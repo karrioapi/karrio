@@ -129,18 +129,18 @@ def shipment_request(
                         ARTICLE=(
                             [
                                 ARTICLE(
-                                    ITEMS=article.quantity,
-                                    DESCRIPTION=article.description,
+                                    ITEMS=item.quantity,
+                                    DESCRIPTION=lib.text(item.title or item.description or "N/A", max=35),
                                     WEIGHT=units.Weight(
-                                        article.weight,
-                                        units.WeightUnit[article.weight_unit],
+                                        item.weight,
+                                        units.WeightUnit[item.weight_unit],
                                     ).KG,
-                                    INVOICEVALUE=article.value_amount,
-                                    INVOICEDESC=article.description,
-                                    HTS=article.hs_code or article.sku,
-                                    COUNTRY=article.origin_country,
+                                    INVOICEVALUE=item.value_amount,
+                                    INVOICEDESC=lib.text(item.title or item.description, max=35),
+                                    HTS=item.hs_code or item.sku,
+                                    COUNTRY=item.origin_country,
                                 )
-                                for article in payload.customs.commodities
+                                for item in payload.customs.commodities
                             ]
                             if payload.customs is not None
                             and any(payload.customs.commodities)

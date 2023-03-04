@@ -236,8 +236,8 @@ NegotiatedShipmentResponseXML = f"""<?xml version="1.0" encoding="UTF-8"?>
                     </ship:ServiceOptionsCharges>
                     <ship:ShippingLabel>
                         <ship:ImageFormat>
-                            <ship:Code>GIF</ship:Code>
-                            <ship:Description>GIF</ship:Description>
+                            <ship:Code>PNG</ship:Code>
+                            <ship:Description>PNG</ship:Description>
                         </ship:ImageFormat>
                         <ship:GraphicImage>{LABEL}</ship:GraphicImage>
                         <ship:HTMLImage>PCFET0NUWVBFIEhUTUwgUFVCTElD(Truncated)</ship:HTMLImage>
@@ -294,8 +294,8 @@ ShipmentResponseXML = f"""<?xml version="1.0" encoding="UTF-8"?>
                     </ship:ServiceOptionsCharges>
                     <ship:ShippingLabel>
                         <ship:ImageFormat>
-                            <ship:Code>GIF</ship:Code>
-                            <ship:Description>GIF</ship:Description>
+                            <ship:Code>PNG</ship:Code>
+                            <ship:Description>PNG</ship:Description>
                         </ship:ImageFormat>
                         <ship:GraphicImage>{LABEL}</ship:GraphicImage>
                         <ship:HTMLImage>PCFET0NUWVBFIEhUTUwgUFVCTElDICI(Truncated)</ship:HTMLImage>
@@ -332,6 +332,7 @@ ShipmentRequestXML = """<tns:Envelope xmlns:auth="http://www.ups.com/schema/xpci
                 <ship:Shipper>
                     <ship:Name>Shipper Name</ship:Name>
                     <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
                     <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
                     <ship:Phone>
                         <ship:Number>1234567890</ship:Number>
@@ -348,6 +349,7 @@ ShipmentRequestXML = """<tns:Envelope xmlns:auth="http://www.ups.com/schema/xpci
                 <ship:ShipTo>
                     <ship:Name>Ship To Name</ship:Name>
                     <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Ship To Name</ship:CompanyDisplayableName>
                     <ship:Phone>
                         <ship:Number>1234567890</ship:Number>
                     </ship:Phone>
@@ -405,7 +407,7 @@ ShipmentRequestXML = """<tns:Envelope xmlns:auth="http://www.ups.com/schema/xpci
             </ship:Shipment>
             <ship:LabelSpecification>
                 <ship:LabelImageFormat>
-                    <ship:Code>GIF</ship:Code>
+                    <ship:Code>PNG</ship:Code>
                 </ship:LabelImageFormat>
                 <ship:LabelStockSize>
                     <ship:Height>6</ship:Height>
@@ -442,6 +444,7 @@ ShipmentRequestWithPresetXML = """<tns:Envelope xmlns:auth="http://www.ups.com/s
                 <ship:Shipper>
                     <ship:Name>Shipper Name</ship:Name>
                     <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
                     <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
                     <ship:Phone>
                         <ship:Number>1234567890</ship:Number>
@@ -458,6 +461,7 @@ ShipmentRequestWithPresetXML = """<tns:Envelope xmlns:auth="http://www.ups.com/s
                 <ship:ShipTo>
                     <ship:Name>Ship To Name</ship:Name>
                     <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Ship To Name</ship:CompanyDisplayableName>
                     <ship:Phone>
                         <ship:Number>1234567890</ship:Number>
                     </ship:Phone>

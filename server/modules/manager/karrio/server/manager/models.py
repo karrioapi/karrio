@@ -210,9 +210,10 @@ class Commodity(OwnedEntity):
 
     weight = models.FloatField(blank=True, null=True)
     quantity = models.IntegerField(blank=True, null=True)
-    description = models.CharField(max_length=25, null=True, blank=True)
-    sku = models.CharField(max_length=25, null=True, blank=True, db_index=True)
-    hs_code = models.CharField(max_length=25, null=True, blank=True, db_index=True)
+    title = models.CharField(max_length=35, null=True, blank=True)
+    description = models.CharField(max_length=100, null=True, blank=True)
+    sku = models.CharField(max_length=35, null=True, blank=True, db_index=True)
+    hs_code = models.CharField(max_length=35, null=True, blank=True, db_index=True)
     value_amount = models.FloatField(blank=True, null=True)
     weight_unit = models.CharField(
         max_length=2, choices=WEIGHT_UNIT, null=True, blank=True

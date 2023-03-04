@@ -43,9 +43,3 @@ class Settings(core.Settings):
     def basic_authentication(self):
         pair = "%s:%s" % (self.username, self.password)
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
-
-
-# class Authentification(dpdhl.AuthentificationType):
-#     def __init__(self, user=None, signature=None, gds_collector_=None, **kwargs_):
-#         super().__init__(user, signature, gds_collector_, **kwargs_)
-#         self.original_tagname_ = "Authentification"

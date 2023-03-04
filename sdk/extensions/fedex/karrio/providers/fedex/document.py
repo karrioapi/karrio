@@ -68,7 +68,12 @@ def document_upload_request(
             ),
             ApplicationId=None,
             ServiceLevel=None,
-            ProcessingOptions=None,
+            ProcessingOptions=fedex.UploadDocumentsProcessingOptionsRequested(
+                Options=None,
+                PostShipmentUploadDetail=fedex.PostShipmentUploadDetail(
+                    TrackingNumber=payload.tracking_number,
+                ),
+            ),
             OriginCountryCode=options.origin_country_code.state,
             OriginStateOrProvinceCode=None,
             OriginPostalCode=options.origin_postal_code.state,
@@ -104,7 +109,9 @@ def document_upload_request(
 
     return lib.Serializable(
         request,
-        provider_utils.default_request_serializer(
-            "v19", 'xmlns:v19="http://fedex.com/ws/uploaddocument/v19"'
+        lambda _: (
+            provider_utils.default_request_serializer("v19", 'xmlns:v19="http://fedex.com/ws/uploaddocument/v19"')(_)
+            .replace("<v19:DocumentContent>b'", "<v19:DocumentContent>")
+            .replace("'</v19:DocumentContent>", "</v19:DocumentContent>")
         ),
     )

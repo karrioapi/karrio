@@ -145,7 +145,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                         declaration=customs.options.declaration.state,
                         customs_items=[
                             easypost.CustomsItem(
-                                description=item.description,
+                                description=lib.text(item.description or item.title or "N/A"),
                                 origin_country=item.origin_country,
                                 quantity=item.quantity,
                                 value=item.value_amount,

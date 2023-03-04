@@ -105,7 +105,7 @@ def shipment_request(
         weight_unit=weight_unit.value,
     )
 
-    payment = payload.payment or fedex.Payment()
+    payment = payload.payment or models.Payment()
     service = provider_units.ServiceType.map(payload.service).value_or_key
     label_type, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
@@ -299,7 +299,17 @@ def shipment_request(
                         InternationalTrafficInArmsRegulationsDetail=None,
                         ShipmentDryIceDetail=None,
                         HomeDeliveryPremiumDetail=None,
-                        EtdDetail=None,
+                        EtdDetail=(
+                            fedex.EtdDetail(
+                                Confirmation="CONFIRMED",
+                                Attributes=["POST_SHIPMENT_UPLOAD_REQUESTED"],
+                                RequestedDocumentCopies=None,
+                                Documents=None,
+                                DocumentReferences=None,
+                            )
+                            if options.fedex_electronic_trade_documents.state
+                            else None
+                        ),
                     )
                     if options.has_content
                     else None
@@ -389,7 +399,7 @@ def shipment_request(
                             fedex.Commodity(
                                 Name=None,
                                 NumberOfPieces=item.quantity,
-                                Description=item.description or "N/A",
+                                Description=lib.text(item.title or item.description or "N/A", max=35),
                                 Purpose=None,
                                 CountryOfManufacture=(
                                     item.origin_country or shipper.country_code

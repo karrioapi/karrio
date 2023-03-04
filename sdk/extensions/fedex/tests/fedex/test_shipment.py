@@ -146,7 +146,7 @@ shipment_data = {
     "customs": {
         "invoice": "123456789",
         "duty": {"paid_by": "sender", "declared_value": 100.0},
-        "commodities": [{"weight": "10", "description": "test", "hs_code": "00339BB"}],
+        "commodities": [{"weight": "10", "title": "test", "hs_code": "00339BB"}],
         "commercial_invoice": True,
     },
     "reference": "#Order 11111",
@@ -318,6 +318,10 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
+                    <v26:EtdDetail>
+                        <v26:Confirmation>CONFIRMED</v26:Confirmation>
+                        <v26:Attributes>POST_SHIPMENT_UPLOAD_REQUESTED</v26:Attributes>
+                    </v26:EtdDetail>
                 </v26:SpecialServicesRequested>
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>

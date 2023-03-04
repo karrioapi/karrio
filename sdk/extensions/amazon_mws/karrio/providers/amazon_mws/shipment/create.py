@@ -94,7 +94,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                 items=[
                     amazon.Item(
                         quantity=item.quantity,
-                        title=item.description,
+                        title=lib.text(item.title or item.description, max=35),
                         unitPrice=amazon.UnitPrice(
                             value=item.value_amount,
                             unit=item.value_currency,

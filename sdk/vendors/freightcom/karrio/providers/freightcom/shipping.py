@@ -275,7 +275,9 @@ def shipping_request(
                     Item=[
                         ItemType(
                             code=(item.hs_code or item.sku or "0000"),
-                            description=item.description or "item",
+                            description=lib.text(
+                                item.description or item.title or "item"
+                            ),
                             originCountry=(
                                 item.origin_country or payload.shipper.country_code
                             ),

@@ -282,8 +282,8 @@ def shipment_request(
                             ArrayOfCustomsitemdata(
                                 item=[
                                     CustomsItemData(
-                                        nameEn=item.description or "N/A",
-                                        namePl=item.description or "N/A",
+                                        nameEn=lib.text(item.title or item.description or "N/A", max=35),
+                                        namePl=lib.text(item.title or item.description or "N/A", max=35),
                                         quantity=item.quantity,
                                         weight=units.Weight(
                                             item.weight,

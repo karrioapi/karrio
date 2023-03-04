@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Fri Aug  5 17:17:30 2022 by generateDS.py version 2.40.13.
-# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sun Feb 26 19:05:51 2023 by generateDS.py version 2.41.1.
+# Python 3.10.6 (main, Nov 14 2022, 16:10:14) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
 #   ('-o', './dpdhl_lib/business_interface.py')
 #
 # Command line arguments:
-#   ./schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd
+#   ./schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/business_interface.py" ./schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dpdhl_lib/business_interface.py" ./schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd
 #
 # Current working directory (os.getcwd()):
 #   dpdhl
@@ -1138,7 +1138,7 @@ class activeType43(str, Enum):
 
 
 class activeType44(str, Enum):
-    """activeType44 -- 	Indicates, if the option is on/off
+    """activeType44 --  Indicates, if the option is on/off
     
     """
     _0='0'
@@ -1146,7 +1146,23 @@ class activeType44(str, Enum):
 
 
 class activeType45(str, Enum):
-    """activeType45 -- Indicates, if the option is on/off
+    """activeType45 --  Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType46(str, Enum):
+    """activeType46 --  Indicates, if the option is on/off
+    
+    """
+    _0='0'
+    _1='1'
+
+
+class activeType47(str, Enum):
+    """activeType47 -- Indicates, if the option is on/off
     
     """
     _0='0'
@@ -1154,15 +1170,10 @@ class activeType45(str, Enum):
 
 
 class exportDocResponseTypeType(str, Enum):
-    """exportDocResponseTypeType -- Dial to determine label ouput format. Must be
-    either 'URL' or
-    'B64' = Base64encoded: it is possible to request
-    an URL for receiving
-    the label as PDF stream, or to request the
-    label as base64encoded binary
-    data directly. If not defined by
-    client, web service defaults to
-    'URL'.
+    """exportDocResponseTypeType -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
     
     """
     URL='URL'
@@ -1183,15 +1194,10 @@ class exportTypeType(str, Enum):
 
 
 class labelResponseTypeType(str, Enum):
-    """labelResponseTypeType -- Dial to determine label ouput format. Must be
-    either 'URL' or
-    'B64' = Base64encoded: it is possible to request
-    an URL for receiving
-    the label as PDF stream, or to request the
-    label as base64encoded binary
-    data directly. If not defined by
-    client, web service defaults to
-    'URL'.
+    """labelResponseTypeType -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
     
     """
     URL='URL'
@@ -1200,15 +1206,10 @@ class labelResponseTypeType(str, Enum):
 
 
 class labelResponseTypeType11(str, Enum):
-    """labelResponseTypeType11 -- Dial to determine label ouput format. Must be
-    either 'URL' or
-    'B64' = Base64encoded: it is possible to request
-    an URL for receiving
-    the label as PDF stream, or to request the
-    label as base64encoded binary
-    data directly. If not defined by
-    client, web service defaults to
-    'URL'.
+    """labelResponseTypeType11 -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
     
     """
     URL='URL'
@@ -1217,15 +1218,10 @@ class labelResponseTypeType11(str, Enum):
 
 
 class labelResponseTypeType4(str, Enum):
-    """labelResponseTypeType4 -- Dial to determine label ouput format. Must be
-    either 'URL' or
-    'B64' = Base64encoded: it is possible to request
-    an URL for receiving
-    the label as PDF stream, or to request the
-    label as base64encoded binary
-    data directly. If not defined by
-    client, web service defaults to
-    'URL'.
+    """labelResponseTypeType4 -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
     
     """
     URL='URL'
@@ -1235,7 +1231,8 @@ class labelResponseTypeType4(str, Enum):
 
 class termsOfTradeType(str, Enum):
     """termsOfTradeType --
-    Element provides terms of trades, incoterms codes:
+    Element provides terms of
+    trades, incoterms codes:
     DDP (Delivery Duty Paid)
     DXV (Delivery Duty Paid (excl. VAT))
     DAP (formerly DDU, Delivery At Place)
@@ -1252,19 +1249,16 @@ class termsOfTradeType(str, Enum):
 
 
 class typeType(str, Enum):
-    """typeType --
-    This service defines the handling of parcels that
-    cannot be delivered. There are two options: IMMEDIATE (Sending back
-    to sender), ABANDONMENT (Abandonment of parcel at the hands of
-    sender (free of charge). The definition of undeliverability is
-    country-specific and depends on the regulations of the postal
-    company of the receiving country. Usually, if parcels cannot be
-    delivered at first try, recipients receive a notification card and
-    can pick up their shipment at a local postal office. After the
-    storage period has expired, the shipment will be handled according
-    to your choosen endorsement option. Shipments that cannot be
-    delivered due to address problems or active refusal will be either
-    returned immediately or treated as abandoned.
+    """typeType --  This service defines the handling of parcels that cannot be
+    delivered. There are two options: IMMEDIATE (Sending back to sender),
+    ABANDONMENT (Abandonment of parcel at the hands of sender (free of charge). The
+    definition of undeliverability is country-specific and depends on the
+    regulations of the postal company of the receiving country. Usually, if parcels
+    cannot be delivered at first try, recipients receive a notification card and can
+    pick up their shipment at a local postal office. After the storage period has
+    expired, the shipment will be handled according to your choosen endorsement
+    option. Shipments that cannot be delivered due to address problems or active
+    refusal will be either returned immediately or treated as abandoned.
     
     """
     IMMEDIATE='IMMEDIATE'
@@ -1272,16 +1266,10 @@ class typeType(str, Enum):
 
 
 class typeType38(str, Enum):
-    """typeType38 --
-    Timeframe of delivery, if the option is used:
-    ValidValues are
-    10001200: 10:00 until 12:00;
-    12001400: 12:00 until
-    14:00
-    14001600: 14:00 until 16:00;
-    16001800: 16:00 until 18:00
-    18002000: 18:00 until 20:00;
-    19002100: 19:00 until 21:00
+    """typeType38 --  Timeframe of delivery, if the option is used: ValidValues are
+    10001200: 10:00 until 12:00; 12001400: 12:00 until 14:00 14001600: 14:00 until
+    16:00; 16001800: 16:00 until 18:00 18002000: 18:00 until 20:00; 19002100: 19:00
+    until 21:00
     
     """
     _1_0001200='10001200'
@@ -1301,11 +1289,8 @@ class unitType(str, Enum):
 
 
 class GetVersionResponse(GeneratedsSuper):
-    """GetVersionResponse -- The version of the webservice and the version of the
-    software
-    build.
-      
-    * Version -- The version of the webservice implementation.
+    """GetVersionResponse -- The version of the webservice and the version of the software build.
+    Version -- The version of the webservice implementation.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -1402,55 +1387,45 @@ class GetVersionResponse(GeneratedsSuper):
 
 class CreateShipmentOrderRequest(GeneratedsSuper):
     """CreateShipmentOrderRequest -- The shipmentdata for creating a shipment.
-      
-    * Version -- The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * ShipmentOrder -- ShipmentOrder is the highest parent element that
-      contains all
-      data with respect to one shipment order.
-      
-    * labelResponseType -- Dial to determine label ouput format. Must be
-      either 'URL' or
-      'B64' = Base64encoded: it is possible to request
-      an URL for receiving
-      the label as PDF stream, or to request the
-      label as base64encoded binary
-      data directly. If not defined by
-      client, web service defaults to
-      'URL'.
-      
-    * groupProfileName -- The group profile you select defines the billing
-      numbers you can use for creating shipments. To define group
-      profiles please visit our business costumer portal.
-      
-    * labelFormat --
-      In this optional section you can define the following label formats:
-      A4:common label laser printing A4 plain paper;
-      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
-      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
-      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
-      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
-      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
-      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
-      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
-      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
-      
-    * labelFormatRetoure --
-      In this optional section you can define the following label formats:
-      A4:common label laser printing A4 plain paper;
-      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
-      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
-      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
-      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
-      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
-      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
-      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
-      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
-      
-    * combinedPrinting -- To get a single PDF for shipping and return label
-      select this option.
+    Version -- The version of the webservice implementation for which the
+    requesting client is developed.
+    ShipmentOrder -- ShipmentOrder is the highest parent element that contains all
+    data with respect to one shipment order.
+    labelResponseType -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
+    groupProfileName -- The group profile you select defines the billing numbers you
+    can use for creating shipments. To define group profiles please visit
+    our business costumer portal.
+    labelFormat --  In this optional section you can define the following label
+    formats: A4:common label laser printing A4 plain paper; 910-300-700:
+    common label laser printing 105 x 205 mm (A5 plain paper, 910-300-700);
+    910-300-700-oz: common label laser printing 105 x 205 mm without
+    additional barcode labels (A5 plain paper, 910-300-700); 910-300-300:
+    common label laser printing 105 x 148 mm (A5 plain paper, 910-300-700);
+    910-300-300-oz: common label laser printing 105 x 148 mm without
+    additional barcode labels (A5 plain paper, 910-300-300); 910-300-710:
+    common label laser printing 105 x 208 mm (910-300-710); 910-300-600:
+    common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+    910-300-400: common label thermal printing 103 x 150 mm (910-300-400,
+    910-300-410); 100x70mm: 100 x 70 mm label (only for Warenpost and
+    Warenpost International);
+    labelFormatRetoure --  In this optional section you can define the following label
+    formats: A4:common label laser printing A4 plain paper; 910-300-700:
+    common label laser printing 105 x 205 mm (a5 plain paper, 910-300-700);
+    910-300-700-oz: common label laser printing 105 x 205 mm without
+    additional barcode labels (A5 plain paper, 910-300-700); 910-300-300:
+    common label laser printing 105 x 148 mm (A5 plain paper, 910-300-300);
+    910-300-300-oz: common label laser printing 105 x 148 mm without
+    additional barcode labels (A5 plain paper, 910-300-300); 910-300-710:
+    common label laser printing 105 x 208 mm (910-300-710); 910-300-600:
+    common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+    910-300-400: common label thermal printing 103 x 150 mm (910-300-400,
+    910-300-410); 100x70mm: 100 x 70 mm label (only for Warenpost and
+    Warenpost International);
+    combinedPrinting -- To get a single PDF for shipping and return label select this
+    option.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -1706,14 +1681,10 @@ class CreateShipmentOrderRequest(GeneratedsSuper):
 
 class ValidateShipmentOrderRequest(GeneratedsSuper):
     """ValidateShipmentOrderRequest -- The shipmentdata for validating a shipment.
-      
-    * Version -- The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * ShipmentOrder -- ShipmentOrder is the highest parent element that
-      contains all
-      data with respect to one shipment order.
+    Version -- The version of the webservice implementation for which the
+    requesting client is developed.
+    ShipmentOrder -- ShipmentOrder is the highest parent element that contains all
+    data with respect to one shipment order.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -1833,20 +1804,12 @@ class ValidateShipmentOrderRequest(GeneratedsSuper):
 
 
 class CreateShipmentOrderResponse(GeneratedsSuper):
-    """CreateShipmentOrderResponse -- The status of the operation and the shipment
-    identifier (if
-    available).
-      
-    * Version -- The version of the webservice implementation.
-      
-    * Status -- Success status after processing the overall
-      request.
-      
-    * CreationState -- The operation's success status for every single
-      ShipmentOrder
-      will be returned by one CreationState element. It is
-      identifiable via
-      SequenceNumber.
+    """CreateShipmentOrderResponse -- The status of the operation and the shipment identifier (if available).
+    Version -- The version of the webservice implementation.
+    Status -- Success status after processing the overall request.
+    CreationState -- The operation's success status for every single ShipmentOrder
+    will be returned by one CreationState element. It is identifiable via
+    SequenceNumber.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -1981,20 +1944,12 @@ class CreateShipmentOrderResponse(GeneratedsSuper):
 
 
 class ValidateShipmentResponse(GeneratedsSuper):
-    """ValidateShipmentResponse -- The status of the operation and the shipment
-    identifier (if
-    available).
-      
-    * Version -- The version of the webservice implementation.
-      
-    * Status -- Success status after processing the overall
-      request.
-      
-    * ValidationState -- The operation's success status for every single
-      ShipmentOrder
-      will be returned by one CreationState element. It is
-      identifiable via
-      SequenceNumber.
+    """ValidateShipmentResponse -- The status of the operation and the shipment identifier (if available).
+    Version -- The version of the webservice implementation.
+    Status -- Success status after processing the overall request.
+    ValidationState -- The operation's success status for every single ShipmentOrder
+    will be returned by one CreationState element. It is identifiable via
+    SequenceNumber.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -2129,62 +2084,45 @@ class ValidateShipmentResponse(GeneratedsSuper):
 
 
 class GetLabelRequest(GeneratedsSuper):
-    """GetLabelRequest -- The identifier for the shipment for which the label
-    url is
-    requested.
-      
-    * Version -- The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * labelResponseType -- Dial to determine label ouput format. Must be
-      either 'URL' or
-      'B64' = Base64encoded: it is possible to request
-      an URL for receiving
-      the label as PDF stream, or to request the
-      label as base64encoded binary
-      data directly. If not defined by
-      client, web service defaults to
-      'URL'.
-      
-    * groupProfileName -- The group profile you select defines the billing
-      numbers you can use for creating shipments. To define group
-      profiles please visit our business costumer portal.
-      The group
-      profile defines the shipments you can get documents for.
-      The
-      shipment needs to have an account/billing number allocated to
-      the
-      group profile. To define group profiles please visit our
-      business
-      costumer portal.
-      
-    * labelFormat --
-      In this optional section you can define the following label formats:
-      A4:common label laser printing A4 plain paper;
-      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
-      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
-      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
-      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
-      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
-      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
-      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
-      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
-      
-    * labelFormatRetoure --
-      In this optional section you can define the following label formats:
-      A4:common label laser printing A4 plain paper;
-      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
-      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
-      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
-      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
-      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
-      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
-      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
-      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
-      
-    * combinedPrinting -- To get a single PDF for shipping and return label
-      select this option.
+    """GetLabelRequest -- The identifier for the shipment for which the label url is requested.
+    Version -- The version of the webservice implementation for which the
+    requesting client is developed.
+    labelResponseType -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
+    groupProfileName -- The group profile you select defines the billing numbers you
+    can use for creating shipments. To define group profiles please visit
+    our business costumer portal. The group profile defines the shipments
+    you can get documents for. The shipment needs to have an account/billing
+    number allocated to the group profile. To define group profiles please
+    visit our business costumer portal.
+    labelFormat --  In this optional section you can define the following label
+    formats: A4:common label laser printing A4 plain paper; 910-300-700:
+    common label laser printing 105 x 205 mm (910-300-700); 910-300-700-oz:
+    common label laser printing 105 x 205 mm without additional barcode
+    labels (910-300-700); 910-300-300: common label laser printing 105 x 148
+    mm (910-300-700); 910-300-300-oz: common label laser printing 105 x 148
+    mm without additional barcode labels (910-300-300); 910-300-710: common
+    label laser printing 105 x 208 mm (910-300-710); 910-300-600: common
+    label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+    910-300-400: common label thermal printing 103 x 150 mm (910-300-400,
+    910-300-410); 100x70mm: 100 x 70 mm label (only for Warenpost and
+    Warenpost International);
+    labelFormatRetoure --  In this optional section you can define the following label
+    formats: A4:common label laser printing A4 plain paper; 910-300-700:
+    common label laser printing 105 x 205 mm (910-300-700); 910-300-700-oz:
+    common label laser printing 105 x 205 mm without additional barcode
+    labels (910-300-700); 910-300-300: common label laser printing 105 x 148
+    mm (910-300-700); 910-300-300-oz: common label laser printing 105 x 148
+    mm without additional barcode labels (910-300-300); 910-300-710: common
+    label laser printing 105 x 208 mm (910-300-710); 910-300-600: common
+    label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+    910-300-400: common label thermal printing 103 x 150 mm (910-300-400,
+    910-300-410); 100x70mm: 100 x 70 mm label (only for Warenpost and
+    Warenpost International);
+    combinedPrinting -- To get a single PDF for shipping and return label select this
+    option.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -2448,20 +2386,12 @@ class GetLabelRequest(GeneratedsSuper):
 
 
 class GetLabelResponse(GeneratedsSuper):
-    """GetLabelResponse -- The status of the operation and requested urls for
-    getting the
-    label.
-      
-    * Version -- The version of the webservice implementation.
-      
-    * Status -- Success status after processing the overall
-      request.
-      
-    * LabelData -- For every ShipmentNumber requested, one LabelData
-      node is
-      returned that contains the status of the label retrieval
-      operation and
-      the URL for the label (if available).
+    """GetLabelResponse -- The status of the operation and requested urls for getting the label.
+    Version -- The version of the webservice implementation.
+    Status -- Success status after processing the overall request.
+    LabelData -- For every ShipmentNumber requested, one LabelData node is
+    returned that contains the status of the label retrieval operation and
+    the URL for the label (if available).
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -2597,22 +2527,18 @@ class GetLabelResponse(GeneratedsSuper):
 
 class DoManifestRequest(GeneratedsSuper):
     """DoManifestRequest -- Manifests one ore more shipments.
-    Version -- The version of the webservice implementation for
-    which the
+    Version -- The version of the webservice implementation for which the
     requesting client is developed.
-      
-    * shipmentNumber --
-      Contains a shipment number. Any number of a printed shipment not already manifested can be used.
-      A Request can contain the element up to 50 times.
-      Requests need to either contain at least one times shipmentNumber or allshipments.
-      Requests cannot contain shipmentNumber and allShipments at the same time.
-      
-    * allShipments --
-      Manifests all shipments. Can be used instead the element
-      “
-      shipmentNumber
-      ”
-      . The element is used without a value, e.g.
+    shipmentNumber --  Contains a shipment number. Any number of a printed
+    shipment not already manifested can be used. A Request can contain
+    the element up to 50 times. Requests need to either contain at least
+    one times shipmentNumber or allshipments. Requests cannot contain
+    shipmentNumber and allShipments at the same time.
+    allShipments --  Manifests all shipments. Can be used instead the element
+    “
+    shipmentNumber
+    ”
+    . The element is used without a value, e.g.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -2837,15 +2763,10 @@ class allShipments(GeneratedsSuper):
 class DoManifestResponse(GeneratedsSuper):
     """DoManifestResponse -- The status of the operation
     Version --  The version of the webservice implementation.
-      
-    * Status -- Status of the request (value of zero means, the
-      request was
-      processed without error; value greater than zero
-      indicates that an error
-      occurred).
-      
-    * ManifestState -- The status of the operation for the corresponding
-      shipment.
+    Status -- Status of the request (value of zero means, the request was
+    processed without error; value greater than zero indicates that an error
+    occurred).
+    ManifestState -- The status of the operation for the corresponding shipment.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -2980,24 +2901,15 @@ class DoManifestResponse(GeneratedsSuper):
 
 
 class DeleteShipmentOrderRequest(GeneratedsSuper):
-    """DeleteShipmentOrderRequest --  The identifier for the shipment which should be
-    deleted.
-      
-    * Version --  The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * shipmentNumber --  In order to delete previously created DD shipment
-      orders,
-      ShipmentNumber. ShipmentNumber is required. This parent
-      element inherits
-      from ShipmentNumberType, therefore all following
-      subelements are valid
-      according to schema, however the web service
-      accepts shipmentNumber
-      only. Note: you can delete more than one
-      shipment by passing multiple
-      ShipmentNumber containers.
+    """DeleteShipmentOrderRequest --  The identifier for the shipment which should be deleted.
+    Version --  The version of the webservice implementation for which the
+    requesting client is developed.
+    shipmentNumber --  In order to delete previously created DD shipment orders,
+    ShipmentNumber. ShipmentNumber is required. This parent element inherits
+    from ShipmentNumberType, therefore all following subelements are valid
+    according to schema, however the web service accepts shipmentNumber
+    only. Note: you can delete more than one shipment by passing multiple
+    ShipmentNumber containers.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -3128,15 +3040,10 @@ class DeleteShipmentOrderRequest(GeneratedsSuper):
 class DeleteShipmentOrderResponse(GeneratedsSuper):
     """DeleteShipmentOrderResponse -- The status of the operation.
     Version -- The version of the webservice implementation.
-      
-    * Status -- Success status after processing the overall
-      request.
-      
-    * DeletionState --  For every ShipmentNumber requested, one
-      DeletionState node
-      is returned that contains the status of the
-      respective deletion
-      operation.
+    Status -- Success status after processing the overall request.
+    DeletionState --  For every ShipmentNumber requested, one DeletionState node
+    is returned that contains the status of the respective deletion
+    operation.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -3271,44 +3178,24 @@ class DeleteShipmentOrderResponse(GeneratedsSuper):
 
 
 class GetExportDocRequest(GeneratedsSuper):
-    """GetExportDocRequest --  The identifier for the shipment for which the export
-    document url is
+    """GetExportDocRequest --  The identifier for the shipment for which the export document url is
     requested.
-      
-    * Version -- The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * shipmentNumber -- To request export documents, ShipmentNumber.
-      ShipmentNumber
-      is required. This parent element inherits from
-      ShipmentNumberType,
-      therefore all following subelements are valid
-      according to schema,
-      however the web service accepts
-      shipmentNumber only.
-      
-    * exportDocResponseType -- Dial to determine label ouput format. Must be
-      either 'URL' or
-      'B64' = Base64encoded: it is possible to request
-      an URL for receiving
-      the label as PDF stream, or to request the
-      label as base64encoded binary
-      data directly. If not defined by
-      client, web service defaults to
-      'URL'.
-      
-    * groupProfileName -- The group profile you select defines the billing
-      numbers you can use for creating shipments. To define group
-      profiles please visit our business costumer portal.
-      The group
-      profile defines the shipments you can get documents for.
-      The
-      shipment needs to have an account/billing number allocated to
-      the
-      group profile. To define group profiles please visit our
-      business
-      costumer portal.
+    Version -- The version of the webservice implementation for which the
+    requesting client is developed.
+    shipmentNumber -- To request export documents, ShipmentNumber. ShipmentNumber
+    is required. This parent element inherits from ShipmentNumberType,
+    therefore all following subelements are valid according to schema,
+    however the web service accepts shipmentNumber only.
+    exportDocResponseType -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
+    groupProfileName -- The group profile you select defines the billing numbers you
+    can use for creating shipments. To define group profiles please visit
+    our business costumer portal. The group profile defines the shipments
+    you can get documents for. The shipment needs to have an account/billing
+    number allocated to the group profile. To define group profiles please
+    visit our business costumer portal.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -3520,24 +3407,15 @@ class GetExportDocRequest(GeneratedsSuper):
 
 
 class GetExportDocResponse(GeneratedsSuper):
-    """GetExportDocResponse -- The status of the operation and requested export
-    document.
-      
-    * Version -- The version of the webservice implementation.
-      
-    * Status -- Status of the request (value of zero means, the
-      request was
-      processed without error; value greater than zero
-      indicates that an error
-      occurred).
-      
-    * ExportDocData -- Contains the result of the document processing: in
-      case of no
-      errors, a base64 encoded PDF is contained; also, the
-      status of this
-      particular document generation and the passed
-      shipment number are
-      returned.
+    """GetExportDocResponse -- The status of the operation and requested export document.
+    Version -- The version of the webservice implementation.
+    Status -- Status of the request (value of zero means, the request was
+    processed without error; value greater than zero indicates that an error
+    occurred).
+    ExportDocData -- Contains the result of the document processing: in case of no
+    errors, a base64 encoded PDF is contained; also, the status of this
+    particular document generation and the passed shipment number are
+    returned.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -3673,12 +3551,9 @@ class GetExportDocResponse(GeneratedsSuper):
 
 class GetManifestRequest(GeneratedsSuper):
     """GetManifestRequest -- The request data for the manifest document
-      
-    * Version -- The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * manifestDate -- Date in format yyyy-mm-dd
+    Version -- The version of the webservice implementation for which the
+    requesting client is developed.
+    manifestDate -- Date in format yyyy-mm-dd
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -3791,19 +3666,12 @@ class GetManifestRequest(GeneratedsSuper):
 
 
 class GetManifestResponse(GeneratedsSuper):
-    """GetManifestResponse -- The status of the operation and requested export
-    document.
-      
-    * Version -- The version of the webservice implementation.
-      
-    * Status -- Status of the request (value of zero means, the
-      request was
-      processed without error; value greater than zero
-      indicates that an error
-      occurred).
-      
-    * manifestData -- The Base64 encoded pdf data for receiving the
-      manifest.
+    """GetManifestResponse -- The status of the operation and requested export document.
+    Version -- The version of the webservice implementation.
+    Status -- Status of the request (value of zero means, the request was
+    processed without error; value greater than zero indicates that an error
+    occurred).
+    manifestData -- The Base64 encoded pdf data for receiving the manifest.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -3938,65 +3806,48 @@ class GetManifestResponse(GeneratedsSuper):
 
 class UpdateShipmentOrderRequest(GeneratedsSuper):
     """UpdateShipmentOrderRequest -- The shipmentdata for creating a shipment.
-      
-    * Version -- The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * shipmentNumber -- The ShipmentNumber of the shipment, which sould be
-      updated.
-      ShipmentNumber is required. This parent element inherits
-      from
-      ShipmentNumberType, therefore all following subelements are
-      valid
-      according to schema, however the web service accepts
-      shipmentNumber
-      only.
-      
-    * ShipmentOrder -- ShipmentOrder contains an update of all data of the
-      selected
-      shipment order.
-      
-    * labelResponseType -- Dial to determine label ouput format. Must be
-      either 'URL' or
-      'B64' = Base64encoded: it is possible to request
-      an URL for receiving
-      the label as PDF stream, or to request the
-      label as base64encoded binary
-      data directly. If not defined by
-      client, web service defaults to
-      'URL'.
-      
-    * groupProfileName -- The group profile you select defines the billing
-      numbers you can use for creating shipments. To define group
-      profiles please visit our business costumer portal.
-      
-    * labelFormat --
-      In this optional section you can define the following label formats:
-      A4:common label laser printing A4 plain paper;
-      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
-      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
-      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
-      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
-      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
-      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
-      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
-      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
-      
-    * labelFormatRetoure --
-      In this optional section you can define the following label formats:
-      A4:common label laser printing A4 plain paper;
-      910-300-700: common label laser printing 105 x 205 mm (910-300-700);
-      910-300-700-oz: common label laser printing 105 x 205 mm without additional barcode labels (910-300-700);
-      910-300-300: common label laser printing 105 x 148 mm (910-300-700);
-      910-300-300-oz: common label laser printing 105 x 148 mm without additional barcode labels (910-300-300);
-      910-300-710: common label laser printing 105 x 208 mm (910-300-710);
-      910-300-600: common label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
-      910-300-400: common label thermal printing 103 x 150 mm (910-300-400, 910-300-410);
-      100x70mm: 100 x 70 mm label (only for Warenpost and Warenpost International);
-      
-    * combinedPrinting -- To get a single PDF for shipping and return label
-      select this option.
+    Version -- The version of the webservice implementation for which the
+    requesting client is developed.
+    shipmentNumber -- The ShipmentNumber of the shipment, which sould be updated.
+    ShipmentNumber is required. This parent element inherits from
+    ShipmentNumberType, therefore all following subelements are valid
+    according to schema, however the web service accepts shipmentNumber
+    only.
+    ShipmentOrder -- ShipmentOrder contains an update of all data of the selected
+    shipment order.
+    labelResponseType -- Dial to determine label ouput format. Must be either 'URL' or
+    'B64' = Base64encoded: it is possible to request an URL for receiving
+    the label as PDF stream, or to request the label as base64encoded binary
+    data directly. If not defined by client, web service defaults to 'URL'.
+    groupProfileName -- The group profile you select defines the billing numbers you
+    can use for creating shipments. To define group profiles please visit
+    our business costumer portal.
+    labelFormat --  In this optional section you can define the following label
+    formats: A4:common label laser printing A4 plain paper; 910-300-700:
+    common label laser printing 105 x 205 mm (910-300-700); 910-300-700-oz:
+    common label laser printing 105 x 205 mm without additional barcode
+    labels (910-300-700); 910-300-300: common label laser printing 105 x 148
+    mm (910-300-700); 910-300-300-oz: common label laser printing 105 x 148
+    mm without additional barcode labels (910-300-300); 910-300-710: common
+    label laser printing 105 x 208 mm (910-300-710); 910-300-600: common
+    label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+    910-300-400: common label thermal printing 103 x 150 mm (910-300-400,
+    910-300-410); 100x70mm: 100 x 70 mm label (only for Warenpost and
+    Warenpost International);
+    labelFormatRetoure --  In this optional section you can define the following label
+    formats: A4:common label laser printing A4 plain paper; 910-300-700:
+    common label laser printing 105 x 205 mm (910-300-700); 910-300-700-oz:
+    common label laser printing 105 x 205 mm without additional barcode
+    labels (910-300-700); 910-300-300: common label laser printing 105 x 148
+    mm (910-300-700); 910-300-300-oz: common label laser printing 105 x 148
+    mm without additional barcode labels (910-300-300); 910-300-710: common
+    label laser printing 105 x 208 mm (910-300-710); 910-300-600: common
+    label thermal printing 103 x 199 mm (910-300-600, 910-300-610);
+    910-300-400: common label thermal printing 103 x 150 mm (910-300-400,
+    910-300-410); 100x70mm: 100 x 70 mm label (only for Warenpost and
+    Warenpost International);
+    combinedPrinting -- To get a single PDF for shipping and return label select this
+    option.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -4267,34 +4118,18 @@ class UpdateShipmentOrderRequest(GeneratedsSuper):
 
 
 class UpdateShipmentOrderResponse(GeneratedsSuper):
-    """UpdateShipmentOrderResponse -- The status of the operation and the shipment
-    identifier (if
-    available).
-      
-    * Version -- The version of the webservice implementation.
-      
-    * Status -- Success status after processing the overall
-      request.
-      
-    * shipmentNumber -- Can contain any DHL shipmentnumber. For successful
-      and unsuccessful operations, the requested
-      ShipmentNumber to be
-      deleted is returned. This is no matter if the operation
-      could be
-      performed or not.
-      
-    * returnShipmentNumber -- Can contain any DHL shipmentnumber. For successful
-      and unsuccessful operations, the requested
-      ShipmentNumber to be
-      deleted is returned. This is no matter if the operation
-      could be
-      performed or not.
-      
-    * LabelData -- The operation's success status for every single
-      ShipmentOrder
-      will be returned by one UpdateState element. It is
-      identifiable via
-      ShipmentNumber.
+    """UpdateShipmentOrderResponse -- The status of the operation and the shipment identifier (if available).
+    Version -- The version of the webservice implementation.
+    Status -- Success status after processing the overall request.
+    shipmentNumber -- Can contain any DHL shipmentnumber. For successful and
+    unsuccessful operations, the requested ShipmentNumber to be deleted is
+    returned. This is no matter if the operation could be performed or not.
+    returnShipmentNumber -- Can contain any DHL shipmentnumber. For successful and
+    unsuccessful operations, the requested ShipmentNumber to be deleted is
+    returned. This is no matter if the operation could be performed or not.
+    LabelData -- The operation's success status for every single ShipmentOrder
+    will be returned by one UpdateState element. It is identifiable via
+    ShipmentNumber.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -4478,39 +4313,21 @@ class UpdateShipmentOrderResponse(GeneratedsSuper):
 
 
 class CreationState(GeneratedsSuper):
-    """CreationState -- The operation's success status for every single
-    ShipmentOrder will be
-    returned by one CreationState element. It is
-    identifiable via SequenceNumber.
-      
-    * sequenceNumber -- Identifier for ShipmentOrder set by client
-      application in
-      CreateShipment request. The defined value is looped
-      through and returned
-      unchanged by the web service within the
-      response of createShipment. The
-      client can therefore assign the
-      status information of the response to the
-      correct ShipmentOrder of
-      the request.
-      
-    * shipmentNumber -- Can contain any DHL shipmentnumber. For successful
-      and unsuccessful operations, the requested
-      ShipmentNumber to be
-      deleted is returned. This is no matter if the operation
-      could be
-      performed or not.
-      
-    * returnShipmentNumber -- Can contain any DHL shipmentnumber. For successful
-      and unsuccessful operations, the requested
-      ShipmentNumber to be
-      deleted is returned. This is no matter if the operation
-      could be
-      performed or not.
-      
-    * LabelData -- For successful operations, a shipment number is
-      created and
-      returned. Depending on the invoked product.
+    """CreationState -- The operation's success status for every single ShipmentOrder will be
+    returned by one CreationState element. It is identifiable via SequenceNumber.
+    sequenceNumber -- Identifier for ShipmentOrder set by client application in
+    CreateShipment request. The defined value is looped through and returned
+    unchanged by the web service within the response of createShipment. The
+    client can therefore assign the status information of the response to the
+    correct ShipmentOrder of the request.
+    shipmentNumber -- Can contain any DHL shipmentnumber. For successful and
+    unsuccessful operations, the requested ShipmentNumber to be deleted is
+    returned. This is no matter if the operation could be performed or not.
+    returnShipmentNumber -- Can contain any DHL shipmentnumber. For successful and
+    unsuccessful operations, the requested ShipmentNumber to be deleted is
+    returned. This is no matter if the operation could be performed or not.
+    LabelData -- For successful operations, a shipment number is created and
+    returned. Depending on the invoked product.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -4693,23 +4510,14 @@ class CreationState(GeneratedsSuper):
 
 
 class ValidationState(GeneratedsSuper):
-    """ValidationState -- The operation's success status for every single
-    ShipmentOrder will be
-    returned by one CreationState element. It is
-    identifiable via SequenceNumber.
-      
-    * sequenceNumber -- Identifier for ShipmentOrder set by client
-      application in
-      CreateShipment request. The defined value is looped
-      through and returned
-      unchanged by the web service within the
-      response of createShipment. The
-      client can therefore assign the
-      status information of the response to the
-      correct ShipmentOrder of
-      the request.
-      
-    * Status --  Success status of processing a particular shipment.
+    """ValidationState -- The operation's success status for every single ShipmentOrder will be
+    returned by one CreationState element. It is identifiable via SequenceNumber.
+    sequenceNumber -- Identifier for ShipmentOrder set by client application in
+    CreateShipment request. The defined value is looped through and returned
+    unchanged by the web service within the response of createShipment. The
+    client can therefore assign the status information of the response to the
+    correct ShipmentOrder of the request.
+    Status --  Success status of processing a particular shipment.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -4835,38 +4643,29 @@ class ValidationState(GeneratedsSuper):
 
 class Statusinformation(GeneratedsSuper):
     """Statusinformation -- The status information used in different situations.
-      
-    * statusCode -- Overall status of the entire request: A value of
-      zero means, the
-      request was processed without error. A value
-      greater than zero indicates
-      that an error occurred. The detailed
-      mapping and explanation of returned
-      status codes is contained in
-      the list.
-      
-    * statusText -- Explanation of the statuscode. Explains what types of errors occurred.
-      
-    * statusMessage -- Detailed explanation of errors or warnings, p.e.
-      “
-      Invalid postal code
-      ”
-      .
-      This element is kept for compatibility reasons only. Please use
-      “
-      statusType
-      ”
-      und
-      “
-      errorMassage
-      ”
-      with their subelements instead.
-      
-    * errorMessage --  Explains details of the error and where it occurred
-      
-    * statusType -- Explains if an error or warning occurred
-      
-    * warningMessage --  Explains details of the error and where it occurred
+    statusCode -- Overall status of the entire request: A value of zero means, the
+    request was processed without error. A value greater than zero indicates
+    that an error occurred. The detailed mapping and explanation of returned
+    status codes is contained in the list.
+    statusText -- Explanation of the statuscode. Explains what types of errors
+    occurred.
+    statusMessage -- Detailed explanation of errors or warnings, p.e.
+    “
+    Invalid postal
+    code
+    ”
+    . This element is kept for compatibility reasons only. Please use
+    “
+    statusType
+    ”
+    und
+    “
+    errorMassage
+    ”
+    with their subelements instead.
+    errorMessage --  Explains details of the error and where it occurred
+    statusType -- Explains if an error or warning occurred
+    warningMessage --  Explains details of the error and where it occurred
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -5073,8 +4872,7 @@ class Statusinformation(GeneratedsSuper):
 
 class StatusElement(GeneratedsSuper):
     """statusElement -- Explanation of the statusElement and potential errors.
-      
-    * statusMessage -- Explanation of the statusMessage and potential errors.
+    statusMessage -- Explanation of the statusMessage and potential errors.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -5189,15 +4987,10 @@ class StatusElement(GeneratedsSuper):
 
 
 class PieceInformation(GeneratedsSuper):
-    """PieceInformation -- Information about each piece (e.g. the generated
-    licence plate). For
-    every piece, a PieceInformation container holds
-    the license plate
-    number.
-      
-    * PieceNumber -- For every piece a piece number is created that is of
-      one of the
-      following types (mostly licensePlate).
+    """PieceInformation -- Information about each piece (e.g. the generated licence plate). For
+    every piece, a PieceInformation container holds the license plate number.
+    PieceNumber -- For every piece a piece number is created that is of one of the
+    following types (mostly licensePlate).
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -5294,23 +5087,14 @@ class PieceInformation(GeneratedsSuper):
 
 class ShipmentOrderType(GeneratedsSuper):
     """ShipmentOrderType -- Data for the creation of a shipment.
-    sequenceNumber -- Free field to to tag multiple shipment orders
-    individually by
-    client. Essential for later mapping of response
-    data returned by webservice
-    upon createShipment operation. Allows
-    client to assign the shipment
-    information of the response to the
-    correct shipment order of the
-    request.
-      
-    * Shipment -- Is the core element of a ShipmentOrder. It contains
-      all relevant
-      information of the shipment.
-      
-    * PrintOnlyIfCodeable -- If set to true (=1), the label will be only be
-      printable, if the
-      receiver address is valid.
+    sequenceNumber -- Free field to to tag multiple shipment orders individually by
+    client. Essential for later mapping of response data returned by webservice
+    upon createShipment operation. Allows client to assign the shipment
+    information of the response to the correct shipment order of the request.
+    Shipment -- Is the core element of a ShipmentOrder. It contains all relevant
+    information of the shipment.
+    PrintOnlyIfCodeable -- If set to true (=1), the label will be only be printable, if the
+    receiver address is valid.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -5453,23 +5237,14 @@ class ShipmentOrderType(GeneratedsSuper):
 
 class ValidateShipmentOrderType(GeneratedsSuper):
     """ValidateShipmentOrderType -- Data for the creation of a shipment.
-    sequenceNumber -- Free field to to tag multiple shipment orders
-    individually by
-    client. Essential for later mapping of response
-    data returned by webservice
-    upon createShipment operation. Allows
-    client to assign the shipment
-    information of the response to the
-    correct shipment order of the
-    request.
-      
-    * Shipment -- Is the core element of a ShipmentOrder. It contains
-      all relevant
-      information of the shipment.
-      
-    * PrintOnlyIfCodeable -- If set to true (=1), the label will be only be
-      printable, if the
-      receiver address is valid.
+    sequenceNumber -- Free field to to tag multiple shipment orders individually by
+    client. Essential for later mapping of response data returned by webservice
+    upon createShipment operation. Allows client to assign the shipment
+    information of the response to the correct shipment order of the request.
+    Shipment -- Is the core element of a ShipmentOrder. It contains all relevant
+    information of the shipment.
+    PrintOnlyIfCodeable -- If set to true (=1), the label will be only be printable, if the
+    receiver address is valid.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -5612,10 +5387,9 @@ class ValidateShipmentOrderType(GeneratedsSuper):
 
 class ShipperTypeType(GeneratedsSuper):
     """ShipperTypeType -- The data of the shipper or return receiver.
-      
-    * Name -- Name of the Return Receiver
-    * Address -- Contains address data.
-    * Communication -- Information about communication.
+    Name -- Name of the Return Receiver
+    Address -- Contains address data.
+    Communication -- Information about communication.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -5839,13 +5613,9 @@ class ShipperType(ShipperTypeType):
 class ReceiverTypeType(GeneratedsSuper):
     """ReceiverTypeType -- The receiver data.
     Address -- The address data of the receiver.
-    Packstation -- The address of the receiver is a german
-    Packstation.
-      
-    * Postfiliale -- The address of the receiver is a german
-      Postfiliale.
-      
-    * Communication -- Information about communication.
+    Packstation -- The address of the receiver is a german Packstation.
+    Postfiliale -- The address of the receiver is a german Postfiliale.
+    Communication -- Information about communication.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -6108,36 +5878,21 @@ class ReceiverType(ReceiverTypeType):
 
 class Ident(GeneratedsSuper):
     """Ident -- Identity data (used for ident services).
-      
-    * FirstName -- First name of the person to be verified. Field
-      length must be
-      less than or equal to 30.
-      
-    * LastName -- Last name of the person to be verified. Field length
-      must be less
-      than or equal to 30.
-      
-    * Street -- Name of the street of registered address. Field
-      length must be
-      less than or equal to 30.
-      
-    * HouseNumber -- House number of registered address. Field length
-      must be less
-      than or equal to 10.
-      
-    * Postcode -- Postcode of registered address. Field length must be
-      less than or
-      equal to 15.
-      
-    * City -- City of registered address. Field length must be
-      less than or
-      equal to 30.
-      
-    * DateOfBirth -- Person's date of birth. Format must be yyyy-mm-dd.
-      
-    * Nationality -- Person's nationality. Field length must be less than
-      or equal to
-      30.
+    FirstName -- First name of the person to be verified. Field length must be
+    less than or equal to 30.
+    LastName -- Last name of the person to be verified. Field length must be less
+    than or equal to 30.
+    Street -- Name of the street of registered address. Field length must be
+    less than or equal to 30.
+    HouseNumber -- House number of registered address. Field length must be less
+    than or equal to 10.
+    Postcode -- Postcode of registered address. Field length must be less than or
+    equal to 15.
+    City -- City of registered address. Field length must be less than or
+    equal to 30.
+    DateOfBirth -- Person's date of birth. Format must be yyyy-mm-dd.
+    Nationality -- Person's nationality. Field length must be less than or equal to
+    30.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -6355,30 +6110,19 @@ class Ident(GeneratedsSuper):
 
 class ShipmentDetailsType(GeneratedsSuper):
     """ShipmentDetailsType -- Details of a shipment.
-    product --
-    Determines the DHL Paket product to be ordered.
-    V01PAK: DHL PAKET;
-    V53WPAK: DHL PAKET International;
-    V54EPAK: DHL Europaket;
-    V62WP: Warenpost;
-    V66WPI: Warenpost International
-      
-    * customerReference -- A reference number that the client can assign for
-      better association purposes. Appears on shipment label. To use the
-      reference number for tracking purposes, it should be at least 8
-      characters long and unique
-      
-    * shipmentDate -- Date of shipment should be close to current date and
-      must not be
-      in the past. Iso format required: yyyy-mm-dd.
-      
-    * costCentre -- Name of a cost center. Appears on shipment label.
-      
-    * returnShipmentReference -- A reference number that the client can assign for
-      better
-      association purposes. Appears on return shipment label. To
-      use the reference number for tracking purposes, it should be at
-      least 8 characters long and unique.
+    product --  Determines the DHL Paket product to be ordered. V01PAK: DHL
+    PAKET; V53WPAK: DHL PAKET International; V54EPAK: DHL Europaket; V62WP:
+    Warenpost; V66WPI: Warenpost International
+    customerReference -- A reference number that the client can assign for better
+    association purposes. Appears on shipment label. To use the reference number
+    for tracking purposes, it should be at least 8 characters long and unique
+    shipmentDate -- Date of shipment should be close to current date and must not be
+    in the past. Iso format required: yyyy-mm-dd.
+    costCentre -- Name of a cost center. Appears on shipment label.
+    returnShipmentReference -- A reference number that the client can assign for better
+    association purposes. Appears on return shipment label. To use the reference
+    number for tracking purposes, it should be at least 8 characters long and
+    unique.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -6670,33 +6414,21 @@ class ShipmentDetailsType(GeneratedsSuper):
 class ShipmentDetailsTypeType(ShipmentDetailsType):
     """ShipmentDetailsTypeType -- Details of a shipment.
     extends the ShipmentDetailsType
-    ShipmentItem -- For every parcel specified, contains weight in kg,
-    length
+    ShipmentItem -- For every parcel specified, contains weight in kg, length
     in cm, width in cm and height in cm.
-      
-    * Service -- Use one dedicated Service node for each service to
-      be
-      booked with the shipment product. Add another Service node for
-      booking a further service and so on. Successful booking of a
-      particular service depends on account permissions and product's
-      service combinatorics. I.e. not every service is allowed for
-      every
-      product, or can be combined with all other allowed
-      services. The
-      service bundles that contain all services are the
-      following.
-      
-    * Notification -- Mechanism to send notifications by email after
-      successful
-      manifesting of shipment.
-      
-    * BankData -- Bank data can be provided here for different
-      purposes.
-      E.g. if COD is booked as service, bank data must be
-      provided by DHL
-      customer (mandatory server logic). The collected
-      money will be
-      transferred to specified bank account.
+    Service -- Use one dedicated Service node for each service to be
+    booked with the shipment product. Add another Service node for
+    booking a further service and so on. Successful booking of a
+    particular service depends on account permissions and product's
+    service combinatorics. I.e. not every service is allowed for every
+    product, or can be combined with all other allowed services. The
+    service bundles that contain all services are the following.
+    Notification -- Mechanism to send notifications by email after successful
+    manifesting of shipment.
+    BankData -- Bank data can be provided here for different purposes.
+    E.g. if COD is booked as service, bank data must be provided by DHL
+    customer (mandatory server logic). The collected money will be
+    transferred to specified bank account.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -7157,50 +6889,46 @@ class ShipmentItemTypeType(ShipmentItemType):
 class ShipmentService(GeneratedsSuper):
     """ShipmentService -- GKV shipment services.
     can be
-    IndividualSenderRequirement --
-    This service is used exclusively for shipments with
-    special delivery requirements. It is not available for our regular
-    business customers.
-      
-    * PackagingReturn -- Service for package return. For packagingReturn you
-      also have to book a return label.
-      
-    * Endorsement -- Service "Endorsement". Mandatory for shipments with
-      product DHL Paket International: V53WPAK
-      
-    * VisualCheckOfAge -- Service visual age check
-    * PreferredLocation -- Service preferred location
-    * PreferredNeighbour -- Service preferred neighbour
-      The details field should be set to the preferred
-      neighbours
-      name.
-      
-    * PreferredDay -- Service preferred day
-    * NoNeighbourDelivery -- Invoke service No Neighbour Delivery.
-      
-    * NamedPersonOnly -- Invoke service Named Person Only.
-    * ReturnReceipt -- Invoke service return receipt.
-    * Premium -- Premium for fast and safe delivery of international
-      shipments.
-      
-    * CashOnDelivery -- Service Cash on delivery.
-    * PDDP -- Postal Delivery Duty Paid
-      Deutsche Post and sender handle import duties instead of consignee
-    * AdditionalInsurance -- Insure shipment with higher than standard amount.
-      
-    * BulkyGoods -- Service to ship bulky goods.
-    * IdentCheck -- Service configuration for IdentCheck.
-      
-    * ParcelOutletRouting -- Service configuration for ParcelOutletRouting.
-      Details can be an
-      email-address, if not set receiver email will be
-      used
+    IndividualSenderRequirement --  This service is used exclusively for shipments with special
+    delivery requirements. It is not available for our regular business
+    customers.
+    PackagingReturn -- Service for package return. For packagingReturn you also have to
+    book a return label.
+    Endorsement -- Service "Endorsement". Mandatory for shipments with product DHL
+    Paket International: V53WPAK
+    VisualCheckOfAge -- Service visual age check
+    PreferredLocation -- Service preferred location
+    PreferredNeighbour -- Service preferred neighbour
+    The details field should be set to the preferred neighbours name.
+    PreferredDay -- Service preferred day
+    NoNeighbourDelivery -- Invoke service No Neighbour Delivery.
+    NamedPersonOnly -- Invoke service Named Person Only.
+    ReturnReceipt -- Invoke service return receipt.
+    Premium -- Premium for fast and safe delivery of international shipments.
+    CashOnDelivery -- Service Cash on delivery.
+    PDDP -- Postal Delivery Duty Paid Deutsche Post and sender handle import
+    duties instead of consignee
+    CDP -- Closest Droppoint Delivery to the droppoint closest to the
+    address of the recipient of the shipment. For this kind of delivery either
+    the phone number and/or the e-mail address of the receiver is mandatory. For
+    shipments using DHL Paket International it is recommended that you choose
+    one of the three delivery types: Economy Premium CDP Otherwise, the current
+    default for the receiver country will be picked.
+    Economy -- Standard delivery of international shipments For shipments using
+    DHL Paket International it is recommended that you choose one of the three
+    delivery types: Economy Premium CDP Otherwise, the current default for the
+    receiver country will be picked.
+    AdditionalInsurance -- Insure shipment with higher than standard amount.
+    BulkyGoods -- Service to ship bulky goods.
+    IdentCheck -- Service configuration for IdentCheck.
+    ParcelOutletRouting -- Service configuration for ParcelOutletRouting. Details can be an
+    email-address, if not set receiver email will be used
     
     """
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, IndividualSenderRequirement=None, PackagingReturn=None, Endorsement=None, VisualCheckOfAge=None, PreferredLocation=None, PreferredNeighbour=None, PreferredDay=None, NoNeighbourDelivery=None, NamedPersonOnly=None, ReturnReceipt=None, Premium=None, CashOnDelivery=None, PDDP=None, AdditionalInsurance=None, BulkyGoods=None, IdentCheck=None, ParcelOutletRouting=None, gds_collector_=None, **kwargs_):
+    def __init__(self, IndividualSenderRequirement=None, PackagingReturn=None, Endorsement=None, VisualCheckOfAge=None, PreferredLocation=None, PreferredNeighbour=None, PreferredDay=None, NoNeighbourDelivery=None, NamedPersonOnly=None, ReturnReceipt=None, Premium=None, CashOnDelivery=None, PDDP=None, CDP=None, Economy=None, AdditionalInsurance=None, BulkyGoods=None, IdentCheck=None, ParcelOutletRouting=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -7232,6 +6960,10 @@ class ShipmentService(GeneratedsSuper):
         self.CashOnDelivery_nsprefix_ = None
         self.PDDP = PDDP
         self.PDDP_nsprefix_ = None
+        self.CDP = CDP
+        self.CDP_nsprefix_ = None
+        self.Economy = Economy
+        self.Economy_nsprefix_ = None
         self.AdditionalInsurance = AdditionalInsurance
         self.AdditionalInsurance_nsprefix_ = None
         self.BulkyGoods = BulkyGoods
@@ -7307,6 +7039,14 @@ class ShipmentService(GeneratedsSuper):
         return self.PDDP
     def set_PDDP(self, PDDP):
         self.PDDP = PDDP
+    def get_CDP(self):
+        return self.CDP
+    def set_CDP(self, CDP):
+        self.CDP = CDP
+    def get_Economy(self):
+        return self.Economy
+    def set_Economy(self, Economy):
+        self.Economy = Economy
     def get_AdditionalInsurance(self):
         return self.AdditionalInsurance
     def set_AdditionalInsurance(self, AdditionalInsurance):
@@ -7338,6 +7078,8 @@ class ShipmentService(GeneratedsSuper):
             self.Premium is not None or
             self.CashOnDelivery is not None or
             self.PDDP is not None or
+            self.CDP is not None or
+            self.Economy is not None or
             self.AdditionalInsurance is not None or
             self.BulkyGoods is not None or
             self.IdentCheck is not None or
@@ -7428,6 +7170,14 @@ class ShipmentService(GeneratedsSuper):
             namespaceprefix_ = self.PDDP_nsprefix_ + ':' if (UseCapturedNS_ and self.PDDP_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sPDDP>%s</%sPDDP>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.PDDP), input_name='PDDP')), namespaceprefix_ , eol_))
+        if self.CDP is not None:
+            namespaceprefix_ = self.CDP_nsprefix_ + ':' if (UseCapturedNS_ and self.CDP_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCDP>%s</%sCDP>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CDP), input_name='CDP')), namespaceprefix_ , eol_))
+        if self.Economy is not None:
+            namespaceprefix_ = self.Economy_nsprefix_ + ':' if (UseCapturedNS_ and self.Economy_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sEconomy>%s</%sEconomy>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.Economy), input_name='Economy')), namespaceprefix_ , eol_))
         if self.AdditionalInsurance is not None:
             namespaceprefix_ = self.AdditionalInsurance_nsprefix_ + ':' if (UseCapturedNS_ and self.AdditionalInsurance_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -7536,6 +7286,18 @@ class ShipmentService(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'PDDP')
             self.PDDP = value_
             self.PDDP_nsprefix_ = child_.prefix
+        elif nodeName_ == 'CDP':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CDP')
+            value_ = self.gds_validate_string(value_, node, 'CDP')
+            self.CDP = value_
+            self.CDP_nsprefix_ = child_.prefix
+        elif nodeName_ == 'Economy':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'Economy')
+            value_ = self.gds_validate_string(value_, node, 'Economy')
+            self.Economy = value_
+            self.Economy_nsprefix_ = child_.prefix
         elif nodeName_ == 'AdditionalInsurance':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'AdditionalInsurance')
@@ -7565,13 +7327,9 @@ class ShipmentService(GeneratedsSuper):
 
 class ShipmentNotificationType(GeneratedsSuper):
     """ShipmentNotificationType -- Notification type
-    recipientEmailAddress -- Email address of the recipient. Mandatory if
-    Notification is
-    set.
-      
-    * templateId -- You
-      may choose between a standard DHL e-mail text (no ID needed) or configure
-      an individual text within the section "Administration".
+    recipientEmailAddress -- Email address of the recipient. Mandatory if Notification is set.
+    templateId -- You may choose between a standard DHL e-mail text (no ID needed)
+    or configure an individual text within the section "Administration".
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -7711,64 +7469,41 @@ class ShipmentNotificationType(GeneratedsSuper):
 
 class ExportDocumentType(GeneratedsSuper):
     """ExportDocumentType -- The data of the export document for a shipment.
+    invoiceNumber -- Invoice number if applicable
+    exportType -- Export type
+    exportTypeDescription -- Description mandatory if ExportType is OTHER.
+    termsOfTrade --
+    Element provides terms of
+    trades, incoterms codes:
+    DDP (Delivery Duty Paid)
+    DXV (Delivery Duty Paid (excl. VAT))
+    DAP (formerly DDU, Delivery At Place)
+    DDX (Delivery Duty Paid (excl. Duties, taxes and VAT)
+    CPT (Carriage Paid To (within EU only))
+    are vaild values.
       
-    * invoiceNumber -- Invoice number if applicable
-    * exportType -- Export type
-    * exportTypeDescription -- Description mandatory if ExportType is OTHER.
-      
-    * termsOfTrade --
-      Element provides terms of trades, incoterms codes:
-      DDP (Delivery Duty Paid)
-      DXV (Delivery Duty Paid (excl. VAT))
-      DAP (formerly DDU, Delivery At Place)
-      DDX (Delivery Duty Paid (excl. Duties, taxes and VAT)
-      CPT (Carriage Paid To (within EU only))
-      are vaild values.
-      
-    * placeOfCommital -- PlaceOfCommital is a Locaton the shipment is handed
-      over to DHL
-      
+    * placeOfCommital -- PlaceOfCommital is a Locaton the shipment is handed over to DHL
     * additionalFee -- Postage costs billed in the invoice
-    * customsCurrency -- CustomsCurrency refers to all stated goods / customs
-      values as well as postage costs. The information has to match
-      the currency of the commercial invoice or the invoice for customs
-      purposes. ISO 4217 alpha, p.E.:
-      EUR for Euro
-      USD for US Dollar
-      GBP for British Pound
-      
+    * customsCurrency -- CustomsCurrency refers to all stated goods / customs values as
+      well as postage costs. The information has to match the currency of the
+      commercial invoice or the invoice for customs purposes. ISO 4217 alpha,
+      p.E.: EUR for Euro USD for US Dollar GBP for British Pound
     * permitNumber -- The permit number.
     * attestationNumber -- The attestation number.
-    * addresseesCustomsReference -- The customs reference is used by customs authorities
-      to identify
-      economics operators an/or other persons involved. With
-      the given reference,
-      granted authorizations and/or relevant
-      processes in customs
-      clearance an/or
-      taxation can be taken into
-      account.
-      
-    * sendersCustomsReference -- The customs reference is used by customs authorities
-      to identify
-      economics operators an/or other persons involved. With
-      the given reference,
-      granted authorizations and/or relevant
-      processes in customs
-      clearance an/or
-      taxation can be taken into
-      account.
-      
+    * addresseesCustomsReference -- The customs reference is used by customs authorities to identify
+      economics operators an/or other persons involved. With the given reference,
+      granted authorizations and/or relevant processes in customs clearance an/or
+      taxation can be taken into account.
+    * sendersCustomsReference -- The customs reference is used by customs authorities to identify
+      economics operators an/or other persons involved. With the given reference,
+      granted authorizations and/or relevant processes in customs clearance an/or
+      taxation can be taken into account.
     * WithElectronicExportNtfctn -- Sets an electronic export notification.
-      
-    * ExportDocPosition -- One or more child elements for every position to be
-      defined within the Export Document. Each one contains description,
-      country code of origin, amount, net weight, customs value.
-      Multiple positions only possible for shipments using DHL Paket
-      International (V53WPAK).
-      Shipments using DHL Europaket (V54EPAK)
-      can only contain one
-      ExportDocPosition.
+    * ExportDocPosition -- One or more child elements for every position to be defined
+      within the Export Document. Each one contains description, country code of
+      origin, amount, net weight, customs value. Multiple positions only possible
+      for shipments using DHL Paket International (V53WPAK). Shipments using DHL
+      Europaket (V54EPAK) can only contain one ExportDocPosition.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -8229,57 +7964,56 @@ class ExportDocumentType(GeneratedsSuper):
 
 
 class FurtherAddressesType(GeneratedsSuper):
-    """FurtherAddressesType -- Further address information
-    The following data fields from the cis_base-types are processed/mandatory/optional:
+    """FurtherAddressesType -- Further address information The following data fields from the
+    cis_base-types are processed/mandatory/optional:
     -------------------------------------------------------------------------------------------------------
-    Salutation		 (optional) : cis:NameType-
+    Salutation (optional) : cis:NameType-
     >
     Person-
     >
-    salutation
-    Company Name 1   (mandatory): cis:NameType-
+    salutation Company Name 1
+    (mandatory): cis:NameType-
     >
     Company-
     >
-    name1
-    Company Name 2   (optional) : cis:NameType-
+    name1 Company Name 2 (optional) :
+    cis:NameType-
     >
     Company-
     >
-    name2
-    Contact Name     (mandatory): cis:CommunicationType-
+    name2 Contact Name (mandatory):
+    cis:CommunicationType-
     >
-    contactPerson
-    Street Name      (mandatory): cis:NativeAddressType-
+    contactPerson Street Name (mandatory):
+    cis:NativeAddressType-
     >
-    streetName
-    Street Number    (mandatory): cis:NativeAddressType-
+    streetName Street Number (mandatory):
+    cis:NativeAddressType-
     >
-    streetNumber
-    Add. Address     (optional) : cis:NativeAddressType-
+    streetNumber Add. Address (optional) :
+    cis:NativeAddressType-
     >
-    careOfName
-    Postcode         (mandatory): cis:NativeAddressType-
+    careOfName Postcode (mandatory):
+    cis:NativeAddressType-
     >
-    zip
-    City Name		 (mandatory): cis:NativeAddressType-
+    zip City Name (mandatory): cis:NativeAddressType-
     >
     city
-    ISO Country Code (mandatory): cis:NativeAddressType-
+    ISO Country Code (mandatory):
+    cis:NativeAddressType-
     >
     Origin-
     >
     CountryType-
     >
-    countryISOType
-    Phone Number     (mandatory): cis:CommunicationType-
+    countryISOType Phone Number
+    (mandatory): cis:CommunicationType-
     >
-    phone
-    Email Address    (mandatory): cis:CommunicationType-
+    phone Email Address (mandatory):
+    cis:CommunicationType-
     >
     email
-      
-    * DeliveryAdress -- Mandatory if further address is to be specified.
+    DeliveryAdress -- Mandatory if further address is to be specified.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -8375,77 +8109,41 @@ class FurtherAddressesType(GeneratedsSuper):
 
 
 class LabelData(GeneratedsSuper):
-    """LabelData -- The status of the getLabel operation and the url for
-    requesting the label
+    """LabelData -- The status of the getLabel operation and the url for requesting the label
     (if available).
-      
-    * Status -- Success status of processing retrieval of particular
-      shipment
-      label.
-      
-    * shipmentNumber -- For successful and unsuccessful operations, the
-      requested
-      ShipmentNumber of the label to be retrieved is returned.
-      This is no matter
-      if it the operation could be performed or not.
-      
-    * labelUrl -- If label output format was requested as 'URL' via
-      LabelResponseType, this element will be returned. It contains the
-      URL to
-      access the PDF label. This is default output format if not
-      specified
-      other by client in labelResponseType. Depending on
-      setting in customer
-      profile all labels or just the shipmentlabel.
-      
-    * labelData --  Label as base64 encoded pdf data, depending on
-      setting in
-      customer profile all labels or just the shipmentlabel.
-      
-    * returnLabelUrl -- If label output format was requested as 'URL' via
-      LabelResponseType, this element will be returned. It contains the
-      URL to
-      access the PDF label. This is default output format if not
-      specified
-      other by client in labelResponseType. Depending on
-      setting in customer
-      profile all labels or just the
-      returnshipmentlabel.
-      
-    * returnLabelData --  Label as base64 encoded pdf data, depending on
-      setting in
-      customer profile all labels or just the
-      returnshipmentlabel.
-      
-    * exportLabelUrl -- If label output format was requested as 'URL' via
-      LabelResponseType, this element will be returned. It contains the
-      URL to
-      access the PDF label. This is default output format if not
-      specified
-      other by client in labelResponseType. Depending on
-      setting in customer
-      profile all labels or just the export
-      documents.
-      
-    * exportLabelData --  Label as base64 encoded pdf data, depending on
-      setting in
-      customer profile all labels or just the export
-      documents.
-      
-    * codLabelUrl -- If label output format was requested as 'URL' via
-      LabelResponseType, this element will be returned. It contains the
-      URL to
-      access the PDF label. This is default output format if not
-      specified
-      other by client in labelResponseType. Depending on
-      setting in customer
-      profile all labels or just the cod related
-      documents.
-      
-    * codLabelData --  Label as base64 encoded pdf data, depending on
-      setting in
-      customer profile all labels or just the cod related
-      documents.
+    Status -- Success status of processing retrieval of particular shipment
+    label.
+    shipmentNumber -- For successful and unsuccessful operations, the requested
+    ShipmentNumber of the label to be retrieved is returned. This is no matter
+    if it the operation could be performed or not.
+    labelUrl -- If label output format was requested as 'URL' via
+    LabelResponseType, this element will be returned. It contains the URL to
+    access the PDF label. This is default output format if not specified
+    other by client in labelResponseType. Depending on setting in customer
+    profile all labels or just the shipmentlabel.
+    labelData --  Label as base64 encoded pdf data, depending on setting in
+    customer profile all labels or just the shipmentlabel.
+    returnLabelUrl -- If label output format was requested as 'URL' via
+    LabelResponseType, this element will be returned. It contains the URL to
+    access the PDF label. This is default output format if not specified
+    other by client in labelResponseType. Depending on setting in customer
+    profile all labels or just the returnshipmentlabel.
+    returnLabelData --  Label as base64 encoded pdf data, depending on setting in
+    customer profile all labels or just the returnshipmentlabel.
+    exportLabelUrl -- If label output format was requested as 'URL' via
+    LabelResponseType, this element will be returned. It contains the URL to
+    access the PDF label. This is default output format if not specified
+    other by client in labelResponseType. Depending on setting in customer
+    profile all labels or just the export documents.
+    exportLabelData --  Label as base64 encoded pdf data, depending on setting in
+    customer profile all labels or just the export documents.
+    codLabelUrl -- If label output format was requested as 'URL' via
+    LabelResponseType, this element will be returned. It contains the URL to
+    access the PDF label. This is default output format if not specified
+    other by client in labelResponseType. Depending on setting in customer
+    profile all labels or just the cod related documents.
+    codLabelData --  Label as base64 encoded pdf data, depending on setting in
+    customer profile all labels or just the cod related documents.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -8702,20 +8400,14 @@ class LabelData(GeneratedsSuper):
 
 
 class ExportDocData(GeneratedsSuper):
-    """ExportDocData -- The status of the getLabel operation and the url for
-    requesting the label
+    """ExportDocData -- The status of the getLabel operation and the url for requesting the label
     (if available)
-      
-    * shipmentNumber -- ShipmentNumber
-    * Status -- Status of the request (value of zero means, the
-      request was
-      processed without error; value greater than zero
-      indicates that an error
-      occurred).
-      
-    * exportDocData -- Export doc as base64 encoded pdf data
-      
-    * exportDocURL -- URL for downloading the Export doc as pdf
+    shipmentNumber -- ShipmentNumber
+    Status -- Status of the request (value of zero means, the request was
+    processed without error; value greater than zero indicates that an error
+    occurred).
+    exportDocData -- Export doc as base64 encoded pdf data
+    exportDocURL -- URL for downloading the Export doc as pdf
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -8872,10 +8564,8 @@ class ExportDocData(GeneratedsSuper):
 class ManifestState(GeneratedsSuper):
     """ManifestState -- The status of a doManifest operation.
     shipmentNumber -- ShipmentNumber
-    Status -- Status of the request (value of zero means, the
-    request was
-    processed without error; value greater than zero
-    indicates that an error
+    Status -- Status of the request (value of zero means, the request was
+    processed without error; value greater than zero indicates that an error
     occurred).
     
     """
@@ -8998,16 +8688,10 @@ class ManifestState(GeneratedsSuper):
 
 class DeletionState(GeneratedsSuper):
     """DeletionState -- The status of a deleteShipment operation.
-      
-    * shipmentNumber -- For successful and unsuccessful operations, the
-      requested
-      ShipmentNumber to be deleted is returned. This is no
-      matter if the operation
-      could be performed or not.
-      
-    * Status -- Success status of processing the deletion of
-      particular
-      shipment.
+    shipmentNumber -- For successful and unsuccessful operations, the requested
+    ShipmentNumber to be deleted is returned. This is no matter if the operation
+    could be performed or not.
+    Status -- Success status of processing the deletion of particular shipment.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -9129,20 +8813,13 @@ class DeletionState(GeneratedsSuper):
 
 class BookPickupRequest(GeneratedsSuper):
     """BookPickupRequest -- The data for a pickup order.
-    Version -- The version of the webservice implementation for
-    which the
+    Version -- The version of the webservice implementation for which the
     requesting client is developed.
-      
-    * BookingInformation -- Contains information in further leaf elements about
-      product,
-      DHL account, pickup date and time, pickup location,
-      amount of pieces,
-      pallets, and shipments, moreover weight and
-      volume weight, size.
-      
-    * PickupAddress -- The pickup address.
-    * ContactOrderer -- The address and contact information of the
-      orderer.
+    BookingInformation -- Contains information in further leaf elements about product,
+    DHL account, pickup date and time, pickup location, amount of pieces,
+    pallets, and shipments, moreover weight and volume weight, size.
+    PickupAddress -- The pickup address.
+    ContactOrderer -- The address and contact information of the orderer.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -9285,16 +8962,11 @@ class BookPickupRequest(GeneratedsSuper):
 class BookPickupResponse(GeneratedsSuper):
     """BookPickupResponse -- The data for a pickup order.
     Version -- The version of the webservice implementation.
-      
-    * Status -- Success status after processing the request.
-      
-    * ConfirmationNumber -- The confirmation number of the successfully created
-      pickup
-      order. It can later be used for cancelling a pickup order.
-      Confirmation
-      number is not available for each pickup type.
-      
-    * ShipmentNumber -- If available, a shipment number is returned.
+    Status -- Success status after processing the request.
+    ConfirmationNumber -- The confirmation number of the successfully created pickup
+    order. It can later be used for cancelling a pickup order. Confirmation
+    number is not available for each pickup type.
+    ShipmentNumber -- If available, a shipment number is returned.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -9440,18 +9112,12 @@ class BookPickupResponse(GeneratedsSuper):
 
 class PickupDetailsType(GeneratedsSuper):
     """PickupDetailsType -- The details of a pickup order.
-    PickupDate -- Pickup date in format yyyy-mm-dd. Mandatory if
-    pickup is booked
+    PickupDate -- Pickup date in format yyyy-mm-dd. Mandatory if pickup is booked
     along with shipment order.
-      
-    * ReadyByTime -- Earliest time for pickup. Format is hh:mm.
-      
-    * ClosingTime -- Lates time for pickup. Format is hh:mm.
-      
-    * Remark -- Remarks to be considered when pickup is done.
-      
-    * PickupLocation -- Area to further detail pickup location beyond
-      address.
+    ReadyByTime -- Earliest time for pickup. Format is hh:mm.
+    ClosingTime -- Lates time for pickup. Format is hh:mm.
+    Remark -- Remarks to be considered when pickup is done.
+    PickupLocation -- Area to further detail pickup location beyond address.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -9665,52 +9331,48 @@ class PickupDetailsType(GeneratedsSuper):
 
 
 class PickupAddressType1(GeneratedsSuper):
-    """PickupAddressType1 --
-    The pickup address. In the PickupType the following data fields are processed/mandatory/optional:
+    """PickupAddressType1 --  The pickup address. In the PickupType the following data fields are
+    processed/mandatory/optional:
     ----------------------------------------------------------------------------------------------
-    Company Name 1   (mandatory): cis:NameType-
+    Company Name 1 (mandatory): cis:NameType-
     >
     Company-
     >
-    name1
-    Contact Name     (mandatory): cis:CommunicationType-
+    name1 Contact Name
+    (mandatory): cis:CommunicationType-
     >
-    contactPerson
-    Street Name      (mandatory): cis:NativeAddressType-
+    contactPerson Street Name (mandatory):
+    cis:NativeAddressType-
     >
-    streetName
-    Street Number    (mandatory): cis:NativeAddressType-
+    streetName Street Number (mandatory):
+    cis:NativeAddressType-
     >
-    streetNumber
-    Add. Address 	 (optional) : cis:NativeAddressType-
+    streetNumber Add. Address (optional) :
+    cis:NativeAddressType-
     >
-    careOfName
-    Postcode         (mandatory): cis:NativeAddressType-
+    careOfName Postcode (mandatory):
+    cis:NativeAddressType-
     >
-    zip
-    City Name		 (mandatory): cis:NativeAddressType-
+    zip City Name (mandatory): cis:NativeAddressType-
     >
     city
-    ISO Country Code (mandatory): cis:NativeAddressType-
+    ISO Country Code (mandatory):
+    cis:NativeAddressType-
     >
     Origin-
     >
     CountryType-
     >
-    countryISOType
-    Phone Number     (mandatory): cis:CommunicationType-
+    countryISOType Phone Number
+    (mandatory): cis:CommunicationType-
     >
-    phone
-    Email Address    (mandatory): cis:CommunicationType-
+    phone Email Address (mandatory):
+    cis:CommunicationType-
     >
     email
-      
-    * Company -- Determines whether pickup address is one of the
-      following
-      types.
-      
-    * Address -- Data fields for pickup address.
-    * Communication -- Info about communication.
+    Company -- Determines whether pickup address is one of the following types.
+    Address -- Data fields for pickup address.
+    Communication -- Info about communication.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -9836,63 +9498,60 @@ class PickupAddressType1(GeneratedsSuper):
 
 
 class PickupOrdererType(GeneratedsSuper):
-    """PickupOrdererType --
-    Information about the pickup orderer. In the PickupOrdererType the following data fields are processed/mandatory/optional:
+    """PickupOrdererType --  Information about the pickup orderer. In the PickupOrdererType the
+    following data fields are processed/mandatory/optional:
     ----------------------------------------------------------------------------------------------
-    Salutation		 (optional) : cis:NameType-
+    Salutation (optional) : cis:NameType-
     >
     Person-
     >
-    salutation
-    Company Name 1   (mandatory): cis:NameType-
+    salutation Company Name 1
+    (mandatory): cis:NameType-
     >
     Company-
     >
-    name1
-    Company Name 2   (optional) : cis:NameType-
+    name1 Company Name 2 (optional) :
+    cis:NameType-
     >
     Company-
     >
-    name2
-    Contact Name     (mandatory): cis:CommunicationType-
+    name2 Contact Name (mandatory):
+    cis:CommunicationType-
     >
-    contactPerson
-    Street Name      (mandatory): cis:NativeAddressType-
+    contactPerson Street Name (mandatory):
+    cis:NativeAddressType-
     >
-    streetName
-    Street Number    (mandatory): cis:NativeAddressType-
+    streetName Street Number (mandatory):
+    cis:NativeAddressType-
     >
-    streetNumber
-    Add. Address     (optional) : cis:NativeAddressType-
+    streetNumber Add. Address (optional) :
+    cis:NativeAddressType-
     >
-    careOfName
-    Postcode         (mandatory): cis:NativeAddressType-
+    careOfName Postcode (mandatory):
+    cis:NativeAddressType-
     >
-    zip
-    City Name		 (mandatory): cis:NativeAddressType-
+    zip City Name (mandatory): cis:NativeAddressType-
     >
     city
-    ISO Country Code (mandatory): cis:NativeAddressType-
+    ISO Country Code (mandatory):
+    cis:NativeAddressType-
     >
     Origin-
     >
     CountryType-
     >
-    countryISOType
-    Phone Number     (mandatory): cis:CommunicationType-
+    countryISOType Phone Number
+    (mandatory): cis:CommunicationType-
     >
-    phone
-    Email Address    (mandatory): cis:CommunicationType-
+    phone Email Address (mandatory):
+    cis:CommunicationType-
     >
     email
-      
-    * Company -- Determines whether orderer contact address is of the
-      following
-      type.
-      
-    * Name3 -- Optional name appendix.
-    * Address -- Data fields for orderer's address.
-    * Communication -- Info about communication.
+    Company -- Determines whether orderer contact address is of the following
+    type.
+    Name3 -- Optional name appendix.
+    Address -- Data fields for orderer's address.
+    Communication -- Info about communication.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -10036,41 +9695,27 @@ class PickupOrdererType(GeneratedsSuper):
 
 class PickupBookingInformationType(GeneratedsSuper):
     """PickupBookingInformationType -- The data of the pickup order.
-    Account -- Depending on whether a DD pickup or TD pickup is
-    invoked, this
-    field contains either the 10-digit EKP number (DD
-    pickups) or the 9-digit
+    Account -- Depending on whether a DD pickup or TD pickup is invoked, this
+    field contains either the 10-digit EKP number (DD pickups) or the 9-digit
     accountNumberExpress (TD pickups).
-      
-    * PickupDate -- Pickup date in format yyyy-mm-dd.
-    * ReadyByTime -- Earliest time for pickup. Format is hh:mm.
-      
-    * ClosingTime -- Lates time for pickup. Format is hh:mm.
-      
-    * Remark -- Remarks to be considered when pickup is done.
-      Mandatory if 'TDI'
-      is selected.
-      
-    * PickupLocation -- Area to further detail pickup location beyond
-      address. Mandatory
-      for TDN and TDI, optional for DDN and DDI.
-      
-    * AmountOfPieces -- Number of pieces to be picked up.
-    * AmountOfPallets -- Number of pallets to be picked up.
-    * WeightInKG -- The weight of all shipment's pieces in kg. Field
-      length must be
-      less than or equal to 22.
-      
-    * CountOfShipments -- Number of shipments to be picked up.
-    * TotalVolumeWeight -- The total volumetric weight of all pieces in kg.
-      Calculated by
-      piece = length x width x height in centimetres /
-      5000. Field length must be
-      less than or equal to 22.
-      
-    * MaxLengthInCM -- The maximum length in cm.
-    * MaxWidthInCM -- The maximum width in cm.
-    * MaxHeightInCM -- The maximum height in cm.
+    PickupDate -- Pickup date in format yyyy-mm-dd.
+    ReadyByTime -- Earliest time for pickup. Format is hh:mm.
+    ClosingTime -- Lates time for pickup. Format is hh:mm.
+    Remark -- Remarks to be considered when pickup is done. Mandatory if 'TDI'
+    is selected.
+    PickupLocation -- Area to further detail pickup location beyond address. Mandatory
+    for TDN and TDI, optional for DDN and DDI.
+    AmountOfPieces -- Number of pieces to be picked up.
+    AmountOfPallets -- Number of pallets to be picked up.
+    WeightInKG -- The weight of all shipment's pieces in kg. Field length must be
+    less than or equal to 22.
+    CountOfShipments -- Number of shipments to be picked up.
+    TotalVolumeWeight -- The total volumetric weight of all pieces in kg. Calculated by
+    piece = length x width x height in centimetres / 5000. Field length must be
+    less than or equal to 22.
+    MaxLengthInCM -- The maximum length in cm.
+    MaxWidthInCM -- The maximum width in cm.
+    MaxHeightInCM -- The maximum height in cm.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -10086,13 +9731,13 @@ class PickupBookingInformationType(GeneratedsSuper):
         self.validate_AccountType(self.Account)
         self.Account_nsprefix_ = None
         self.PickupDate = PickupDate
-        self.validate_PickupDateType46(self.PickupDate)
+        self.validate_PickupDateType48(self.PickupDate)
         self.PickupDate_nsprefix_ = None
         self.ReadyByTime = ReadyByTime
-        self.validate_ReadyByTimeType47(self.ReadyByTime)
+        self.validate_ReadyByTimeType49(self.ReadyByTime)
         self.ReadyByTime_nsprefix_ = None
         self.ClosingTime = ClosingTime
-        self.validate_ClosingTimeType48(self.ClosingTime)
+        self.validate_ClosingTimeType50(self.ClosingTime)
         self.ClosingTime_nsprefix_ = None
         self.Remark = Remark
         self.Remark_nsprefix_ = None
@@ -10206,43 +9851,43 @@ class PickupBookingInformationType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on AccountType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_PickupDateType46(self, value):
+    def validate_PickupDateType48(self, value):
         result = True
-        # Validate type PickupDateType46, a restriction on xs:string.
+        # Validate type PickupDateType48, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PickupDateType46' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on PickupDateType48' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PickupDateType46' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PickupDateType48' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_ReadyByTimeType47(self, value):
+    def validate_ReadyByTimeType49(self, value):
         result = True
-        # Validate type ReadyByTimeType47, a restriction on xs:string.
+        # Validate type ReadyByTimeType49, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ReadyByTimeType47' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ReadyByTimeType49' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ReadyByTimeType47' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ReadyByTimeType49' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_ClosingTimeType48(self, value):
+    def validate_ClosingTimeType50(self, value):
         result = True
-        # Validate type ClosingTimeType48, a restriction on xs:string.
+        # Validate type ClosingTimeType50, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ClosingTimeType48' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on ClosingTimeType50' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ClosingTimeType48' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on ClosingTimeType50' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_AmountOfPiecesType(self, value):
@@ -10471,24 +10116,24 @@ class PickupBookingInformationType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'PickupDate')
             self.PickupDate = value_
             self.PickupDate_nsprefix_ = child_.prefix
-            # validate type PickupDateType46
-            self.validate_PickupDateType46(self.PickupDate)
+            # validate type PickupDateType48
+            self.validate_PickupDateType48(self.PickupDate)
         elif nodeName_ == 'ReadyByTime':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'ReadyByTime')
             value_ = self.gds_validate_string(value_, node, 'ReadyByTime')
             self.ReadyByTime = value_
             self.ReadyByTime_nsprefix_ = child_.prefix
-            # validate type ReadyByTimeType47
-            self.validate_ReadyByTimeType47(self.ReadyByTime)
+            # validate type ReadyByTimeType49
+            self.validate_ReadyByTimeType49(self.ReadyByTime)
         elif nodeName_ == 'ClosingTime':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'ClosingTime')
             value_ = self.gds_validate_string(value_, node, 'ClosingTime')
             self.ClosingTime = value_
             self.ClosingTime_nsprefix_ = child_.prefix
-            # validate type ClosingTimeType48
-            self.validate_ClosingTimeType48(self.ClosingTime)
+            # validate type ClosingTimeType50
+            self.validate_ClosingTimeType50(self.ClosingTime)
         elif nodeName_ == 'Remark':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'Remark')
@@ -10570,18 +10215,12 @@ class PickupBookingInformationType(GeneratedsSuper):
 
 class CancelPickupRequest(GeneratedsSuper):
     """CancelPickupRequest -- The data for cancelling a pickup order.
-      
-    * Version -- The version of the webservice implementation for
-      which the
-      requesting client is developed.
-      
-    * BookingConfirmationNumber -- The confirmation number of the pickup order which
-      should be
-      cancelled. Use value from pickup response attribute
-      'ConfirmationNumber'
-      to cancel respective pickup order. Note: only
-      one pickup can be deleted
-      at a time.
+    Version -- The version of the webservice implementation for which the
+    requesting client is developed.
+    BookingConfirmationNumber -- The confirmation number of the pickup order which should be
+    cancelled. Use value from pickup response attribute 'ConfirmationNumber'
+    to cancel respective pickup order. Note: only one pickup can be deleted
+    at a time.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -10695,10 +10334,8 @@ class CancelPickupRequest(GeneratedsSuper):
 
 class CancelPickupResponse(GeneratedsSuper):
     """CancelPickupResponse -- The status of the cancel pickup operation.
-      
-    * Version -- The version of the webservice implementation.
-      
-    * Status -- Success status after processing the request.
+    Version -- The version of the webservice implementation.
+    Status -- Success status after processing the request.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -10810,15 +10447,9 @@ class CancelPickupResponse(GeneratedsSuper):
 
 class IdentityData(GeneratedsSuper):
     """IdentityData -- Identity data (used e.g. for ident services)
-      
-    * DrivingLicense -- If driving license shall be used for verifying
-      identity.
-      
-    * IdentityCard -- If identity card shall be used for verifying
-      identity.
-      
-    * BankCard -- If a bank card shall be used for verifying
-      identity.
+    DrivingLicense -- If driving license shall be used for verifying identity.
+    IdentityCard -- If identity card shall be used for verifying identity.
+    BankCard -- If a bank card shall be used for verifying identity.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -10944,20 +10575,12 @@ class IdentityData(GeneratedsSuper):
 
 
 class ReadShipmentOrderResponse(GeneratedsSuper):
-    """ReadShipmentOrderResponse -- The status of the operation and the shipment
-    identifier (if
-    available).
-      
-    * Version -- The version of the webservice implementation.
-      
-    * status -- Success status after processing the overall
-      request.
-      
-    * CreationState -- The operation's success status for every single
-      ShipmentOrder
-      will be returned by one CreationState element. It is
-      identifiable via
-      SequenceNumber.
+    """ReadShipmentOrderResponse -- The status of the operation and the shipment identifier (if available).
+    Version -- The version of the webservice implementation.
+    status -- Success status after processing the overall request.
+    CreationState -- The operation's success status for every single ShipmentOrder
+    will be returned by one CreationState element. It is identifiable via
+    SequenceNumber.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -11092,7 +10715,8 @@ class ReadShipmentOrderResponse(GeneratedsSuper):
 
 
 class EKP(GeneratedsSuper):
-    """EKP -- First 10 digit number extract from the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01" then EKP is equal to 5000000008.
+    """EKP -- First 10 digit number extract from the 14 digit DHL Account Number.
+    E.g. if DHL Account Number is "5000000008 72 01" then EKP is equal to 5000000008.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -11177,7 +10801,9 @@ class EKP(GeneratedsSuper):
 
 
 class partnerID(GeneratedsSuper):
-    """partnerID -- Field has the partner id. I.e. the last 2 digit number extract from the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01" then Attendance is 01.
+    """partnerID -- Field has the partner id. I.e. the last 2 digit number extract from
+    the 14 digit DHL Account Number. E.g. if DHL Account Number is "5000000008 72 01"
+    then Attendance is 01.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -11857,12 +11483,8 @@ class routeCode(GeneratedsSuper):
 
 
 class routingCode(GeneratedsSuper):
-    """routingCode --
-    The following barcode types are:
-    1. GS1 Barcode
-    2. ASC MH10 Barcode
-    3. 2/5 Interleaved
-    4. Code 128 ( UPU )
+    """routingCode --  The following barcode types are: 1. GS1 Barcode 2. ASC MH10 Barcode
+    3. 2/5 Interleaved 4. Code 128 ( UPU )
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -12287,11 +11909,13 @@ class streetNumberCode(GeneratedsSuper):
 
 
 class Version(GeneratedsSuper):
-    """Version -- The version of the webservice implementation for which the
-    requesting client is developed.
+    """Version -- The version of the webservice implementation for which the requesting
+    client is developed.
     includes
-    majorRelease -- The number of the major release. E.g. the '3' in version "3.2.".
-    minorRelease -- The number of the minor release. E.g. the '3' in version "3.2.".
+    majorRelease -- The number of the major release. E.g. the '3' in version
+    "3.2.".
+    minorRelease -- The number of the minor release. E.g. the '3' in version
+    "3.2.".
     build -- Optional build id to be addressed.
     
     """
@@ -12305,13 +11929,13 @@ class Version(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.majorRelease = majorRelease
-        self.validate_majorReleaseType54(self.majorRelease)
+        self.validate_majorReleaseType56(self.majorRelease)
         self.majorRelease_nsprefix_ = None
         self.minorRelease = minorRelease
-        self.validate_minorReleaseType55(self.minorRelease)
+        self.validate_minorReleaseType57(self.minorRelease)
         self.minorRelease_nsprefix_ = None
         self.build_ = build_
-        self.validate_buildType56(self.build_)
+        self.validate_buildType58(self.build_)
         self.build__nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
@@ -12340,31 +11964,31 @@ class Version(GeneratedsSuper):
         return self.build_
     def set_build(self, build_):
         self.build_ = build_
-    def validate_majorReleaseType54(self, value):
+    def validate_majorReleaseType56(self, value):
         result = True
-        # Validate type majorReleaseType54, a restriction on xs:string.
+        # Validate type majorReleaseType56, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 2:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on majorReleaseType54' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on majorReleaseType56' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_minorReleaseType55(self, value):
+    def validate_minorReleaseType57(self, value):
         result = True
-        # Validate type minorReleaseType55, a restriction on xs:string.
+        # Validate type minorReleaseType57, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 2:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on minorReleaseType55' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on minorReleaseType57' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_buildType56(self, value):
+    def validate_buildType58(self, value):
         result = True
-        # Validate type buildType56, a restriction on xs:string.
+        # Validate type buildType58, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on buildType56' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on buildType58' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def _hasContent(self):
@@ -12438,24 +12062,24 @@ class Version(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'majorRelease')
             self.majorRelease = value_
             self.majorRelease_nsprefix_ = child_.prefix
-            # validate type majorReleaseType54
-            self.validate_majorReleaseType54(self.majorRelease)
+            # validate type majorReleaseType56
+            self.validate_majorReleaseType56(self.majorRelease)
         elif nodeName_ == 'minorRelease':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'minorRelease')
             value_ = self.gds_validate_string(value_, node, 'minorRelease')
             self.minorRelease = value_
             self.minorRelease_nsprefix_ = child_.prefix
-            # validate type minorReleaseType55
-            self.validate_minorReleaseType55(self.minorRelease)
+            # validate type minorReleaseType57
+            self.validate_minorReleaseType57(self.minorRelease)
         elif nodeName_ == 'build':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'build')
             value_ = self.gds_validate_string(value_, node, 'build')
             self.build_ = value_
             self.build_nsprefix_ = child_.prefix
-            # validate type buildType56
-            self.validate_buildType56(self.build_)
+            # validate type buildType58
+            self.validate_buildType58(self.build_)
 # end class Version
 
 
@@ -12601,12 +12225,15 @@ class AuthentificationType(GeneratedsSuper):
 class NativeAddressType(GeneratedsSuper):
     """NativeAddressType -- Type of native address
     includes
-    streetName -- The name of the street. Optionally the house number can be passed in this field too.
-    In this case the field "streetNumber" must not be present.
-    streetNumber -- The house number. This field is only optional when the house number is passed with
-    the field streetName.
-    addressAddition -- Address addon, is only printed in the international area (V53WPAK)
-    dispatchingInformation -- DispatchingInformation, is only printed in the international area (V53WPAK)
+    streetName -- The name of the street. Optionally the house number can be
+    passed in this field too. In this case the field "streetNumber" must not be
+    present.
+    streetNumber -- The house number. This field is only optional when the house
+    number is passed with the field streetName.
+    addressAddition -- Address addon, is only printed in the international area
+    (V53WPAK)
+    dispatchingInformation -- DispatchingInformation, is only printed in the international
+    area (V53WPAK)
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -12619,10 +12246,10 @@ class NativeAddressType(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.streetName = streetName
-        self.validate_streetNameType57(self.streetName)
+        self.validate_streetNameType59(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType58(self.streetNumber)
+        self.validate_streetNumberType60(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         if addressAddition is None:
             self.addressAddition = []
@@ -12695,22 +12322,22 @@ class NativeAddressType(GeneratedsSuper):
         return self.Origin
     def set_Origin(self, Origin):
         self.Origin = Origin
-    def validate_streetNameType57(self, value):
+    def validate_streetNameType59(self, value):
         result = True
-        # Validate type streetNameType57, a restriction on xs:string.
+        # Validate type streetNameType59, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 50:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType57' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType59' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType58(self, value):
+    def validate_streetNumberType60(self, value):
         result = True
-        # Validate type streetNumberType58, a restriction on xs:string.
+        # Validate type streetNumberType60, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType58' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType60' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_addressAdditionType(self, value):
@@ -12835,16 +12462,16 @@ class NativeAddressType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType57
-            self.validate_streetNameType57(self.streetName)
+            # validate type streetNameType59
+            self.validate_streetNameType59(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType58
-            self.validate_streetNumberType58(self.streetNumber)
+            # validate type streetNumberType60
+            self.validate_streetNumberType60(self.streetNumber)
         elif nodeName_ == 'addressAddition':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'addressAddition')
@@ -12893,10 +12520,11 @@ class NativeAddressType(GeneratedsSuper):
 class NativeAddressTypeNew(GeneratedsSuper):
     """NativeAddressTypeNew -- Type of native address
     includes
-    streetName -- The name of the street. Optionally the house number can be passed in this field too.
-    In this case the field "streetNumber" must not be present.
-    streetNumber -- The house number. This field is only optional when the house number is passed with
-    the field streetName.
+    streetName -- The name of the street. Optionally the house number can be
+    passed in this field too. In this case the field "streetNumber" must not be
+    present.
+    streetNumber -- The house number. This field is only optional when the house
+    number is passed with the field streetName.
     Origin -- Country.
     
     """
@@ -12910,10 +12538,10 @@ class NativeAddressTypeNew(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.streetName = streetName
-        self.validate_streetNameType59(self.streetName)
+        self.validate_streetNameType61(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType60(self.streetNumber)
+        self.validate_streetNumberType62(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -12957,22 +12585,22 @@ class NativeAddressTypeNew(GeneratedsSuper):
         return self.Origin
     def set_Origin(self, Origin):
         self.Origin = Origin
-    def validate_streetNameType59(self, value):
+    def validate_streetNameType61(self, value):
         result = True
-        # Validate type streetNameType59, a restriction on xs:string.
+        # Validate type streetNameType61, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 50:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType59' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType61' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType60(self, value):
+    def validate_streetNumberType62(self, value):
         result = True
-        # Validate type streetNumberType60, a restriction on xs:string.
+        # Validate type streetNumberType62, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType60' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType62' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -13059,16 +12687,16 @@ class NativeAddressTypeNew(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType59
-            self.validate_streetNameType59(self.streetName)
+            # validate type streetNameType61
+            self.validate_streetNameType61(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType60
-            self.validate_streetNumberType60(self.streetNumber)
+            # validate type streetNumberType62
+            self.validate_streetNumberType62(self.streetNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -13091,12 +12719,15 @@ class NativeAddressTypeNew(GeneratedsSuper):
 
 
 class ReceiverNativeAddressType(GeneratedsSuper):
-    """streetName -- The name of the street. Optionally the house number can be passed in this field too.
-    In this case the field "streetNumber" must not be present.
-    streetNumber -- The house number. This field is only optional when the house number is passed with
-    the field streetName.
-    addressAddition -- Address addon, is only printed in the international area (V53WPAK)
-    dispatchingInformation -- DispatchingInformation, is only printed in the international area (V53WPAK)
+    """streetName -- The name of the street. Optionally the house number can be
+    passed in this field too. In this case the field "streetNumber" must not be
+    present.
+    streetNumber -- The house number. This field is only optional when the house
+    number is passed with the field streetName.
+    addressAddition -- Address addon, is only printed in the international area
+    (V53WPAK)
+    dispatchingInformation -- DispatchingInformation, is only printed in the international
+    area (V53WPAK)
     Origin -- Country.
     
     """
@@ -13116,10 +12747,10 @@ class ReceiverNativeAddressType(GeneratedsSuper):
         self.validate_name3(self.name3)
         self.name3_nsprefix_ = "cis"
         self.streetName = streetName
-        self.validate_streetNameType61(self.streetName)
+        self.validate_streetNameType63(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType62(self.streetNumber)
+        self.validate_streetNumberType64(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         if addressAddition is None:
             self.addressAddition = []
@@ -13127,7 +12758,7 @@ class ReceiverNativeAddressType(GeneratedsSuper):
             self.addressAddition = addressAddition
         self.addressAddition_nsprefix_ = None
         self.dispatchingInformation = dispatchingInformation
-        self.validate_dispatchingInformationType64(self.dispatchingInformation)
+        self.validate_dispatchingInformationType66(self.dispatchingInformation)
         self.dispatchingInformation_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -13210,40 +12841,40 @@ class ReceiverNativeAddressType(GeneratedsSuper):
         # Validate type name3, a restriction on xs:string.
         pass
         return result
-    def validate_streetNameType61(self, value):
+    def validate_streetNameType63(self, value):
         result = True
-        # Validate type streetNameType61, a restriction on xs:string.
+        # Validate type streetNameType63, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 50:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType61' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType63' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType62(self, value):
+    def validate_streetNumberType64(self, value):
         result = True
-        # Validate type streetNumberType62, a restriction on xs:string.
+        # Validate type streetNumberType64, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType62' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType64' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_addressAdditionType63(self, value):
+    def validate_addressAdditionType65(self, value):
         result = True
-        # Validate type addressAdditionType63, a restriction on xs:string.
+        # Validate type addressAdditionType65, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on addressAdditionType63' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on addressAdditionType65' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_dispatchingInformationType64(self, value):
+    def validate_dispatchingInformationType66(self, value):
         result = True
-        # Validate type dispatchingInformationType64, a restriction on xs:string.
+        # Validate type dispatchingInformationType66, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on dispatchingInformationType64' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on dispatchingInformationType66' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -13376,32 +13007,32 @@ class ReceiverNativeAddressType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType61
-            self.validate_streetNameType61(self.streetName)
+            # validate type streetNameType63
+            self.validate_streetNameType63(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType62
-            self.validate_streetNumberType62(self.streetNumber)
+            # validate type streetNumberType64
+            self.validate_streetNumberType64(self.streetNumber)
         elif nodeName_ == 'addressAddition':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'addressAddition')
             value_ = self.gds_validate_string(value_, node, 'addressAddition')
             self.addressAddition.append(value_)
             self.addressAddition_nsprefix_ = child_.prefix
-            # validate type addressAdditionType63
-            self.validate_addressAdditionType63(self.addressAddition[-1])
+            # validate type addressAdditionType65
+            self.validate_addressAdditionType65(self.addressAddition[-1])
         elif nodeName_ == 'dispatchingInformation':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'dispatchingInformation')
             value_ = self.gds_validate_string(value_, node, 'dispatchingInformation')
             self.dispatchingInformation = value_
             self.dispatchingInformation_nsprefix_ = child_.prefix
-            # validate type dispatchingInformationType64
-            self.validate_dispatchingInformationType64(self.dispatchingInformation)
+            # validate type dispatchingInformationType66
+            self.validate_dispatchingInformationType66(self.dispatchingInformation)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -14596,8 +14227,10 @@ class name3(GeneratedsSuper):
 class CommunicationType(GeneratedsSuper):
     """CommunicationType -- Type of communication.
     includes
-    phone -- Phone number.
-    email -- Emailaddress.
+    phone -- Phone number. If you are using delivery type CDP, the phone
+    number and/or e-mail address are mandatory
+    email -- Emailaddress. If you are using delivery type CDP, the phone
+    number and/or e-mail address are mandatory
     contactPerson -- First name and last name of contact person.
     
     """
@@ -14898,7 +14531,9 @@ class ContactType(GeneratedsSuper):
 class PackStationType(GeneratedsSuper):
     """PackStationType -- Type of packstation.
     includes
-    postNumber -- Post Nummer of the receiver, if not set receiver e-mail and/or mobilephone number needs to be set. When sending to a packstation with "DHL Paket" (V01PAK), the postnumber must always be entered.
+    postNumber -- Post Nummer of the receiver, if not set receiver e-mail and/or
+    mobilephone number needs to be set. When sending to a packstation with "DHL
+    Paket" (V01PAK), the postnumber must always be entered.
     packstationNumber -- Number of the Packstation.
     
     """
@@ -15145,7 +14780,7 @@ class PostfilialeType(GeneratedsSuper):
         self.validate_postfilialNumberType(self.postfilialNumber)
         self.postfilialNumber_nsprefix_ = None
         self.postNumber = postNumber
-        self.validate_postNumberType65(self.postNumber)
+        self.validate_postNumberType67(self.postNumber)
         self.postNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -15202,17 +14837,17 @@ class PostfilialeType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postfilialNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_postNumberType65(self, value):
+    def validate_postNumberType67(self, value):
         result = True
-        # Validate type postNumberType65, a restriction on xs:string.
+        # Validate type postNumberType67, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType65' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType67' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 1:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType65' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType67' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -15307,8 +14942,8 @@ class PostfilialeType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'postNumber')
             self.postNumber = value_
             self.postNumber_nsprefix_ = child_.prefix
-            # validate type postNumberType65
-            self.validate_postNumberType65(self.postNumber)
+            # validate type postNumberType67
+            self.validate_postNumberType67(self.postNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -15348,10 +14983,10 @@ class PostfilialeTypeNoCountry(GeneratedsSuper):
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
         self.postfilialNumber = postfilialNumber
-        self.validate_postfilialNumberType66(self.postfilialNumber)
+        self.validate_postfilialNumberType68(self.postfilialNumber)
         self.postfilialNumber_nsprefix_ = None
         self.postNumber = postNumber
-        self.validate_postNumberType67(self.postNumber)
+        self.validate_postNumberType69(self.postNumber)
         self.postNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -15395,30 +15030,30 @@ class PostfilialeTypeNoCountry(GeneratedsSuper):
         return self.Origin
     def set_Origin(self, Origin):
         self.Origin = Origin
-    def validate_postfilialNumberType66(self, value):
+    def validate_postfilialNumberType68(self, value):
         result = True
-        # Validate type postfilialNumberType66, a restriction on xs:string.
+        # Validate type postfilialNumberType68, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 3:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postfilialNumberType66' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postfilialNumberType68' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 3:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postfilialNumberType66' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postfilialNumberType68' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_postNumberType67(self, value):
+    def validate_postNumberType69(self, value):
         result = True
-        # Validate type postNumberType67, a restriction on xs:string.
+        # Validate type postNumberType69, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 10:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType67' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on postNumberType69' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
             if len(value) < 1:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType67' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on postNumberType69' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -15505,16 +15140,16 @@ class PostfilialeTypeNoCountry(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'postfilialNumber')
             self.postfilialNumber = value_
             self.postfilialNumber_nsprefix_ = child_.prefix
-            # validate type postfilialNumberType66
-            self.validate_postfilialNumberType66(self.postfilialNumber)
+            # validate type postfilialNumberType68
+            self.validate_postfilialNumberType68(self.postfilialNumber)
         elif nodeName_ == 'postNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'postNumber')
             value_ = self.gds_validate_string(value_, node, 'postNumber')
             self.postNumber = value_
             self.postNumber_nsprefix_ = child_.prefix
-            # validate type postNumberType67
-            self.validate_postNumberType67(self.postNumber)
+            # validate type postNumberType69
+            self.validate_postNumberType69(self.postNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -15557,10 +15192,10 @@ class ParcelShopType(GeneratedsSuper):
         self.validate_parcelShopNumberType(self.parcelShopNumber)
         self.parcelShopNumber_nsprefix_ = None
         self.streetName = streetName
-        self.validate_streetNameType68(self.streetName)
+        self.validate_streetNameType70(self.streetName)
         self.streetName_nsprefix_ = None
         self.streetNumber = streetNumber
-        self.validate_streetNumberType69(self.streetNumber)
+        self.validate_streetNumberType71(self.streetNumber)
         self.streetNumber_nsprefix_ = None
         self.zip = zip
         self.zip_nsprefix_ = "cis"
@@ -15621,22 +15256,22 @@ class ParcelShopType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on parcelShopNumberType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNameType68(self, value):
+    def validate_streetNameType70(self, value):
         result = True
-        # Validate type streetNameType68, a restriction on xs:string.
+        # Validate type streetNameType70, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 35:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType68' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNameType70' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def validate_streetNumberType69(self, value):
+    def validate_streetNumberType71(self, value):
         result = True
-        # Validate type streetNumberType69, a restriction on xs:string.
+        # Validate type streetNumberType71, a restriction on xs:string.
         if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
             if len(value) > 5:
                 lineno = self.gds_get_node_lineno_()
-                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType69' % {"value" : encode_str_2_3(value), "lineno": lineno} )
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on streetNumberType71' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
     def validate_city(self, value):
@@ -15736,16 +15371,16 @@ class ParcelShopType(GeneratedsSuper):
             value_ = self.gds_validate_string(value_, node, 'streetName')
             self.streetName = value_
             self.streetName_nsprefix_ = child_.prefix
-            # validate type streetNameType68
-            self.validate_streetNameType68(self.streetName)
+            # validate type streetNameType70
+            self.validate_streetNameType70(self.streetName)
         elif nodeName_ == 'streetNumber':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'streetNumber')
             value_ = self.gds_validate_string(value_, node, 'streetNumber')
             self.streetNumber = value_
             self.streetNumber_nsprefix_ = child_.prefix
-            # validate type streetNumberType69
-            self.validate_streetNumberType69(self.streetNumber)
+            # validate type streetNumberType71
+            self.validate_streetNumberType71(self.streetNumber)
         elif nodeName_ == 'zip':
             obj_ = ZipType.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
@@ -17262,33 +16897,23 @@ class ZipType(GeneratedsSuper):
 
 
 class ShipmentType(GeneratedsSuper):
-    """ShipmentType -- Is the core element of a ShipmentOrder. It contains
-    all relevant
+    """ShipmentType -- Is the core element of a ShipmentOrder. It contains all relevant
     information of the shipment.
-      
-    * ShipmentDetails -- Contains the information of the shipment product
-      code, weight and size characteristics and services to be used.
-      
-    * Shipper -- Contains relevant information about the
-      Shipper.
-      
-    * ShipperReference -- Contains a reference to the Shipper data
-      configured in GKP.
-      
-    * Receiver -- Contains relevant information about
-      Receiver.
-      
-    * ReturnReceiver -- To be used if a return label address shall be
-      generated.
-      
-    * ExportDocument -- For international shipments. This section
-      contains information about the exported goods relevant for
-      customs. For international shipments: commercial invoice and
-      customs declaration (CN23) have to be attached to the shipment.
-      Data relevant for customs also has to be transferred as
-      electronically.
-      
-    * feederSystem -- Is only to be indicated by DHL partners
+    ShipmentDetails -- Contains the information of the shipment product
+    code, weight and size characteristics and services to be used.
+    Shipper -- Contains relevant information about the Shipper.
+    ShipperReference -- Contains a reference to the Shipper data
+    configured in GKP.
+    Receiver -- Contains relevant information about Receiver.
+    ReturnReceiver -- To be used if a return label address shall be
+    generated.
+    ExportDocument -- For international shipments. This section contains
+    information about the exported goods relevant for customs. For
+    international shipments: commercial invoice and customs
+    declaration (CN23) have to be attached to the shipment. Data
+    relevant for customs also has to be transferred as
+    electronically.
+    feederSystem -- Is only to be indicated by DHL partners
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -17503,30 +17128,21 @@ class ShipmentType(GeneratedsSuper):
 
 
 class ShipmentType18(GeneratedsSuper):
-    """ShipmentType18 -- Is the core element of a ShipmentOrder. It contains
-    all relevant
+    """ShipmentType18 -- Is the core element of a ShipmentOrder. It contains all relevant
     information of the shipment.
-      
-    * ShipmentDetails -- Contains the information of the shipment product
-      code, weight and size characteristics and services to be used.
-      
-    * Shipper -- Contains relevant information about the
-      Shipper.
-      
-    * Receiver -- Contains relevant information about
-      Receiver.
-      
-    * ReturnReceiver -- To be used if a return label address shall be
-      generated.
-      
-    * ExportDocument -- For international shipments. This section
-      contains information about the exported goods relevant for
-      customs. For international shipments: commercial invoice and
-      customs declaration (CN23) have to be attached to the shipment.
-      Data relevant for customs also has to be transferred as
-      electronically.
-      
-    * feederSystem -- Is only to be indicated by DHL partners
+    ShipmentDetails -- Contains the information of the shipment product
+    code, weight and size characteristics and services to be used.
+    Shipper -- Contains relevant information about the Shipper.
+    Receiver -- Contains relevant information about Receiver.
+    ReturnReceiver -- To be used if a return label address shall be
+    generated.
+    ExportDocument -- For international shipments. This section contains
+    information about the exported goods relevant for customs. For
+    international shipments: commercial invoice and customs
+    declaration (CN23) have to be attached to the shipment. Data
+    relevant for customs also has to be transferred as
+    electronically.
+    feederSystem -- Is only to be indicated by DHL partners
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -17710,18 +17326,14 @@ class ShipmentType18(GeneratedsSuper):
 class IdentType(GeneratedsSuper):
     """surname -- Surname (family name) of the person for ident
     check.
-      
-    * givenName -- Given name (first name) of the person for
-      ident
-      check.
-      
-    * dateOfBirth -- date of birth (DOB) of the person for ident
-      check,
-      if the option is used: Date in format
-      yyyy-mm-dd
-      
-    * minimumAge --  minimum age of the person for ident check
-      ("A16" or "A18")
+    givenName -- Given name (first name) of the person for ident
+    check.
+    dateOfBirth -- date of birth (DOB) of the person for ident check,
+    if the option is used: Date in format yyyy-mm-dd This attribute
+    is only optional, if you set a minimum age
+    minimumAge --  minimum age of the person for ident check ("A16"
+    or "A18") This attribute is only optional, if you specify the
+    date of birth
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -17934,37 +17546,29 @@ class IdentType(GeneratedsSuper):
 
 
 class ExportDocPositionType(GeneratedsSuper):
-    """ExportDocPositionType -- One or more child elements for every position to be
-    defined within the Export Document. Each one contains description,
-    country code of origin, amount, net weight, customs value.
-    Multiple positions only possible for shipments using DHL Paket
-    International (V53WPAK).
-    Shipments using DHL Europaket (V54EPAK)
-    can only contain one
-    ExportDocPosition.
-      
-    * description -- Description of the goods
-    * countryCodeOrigin -- ISO-Code (ISO 3166-2) of country the goods were
-      manufactured
-      
-    * customsTariffNumber -- Customs tariff number of the unit / position.
-      If the service PDDP is used, customsTariffNumber is required.
-      
-    * amount -- Quantity of the unit / position. Only positive
-      values (
-      >
-      0) are allowed.
-      
-    * netWeightInKG -- Net weight of the unit / position. Only positive
-      values (
-      >
-      0) are allowed.The total net weight must not exceed
-      the shipment weight
-      
-    * customsValue -- Customs value amount of the unit /position. Only
-      positive values (
-      >
-      0) are allowed.
+    """ExportDocPositionType -- One or more child elements for every position to be defined
+    within the Export Document. Each one contains description, country code of
+    origin, amount, net weight, customs value. Multiple positions only possible
+    for shipments using DHL Paket International (V53WPAK). Shipments using DHL
+    Europaket (V54EPAK) can only contain one ExportDocPosition.
+    description -- Description of the goods
+    countryCodeOrigin -- ISO-Code (ISO 3166-2) of country the goods were
+    manufactured
+    customsTariffNumber -- Customs tariff number of the unit / position. If the
+    service PDDP is used, customsTariffNumber is required.
+    amount -- Quantity of the unit / position. Only positive values
+    (
+    >
+    0) are allowed.
+    netWeightInKG -- Net weight of the unit / position. Only positive
+    values (
+    >
+    0) are allowed.The total net weight must not exceed
+    the shipment weight
+    customsValue -- Customs value amount of the unit /position. Only
+    positive values (
+    >
+    0) are allowed.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -18236,13 +17840,11 @@ class ExportDocPositionType(GeneratedsSuper):
 
 class DeliveryAdressType(GeneratedsSuper):
     """DeliveryAdressType -- Mandatory if further address is to be specified.
-      
-    * Company -- Determines whether further address is one of the
-      following types.
-      
-    * Name3 -- Extra data for name extension.
-    * Address -- Contains address data.
-    * Communication -- Info about communication.
+    Company -- Determines whether further address is one of the
+    following types.
+    Name3 -- Extra data for name extension.
+    Address -- Contains address data.
+    Communication -- Info about communication.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -18385,16 +17987,12 @@ class DeliveryAdressType(GeneratedsSuper):
 
 
 class DrivingLicenseType(GeneratedsSuper):
-    """DrivingLicenseType -- If driving license shall be used for verifying
-    identity.
-      
-    * LicenseNumber -- ID number of the driving license. Mandatory if
-      DrivingLicense is chosen as identity
-      instrument.
-      
-    * Authority -- Name of certifying authority of the driving
-      license. Mandatory if DrivingLicense is chosen as identity
-      instrument.
+    """DrivingLicenseType -- If driving license shall be used for verifying identity.
+    LicenseNumber -- ID number of the driving license. Mandatory if
+    DrivingLicense is chosen as identity instrument.
+    Authority -- Name of certifying authority of the driving
+    license. Mandatory if DrivingLicense is chosen as identity
+    instrument.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -18509,16 +18107,13 @@ class DrivingLicenseType(GeneratedsSuper):
 
 
 class IdentityCardType(GeneratedsSuper):
-    """IdentityCardType -- If identity card shall be used for verifying
-    identity.
-      
-    * CardNumber -- Number of the identity card. Mandatory if
-      IdentityCard is chosen as identity instrument. Field length
-      must be less than or equal to 20.
-      
-    * CardAuthority -- Name of certifying card authority. Mandatory if
-      IdentityCard is chosen as identity instrument. Field length
-      must be less than or equal to 30.
+    """IdentityCardType -- If identity card shall be used for verifying identity.
+    CardNumber -- Number of the identity card. Mandatory if
+    IdentityCard is chosen as identity instrument. Field length
+    must be less than or equal to 20.
+    CardAuthority -- Name of certifying card authority. Mandatory if
+    IdentityCard is chosen as identity instrument. Field length
+    must be less than or equal to 30.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -18633,20 +18228,15 @@ class IdentityCardType(GeneratedsSuper):
 
 
 class BankCardType(GeneratedsSuper):
-    """BankCardType -- If a bank card shall be used for verifying
-    identity.
-      
-    * CardType -- Type of bank card. Mandatory if BankCard is
-      chosen as identity instrument.
-      
-    * CardNumber -- Number of bank card. Mandatory if BankCard is
-      chosen as identity instrument.
-      
-    * BankName -- Name of bank. Mandatory if BankCard is chosen as
-      identity instrument.
-      
-    * BankCode -- Bank code. Mandatory if BankCard is chosen as
-      identity instrument.
+    """BankCardType -- If a bank card shall be used for verifying identity.
+    CardType -- Type of bank card. Mandatory if BankCard is
+    chosen as identity instrument.
+    CardNumber -- Number of bank card. Mandatory if BankCard is
+    chosen as identity instrument.
+    BankName -- Name of bank. Mandatory if BankCard is chosen as
+    identity instrument.
+    BankCode -- Bank code. Mandatory if BankCard is chosen as
+    identity instrument.
     
     """
     __hash__ = GeneratedsSuper.__hash__
@@ -18998,226 +18588,232 @@ RenameMappings_ = {
 # and the file in which each is defined.
 # simpleTypes are marked "ST" and complexTypes "CT".
 NamespaceToDefMappings_ = {'http://dhl.de/webservice/cisbase': [('countryISOType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'ST'),
                                       ('ZipType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'ST'),
                                       ('AuthentificationType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('NativeAddressTypeNew',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNativeAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PickupAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('DeliveryAddressType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('BankType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('NameType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ReceiverNameType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('CommunicationType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ContactType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PackStationType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('PostfilialeTypeNoCountry',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ParcelShopType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('CustomerType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ErrorType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('CountryType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT'),
                                       ('ShipmentNumberType',
-                                       './schemas/geschaeftskundenversand-api-3.3.2-schema-cis_base.xsd',
+                                       './schemas/geschaeftskundenversand-api-3.4.0-schema-cis_base.xsd',
                                        'CT')],
  'http://dhl.de/webservices/businesscustomershipping/3.0': [('SequenceNumber',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'ST'),
                                                             ('ShipperReferenceType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'ST'),
                                                             ('CreationState',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ValidationState',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('Statusinformation',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('StatusElement',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PieceInformation',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentOrderType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ValidateShipmentOrderType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipperTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipperType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ReceiverTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ReceiverType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('Ident',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentDetailsType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentDetailsTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentItemType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentItemTypeType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentService',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('Serviceconfiguration',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetails',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetailsPreferredDay',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetailsPreferredLocation',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetailsPreferredNeighbour',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetailsOptional',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDetailsResponse',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationEndorsement',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationISR',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDH',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationVisualAgeCheck',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDeliveryTimeframe',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationDateOfDelivery',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationAdditionalInsurance',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationCashOnDelivery',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationUnfree',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PDDP',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
+                                                             'CT'),
+                                                            ('CDP',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
+                                                             'CT'),
+                                                            ('Economy',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ServiceconfigurationIC',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ShipmentNotificationType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ExportDocumentType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('FurtherAddressesType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('LabelData',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ExportDocData',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ManifestState',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('DeletionState',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupDetailsType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupAddressType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupOrdererType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PickupBookingInformationType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('IdentityData',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PackstationType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('PostfilialeType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT'),
                                                             ('ParcelShopType',
-                                                             './schemas/geschaeftskundenversand-api-3.3.2-schema-bcs_base.xsd',
+                                                             './schemas/geschaeftskundenversand-api-3.4.0-schema-bcs_base.xsd',
                                                              'CT')]}
 
 __all__ = [

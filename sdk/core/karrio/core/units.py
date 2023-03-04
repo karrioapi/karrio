@@ -525,7 +525,7 @@ class Package:
         if any(self.parcel.description or ""):
             return self.parcel.description
 
-        descriptions = [item.description for item in self.items]
+        descriptions = [item.title or item.description for item in self.items]
         description: typing.Optional[str] = utils.SF.concat_str(
             *descriptions, join=True
         )  # type:ignore

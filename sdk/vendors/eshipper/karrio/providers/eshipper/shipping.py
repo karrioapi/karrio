@@ -291,9 +291,12 @@ def shipping_request(
                     Item=[
                         ItemType(
                             code=item.hs_code or "0000",
-                            description=item.description or "item",
-                            originCountry=item.origin_country
-                            or payload.shipper.country_code,
+                            description=lib.text(
+                                item.description or item.title or "item"
+                            ),
+                            originCountry=(
+                                item.origin_country or payload.shipper.country_code
+                            ),
                             unitPrice=item.value_amount,
                             quantity=item.quantity or 1,
                             skuCode=item.sku,

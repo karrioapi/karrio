@@ -163,7 +163,10 @@ def shipment_request(
         ),
         Commodity=(
             [
-                Commodity(CommodityCode=c.sku or "N/A", CommodityName=c.description)
+                Commodity(
+                    CommodityCode=c.sku or "N/A", 
+                    CommodityName=lib.text(c.title or c.description, max=35),
+                )
                 for c in customs.commodities
             ]
             if any(customs.commodities)
@@ -231,7 +234,7 @@ def shipment_request(
                         LineNumber=index,
                         Quantity=item.quantity,
                         QuantityUnit="PCS",
-                        Description=item.description or "N/A",
+                        Description=lib.text(item.title or item.description or "N/A", max=35),
                         Value=item.value_amount or 0.0,
                         IsDomestic=None,
                         CommodityCode=item.sku or "N/A",

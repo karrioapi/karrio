@@ -44,8 +44,9 @@ class Commodity:
 
     id: str = None
     sku: str = None
-    hs_code: str = None
+    title: str = None
     quantity: int = 1
+    hs_code: str = None
     weight: float = None
     weight_unit: str = None
     description: str = None
@@ -411,6 +412,7 @@ class DocumentUploadRequest:
     document_files: List[DocumentFile] = JList[DocumentFile, REQUIRED]
     options: Dict = {}
     reference: str = None
+    tracking_number: str = None
 
 
 @attr.s(auto_attribs=True)

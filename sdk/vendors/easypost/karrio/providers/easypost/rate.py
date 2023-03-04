@@ -123,7 +123,7 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
                     customs_signer=payload.shipper.person_name,
                     customs_items=[
                         easypost.CustomsItem(
-                            description=item.description,
+                            description=lib.text(item.description or item.title or "N/A"),
                             origin_country=item.origin_country,
                             quantity=item.quantity,
                             value=item.value_amount,

@@ -96,7 +96,7 @@ def shipment_request(
         ShippingContents=ShippingContentsType(
             ItemDetail=[
                 ItemDetailType(
-                    Description=item.description,
+                    Description=lib.text(item.description or item.title or "N/A"),
                     Quantity=item.quantity,
                     Value=item.value_amount,
                     NetPounds=units.Weight(

@@ -30,7 +30,7 @@ def parse_error_response(
                     else {}
                 ),
                 **(
-                    {"error": error.errorMessage}
+                    {"error": lib.join(*[f"{_.statusElement}: {_.statusMessage}" for _ in error.errorMessage], join=" ")}
                     if any(error.errorMessage or "")
                     else {}
                 ),

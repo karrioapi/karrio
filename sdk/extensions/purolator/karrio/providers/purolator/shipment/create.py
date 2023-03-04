@@ -295,7 +295,7 @@ def _shipment_request(
                             ArrayOfContentDetail(
                                 ContentDetail=[
                                     ContentDetail(
-                                        Description=(item.description or "")[:25],
+                                        Description=lib.text(item.title or item.description or "", max=25),
                                         HarmonizedCode=item.hs_code or "0000",
                                         CountryOfManufacture=(
                                             item.origin_country

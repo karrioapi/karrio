@@ -55,7 +55,7 @@ SAMPLE_SHIPMENT_REQUEST = {
                     "weight": 1.0,
                     "weight_unit": "LB",
                     "quantity": 1,
-                    "description": "Item 1",
+                    "title": "Item 1",
                     "sku": "SKU-1",
                     "metadata": {
                         "RFF_CN": "037-2332855",

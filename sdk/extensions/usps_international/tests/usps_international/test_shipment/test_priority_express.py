@@ -144,6 +144,7 @@ ShipmentRequestXML = """<eVSExpressMailIntlRequest USERID="username" PASSWORD="p
     <RedirectZip4></RedirectZip4>
     <ShippingContents>
         <ItemDetail>
+            <Description>N/A</Description>
             <Quantity>1</Quantity>
             <Value>30.</Value>
             <NetPounds>4.41</NetPounds>

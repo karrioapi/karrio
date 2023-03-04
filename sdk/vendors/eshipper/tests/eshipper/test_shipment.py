@@ -117,7 +117,7 @@ shipment_data = {
             {
                 "sku": "098765",
                 "hs_code": "1234",
-                "description": "Laptop computer",
+                "title": "Laptop computer",
                 "origin_country": "US",
                 "quantity": 100,
                 "value_amount": 1000.00,

@@ -226,11 +226,18 @@ class CommodityData(serializers.Serializer):
         choices=WEIGHT_UNIT,
         help_text="The commodity's weight unit",
     )
-    description = serializers.CharField(
+    title = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
         max_length=35,
+        help_text="A description of the commodity",
+    )
+    description = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        max_length=100,
         help_text="A description of the commodity",
     )
     quantity = serializers.IntegerField(
