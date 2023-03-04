@@ -152,6 +152,7 @@ class CommodityInput:
     weight_unit: utils.WeightUnitEnum
     quantity: typing.Optional[int] = 1
     sku: typing.Optional[str] = strawberry.UNSET
+    title: typing.Optional[str] = strawberry.UNSET
     hs_code: typing.Optional[str] = strawberry.UNSET
     description: typing.Optional[str] = strawberry.UNSET
     value_amount: typing.Optional[float] = strawberry.UNSET

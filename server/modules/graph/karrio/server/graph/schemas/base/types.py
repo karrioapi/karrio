@@ -236,6 +236,7 @@ class CommodityType:
     quantity: int
     metadata: utils.JSON
     sku: typing.Optional[str]
+    title: typing.Optional[str]
     hs_code: typing.Optional[str]
     description: typing.Optional[str]
     value_amount: typing.Optional[float]
@@ -247,6 +248,7 @@ class CommodityType:
     created_by: typing.Optional[UserType]
     parent_id: typing.Optional[str] = None
     parent: typing.Optional["CommodityType"] = None
+    unfulfilled_quantity: typing.Optional[int] = None
 
 
 @strawberry.type
@@ -325,7 +327,7 @@ class CustomsType:
     updated_at: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_by: typing.Optional[UserType] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
-    duty_billing_address: typing.Optional[AddressType]
+    duty_billing_address: typing.Optional[AddressType] = strawberry.UNSET
 
     @strawberry.field
     def duty(self: manager) -> typing.Optional[DutyType]:

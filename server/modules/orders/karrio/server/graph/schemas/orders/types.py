@@ -17,6 +17,7 @@ class LineItemType:
     weight: float
     metadata: utils.JSON
     sku: typing.Optional[str]
+    title: typing.Optional[str]
     hs_code: typing.Optional[str]
     description: typing.Optional[str]
     value_amount: typing.Optional[float]
