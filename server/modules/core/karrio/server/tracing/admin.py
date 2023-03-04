@@ -20,15 +20,15 @@ class TracingRecordAdmin(admin.ModelAdmin):
     ]
 
     def get_queryset(self, request):
-        query = super().get_queryset(request)
-        records = models.TracingRecord.objects.all()
-
-        return query.filter(
-            id__in=(
-                records.filter(link__org__users__id=request.user.id)
-                if settings.MULTI_ORGANIZATIONS else records
+        if settings.MULTI_ORGANIZATIONS:
+            return (
+                models.TracingRecord.objects
+                .all()
+                .filter(link__org__users__id=request.user.id)
+                .order_by("-timestamp")
             )
-        ).order_by("-timestamp")
+
+        return super().get_queryset(request).order_by("-timestamp")
 
     def has_add_permission(self, request) -> bool:
         return False
