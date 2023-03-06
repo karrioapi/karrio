@@ -838,6 +838,8 @@ class ShippingOption(utils.Enum):
     email_notification = utils.OptionEnum("email_notification", bool)
     email_notification_to = utils.OptionEnum("email_notification_to")
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
+    doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
+    doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict)
 
 
 class ShippingOptions(Options):

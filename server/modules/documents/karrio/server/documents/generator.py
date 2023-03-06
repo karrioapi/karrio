@@ -89,7 +89,9 @@ def get_shipments_context(shipment_ids: str) -> typing.List[dict]:
 
 def get_shipment_item_contexts(shipment):
     items = LineItem.objects.filter(commodity_parcel__parcel_shipment=shipment)
-    distinct_items = [__ for _, __ in ({item.parent_id: item for item in items}).items()]
+    distinct_items = [
+        __ for _, __ in ({item.parent_id: item for item in items}).items()
+    ]
 
     return [
         {
@@ -97,10 +99,7 @@ def get_shipment_item_contexts(shipment):
             "ship_quantity": items.filter(parent_id=item.parent_id).aggregate(
                 Sum("quantity")
             )["quantity__sum"],
-            "order": (
-                OrderSerializer(item.order).data
-                if item.order else {}
-            ),
+            "order": (OrderSerializer(item.order).data if item.order else {}),
         }
         for item in distinct_items
     ]
@@ -154,9 +153,9 @@ def get_orders_context(order_ids: str) -> typing.List[dict]:
     ]
 
 
-def generate_document(slug: str, shipment) -> dict:
+def generate_document(slug: str, shipment, **kwargs) -> dict:
     template = models.DocumentTemplate.objects.get(slug=slug)
-    carrier = getattr(shipment, "selected_rate_carrier", None)
+    carrier = kwargs.get("carrier") or getattr(shipment, "selected_rate_carrier", None)
     params = dict(
         shipments_context=[
             dict(
@@ -174,6 +173,6 @@ def generate_document(slug: str, shipment) -> dict:
 
     return dict(
         doc_type=None,
-        doc_name=f"{shipment.tracking_number} - {template.name}.pdf",
+        doc_name=f"{template.name}.pdf",
         doc_file=base64.b64encode(document).decode("utf-8"),
     )

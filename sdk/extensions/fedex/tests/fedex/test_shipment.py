@@ -141,7 +141,7 @@ shipment_data = {
         }
     ],
     "service": "fedex_international_priority",
-    "options": {"currency": "USD", "paperless_trade": True},
+    "options": {"currency": "USD"},
     "payment": {"paid_by": "third_party", "account_number": "2349857"},
     "customs": {
         "invoice": "123456789",
@@ -174,7 +174,7 @@ multi_piece_shipment_data = {
             "height": 11,
         },
     ],
-    "options": {"currency": "USD"},
+    "options": {"currency": "USD", "paperless_trade": True},
 }
 
 shipment_cancel_data = {
@@ -295,7 +295,6 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
-                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
@@ -318,10 +317,6 @@ ShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
-                    <v26:EtdDetail>
-                        <v26:Confirmation>CONFIRMED</v26:Confirmation>
-                        <v26:Attributes>POST_SHIPMENT_UPLOAD_REQUESTED</v26:Attributes>
-                    </v26:EtdDetail>
                 </v26:SpecialServicesRequested>
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>
@@ -484,6 +479,7 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
+                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
@@ -506,6 +502,10 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
+                    <v26:EtdDetail>
+                        <v26:Confirmation>CONFIRMED</v26:Confirmation>
+                        <v26:Attributes>POST_SHIPMENT_UPLOAD_REQUESTED</v26:Attributes>
+                    </v26:EtdDetail>
                 </v26:SpecialServicesRequested>
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>
@@ -520,14 +520,6 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                         <v26:Currency>USD</v26:Currency>
                         <v26:Amount>100</v26:Amount>
                     </v26:CustomsValue>
-                    <v26:CommercialInvoice>
-                        <v26:CustomerReferences>
-                            <v26:CustomerReferenceType>INVOICE_NUMBER</v26:CustomerReferenceType>
-                            <v26:Value>123456789</v26:Value>
-                        </v26:CustomerReferences>
-                        <v26:OriginatorName>Input Your Information</v26:OriginatorName>
-                        <v26:TermsOfSale>DDU</v26:TermsOfSale>
-                    </v26:CommercialInvoice>
                     <v26:Commodities>
                         <v26:NumberOfPieces>1</v26:NumberOfPieces>
                         <v26:Description>test</v26:Description>
@@ -551,15 +543,6 @@ MasterShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.or
                     <v26:LabelPrintingOrientation>TOP_EDGE_OF_TEXT_FIRST</v26:LabelPrintingOrientation>
                     <v26:LabelOrder>SHIPPING_LABEL_FIRST</v26:LabelOrder>
                 </v26:LabelSpecification>
-                <v26:ShippingDocumentSpecification>
-                    <v26:ShippingDocumentTypes>COMMERCIAL_INVOICE</v26:ShippingDocumentTypes>
-                    <v26:CommercialInvoiceDetail>
-                        <v26:Format>
-                            <v26:ImageType>PDF</v26:ImageType>
-                            <v26:StockType>PAPER_LETTER</v26:StockType>
-                        </v26:Format>
-                    </v26:CommercialInvoiceDetail>
-                </v26:ShippingDocumentSpecification>
                 <v26:PackageCount>2</v26:PackageCount>
                 <v26:RequestedPackageLineItems>
                     <v26:SequenceNumber>1</v26:SequenceNumber>
@@ -668,6 +651,7 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                     </v26:Payor>
                 </v26:ShippingChargesPayment>
                 <v26:SpecialServicesRequested>
+                    <v26:SpecialServiceTypes>ELECTRONIC_TRADE_DOCUMENTS</v26:SpecialServiceTypes>
                     <v26:EventNotificationDetail>
                         <v26:EventNotifications>
                             <v26:Events>ON_DELIVERY</v26:Events>
@@ -690,6 +674,10 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                             </v26:FormatSpecification>
                         </v26:EventNotifications>
                     </v26:EventNotificationDetail>
+                    <v26:EtdDetail>
+                        <v26:Confirmation>CONFIRMED</v26:Confirmation>
+                        <v26:Attributes>POST_SHIPMENT_UPLOAD_REQUESTED</v26:Attributes>
+                    </v26:EtdDetail>
                 </v26:SpecialServicesRequested>
                 <v26:CustomsClearanceDetail>
                     <v26:DutiesPayment>
@@ -704,14 +692,6 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                         <v26:Currency>USD</v26:Currency>
                         <v26:Amount>100</v26:Amount>
                     </v26:CustomsValue>
-                    <v26:CommercialInvoice>
-                        <v26:CustomerReferences>
-                            <v26:CustomerReferenceType>INVOICE_NUMBER</v26:CustomerReferenceType>
-                            <v26:Value>123456789</v26:Value>
-                        </v26:CustomerReferences>
-                        <v26:OriginatorName>Input Your Information</v26:OriginatorName>
-                        <v26:TermsOfSale>DDU</v26:TermsOfSale>
-                    </v26:CommercialInvoice>
                     <v26:Commodities>
                         <v26:NumberOfPieces>1</v26:NumberOfPieces>
                         <v26:Description>test</v26:Description>
@@ -735,15 +715,6 @@ SecondPieceShipmentRequestXml = """<tns:Envelope xmlns:tns="http://schemas.xmlso
                     <v26:LabelPrintingOrientation>TOP_EDGE_OF_TEXT_FIRST</v26:LabelPrintingOrientation>
                     <v26:LabelOrder>SHIPPING_LABEL_FIRST</v26:LabelOrder>
                 </v26:LabelSpecification>
-                <v26:ShippingDocumentSpecification>
-                    <v26:ShippingDocumentTypes>COMMERCIAL_INVOICE</v26:ShippingDocumentTypes>
-                    <v26:CommercialInvoiceDetail>
-                        <v26:Format>
-                            <v26:ImageType>PDF</v26:ImageType>
-                            <v26:StockType>PAPER_LETTER</v26:StockType>
-                        </v26:Format>
-                    </v26:CommercialInvoiceDetail>
-                </v26:ShippingDocumentSpecification>
                 <v26:MasterTrackingId>
                     <v26:TrackingIdType>[MASTER_ID_TYPE]</v26:TrackingIdType>
                     <v26:TrackingNumber>[MASTER_TRACKING_ID]</v26:TrackingNumber>

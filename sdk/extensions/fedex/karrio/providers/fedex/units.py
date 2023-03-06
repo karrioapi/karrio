@@ -434,6 +434,8 @@ class ShippingOption(utils.Enum):
     notification = fedex_event_notification
     cash_on_delivery = fedex_cod
     paperless_trade = fedex_electronic_trade_documents
+    doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
+    doc_references = utils.OptionEnum("WEIGHING", utils.DP.to_dict)
 
 
 def shipping_options_initializer(
@@ -462,7 +464,7 @@ def shipping_options_initializer(
         )
 
     def items_filter(key: str) -> bool:
-        return key in option_type  # type: ignore
+        return key in option_type and key not in ["doc_files", "doc_references"] # type: ignore
 
     return units.ShippingOptions(_options, option_type, items_filter=items_filter)
 
