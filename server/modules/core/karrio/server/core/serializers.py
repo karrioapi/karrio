@@ -189,7 +189,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=35,
+        max_length=50,
         help_text="""The address line with street number <br/>
         **(required for shipment purchase)**
         """,
@@ -198,7 +198,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=35,
+        max_length=50,
         help_text="The address line with suite number",
     )
     validate_location = serializers.BooleanField(
