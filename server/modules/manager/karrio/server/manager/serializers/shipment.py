@@ -434,6 +434,7 @@ def buy_shipment_label(
     service: str = None,
 ) -> models.Shipment:
     extra: dict = {}
+    invoice: dict = {}
     invoice_template = shipment.options.get("invoice_template")
     rate = next(
         (
@@ -448,12 +449,27 @@ def buy_shipment_label(
         carrier_id=rate["carrier_id"],
         test_mode=rate["test_mode"],
     )
+    is_paperless_trade = "paperless" in carrier.capabilities and (
+        shipment.options.get("paperless_trade") == True
+        or shipment.options.get("fedex_electronic_trade_documents") == True
+    )
+    pre_purchase_generation = any(invoice_template or "") and is_paperless_trade
+
+    # Generate invoice in advance if is_paperless_trade
+    if pre_purchase_generation:
+        shipment.selected_rate = rate
+        shipment.selected_rate_carrier = carrier
+        document = generate_custom_invoice(invoice_template, shipment)
+        invoice = dict(invoice=document["doc_file"])
+        extra.update(
+            options={**shipment.options, **dict(doc_files=[document])},
+        )
 
     # Submit shipment to carriers
     response: Shipment = (
         ShipmentPurchaseSerializer.map(
             context=context,
-            data={**Shipment(shipment).data, **payload},
+            data={**Shipment(shipment).data, **payload, **extra},
         )
         .save(carrier=carrier)
         .instance
@@ -464,6 +480,7 @@ def buy_shipment_label(
             dict(id=parcel.id, reference_number=parcel.reference_number)
             for parcel in response.parcels
         ],
+        docs={**lib.to_dict(response.docs), **invoice},
     )
 
     # Update shipment state
@@ -481,11 +498,16 @@ def buy_shipment_label(
         .instance
     )
 
-    
-    utils.failsafe(lambda: (
-        create_shipment_tracker(purchased_shipment, context=context),
-        generate_custom_invoice(invoice_template, purchased_shipment),
-    ))
+    utils.failsafe(
+        lambda: (
+            create_shipment_tracker(purchased_shipment, context=context),
+            (
+                None
+                if pre_purchase_generation
+                else generate_custom_invoice(invoice_template, purchased_shipment)
+            ),
+        )
+    )
 
     return purchased_shipment
 
@@ -628,13 +650,9 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
             logger.exception("Failed to update shipment tracking url", e)
 
 
-def generate_custom_invoice(
-    template: str,
-    shipment: models.Shipment,
-    **kwargs
-):
+def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
     """This function generates a custom invoice using Karrio's
-    document generation service. And dispatch a document upload if 
+    document generation service. And dispatch a document upload if
     paperless trade is supported.
     """
     # Skip document generation if not template is provided
@@ -649,7 +667,12 @@ def generate_custom_invoice(
     # generate invoice document
     import karrio.server.documents.generator as documents
 
-    document = documents.generate_document(template, shipment)
-    shipment.invoice = document["doc_file"]
-    shipment.save(update_fields=["invoice"])
+    document = documents.generate_document(template, shipment, **kwargs)
+
+    if getattr(shipment, "tracking_number", None) is not None:
+        shipment.invoice = document["doc_file"]
+        shipment.save(update_fields=["invoice"])
+
     logger.info("> custom document successfully generated.")
+
+    return document

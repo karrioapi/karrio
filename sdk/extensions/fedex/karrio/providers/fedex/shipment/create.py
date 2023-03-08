@@ -1,5 +1,6 @@
 import fedex_lib.ship_service_v26 as fedex
 import typing
+import base64
 import datetime
 import karrio.lib as lib
 import karrio.core.units as units
@@ -301,11 +302,67 @@ def shipment_request(
                         HomeDeliveryPremiumDetail=None,
                         EtdDetail=(
                             fedex.EtdDetail(
-                                Confirmation="CONFIRMED",
-                                Attributes=["POST_SHIPMENT_UPLOAD_REQUESTED"],
+                                Confirmation=(
+                                    None
+                                    if options.doc_files.state
+                                    or options.doc_references.state
+                                    else "CONFIRMED"
+                                ),
+                                Attributes=(
+                                    None
+                                    if options.doc_files.state
+                                    or options.doc_references.state
+                                    else ["POST_SHIPMENT_UPLOAD_REQUESTED"]
+                                ),
                                 RequestedDocumentCopies=None,
-                                Documents=None,
-                                DocumentReferences=None,
+                                Documents=(
+                                    [
+                                        fedex.UploadDocumentDetail(
+                                            LineNumber=idx,
+                                            CustomerReference=payload.reference
+                                            or getattr(payload, "id", None),
+                                            DocumentProducer=fedex.UploadDocumentProducerType.CUSTOMER,
+                                            DocumentType=(
+                                                provider_units.UploadDocumentType.map(
+                                                    doc["doc_name"]
+                                                ).value
+                                                or fedex.UploadDocumentType.COMMERCIAL_INVOICE
+                                            ),
+                                            FileName=doc["doc_name"],
+                                            DocumentContent=base64.b64decode(
+                                                doc["doc_file"]
+                                            ),
+                                            ExpirationDate=None,
+                                        )
+                                        for idx, doc in enumerate(
+                                            options.doc_files.state
+                                        )
+                                    ]
+                                    if any(options.doc_files.state or [])
+                                    else None
+                                ),
+                                DocumentReferences=(
+                                    [
+                                        fedex.UploadDocumentReferenceDetail(
+                                            LineNumber=idx,
+                                            CustomerReference=payload.reference
+                                            or getattr(payload, "id", None),
+                                            Description=None,
+                                            DocumentProducer=fedex.UploadDocumentProducerType.CUSTOMER,
+                                            DocumentType=(
+                                                doc.get("doc_type")
+                                                or fedex.UploadDocumentType.COMMERCIAL_INVOICE
+                                            ),
+                                            DocumentId=doc["doc_id"],
+                                            DocumentIdProducer=fedex.UploadDocumentProducerType.CUSTOMER,
+                                        )
+                                        for idx, doc in enumerate(
+                                            options.doc_references.state
+                                        )
+                                    ]
+                                    if any(options.doc_references.state or [])
+                                    else None
+                                ),
                             )
                             if options.fedex_electronic_trade_documents.state
                             else None
@@ -392,14 +449,19 @@ def shipment_request(
                                     customs.incoterm or "DDU"
                                 ).value,
                             )
-                            if customs.commercial_invoice
+                            if (
+                                customs.commercial_invoice is True
+                                and not options.fedex_electronic_trade_documents.state
+                            )
                             else None
                         ),
                         Commodities=[
                             fedex.Commodity(
                                 Name=None,
                                 NumberOfPieces=item.quantity,
-                                Description=lib.text(item.title or item.description or "N/A", max=35),
+                                Description=lib.text(
+                                    item.title or item.description or "N/A", max=35
+                                ),
                                 Purpose=None,
                                 CountryOfManufacture=(
                                     item.origin_country or shipper.country_code
@@ -450,33 +512,40 @@ def shipment_request(
                     PrintedLabelOrigin=None,
                     CustomerSpecifiedDetail=None,
                 ),
-                ShippingDocumentSpecification=fedex.ShippingDocumentSpecification(
-                    ShippingDocumentTypes=["COMMERCIAL_INVOICE"],
-                    NotificationContentSpecification=None,
-                    CertificateOfOrigin=None,
-                    CommercialInvoiceDetail=fedex.CommercialInvoiceDetail(
-                        Format=fedex.ShippingDocumentFormat(
-                            Dispositions=None,
-                            TopOfPageOffset=None,
-                            ImageType="PDF",
-                            StockType="PAPER_LETTER",
-                            ProvideInstructions=None,
-                            OptionsRequested=None,
-                            Localization=None,
-                            CustomDocumentIdentifier=None,
+                ShippingDocumentSpecification=(
+                    fedex.ShippingDocumentSpecification(
+                        ShippingDocumentTypes=["COMMERCIAL_INVOICE"],
+                        NotificationContentSpecification=None,
+                        CertificateOfOrigin=None,
+                        CommercialInvoiceDetail=fedex.CommercialInvoiceDetail(
+                            Format=fedex.ShippingDocumentFormat(
+                                Dispositions=None,
+                                TopOfPageOffset=None,
+                                ImageType="PDF",
+                                StockType="PAPER_LETTER",
+                                ProvideInstructions=None,
+                                OptionsRequested=None,
+                                Localization=None,
+                                CustomDocumentIdentifier=None,
+                            ),
+                            CustomerImageUsages=None,
+                            FormVersion=None,
                         ),
-                        CustomerImageUsages=None,
-                        FormVersion=None,
-                    ),
-                    CustomPackageDocumentDetail=None,
-                    CustomShipmentDocumentDetail=None,
-                    ExportDeclarationDetail=None,
-                    GeneralAgencyAgreementDetail=None,
-                    NaftaCertificateOfOriginDetail=None,
-                    DangerousGoodsShippersDeclarationDetail=None,
-                    FreightAddressLabelDetail=None,
-                    FreightBillOfLadingDetail=None,
-                    ReturnInstructionsDetail=None,
+                        CustomPackageDocumentDetail=None,
+                        CustomShipmentDocumentDetail=None,
+                        ExportDeclarationDetail=None,
+                        GeneralAgencyAgreementDetail=None,
+                        NaftaCertificateOfOriginDetail=None,
+                        DangerousGoodsShippersDeclarationDetail=None,
+                        FreightAddressLabelDetail=None,
+                        FreightBillOfLadingDetail=None,
+                        ReturnInstructionsDetail=None,
+                    )
+                    if (
+                        customs.commercial_invoice is True
+                        and not options.fedex_electronic_trade_documents.state
+                    )
+                    else None
                 ),
                 RateRequestTypes=None,
                 EdtRequestType=None,
@@ -581,6 +650,10 @@ def _request_serializer(
         envelope.Body.ns_prefix_ = envelope.ns_prefix_
         lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v26")
 
-        return lib.to_xml(envelope, namespacedef_=namespacedef_)
+        return (
+            lib.to_xml(envelope, namespacedef_=namespacedef_)
+            .replace("<v26:DocumentContent>b'", "<v26:DocumentContent>")
+            .replace("'</v26:DocumentContent>", "</v26:DocumentContent>")
+        )
 
     return [serialize(request) for request in requests]
