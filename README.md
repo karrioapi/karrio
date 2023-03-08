@@ -19,7 +19,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 
-Karrio is a suite of open-source tools that make shipping simple and accessible. With karrio, you can access a network of shipping carriers with a single API integration, build shipping functionalities seamlessly, and improve fulfilment operations.
+Karrio is an open-source platform that make shipping simple and accessible. With karrio, you can access a network of shipping carriers with a single API integration, build shipping functionalities seamlessly, and improve fulfilment operations.
 
 **Get up and running in 1 minute with:**
 
@@ -71,17 +71,17 @@ We believe that the logistics industry can greatly benefit from a unified, open 
 
 ## What are the benefits?
 
-Karrio is the only **platform-focused** open-source shipping platform with label generation, customs documentation generation and package tracking API that **you can host on your own infrastructure**.
+Karrio is the only **platform-focused** open-source shipping platform with label generation, document generation and package tracking API that **you can host on your own infrastructure**.
 
 We are an open-source alternative to manual in-house carrier integration and Multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
+
+### Shipping for platforms
+
+With Karrio, you can extend your platform with native shipping capabilities. Improve merchants, shippers and customers experience on your Marketplace, eCommerce, ERP, WMS, OMS, 3PL and Logistics platform.
 
 ### Shipping for enterprise
 
 Karrio makes modern shipping accessible to retailers as well as enterprises in regulated industries and government agencies.
-
-### Shipping for platforms
-
-With Karrio, you can extend your platform with native shipping capabilities. Improve merchants, shippers and consumers experience on your Marketplace, eCommerce, ERP, WMS, OMS and apps.
 
 ## Support
 
