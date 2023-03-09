@@ -45,8 +45,7 @@ def add_extension(
         #project files
         templates.SETUP_TEMPLATE.stream(**context).dump(f'{ROOT_DIR.substitute(id=id)}/setup.py')
         templates.README_TEMPLATE.stream(**context).dump(f'{ROOT_DIR.substitute(id=id)}/README.md')
-        templates.PYPROJECT_TEMPLATE.stream(**context).dump(f'{ROOT_DIR.substitute(id=id)}/pyproject.toml')
-
+        
         # tests files
         templates.TEST_FIXTURE_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/fixture.py')
         templates.TEST_PROVIDER_IMPORTS_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/__init__.py')
@@ -66,27 +65,27 @@ def add_extension(
 
 
         if "address" in features:
-            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/address.py')
+            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/text_address.py')
 
             templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/address.py')
 
         if "rating" in features:
-            templates.TEST_RATE_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/rate.py')
+            templates.TEST_RATE_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/text_rate.py')
 
             templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/rate.py')
 
         if "tracking" in features:
-            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/tracking.py')
+            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/text_tracking.py')
 
             templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/tracking.py')
 
         if "document" in features:
-            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/document.py')
+            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/text_document.py')
 
             templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/document.py')
 
         if "shipping" in features:
-            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/shipment.py')
+            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/text_shipment.py')
 
             os.makedirs(f'{PROVIDERS_DIR.substitute(id=id)}/shipment', exist_ok=True)
             templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/shipment/cancel.py')
@@ -94,7 +93,7 @@ def add_extension(
             templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/shipment/__init__.py')
 
         if "pickup" in features:
-            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/pickup.py')
+            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(f'{TESTS_DIR.substitute(id=id)}/text_pickup.py')
 
             os.makedirs(f'{PROVIDERS_DIR.substitute(id=id)}/pickup', exist_ok=True)
             templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(f'{PROVIDERS_DIR.substitute(id=id)}/pickup/cancel.py')

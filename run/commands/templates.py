@@ -130,36 +130,6 @@ UNITS_TEMPLATES = Template('''
 
 """CARRIER EXTENSTION TEMPLATES SECTION"""
 
-PYPROJECT_TEMPLATE = Template('''
-[tool.poetry]
-name = "karrio.{{id}}"
-version = "{{version}}"
-homepage="https://docs.karrio.io/guides/sdk"
-repository="https://github.com/karrioapi/karrio"
-description = "Karrio - {{name}} Shipping Extension"
-authors = ["Karrio <hello@karrio.io>"]
-license = "GPLv3"
-readme = "README.md"
-packages = [{ include = "karrio" }]
-classifiers=[
-    "Intended Audience :: Developers",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
-]
-
-[tool.poetry.dependencies]
-python = "^3.7"
-"karrio" = ""
-
-[tool.poetry.dev-dependencies]
-
-[build-system]
-requires = ["poetry-core>=1.0.0", "setuptools!=50.0"]
-build-backend = "poetry.core.masonry.api"
-
-''')
-
 README_TEMPLATE = Template('''
 # karrio.{{id}}
 
@@ -196,16 +166,30 @@ Check the [Karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping A
 
 SETUP_TEMPLATE = Template('''
 """Warning: This setup.py is only there for git install until poetry support git subdirectory"""
-
 from setuptools import setup, find_namespace_packages
 
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
 setup(
-      name='karrio.{{id}}',
-      version='0.0.0-dev',
-      license='Apache 2',
-      packages=find_namespace_packages(),
-      install_requires=['karrio'],
-      zip_safe=False,
+    name="karrio.{{id}}",
+    version="{{version}}",
+    description="Karrio - {{name}} Shipping Extension",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/karrioapi/karrio",
+    author="karrio",
+    author_email="hello@karrio.io",
+    license="Apache-2.0",
+    packages=find_namespace_packages(exclude=["tests.*", "tests"]),
+    install_requires=["karrio"],
+    classifiers=[
+        "Intended Audience :: Developers",
+        "Operating System :: OS Independent",
+        "Programming Language :: Python :: 3",
+    ],
+    zip_safe=False,
+    include_package_data=True,
 )
 
 ''')
@@ -1050,12 +1034,12 @@ TEST_IMPORTS_TEMPLATE = Template('''from tests.{{id}} import *
 ''')
 
 TEST_PROVIDER_IMPORTS_TEMPLATE = Template('''{% if "rating" in features %}
-from tests.{{id}}.rate import *{% endif %}{% if "pickup" in features %}
-from tests.{{id}}.pickup import *{% endif %}{% if "address" in features %}
-from tests.{{id}}.address import *{% endif %}{% if "tracking" in features %}
-from tests.{{id}}.tracking import *{% endif %}{% if "shipping" in features %}
-from tests.{{id}}.shipment import *{% endif %}{% if "document" in features %}
-from tests.{{id}}.document import *{% endif %}
+from tests.{{id}}.test_rate import *{% endif %}{% if "pickup" in features %}
+from tests.{{id}}.test_pickup import *{% endif %}{% if "address" in features %}
+from tests.{{id}}.test_address import *{% endif %}{% if "tracking" in features %}
+from tests.{{id}}.test_tracking import *{% endif %}{% if "shipping" in features %}
+from tests.{{id}}.test_shipment import *{% endif %}{% if "document" in features %}
+from tests.{{id}}.test_document import *{% endif %}
 ''')
 
 TEST_FIXTURE_TEMPLATE = Template('''
