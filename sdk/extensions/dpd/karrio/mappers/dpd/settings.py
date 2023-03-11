@@ -10,6 +10,9 @@ class Settings(provider_utils.Settings):
     """DPD connection settings."""
 
     # required carrier specific properties
+    delis_id: str
+    password: str
+    message_language: str = "en_EN"
 
     # generic properties
     id: str = None

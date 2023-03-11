@@ -827,7 +827,7 @@ def shipment_request(
 ) -> lib.Serializable:
     packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
     options = lib.to_shipping_options(payload.options, provider_units.ShippingOption)  # preprocess the request options
-    services = provider_units.Services.map(payload.service).value_or_key  # preprocess the request services
+    service = provider_units.Services.map(payload.service).value_or_key  # preprocess the request services
 
     request = None  # map data to convert karrio model to {{id}} specific type
 

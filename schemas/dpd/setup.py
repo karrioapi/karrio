@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 setup(
     name="carrier.dpd",
     version="2023.3",
-    description="DPD Belux Web API Schemas Python Data Types library",
+    description="DPD Web API Schemas Python Data Types library",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/karrioapi/karrio",
