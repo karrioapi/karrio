@@ -19,17 +19,31 @@ class PackagingType(lib.Flag):
 
 class ShippingService(lib.Enum):
     """ Carrier specific services """
-    dpd_standard_service = "DPD Standard Service"
+    
+    dpd_express_10h = "E10"
+    dpd_express_12h = "E12"
+    dpd_express_18h_guarantee = "E18"
+    dpd_express_b2b_predict = "B2B MSG option"
+    dpd_cl = "CL"
 
 
 class ShippingOption(lib.Enum):
     """ Carrier specific options """
-    # dpd_option = lib.OptionEnum("code")
-
-    """ Unified Option type mapping """
-    # insurance = dpd_coverage  #  maps unified karrio option to carrier specific
-
-    pass
+    
+    dpd_order_type = lib.OptionEnum("orderType")
+    dpd_saturday_delivery = lib.OptionEnum("saturdayDelivery")
+    dpd_ex_works_delivery = lib.OptionEnum("exWorksDelivery")
+    dpd_guarantee = lib.OptionEnum("guarantee")
+    dpd_tyres = lib.OptionEnum("tyres")
+    dpd_personal_delivery = lib.OptionEnum("personalDelivery")
+    dpd_pickup = lib.OptionEnum("pickup")
+    dpd_parcel_shop_delivery = lib.OptionEnum("parcelShopDelivery")
+    dpd_predict = lib.OptionEnum("predict")
+    dpd_personal_delivery_notification = lib.OptionEnum("personalDeliveryNotification")
+    dpd_proactive_notification = lib.OptionEnum("proactiveNotification")
+    dpd_delivery = lib.OptionEnum("delivery")
+    dpd_invoice_address = lib.OptionEnum("invoiceAddress")
+    dpd_country_specific_service = lib.OptionEnum("countrySpecificService")
 
 
 def shipping_options_initializer(
