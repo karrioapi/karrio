@@ -199,7 +199,6 @@ PickupRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-
                     <xsd1:created_by>John Doe</xsd1:created_by>
                     <xsd1:pickup_address>
                         <xsd1:address_line_1>2271 Herring Cove</xsd1:address_line_1>
-                        <xsd1:address_line_2></xsd1:address_line_2>
                         <xsd1:attention>John Doe</xsd1:attention>
                         <xsd1:city>Halifax</xsd1:city>
                         <xsd1:country>CA</xsd1:country>
@@ -231,7 +230,6 @@ PickupUpdateRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05
                     <xsd1:created_by>Jane Doe</xsd1:created_by>
                     <xsd1:pickup_address>
                         <xsd1:address_line_1></xsd1:address_line_1>
-                        <xsd1:address_line_2></xsd1:address_line_2>
                         <xsd1:attention>Jane Doe</xsd1:attention>
                         <xsd1:email>john.doe@canpar.ca</xsd1:email>
                         <xsd1:phone>1 514 5555555</xsd1:phone>

@@ -2,6 +2,7 @@ import typing
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.dpd.utils as provider_utils
+from karrio.core.utils.soap import extract_fault
 
 
 def parse_error_response(
@@ -9,7 +10,7 @@ def parse_error_response(
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors = []  # compute the carrier error object list
+    errors: typing.List[typing.Any] = []  # compute the carrier error object list
 
     return [
         models.Message(
@@ -20,4 +21,4 @@ def parse_error_response(
             details={**kwargs},
         )
         for error in errors
-    ]
+    ] + extract_fault(response, settings)

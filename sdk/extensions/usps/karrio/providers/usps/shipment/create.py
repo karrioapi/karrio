@@ -85,7 +85,7 @@ def shipment_request(
         ),
         FromName=payload.shipper.person_name,
         FromFirm=payload.shipper.company_name or "N/A",
-        FromAddress1=payload.shipper.address_line2,
+        FromAddress1=payload.shipper.address_line2 or "",
         FromAddress2=payload.shipper.address_line1,
         FromCity=payload.shipper.city,
         FromState=payload.shipper.state_code,
