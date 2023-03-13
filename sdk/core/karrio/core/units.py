@@ -1134,6 +1134,15 @@ class ComputedDocumentFile(models.DocumentFile):
         return pathlib.Path(self.doc_name or "").suffix
 
 
+class TrackingStatus(utils.Enum):
+    blocked = ["blocked"]
+    delivered = ["delivered"]
+    in_transit = ["in_transit"]
+    delivery_failed = ["delivery_failed"]
+    out_for_delivery = ["out_for_delivery"]
+    ready_for_pickup = ["ready_for_pickup"]
+
+
 class Currency(utils.Enum):
     EUR = "Euro"
     AED = "UAE Dirham"

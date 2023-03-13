@@ -289,8 +289,9 @@ class TrackingDetails:
     carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
-    delivered: bool = None
     estimated_delivery: str = None
+    delivered: bool = None
+    status: str = None
     meta: dict = None
 
 
