@@ -166,7 +166,6 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
             </headerValue>
             <shipperValue>
                 <shipperAdress1>28 rue du Clair Bocage</shipperAdress1>
-                <shipperAdress2></shipperAdress2>
                 <shipperCity>La Seyne-sur-mer</shipperCity>
                 <shipperCivility>M</shipperCivility>
                 <shipperContactName>Jean Dupont</shipperContactName>
@@ -180,7 +179,6 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
             </shipperValue>
             <customerValue>
                 <customerAdress1>72 rue Reine Elisabeth</customerAdress1>
-                <customerAdress2></customerAdress2>
                 <customerCity>Menton</customerCity>
                 <customerCivility>M</customerCivility>
                 <customerContactName>Lucas Dupont</customerContactName>
@@ -193,7 +191,6 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
             </customerValue>
             <recipientValue>
                 <recipientAdress1>72 rue Reine Elisabeth</recipientAdress1>
-                <recipientAdress2></recipientAdress2>
                 <recipientCity>Menton</recipientCity>
                 <recipientContactName>Lucas Dupont</recipientContactName>
                 <recipientCountry>FR</recipientCountry>

@@ -155,7 +155,6 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
     <AllowNonCleansedOriginAddr></AllowNonCleansedOriginAddr>
     <ToName>Tall Tom</ToName>
     <ToFirm>ABC Corp.</ToFirm>
-    <ToAddress1></ToAddress1>
     <ToAddress2>1098 N Fraser Street</ToAddress2>
     <ToCity>Georgetown</ToCity>
     <ToState>SC</ToState>
@@ -180,7 +179,6 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
     <ImageType>PDF</ImageType>
     <NonDeliveryOption>RETURN</NonDeliveryOption>
     <AltReturnAddress1></AltReturnAddress1>
-    <AltReturnAddress2></AltReturnAddress2>
 </eVSRequest>
 """
 

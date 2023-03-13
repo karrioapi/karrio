@@ -24,7 +24,7 @@ def parse_tracking_response(
             response_messages.append(response)
 
     tracking_details = [_extract_details(_, settings) for _ in response_details]
-    messages = sum(
+    messages: typing.List[models.Message] = sum(
         [
             error.parse_error_response(_[1], settings, dict(tracking_number=_[0]))
             for _ in response_messages

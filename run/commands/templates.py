@@ -1131,7 +1131,7 @@ TEST_RATE_TEMPLATE = Template(
     '''
 import unittest
 from unittest.mock import patch, ANY
-from tests.{{id}}.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib
@@ -1188,7 +1188,7 @@ TEST_TRACKING_TEMPLATE = Template(
     '''
 import unittest
 from unittest.mock import patch, ANY
-from tests.{{id}}.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib
@@ -1267,7 +1267,7 @@ TEST_SHIPMENT_TEMPLATE = Template(
     '''
 import unittest
 from unittest.mock import patch, ANY
-from tests.{{id}}.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib
@@ -1368,7 +1368,7 @@ TEST_DOCUMENT_UPLOAD_TEMPLATE = Template(
     '''
 import unittest
 from unittest.mock import patch, ANY
-from tests.{{id}}.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib
@@ -1455,7 +1455,7 @@ TEST_PICKUP_TEMPLATE = Template(
     '''
 import unittest
 from unittest.mock import patch, ANY
-from tests.{{id}}.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib
@@ -1578,7 +1578,7 @@ TEST_ADDRESS_TEMPLATE = Template(
     '''
 import unittest
 from unittest.mock import patch, ANY
-from tests.{{id}}.fixture import gateway
+from .fixture import gateway
 
 import karrio
 import karrio.lib as lib

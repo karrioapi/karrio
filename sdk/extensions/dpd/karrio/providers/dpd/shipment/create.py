@@ -34,7 +34,7 @@ def _extract_details(
     shipments: typing.List[dpd.shipmentResponses] = lib.find_element(
         "shipmentResponses", data, dpd.shipmentResponses
     )
-    parcels = sum([_.parcelInformation for _ in shipments], start=[])
+    parcels: typing.List[dpd.parcelInformation] = sum([_.parcelInformation for _ in shipments], start=[])
     tracking_numbers = [_.parcelLabelNumber for _ in parcels]
     shipment_identifiers = [(_.identificationNumber or _.mpsId) for _ in shipments]
 
