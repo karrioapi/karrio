@@ -1,10 +1,10 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 
 
 class PackagingType(lib.Flag):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -18,8 +18,8 @@ class PackagingType(lib.Flag):
 
 
 class ShippingService(lib.Enum):
-    """ Carrier specific services """
-    
+    """Carrier specific services"""
+
     dpd_express_10h = "E10"
     dpd_express_12h = "E12"
     dpd_express_18h_guarantee = "E18"
@@ -28,8 +28,8 @@ class ShippingService(lib.Enum):
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
-    
+    """Carrier specific options"""
+
     dpd_order_type = lib.OptionEnum("orderType")
     dpd_saturday_delivery = lib.OptionEnum("saturdayDelivery")
     dpd_ex_works_delivery = lib.OptionEnum("exWorksDelivery")
@@ -61,3 +61,13 @@ def shipping_options_initializer(
         return key in ShippingOption  # type: ignore
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+
+class TrackingStatus(lib.Enum):
+    """Carrier tracking status mapping"""
+
+    delivered = ["Delivered"]
+    in_transit = ["in_transit"]
+    delivery_failed = ["DeliveryFailure"]
+    out_for_delivery = ["Courier", "ReturningFromDelivery"]
+    ready_for_pickup = ["ParcelShop"]

@@ -69,7 +69,9 @@ def shipment_request(
         Body=lib.Body(
             dpd.storeOrders(
                 printOptions=dpd.printOptions(
-                    printerLanguage=units.LabelType.map(payload.label_type or "PDF").value,
+                    printerLanguage=units.LabelType.map(
+                        payload.label_type or "PDF"
+                    ).value,
                     paperFormat="A6",
                     printer=None,
                     startPosition=None,
@@ -191,7 +193,8 @@ def shipment_request(
                                     commercialInvoiceConsignor=None,
                                     commercialInvoiceLine=None,
                                 )
-                                if is_intl else None
+                                if is_intl
+                                else None
                             ),
                             hazardous=None,
                             printInfo1OnParcelLabel=None,

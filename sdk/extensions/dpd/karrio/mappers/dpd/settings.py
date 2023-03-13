@@ -1,4 +1,3 @@
-
 """Karrio DPD client settings."""
 
 import attr

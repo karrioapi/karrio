@@ -65,14 +65,15 @@ class XMLPARSER:
         in_element: Element,
         element_type: Type[Union[T, Element]] = None,
         first: bool = None,
-    ):
+    ) -> Optional[Union[Element, T, List[Element], List[T]]]:
+        nodes = [*in_element.xpath(".//*[local-name() = $name]", name=tag)]
         children = [
             (
                 child
                 if element_type is None
                 else XMLPARSER.to_object(element_type, child)
             )
-            for child in list(in_element.xpath(".//*[local-name() = $name]", name=tag))
+            for child in nodes
         ]
 
         if first is True:
