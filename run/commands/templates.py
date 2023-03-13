@@ -1,7 +1,8 @@
 from jinja2 import Template
 
 
-MODELS_TEMPLATE = Template('''
+MODELS_TEMPLATE = Template(
+    """
 {% for name, cls in classes.items() %}
 #### {{ name }}
 
@@ -10,9 +11,11 @@ MODELS_TEMPLATE = Template('''
 {% for prop in cls.__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
 {% endfor %}
 {% endfor %}
-''')
+"""
+)
 
-SETTINGS_TEMPLATE = Template('''
+SETTINGS_TEMPLATE = Template(
+    """
 {% for k, val in settings.items() %}
 #### {{ val['label'] }} Settings `[carrier_name = {{k}}]`
 
@@ -21,9 +24,11 @@ SETTINGS_TEMPLATE = Template('''
 {% for prop in val['Settings'].__attrs_attrs__ %}| `{{ prop.name }}` | {{ prop.type }} | {{ '**required**' if str(prop.default) == 'NOTHING' else '' }}
 {% endfor %}
 {% endfor %}
-''')
+"""
+)
 
-SERVICES_TEMPLATE = Template('''
+SERVICES_TEMPLATE = Template(
+    """
 {% for key, value in service_mappers.items() %}
 #### {{ mappers[key]["label"] }}
 
@@ -32,9 +37,11 @@ SERVICES_TEMPLATE = Template('''
 {% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
-''')
+"""
+)
 
-SHIPMENT_OPTIONS_TEMPLATE = Template('''
+SHIPMENT_OPTIONS_TEMPLATE = Template(
+    """
 {% for key, value in option_mappers.items() %}
 #### {{ mappers[key]["label"] }}
 
@@ -43,9 +50,11 @@ SHIPMENT_OPTIONS_TEMPLATE = Template('''
 {% for code, spec in value.items() %}| `{{ code }}` | {{ spec.get('key') }} | {{ spec.get('type') }}
 {% endfor %}
 {% endfor %}
-''')
+"""
+)
 
-PACKAGING_TYPES_TEMPLATE = Template('''
+PACKAGING_TYPES_TEMPLATE = Template(
+    """
 {% for key, value in packaging_mappers.items() %}
 #### {{ mappers[key]["label"] }}
 
@@ -54,9 +63,11 @@ PACKAGING_TYPES_TEMPLATE = Template('''
 {% for code, name in value.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 {% endfor %}
-''')
+"""
+)
 
-SHIPMENT_PRESETS_TEMPLATE = Template('''
+SHIPMENT_PRESETS_TEMPLATE = Template(
+    """
 {% for key, value in preset_mappers.items() %}
 #### {{ mappers[key]["label"] }}
 
@@ -65,9 +76,11 @@ SHIPMENT_PRESETS_TEMPLATE = Template('''
 {% for code, dim in value.items() %}{{ format_dimension(code, dim) }}
 {% endfor %}
 {% endfor %}
-''')
+"""
+)
 
-UTILS_TOOLS_TEMPLATE = Template('''
+UTILS_TOOLS_TEMPLATE = Template(
+    """
 {% for tool, import in utils %}
 - `{{ tool.__name__ }}`
 
@@ -81,9 +94,11 @@ Usage:
 ```
 
 {% endfor %}
-''')
+"""
+)
 
-COUNTRY_INFO_TEMPLATES = Template('''
+COUNTRY_INFO_TEMPLATES = Template(
+    """
 ## Countries
 
 | Code | Name
@@ -109,9 +124,11 @@ COUNTRY_INFO_TEMPLATES = Template('''
 | --- | ---
 {% for code, name in currencies.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
-''')
+"""
+)
 
-UNITS_TEMPLATES = Template('''
+UNITS_TEMPLATES = Template(
+    """
 ## WEIGHT UNITS
 
 | Code | Identifier
@@ -126,11 +143,13 @@ UNITS_TEMPLATES = Template('''
 {% for code, name in dimension_units.items() %}| `{{ code }}` | {{ name }}
 {% endfor %}
 
-''')
+"""
+)
 
 """CARRIER EXTENSTION TEMPLATES SECTION"""
 
-README_TEMPLATE = Template('''
+README_TEMPLATE = Template(
+    """
 # karrio.{{id}}
 
 This package is a {{name}} extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
@@ -162,9 +181,11 @@ from karrio.mappers.{{id}}.settings import Settings
 
 Check the [Karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests
 
-''')
+"""
+)
 
-SETUP_TEMPLATE = Template('''
+SETUP_TEMPLATE = Template(
+    '''
 """Warning: This setup.py is only there for git install until poetry support git subdirectory"""
 from setuptools import setup, find_namespace_packages
 
@@ -192,9 +213,11 @@ setup(
     include_package_data=True,
 )
 
-''')
+'''
+)
 
-MAPPER_METADATA_TEMPLATE = Template('''
+MAPPER_METADATA_TEMPLATE = Template(
+    """
 from karrio.core.metadata import Metadata
 
 from karrio.mappers.{{id}}.mapper import Mapper
@@ -214,9 +237,11 @@ METADATA = Metadata(
     is_hub=False
 )
 
-''')
+"""
+)
 
-MAPPER_TEMPLATE = Template('''
+MAPPER_TEMPLATE = Template(
+    '''
 """Karrio {{name}} client mapper."""
 
 import typing
@@ -312,9 +337,11 @@ class Mapper(mapper.Mapper):
         return provider.parse_document_upload_response(response.deserialize(), self.settings)
     {% endif %}
 
-''')
+'''
+)
 
-MAPPER_PROXY_TEMPLATE = Template('''
+MAPPER_PROXY_TEMPLATE = Template(
+    '''
 """Karrio {{name}} client proxy."""
 
 import karrio.lib as lib
@@ -413,9 +440,11 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, {% if is_xml_api %}lib.to_element{% else %}lib.to_dict{% endif %})
     {% endif %}
-''')
+'''
+)
 
-MAPPER_SETTINGS_TEMPLATE = Template('''
+MAPPER_SETTINGS_TEMPLATE = Template(
+    '''
 """Karrio {{name}} client settings."""
 
 import attr
@@ -435,9 +464,11 @@ class Settings(provider_utils.Settings):
     account_country_code: str = None
     metadata: dict = {}
 
-''')
+'''
+)
 
-PROVIDER_IMPORTS_TEMPLATE = Template('''
+PROVIDER_IMPORTS_TEMPLATE = Template(
+    """
 from karrio.providers.{{id}}.utils import Settings{% if "rating" in features %}
 from karrio.providers.{{id}}.rate import parse_rate_response, rate_request{% endif %}{% if "shipping" in features %}
 from karrio.providers.{{id}}.shipment import (
@@ -463,9 +494,11 @@ from karrio.providers.{{id}}.document import (
     document_upload_request,
 ){% endif %}
 
-''')
+"""
+)
 
-PROVIDER_ERROR_TEMPLATE = Template('''
+PROVIDER_ERROR_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -490,9 +523,11 @@ def parse_error_response(
         for error in errors
     ]
 
-''')
+"""
+)
 
-PROVIDER_RATE_TEMPLATE = Template('''
+PROVIDER_RATE_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -539,16 +574,22 @@ def rate_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
-    options = lib.to_shipping_options(payload.options, provider_units.ShippingOption)  # preprocess the request options
     services = lib.to_services(payload.services, provider_units.ShippingService)  # preprocess the request services
+    options = lib.to_shipping_options(
+        payload.options,
+        package_options=packages.options,
+        option_type=provider_units.ShippingOption,
+    )   # preprocess the request options
 
     request = None  # map data to convert karrio model to {{id}} specific type
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_TRACKING_TEMPLATE = Template('''
+PROVIDER_TRACKING_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -604,9 +645,11 @@ def tracking_request(
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_UNITS_TEMPLATE = Template('''
+PROVIDER_UNITS_TEMPLATE = Template(
+    '''
 import karrio.lib as lib
 import karrio.core.units as units
 
@@ -656,9 +699,11 @@ def shipping_options_initializer(
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
 
-''')
+'''
+)
 
-PROVIDER_UTILS_TEMPLATE = Template('''
+PROVIDER_UTILS_TEMPLATE = Template(
+    '''
 import karrio.core as core
 
 
@@ -679,9 +724,11 @@ class Settings(core.Settings):
             else "https://sandbox.carrier.api"
         )
 
-''')
+'''
+)
 
-PROVIDER_ADDRESS_TEMPLATE = Template('''
+PROVIDER_ADDRESS_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -720,9 +767,11 @@ def address_validation_request(
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_SHIPMENT_IMPORTS_TEMPLATE = Template('''
+PROVIDER_SHIPMENT_IMPORTS_TEMPLATE = Template(
+    """
 from karrio.providers.{{id}}.shipment.create import (
     parse_shipment_response,
     shipment_request,
@@ -732,9 +781,11 @@ from karrio.providers.{{id}}.shipment.cancel import (
     shipment_cancel_request,
 )
 
-''')
+"""
+)
 
-PROVIDER_SHIPMENT_CANCEL_TEMPLATE = Template('''
+PROVIDER_SHIPMENT_CANCEL_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -772,9 +823,11 @@ def shipment_cancel_request(
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_SHIPMENT_CREATE_TEMPLATE = Template('''
+PROVIDER_SHIPMENT_CREATE_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -826,16 +879,22 @@ def shipment_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
-    options = lib.to_shipping_options(payload.options, provider_units.ShippingOption)  # preprocess the request options
-    service = provider_units.Services.map(payload.service).value_or_key  # preprocess the request services
+    service = provider_units.ShippingService.map(payload.service).value_or_key  # preprocess the request services
+    options = lib.to_shipping_options(
+        payload.options,
+        package_options=packages.options,
+        option_type=provider_units.ShippingOption,
+    )   # preprocess the request options
 
     request = None  # map data to convert karrio model to {{id}} specific type
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_DOCUMENT_UPLOAD_TEMPLATE = Template('''
+PROVIDER_DOCUMENT_UPLOAD_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -886,16 +945,20 @@ def document_upload_request(
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_PICKUP_IMPORTS_TEMPLATE = Template('''
+PROVIDER_PICKUP_IMPORTS_TEMPLATE = Template(
+    """
 from karrio.providers.{{id}}.pickup.create import parse_pickup_response, pickup_request
 from karrio.providers.{{id}}.pickup.update import parse_pickup_update_response, pickup_update_request
 from karrio.providers.{{id}}.pickup.cancel import parse_pickup_cancel_response, pickup_cancel_request
 
-''')
+"""
+)
 
-PROVIDER_PICKUP_CANCEL_TEMPLATE = Template('''
+PROVIDER_PICKUP_CANCEL_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -934,9 +997,11 @@ def pickup_cancel_request(
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_PICKUP_CREATE_TEMPLATE = Template('''
+PROVIDER_PICKUP_CREATE_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -981,9 +1046,11 @@ def pickup_request(
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-PROVIDER_PICKUP_UPDATE_TEMPLATE = Template('''
+PROVIDER_PICKUP_UPDATE_TEMPLATE = Template(
+    """
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -1028,21 +1095,27 @@ def pickup_update_request(
 
     return lib.Serializable(request)
 
-''')
+"""
+)
 
-TEST_IMPORTS_TEMPLATE = Template('''from tests.{{id}} import *
-''')
+TEST_IMPORTS_TEMPLATE = Template(
+    """from tests.{{id}} import *
+"""
+)
 
-TEST_PROVIDER_IMPORTS_TEMPLATE = Template('''{% if "rating" in features %}
+TEST_PROVIDER_IMPORTS_TEMPLATE = Template(
+    """{% if "rating" in features %}
 from .test_rate import *{% endif %}{% if "pickup" in features %}
 from .test_pickup import *{% endif %}{% if "address" in features %}
 from .test_address import *{% endif %}{% if "tracking" in features %}
 from .test_tracking import *{% endif %}{% if "shipping" in features %}
 from .test_shipment import *{% endif %}{% if "document" in features %}
 from .test_document import *{% endif %}
-''')
+"""
+)
 
-TEST_FIXTURE_TEMPLATE = Template('''
+TEST_FIXTURE_TEMPLATE = Template(
+    """
 import karrio
 
 gateway = karrio.gateway["{{id}}"].create(
@@ -1051,9 +1124,11 @@ gateway = karrio.gateway["{{id}}"].create(
     )
 )
 
-''')
+"""
+)
 
-TEST_RATE_TEMPLATE = Template('''
+TEST_RATE_TEMPLATE = Template(
+    '''
 import unittest
 from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
@@ -1106,9 +1181,11 @@ RateRequest = {% if is_xml_api %}"""<a></a>
 RateResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
-''')
+'''
+)
 
-TEST_TRACKING_TEMPLATE = Template('''
+TEST_TRACKING_TEMPLATE = Template(
+    '''
 import unittest
 from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
@@ -1183,9 +1260,11 @@ TrackingResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 ErrorResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
-''')
+'''
+)
 
-TEST_SHIPMENT_TEMPLATE = Template('''
+TEST_SHIPMENT_TEMPLATE = Template(
+    '''
 import unittest
 from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
@@ -1281,11 +1360,12 @@ ShipmentResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 ShipmentCancelResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
-''')
+'''
+)
 
 
-
-TEST_DOCUMENT_UPLOAD_TEMPLATE = Template('''
+TEST_DOCUMENT_UPLOAD_TEMPLATE = Template(
+    '''
 import unittest
 from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
@@ -1368,9 +1448,11 @@ DocumentUploadRequest = {% if is_xml_api %}"""<a></a>
 DocumentUploadResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
-''')
+'''
+)
 
-TEST_PICKUP_TEMPLATE = Template('''
+TEST_PICKUP_TEMPLATE = Template(
+    '''
 import unittest
 from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
@@ -1489,9 +1571,11 @@ PickupUpdateResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 PickupCancelResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
-''')
+'''
+)
 
-TEST_ADDRESS_TEMPLATE = Template('''
+TEST_ADDRESS_TEMPLATE = Template(
+    '''
 import unittest
 from unittest.mock import patch, ANY
 from tests.{{id}}.fixture import gateway
@@ -1546,4 +1630,5 @@ AddressValidationRequest = {% if is_xml_api %}"""<a></a>
 AddressValidationResponse = """{% if is_xml_api %}<a></a>{% else %}{}{% endif %}
 """
 
-''')
+'''
+)

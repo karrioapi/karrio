@@ -610,6 +610,13 @@ def to_buffer(
 ):
     return utils.to_buffer(base64_string, **kwargs)
 
+def decode(byte: bytes):
+    return (
+        failsafe(lambda: byte.decode("utf-8")) or
+        failsafe(lambda: byte.decode("ISO-8859-1")) or
+        byte.decode("utf-8")
+    )
+
 
 # -----------------------------------------------------------
 # other utilities functions
