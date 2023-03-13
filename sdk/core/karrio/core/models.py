@@ -30,7 +30,7 @@ class Address:
     residential: bool = False
 
     address_line1: str = ""
-    address_line2: str = ""
+    address_line2: str = None
 
     federal_tax_id: str = None
     state_tax_id: str = None

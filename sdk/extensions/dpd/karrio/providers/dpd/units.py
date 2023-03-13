@@ -17,6 +17,22 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
+class Incoterm(lib.Enum):
+    DAP = "06"
+    DAP_enhanced = "07"
+
+
+class CustomsContentType(lib.Flag):
+    sale = "01"
+    return_replacement = "02"
+    gift = "03"
+
+    """ Unified Content type mapping """
+    sample = sale
+    merchandise = sale
+    return_merchandise = return_replacement
+
+
 class ShippingService(lib.Enum):
     """Carrier specific services"""
 
