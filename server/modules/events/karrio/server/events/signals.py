@@ -20,6 +20,7 @@ def register_signals():
 
 
 @utils.disable_for_loaddata
+@utils.error_wrapper
 def shipment_updated(
     sender, instance, created, raw, using, update_fields, *args, **kwargs
 ):
@@ -27,9 +28,13 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
+    is_bound = "created_at" in (update_fields or [])
     status_updated = "status" in (update_fields or [])
-    if created and instance.status != serializers.ShipmentStatus.purchased.value:
+
+    if created:
         return
+    if is_bound and instance.status == serializers.ShipmentStatus.purchased.value:
+        event = EventTypes.shipment_purchased.value
     elif status_updated and instance.status == serializers.ShipmentStatus.purchased.value:
         event = EventTypes.shipment_purchased.value
     elif status_updated and instance.status == serializers.ShipmentStatus.in_transit.value:
@@ -42,8 +47,8 @@ def shipment_updated(
     data = serializers.Shipment(instance).data
     event_at = instance.updated_at
     context = dict(
-        user_id=utils.failsafe(lambda: instance.created_by.id),
         test_mode=instance.test_mode,
+        user_id=utils.failsafe(lambda: instance.created_by.id),
         org_id=utils.failsafe(
             lambda: instance.org.first().id if hasattr(instance, "org") else None
         ),
