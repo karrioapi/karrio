@@ -1,5 +1,6 @@
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.core.models as models
 
 
 class PackagingType(lib.Flag):
@@ -36,11 +37,17 @@ class CustomsContentType(lib.Flag):
 class ShippingService(lib.Enum):
     """Carrier specific services"""
 
+    dpd_cl = "CL"
     dpd_express_10h = "E10"
     dpd_express_12h = "E12"
     dpd_express_18h_guarantee = "E18"
     dpd_express_b2b_predict = "B2B MSG option"
-    dpd_cl = "CL"
+
+    dpd_home_europe = dpd_cl
+    dpd_shop_europe = dpd_cl
+    dpd_express_europe = dpd_cl
+    dpd_express_guarantee = dpd_cl
+    dpd_express_international = dpd_cl
 
 
 class ShippingOption(lib.Enum):
@@ -84,6 +91,168 @@ class TrackingStatus(lib.Enum):
 
     delivered = ["Delivered"]
     in_transit = ["in_transit"]
+    ready_for_pickup = ["ParcelShop"]
     delivery_failed = ["DeliveryFailure"]
     out_for_delivery = ["Courier", "ReturningFromDelivery"]
-    ready_for_pickup = ["ParcelShop"]
+
+
+DEFAULT_SERVICES = [
+    models.ServiceLevel(
+        service_name="DPD Express 10h",
+        service_code="dpd_express_10h",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="DPD Express 12h",
+        service_code="dpd_express_12h",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="DPD Express 18h Guarantee",
+        service_code="dpd_express_18h_guarantee",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="DPD B2B MSG option",
+        service_code="dpd_express_b2b_predict",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="CL",
+        service_code="dpd_cl",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        domicile=True,
+        international=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="CL",
+        service_code="dpd_cl",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        domicile=True,
+        international=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="DPD Shop Europe",
+        service_code="dpd_shop_europe",
+        currency="EUR",
+        max_weight=20.0,
+        weight_unit="KG",
+        domicile=True,
+        international=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="DPD Business International",
+        service_code="dpd_business_international",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        international=True,
+        zones=[models.ServiceZone(rate=0.0, country_codes=[""])],
+    ),
+]
+
+
+DEFAULT_NL_SERVICES = [
+    models.ServiceLevel(
+        service_name="Express 10h",
+        service_code="dpd_express_10h",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="Express 12h",
+        service_code="dpd_express_12h",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="Express 18h Guarantee",
+        service_code="dpd_express_18h_guarantee",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="B2B MSG option",
+        service_code="dpd_express_b2b_predict",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        max_length=175,
+        dimension_unit="CM",
+        domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
+    ),
+    models.ServiceLevel(
+        service_name="CL",
+        service_code="dpd_cl",
+        currency="EUR",
+        max_weight=31.5,
+        weight_unit="KG",
+        domicile=True,
+        international=True,
+        zones=[
+            # The Netherlands
+            models.ServiceZone(label="2shop", max_weight=1.00, min_weight=0.00, rate=4.25),
+            models.ServiceZone(label="2shop", max_weight=10.0, min_weight=1.00, rate=4.40),
+            models.ServiceZone(label="2shop", max_weight=20.0, min_weight=10.0, rate=9.00),
+            models.ServiceZone(label="2home", max_weight=1.00, min_weight=0.00, rate=5.25),
+            models.ServiceZone(label="2home", max_weight=10.0, min_weight=1.00, rate=5.60),
+            models.ServiceZone(label="2home", max_weight=20.0, min_weight=10.0, rate=9.50),
+            # Belgium
+            models.ServiceZone(label="2shop", max_weight=1.00, min_weight=0.00, rate=4.25),
+            models.ServiceZone(label="2shop", max_weight=10.0, min_weight=1.00, rate=4.40),
+            models.ServiceZone(label="2shop", max_weight=20.0, min_weight=10.0, rate=9.00),
+            models.ServiceZone(label="2home", max_weight=1.00, min_weight=0.00, rate=5.25),
+            models.ServiceZone(label="2home", max_weight=10.0, min_weight=1.00, rate=5.60),
+            models.ServiceZone(label="2home", max_weight=20.0, min_weight=10.0, rate=9.50),
+        ],
+    ),
+]

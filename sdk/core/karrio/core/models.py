@@ -261,9 +261,13 @@ class TrackingEvent:
 
     date: str
     description: str
-    location: str = None
     code: str = None
     time: str = None
+    location: str = None
+
+    # Geolocation
+    latitude: float = None
+    longitude: float = None
 
 
 @attr.s(auto_attribs=True)
@@ -275,8 +279,9 @@ class RateDetails:
     service: str
     currency: str = None
     total_charge: float = 0.0
-    transit_days: int = None
     extra_charges: List[ChargeDetails] = JList[ChargeDetails]
+    estimated_delivery: str = None
+    transit_days: int = None
     meta: dict = None
     id: str = None
 
@@ -343,33 +348,63 @@ class ConfirmationDetails:
 
 
 @attr.s(auto_attribs=True)
+class ServiceZone:
+    """Karrio unified service zone."""
+
+    id: str = None
+    label: str = None
+    rate: str = None
+
+    # Weight restrictions
+    min_weight: float = None
+    max_weight: float = None
+
+    # Estimated delivery
+    transit_days: int = None
+    transit_time: float = None
+
+    # Geolocation
+    radius: float = None
+    latitude: float = None
+    longitude: float = None
+
+    # Location
+    cities: List[str] = []
+    country_codes: List[str] = []
+
+
+@attr.s(auto_attribs=True)
 class ServiceLevel:
     """Karrio unified service level data type."""
 
     service_name: str
     service_code: str
     description: str = ""
-    id: str = None
     active: bool = True
+    id: str = None
 
-    # Costs definition
-    cost: float = None
+    # Rate definitions
     currency: str = None
+    zones: List[ServiceZone] = JList[ServiceZone]
 
-    # Estimated delivery date
-    estimated_transit_days: int = None
+    # Weight restrictions
+    min_weight: float = None
+    max_weight: float = None
+    weight_unit: str = None
 
     # Size restrictions
-    max_weight: float = None
     max_width: float = None
     max_height: float = None
     max_length: float = None
-    weight_unit: str = None
     dimension_unit: str = None
 
     # Destination supports
     domicile: bool = None
     international: bool = None
+
+    # Estimated delivery
+    transit_days: int = None
+    transit_time: float = None
 
 
 @attr.s(auto_attribs=True)
