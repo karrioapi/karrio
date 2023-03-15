@@ -49,7 +49,7 @@ def _extract_detail(
             TrackingEvent(
                 date=_best_time(DF.fdate, event),
                 description=event.description,
-                location=event.location,
+                location=f"{event.origin_location} to {event.destination_location}" if (event.origin_location and event.destination_location) else event.location,
                 code=event.event_type,
                 time=_best_time(DF.ftime, event),
             )

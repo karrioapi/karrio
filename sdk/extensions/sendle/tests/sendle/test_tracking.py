@@ -90,6 +90,7 @@ ParsedTrackingResponse = [
                     "code": "In Transit",
                     "date": "2015-11-25",
                     "description": "In transit",
+                    "location": "Sydney to Brisbane",
                     "time": "09:14",
                 },
                 {
@@ -103,6 +104,7 @@ ParsedTrackingResponse = [
                     "date": "2015-11-24",
                     "description": "Parcel picked up",
                     "time": "20:31",
+                    "location": "NSW",
                 },
                 {
                     "code": "Pickup Attempted",
@@ -144,6 +146,7 @@ TrackingResponseJSON = """{
         {
             "event_type": "Pickup",
             "scan_time": "2015-11-24T20:31:00Z",
+            "location": "NSW",
             "description": "Parcel picked up"
         },
         {
