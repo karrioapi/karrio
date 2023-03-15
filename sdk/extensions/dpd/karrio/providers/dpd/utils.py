@@ -1,5 +1,7 @@
+import typing
 import dpd_lib.Authentication20 as dpd
 import karrio.core as core
+import karrio.providers.dpd.units as units
 
 
 class Settings(core.Settings):
@@ -8,6 +10,7 @@ class Settings(core.Settings):
     delis_id: str
     password: str
     message_language: str = "en_EN"
+    account_country_code: str = "BE"
 
     @property
     def carrier_name(self):
@@ -20,6 +23,21 @@ class Settings(core.Settings):
             if self.test_mode
             else "https://wsshipper.dpd.be/soap"
         )
+
+    def __getattr__(self, __name: str) -> typing.Any:
+        _value = super().__getattr__(__name)
+
+        if __name != 'services':
+            return _value
+
+        if any(_value or []):
+            return _value
+
+        if self.account_country_code == "NL":
+            return units.DEFAULT_NL_SERVICES
+
+        return units.DEFAULT_NL_SERVICES
+
 
     @property
     def authentication(self):

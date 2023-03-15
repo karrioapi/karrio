@@ -6,7 +6,7 @@ django-two-factor-auth==1.15.0
 
 # Carrier Extentions in Development
 -e ./sdk/core
-# -e ./sdk/extensions/generic
+-e ./sdk/extensions/generic
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
@@ -14,11 +14,11 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
 # -e ./sdk/extensions/dhl_express
-# -e ./sdk/extensions/dhl_poland
+-e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 -e ./sdk/extensions/dpd
-# -e ./sdk/extensions/dpdhl
+-e ./sdk/extensions/dpdhl
 # -e ./sdk/extensions/fedex
 # -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
@@ -38,8 +38,8 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/vendors/freightcom
 
 
-karrio
-karrio.generic
+# karrio
+# karrio.generic
 karrio.amazon-mws
 karrio.aramex
 karrio.australiapost
@@ -47,10 +47,11 @@ karrio.canadapost
 karrio.canpar
 karrio.chronopost
 karrio.dhl-express
-karrio.dhl-poland
+# karrio.dhl-poland
 karrio.dhl-universal
 karrio.dicom
-karrio.dpdhl
+# karrio.dpd
+# karrio.dpdhl
 karrio.fedex
 karrio.purolator
 karrio.royalmail

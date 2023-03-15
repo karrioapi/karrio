@@ -1,21 +1,21 @@
-from karrio.core.utils import Enum, OptionEnum, Flag
-from karrio.core.models import ServiceLevel
+import karrio.lib as lib
+import karrio.core.models as models
 
 
-class Service(Enum):
+class Service(lib.Enum):
     standard_service = "standard"
 
 
-class Option(Flag):
-    tracking_number_reference = OptionEnum("tracking_number")
+class Option(lib.Flag):
+    tracking_number_reference = lib.OptionEnum("tracking_number")
 
 
 DEFAULT_SERVICES = [
-    ServiceLevel(
+    models.ServiceLevel(
         service_name="Standard Service",
         service_code="standard_service",
-        cost=0.00,
         currency="USD",
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
     ),
 ]
 

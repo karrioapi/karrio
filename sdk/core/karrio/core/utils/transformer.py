@@ -53,18 +53,10 @@ def to_multi_piece_rates(
                 all_charges,
                 {},
             )
-            total_charge = (
-                sum(
-                    (
-                        utils.NF.decimal(rate.total_charge or 0)
-                        for rate in similar_rates
-                    ),
-                    0.0,
-                )
-                if any(rate.total_charge for rate in similar_rates)
-                else None
+            total_charge = sum(
+                (utils.NF.decimal(rate.total_charge or 0.0) for rate in similar_rates),
+                0.0,
             )
-
             multi_piece_rates.append(
                 models.RateDetails(
                     carrier_name=main.carrier_name,

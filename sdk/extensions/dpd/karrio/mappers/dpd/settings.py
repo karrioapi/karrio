@@ -1,6 +1,9 @@
 """Karrio DPD client settings."""
 
 import attr
+import typing
+import jstruct.types as jstruct
+import karrio.core.models as models
 import karrio.providers.dpd.utils as provider_utils
 
 
@@ -17,5 +20,6 @@ class Settings(provider_utils.Settings):
     id: str = None
     test_mode: bool = False
     carrier_id: str = "dpd"
-    account_country_code: str = None
+    account_country_code: str = "BE"
     metadata: dict = {}
+    services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel]  # type: ignore
