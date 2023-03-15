@@ -1,5 +1,8 @@
 from typing import List, Tuple
-from sendle_lib.tracking_response import Tracking
+from sendle_lib.tracking_response import (
+    Tracking,
+    TrackingEvent as SendleTrackingEvent,
+)
 from karrio.core.utils import (
     Serializable,
     DF,
@@ -44,17 +47,28 @@ def _extract_detail(
         tracking_number=tracking_number,
         events=[
             TrackingEvent(
-                date=DF.fdate(event.scan_time, "%Y-%m-%dT%H:%M:%SZ"),
+                date=_best_time(DF.fdate, event),
                 description=event.description,
                 location=event.location,
                 code=event.event_type,
-                time=DF.ftime(event.scan_time, "%Y-%m-%dT%H:%M:%SZ"),
+                time=_best_time(DF.ftime, event),
             )
             for event in reversed(tracking_details.tracking_events)
         ],
         estimated_delivery=DF.fdate(estimated_delivery, "%Y-%m-%d"),
         delivered=(tracking_details.state == "Delivered"),
     )
+
+
+def _best_time(parsingFunction, event: SendleTrackingEvent) -> str:
+    if event.local_scan_time is not None:
+        try:
+            return parsingFunction(event.local_scan_time, "%Y-%m-%dT%H:%M:%S")
+        except:
+            # local_scan_time's format is not strictly defined,
+            # but this is the most common one
+            ...
+    return parsingFunction(event.scan_time, "%Y-%m-%dT%H:%M:%SZ")
 
 
 def tracking_request(payload: TrackingRequest, _) -> Serializable[list]:

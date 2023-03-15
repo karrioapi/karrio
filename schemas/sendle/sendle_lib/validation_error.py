@@ -1,20 +1,20 @@
 from attr import s
 from typing import List, Optional
-from jstruct import JList, JStruct
+from jstruct import JStruct
 
 
 @s(auto_attribs=True)
 class Weight:
-    value: List[str] = JList[str]
-    units: List[str] = JList[str]
+    value: List[str] = []
+    units: List[str] = []
 
 
 @s(auto_attribs=True)
 class Messages:
-    pickup_suburb: List[str] = JList[str]
-    pickup_postcode: List[str] = JList[str]
-    delivery_suburb: List[str] = JList[str]
-    delivery_postcode: List[str] = JList[str]
+    pickup_suburb: List[str] = []
+    pickup_postcode: List[str] = []
+    delivery_suburb: List[str] = []
+    delivery_postcode: List[str] = []
     weight: Optional[Weight] = JStruct[Weight]
 
 

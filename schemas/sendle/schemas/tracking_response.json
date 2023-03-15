@@ -14,9 +14,11 @@
           "reason": "Parcel not ready"
         },
         {
-          "event_type": "Pickup",
-          "scan_time": "2015-11-24T20:31:00Z",
-          "description": "Parcel picked up"
+          "event_type": "In Transit",
+          "scan_time": "2020-07-06T09:38:00Z",
+          "local_scan_time": "2020-07-06T09:38:00",
+          "description": "USPS in possession of item",
+          "location": "CLARKDALE, GA"
         },
         {
           "event_type": "Info",

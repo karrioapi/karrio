@@ -29,9 +29,10 @@ class TrackingEvent:
     scan_time: Optional[str] = None
     description: Optional[str] = None
     reason: Optional[str] = None
+    local_scan_time: Optional[str] = None
+    location: Optional[str] = None
     origin_location: Optional[str] = None
     destination_location: Optional[str] = None
-    location: Optional[str] = None
     requester: Optional[str] = None
 
 

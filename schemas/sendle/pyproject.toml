@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "carrier.sendle"
-version = "2021.11"
+version = "2023.03"
 description = "Sendle API Schemas Python Data Types library"
 repository="https://github.com/karrioapi/karrio"
 homepage="https://github.com/karrioapi/karrio/tree/main/schemas/sendle"
@@ -19,7 +19,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-jstruct = ""
+jstruct = "*"
 
 [tool.poetry.dev-dependencies]
 
