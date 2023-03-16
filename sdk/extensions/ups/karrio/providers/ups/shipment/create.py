@@ -41,20 +41,20 @@ def _process_label(shipment: ups.ShipmentResultsType):
     )
     labels = [
         (
-            lib.image_to_pdf(pkg.ShippingLabel.GraphicImage, rotate=-90) 
+            lib.image_to_pdf(pkg.ShippingLabel.GraphicImage, rotate=-90)
             if label_type == "PDF"
             else pkg.ShippingLabel.GraphicImage
         )
         for pkg in shipment.PackageResults
     ]
-    
-    
+
+
     return (
-        labels[0] 
-        if len(labels) == 1 
+        labels[0]
+        if len(labels) == 1
         else lib.bundle_base64(labels, label_type)
     )
-    
+
 
 
 def shipment_request(
@@ -68,7 +68,7 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    biling_address = lib.to_address(payload.billing_address or payload.shipper) 
+    biling_address = lib.to_address(payload.billing_address or payload.shipper)
 
     if any(key in service for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
@@ -99,6 +99,26 @@ def shipment_request(
             Description=packages.description,
             DocumentsOnlyIndicator=("" if packages.is_document else None),
             Shipper=ups.ShipperType(
+                Name=(payload.shipper.company_name or payload.shipper.person_name),
+                AttentionName=payload.shipper.person_name,
+                CompanyDisplayableName=payload.shipper.company_name,
+                TaxIdentificationNumber=payload.shipper.federal_tax_id,
+                TaxIDType=None,
+                Phone=ups.ShipPhoneType(Number=payload.shipper.phone_number or "000-000-0000"),
+                ShipperNumber=settings.account_number,
+                FaxNumber=None,
+                EMailAddress=payload.shipper.email,
+                Address=ups.ShipAddressType(
+                    AddressLine=lib.join(
+                        payload.shipper.address_line1, payload.shipper.address_line2
+                    ),
+                    City=payload.shipper.city,
+                    StateProvinceCode=payload.shipper.state_code,
+                    PostalCode=payload.shipper.postal_code,
+                    CountryCode=payload.shipper.country_code,
+                ),
+            ),
+            ShipFrom=ups.ShipperType(
                 Name=(payload.shipper.company_name or payload.shipper.person_name),
                 AttentionName=payload.shipper.person_name,
                 CompanyDisplayableName=payload.shipper.company_name,
@@ -338,7 +358,7 @@ def shipment_request(
             LabelImageFormat=ups.LabelImageFormatType(Code=label_format),
             HTTPUserAgent=None,
             LabelStockSize=ups.LabelStockSizeType(
-                Height=label_height, 
+                Height=label_height,
                 Width=label_width,
             ),
             Instruction=None,

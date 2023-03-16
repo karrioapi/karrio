@@ -361,6 +361,23 @@ ShipmentRequestXML = """<tns:Envelope xmlns:auth="http://www.ups.com/schema/xpci
                         <ship:CountryCode>CountryCode</ship:CountryCode>
                     </ship:Address>
                 </ship:ShipTo>
+                <ship:ShipFrom>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipFrom>
                 <ship:PaymentInformation>
                     <ship:ShipmentCharge>
                         <ship:Type>01</ship:Type>
@@ -473,6 +490,23 @@ ShipmentRequestWithPresetXML = """<tns:Envelope xmlns:auth="http://www.ups.com/s
                         <ship:CountryCode>CountryCode</ship:CountryCode>
                     </ship:Address>
                 </ship:ShipTo>
+                <ship:ShipFrom>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipFrom>
                 <ship:PaymentInformation>
                     <ship:ShipmentCharge>
                         <ship:Type>01</ship:Type>
