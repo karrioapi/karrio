@@ -82,8 +82,8 @@ def shipment_request(
     request = lib.Envelope(
         Header=lib.Header(
             provider_utils.AuthentificationType(
-                user=settings.app_id,
-                signature=settings.signature,
+                user=settings.username,
+                signature=settings.password,
             ),
         ),
         Body=lib.Body(

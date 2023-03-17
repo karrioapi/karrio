@@ -165,8 +165,8 @@ ParsedCancelShipmentResponse = [
 ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cis="http://dhl.de/webservice/cisbase" xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0">
     <soapenv:Header>
         <cis:Authentification>
-            <cis:user>app_01</cis:user>
-            <cis:signature>pass</cis:signature>
+            <cis:user>developerid</cis:user>
+            <cis:signature>password</cis:signature>
         </cis:Authentification>
     </soapenv:Header>
     <soapenv:Body>
@@ -251,8 +251,8 @@ InternationalShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schema
     xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0">
     <soapenv:Header>
         <cis:Authentification>
-            <cis:user>2222222222_01</cis:user>
-            <cis:signature>pass</cis:signature>
+            <cis:user>developerid</cis:user>
+            <cis:signature>password</cis:signature>
         </cis:Authentification>
     </soapenv:Header>
     <soapenv:Body>
@@ -362,8 +362,8 @@ InternationalShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schema
 ShipmentCancelRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:cis="http://dhl.de/webservice/cisbase" xmlns:ns="http://dhl.de/webservices/businesscustomershipping/3.0">
     <soapenv:Header>
         <cis:Authentification>
-            <cis:user>app_01</cis:user>
-            <cis:signature>pass</cis:signature>
+            <cis:user>developerid</cis:user>
+            <cis:signature>password</cis:signature>
         </cis:Authentification>
     </soapenv:Header>
     <soapenv:Body>
