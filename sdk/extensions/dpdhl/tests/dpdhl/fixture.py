@@ -5,7 +5,7 @@ gateway = karrio.gateway["dpdhl"].create(
         username="username",
         password="password",
         signature="pass",
-        app_id="2222222222_01",
-        account_number="22222222220104",
+        app_id="app_01",
+        account_number="2222222222",
     )
 )

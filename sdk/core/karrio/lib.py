@@ -65,7 +65,7 @@ def text(
     separator: str = None,
 ) -> typing.Optional[str]:
     """Returns a joined text
-    
+
     Example:
         result1 = text("string text 1", "string text 2")
         print(result1) # "string text 1 string text 2"
@@ -87,7 +87,7 @@ def text(
 
     if _text is None:
         return None
-    
+
     return typing.cast(str, _text[0:max] if max else _text)
 
 
@@ -622,9 +622,4 @@ def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
     Only use it when you are running something unstable that you
     don't mind if it fails.
     """
-    try:
-        return callable()
-    except Exception as e:
-        if warning:
-            logger.warning(string.Template(warning).substitute(error=e))
-        return None
+    return utils.failsafe(callable, warning=warning)

@@ -2,9 +2,10 @@ import io
 import re
 import ssl
 import uuid
+import string
+import base64
 import asyncio
 import logging
-import base64
 import urllib.parse
 from PyPDF2 import PdfMerger
 from PIL import Image, ImageFile
@@ -24,6 +25,15 @@ NEW_LINE = """
 
 def identity(value: Any) -> Any:
     return value
+
+
+def failsafe(callable: Callable[[], T], warning: str = None) -> T:
+    try:
+        return callable()
+    except Exception as e:
+        if warning:
+            logger.warning(string.Template(warning).substitute(error=e))
+        return None
 
 
 def to_buffer(encoded_file: str, **kwargs) -> io.BytesIO:
@@ -107,7 +117,11 @@ def bundle_base64(base64_strings: List[str], format: str = "PDF") -> str:
 
 
 def decode_bytes(byte):
-    return byte.decode("utf-8")
+    return (
+        failsafe(lambda: byte.decode("utf-8")) or
+        failsafe(lambda: byte.decode("ISO-8859-1")) or
+        byte.decode("utf-8")
+    )
 
 
 def process_request(

@@ -14,7 +14,7 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
 # -e ./sdk/extensions/dhl_express
-# -e ./sdk/extensions/dhl_poland
+-e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 -e ./sdk/extensions/dpdhl
