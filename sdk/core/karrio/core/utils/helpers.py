@@ -184,7 +184,7 @@ def process_error(
     if on_error is not None:
         _error = on_error(error)
     else:
-        _error = error.read().decode("utf-8")
+        _error = decode_bytes(error.read())
 
     if trace:
         trace({"request_id": request_id, "error": _error}, "error")
