@@ -1,22 +1,23 @@
+import yaml
 import pydoc
+import typing
 import logging
-from typing import Generic, Type, Optional, Union, TypeVar, Any, NamedTuple, List
 from django.db import models
 from django.conf import settings
 from django.db import transaction
-from django.forms.models import model_to_dict
 from rest_framework import serializers
+from django.forms.models import model_to_dict
 from drf_spectacular.types import OpenApiTypes
 
 import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
-T = TypeVar("T")
+T = typing.TypeVar("T")
 
 
-class Context(NamedTuple):
-    user: Any
-    org: Any = None
+class Context(typing.NamedTuple):
+    user: typing.Any
+    org: typing.Any = None
     test_mode: bool = None
 
     def __getitem__(self, item):
@@ -33,7 +34,7 @@ class DecoratedSerializer:
         self._serializer = serializer
 
     @property
-    def data(self) -> Optional[dict]:
+    def data(self) -> typing.Optional[dict]:
         return self._serializer.validated_data if self._serializer is not None else None
 
     @property
@@ -56,7 +57,7 @@ class AbstractSerializer:
 
     @classmethod
     def map(
-        cls, instance=None, data: Union[str, dict] = None, **kwargs
+        cls, instance=None, data: typing.Union[str, dict] = None, **kwargs
     ) -> "DecoratedSerializer":
         if data is None and instance is None:
             serializer = None
@@ -139,7 +140,7 @@ Custom serializer utilities functions
 """
 
 
-def PaginatedResult(serializer_name: str, content_serializer: Type[Serializer]):
+def PaginatedResult(serializer_name: str, content_serializer: typing.Type[Serializer]):
     return type(
         serializer_name,
         (Serializer,),
@@ -156,7 +157,7 @@ def PaginatedResult(serializer_name: str, content_serializer: Type[Serializer]):
     )
 
 
-def owned_model_serializer(serializer: Type[Serializer]):
+def owned_model_serializer(serializer: typing.Type[Serializer]):
     class MetaSerializer(serializer):  # type: ignore
         context: dict = {}
 
@@ -218,7 +219,7 @@ def link_org(entity: ModelSerializer, context: Context):
         )
 
 
-def bulk_link_org(entities: List[models.Model], context: Context):
+def bulk_link_org(entities: typing.List[models.Model], context: Context):
     if len(entities) == 0 or settings.MULTI_ORGANIZATIONS is False:
         return
 
@@ -251,7 +252,6 @@ def save_many_to_many_data(
     payload: dict = None,
     **kwargs,
 ):
-
     if not any((key in payload for key in [name])):
         return None
 
@@ -290,7 +290,6 @@ def save_one_to_one_data(
     payload: dict = None,
     **kwargs,
 ):
-
     if name not in payload:
         return None
 
@@ -314,7 +313,7 @@ def save_one_to_one_data(
 
 
 def allow_model_id(model_paths: []):  # type: ignore
-    def _decorator(serializer: Type[Serializer]):
+    def _decorator(serializer: typing.Type[Serializer]):
         class ModelIdSerializer(serializer):  # type: ignore
             def __init__(self, *args, **kwargs):
                 for param, model_path in model_paths:
@@ -346,7 +345,7 @@ def allow_model_id(model_paths: []):  # type: ignore
     return _decorator
 
 
-def make_fields_optional(serializer: Type[ModelSerializer]):
+def make_fields_optional(serializer: typing.Type[ModelSerializer]):
     _name = f"Partial{serializer.__name__}"
 
     class _Meta(serializer.Meta):  # type: ignore
@@ -361,7 +360,7 @@ def make_fields_optional(serializer: Type[ModelSerializer]):
     return type(_name, (serializer,), dict(Meta=_Meta))
 
 
-def exclude_id_field(serializer: Type[ModelSerializer]):
+def exclude_id_field(serializer: typing.Type[ModelSerializer]):
     class _Meta(serializer.Meta):  # type: ignore
         exclude = [*getattr(serializer.Meta, "exclude", []), "id"]
 
@@ -377,7 +376,9 @@ def is_field_optional(model, field_name: str) -> bool:
     return False
 
 
-def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> dict:
+def process_dictionaries_mutations(
+    keys: typing.List[str], payload: dict, entity
+) -> dict:
     """This function checks if the payload contains dictionary with the keys and if so, it
     mutate the values content by removing any null values and adding the new one.
     """
@@ -388,3 +389,19 @@ def process_dictionaries_mutations(keys: List[str], payload: dict, entity) -> di
         data.update({key: value})
 
     return data
+
+
+def get_query_flag(
+    key: str,
+    query_params: dict,
+    nullable: bool = True,
+) -> typing.Optional[bool]:
+    _value = yaml.safe_load(query_params.get(key) or "")
+
+    if key in query_params and _value is not False:
+        return True
+
+    if nullable:
+        return _value
+
+    return False
