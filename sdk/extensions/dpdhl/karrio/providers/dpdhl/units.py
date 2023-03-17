@@ -1,3 +1,4 @@
+import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -88,12 +89,15 @@ class ServicePrefix(lib.Enum):
 
     @classmethod
     def account_suffix(
-        cls,
+        cls: lib.Enum,
         account: str,
         service: str,
         options: units.Options,
         is_international: bool = None,
     ):
+        if len(account) > 10:
+            return account
+
         _prefix = cls[service].value
         _suffix = "01"
 
