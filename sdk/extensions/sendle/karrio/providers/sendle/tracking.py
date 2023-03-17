@@ -49,7 +49,7 @@ def _extract_detail(
             TrackingEvent(
                 date=_best_time(DF.fdate, event),
                 description=event.description,
-                location=f"{event.origin_location} to {event.destination_location}" if (event.origin_location and event.destination_location) else event.location,
+                location=f"{event.origin_location} to {event.destination_location}"
                 code=event.event_type,
                 time=_best_time(DF.ftime, event),
             )
@@ -63,11 +63,12 @@ def _extract_detail(
 def _best_time(parsingFunction, event: SendleTrackingEvent) -> str:
     if event.local_scan_time is not None:
         try:
-            return parsingFunction(event.local_scan_time, "%Y-%m-%dT%H:%M:%S")
-        except:
             # local_scan_time's format is not strictly defined,
             # but this is the most common one
-            ...
+            return parsingFunction(event.local_scan_time, "%Y-%m-%dT%H:%M:%S")
+        except ValueError:
+            # so if we get a ValueError, that's okay
+            pass
     return parsingFunction(event.scan_time, "%Y-%m-%dT%H:%M:%SZ")
 
 
