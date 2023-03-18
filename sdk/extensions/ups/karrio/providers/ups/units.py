@@ -54,6 +54,20 @@ class Incoterm(utils.Enum):
     FOB = "Free On Board"
 
 
+class CustomsContentType(utils.Enum):
+    sale = "SALE"
+    gift = "GIFT"
+    sample = "SAMPLE"
+    repair = "REPAIR"
+    return_merchandise = "RETURN"
+    inter_company_data = "INTERCOMPANYDATA"
+    other = "Any other reason"
+
+    """ Unified Content type mapping """
+    documents = other
+    merchandise = sale
+
+
 class WeightUnit(utils.Enum):
     KG = "KGS"
     LB = "LBS"

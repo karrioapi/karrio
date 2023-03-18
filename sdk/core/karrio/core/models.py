@@ -410,16 +410,16 @@ class DocumentUploadRequest:
     """shipment document upload request unified data type."""
 
     document_files: List[DocumentFile] = JList[DocumentFile, REQUIRED]
-    options: Dict = {}
-    reference: str = None
     tracking_number: str = None
+    reference: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
 class DocumentDetails:
     """Karrio unified uploaded document id info data type."""
 
-    document_id: str
+    doc_id: str
     file_name: str
 
 

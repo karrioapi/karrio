@@ -26,12 +26,13 @@ def _extract_error(error_node: Element, settings: Settings) -> Message:
 def parse_rest_error_response(
     errors: List[dict], settings: Settings, details: dict = None
 ) -> List[Message]:
+    print()
     return [
         Message(
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
-            code=error.get("code"),
-            message=error.get("message"),
+            code=error.get("code") or error.get("Code"),
+            message=error.get("message") or error.get("Description"),
             details=details,
         )
         for error in errors

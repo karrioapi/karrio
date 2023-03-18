@@ -17,8 +17,11 @@ def parse_document_upload_response(
     raw_documents = [
         (name, result["UploadResponse"]["FormsHistoryDocumentID"])
         for name, result in responses
-        if "UploadResponse" in result
-        and result["UploadResponse"].get("FormsHistoryDocumentID") is not None
+        if (
+            "Fault" not in result
+            and "UploadResponse" in result
+            and result["UploadResponse"].get("FormsHistoryDocumentID") is not None
+        )
     ]
     messages: typing.List[models.Message] = sum(
         [
@@ -36,6 +39,20 @@ def parse_document_upload_response(
                         if "UploadResponse" in result
                         else []
                     ),
+                    *(  # get errors from the API Fault
+                        [
+                            result["Fault"]["detail"]["Errors"]["ErrorDetail"][
+                                "PrimaryErrorCode"
+                            ]
+                        ]
+                        if result.get("Fault", {})
+                        .get("detail", {})
+                        .get("Errors", {})
+                        .get("ErrorDetail", {})
+                        .get("PrimaryErrorCode")
+                        is not None
+                        else []
+                    ),
                 ],
                 settings,
                 dict(file_name=file_name),
@@ -45,7 +62,11 @@ def parse_document_upload_response(
         [],
     )
 
-    details = _extract_details(raw_documents, settings)
+    details = (
+        _extract_details(raw_documents, settings)
+        if any(raw_documents)
+        else None
+    )
 
     return details, messages
 
@@ -64,7 +85,7 @@ def _extract_details(
         carrier_name=settings.carrier_id,
         documents=[
             models.DocumentDetails(
-                document_id=doc.DocumentID,
+                doc_id=doc.DocumentID,
                 file_name=name,
             )
             for name, doc in documents

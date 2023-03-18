@@ -64,7 +64,7 @@ def _extract_details(
         carrier_name=settings.carrier_id,
         documents=[
             models.DocumentDetails(
-                document_id=doc.DocumentID,
+                doc_id=doc.DocumentID,
                 file_name=name,
             )
             for name, doc in documents

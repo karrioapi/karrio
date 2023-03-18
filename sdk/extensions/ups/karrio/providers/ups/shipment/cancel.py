@@ -3,7 +3,6 @@ from ups_lib import common
 from ups_lib.void_web_service_schema import (
     VoidShipmentRequest,
     CodeDescriptionType,
-    RequestType,
     VoidShipmentType,
 )
 from karrio.core.utils import Envelope, Element, create_envelope, Serializable, XP
@@ -14,6 +13,7 @@ from karrio.core.models import (
 )
 from karrio.providers.ups.utils import Settings, default_request_serializer
 from karrio.providers.ups.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_shipment_cancel_response(
@@ -60,9 +60,23 @@ def shipment_cancel_request(
         ),
     )
 
-    return Serializable(
+    return lib.Serializable(
         request,
-        default_request_serializer(
-            "void", 'xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1"'
+        lambda envelope: lib.envelope_serializer(
+            envelope,
+            namespace=(
+                'xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"'
+                ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
+                ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+                ' xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"'
+                ' xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1"'
+            ),
+            prefixes=dict(
+                Request="common",
+                Envelope="soapenv",
+                UPSSecurity="upss",
+                VoidShipmentRequest="void",
+            ),
         ),
     )

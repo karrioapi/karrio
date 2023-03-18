@@ -1376,7 +1376,11 @@ class DocumentFileData(serializers.Serializer):
     )
     doc_name = serializers.CharField(
         required=True,
-        help_text="A file name",
+        help_text="The file name",
+    )
+    doc_format = serializers.CharField(
+        required=True,
+        help_text="The file format",
     )
     doc_type = serializers.CharField(
         required=False,
@@ -1414,7 +1418,7 @@ class DocumentUploadData(serializers.Serializer):
 
 
 class DocumentDetails(serializers.Serializer):
-    document_id = serializers.CharField(
+    doc_id = serializers.CharField(
         required=False,
         help_text="The uploaded document id.",
     )
