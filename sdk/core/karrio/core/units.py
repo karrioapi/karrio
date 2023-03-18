@@ -887,6 +887,14 @@ class ShippingOptions(Options):
     def signature_confirmation(self) -> utils.OptionEnum:
         return self[ShippingOption.signature_confirmation.name]
 
+    @property
+    def doc_files(self) -> utils.OptionEnum:
+        return self[ShippingOption.doc_files.name]
+
+    @property
+    def doc_references(self) -> utils.OptionEnum:
+        return self[ShippingOption.doc_references.name]
+
 
 class CustomsOption(utils.Enum):
     """common shipment customs identifiers"""

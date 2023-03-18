@@ -40,6 +40,7 @@ from karrio.server.core.serializers import (
     Message,
     Rate,
 )
+from karrio.server.manager.serializers.document import DocumentUploadSerializer
 from karrio.server.manager.serializers.address import AddressSerializer
 from karrio.server.manager.serializers.customs import CustomsSerializer
 from karrio.server.manager.serializers.parcel import ParcelSerializer
@@ -449,9 +450,9 @@ def buy_shipment_label(
         carrier_id=rate["carrier_id"],
         test_mode=rate["test_mode"],
     )
-    is_paperless_trade = "paperless" in carrier.capabilities and (
-        shipment.options.get("paperless_trade") == True
-        or shipment.options.get("fedex_electronic_trade_documents") == True
+    is_paperless_trade = (
+        "paperless" in carrier.capabilities
+        and shipment.options.get("paperless_trade") == True
     )
     pre_purchase_generation = any(invoice_template or "") and is_paperless_trade
 
@@ -461,8 +462,11 @@ def buy_shipment_label(
         shipment.selected_rate_carrier = carrier
         document = generate_custom_invoice(invoice_template, shipment)
         invoice = dict(invoice=document["doc_file"])
+
+        # TODO:: Check support for dedicated document upload before upload...
+        upload = upload_customs_forms(shipment, document, context=context)
         extra.update(
-            options={**shipment.options, **dict(doc_files=[document])},
+            options={**shipment.options, **dict(doc_references=upload.documents)},
         )
 
     # Submit shipment to carriers
@@ -676,3 +680,19 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
     logger.info("> custom document successfully generated.")
 
     return document
+
+
+def upload_customs_forms(shipment: models.Shipment, document: dict, context = None):
+    return (
+        DocumentUploadSerializer.map(
+            getattr(shipment, "shipment_upload_record", None),
+            data=dict(
+                document_files=[document],
+                shipment_id=shipment.id,
+                reference=shipment.id,
+            ),
+            context=context,
+        )
+        .save(shipment=shipment)
+        .instance
+    )

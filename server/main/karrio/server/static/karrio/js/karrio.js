@@ -1257,7 +1257,7 @@ var Karrio = (function () {
             return json;
         }
         return {
-            'document_id': !exists(json, 'document_id') ? undefined : json['document_id'],
+            'doc_id': !exists(json, 'doc_id') ? undefined : json['doc_id'],
             'file_name': !exists(json, 'file_name') ? undefined : json['file_name'],
         };
     }
@@ -1273,6 +1273,7 @@ var Karrio = (function () {
         return {
             'doc_file': value.doc_file,
             'doc_name': value.doc_name,
+            'doc_format': value.doc_format,
             'doc_type': value.doc_type,
         };
     }
@@ -5572,6 +5573,9 @@ var Karrio = (function () {
                             queryParameters = {};
                             if (requestParameters.hub !== undefined) {
                                 queryParameters['hub'] = requestParameters.hub;
+                            }
+                            if (requestParameters.pendingPickup !== undefined) {
+                                queryParameters['pending_pickup'] = requestParameters.pendingPickup;
                             }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';

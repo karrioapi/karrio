@@ -173,6 +173,7 @@ def generate_document(slug: str, shipment, **kwargs) -> dict:
 
     return dict(
         doc_type=None,
+        doc_format="PDF",
         doc_name=f"{template.name}.pdf",
         doc_file=base64.b64encode(document).decode("utf-8"),
     )

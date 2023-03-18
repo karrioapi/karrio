@@ -16,8 +16,10 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # required carrier specific properties
     username: str  # type:ignore
     password: str  # type:ignore
-    signature: str  # type:ignore
-    app_id: str  # type:ignore
+    app_id: str = ""
+    app_token: str = ""
+    zt_id: str = ""
+    zt_password: str = ""
     account_number: str = None
     language_code: str = "en"
 

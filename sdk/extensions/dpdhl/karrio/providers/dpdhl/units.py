@@ -1,3 +1,4 @@
+import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -75,6 +76,77 @@ class ShippingService(lib.Enum):
     dpdhl_paket_connect = "V55PAK"
     dpdhl_warenpost = "V62WP"
     dpdhl_warenpost_international = "V66WPI"
+    dpdhl_retoure = ""
+
+
+class ServicePrefix(lib.Enum):
+    V01PAK = "01"
+    V53WPAK = "53"
+    V54EPAK = "54"
+    V55PAK = "55"
+    V62WP = "62"
+    V66WPI = "66"
+
+    @classmethod
+    def account_suffix(
+        cls: lib.Enum,
+        account: str,
+        service: str,
+        options: units.Options,
+        is_international: bool = None,
+    ):
+        if len(account) > 10:
+            return account
+
+        _prefix = cls[service].value
+        _suffix = "01"
+
+        if service == cls.V01PAK.name and (
+            options.dpdhl_additional_insurance.state is not None
+            or options.dpdhl_cash_on_delivery.state is not None
+        ):
+            _suffix = "03"
+
+        if (
+            service == cls.V53WPAK.name
+            and is_international
+            and options.dpdhl_additional_insurance.state is None
+            and options.dpdhl_cash_on_delivery.state is None
+            and options.dpdhl_premium.state is None
+        ):
+            _suffix = "02"
+
+        if service == cls.V54EPAK.name and options.dpdhl_go_green.state is None:
+            _suffix = "02"
+        if service == cls.V54EPAK.name and (
+            options.dpdhl_bulky_goods.state is not None
+        ):
+            _suffix = "03"
+
+        if (
+            service == cls.V55PAK.name
+            and options.dpdhl_additional_insurance.state is None
+            and options.dpdhl_bulky_goods.state is None
+            and options.dpdhl_go_green.state is None
+        ):
+            _suffix = "02"
+
+        if service == cls.V62WP.name:
+            _suffix = "01"
+
+        if (
+            service == cls.V66WPI.name
+            and options.dpdhl_go_green.state is None
+            and options.dpdhl_premium.state is None
+        ):
+            _suffix = "03"
+        if service == cls.V66WPI.name and (
+            options.dpdhl_go_green.state is not None
+            and options.dpdhl_premium.state is not None
+        ):
+            _suffix = "04"
+
+        return f"{account}{_prefix}{_suffix}"
 
 
 class ShippingOption(lib.Enum):
@@ -87,6 +159,7 @@ class ShippingOption(lib.Enum):
     dpdhl_return_receipt = lib.OptionEnum("ReturnReceipt", bool)
     dpdhl_preferred_neighbour = lib.OptionEnum("PreferredNeighbour")
     dpdhl_preferred_location = lib.OptionEnum("PreferredLocation")
+    dpdhl_notification = lib.OptionEnum("Notification")
     dpdhl_visual_check_of_age = lib.OptionEnum("VisualCheckOfAge", bool)
     dpdhl_named_person_only = lib.OptionEnum("NamedPersonOnly", bool)
     dpdhl_identcheck = lib.OptionEnum("code", lib.to_dict)
@@ -102,6 +175,8 @@ class ShippingOption(lib.Enum):
 
     """ Unified Option type mapping """
     insurance = dpdhl_additional_insurance
+    cash_on_dlivery = dpdhl_cash_on_delivery
+    email_notification = dpdhl_notification
 
 
 def shipping_options_initializer(

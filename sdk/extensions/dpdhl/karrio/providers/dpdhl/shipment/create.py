@@ -62,9 +62,29 @@ def shipment_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
+    account_number = provider_units.ServicePrefix.account_suffix(
+        settings.account_number,
+        service=service,
+        options=options,
+        is_international=shipper.country_code != recipient.country_code,
+    )
+    return_account_number = (
+        provider_units.ServicePrefix.account_suffix(
+            options.return_account_number.state,
+            service=service,
+            options=options,
+            is_international=shipper.country_code != recipient.country_code,
+        )
+        if options.return_account_number.state is not None
+        else account_number
+    )
+
     request = lib.Envelope(
         Header=lib.Header(
-            settings.AuthentificationType,
+            provider_utils.AuthentificationType(
+                user=("2222222222_01" if settings.test_mode else settings.username),
+                signature=("pass" if settings.test_mode else settings.password),
+            ),
         ),
         Body=lib.Body(
             dpdhl.CreateShipmentOrderRequest(
@@ -78,7 +98,7 @@ def shipment_request(
                         Shipment=dpdhl.ShipmentType(
                             ShipmentDetails=dpdhl.ShipmentDetailsTypeType(
                                 product=service,
-                                accountNumber=settings.account_number,
+                                accountNumber=account_number,
                                 customerReference=None,
                                 shipmentDate=(
                                     options.shipment_date.state
@@ -87,10 +107,7 @@ def shipment_request(
                                 costCentre=(settings.metadata or {}).get(
                                     "cost-reference"
                                 ),
-                                returnShipmentAccountNumber=(
-                                    options.return_account_number.state
-                                    or settings.account_number
-                                ),
+                                returnShipmentAccountNumber=return_account_number,
                                 returnShipmentReference=None,
                                 ShipmentItem=dpdhl.ShipmentItemType(
                                     weightInKG=package.weight.KG,
@@ -98,90 +115,94 @@ def shipment_request(
                                     widthInCM=package.width.CM,
                                     heightInCM=package.height.CM,
                                 ),
-                                Service=dpdhl.ShipmentService(
-                                    IndividualSenderRequirement=(
-                                        int(
-                                            options.dpdhl_individual_sender_requirement.state
-                                        )
-                                        if "dpdhl_individual_sender_requirement"
-                                        in options
-                                        else None
-                                    ),
-                                    PackagingReturn=(
-                                        int(options.dpdhl_packaging_return.state)
-                                        if "dpdhl_packaging_return" in options
-                                        else None
-                                    ),
-                                    Endorsement=(
-                                        int(options.dpdhl_endorsement.state)
-                                        if "dpdhl_endorsement" in options
-                                        else None
-                                    ),
-                                    VisualCheckOfAge=(
-                                        int(options.dpdhl_visual_check_of_age.state)
-                                        if "dpdhl_visual_check_of_age" in options
-                                        else None
-                                    ),
-                                    PreferredLocation=options.dpdhl_preferred_location.state,
-                                    PreferredNeighbour=options.dpdhl_preferred_neighbour.state,
-                                    PreferredDay=options.dpdhl_preferred_day.state,
-                                    NoNeighbourDelivery=(
-                                        int(options.dpdhl_no_neighbour_delivery.state)
-                                        if "dpdhl_no_neighbour_delivery" in options
-                                        else None
-                                    ),
-                                    NamedPersonOnly=(
-                                        int(options.dpdhl_named_person_only.state)
-                                        if "dpdhl_named_person_only" in options
-                                        else None
-                                    ),
-                                    ReturnReceipt=(
-                                        int(options.dpdhl_return_receipt.state)
-                                        if "dpdhl_return_receipt" in options
-                                        else None
-                                    ),
-                                    Premium=(
-                                        int(options.dpdhl_premium.state)
-                                        if "dpdhl_premium" in options
-                                        else None
-                                    ),
-                                    CashOnDelivery=options.dpdhl_cash_on_delivery.state,
-                                    PDDP=(
-                                        int(
-                                            getattr(customs.duty, "incoterm", None)
-                                            == "DDP"
-                                        )
-                                        if customs.is_defined
-                                        else None
-                                    ),
-                                    AdditionalInsurance=options.dpdhl_additional_insurance.state,
-                                    BulkyGoods=(
-                                        int(options.dpdhl_bulky_goods.state)
-                                        if "dpdhl_bulky_goods" in options
-                                        else None
-                                    ),
-                                    IdentCheck=(
-                                        dpdhl.IdentType(
-                                            surname=options.dpdhl_identcheck.state.get(
-                                                "surname"
-                                            ),
-                                            givenName=options.dpdhl_identcheck.state.get(
-                                                "givenName"
-                                            ),
-                                            dateOfBirth=options.dpdhl_identcheck.state.get(
-                                                "dateOfBirth"
-                                            ),
-                                            minimumAge=options.dpdhl_identcheck.state.get(
-                                                "minimumAge"
-                                            ),
-                                        )
-                                        if "dpdhl_identcheck" in options
-                                        else None
-                                    ),
-                                    ParcelOutletRouting=options.email_notification_to.state,
-                                )
-                                if any(options.items())
-                                else None,
+                                Service=(
+                                    dpdhl.ShipmentService(
+                                        IndividualSenderRequirement=(
+                                            int(
+                                                options.dpdhl_individual_sender_requirement.state
+                                            )
+                                            if "dpdhl_individual_sender_requirement"
+                                            in options
+                                            else None
+                                        ),
+                                        PackagingReturn=(
+                                            int(options.dpdhl_packaging_return.state)
+                                            if "dpdhl_packaging_return" in options
+                                            else None
+                                        ),
+                                        Endorsement=(
+                                            int(options.dpdhl_endorsement.state)
+                                            if "dpdhl_endorsement" in options
+                                            else None
+                                        ),
+                                        VisualCheckOfAge=(
+                                            int(options.dpdhl_visual_check_of_age.state)
+                                            if "dpdhl_visual_check_of_age" in options
+                                            else None
+                                        ),
+                                        PreferredLocation=options.dpdhl_preferred_location.state,
+                                        PreferredNeighbour=options.dpdhl_preferred_neighbour.state,
+                                        PreferredDay=options.dpdhl_preferred_day.state,
+                                        NoNeighbourDelivery=(
+                                            int(
+                                                options.dpdhl_no_neighbour_delivery.state
+                                            )
+                                            if "dpdhl_no_neighbour_delivery" in options
+                                            else None
+                                        ),
+                                        NamedPersonOnly=(
+                                            int(options.dpdhl_named_person_only.state)
+                                            if "dpdhl_named_person_only" in options
+                                            else None
+                                        ),
+                                        ReturnReceipt=(
+                                            int(options.dpdhl_return_receipt.state)
+                                            if "dpdhl_return_receipt" in options
+                                            else None
+                                        ),
+                                        Premium=(
+                                            int(options.dpdhl_premium.state)
+                                            if "dpdhl_premium" in options
+                                            else None
+                                        ),
+                                        CashOnDelivery=options.dpdhl_cash_on_delivery.state,
+                                        PDDP=(
+                                            int(
+                                                getattr(customs.duty, "incoterm", None)
+                                                == "DDP"
+                                            )
+                                            if customs.is_defined
+                                            else None
+                                        ),
+                                        AdditionalInsurance=options.dpdhl_additional_insurance.state,
+                                        BulkyGoods=(
+                                            int(options.dpdhl_bulky_goods.state)
+                                            if "dpdhl_bulky_goods" in options
+                                            else None
+                                        ),
+                                        IdentCheck=(
+                                            dpdhl.IdentType(
+                                                surname=options.dpdhl_identcheck.state.get(
+                                                    "surname"
+                                                ),
+                                                givenName=options.dpdhl_identcheck.state.get(
+                                                    "givenName"
+                                                ),
+                                                dateOfBirth=options.dpdhl_identcheck.state.get(
+                                                    "dateOfBirth"
+                                                ),
+                                                minimumAge=options.dpdhl_identcheck.state.get(
+                                                    "minimumAge"
+                                                ),
+                                            )
+                                            if "dpdhl_identcheck" in options
+                                            else None
+                                        ),
+                                        ParcelOutletRouting=options.email_notification_to.state,
+                                    )
+                                    if any(options.items())
+                                    else None
+                                ),
                                 Notification=(
                                     dpdhl.ShipmentNotificationType(
                                         recipientEmailAddress=(
@@ -206,8 +227,7 @@ def shipment_request(
                                         shipper.street_name or shipper.address_line1
                                     ),
                                     streetNumber=(
-                                        shipper.street_number
-                                        or shipper.address_line2
+                                        shipper.street_number or shipper.address_line2
                                     ),
                                     addressAddition=None,
                                     dispatchingInformation=None,
@@ -231,10 +251,7 @@ def shipment_request(
                             ),
                             ShipperReference=payload.reference,
                             Receiver=dpdhl.ReceiverType(
-                                name1=(
-                                    recipient.person_name
-                                    or recipient.company_name
-                                ),
+                                name1=(recipient.person_name or recipient.company_name),
                                 Address=dpdhl.ReceiverNativeAddressType(
                                     name2=recipient.company_name,
                                     name3=None,
@@ -296,7 +313,13 @@ def shipment_request(
                                     WithElectronicExportNtfctn=None,
                                     ExportDocPosition=[
                                         dpdhl.ExportDocPositionType(
-                                            description=lib.text(item.title or item.description or "N/A" or item.sku, max=35),
+                                            description=lib.text(
+                                                item.title
+                                                or item.description
+                                                or "N/A"
+                                                or item.sku,
+                                                max=35,
+                                            ),
                                             countryCodeOrigin=(
                                                 item.origin_country
                                                 or shipper.country_code

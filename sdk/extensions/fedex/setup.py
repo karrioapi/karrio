@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.fedex",
-    version="2023.1.11",
+    version="2023.1.12",
     description="Karrio - Fedex Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

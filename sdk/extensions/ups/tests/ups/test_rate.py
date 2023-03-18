@@ -111,6 +111,7 @@ rate_req_with_package_preset_data = {
         {
             "package_preset": "ups_express_pak",
             "description": "TV",
+            "weight": 4.0,
         }
     ],
     "reference": "Your Customer Context",
@@ -246,8 +247,7 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
-                <common:RequestOption>Shop</common:RequestOption>
-                <common:RequestOption>Rate</common:RequestOption>
+                <common:RequestOption>Shoptimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
@@ -276,6 +276,12 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                 <rate:Service>
                     <rate:Code>11</rate:Code>
                 </rate:Service>
+                <rate:ShipmentTotalWeight>
+                    <rate:UnitOfMeasurement>
+                        <rate:Code>LBS</rate:Code>
+                    </rate:UnitOfMeasurement>
+                    <rate:Weight>4.0</rate:Weight>
+                </rate:ShipmentTotalWeight>
                 <rate:Package>
                     <rate:PackagingType>
                         <rate:Code>2a</rate:Code>
@@ -299,6 +305,9 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                     <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
                     <rate:RateChartIndicator></rate:RateChartIndicator>
                 </rate:ShipmentRatingOptions>
+                <rate:InvoiceLineTotal>
+                    <rate:MonetaryValue>1.0</rate:MonetaryValue>
+                </rate:InvoiceLineTotal>
                 <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
                 <rate:TaxInformationIndicator></rate:TaxInformationIndicator>
                 <rate:DeliveryTimeInformation>
@@ -328,8 +337,7 @@ RateRequestWithPackagePresetXML = """<tns:Envelope xmlns:tns="http://schemas.xml
     <tns:Body>
         <rate:RateRequest>
             <common:Request>
-                <common:RequestOption>Shop</common:RequestOption>
-                <common:RequestOption>Rate</common:RequestOption>
+                <common:RequestOption>Shoptimeintransit</common:RequestOption>
                 <common:TransactionReference>
                     <common:CustomerContext>Your Customer Context</common:CustomerContext>
                 </common:TransactionReference>
@@ -358,6 +366,12 @@ RateRequestWithPackagePresetXML = """<tns:Envelope xmlns:tns="http://schemas.xml
                 <rate:Service>
                     <rate:Code>11</rate:Code>
                 </rate:Service>
+                <rate:ShipmentTotalWeight>
+                    <rate:UnitOfMeasurement>
+                        <rate:Code>LBS</rate:Code>
+                    </rate:UnitOfMeasurement>
+                    <rate:Weight>4.0</rate:Weight>
+                </rate:ShipmentTotalWeight>
                 <rate:Package>
                     <rate:PackagingType>
                         <rate:Code>02</rate:Code>
@@ -370,11 +384,20 @@ RateRequestWithPackagePresetXML = """<tns:Envelope xmlns:tns="http://schemas.xml
                         <rate:Width>16.0</rate:Width>
                         <rate:Height>11.75</rate:Height>
                     </rate:Dimensions>
+                    <rate:PackageWeight>
+                        <rate:UnitOfMeasurement>
+                            <rate:Code>LBS</rate:Code>
+                        </rate:UnitOfMeasurement>
+                        <rate:Weight>4.0</rate:Weight>
+                    </rate:PackageWeight>
                 </rate:Package>
                 <rate:ShipmentRatingOptions>
                     <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
                     <rate:RateChartIndicator></rate:RateChartIndicator>
                 </rate:ShipmentRatingOptions>
+                <rate:InvoiceLineTotal>
+                    <rate:MonetaryValue>1.0</rate:MonetaryValue>
+                </rate:InvoiceLineTotal>
                 <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
                 <rate:TaxInformationIndicator></rate:TaxInformationIndicator>
                 <rate:DeliveryTimeInformation>

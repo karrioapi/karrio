@@ -22,11 +22,10 @@ class TestDPDHLTracking(unittest.TestCase):
         with patch("karrio.mappers.dpdhl.proxy.lib.request") as mock:
             mock.return_value = "<a></a>"
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
-            query = urllib.parse.urlencode(dict(xml=TrackingRequest))
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/rest/sendungsverfolgung?{query}",
+                f"{gateway.settings.server_url}/rest/sendungsverfolgung",
             )
 
     def test_parse_tracking_response(self):
@@ -131,7 +130,7 @@ ParsedErrorResponse = [
 ]
 
 
-TrackingRequest = """<data appname="2222222222_01" password="pass" request="d-get-piece-detail" language-code="en" piece-code="00340434161094042557"/>
+TrackingRequest = """<data appname="zt12345" password="geheim" request="d-get-piece-detail" language-code="en" piece-code="00340434161094042557"/>
 """
 
 TrackingResponse = """<?xml version="1.0" encoding="UTF-8"?>

@@ -44,6 +44,19 @@ class TestUPSDocument(unittest.TestCase):
                 lib.to_dict(parsed_response), ParsedDocumentUploadResponse
             )
 
+    def test_document_error_response_parsing(self):
+        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
+            mock.return_value = DocumentUploadErrorResponse
+            parsed_response = (
+                karrio.Document.upload(self.DocumentUploadRequest)
+                .from_(gateway)
+                .parse()
+            )
+            print(lib.to_dict(parsed_response))
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedDocumentUploadErrorResponse
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -66,13 +79,26 @@ ParsedDocumentUploadResponse = [
         "carrier_name": "ups",
         "documents": [
             {
-                "document_id": "2016-01-18-11.01.07.589501",
+                "doc_id": "2016-01-18-11.01.07.589501",
                 "file_name": "TestFile.txt",
             }
         ],
         "meta": {},
     },
     [],
+]
+
+ParsedDocumentUploadErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "code": "9590004",
+            "details": {"file_name": "TestFile.txt"},
+            "message": "Valid File Format is Required.",
+        }
+    ],
 ]
 
 
@@ -107,5 +133,24 @@ DocumentUploadResponse = """{
       "DocumentID": "2016-01-18-11.01.07.589501"
     }
   }
+}
+"""
+
+DocumentUploadErrorResponse = """{
+    "Fault": {
+        "faultcode": "Client",
+        "faultstring": "An exception has been raised as a result of client data.",
+        "detail": {
+            "Errors": {
+                "ErrorDetail": {
+                    "Severity": "Hard",
+                    "PrimaryErrorCode": {
+                        "Code": "9590004",
+                        "Description": "Valid File Format is Required."
+                    }
+                }
+            }
+        }
+    }
 }
 """

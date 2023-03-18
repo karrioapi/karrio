@@ -3,6 +3,7 @@ import rest_framework as drf
 
 import karrio.core.units as units
 import karrio.server.serializers as serializers
+import karrio.server.core.dataunits as dataunits
 import karrio.server.core.validators as validators
 import karrio.server.providers.models as providers
 
@@ -637,8 +638,10 @@ class TrackingData(serializers.Serializer):
         required=True,
         help_text="The package tracking number",
     )
-    carrier_name = serializers.CharField(
-        required=True, help_text="The tracking carrier"
+    carrier_name = serializers.ChoiceField(
+        choices=dataunits.NON_HUBS_CARRIERS,
+        required=True,
+        help_text="The tracking carrier",
     )
 
 
@@ -1373,7 +1376,11 @@ class DocumentFileData(serializers.Serializer):
     )
     doc_name = serializers.CharField(
         required=True,
-        help_text="A file name",
+        help_text="The file name",
+    )
+    doc_format = serializers.CharField(
+        required=True,
+        help_text="The file format",
     )
     doc_type = serializers.CharField(
         required=False,
@@ -1411,7 +1418,7 @@ class DocumentUploadData(serializers.Serializer):
 
 
 class DocumentDetails(serializers.Serializer):
-    document_id = serializers.CharField(
+    doc_id = serializers.CharField(
         required=False,
         help_text="The uploaded document id.",
     )

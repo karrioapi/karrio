@@ -41,7 +41,10 @@ def shipment_cancel_request(
 
     request = lib.Envelope(
         Header=lib.Header(
-            settings.AuthentificationType,
+            provider_utils.AuthentificationType(
+                user=("2222222222_01" if settings.test_mode else settings.username),
+                signature=("pass" if settings.test_mode else settings.password),
+            ),
         ),
         Body=lib.Body(
             dpdhl.DeleteShipmentOrderRequest(

@@ -39,14 +39,20 @@ def notify_webhooks(*args, **kwargs):
 
 
 @db_periodic_task(crontab(hour=f"*/{DATA_ARCHIVING_SCHEDULE}"))
-@utils.tenant_aware
 def periodic_data_archiving(*args, **kwargs):
     from karrio.server.events.task_definitions.base import archiving
 
-    utils.failsafe(
-        lambda: archiving.run_data_archiving(*args, **kwargs),
-        "An error occured during data archiving: $error",
-    )
+    @utils.run_on_all_tenants
+    def _run(**kwargs):
+        try:
+            utils.failsafe(
+                lambda: archiving.run_data_archiving(*args, **kwargs),
+                "An error occured during data archiving: $error",
+            )
+        except Exception as e:
+            logger.error(f"failed to crawl tracking statuses: {e}")
+
+    _run()
 
 TASK_DEFINITIONS = [
     background_trackers_update,

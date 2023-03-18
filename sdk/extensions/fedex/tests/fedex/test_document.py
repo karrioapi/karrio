@@ -73,7 +73,7 @@ ParsedDocumentUploadResponse = [
         "carrier_name": "carrier_id",
         "documents": [
             {
-                "document_id": "090493e1815c194e",
+                "doc_id": "090493e1815c194e",
                 "file_name": "vikas_coo.txt",
             }
         ],

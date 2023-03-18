@@ -9,11 +9,13 @@ class DPDHLSettings(providers.Carrier):
         verbose_name = 'Deutsche Post DHL Settings'
         verbose_name_plural = 'Deutsche Post DHL Settings'
 
-    app_id = models.CharField(max_length=100)
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    signature = models.CharField(max_length=100)
-    account_number = models.CharField(max_length=100, blank=True, default='')
+    zt_id = models.CharField(max_length=100, blank=True, null=True, default='')
+    zt_password = models.CharField(max_length=100, blank=True, null=True, default='')
+    app_id = models.CharField(max_length=100, blank=True, null=True, default='')
+    app_token = models.CharField(max_length=100, blank=True, null=True, default='')
+    account_number = models.CharField(max_length=100, blank=True, null=True, default='')
     services = models.ManyToManyField("ServiceLevel", blank=True)
 
     @property

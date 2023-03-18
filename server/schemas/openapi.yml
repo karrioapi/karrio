@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.1.11`.
+    The current version is `2023.1.12`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.1.11
+  version: 2023.1.12
 paths:
   /:
     get:
@@ -2825,6 +2825,13 @@ paths:
         name: hub
         schema:
           type: string
+      - in: query
+        name: pending_pickup
+        schema:
+          type: boolean
+        description: Add this flag to add the tracker whether the tracking info exist
+          or not.When the package is eventually picked up, the tracker with capture
+          real time updates.
       tags:
       - Trackers
       requestBody:
@@ -6648,7 +6655,7 @@ components:
     DocumentDetails:
       type: object
       properties:
-        document_id:
+        doc_id:
           type: string
           description: The uploaded document id.
         file_name:
@@ -6662,7 +6669,10 @@ components:
           description: A base64 file to upload
         doc_name:
           type: string
-          description: A file name
+          description: The file name
+        doc_format:
+          type: string
+          description: The file format
         doc_type:
           type: string
           nullable: true
@@ -6674,6 +6684,7 @@ components:
           maxLength: 50
       required:
       - doc_file
+      - doc_format
       - doc_name
     DocumentUploadData:
       type: object
@@ -10790,8 +10801,59 @@ components:
           type: string
           description: The package tracking number
         carrier_name:
+          enum:
+          - amazon_mws
+          - aramex
+          - australiapost
+          - canadapost
+          - canpar
+          - chronopost
+          - dhl_express
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpdhl
+          - fedex
+          - generic
+          - purolator
+          - royalmail
+          - sendle
+          - sf_express
+          - tnt
+          - ups
+          - ups_freight
+          - usps
+          - usps_international
+          - yanwen
+          - yunexpress
           type: string
-          description: The tracking carrier
+          description: |-
+            The tracking carrier
+
+            * `amazon_mws` - amazon_mws
+            * `aramex` - aramex
+            * `australiapost` - australiapost
+            * `canadapost` - canadapost
+            * `canpar` - canpar
+            * `chronopost` - chronopost
+            * `dhl_express` - dhl_express
+            * `dhl_poland` - dhl_poland
+            * `dhl_universal` - dhl_universal
+            * `dicom` - dicom
+            * `dpdhl` - dpdhl
+            * `fedex` - fedex
+            * `generic` - generic
+            * `purolator` - purolator
+            * `royalmail` - royalmail
+            * `sendle` - sendle
+            * `sf_express` - sf_express
+            * `tnt` - tnt
+            * `ups` - ups
+            * `ups_freight` - ups_freight
+            * `usps` - usps
+            * `usps_international` - usps_international
+            * `yanwen` - yanwen
+            * `yunexpress` - yunexpress
       required:
       - carrier_name
       - tracking_number
@@ -11180,25 +11242,25 @@ tags:
     | canpar | Canpar |
     | chronopost | Chronopost |
     | dhl_express | DHL Express |
-    | dhl_poland | DHL Parcel Poland |
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
-    | dpdhl | Deutsche Post DHL |
     | easypost | EasyPost |
     | eshipper | eShipper |
     | freightcom | Freightcom |
     | purolator | Purolator |
     | royalmail | Royal Mail |
-    | sendle | Sendle |
     | sf_express | SF-Express |
     | tnt | TNT |
-    | ups | UPS |
     | ups_freight | UPS Freight |
     | usps | USPS |
     | usps_international | USPS International |
     | yanwen | Yanwen |
     | yunexpress | Yunexpress |
+    | ups | UPS |
     | fedex | FedEx |
+    | dpdhl | Deutsche Post DHL |
+    | dhl_poland | DHL Parcel Poland |
+    | sendle | Sendle |
 
     ---
     ## Services
@@ -11290,26 +11352,6 @@ tags:
     | dhl_express_envelope_doc | X |
     | dhl_express_12_00_nondoc | Y |
     | dhl_destination_charges | Z |
-
-    ### DHL Parcel Poland
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dhl_poland_premium | PR |
-    | dhl_poland_polska | AH |
-    | dhl_poland_09 | 09 |
-    | dhl_poland_12 | 12 |
-    | dhl_poland_connect | EK |
-    | dhl_poland_international | PI |
-
-    ### Deutsche Post DHL
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dpdhl_paket | V01PAK |
-    | dpdhl_paket_international | V53WPAK |
-    | dpdhl_europaket | V54EPAK |
-    | dpdhl_paket_connect | V55PAK |
-    | dpdhl_warenpost | V62WP |
-    | dpdhl_warenpost_international | V66WPI |
 
     ### EasyPost
     | Code         | Service Name |
@@ -12152,46 +12194,6 @@ tags:
     | tnt_economy_express | 48N |
     | tnt_global_express | 15N |
 
-    ### UPS
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | ups_standard | 11 |
-    | ups_worldwide_expedited | 8 |
-    | ups_worldwide_express | 07 |
-    | ups_worldwide_express_plus | 54 |
-    | ups_worldwide_saver | 65 |
-    | ups_worldwide_economy_ddp | 72 |
-    | ups_worldwide_economy_ddu | 17 |
-    | ups_2nd_day_air | 02 |
-    | ups_2nd_day_air_am | 59 |
-    | ups_3_day_select | 12 |
-    | ups_expedited_mail_innovations | M4 |
-    | ups_first_class_mail | M2 |
-    | ups_ground | 03 |
-    | ups_next_day_air | 01 |
-    | ups_next_day_air_early | 14 |
-    | ups_next_day_air_saver | 13 |
-    | ups_priority_mail | M3 |
-    | ups_express_saver | 13 |
-    | ups_access_point_economy | 70 |
-    | ups_express | 01 |
-    | ups_express_early | 54 |
-    | ups_tm_worldwide_economy_ddp | 72 |
-    | ups_tm_worldwide_economy_ddu | 17 |
-    | ups_expedited | 08 |
-    | ups_express_12_00 | 74 |
-    | ups_tm_economy_ddp | 72 |
-    | ups_tm_economy_ddu | 17 |
-    | ups_express_plus | 54 |
-    | ups_today_dedicated_courier | 83 |
-    | ups_today_express | 85 |
-    | ups_today_express_saver | 86 |
-    | ups_today_standard | 82 |
-    | ups_worldwide_express_freight | 96 |
-    | ups_priority_mail_innovations | M5 |
-    | ups_economy_mail_innovations | M6 |
-    | ups_worldwide_express_freight_mid_day | 71 |
-
     ### USPS
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12247,6 +12249,46 @@ tags:
     | usps_online | Online |
     | usps_plus | Plus |
     | usps_bpm | BPM |
+
+    ### UPS
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | ups_standard | 11 |
+    | ups_worldwide_expedited | 8 |
+    | ups_worldwide_express | 07 |
+    | ups_worldwide_express_plus | 54 |
+    | ups_worldwide_saver | 65 |
+    | ups_worldwide_economy_ddp | 72 |
+    | ups_worldwide_economy_ddu | 17 |
+    | ups_2nd_day_air | 02 |
+    | ups_2nd_day_air_am | 59 |
+    | ups_3_day_select | 12 |
+    | ups_expedited_mail_innovations | M4 |
+    | ups_first_class_mail | M2 |
+    | ups_ground | 03 |
+    | ups_next_day_air | 01 |
+    | ups_next_day_air_early | 14 |
+    | ups_next_day_air_saver | 13 |
+    | ups_priority_mail | M3 |
+    | ups_express_saver | 13 |
+    | ups_access_point_economy | 70 |
+    | ups_express | 01 |
+    | ups_express_early | 54 |
+    | ups_tm_worldwide_economy_ddp | 72 |
+    | ups_tm_worldwide_economy_ddu | 17 |
+    | ups_expedited | 08 |
+    | ups_express_12_00 | 74 |
+    | ups_tm_economy_ddp | 72 |
+    | ups_tm_economy_ddu | 17 |
+    | ups_express_plus | 54 |
+    | ups_today_dedicated_courier | 83 |
+    | ups_today_express | 85 |
+    | ups_today_express_saver | 86 |
+    | ups_today_standard | 82 |
+    | ups_worldwide_express_freight | 96 |
+    | ups_priority_mail_innovations | M5 |
+    | ups_economy_mail_innovations | M6 |
+    | ups_worldwide_express_freight_mid_day | 71 |
 
     ### FedEx
     | Code         | Service Name |
@@ -12307,6 +12349,27 @@ tags:
     | fedex_smart_post | SMART_POST |
     | fedex_standard_overnight | STANDARD_OVERNIGHT |
     | fedex_transborder_distribution_consolidation | TRANSBORDER_DISTRIBUTION_CONSOLIDATION |
+
+    ### Deutsche Post DHL
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dpdhl_paket | V01PAK |
+    | dpdhl_paket_international | V53WPAK |
+    | dpdhl_europaket | V54EPAK |
+    | dpdhl_paket_connect | V55PAK |
+    | dpdhl_warenpost | V62WP |
+    | dpdhl_warenpost_international | V66WPI |
+    | dpdhl_retoure |  |
+
+    ### DHL Parcel Poland
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dhl_poland_premium | PR |
+    | dhl_poland_polska | AH |
+    | dhl_poland_09 | 09 |
+    | dhl_poland_12 | 12 |
+    | dhl_poland_connect | EK |
+    | dhl_poland_international | PI |
 
 
     ---

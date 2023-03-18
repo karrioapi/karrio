@@ -185,6 +185,291 @@ ParsedShipmentCancelResponse = [
 ]
 
 
+ShipmentRequestXML = """<soapenv:Envelope xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0">
+    <soapenv:Header>
+        <upss:UPSSecurity>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
+        </upss:UPSSecurity>
+    </soapenv:Header>
+    <soapenv:Body>
+        <ship:ShipmentRequest>
+            <common:Request>
+                <common:RequestOption>validate</common:RequestOption>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
+            </common:Request>
+            <ship:Shipment>
+                <ship:Description>Description</ship:Description>
+                <ship:Shipper>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:Shipper>
+                <ship:ShipTo>
+                    <ship:Name>Ship To Name</ship:Name>
+                    <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Ship To Name</ship:CompanyDisplayableName>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipTo>
+                <ship:ShipFrom>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipFrom>
+                <ship:PaymentInformation>
+                    <ship:ShipmentCharge>
+                        <ship:Type>01</ship:Type>
+                        <ship:BillShipper>
+                            <ship:AccountNumber>Your Account Number</ship:AccountNumber>
+                        </ship:BillShipper>
+                    </ship:ShipmentCharge>
+                </ship:PaymentInformation>
+                <ship:ReferenceNumber>
+                    <ship:Code>CountryCode</ship:Code>
+                    <ship:Value>Your Customer Context</ship:Value>
+                </ship:ReferenceNumber>
+                <ship:Service>
+                    <ship:Code>01</ship:Code>
+                </ship:Service>
+                <ship:ShipmentServiceOptions>
+                    <ship:Notification>
+                        <ship:NotificationCode>8</ship:NotificationCode>
+                        <ship:EMail>
+                            <ship:EMailAddress>test@mail.com</ship:EMailAddress>
+                        </ship:EMail>
+                    </ship:Notification>
+                </ship:ShipmentServiceOptions>
+                <ship:Package>
+                    <ship:Description>Description</ship:Description>
+                    <ship:Packaging>
+                        <ship:Code>02</ship:Code>
+                    </ship:Packaging>
+                    <ship:Dimensions>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>IN</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Length>7.0</ship:Length>
+                        <ship:Width>5.0</ship:Width>
+                        <ship:Height>2.0</ship:Height>
+                    </ship:Dimensions>
+                    <ship:PackageWeight>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>LBS</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Weight>10.0</ship:Weight>
+                    </ship:PackageWeight>
+                </ship:Package>
+            </ship:Shipment>
+            <ship:LabelSpecification>
+                <ship:LabelImageFormat>
+                    <ship:Code>PNG</ship:Code>
+                </ship:LabelImageFormat>
+                <ship:LabelStockSize>
+                    <ship:Height>6</ship:Height>
+                    <ship:Width>4</ship:Width>
+                </ship:LabelStockSize>
+            </ship:LabelSpecification>
+        </ship:ShipmentRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
+"""
+
+ShipmentRequestWithPresetXML = """<soapenv:Envelope xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0">
+    <soapenv:Header>
+        <upss:UPSSecurity>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
+        </upss:UPSSecurity>
+    </soapenv:Header>
+    <soapenv:Body>
+        <ship:ShipmentRequest>
+            <common:Request>
+                <common:RequestOption>validate</common:RequestOption>
+                <common:TransactionReference>
+                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
+                </common:TransactionReference>
+            </common:Request>
+            <ship:Shipment>
+                <ship:Description>Description</ship:Description>
+                <ship:Shipper>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:Shipper>
+                <ship:ShipTo>
+                    <ship:Name>Ship To Name</ship:Name>
+                    <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Ship To Name</ship:CompanyDisplayableName>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipTo>
+                <ship:ShipFrom>
+                    <ship:Name>Shipper Name</ship:Name>
+                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
+                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
+                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
+                    <ship:Phone>
+                        <ship:Number>1234567890</ship:Number>
+                    </ship:Phone>
+                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
+                    <ship:Address>
+                        <ship:AddressLine>Address Line</ship:AddressLine>
+                        <ship:City>City</ship:City>
+                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
+                        <ship:PostalCode>PostalCode</ship:PostalCode>
+                        <ship:CountryCode>CountryCode</ship:CountryCode>
+                    </ship:Address>
+                </ship:ShipFrom>
+                <ship:PaymentInformation>
+                    <ship:ShipmentCharge>
+                        <ship:Type>01</ship:Type>
+                        <ship:BillShipper>
+                            <ship:AccountNumber>Your Account Number</ship:AccountNumber>
+                        </ship:BillShipper>
+                    </ship:ShipmentCharge>
+                </ship:PaymentInformation>
+                <ship:ReferenceNumber>
+                    <ship:Code>CountryCode</ship:Code>
+                    <ship:Value>Your Customer Context</ship:Value>
+                </ship:ReferenceNumber>
+                <ship:Service>
+                    <ship:Code>01</ship:Code>
+                </ship:Service>
+                <ship:ShipmentServiceOptions>
+                    <ship:Notification>
+                        <ship:NotificationCode>8</ship:NotificationCode>
+                        <ship:EMail>
+                            <ship:EMailAddress>test@mail.com</ship:EMailAddress>
+                        </ship:EMail>
+                    </ship:Notification>
+                </ship:ShipmentServiceOptions>
+                <ship:Package>
+                    <ship:Description>Description</ship:Description>
+                    <ship:Packaging>
+                        <ship:Code>02</ship:Code>
+                    </ship:Packaging>
+                    <ship:Dimensions>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>IN</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Length>3.0</ship:Length>
+                        <ship:Width>16.0</ship:Width>
+                        <ship:Height>11.0</ship:Height>
+                    </ship:Dimensions>
+                    <ship:PackageWeight>
+                        <ship:UnitOfMeasurement>
+                            <ship:Code>LBS</ship:Code>
+                        </ship:UnitOfMeasurement>
+                        <ship:Weight>30.0</ship:Weight>
+                    </ship:PackageWeight>
+                </ship:Package>
+            </ship:Shipment>
+            <ship:LabelSpecification>
+                <ship:LabelImageFormat>
+                    <ship:Code>ZPL</ship:Code>
+                </ship:LabelImageFormat>
+                <ship:LabelStockSize>
+                    <ship:Height>6</ship:Height>
+                    <ship:Width>4</ship:Width>
+                </ship:LabelStockSize>
+            </ship:LabelSpecification>
+        </ship:ShipmentRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
+"""
+
+ShipmentCancelRequestXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1">
+    <soapenv:Header>
+        <upss:UPSSecurity>
+            <upss:UsernameToken>
+                <upss:Username>username</upss:Username>
+                <upss:Password>password</upss:Password>
+            </upss:UsernameToken>
+            <upss:ServiceAccessToken>
+                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
+            </upss:ServiceAccessToken>
+        </upss:UPSSecurity>
+    </soapenv:Header>
+    <soapenv:Body>
+        <void:VoidShipmentRequest>
+            <common:Request>
+                <common:TransactionReference>
+                    <common:CustomerContext>1ZWA82900191640782</common:CustomerContext>
+                </common:TransactionReference>
+            </common:Request>
+            <void:VoidShipment>
+                <void:ShipmentIdentificationNumber>1ZWA82900191640782</void:ShipmentIdentificationNumber>
+            </void:VoidShipment>
+        </void:VoidShipmentRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
+"""
+
 NegotiatedShipmentResponseXML = f"""<?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
     <soapenv:Header />
@@ -305,257 +590,6 @@ ShipmentResponseXML = f"""<?xml version="1.0" encoding="UTF-8"?>
         </ship:ShipmentResponse>
     </soapenv:Body>
 </soapenv:Envelope>
-"""
-
-ShipmentRequestXML = """<tns:Envelope xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth" xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0">
-    <tns:Header>
-        <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
-        </upss:UPSSecurity>
-    </tns:Header>
-    <tns:Body>
-        <ship:ShipmentRequest>
-            <common:Request>
-                <common:RequestOption>validate</common:RequestOption>
-                <common:TransactionReference>
-                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
-                </common:TransactionReference>
-            </common:Request>
-            <ship:Shipment>
-                <ship:Description>Description</ship:Description>
-                <ship:Shipper>
-                    <ship:Name>Shipper Name</ship:Name>
-                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
-                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
-                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
-                    <ship:Phone>
-                        <ship:Number>1234567890</ship:Number>
-                    </ship:Phone>
-                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
-                    <ship:Address>
-                        <ship:AddressLine>Address Line</ship:AddressLine>
-                        <ship:City>City</ship:City>
-                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
-                        <ship:PostalCode>PostalCode</ship:PostalCode>
-                        <ship:CountryCode>CountryCode</ship:CountryCode>
-                    </ship:Address>
-                </ship:Shipper>
-                <ship:ShipTo>
-                    <ship:Name>Ship To Name</ship:Name>
-                    <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
-                    <ship:CompanyDisplayableName>Ship To Name</ship:CompanyDisplayableName>
-                    <ship:Phone>
-                        <ship:Number>1234567890</ship:Number>
-                    </ship:Phone>
-                    <ship:Address>
-                        <ship:AddressLine>Address Line</ship:AddressLine>
-                        <ship:City>City</ship:City>
-                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
-                        <ship:PostalCode>PostalCode</ship:PostalCode>
-                        <ship:CountryCode>CountryCode</ship:CountryCode>
-                    </ship:Address>
-                </ship:ShipTo>
-                <ship:PaymentInformation>
-                    <ship:ShipmentCharge>
-                        <ship:Type>01</ship:Type>
-                        <ship:BillShipper>
-                            <ship:AccountNumber>Your Account Number</ship:AccountNumber>
-                        </ship:BillShipper>
-                    </ship:ShipmentCharge>
-                </ship:PaymentInformation>
-                <ship:ReferenceNumber>
-                    <ship:Code>CountryCode</ship:Code>
-                    <ship:Value>Your Customer Context</ship:Value>
-                </ship:ReferenceNumber>
-                <ship:Service>
-                    <ship:Code>01</ship:Code>
-                </ship:Service>
-                <ship:ShipmentServiceOptions>
-                    <ship:Notification>
-                        <ship:NotificationCode>8</ship:NotificationCode>
-                        <ship:EMail>
-                            <ship:EMailAddress>test@mail.com</ship:EMailAddress>
-                        </ship:EMail>
-                    </ship:Notification>
-                </ship:ShipmentServiceOptions>
-                <ship:Package>
-                    <ship:Description>Description</ship:Description>
-                    <ship:Packaging>
-                        <ship:Code>02</ship:Code>
-                    </ship:Packaging>
-                    <ship:Dimensions>
-                        <ship:UnitOfMeasurement>
-                            <ship:Code>IN</ship:Code>
-                        </ship:UnitOfMeasurement>
-                        <ship:Length>7.0</ship:Length>
-                        <ship:Width>5.0</ship:Width>
-                        <ship:Height>2.0</ship:Height>
-                    </ship:Dimensions>
-                    <ship:PackageWeight>
-                        <ship:UnitOfMeasurement>
-                            <ship:Code>LBS</ship:Code>
-                        </ship:UnitOfMeasurement>
-                        <ship:Weight>10.0</ship:Weight>
-                    </ship:PackageWeight>
-                </ship:Package>
-            </ship:Shipment>
-            <ship:LabelSpecification>
-                <ship:LabelImageFormat>
-                    <ship:Code>PNG</ship:Code>
-                </ship:LabelImageFormat>
-                <ship:LabelStockSize>
-                    <ship:Height>6</ship:Height>
-                    <ship:Width>4</ship:Width>
-                </ship:LabelStockSize>
-            </ship:LabelSpecification>
-        </ship:ShipmentRequest>
-    </tns:Body>
-</tns:Envelope>
-"""
-
-ShipmentRequestWithPresetXML = """<tns:Envelope xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth" xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0" xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0">
-    <tns:Header>
-        <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
-        </upss:UPSSecurity>
-    </tns:Header>
-    <tns:Body>
-        <ship:ShipmentRequest>
-            <common:Request>
-                <common:RequestOption>validate</common:RequestOption>
-                <common:TransactionReference>
-                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
-                </common:TransactionReference>
-            </common:Request>
-            <ship:Shipment>
-                <ship:Description>Description</ship:Description>
-                <ship:Shipper>
-                    <ship:Name>Shipper Name</ship:Name>
-                    <ship:AttentionName>Shipper Attn Name</ship:AttentionName>
-                    <ship:CompanyDisplayableName>Shipper Name</ship:CompanyDisplayableName>
-                    <ship:TaxIdentificationNumber>123456</ship:TaxIdentificationNumber>
-                    <ship:Phone>
-                        <ship:Number>1234567890</ship:Number>
-                    </ship:Phone>
-                    <ship:ShipperNumber>Your Account Number</ship:ShipperNumber>
-                    <ship:Address>
-                        <ship:AddressLine>Address Line</ship:AddressLine>
-                        <ship:City>City</ship:City>
-                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
-                        <ship:PostalCode>PostalCode</ship:PostalCode>
-                        <ship:CountryCode>CountryCode</ship:CountryCode>
-                    </ship:Address>
-                </ship:Shipper>
-                <ship:ShipTo>
-                    <ship:Name>Ship To Name</ship:Name>
-                    <ship:AttentionName>Ship To Attn Name</ship:AttentionName>
-                    <ship:CompanyDisplayableName>Ship To Name</ship:CompanyDisplayableName>
-                    <ship:Phone>
-                        <ship:Number>1234567890</ship:Number>
-                    </ship:Phone>
-                    <ship:Address>
-                        <ship:AddressLine>Address Line</ship:AddressLine>
-                        <ship:City>City</ship:City>
-                        <ship:StateProvinceCode>StateProvinceCode</ship:StateProvinceCode>
-                        <ship:PostalCode>PostalCode</ship:PostalCode>
-                        <ship:CountryCode>CountryCode</ship:CountryCode>
-                    </ship:Address>
-                </ship:ShipTo>
-                <ship:PaymentInformation>
-                    <ship:ShipmentCharge>
-                        <ship:Type>01</ship:Type>
-                        <ship:BillShipper>
-                            <ship:AccountNumber>Your Account Number</ship:AccountNumber>
-                        </ship:BillShipper>
-                    </ship:ShipmentCharge>
-                </ship:PaymentInformation>
-                <ship:ReferenceNumber>
-                    <ship:Code>CountryCode</ship:Code>
-                    <ship:Value>Your Customer Context</ship:Value>
-                </ship:ReferenceNumber>
-                <ship:Service>
-                    <ship:Code>01</ship:Code>
-                </ship:Service>
-                <ship:ShipmentServiceOptions>
-                    <ship:Notification>
-                        <ship:NotificationCode>8</ship:NotificationCode>
-                        <ship:EMail>
-                            <ship:EMailAddress>test@mail.com</ship:EMailAddress>
-                        </ship:EMail>
-                    </ship:Notification>
-                </ship:ShipmentServiceOptions>
-                <ship:Package>
-                    <ship:Description>Description</ship:Description>
-                    <ship:Packaging>
-                        <ship:Code>02</ship:Code>
-                    </ship:Packaging>
-                    <ship:Dimensions>
-                        <ship:UnitOfMeasurement>
-                            <ship:Code>IN</ship:Code>
-                        </ship:UnitOfMeasurement>
-                        <ship:Length>3.0</ship:Length>
-                        <ship:Width>16.0</ship:Width>
-                        <ship:Height>11.0</ship:Height>
-                    </ship:Dimensions>
-                    <ship:PackageWeight>
-                        <ship:UnitOfMeasurement>
-                            <ship:Code>LBS</ship:Code>
-                        </ship:UnitOfMeasurement>
-                        <ship:Weight>30.0</ship:Weight>
-                    </ship:PackageWeight>
-                </ship:Package>
-            </ship:Shipment>
-            <ship:LabelSpecification>
-                <ship:LabelImageFormat>
-                    <ship:Code>ZPL</ship:Code>
-                </ship:LabelImageFormat>
-                <ship:LabelStockSize>
-                    <ship:Height>6</ship:Height>
-                    <ship:Width>4</ship:Width>
-                </ship:LabelStockSize>
-            </ship:LabelSpecification>
-        </ship:ShipmentRequest>
-    </tns:Body>
-</tns:Envelope>
-"""
-
-ShipmentCancelRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:void="http://www.ups.com/XMLSchema/XOLTWS/Void/v1.1">
-    <tns:Header>
-        <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
-        </upss:UPSSecurity>
-    </tns:Header>
-    <tns:Body>
-        <void:VoidShipmentRequest>
-            <common:Request>
-                <common:TransactionReference>
-                    <common:CustomerContext>1ZWA82900191640782</common:CustomerContext>
-                </common:TransactionReference>
-            </common:Request>
-            <void:VoidShipment>
-                <void:ShipmentIdentificationNumber>1ZWA82900191640782</void:ShipmentIdentificationNumber>
-            </void:VoidShipment>
-        </void:VoidShipmentRequest>
-    </tns:Body>
-</tns:Envelope>
 """
 
 ShipmentCancelResponseXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">

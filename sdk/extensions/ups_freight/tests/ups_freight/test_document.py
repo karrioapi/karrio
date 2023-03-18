@@ -66,7 +66,7 @@ ParsedDocumentUploadResponse = [
         "carrier_name": "ups_freight",
         "documents": [
             {
-                "document_id": "2016-01-18-11.01.07.589501",
+                "doc_id": "2016-01-18-11.01.07.589501",
                 "file_name": "TestFile.txt",
             }
         ],

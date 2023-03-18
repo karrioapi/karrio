@@ -84,11 +84,7 @@ class DocumentList(GenericAPIView):
 
         upload_record = (
             DocumentUploadSerializer.map(
-                (
-                    shipment.shipment_upload_record
-                    if hasattr(shipment, "shipment_upload_record")
-                    else None
-                ),
+                getattr(shipment, "shipment_upload_record", None),
                 data=request.data,
                 context=request,
             )

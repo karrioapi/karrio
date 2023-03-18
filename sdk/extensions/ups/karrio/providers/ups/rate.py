@@ -45,12 +45,13 @@ def _extract_package_rate(
         charges = [
             ("Base charge", rate.TransportationCharges.MonetaryValue),
             *(
-              [] if any(itemized_charges) else
-              [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]  
+                []
+                if any(itemized_charges)
+                else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
             ),
             (rate.ServiceOptionsCharges.Code, rate.ServiceOptionsCharges.MonetaryValue),
             *(
-                (getattr(c, "Code", None) or getattr(c, "Type", None), c.MonetaryValue) 
+                (getattr(c, "Code", None) or getattr(c, "Type", None), c.MonetaryValue)
                 for c in itemized_charges
             ),
         ]
@@ -104,6 +105,7 @@ def rate_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    currency = options.currency.state or settings.default_currency
     mps_packaging = (
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
@@ -113,7 +115,7 @@ def rate_request(
 
     request = ups.RateRequest(
         Request=ups.RequestType(
-            RequestOption=["Shop", "Rate"],
+            RequestOption=["Shoptimeintransit"],
             SubVersion=None,
             TransactionReference=ups.TransactionReferenceType(
                 CustomerContext=payload.reference,
@@ -129,8 +131,8 @@ def rate_request(
                 ShipperNumber=settings.account_number,
                 Address=ups.ShipAddressType(
                     AddressLine=lib.join(
-                        payload.recipient.address_line1,
-                        payload.recipient.address_line2,
+                        payload.shipper.address_line1,
+                        payload.shipper.address_line2,
                     ),
                     City=payload.shipper.city,
                     StateProvinceCode=payload.shipper.state_code,
@@ -164,12 +166,21 @@ def rate_request(
             FreightShipmentInformation=None,
             GoodsNotInFreeCirculationIndicator=None,
             Service=(
-                ups.UOMCodeDescriptionType(Code=service.value, Description=None)
-                if service is not None
-                else None
+                ups.UOMCodeDescriptionType(
+                    Code=(
+                        service.value
+                        if service
+                        else provider_units.ShippingService.ups_ground.value
+                    )
+                )
             ),
             NumOfPieces=None,  # Only required for Freight
-            ShipmentTotalWeight=None,  # Only required for "timeintransit" requests
+            ShipmentTotalWeight=ups.ShipmentWeightType(
+                UnitOfMeasurement=ups.CodeDescriptionType1(
+                    Code=provider_units.WeightUnit[packages.weight_unit].value
+                ),
+                Weight=packages.weight.value,
+            ),  # Only required for "timeintransit" requests
             DocumentsOnlyIndicator=("" if is_document else None),
             Package=[
                 ups.PackageType(
@@ -229,7 +240,7 @@ def rate_request(
                     ),
                     AccessPointCOD=(
                         ups.ShipmentServiceOptionsAccessPointCODType(
-                            CurrencyCode=options.currency.state,
+                            CurrencyCode=currency,
                             MonetaryValue=lib.to_money(
                                 options.ups_access_point_cod.state
                             ),
@@ -328,7 +339,10 @@ def rate_request(
                 RateChartIndicator="",
                 UserLevelDiscountIndicator=None,
             ),
-            InvoiceLineTotal=None,
+            InvoiceLineTotal=ups.InvoiceLineTotalType(
+                CurrencyCode=currency,
+                MonetaryValue=options.declared_value.state or 1.0,
+            ),
             RatingMethodRequestedIndicator="",
             TaxInformationIndicator="",
             PromotionalDiscountInformation=None,

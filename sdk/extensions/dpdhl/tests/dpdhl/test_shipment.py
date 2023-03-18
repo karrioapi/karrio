@@ -136,6 +136,13 @@ ParsedShipmentResponse = [
             "carrier_id": "dpdhl",
             "carrier_name": "dpdhl",
             "code": 0,
+            "details": {},
+            "message": "Weak validation error occured.",
+        },
+        {
+            "carrier_id": "dpdhl",
+            "carrier_name": "dpdhl",
+            "code": 0,
             "details": {
                 "message": "Der eingegebene Wert ist zu lang und wurde gekürzt. Die angegebene Straße kann nicht gefunden werden. Die angegebene Straße kann nicht gefunden werden. Der eingegebene Wert ist zu lang und wurde gekürzt."
             },
@@ -173,9 +180,9 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                 <Shipment>
                     <ShipmentDetails>
                         <product>V01PAK</product>
-                        <cis:accountNumber>22222222220104</cis:accountNumber>
+                        <cis:accountNumber>22222222220101</cis:accountNumber>
                         <shipmentDate>2020-12-29</shipmentDate>
-                        <returnShipmentAccountNumber>22222222220104</returnShipmentAccountNumber>
+                        <returnShipmentAccountNumber>22222222220101</returnShipmentAccountNumber>
                         <ShipmentItem>
                             <weightInKG>5</weightInKG>
                             <lengthInCM>60</lengthInCM>

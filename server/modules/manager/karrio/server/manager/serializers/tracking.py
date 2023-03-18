@@ -33,6 +33,7 @@ class TrackingSerializer(TrackingDetails):
         carrier_filter = validated_data["carrier_filter"]
         tracking_number = validated_data["tracking_number"]
         options = validated_data["options"]
+        pending_pickup = validated_data.get("pending_pickup")
         carrier = Carriers.first(
             context=context,
             **{"raise_not_found": True, **DEFAULT_CARRIER_FILTER, **carrier_filter}
@@ -43,7 +44,7 @@ class TrackingSerializer(TrackingDetails):
                 dict(tracking_numbers=[tracking_number], options=options)
             ).data,
             carrier=carrier,
-            raise_on_error=False,
+            raise_on_error=(pending_pickup is not True),
         )
 
         return models.Tracking.objects.create(

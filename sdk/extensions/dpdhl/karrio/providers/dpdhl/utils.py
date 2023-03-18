@@ -15,8 +15,10 @@ class Settings(core.Settings):
     # required carrier specific properties
     username: str  # type:ignore
     password: str  # type:ignore
-    signature: str  # type:ignore
-    app_id: str  # type:ignore
+    app_id: str = None
+    app_token: str = None
+    zt_id: str = None
+    zt_password: str = None
     account_number: str = None
     language_code: str = "en"
 
@@ -33,13 +35,10 @@ class Settings(core.Settings):
         )
 
     @property
-    def AuthentificationType(self):
-        return AuthentificationType(
-            user=self.app_id,
-            signature=self.signature,
-        )
-
-    @property
     def basic_authentication(self):
-        pair = "%s:%s" % (self.username, self.password)
+        pair = "%s:%s" % (
+            (self.username, self.password)
+            if self.test_mode else
+            (self.app_id, self.app_token)
+        )
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
