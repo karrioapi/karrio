@@ -13,6 +13,7 @@ quicktype () {
 quicktype --src="${SCHEMAS}/order_cancel_response.json" --out="${LIB_MODULES}/order_cancel_response.py"
 quicktype --src="${SCHEMAS}/order_request.json" --out="${LIB_MODULES}/order_request.py"
 quicktype --src="${SCHEMAS}/order_response.json" --out="${LIB_MODULES}/order_response.py"
+quicktype --src="${SCHEMAS}/products_response.json" --out="${LIB_MODULES}/products_response.py"
 quicktype --src="${SCHEMAS}/rating.json" --out="${LIB_MODULES}/rating.py"
 quicktype --src="${SCHEMAS}/tracking_response.json" --out="${LIB_MODULES}/tracking_response.py"
 quicktype --src="${SCHEMAS}/validation_error.json" --out="${LIB_MODULES}/validation_error.py"

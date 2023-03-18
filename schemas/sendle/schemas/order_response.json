@@ -8,9 +8,7 @@
   "order_url": "https://api.sendle.com/api/orders/f5233746-71d4-4b05-bf63-56f4abaed5f6",
   "sendle_reference": "S3ND73",
   "tracking_url": "https://track.sendle.com/tracking?ref=S3ND73",
-  "metadata": {
-    "your_data": "XYZ123"
-  },
+  "metadata": {},
   "labels": [
     {
       "format": "pdf",
@@ -28,19 +26,25 @@
     "pickup_date": "2015-11-24",
     "picked_up_on": "",
     "delivered_on": "",
-    "estimated_delivery_date_minimum": "2015-11-26",
-    "estimated_delivery_date_maximum": "2015-11-27"
+    "estimated_delivery_date_minimum": "2021-11-29",
+    "estimated_delivery_date_maximum": "2021-12-03",
+    "status": null
   },
+  "hide_pickup_address": false,
   "description": "Kryptonite",
-  "kilogram_weight": "1.0",
   "weight": {
     "value": "1",
     "units": "kg"
   },
-  "cubic_metre_volume": "0.01",
   "volume": {
     "value": "0.01",
     "units": "m3"
+  },
+  "dimensions": {
+    "length": "30.0",
+    "width": "20.0",
+    "height": "17.0",
+    "units": "cm"
   },
   "customer_reference": "SupBdayPressie",
   "sender": {
@@ -48,8 +52,8 @@
       "name": "Lex Luthor",
       "phone": "0412 345 678",
       "email": "lluthor@gmail.com",
-      "sendle_id": "sendleID",
-      "company": "LexCorp"
+      "company": "LexCorp",
+      "sendle_id": "sendleID"
     },
     "address": {
       "address_line1": "123 Gotham Ln",
@@ -80,21 +84,88 @@
   },
   "route": {
     "description": "Sydney to Sydney",
-    "type": "same-city",
-    "delivery_guarantee_status": "eligible"
+    "type": "same-city"
   },
   "price": {
-    "tax": {
-      "currency": "AUD",
-      "amount": 0.81
+    "gross": {
+      "amount": 7.7,
+      "currency": "AUD"
     },
     "net": {
-      "currency": "AUD",
-      "amount": 8.14
+      "amount": 7.7,
+      "currency": "AUD"
     },
-    "gross": {
-      "currency": "AUD",
-      "amount": 8.95
+    "tax": {
+      "amount": 0,
+      "currency": "AUD"
     }
+  },
+  "price_breakdown": {
+    "base": {
+      "amount": 15,
+      "currency": "AUD"
+    },
+    "discount": {
+      "amount": -7.5,
+      "currency": "AUD"
+    },
+    "cover": {
+      "amount": 0,
+      "currency": "AUD"
+    },
+    "fuel_surcharge": {
+      "amount": 0.2,
+      "currency": "AUD"
+    },
+    "base_tax": {
+      "amount": 0,
+      "currency": "AUD"
+    },
+    "discount_tax": {
+      "amount": 0,
+      "currency": "AUD"
+    },
+    "cover_tax": {
+      "amount": 0,
+      "currency": "AUD"
+    },
+    "fuel_surcharge_tax": {
+      "amount": 0,
+      "currency": "AUD"
+    }
+  },
+  "tax_breakdown": {
+    "gst": {
+      "amount": 0,
+      "currency": "AUD",
+      "rate": 0.1
+    },
+    "hst": {
+      "amount": 0,
+      "currency": "CAD",
+      "rate": 0.1
+    },
+    "qst": {
+      "amount": 0,
+      "currency": "CAD",
+      "rate": 0.1
+    }
+  },
+  "parcel_contents": [
+    {
+      "description": "Kryptonite",
+      "country_of_origin": "krypton",
+      "value": "900.0",
+      "currency": "AUD",
+      "hs_code": "6815.99.41",
+      "quantity": 1
+    }
+  ],
+  "product": {
+    "atl_only": false,
+    "code": "STANDARD-PICKUP",
+    "name": "Standard Pickup",
+    "first_mile_option": "pickup",
+    "service": "standard"
   }
 }

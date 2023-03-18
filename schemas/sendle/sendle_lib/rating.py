@@ -1,6 +1,6 @@
 from attr import s
 from typing import Optional, List
-from jstruct import JList, JStruct
+from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
@@ -31,8 +31,8 @@ class InternationalQuoteRequest:
 
 @s(auto_attribs=True)
 class Eta:
-    days_range: List[int] = JList[int]
-    date_range: List[str] = JList[str]
+    days_range: List[int] = []
+    date_range: List[str] = []
     for_pickup_date: Optional[str] = None
 
 

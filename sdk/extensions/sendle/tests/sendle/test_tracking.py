@@ -90,7 +90,8 @@ ParsedTrackingResponse = [
                     "code": "In Transit",
                     "date": "2015-11-25",
                     "description": "In transit",
-                    "time": "01:14",
+                    "location": "Sydney to Brisbane",
+                    "time": "09:14",
                 },
                 {
                     "code": "Info",
@@ -103,6 +104,7 @@ ParsedTrackingResponse = [
                     "date": "2015-11-24",
                     "description": "Parcel picked up",
                     "time": "20:31",
+                    "location": "NSW",
                 },
                 {
                     "code": "Pickup Attempted",
@@ -144,6 +146,7 @@ TrackingResponseJSON = """{
         {
             "event_type": "Pickup",
             "scan_time": "2015-11-24T20:31:00Z",
+            "location": "NSW",
             "description": "Parcel picked up"
         },
         {
@@ -156,12 +159,14 @@ TrackingResponseJSON = """{
             "scan_time": "2015-11-25T01:14:00Z",
             "description": "In transit",
             "origin_location": "Sydney",
-            "destination_location": "Brisbane"
+            "destination_location": "Brisbane",
+            "local_scan_time": "2015-11-25T09:14:00"
         },
         {
             "event_type": "Info",
             "scan_time": "2015-11-26T19:46:00Z",
-            "description": "Arrived at the depot for processing"
+            "description": "Arrived at the depot for processing",
+            "local_scan_time": "2015 11 27 / 05:46:00"
         },
         {
             "event_type": "Info",
