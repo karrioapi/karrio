@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="carrier.sendle",
-    version="2023.3.17",
+    version="2023.1.12",
     description="Sendle API Schemas Python Data Types library",
     long_description=long_description,
     long_description_content_type="text/markdown",

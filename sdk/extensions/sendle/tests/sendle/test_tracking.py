@@ -33,9 +33,7 @@ class TestCarrierTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.sendle.proxy.http") as mock:
@@ -44,9 +42,7 @@ class TestCarrierTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedErrorResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -91,7 +87,7 @@ ParsedTrackingResponse = [
                     "date": "2015-11-25",
                     "description": "In transit",
                     "location": "Sydney to Brisbane",
-                    "time": "09:14",
+                    "time": "01:14",
                 },
                 {
                     "code": "Info",
@@ -100,11 +96,11 @@ ParsedTrackingResponse = [
                     "time": "01:04",
                 },
                 {
-                    "code": "Pickup",
-                    "date": "2015-11-24",
-                    "description": "Parcel picked up",
-                    "time": "20:31",
-                    "location": "NSW",
+                    "code": "In Transit",
+                    "date": "2020-07-06",
+                    "description": "USPS in possession of item",
+                    "location": "CLARKDALE, GA",
+                    "time": "09:38",
                 },
                 {
                     "code": "Pickup Attempted",
@@ -136,6 +132,10 @@ TrackingRequestJSON = ["S3ND73"]
 
 TrackingResponseJSON = """{
     "state": "Delivered",
+    "status": {
+        "description": "Parcel in transit from Adelaide",
+        "last_changed_at": "2021-01-29 01:25:57 UTC"
+    },
     "tracking_events": [
         {
             "event_type": "Pickup Attempted",
@@ -144,10 +144,11 @@ TrackingResponseJSON = """{
             "reason": "Parcel not ready"
         },
         {
-            "event_type": "Pickup",
-            "scan_time": "2015-11-24T20:31:00Z",
-            "location": "NSW",
-            "description": "Parcel picked up"
+            "event_type": "In Transit",
+            "scan_time": "2020-07-06T09:38:00Z",
+            "local_scan_time": "2020-07-06T09:38:00",
+            "description": "USPS in possession of item",
+            "location": "CLARKDALE, GA"
         },
         {
             "event_type": "Info",
@@ -160,13 +161,13 @@ TrackingResponseJSON = """{
             "description": "In transit",
             "origin_location": "Sydney",
             "destination_location": "Brisbane",
-            "local_scan_time": "2015-11-25T09:14:00"
+            "location": "SYDNEY",
+            "requester": ""
         },
         {
             "event_type": "Info",
             "scan_time": "2015-11-26T19:46:00Z",
-            "description": "Arrived at the depot for processing",
-            "local_scan_time": "2015 11 27 / 05:46:00"
+            "description": "Arrived at the depot for processing"
         },
         {
             "event_type": "Info",
@@ -192,8 +193,8 @@ TrackingResponseJSON = """{
     },
     "scheduling": {
         "pickup_date": "2015-11-24",
-        "picked_up_on": null,
-        "delivered_on": null,
+        "picked_up_on": "",
+        "delivered_on": "",
         "estimated_delivery_date_minimum": "2015-11-26",
         "estimated_delivery_date_maximum": "2015-11-27"
     }
