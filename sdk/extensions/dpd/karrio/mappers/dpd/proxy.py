@@ -13,11 +13,14 @@ class Proxy(proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}",
+            url=f"{self.settings.server_url}/soap/services/ShipmentService/V3_3",
             data=request.serialize(),
             trace=self.trace_as("xml"),
             method="POST",
-            headers={},
+            headers={
+                "Content-Type": "text/xml;charset=UTF-8",
+                "SOAPAction": "http://dpd.com/common/service/types/ShipmentService/3.3/storeOrders"
+            },
         )
 
         return lib.Deserializable(response, lib.to_element)
@@ -26,10 +29,14 @@ class Proxy(proxy.Proxy):
         def _track(payload):
             tracking_number, data = payload
             return tracking_number, lib.request(
-                url=f"{self.settings.server_url}",
+                url=f"{self.settings.server_url}/soap/services/ParcelLifeCycleService/V2_0",
                 trace=self.trace_as("xml"),
                 method="POST",
                 data=data,
+                headers={
+                    "Content-Type": "text/xml;charset=UTF-8",
+                    "SOAPAction": "http://dpd.com/common/service/types/ParcelLifeCycleService/2.0/getTrackingData"
+                },
             )
 
         responses = lib.run_concurently(_track, requests.serialize().items())

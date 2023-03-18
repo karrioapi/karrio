@@ -37,7 +37,7 @@ class TestDPDShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/soap/services/ShipmentService/V3_3",
             )
 
     def test_parse_shipment_response(self):

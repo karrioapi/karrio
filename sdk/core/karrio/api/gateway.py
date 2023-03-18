@@ -1,7 +1,6 @@
 """Karrio API Gateway definition modules."""
 import attr
 import logging
-import warnings
 from typing import Callable, Optional, Union, List
 
 from karrio.api.proxy import Proxy

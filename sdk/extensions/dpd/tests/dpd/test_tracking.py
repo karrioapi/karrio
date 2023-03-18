@@ -23,7 +23,7 @@ class TestDPDTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/soap/services/ParcelLifeCycleService/V2_0",
             )
 
     def test_parse_tracking_response(self):
@@ -35,15 +35,14 @@ class TestDPDTracking(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.dpd.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
 
-#  def test_parse_error_response(self):
-#      with patch("karrio.mappers.dpd.proxy.lib.request") as mock:
-#          mock.return_value = ErrorResponse
-#          parsed_response = (
-#              karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
-#          )
-
-#          self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -174,7 +173,18 @@ ParsedTrackingResponse = [
     [],
 ]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "dpd",
+            "carrier_name": "dpd",
+            "code": "DELICOM_ERR_AUTHENTICATION",
+            "details": {"tracking_number": "05308801410058"},
+            "message": "Authentication failure, check delisId and password.",
+        }
+    ],
+]
 
 
 TrackingRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://dpd.com/common/service/types/Authentication/2.0" xmlns:ns1="http://dpd.com/common/service/types/ParcelLifeCycleService/2.0">
@@ -641,33 +651,18 @@ TrackingResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap
 </soap:Envelope>
 """
 
-ErrorResponse = """<a></a>
-"""
-
-
-LoginRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://dpd.com/common/service/types/LoginService/2.0">
-   <soapenv:Header/>
-   <soapenv:Body>
-      <ns:getAuth>
-         <delisId>KD*****</delisId>
-         <password>*******</password>
-         <messageLanguage>en_EN</messageLanguage>
-      </ns:getAuth>
-   </soapenv:Body>
-</soapenv:Envelope>
-"""
-
-LoginResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+ErrorResponse = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
    <soap:Body>
-      <getAuthResponse xmlns="http://dpd.com/common/service/types/LoginService/2.1">
-         <return>
-            <delisId>SWSTEST</delisId>
-            <customerUid>SWSTEST</customerUid>
-            <authToken>GFadfGob14GWWgQcIldI6zYtuR7cyEHe2z6eWzb7BpFmcFvrzclRljlcV1OF</authToken>
-            <depot>0530</depot>
-            <authTokenExpires>2020-05-08T13:02:56.06</authTokenExpires>
-         </return>
-      </getAuthResponse>
+      <soap:Fault>
+         <faultcode>soap:Server</faultcode>
+         <faultstring>Fault occured</faultstring>
+         <detail>
+            <ns:authenticationFault xmlns:ns="http://dpd.com/common/service/types/Authentication/2.0">
+               <errorCode>DELICOM_ERR_AUTHENTICATION</errorCode>
+               <errorMessage>Authentication failure, check delisId and password.</errorMessage>
+            </ns:authenticationFault>
+         </detail>
+      </soap:Fault>
    </soap:Body>
 </soap:Envelope>
 """
