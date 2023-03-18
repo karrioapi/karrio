@@ -42,8 +42,8 @@ def shipment_cancel_request(
     request = lib.Envelope(
         Header=lib.Header(
             provider_utils.AuthentificationType(
-                user=settings.username,
-                signature=settings.password,
+                user=("2222222222_01" if settings.test_mode else settings.username),
+                signature=("pass" if settings.test_mode else settings.password),
             ),
         ),
         Body=lib.Body(

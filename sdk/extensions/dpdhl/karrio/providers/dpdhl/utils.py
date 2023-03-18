@@ -15,10 +15,10 @@ class Settings(core.Settings):
     # required carrier specific properties
     username: str  # type:ignore
     password: str  # type:ignore
-    app_id: str  # type:ignore
-    app_token: str  # type:ignore
-    zt_id: str  # type:ignore
-    zt_password: str  # type:ignore
+    app_id: str = None
+    app_token: str = None
+    zt_id: str = None
+    zt_password: str = None
     account_number: str = None
     language_code: str = "en"
 

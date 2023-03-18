@@ -5060,7 +5060,31 @@
             "deprecationReason": null
           },
           {
-            "name": "signature",
+            "name": "app_id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "app_token",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "zt_id",
             "description": null,
             "args": [],
             "type": {
@@ -5076,7 +5100,7 @@
             "deprecationReason": null
           },
           {
-            "name": "app_id",
+            "name": "zt_password",
             "description": null,
             "args": [],
             "type": {
@@ -25491,7 +25515,27 @@
             "defaultValue": null
           },
           {
-            "name": "signature",
+            "name": "app_id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "app_token",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "zt_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -25505,7 +25549,7 @@
             "defaultValue": null
           },
           {
-            "name": "app_id",
+            "name": "zt_password",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -25522,13 +25566,9 @@
             "name": "account_number",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null
           },
@@ -28834,7 +28874,7 @@
             "defaultValue": null
           },
           {
-            "name": "signature",
+            "name": "app_id",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -28844,7 +28884,27 @@
             "defaultValue": null
           },
           {
-            "name": "app_id",
+            "name": "app_token",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "zt_id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "zt_password",
             "description": null,
             "type": {
               "kind": "SCALAR",
