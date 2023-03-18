@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.1.11`.
+    The current version is `2023.1.12`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.1.11
+  version: 2023.1.12
 paths:
   /:
     get:
@@ -6655,7 +6655,7 @@ components:
     DocumentDetails:
       type: object
       properties:
-        document_id:
+        doc_id:
           type: string
           description: The uploaded document id.
         file_name:
@@ -6669,7 +6669,10 @@ components:
           description: A base64 file to upload
         doc_name:
           type: string
-          description: A file name
+          description: The file name
+        doc_format:
+          type: string
+          description: The file format
         doc_type:
           type: string
           nullable: true
@@ -6681,6 +6684,7 @@ components:
           maxLength: 50
       required:
       - doc_file
+      - doc_format
       - doc_name
     DocumentUploadData:
       type: object
@@ -11245,7 +11249,6 @@ tags:
     | freightcom | Freightcom |
     | purolator | Purolator |
     | royalmail | Royal Mail |
-    | sendle | Sendle |
     | sf_express | SF-Express |
     | tnt | TNT |
     | ups_freight | UPS Freight |
@@ -11257,6 +11260,7 @@ tags:
     | fedex | FedEx |
     | dpdhl | Deutsche Post DHL |
     | dhl_poland | DHL Parcel Poland |
+    | sendle | Sendle |
 
     ---
     ## Services
