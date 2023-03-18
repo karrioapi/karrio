@@ -22,7 +22,7 @@ class RatingMixinProxy:
 
     def get_rates(
         self, request: utils.Serializable[models.RateRequest]
-    ) -> utils.Deserializable[typing.Tuple[str, PackageRates]]:
+    ) -> utils.Deserializable[typing.List[typing.Tuple[str, PackageRates]]]:
         _request = request.serialize()
 
         shipper = lib.to_address(_request.shipper)
@@ -45,7 +45,7 @@ class RatingMixinProxy:
             if s.service_code in _request.services
         ]
 
-        response = [
+        response: typing.List[typing.Tuple[str, PackageRates]] = [
             (
                 f'{getattr(pkg, "id", idx)}',
                 get_available_rates(
@@ -127,7 +127,12 @@ def get_available_rates(
             and package.width[service.dimension_unit]
             <= units.Dimension(service.max_width, service.dimension_unit).value
         ) or (service.max_width is None)
-        match_weight_requirements = (
+        match_min_weight_requirements = (
+            service.min_weight is not None
+            and package.weight[service.weight_unit]
+            <= units.Weight(service.min_weight, service.weight_unit).value
+        ) or (service.min_weight is None)
+        match_max_weight_requirements = (
             service.max_weight is not None
             and package.weight[service.weight_unit]
             <= units.Weight(service.max_weight, service.weight_unit).value
@@ -150,13 +155,13 @@ def get_available_rates(
             _match_zone_min_weight_requirements = (
                 zone.min_weight is not None
                 and package.weight[service.weight_unit]
-                <= units.Weight(zone.min_weight, service.weight_unit).value
-            ) or (service.min_weight is None)
+                >= units.Weight(zone.min_weight, service.weight_unit).value
+            ) or (zone.min_weight is None)
             _match_zone_max_weight_requirements = (
                 zone.max_weight is not None
                 and package.weight[service.weight_unit]
                 <= units.Weight(zone.max_weight, service.weight_unit).value
-            ) or (service.max_weight is None)
+            ) or (zone.max_weight is None)
 
             # Check if best fit zone is selected
             _best_fit_zone_selected = (
@@ -229,7 +234,7 @@ def get_available_rates(
         if (
             destination_covered
             and service.max_weight is not None
-            and not match_weight_requirements
+            and not match_max_weight_requirements
         ):
             errors.append(
                 models.Message(
@@ -245,7 +250,8 @@ def get_available_rates(
             and match_length_requirements
             and match_height_requirements
             and match_width_requirements
-            and match_weight_requirements
+            and match_min_weight_requirements
+            and match_max_weight_requirements
             and selected_zone is not None
         ):
             carrier_name = getattr(

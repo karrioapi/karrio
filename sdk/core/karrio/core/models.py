@@ -353,7 +353,7 @@ class ServiceZone:
 
     id: str = None
     label: str = None
-    rate: str = None
+    rate: float = None
 
     # Weight restrictions
     min_weight: float = None
