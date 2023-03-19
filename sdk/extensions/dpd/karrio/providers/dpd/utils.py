@@ -1,12 +1,8 @@
 import dpd_lib.Authentication20 as auth
 import dpd_lib.LoginServiceV21 as dpd
-import typing
-import jstruct
 import datetime
 import karrio.lib as lib
 import karrio.core as core
-import karrio.core.models as models
-import karrio.providers.dpd.units as units
 
 
 class Settings(core.Settings):
@@ -17,7 +13,7 @@ class Settings(core.Settings):
     depot: str = None
     message_language: str = "en_EN"
     account_country_code: str = "BE"
-    cache: dict = {}
+    cache: lib.Cache = lib.Cache()
 
     @property
     def carrier_name(self):
@@ -46,17 +42,16 @@ class Settings(core.Settings):
         """
         cache_key = f"{self.carrier_name}|{self.delis_id}|{self.password}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
-        cache = self.cache or {}
 
-        auth = cache.get(cache_key) or {}
+        auth = self.cache.get(cache_key) or {}
         token = auth.get("token")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
         if token is not None and expiry is not None and expiry > now:
             return token
 
-        new_auth = login(self)
-        self.cache = {**cache, cache_key: new_auth}
+        self.cache.set(cache_key, lambda: login(self))
+        new_auth = self.cache.get(cache_key)
 
         if any(self.depot or "") is False:
             self.depot = new_auth["depot"]

@@ -21,6 +21,7 @@ Body = utils.Body
 Element = utils.Element
 Tracer = utils.Tracer
 Trace = utils.Trace
+Cache = utils.Cache
 Job = utils.Job
 OptionEnum = utils.OptionEnum
 Enum = utils.Enum
