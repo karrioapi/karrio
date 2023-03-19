@@ -44,10 +44,11 @@ class Settings(core.Settings):
         """Retrieve the auth token using the delis_id|passwword pair
         or collect it from the cache if an unexpired token exist.
         """
+        cache_key = f"{self.carrier_name}|{self.delis_id}|{self.password}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
         cache = self.cache or {}
 
-        auth = cache.get(f"{self.carrier_name}|{self.delis_id}|{self.password}") or {}
+        auth = cache.get(cache_key) or {}
         token = auth.get("token")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
@@ -55,7 +56,7 @@ class Settings(core.Settings):
             return token
 
         new_auth = login(self)
-        self.cache = {**cache, f"{self.carrier_name}|{self.delis_id}|{self.password}": new_auth}
+        self.cache = {**cache, cache_key: new_auth}
 
         if any(self.depot or "") is False:
             self.depot = new_auth["depot"]

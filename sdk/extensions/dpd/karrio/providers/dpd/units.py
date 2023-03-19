@@ -54,19 +54,19 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     dpd_order_type = lib.OptionEnum("orderType")
-    dpd_saturday_delivery = lib.OptionEnum("saturdayDelivery")
-    dpd_ex_works_delivery = lib.OptionEnum("exWorksDelivery")
-    dpd_guarantee = lib.OptionEnum("guarantee")
-    dpd_tyres = lib.OptionEnum("tyres")
-    dpd_personal_delivery = lib.OptionEnum("personalDelivery")
-    dpd_pickup = lib.OptionEnum("pickup")
+    dpd_saturday_delivery = lib.OptionEnum("saturdayDelivery", bool)
+    dpd_ex_works_delivery = lib.OptionEnum("exWorksDelivery", bool)
+    # dpd_guarantee = lib.OptionEnum("guarantee", bool)
+    dpd_tyres = lib.OptionEnum("tyres", bool)
+    # dpd_personal_delivery = lib.OptionEnum("personalDelivery", bool)
+    # dpd_pickup = lib.OptionEnum("pickup", bool)
     dpd_parcel_shop_delivery = lib.OptionEnum("parcelShopDelivery")
-    dpd_predict = lib.OptionEnum("predict")
-    dpd_personal_delivery_notification = lib.OptionEnum("personalDeliveryNotification")
-    dpd_proactive_notification = lib.OptionEnum("proactiveNotification")
-    dpd_delivery = lib.OptionEnum("delivery")
-    dpd_invoice_address = lib.OptionEnum("invoiceAddress")
-    dpd_country_specific_service = lib.OptionEnum("countrySpecificService")
+    # dpd_predict = lib.OptionEnum("predict", bool)
+    # dpd_personal_delivery_notification = lib.OptionEnum("personalDeliveryNotification", bool)
+    # dpd_proactive_notification = lib.OptionEnum("proactiveNotification", bool)
+    # dpd_delivery = lib.OptionEnum("delivery", bool)
+    # dpd_invoice_address = lib.OptionEnum("invoiceAddress")
+    # dpd_country_specific_service = lib.OptionEnum("countrySpecificService")
 
 
 def shipping_options_initializer(

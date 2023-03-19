@@ -34,7 +34,9 @@ def _extract_details(
     shipments: typing.List[dpd.shipmentResponses] = lib.find_element(
         "shipmentResponses", data, dpd.shipmentResponses
     )
-    parcels: typing.List[dpd.parcelInformation] = sum([_.parcelInformation for _ in shipments], start=[])
+    parcels: typing.List[dpd.parcelInformation] = sum(
+        [_.parcelInformation for _ in shipments], start=[]
+    )
     tracking_numbers = [_.parcelLabelNumber for _ in parcels]
     shipment_identifiers = [(_.identificationNumber or _.mpsId) for _ in shipments]
 
@@ -257,8 +259,8 @@ def shipment_request(
                                             iaccount=None,
                                             eoriNumber=customs.options.eoriNumber.state,
                                             vatNumber=(
-                                                customs.options.vatNumber.state or
-                                                customs.duty_billing_address.tax_id
+                                                customs.options.vatNumber.state
+                                                or customs.duty_billing_address.tax_id
                                             ),
                                             idDocType=None,
                                             idDocNumber=None,
@@ -319,7 +321,7 @@ def shipment_request(
                                                 pkg.items
                                                 if any(pkg.items)
                                                 else customs.commodities,
-                                                start=1
+                                                start=1,
                                             )
                                         ],
                                     )
@@ -337,17 +339,43 @@ def shipment_request(
                             for index, pkg in enumerate(packages)
                         ],
                         productAndServiceData=dpd.productAndServiceData(
-                            orderType="consignment",
+                            orderType=options.dpd_order_type.state or "consignment",
                             saturdayDelivery=options.saturday_delivery.state,
                             exWorksDelivery=options.dpd_ex_works_delivery.state,
                             guarantee=None,
-                            tyres=None,
+                            tyres=options.dpd_tyres.state,
                             personalDelivery=None,
                             pickup=None,
                             parcelShopDelivery=(
                                 dpd.parcelShopDelivery(
-                                    parcelShopId=None,
-                                    parcelShopNotification=None,
+                                    parcelShopId=options.parcel_shop_delivery.state,
+                                    parcelShopNotification=(
+                                        dpd.notification(
+                                            channel=(
+                                                "3"
+                                                if (
+                                                    options.email_notification_to.state
+                                                    is None
+                                                    and recipient.email is None
+                                                )
+                                                else "1"
+                                            ),
+                                            value=(
+                                                options.email_notification_to.state
+                                                or recipient.email
+                                                or recipient.phone_number
+                                            ),
+                                            language="EN",
+                                        )
+                                        if any(
+                                            [
+                                                options.email_notification_to.state,
+                                                recipient.email,
+                                                recipient.phone_number,
+                                            ]
+                                        )
+                                        else None
+                                    ),
                                 )
                                 if options.parcel_shop_delivery.state
                                 else None
