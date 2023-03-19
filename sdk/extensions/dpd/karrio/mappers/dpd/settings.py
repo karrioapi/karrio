@@ -15,6 +15,7 @@ class Settings(provider_utils.Settings):
     # required carrier specific properties
     delis_id: str
     password: str
+    depot: str = None
     message_language: str = "en_EN"
 
     # generic properties

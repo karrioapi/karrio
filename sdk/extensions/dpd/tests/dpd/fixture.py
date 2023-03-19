@@ -11,7 +11,8 @@ gateway = karrio.gateway["dpd"].create(
         password=password,
         test_mode=True,
         cache={
-            f"{delis_id}|{password}": dict(
+            f"dpd|{delis_id}|{password}": dict(
+                depot="0530",
                 token="****",
                 expiry=expiry.strftime("%Y-%m-%d %H:%M:%S"),
             )

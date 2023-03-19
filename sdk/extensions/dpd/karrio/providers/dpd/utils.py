@@ -14,6 +14,7 @@ class Settings(core.Settings):
 
     delis_id: str
     password: str
+    depot: str = None
     message_language: str = "en_EN"
     account_country_code: str = "BE"
     cache: dict = {}
@@ -46,7 +47,7 @@ class Settings(core.Settings):
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
         cache = self.cache or {}
 
-        auth = cache.get(f"{self.delis_id}|{self.password}") or {}
+        auth = cache.get(f"{self.carrier_name}|{self.delis_id}|{self.password}") or {}
         token = auth.get("token")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
@@ -54,7 +55,10 @@ class Settings(core.Settings):
             return token
 
         new_auth = login(self)
-        self.cache = {**cache, f"{self.delis_id}|{self.password}": new_auth}
+        self.cache = {**cache, f"{self.carrier_name}|{self.delis_id}|{self.password}": new_auth}
+
+        if any(self.depot or "") is False:
+            self.depot = new_auth["depot"]
 
         return new_auth["token"]
 
@@ -110,6 +114,7 @@ def _extract_login_details(node: lib.Element):
         first=True,
     )
     return dict(
+        depot=data.depot,
         token=data.authToken,
         expiry=lib.fdatetime(
             data.authTokenExpires,

@@ -39,8 +39,10 @@ class TestDPDLogin(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
 ParsedLoginResponse = {
     "expiry": ANY,
+    "depot": "0530",
     "token": "GFadfGob14GWWgQcIldI6zYtuR7cyEHe2z6eWzb7BpFmcFvrzclRljlcV1OF",
 }
 

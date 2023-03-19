@@ -101,7 +101,7 @@ def shipment_request(
                             mpsCustomerReferenceNumber3=None,
                             mpsCustomerReferenceNumber4=None,
                             identificationNumber=None,
-                            sendingDepot=None,
+                            sendingDepot=settings.depot,
                             product=service,
                             mpsCompleteDelivery=None,
                             mpsCompleteDeliveryLabel=None,
