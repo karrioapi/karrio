@@ -6,10 +6,14 @@ import karrio.api.mapper as mapper
 import karrio.core.models as models
 import karrio.providers.dpd as provider
 import karrio.mappers.dpd.settings as provider_settings
+import karrio.universal.providers.rating as universal_provider
 
 
 class Mapper(mapper.Mapper):
     settings: provider_settings.Settings
+
+    def create_rate_request(self, payload: models.RateRequest) -> lib.Serializable:
+        return universal_provider.rate_request(payload, self.settings)
 
     def create_tracking_request(
         self, payload: models.TrackingRequest
@@ -21,20 +25,10 @@ class Mapper(mapper.Mapper):
     ) -> lib.Serializable:
         return provider.shipment_request(payload, self.settings)
 
-    def create_cancel_shipment_request(
-        self, payload: models.ShipmentCancelRequest
-    ) -> lib.Serializable[str]:
-        return provider.shipment_cancel_request(payload, self.settings)
-
-    def create_document_upload_request(
-        self, payload: models.DocumentUploadRequest
-    ) -> lib.Serializable[str]:
-        return provider.document_upload_request(payload, self.settings)
-
-    def parse_cancel_shipment_response(
-        self, response: lib.Deserializable
-    ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return provider.parse_shipment_cancel_response(
+    def parse_rate_response(
+        self, response: lib.Deserializable[str]
+    ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+        return universal_provider.parse_rate_response(
             response.deserialize(), self.settings
         )
 

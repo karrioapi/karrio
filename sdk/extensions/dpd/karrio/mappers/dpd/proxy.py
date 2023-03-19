@@ -3,9 +3,10 @@
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.mappers.dpd.settings as provider_settings
+import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
-class Proxy(proxy.Proxy):
+class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     settings: provider_settings.Settings
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:

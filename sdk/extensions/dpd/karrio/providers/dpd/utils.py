@@ -1,5 +1,6 @@
 import dpd_lib.Authentication20 as auth
 import dpd_lib.LoginServiceV21 as dpd
+import jstruct
 import datetime
 import karrio.lib as lib
 import karrio.core as core
@@ -13,7 +14,7 @@ class Settings(core.Settings):
     depot: str = None
     message_language: str = "en_EN"
     account_country_code: str = "BE"
-    cache: lib.Cache = lib.Cache()
+    cache: lib.Cache = jstruct.JStruct[lib.Cache]
 
     @property
     def carrier_name(self):

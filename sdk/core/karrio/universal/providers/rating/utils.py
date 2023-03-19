@@ -15,3 +15,7 @@ class RatingMixinSettings(settings.Settings):
 
     # Additional properties
     services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel]
+
+    @property
+    def shipping_services(self) -> typing.List[models.ServiceLevel]:
+        return self.services

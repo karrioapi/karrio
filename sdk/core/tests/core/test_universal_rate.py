@@ -41,6 +41,7 @@ class TestUniversalRating(unittest.TestCase):
             RateRequest(
                 **{
                     **rate_request_data,
+                    "services": ["carrier_standard", "carrier_premium"],
                     "parcels": [
                         {
                             **rate_request_data["parcels"][0],
@@ -80,6 +81,7 @@ class TestUniversalRating(unittest.TestCase):
             RateRequest(
                 **{
                     **rate_request_data,
+                    "services": ["carrier_interational_parcel"],
                     "recipient": {"postal_code": "11111", "country_code": "US"},
                     "parcels": [
                         {

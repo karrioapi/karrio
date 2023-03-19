@@ -152,16 +152,6 @@ DEFAULT_SERVICES = [
         zones=[models.ServiceZone(rate=0.0)],
     ),
     models.ServiceLevel(
-        service_name="CL",
-        service_code="dpd_cl",
-        currency="EUR",
-        max_weight=31.5,
-        weight_unit="KG",
-        domicile=True,
-        international=True,
-        zones=[models.ServiceZone(rate=0.0)],
-    ),
-    models.ServiceLevel(
         service_name="DPD Shop Europe",
         service_code="dpd_shop_europe",
         currency="EUR",
@@ -169,7 +159,7 @@ DEFAULT_SERVICES = [
         weight_unit="KG",
         domicile=True,
         international=True,
-        zones=[models.ServiceZone(rate=0.0)],
+        zones=[models.ServiceZone(rate=0.0, country_codes=["AT", "DK", "CZ", "EE", "FI", "LV", "LT", "PL", "CH"])],
     ),
     models.ServiceLevel(
         service_name="DPD Business International",
@@ -180,7 +170,7 @@ DEFAULT_SERVICES = [
         max_length=175,
         dimension_unit="CM",
         international=True,
-        zones=[models.ServiceZone(rate=0.0, country_codes=[""])],
+        zones=[models.ServiceZone(rate=0.0)],
     ),
 ]
 

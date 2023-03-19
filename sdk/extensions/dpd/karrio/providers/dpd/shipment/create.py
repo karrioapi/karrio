@@ -1,5 +1,6 @@
 import dpd_lib.ShipmentServiceV33 as dpd
 import typing
+import base64
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -38,14 +39,14 @@ def _extract_details(
         [_.parcelInformation for _ in shipments], start=[]
     )
     tracking_numbers = [_.parcelLabelNumber for _ in parcels]
-    shipment_identifiers = [(_.identificationNumber or _.mpsId) for _ in shipments]
+    shipment_identifiers = [_.mpsId for _ in shipments]
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracking_numbers[0],
         shipment_identifier=shipment_identifiers[0],
-        docs=models.Documents(label=lib.decode(label)),
+        docs=models.Documents(label=base64.b64encode(label).decode("utf-8")),
         meta=dict(
             tracking_numbers=tracking_numbers,
             shipment_identifiers=shipment_identifiers,

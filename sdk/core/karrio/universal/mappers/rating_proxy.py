@@ -41,7 +41,7 @@ class RatingMixinProxy:
         is_international = not is_domicile
         selected_services = [
             s.service_code
-            for s in self.settings.services
+            for s in self.settings.shipping_services
             if s.service_code in _request.services
         ]
 
@@ -75,7 +75,7 @@ def get_available_rates(
 ) -> PackageRates:
     errors: typing.List[models.Message] = []
     rates: typing.List[models.RateDetails] = []
-    services = [svc for svc in settings.services if svc.active]
+    services = [svc for svc in settings.shipping_services if svc.active]
 
     for service in services:
         # Check if service requested
@@ -193,7 +193,8 @@ def get_available_rates(
                 )
             )
         if (
-            destination_covered
+            explicitly_requested
+            and destination_covered
             and service.max_length is not None
             and not match_length_requirements
         ):
@@ -206,7 +207,8 @@ def get_available_rates(
                 )
             )
         if (
-            destination_covered
+            explicitly_requested
+            and destination_covered
             and service.max_height is not None
             and not match_height_requirements
         ):
@@ -219,7 +221,8 @@ def get_available_rates(
                 )
             )
         if (
-            destination_covered
+            explicitly_requested
+            and destination_covered
             and service.max_width is not None
             and not match_width_requirements
         ):
@@ -232,7 +235,8 @@ def get_available_rates(
                 )
             )
         if (
-            destination_covered
+            explicitly_requested
+            and destination_covered
             and service.max_weight is not None
             and not match_max_weight_requirements
         ):

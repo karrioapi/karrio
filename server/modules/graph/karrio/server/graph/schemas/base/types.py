@@ -728,6 +728,7 @@ class ConnectionType:
 
 def create_carrier_settings_type(name: str, model):
     _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
+    EXCLUDED_FIELDS = ["cache"]
 
     @strawberry.type
     class _Settings(ConnectionType):
@@ -768,7 +769,7 @@ def create_carrier_settings_type(name: str, model):
                 **{
                     k: strawberry.UNSET
                     for k, _ in getattr(_RawSettings, "__annotations__", {}).items()
-                    if hasattr(model, k)
+                    if hasattr(model, k) and k not in EXCLUDED_FIELDS
                 },
                 "__annotations__": {
                     k: (
@@ -777,7 +778,7 @@ def create_carrier_settings_type(name: str, model):
                         else v
                     )
                     for k, v in annotations.items()
-                    if hasattr(model, k)
+                    if hasattr(model, k) and k not in EXCLUDED_FIELDS
                 },
             },
         )

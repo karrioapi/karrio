@@ -109,20 +109,24 @@ class Carrier(core.OwnedEntity):
 
     @property
     def data(self) -> datatypes.CarrierSettings:
-        _extra: Dict = dict()
+        _computed_data: Dict = dict(
+            id=self.settings.id,
+            carrier_name=self.settings.carrier_name,
+            display_name=self.settings.carrier_display_name,
+        )
 
         if hasattr(self.settings, "services"):
-            _extra.update(
+            _computed_data.update(
                 services=[model_to_dict(s) for s in self.settings.services.all()]
             )
 
+        if hasattr(self.settings, "cache"):
+            _computed_data.update(cache=self.settings.cache)
+
         return datatypes.CarrierSettings.create(
             {
-                "id": self.settings.id,
-                "carrier_name": self.settings.carrier_name,
-                "display_name": self.settings.carrier_display_name,
+                **_computed_data,
                 **model_to_dict(self.settings),
-                **_extra,
             }
         )
 
