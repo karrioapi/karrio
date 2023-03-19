@@ -603,6 +603,39 @@ class ShipmentType:
 
 
 @strawberry.type
+class ServiceZoneType:
+    object_type: str
+    label: typing.Optional[str]
+    rate: typing.Optional[float]
+
+    min_weight: typing.Optional[float]
+    max_weight: typing.Optional[float]
+
+    transit_days: typing.Optional[int]
+    transit_time: typing.Optional[float]
+
+    radius: typing.Optional[float]
+    latitude: typing.Optional[float]
+    longitude: typing.Optional[float]
+
+    cities: typing.Optional[typing.List[str]]
+    country_codes: typing.Optional[typing.List[utils.CountryCodeEnum]]
+
+    @staticmethod
+    def parse(zone: dict):
+        return ServiceZoneType(
+            **{
+                "object_type": "zone",
+                **{
+                    k: v
+                    for k, v in zone.items()
+                    if k in ServiceZoneType.__annotations__
+                },
+            }
+        )
+
+
+@strawberry.type
 class ServiceLevelType:
     id: str
     object_type: str
@@ -611,20 +644,24 @@ class ServiceLevelType:
     description: typing.Optional[str]
     active: typing.Optional[bool]
 
-    cost: typing.Optional[float]
     currency: typing.Optional[utils.CurrencyCodeEnum]
+    transit_days: typing.Optional[int]
+    transit_time: typing.Optional[float]
 
-    estimated_transit_days: typing.Optional[int]
-
-    max_weight: typing.Optional[float]
     max_width: typing.Optional[float]
     max_height: typing.Optional[float]
     max_length: typing.Optional[float]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
     dimension_unit: typing.Optional[utils.DimensionUnitEnum]
+
+    max_weight: typing.Optional[float]
+    weight_unit: typing.Optional[utils.WeightUnitEnum]
 
     domicile: typing.Optional[bool]
     international: typing.Optional[bool]
+
+    @strawberry.field
+    def zones(self: providers.ServiceLevel) -> typing.List[ServiceZoneType]:
+        return [ServiceZoneType.parse(zone) for zone in self.zones or []]
 
 
 @strawberry.type

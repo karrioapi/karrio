@@ -348,23 +348,49 @@ class LabelTemplateInput(utils.BaseInput):
 
 
 @strawberry.input
+class ServiceZoneInput(utils.BaseInput):
+    rate: float
+    label: typing.Optional[str] = strawberry.UNSET
+
+    min_weight: typing.Optional[float] = strawberry.UNSET
+    max_weight: typing.Optional[float] = strawberry.UNSET
+
+    transit_days: typing.Optional[int] = strawberry.UNSET
+    transit_time: typing.Optional[float] = strawberry.UNSET
+
+    radius: typing.Optional[float] = strawberry.UNSET
+    latitude: typing.Optional[float] = strawberry.UNSET
+    longitude: typing.Optional[float] = strawberry.UNSET
+
+    cities: typing.Optional[typing.List[str]] = strawberry.UNSET
+    country_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateServiceZoneInput(ServiceZoneInput):
+    rate: typing.Optional[float] = strawberry.UNSET
+
+@strawberry.input
 class CreateServiceLevelInput(utils.BaseInput):
     service_name: str
     service_code: str
-    cost: float
     currency: utils.CurrencyCodeEnum
+    zones: typing.List[ServiceZoneInput]
 
     description: typing.Optional[str] = strawberry.UNSET
     active: typing.Optional[bool] = strawberry.UNSET
 
-    estimated_transit_days: typing.Optional[int] = strawberry.UNSET
+    transit_days: typing.Optional[int] = strawberry.UNSET
+    transit_time: typing.Optional[float] = strawberry.UNSET
 
-    max_weight: typing.Optional[float] = strawberry.UNSET
     max_width: typing.Optional[float] = strawberry.UNSET
     max_height: typing.Optional[float] = strawberry.UNSET
     max_length: typing.Optional[float] = strawberry.UNSET
-    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
     dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+
+    min_weight: typing.Optional[float] = strawberry.UNSET
+    max_weight: typing.Optional[float] = strawberry.UNSET
+    weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
 
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
@@ -375,8 +401,8 @@ class UpdateServiceLevelInput(CreateServiceLevelInput):
     id: typing.Optional[str] = strawberry.UNSET
     service_name: typing.Optional[str] = strawberry.UNSET
     service_code: typing.Optional[str] = strawberry.UNSET
-    cost: typing.Optional[float] = strawberry.UNSET
     currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    zones: typing.Optional[typing.List[UpdateServiceZoneInput]] = strawberry.UNSET
 
 
 def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.Type]:
