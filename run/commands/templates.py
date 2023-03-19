@@ -289,7 +289,7 @@ class Mapper(mapper.Mapper):
         self, payload: models.ShipmentCancelRequest
     ) -> lib.Serializable[str]:
         return provider.shipment_cancel_request(payload, self.settings)
-    {% endif %}{% if "shipping" in features %}
+    {% endif %}{% if "document" in features %}
     def create_document_upload_request(
         self, payload: models.DocumentUploadRequest
     ) -> lib.Serializable[str]:
