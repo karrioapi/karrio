@@ -9,13 +9,17 @@ def forwards_func(apps, schema_editor):
 
     records = DocumentUploadRecord.objects.using(db_alias).all()
 
-    for record in records:
-        record.documents = [
+    for _record in records:
+        _documents = sum((
+            doc if isinstance(doc, list) else [doc]
+            for doc in _record.documents or []
+        ), start=[])
+        _record.documents = [
             dict(doc_id=doc["document_id"], file_name=doc["file_name"])
-            for doc in record.documents
+            for doc in _documents
         ]
 
-        record.save()
+        _record.save()
 
 
 def reverse_func(apps, schema_editor):

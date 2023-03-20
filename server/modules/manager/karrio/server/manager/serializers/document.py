@@ -22,7 +22,7 @@ class DocumentUploadSerializer(core.DocumentUploadData):
         )
         tracking_number = getattr(shipment, "tracking_number", None)
         reference = validated_data.get("reference") or tracking_number
-        
+
         payload = core.DocumentUploadData(validated_data).data
         options = ({
             "origin_country_code": shipment.shipper.country_code,
@@ -75,7 +75,7 @@ class DocumentUploadSerializer(core.DocumentUploadData):
 
         if any(response.documents):
             changes.append("documents")
-            instance.documents = [*instance.documents, lib.to_dict(response.documents)]
+            instance.documents = [*instance.documents, *lib.to_dict(response.documents)]
 
         if any(response.messages):
             changes.append("messages")
