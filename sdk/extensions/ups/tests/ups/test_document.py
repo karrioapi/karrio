@@ -52,7 +52,7 @@ class TestUPSDocument(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-            print(lib.to_dict(parsed_response))
+
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedDocumentUploadErrorResponse
             )

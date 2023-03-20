@@ -42,7 +42,12 @@ class Settings(BaseSettings):
 
     @property
     def default_currency(self) -> typing.Optional[str]:
-        return units.CountryCurrency.map(self.account_country_code).value
+        if self.account_country_code in SUPPORTED_COUNTRY_CURRENCY:
+            return units.CountryCurrency.map(
+                self.account_country_code
+            ).value
+
+        return "USD"
 
 
 def default_request_serializer(
@@ -67,3 +72,6 @@ def default_request_serializer(
         return lib.to_xml(envelope, namespacedef_=namespace_)
 
     return serializer
+
+
+SUPPORTED_COUNTRY_CURRENCY = ["US", "CA", "FR", "FR", "AU"]
