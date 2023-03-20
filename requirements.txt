@@ -96,13 +96,13 @@ karrio.server.documents==2023.1.12
 karrio.server.events==2023.1.12
 karrio.server.graph==2023.1.12
 karrio.server.iam==2023.1
-karrio.server.manager==2023.1.12
+karrio.server.manager==2023.1.12.1
 karrio.server.orders==2023.1.11
 karrio.server.pricing==2023.1.12
 karrio.server.proxy==2023.1.6
 karrio.sf-express==2023.1
 karrio.tnt==2023.1
-karrio.ups==2023.1.12
+karrio.ups==2023.1.12.1
 karrio.ups-freight==2023.1.12
 karrio.usps==2023.1.10
 karrio.usps-international==2023.1.10
