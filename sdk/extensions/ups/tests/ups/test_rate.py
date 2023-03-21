@@ -60,7 +60,7 @@ rate_req_data = {
     "shipper": {
         "company_name": "Shipper Name",
         "postal_code": "H3N1S4",
-        "country_code": "CountryCode",
+        "country_code": "CA",
         "city": "Montreal",
         "address_line1": "Address Line",
     },
@@ -95,7 +95,7 @@ rate_req_with_package_preset_data = {
     "shipper": {
         "company_name": "Shipper Name",
         "postal_code": "H3N1S4",
-        "country_code": "CountryCode",
+        "country_code": "CA",
         "city": "Montreal",
         "address_line1": "Address Line",
     },
@@ -260,7 +260,7 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                         <rate:AddressLine>Address Line</rate:AddressLine>
                         <rate:City>Montreal</rate:City>
                         <rate:PostalCode>H3N1S4</rate:PostalCode>
-                        <rate:CountryCode>CountryCode</rate:CountryCode>
+                        <rate:CountryCode>CA</rate:CountryCode>
                     </rate:Address>
                 </rate:Shipper>
                 <rate:ShipTo>
@@ -306,6 +306,7 @@ RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/env
                     <rate:RateChartIndicator></rate:RateChartIndicator>
                 </rate:ShipmentRatingOptions>
                 <rate:InvoiceLineTotal>
+                    <rate:CurrencyCode>USD</rate:CurrencyCode>
                     <rate:MonetaryValue>1.0</rate:MonetaryValue>
                 </rate:InvoiceLineTotal>
                 <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
@@ -350,7 +351,7 @@ RateRequestWithPackagePresetXML = """<tns:Envelope xmlns:tns="http://schemas.xml
                         <rate:AddressLine>Address Line</rate:AddressLine>
                         <rate:City>Montreal</rate:City>
                         <rate:PostalCode>H3N1S4</rate:PostalCode>
-                        <rate:CountryCode>CountryCode</rate:CountryCode>
+                        <rate:CountryCode>CA</rate:CountryCode>
                     </rate:Address>
                 </rate:Shipper>
                 <rate:ShipTo>
@@ -396,6 +397,7 @@ RateRequestWithPackagePresetXML = """<tns:Envelope xmlns:tns="http://schemas.xml
                     <rate:RateChartIndicator></rate:RateChartIndicator>
                 </rate:ShipmentRatingOptions>
                 <rate:InvoiceLineTotal>
+                    <rate:CurrencyCode>USD</rate:CurrencyCode>
                     <rate:MonetaryValue>1.0</rate:MonetaryValue>
                 </rate:InvoiceLineTotal>
                 <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
