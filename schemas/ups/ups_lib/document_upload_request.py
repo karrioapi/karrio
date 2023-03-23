@@ -17,9 +17,7 @@ class UsernameTokenType:
 @s(auto_attribs=True)
 class UPSSecurityType:
     UsernameToken: Optional[UsernameTokenType] = JStruct[UsernameTokenType]
-    ServiceAccessToken: Optional[ServiceAccessTokenType] = JStruct[
-        ServiceAccessTokenType
-    ]
+    ServiceAccessToken: Optional[ServiceAccessTokenType] = JStruct[ServiceAccessTokenType]
 
 
 @s(auto_attribs=True)
@@ -29,9 +27,7 @@ class TransactionReferenceType:
 
 @s(auto_attribs=True)
 class RequestType:
-    TransactionReference: Optional[TransactionReferenceType] = JStruct[
-        TransactionReferenceType
-    ]
+    TransactionReference: Optional[TransactionReferenceType] = JStruct[TransactionReferenceType]
 
 
 @s(auto_attribs=True)

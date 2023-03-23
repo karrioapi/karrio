@@ -22,17 +22,13 @@ class TransactionReferenceType:
 @s(auto_attribs=True)
 class ResponseType:
     ResponseStatus: Optional[ResponseStatusType] = JStruct[ResponseStatusType]
-    TransactionReference: Optional[TransactionReferenceType] = JStruct[
-        TransactionReferenceType
-    ]
+    TransactionReference: Optional[TransactionReferenceType] = JStruct[TransactionReferenceType]
 
 
 @s(auto_attribs=True)
 class UploadResponseType:
     Response: Optional[ResponseType] = JStruct[ResponseType]
-    FormsHistoryDocumentID: Optional[FormsHistoryDocumentIDType] = JStruct[
-        FormsHistoryDocumentIDType
-    ]
+    FormsHistoryDocumentID: Optional[FormsHistoryDocumentIDType] = JStruct[FormsHistoryDocumentIDType]
 
 
 @s(auto_attribs=True)

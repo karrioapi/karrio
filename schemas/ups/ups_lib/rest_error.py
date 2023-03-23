@@ -4,16 +4,16 @@ from jstruct import JList, JStruct
 
 
 @s(auto_attribs=True)
-class Error:
+class ErrorType:
     code: Optional[int] = None
     message: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class Response:
-    errors: List[Error] = JList[Error]
+class ResponseType:
+    errors: List[ErrorType] = JList[ErrorType]
 
 
 @s(auto_attribs=True)
-class RESTError:
-    response: Optional[Response] = JStruct[Response]
+class RESTErrorType:
+    response: Optional[ResponseType] = JStruct[ResponseType]

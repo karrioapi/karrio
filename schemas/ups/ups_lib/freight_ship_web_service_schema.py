@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Mon Aug  1 09:54:55 2022 by generateDS.py version 2.40.13.
-# Python 3.8.7 (v3.8.7:6503f05dd5, Dec 21 2020, 12:45:15)  [Clang 6.0 (clang-600.0.57)]
+# Generated Thu Mar 23 12:04:02 2023 by generateDS.py version 2.41.3.
+# Python 3.10.6 (main, Mar 10 2023, 10:55:28) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/FreightShipWebServiceSchema.xsd
 #
 # Command line:
-#   /Users/danielk/Documents/karrio/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/freight_ship_web_service_schema.py" ./schemas/FreightShipWebServiceSchema.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/freight_ship_web_service_schema.py" ./schemas/FreightShipWebServiceSchema.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups
@@ -18826,13 +18826,10 @@ class PropertyType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PropertyType')
-        if self._hasContent():
-            outfile.write('>')
-            outfile.write(self.convert_unicode(self.valueOf_))
-            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PropertyType', pretty_print=pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
+        outfile.write('>')
+        self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_, pretty_print=pretty_print)
+        outfile.write(self.convert_unicode(self.valueOf_))
+        outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
     def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='PropertyType'):
         if self.Key is not None and 'Key' not in already_processed:
             already_processed.add('Key')
