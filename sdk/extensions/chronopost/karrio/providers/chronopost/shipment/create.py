@@ -1,17 +1,7 @@
+import chronopost_lib.shippingservice as chronopost
+import typing
 import base64
-from datetime import datetime
-import typing
-from chronopost_lib.shippingservice import (
-    customerValue,
-    recipientValue,
-    refValue,
-    resultMultiParcelValue,
-    shippingMultiParcelV5,
-    shipperValue,
-    skybillParamsValue,
-    skybillValue,
-)
-import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.chronopost.error as provider_error
@@ -34,15 +24,18 @@ def parse_shipment_response(
 def _extract_details(
     response: lib.Element, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
-    shipment = lib.to_object(resultMultiParcelValue, response)
+    shipment = lib.to_object(chronopost.resultMultiParcelValue, response)
     label = base64.b64encode(shipment.pdfEtiquette).decode("utf-8")
+
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.skybillNumber,
         shipment_identifier=shipment.skybillNumber,
         docs=models.Documents(label=label),
-        meta={},
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(shipment.skybillNumber),
+        ),
     )
 
 
@@ -62,18 +55,18 @@ def shipment_request(
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    shipping_date = lib.to_date(options.shipment_date.state) or datetime.now()
+    shipping_date = lib.to_date(options.shipment_date.state) or datetime.datetime.now()
     product_code = provider_units.ShippingService.map(payload.service).value_or_key
     label_type = provider_units.LabelType.map(payload.label_type or "PDF").value
 
     request = lib.Envelope(
         Body=lib.Body(
-            shippingMultiParcelV5(
+            chronopost.shippingMultiParcelV5(
                 esdValue=None,
                 headerValue=settings.header_value,
                 shipperValue=(
-                    shipperValue(
-                        shipperAdress1=shipper.address_line1,
+                    chronopost.shipperValue(
+                        shipperAdress1=lib.text(shipper.street_number, shipper.address_line1),
                         shipperAdress2=shipper.address_line2,
                         shipperCity=shipper.city,
                         shipperContactName=shipper.person_name,
@@ -88,8 +81,8 @@ def shipment_request(
                         shipperZipCode=shipper.postal_code,
                     ),
                 ),
-                customerValue=customerValue(
-                    customerAdress1=recipient.address_line1,
+                customerValue=chronopost.customerValue(
+                    customerAdress1=lib.text(recipient.street_number, recipient.address_line1),
                     customerAdress2=recipient.address_line2,
                     customerCity=recipient.city,
                     customerContactName=recipient.person_name,
@@ -105,8 +98,8 @@ def shipment_request(
                     customerCivility="M",
                 ),
                 recipientValue=(
-                    recipientValue(
-                        recipientAdress1=recipient.address_line1,
+                    chronopost.recipientValue(
+                        recipientAdress1=lib.text(recipient.street_number, recipient.address_line1),
                         recipientAdress2=recipient.address_line2,
                         recipientCity=recipient.city,
                         recipientContactName=recipient.person_name,
@@ -121,7 +114,7 @@ def shipment_request(
                     ),
                 ),
                 refValue=(
-                    refValue(
+                    chronopost.refValue(
                         shipperRef=payload.reference,
                         recipientRef=None,
                         customerSkybillNumber=None,
@@ -129,7 +122,7 @@ def shipment_request(
                     ),
                 ),
                 skybillValue=(
-                    skybillValue(
+                    chronopost.skybillValue(
                         bulkNumber=1,
                         codCurrency=(
                             options.currency.state
@@ -175,7 +168,7 @@ def shipment_request(
                         weightUnit=provider_units.WeightUnit.KG.value,
                     ),
                 ),
-                skybillParamsValue=skybillParamsValue(
+                skybillParamsValue=chronopost.skybillParamsValue(
                     duplicata=None,
                     mode=label_type,
                 ),

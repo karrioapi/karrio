@@ -1089,8 +1089,10 @@ class ComputedAddress(models.Address):
         return getattr(self.address.extra, "suite", None)
 
     @property
-    def street_number(self) -> typing.Optional[str]:
-        return getattr(self.address.extra, "street_number", None)
+    def contact(self) -> typing.Optional[str]:
+        return getattr(self.address, "person_name", None) or getattr(
+            self.address, "company_name", None
+        )
 
     @property
     def street_name(self) -> typing.Optional[str]:
@@ -1101,15 +1103,24 @@ class ComputedAddress(models.Address):
         return getattr(self.address.extra, "street_type", None)
 
     def _compute_address_line(self, join: bool = True) -> typing.Optional[str]:
-        if any([self.address.address_line1, self.address.address_line2]):
+        if any(
+            [
+                self.address.street_number,
+                self.address.address_line1,
+                self.address.address_line2,
+            ]
+        ):
             return utils.SF.concat_str(
-                self.address.address_line1, self.address.address_line2, join=join
+                self.address.street_number,
+                self.address.address_line1,
+                self.address.address_line2,
+                join=join,
             )  # type:ignore
 
         if self.address.extra is not None:
             return utils.SF.concat_str(
                 self.address.extra.suite,
-                self.address.extra.street_number,
+                self.address.street_number,
                 self.address.extra.street_name,
                 self.address.extra.street_type,
                 join=True,
@@ -1135,10 +1146,11 @@ class ComputedDocumentFile(models.DocumentFile):
 
 
 class TrackingStatus(utils.Enum):
-    blocked = ["blocked"]
+    on_hold = ["on_hold"]
     delivered = ["delivered"]
     in_transit = ["in_transit"]
     delivery_failed = ["delivery_failed"]
+    delivery_delayed = ["delivery_delayed"]
     out_for_delivery = ["out_for_delivery"]
     ready_for_pickup = ["ready_for_pickup"]
 

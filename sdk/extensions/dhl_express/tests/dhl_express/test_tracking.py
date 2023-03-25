@@ -49,9 +49,7 @@ class TestDHLTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_in_transit_tracking_response(self):
         with patch("karrio.mappers.dhl_express.proxy.http") as mock:
@@ -60,8 +58,8 @@ class TestDHLTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedInTransitTrackingResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedInTransitTrackingResponse
             )
 
     def test_tracking_single_not_found_parsing(self):
@@ -70,8 +68,8 @@ class TestDHLTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingSingNotFound)
+            self.assertListEqual(
+                DP.to_dict(parsed_response), ParsedTrackingSingNotFound
             )
 
 
@@ -128,77 +126,77 @@ ParsedTrackingResponse = [
                 {
                     "code": "AR",
                     "date": "2009-08-31",
-                    "description": "Arrived at DHL facility in Milan -\n                        Italy",
+                    "description": "Arrived at DHL facility in Milan -\n                        Italy ",
                     "location": "Milan - Italy ",
                     "time": "08:59",
                 },
                 {
                     "code": "DF",
                     "date": "2009-08-31",
-                    "description": "Departed from DHL facility in Milan -\n                        Italy",
+                    "description": "Departed from DHL facility in Milan -\n                        Italy ",
                     "location": "Milan - Italy ",
                     "time": "06:23",
                 },
                 {
                     "code": "DF",
                     "date": "2009-08-31",
-                    "description": "Departed from DHL facility in Bergamo -\n                        Italy",
+                    "description": "Departed from DHL facility in Bergamo -\n                        Italy ",
                     "location": "Bergamo - Italy ",
                     "time": "02:06",
                 },
                 {
                     "code": "PL",
                     "date": "2009-08-30",
-                    "description": "Processed at Location Bergamo - Italy",
+                    "description": "Processed at Location Bergamo - Italy ",
                     "location": "Bergamo - Italy ",
                     "time": "23:30",
                 },
                 {
                     "code": "AF",
                     "date": "2009-08-30",
-                    "description": "Arrived at DHL facility in Bergamo -\n                        Italy",
+                    "description": "Arrived at DHL facility in Bergamo -\n                        Italy ",
                     "location": "Bergamo - Italy ",
                     "time": "19:43",
                 },
                 {
                     "code": "DF",
                     "date": "2009-08-29",
-                    "description": "Departed from DHL facility in Leipzig -\n                        Germany",
+                    "description": "Departed from DHL facility in Leipzig -\n                        Germany ",
                     "location": "Leipzig - Germany ",
                     "time": "05:52",
                 },
                 {
                     "code": "PL",
                     "date": "2009-08-29",
-                    "description": "Processed at Location Leipzig - Germany",
+                    "description": "Processed at Location Leipzig - Germany ",
                     "location": "Leipzig - Germany ",
                     "time": "01:05",
                 },
                 {
                     "code": "AF",
                     "date": "2009-08-29",
-                    "description": "Arrived at DHL facility in Leipzig -\n                        Germany",
+                    "description": "Arrived at DHL facility in Leipzig -\n                        Germany ",
                     "location": "Leipzig - Germany ",
                     "time": "00:32",
                 },
                 {
                     "code": "DF",
                     "date": "2009-08-28",
-                    "description": "Departed from DHL facility in Barcelona\n                        - Spain",
+                    "description": "Departed from DHL facility in Barcelona\n                        - Spain ",
                     "location": "Barcelona - Spain ",
                     "time": "22:01",
                 },
                 {
                     "code": "AF",
                     "date": "2009-08-28",
-                    "description": "Arrived at DHL facility in Barcelona -\n                        Spain",
+                    "description": "Arrived at DHL facility in Barcelona -\n                        Spain ",
                     "location": "Barcelona - Spain ",
                     "time": "21:17",
                 },
                 {
                     "code": "PL",
                     "date": "2009-08-28",
-                    "description": "Processed at Location Barcelona - Spain",
+                    "description": "Processed at Location Barcelona - Spain ",
                     "location": "Barcelona - Spain ",
                     "time": "20:39",
                 },
@@ -223,6 +221,12 @@ ParsedTrackingResponse = [
                     "time": "13:26",
                 },
             ],
+            "info": {
+                "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=3180831640",
+                "package_weight": 0.74,
+                "package_weight_unit": "KG",
+                "shipping_date": "2009-08-28",
+            },
             "tracking_number": "3180831640",
         },
         {
@@ -238,6 +242,11 @@ ParsedTrackingResponse = [
                     "time": "10:00",
                 }
             ],
+            "info": {
+                "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=7740842550",
+                "package_weight_unit": "KG",
+                "shipping_date": "2009-08-26",
+            },
             "tracking_number": "7740842550",
         },
         {
@@ -260,6 +269,12 @@ ParsedTrackingResponse = [
                     "time": "23:58",
                 },
             ],
+            "info": {
+                "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=1815115363",
+                "package_weight": 24.5,
+                "package_weight_unit": "KG",
+                "shipping_date": "2009-08-13",
+            },
             "tracking_number": "1815115363",
         },
     ],
@@ -283,6 +298,13 @@ ParsedInTransitTrackingResponse = [
                 }
             ],
             "tracking_number": "9053283201",
+            "info": {
+                "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=9053283201",
+                "customer_name": "\n                ",
+                "package_weight": 0.09,
+                "package_weight_unit": "KG",
+                "shipping_date": "2021-05-04",
+            },
         }
     ],
     [],

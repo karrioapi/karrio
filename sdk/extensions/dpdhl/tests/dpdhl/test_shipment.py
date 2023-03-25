@@ -80,23 +80,23 @@ ShipmentPayload = {
         "company_name": "Absender Zeile 2",
         "person_name": "Absender Zeile 1",
         "address_line1": "Vegesacker Heerstr.",
+        "street_number": "111",
         "city": "Bremen",
         "postal_code": "28757",
         "country_code": "DE",
         "phone_number": "+49421987654321",
         "email": "absender@dhl.local",
-        "extra": {"street_number": "111"},
     },
     "recipient": {
         "company_name": "Empfänger Zeile 2",
         "person_name": "Kontaktperson Empfänger",
         "address_line1": "An der Weide",
+        "street_number": "50a",
         "city": "Bremen",
         "postal_code": "28195",
         "country_code": "DE",
         "phone_number": "+49421123456789",
         "email": "empfaenger@dhl.local",
-        "extra": {"street_number": "50a"},
     },
     "parcels": [
         {
@@ -127,9 +127,11 @@ ParsedShipmentResponse = [
         "carrier_name": "dpdhl",
         "docs": {"label": ANY},
         "label_type": "PDF",
-        "meta": {},
         "shipment_identifier": "222201040023121880",
         "tracking_number": "222201040023121880",
+        "meta": {
+            "carrier_tracking_link": "https://www.dhl.de/en/privatkunden/pakete-empfangen/verfolgen.html?piececode=222201040023121880"
+        },
     },
     [
         {
@@ -147,7 +149,7 @@ ParsedShipmentResponse = [
                 "message": "Der eingegebene Wert ist zu lang und wurde gekürzt. Die angegebene Straße kann nicht gefunden werden. Die angegebene Straße kann nicht gefunden werden. Der eingegebene Wert ist zu lang und wurde gekürzt."
             },
             "message": "Weak validation error occured.",
-        }
+        },
     ],
 ]
 

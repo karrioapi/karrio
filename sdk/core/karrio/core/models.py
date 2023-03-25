@@ -7,7 +7,6 @@ from jstruct import JList, JStruct, REQUIRED
 @attr.s(auto_attribs=True)
 class AddressExtra:
     street_name: str = None
-    street_number: str = None
     street_type: str = None
     suburb: str = None
     suite: str = None
@@ -31,6 +30,7 @@ class Address:
 
     address_line1: str = ""
     address_line2: str = None
+    street_number: str = None
 
     federal_tax_id: str = None
     state_tax_id: str = None
@@ -287,6 +287,30 @@ class RateDetails:
 
 
 @attr.s(auto_attribs=True)
+class TrackingInfo:
+    """Karrio unified tracking details data type."""
+
+    customer_name: str = None
+    expected_delivery: str = None
+    note: str = None
+    order_date: str = None
+    order_id: str = None
+    package_weight: str = None
+    package_weight_unit: str = None
+    shipment_package_count: str = None
+    shipment_pickup_date: str = None
+    shipment_delivery_date: str = None
+    shipment_service: str = None
+    shipment_origin_country: str = None
+    shipment_origin_postal_code: str = None
+    shipment_destication_country: str = None
+    shipment_destination_postal_code: str = None
+    shipping_date: str = None
+    signed_by: str = None
+    source: str = None
+    carrier_tracking_link: str = None
+
+@attr.s(auto_attribs=True)
 class TrackingDetails:
     """Karrio unified tracking details data type."""
 
@@ -295,6 +319,7 @@ class TrackingDetails:
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
     estimated_delivery: str = None
+    info: TrackingInfo = None
     delivered: bool = None
     status: str = None
     meta: dict = None

@@ -99,6 +99,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "8300100690",
         "tracking_number": "8300100690",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=8300100690"
+        },
     },
     [],
 ]

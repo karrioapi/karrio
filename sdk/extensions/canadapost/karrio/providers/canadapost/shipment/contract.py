@@ -44,8 +44,10 @@ def _extract_shipment(
     response: lib.Element,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    info = lib.find_element("shipment-info", response, ShipmentInfoType, first=True)
-    label = lib.find_element("label", response, first=True)
+    info: ShipmentInfoType = lib.find_element(
+        "shipment-info", response, ShipmentInfoType, first=True
+    )
+    label: lib.Element = lib.find_element("label", response, first=True)
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -53,6 +55,9 @@ def _extract_shipment(
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
         docs=models.Documents(label=getattr(label, "text", None)),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(info.tracking_pin),
+        ),
     )
 
 
@@ -108,8 +113,10 @@ def shipment_request(
                     postal_zip_code=provider_utils.format_ca_postal_code(
                         payload.shipper.postal_code
                     ),
-                    address_line_1=lib.join(payload.shipper.address_line1, join=True),
-                    address_line_2=lib.join(payload.shipper.address_line2, join=True),
+                    address_line_1=lib.text(
+                        payload.shipper.street_number, payload.shipper.address_line1
+                    ),
+                    address_line_2=lib.text(payload.shipper.address_line2),
                 ),
             ),
             destination=DestinationType(
@@ -124,8 +131,10 @@ def shipment_request(
                     postal_zip_code=provider_utils.format_ca_postal_code(
                         payload.recipient.postal_code
                     ),
-                    address_line_1=lib.join(payload.recipient.address_line1, join=True),
-                    address_line_2=lib.join(payload.recipient.address_line2, join=True),
+                    address_line_1=lib.text(
+                        payload.recipient.street_number, payload.recipient.address_line1
+                    ),
+                    address_line_2=lib.text(payload.recipient.address_line2),
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
@@ -191,14 +200,24 @@ def shipment_request(
                             item=[
                                 SkuType(
                                     customs_number_of_units=item.quantity,
-                                    customs_description=lib.text(item.title or item.description or item.sku or "N/B", max=35),
+                                    customs_description=lib.text(
+                                        item.title
+                                        or item.description
+                                        or item.sku
+                                        or "N/B",
+                                        max=35,
+                                    ),
                                     sku=item.sku or "0000",
                                     hs_tariff_code=item.hs_code,
                                     unit_weight=(item.weight or 1),
                                     customs_value_per_unit=item.value_amount,
                                     customs_unit_of_measure=None,
-                                    country_of_origin=(item.origin_country or payload.shipper.country_code),
-                                    province_of_origin=payload.shipper.state_code or "N/B",
+                                    country_of_origin=(
+                                        item.origin_country
+                                        or payload.shipper.country_code
+                                    ),
+                                    province_of_origin=payload.shipper.state_code
+                                    or "N/B",
                                 )
                                 for item in customs.commodities
                             ]

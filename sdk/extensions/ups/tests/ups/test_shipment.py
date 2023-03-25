@@ -159,6 +159,9 @@ NegotiatedParsedShipmentResponse = [
         "tracking_number": "1ZWA82900191640782",
         "shipment_identifier": "1ZWA82900191640782",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1ZWA82900191640782/trackdetails"
+        },
     },
     [],
 ]
@@ -170,6 +173,9 @@ ParsedShipmentResponse = [
         "tracking_number": "1ZWA82900191640782",
         "shipment_identifier": "1ZWA82900191640782",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1ZWA82900191640782/trackdetails"
+        },
     },
     [],
 ]

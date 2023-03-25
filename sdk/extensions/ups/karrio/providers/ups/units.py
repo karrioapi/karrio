@@ -266,3 +266,11 @@ class UploadDocumentType(utils.Flag):
     pro_forma_invoice = ups_other_document
     packing_list = ups_packing_list
     other = ups_other_document
+
+
+class TrackingStatus(utils.Enum):
+    on_hold = ["X"]
+    delivered = ["D"]
+    in_transit = [""]
+    delivery_failed = ["RS"]
+    out_for_delivery = ["OT"]

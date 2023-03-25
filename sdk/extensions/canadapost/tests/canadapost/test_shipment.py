@@ -232,6 +232,9 @@ ParsedShipmentResponse = [
         "tracking_number": "123456789012",
         "shipment_identifier": "123456789012",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012"
+        },
     },
     [],
 ]

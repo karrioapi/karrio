@@ -12,16 +12,19 @@ from tnt_lib.label_request import (
     pieceType,
     measurementsType,
 )
+import karrio.lib as lib
 from karrio.core.utils import Serializable
 from karrio.core.units import Packages
 from karrio.core.models import ShipmentRequest, Payment
-from karrio.providers.tnt.units import PaymentType, ShippingOption, ShipmentService
+from karrio.providers.tnt.units import PaymentType
 from karrio.providers.tnt.utils import Settings
 
 
 def create_label_request(
     activity: document, payload: ShipmentRequest, settings: Settings
 ) -> Serializable[labelRequest]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     package = Packages(payload.parcels).single
     payment = payload.payment or Payment(paid_by="sender")
     price: PRICE = next(activity.RATE.PRICE, PRICE())
@@ -36,32 +39,31 @@ def create_label_request(
                 ),
                 collectionDateTime=None,
                 sender=nameAndAddressRequestType(
-                    name=payload.shipper.company_name or payload.shipper.person_name,
-                    addressLine1=payload.shipper.address_line1,
-                    addressLine2=payload.shipper.address_line2,
+                    name=recipient.contact,
+                    addressLine1=lib.text(shipper.street_number, shipper.address_line1),
+                    addressLine2=shipper.address_line2,
                     addressLine3=None,
-                    town=payload.shipper.city,
+                    town=shipper.city,
                     exactMatch=None,
-                    province=payload.shipper.state_code,
-                    postcode=payload.shipper.postal_code,
-                    country=payload.shipper.country_code,
+                    province=shipper.state_code,
+                    postcode=shipper.postal_code,
+                    country=shipper.country_code,
                 ),
                 delivery=nameAndAddressRequestType(
-                    name=payload.recipient.company_name
-                    or payload.recipient.person_name,
-                    addressLine1=payload.recipient.address_line1,
-                    addressLine2=payload.recipient.address_line2,
+                    name=recipient.contact,
+                    addressLine1=lib.text(recipient.street_number, recipient.address_line1),
+                    addressLine2=recipient.address_line2,
                     addressLine3=None,
-                    town=payload.recipient.city,
+                    town=recipient.city,
                     exactMatch=None,
-                    province=payload.recipient.state_code,
-                    postcode=payload.recipient.postal_code,
-                    country=payload.recipient.country_code,
+                    province=recipient.state_code,
+                    postcode=recipient.postal_code,
+                    country=recipient.country_code,
                 ),
                 contact=contactType(
-                    name=payload.shipper.person_name,
-                    telephoneNumber=payload.shipper.phone_number,
-                    emailAddress=payload.shipper.email,
+                    name=shipper.person_name,
+                    telephoneNumber=shipper.phone_number,
+                    emailAddress=shipper.email,
                 ),
                 product=productType(
                     lineOfBusiness=None,

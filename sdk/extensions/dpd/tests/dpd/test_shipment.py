@@ -99,11 +99,11 @@ IntlShipmentPayload = {
         "country_code": "GB",
         "postal_code": "LS101AB",
         "address_line1": "Receiverstraat",
+        "street_number": 5,
         "residential": False,
         "phone_number": "+442012345678",
         "email": "receiver@receivercompany.com",
         "federal_tax_id": "GB654321",
-        "extra": {"street_number": 5},
     },
     "parcels": [
         {
@@ -160,6 +160,7 @@ ParsedShipmentResponse = [
         "meta": {
             "shipment_identifiers": ["MPS0530000001126720230319"],
             "tracking_numbers": ["05300000011267"],
+            "carrier_tracking_link": "https://www.dpdgroup.com/be/mydpd/my-parcels/track?lang=en&parcelNumber=05300000011267",
         },
         "shipment_identifier": "MPS0530000001126720230319",
         "tracking_number": "05300000011267",

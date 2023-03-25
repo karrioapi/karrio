@@ -26,6 +26,10 @@ class Settings(BaseSettings):
             else "https://xmlpi-ea.dhl.com/XMLShippingServlet"
         )
 
+    @property
+    def tracking_url(self):
+        return "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
+
     def Request(self, **kwargs) -> Request:
         return Request(
             ServiceHeader=ServiceHeader(

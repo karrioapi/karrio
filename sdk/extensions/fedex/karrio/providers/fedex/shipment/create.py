@@ -74,7 +74,10 @@ def _extract_details(
             label=label,
             **({"invoice": invoice} if invoice else {}),
         ),
-        meta=dict(tracking_numbers=tracking_numbers),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(master_id),
+            tracking_numbers=tracking_numbers
+        ),
     )
 
 

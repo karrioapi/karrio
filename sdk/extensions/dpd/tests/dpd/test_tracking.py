@@ -168,6 +168,9 @@ ParsedTrackingResponse = [
             ],
             "status": "out_for_delivery",
             "tracking_number": "05308801410058",
+            "info": {
+                "carrier_tracking_link": "https://www.dpdgroup.com/be/mydpd/my-parcels/track?lang=en&parcelNumber=05308801410058"
+            },
         }
     ],
     [],

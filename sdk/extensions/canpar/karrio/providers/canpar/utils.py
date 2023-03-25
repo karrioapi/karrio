@@ -27,6 +27,10 @@ class Settings(BaseSettings):
             else "https://canship.canpar.com/canshipws/services"
         )
 
+    @property
+    def tracking_url(self):
+        return "https://www.canpar.com/" + self.language + "/tracking/track.htm?barcode={}"
+
     @staticmethod
     def serialize(
         envelope: Envelope,

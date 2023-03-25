@@ -124,13 +124,11 @@ def rate_request(
                 CountryCode=payload.shipper.country_code,
                 Postalcode=payload.shipper.postal_code,
                 City=payload.shipper.city,
-                Suburb=payload.shipper.state_code,
             ),
             To=DCTTo(
                 CountryCode=payload.recipient.country_code,
                 Postalcode=payload.recipient.postal_code,
                 City=payload.recipient.city,
-                Suburb=payload.recipient.state_code,
             ),
             BkgDetails=BkgDetailsType(
                 PaymentCountryCode=payload.shipper.country_code,

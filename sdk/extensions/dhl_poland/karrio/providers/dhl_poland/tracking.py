@@ -1,8 +1,4 @@
-from dhl_poland_lib.services import (
-    getTrackAndTraceInfo,
-    TrackAndTraceResponse,
-    TrackAndTraceEvent,
-)
+import dhl_poland_lib.services as dhl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -37,11 +33,11 @@ def _extract_tracking_details(
     node: lib.Element,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    track: TrackAndTraceResponse = lib.find_element(
-        "getTrackAndTraceInfoResult", node, TrackAndTraceResponse, first=True
+    track: dhl.TrackAndTraceResponse = lib.find_element(
+        "getTrackAndTraceInfoResult", node, dhl.TrackAndTraceResponse, first=True
     )
     events = [
-        lib.to_object(TrackAndTraceEvent, item)
+        lib.to_object(dhl.TrackAndTraceEvent, item)
         for item in lib.find_element("item", node)
     ]
 
@@ -60,6 +56,9 @@ def _extract_tracking_details(
             for event in events
         ],
         delivered=any(track.receivedBy or ""),
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(track.shipmentId),
+        ),
     )
 
 
@@ -70,7 +69,7 @@ def tracking_request(
     requests = {
         tracking_number: lib.create_envelope(
             body_prefix="",
-            body_content=getTrackAndTraceInfo(
+            body_content=dhl.getTrackAndTraceInfo(
                 authData=settings.auth_data,
                 shipmentId=tracking_number,
             ),

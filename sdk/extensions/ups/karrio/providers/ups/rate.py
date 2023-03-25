@@ -97,6 +97,8 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[ups.RateRequest]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     service = lib.to_services(payload.services, provider_units.ShippingService).first
@@ -127,30 +129,30 @@ def rate_request(
         Shipment=ups.ShipmentType(
             OriginRecordTransactionTimestamp=None,
             Shipper=ups.ShipperType(
-                Name=payload.shipper.company_name,
+                Name=shipper.company_name,
                 ShipperNumber=settings.account_number,
                 Address=ups.ShipAddressType(
                     AddressLine=lib.join(
-                        payload.shipper.address_line1,
-                        payload.shipper.address_line2,
+                        lib.text(shipper.street_number, shipper.address_line1),
+                        shipper.address_line2,
                     ),
-                    City=payload.shipper.city,
-                    StateProvinceCode=payload.shipper.state_code,
-                    PostalCode=payload.shipper.postal_code,
-                    CountryCode=payload.shipper.country_code,
+                    City=shipper.city,
+                    StateProvinceCode=shipper.state_code,
+                    PostalCode=shipper.postal_code,
+                    CountryCode=shipper.country_code,
                 ),
             ),
             ShipTo=ups.ShipToType(
-                Name=payload.recipient.company_name,
+                Name=recipient.company_name,
                 Address=ups.ShipToAddressType(
                     AddressLine=lib.join(
-                        payload.recipient.address_line1,
-                        payload.recipient.address_line2,
+                        lib.text(recipient.street_number, recipient.address_line1),
+                        recipient.address_line2,
                     ),
-                    City=payload.recipient.city,
-                    StateProvinceCode=payload.recipient.state_code,
-                    PostalCode=payload.recipient.postal_code,
-                    CountryCode=payload.recipient.country_code,
+                    City=recipient.city,
+                    StateProvinceCode=recipient.state_code,
+                    PostalCode=recipient.postal_code,
+                    CountryCode=recipient.country_code,
                     ResidentialAddressIndicator=None,
                 ),
             ),

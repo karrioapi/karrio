@@ -165,6 +165,9 @@ ParsedShipmentResponse = [
         },
         "shipment_identifier": "10000696",
         "tracking_number": "D999999990000000461001",
+        "meta": {
+            "carrier_tracking_link": "https://www.canpar.com/en/tracking/track.htm?barcode=D999999990000000461001"
+        },
     },
     [],
 ]

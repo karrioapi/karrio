@@ -89,18 +89,20 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[lib.Envelope]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
         required=["weight"],
     )
     service = units.Services(payload.services, provider_units.ShippingService).first
-    is_international = payload.shipper.country_code != payload.recipient.country_code
+    is_international = shipper.country_code != recipient.country_code
 
     service = lib.to_services(
         payload.services,
         is_international=is_international,
-        recipient_country=payload.recipient.country_code,
+        recipient_country=recipient.country_code,
         service_type=provider_units.ShippingService,
         initializer=provider_units.shipping_services_initializer,
     ).first
@@ -110,12 +112,8 @@ def rate_request(
         service_is_defined=(getattr(service, "value", None) in payload.services),
         initializer=provider_units.shipping_options_initializer,
     )
-    shipper_phone = units.Phone(
-        payload.shipper.phone_number, payload.shipper.country_code or "CA"
-    )
-    recipient_phone = units.Phone(
-        payload.recipient.phone_number, payload.recipient.country_code
-    )
+    shipper_phone = units.Phone(shipper.phone_number, shipper.country_code or "CA")
+    recipient_phone = units.Phone(recipient.phone_number, recipient.country_code)
 
     request = lib.create_envelope(
         header_content=RequestContext(
@@ -129,24 +127,22 @@ def rate_request(
             Shipment=Shipment(
                 SenderInformation=SenderInformation(
                     Address=Address(
-                        Name=payload.shipper.person_name or "",
-                        Company=payload.shipper.company_name,
+                        Name=shipper.person_name or "",
+                        Company=shipper.company_name,
                         Department=None,
-                        StreetNumber="",
+                        StreetNumber=shipper.street_number or "",
                         StreetSuffix=None,
-                        StreetName=lib.join(payload.shipper.address_line1, join=True),
+                        StreetName=lib.text(shipper.address_line1),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=lib.join(
-                            payload.shipper.address_line2, join=True
-                        ),
+                        StreetAddress2=lib.text(shipper.address_line2),
                         StreetAddress3=None,
-                        City=payload.shipper.city or "",
-                        Province=payload.shipper.state_code or "",
-                        Country=payload.shipper.country_code or "",
-                        PostalCode=payload.shipper.postal_code or "",
+                        City=shipper.city or "",
+                        Province=shipper.state_code or "",
+                        Country=shipper.country_code or "",
+                        PostalCode=shipper.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=shipper_phone.country_code or "0",
                             AreaCode=shipper_phone.area_code or "0",
@@ -155,30 +151,26 @@ def rate_request(
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=(
-                        payload.shipper.federal_tax_id or payload.shipper.state_tax_id
-                    ),
+                    TaxNumber=(shipper.federal_tax_id or shipper.state_tax_id),
                 ),
                 ReceiverInformation=ReceiverInformation(
                     Address=Address(
-                        Name=payload.recipient.person_name or "",
-                        Company=payload.recipient.company_name,
+                        Name=recipient.person_name or "",
+                        Company=recipient.company_name,
                         Department=None,
-                        StreetNumber="",
+                        StreetNumber=recipient.street_number or "",
                         StreetSuffix=None,
-                        StreetName=lib.join(payload.recipient.address_line1, join=True),
+                        StreetName=lib.text(recipient.address_line1),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=lib.join(
-                            payload.recipient.address_line2, join=True
-                        ),
+                        StreetAddress2=lib.text(recipient.address_line2),
                         StreetAddress3=None,
-                        City=payload.recipient.city or "",
-                        Province=payload.recipient.state_code or "",
-                        Country=payload.recipient.country_code or "",
-                        PostalCode=payload.recipient.postal_code or "",
+                        City=recipient.city or "",
+                        Province=recipient.state_code or "",
+                        Country=recipient.country_code or "",
+                        PostalCode=recipient.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=recipient_phone.country_code or "0",
                             AreaCode=recipient_phone.area_code or "0",
@@ -187,10 +179,7 @@ def rate_request(
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=(
-                        payload.recipient.federal_tax_id
-                        or payload.recipient.state_tax_id
-                    ),
+                    TaxNumber=(recipient.federal_tax_id or recipient.state_tax_id),
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
@@ -199,7 +188,8 @@ def rate_request(
                     ServiceID=service.value,
                     Description=(
                         packages.description[:25]
-                        if any(packages.description or "") else None
+                        if any(packages.description or "")
+                        else None
                     ),
                     TotalWeight=(
                         TotalWeight(

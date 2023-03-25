@@ -24,5 +24,9 @@ class Settings(BaseSettings):
         return "https://ws.chronopost.fr"
 
     @property
+    def tracking_url(self):
+        return "https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT={}"
+
+    @property
     def header_value(self):
         return headerValue(accountNumber=self.account_number, idEmit=self.id_emit)

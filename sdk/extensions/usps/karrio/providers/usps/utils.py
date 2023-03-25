@@ -24,3 +24,7 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return "https://secure.shippingapis.com/ShippingAPI.dll"
+
+    @property
+    def tracking_url(self):
+        return "https://tools.usps.com/go/TrackConfirmAction?tLabels={}"

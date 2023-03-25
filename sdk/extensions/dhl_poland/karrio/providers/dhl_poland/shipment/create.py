@@ -1,26 +1,4 @@
-from dhl_poland_lib.services import (
-    Address,
-    Addressat,
-    ArrayOfCustomsitemdata,
-    ArrayOfPackage,
-    ArrayOfService,
-    Billing,
-    CreateShipmentRequest,
-    CustomsAgreementData,
-    CustomsData,
-    CustomsItemData,
-    Package,
-    PreavisoContact,
-    ReceiverAddress,
-    ReceiverAddressat,
-    Ship,
-    ShipmentInfo,
-    ShipmentTime,
-    createShipment,
-    Service as DhlService,
-    CreateShipmentResponse,
-)
-
+import dhl_poland_lib.services as dhl
 import time
 import typing
 import karrio.lib as lib
@@ -48,8 +26,8 @@ def _extract_details(
     response: lib.Element,
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    shipment = lib.find_element(
-        "createShipmentResult", response, CreateShipmentResponse, first=True
+    shipment: dhl.CreateShipmentResponse = lib.find_element(
+        "createShipmentResult", response, dhl.CreateShipmentResponse, first=True
     )
 
     return models.ShipmentDetails(
@@ -60,6 +38,11 @@ def _extract_details(
         docs=models.Documents(
             label=shipment.label.labelContent,
             invoice=shipment.label.fvProformaContent,
+        ),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(
+                shipment.shipmentNotificationNumber
+            ),
         ),
     )
 
@@ -93,14 +76,14 @@ def shipment_request(
     quantity = len(customs.commodities or []) if customs.is_defined else 1
 
     request = lib.create_envelope(
-        body_content=createShipment(
+        body_content=dhl.createShipment(
             authData=settings.auth_data,
-            shipment=CreateShipmentRequest(
-                shipmentInfo=ShipmentInfo(
+            shipment=dhl.CreateShipmentRequest(
+                shipmentInfo=dhl.ShipmentInfo(
                     wayBill=None,
                     dropOffType="REGULAR_PICKUP",
                     serviceType=service_type,
-                    billing=Billing(
+                    billing=dhl.Billing(
                         shippingPaymentType=provider_units.PaymentType[
                             payment.paid_by
                         ].value,
@@ -111,9 +94,9 @@ def shipment_request(
                         costsCenter=None,
                     ),
                     specialServices=(
-                        ArrayOfService(
+                        dhl.ArrayOfService(
                             item=[
-                                DhlService(
+                                dhl.Service(
                                     serviceType=option.code,
                                     serviceValue=lib.to_money(option.state),
                                     textInstruction=None,
@@ -126,7 +109,7 @@ def shipment_request(
                         else None
                     ),
                     shipmentTime=(
-                        ShipmentTime(
+                        dhl.ShipmentTime(
                             shipmentDate=(
                                 options.shipment_date.state or time.strftime("%Y-%m-%d")
                             ),
@@ -139,10 +122,10 @@ def shipment_request(
                 content=payload.parcels[0].content or "N/A",
                 comment=None,
                 reference=payload.reference,
-                ship=Ship(
-                    shipper=Addressat(
+                ship=dhl.Ship(
+                    shipper=dhl.Addressat(
                         preaviso=(
-                            PreavisoContact(
+                            dhl.PreavisoContact(
                                 personName=shipper.person_name,
                                 phoneNumber=shipper.phone_number,
                                 emailAddress=shipper.email,
@@ -157,7 +140,7 @@ def shipment_request(
                             else None
                         ),
                         contact=(
-                            PreavisoContact(
+                            dhl.PreavisoContact(
                                 personName=shipper.person_name,
                                 phoneNumber=shipper.phone_number,
                                 emailAddress=shipper.email,
@@ -171,18 +154,18 @@ def shipment_request(
                             )
                             else None
                         ),
-                        address=Address(
+                        address=dhl.Address(
                             name=(shipper.company_name or shipper.person_name),
                             postalCode=(shipper.postal_code or "").replace("-", ""),
                             city=shipper.city,
-                            street=shipper.address_line,
+                            street=lib.text(shipper.address_line1, shipper.address_line2),
                             houseNumber=(shipper.street_number or "N/A"),
                             apartmentNumber=shipper.suite,
                         ),
                     ),
-                    receiver=ReceiverAddressat(
+                    receiver=dhl.ReceiverAddressat(
                         preaviso=(
-                            PreavisoContact(
+                            dhl.PreavisoContact(
                                 personName=recipient.person_name,
                                 phoneNumber=recipient.phone_number,
                                 emailAddress=recipient.email,
@@ -197,7 +180,7 @@ def shipment_request(
                             else None
                         ),
                         contact=(
-                            PreavisoContact(
+                            dhl.PreavisoContact(
                                 personName=recipient.person_name,
                                 phoneNumber=recipient.phone_number,
                                 emailAddress=recipient.email,
@@ -211,7 +194,7 @@ def shipment_request(
                             )
                             else None
                         ),
-                        address=ReceiverAddress(
+                        address=dhl.ReceiverAddress(
                             country=recipient.country_code,
                             isPackstation=None,
                             isPostfiliale=None,
@@ -220,16 +203,16 @@ def shipment_request(
                             name=(recipient.company_name or recipient.person_name),
                             postalCode=(recipient.postal_code or "").replace("-", ""),
                             city=recipient.city,
-                            street=recipient.address_line,
+                            street=lib.text(recipient.address_line1, recipient.address_line2),
                             houseNumber=(shipper.street_number or "N/A"),
                             apartmentNumber=shipper.suite,
                         ),
                     ),
                     neighbour=None,
                 ),
-                pieceList=ArrayOfPackage(
+                pieceList=dhl.ArrayOfPackage(
                     item=[
-                        Package(
+                        dhl.Package(
                             type_=provider_units.PackagingType[
                                 package.packaging_type or "your_packaging"
                             ].value,
@@ -246,7 +229,7 @@ def shipment_request(
                     ]
                 ),
                 customs=(
-                    CustomsData(
+                    dhl.CustomsData(
                         customsType="S",
                         firstName=getattr(
                             getattr(customs.duty, "bil_to", shipper.company_name),
@@ -279,11 +262,17 @@ def shipment_request(
                         additionalInfo=None,
                         grossWeight=packages.weight.KG,
                         customsItem=(
-                            ArrayOfCustomsitemdata(
+                            dhl.ArrayOfCustomsitemdata(
                                 item=[
-                                    CustomsItemData(
-                                        nameEn=lib.text(item.title or item.description or "N/A", max=35),
-                                        namePl=lib.text(item.title or item.description or "N/A", max=35),
+                                    dhl.CustomsItemData(
+                                        nameEn=lib.text(
+                                            item.title or item.description or "N/A",
+                                            max=35,
+                                        ),
+                                        namePl=lib.text(
+                                            item.title or item.description or "N/A",
+                                            max=35,
+                                        ),
                                         quantity=item.quantity,
                                         weight=units.Weight(
                                             item.weight,
@@ -298,7 +287,7 @@ def shipment_request(
                             if any(customs.commodities)
                             else None
                         ),
-                        customAgreements=CustomsAgreementData(
+                        customAgreements=dhl.CustomsAgreementData(
                             notExceedValue=True,
                             notProhibitedGoods=True,
                             notRestrictedGoods=True,

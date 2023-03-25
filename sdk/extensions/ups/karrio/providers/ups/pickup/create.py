@@ -25,6 +25,7 @@ from karrio.core.utils import (
     DF,
     SF,
 )
+import karrio.lib as lib
 from karrio.core.models import (
     PickupRequest,
     PickupDetails,
@@ -93,6 +94,7 @@ def pickup_request(
 def _create_pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[Envelope]:
+    address = lib.to_address(payload.address)
     packages = Packages(payload.parcels, PackagePresets)
     has_overweight = any(package for package in packages if package.weight.KG > 32)
 
@@ -106,7 +108,7 @@ def _create_pickup_request(
             Shipper=ShipperType(
                 Account=AccountType(
                     AccountNumber=settings.account_number,
-                    AccountCountryCode=payload.address.country_code or "",
+                    AccountCountryCode=address.country_code or "",
                 ),
                 ChargeCard=None,
                 TaxInformation=None,
@@ -117,21 +119,22 @@ def _create_pickup_request(
                 PickupDate=DF.date(payload.pickup_date).strftime("%Y%m%d"),
             ),
             PickupAddress=PickupAddressType(
-                CompanyName=payload.address.company_name,
-                ContactName=payload.address.person_name,
-                AddressLine=SF.concat_str(
-                    payload.address.address_line1, payload.address.address_line2
+                CompanyName=address.company_name,
+                ContactName=address.person_name,
+                AddressLine=lib.join(
+                    lib.text(address.street_number, address.address_line1),
+                    address.address_line2,
                 ),
                 Room=None,
                 Floor=None,
-                City=payload.address.city,
-                StateProvince=payload.address.state_code,
+                City=address.city,
+                StateProvince=address.state_code,
                 Urbanization=None,
-                PostalCode=payload.address.postal_code,
-                CountryCode=payload.address.country_code,
-                ResidentialIndicator=("Y" if payload.address.residential else "N"),
+                PostalCode=address.postal_code,
+                CountryCode=address.country_code,
+                ResidentialIndicator=("Y" if address.residential else "N"),
                 PickupPoint=payload.package_location,
-                Phone=PhoneType(Number=payload.address.phone_number or "000-000-0000"),
+                Phone=PhoneType(Number=address.phone_number or "000-000-0000"),
             ),
             AlternateAddressIndicator="Y",
             PickupPiece=None,

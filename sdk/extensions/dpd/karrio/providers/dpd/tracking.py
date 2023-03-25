@@ -79,6 +79,9 @@ def _extract_details(
         ],
         delivered=delivered,
         status=status,
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(tracking_number),
+        )
     )
 
 

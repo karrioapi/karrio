@@ -1,25 +1,6 @@
-from dhl_express_lib.ship_val_global_req_10_0 import (
-    ShipmentRequest as DHLShipmentRequest,
-    Billing,
-    Consignee,
-    Contact,
-    Commodity,
-    Shipper,
-    ShipmentDetails as DHLShipmentDetails,
-    Reference,
-    Dutiable,
-    MetaData,
-    Notification,
-    SpecialService,
-    WeightType,
-    Label,
-    ExportDeclaration,
-    ExportLineItem,
-    AdditionalInformation,
-)
-from dhl_express_lib.ship_val_global_res_10_0 import LabelImage, MultiLabelType
-from dhl_express_lib.datatypes_global_v10 import Pieces, Piece
-
+import dhl_express_lib.ship_val_global_req_10_0 as dhl
+import dhl_express_lib.ship_val_global_res_10_0 as dhl_res
+import dhl_express_lib.datatypes_global_v10 as dhl_global
 import time
 import typing
 import base64
@@ -49,9 +30,11 @@ def _extract_shipment(
     tracking_number = lib.find_element(
         "AirwayBillNumber", shipment_node, first=True
     ).text
-    label_image = lib.find_element("LabelImage", shipment_node, LabelImage, first=True)
-    multilabels: typing.List[MultiLabelType] = lib.find_element(
-        "MultiLabel", shipment_node, MultiLabelType
+    label_image = lib.find_element(
+        "LabelImage", shipment_node, dhl_res.LabelImage, first=True
+    )
+    multilabels: typing.List[dhl_res.MultiLabelType] = lib.find_element(
+        "MultiLabel", shipment_node, dhl_res.MultiLabelType
     )
     invoice = next(
         (item for item in multilabels if item.DocName == "CustomInvoiceImage"), None
@@ -70,12 +53,15 @@ def _extract_shipment(
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
         docs=models.Documents(label=label, **invoice_data),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(tracking_number),
+        ),
     )
 
 
 def shipment_request(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
-) -> lib.Serializable[DHLShipmentRequest]:
+) -> lib.Serializable[dhl.ShipmentRequest]:
     if any(settings.account_country_code or "") and (
         payload.shipper.country_code != settings.account_country_code
     ):
@@ -123,25 +109,25 @@ def shipment_request(
     content = packages[0].parcel.content or customs.content_description or "N/A"
     reference = payload.reference or getattr(payload, "id", None)
 
-    request = DHLShipmentRequest(
+    request = dhl.ShipmentRequest(
         schemaVersion="10.0",
         Request=settings.Request(
-            MetaData=MetaData(SoftwareName="3PV", SoftwareVersion="10.0")
+            MetaData=dhl.MetaData(SoftwareName="3PV", SoftwareVersion="10.0")
         ),
         RegionCode=provider_units.CountryRegion[shipper.country_code].value,
         LanguageCode="en",
         LatinResponseInd=None,
-        Billing=Billing(
+        Billing=dhl.Billing(
             ShipperAccountNumber=settings.account_number,
             ShippingPaymentType=provider_units.PaymentType[payment.paid_by].value,
             BillingAccountNumber=payment.account_number,
             DutyAccountNumber=duty.account_number,
         ),
-        Consignee=Consignee(
+        Consignee=dhl.Consignee(
             CompanyName=recipient.company_name or "N/A",
             SuiteDepartmentName=recipient.suite,
-            AddressLine1=recipient.address_line1 or recipient.address_line,
-            AddressLine2=lib.join(recipient.address_line2, join=True),
+            AddressLine1=lib.text(recipient.street_number, recipient.address_line1),
+            AddressLine2=lib.text(recipient.address_line2),
             AddressLine3=None,
             City=recipient.city,
             Division=None,
@@ -149,7 +135,7 @@ def shipment_request(
             PostalCode=recipient.postal_code,
             CountryCode=recipient.country_code,
             CountryName=recipient.country_name,
-            Contact=Contact(
+            Contact=dhl.Contact(
                 PersonName=recipient.person_name,
                 PhoneNumber=recipient.phone_number or "0000",
                 Email=recipient.email,
@@ -163,8 +149,8 @@ def shipment_request(
         ),
         Commodity=(
             [
-                Commodity(
-                    CommodityCode=c.sku or "N/A", 
+                dhl.Commodity(
+                    CommodityCode=c.sku or "N/A",
                     CommodityName=lib.text(c.title or c.description, max=35),
                 )
                 for c in customs.commodities
@@ -173,7 +159,7 @@ def shipment_request(
             else None
         ),
         Dutiable=(
-            Dutiable(
+            dhl.Dutiable(
                 DeclaredValue=(
                     duty.declared_value or options.declared_value.state or 1.0
                 ),
@@ -195,7 +181,7 @@ def shipment_request(
             ("CMI" if customs.commercial_invoice else "PFI") if is_dutiable else None
         ),
         ExportDeclaration=(
-            ExportDeclaration(
+            dhl.ExportDeclaration(
                 InterConsignee=None,
                 IsPartiesRelation=None,
                 ECCN=None,
@@ -230,23 +216,25 @@ def shipment_request(
                 ExporterId=None,
                 ExporterCode=None,
                 ExportLineItem=[
-                    ExportLineItem(
+                    dhl.ExportLineItem(
                         LineNumber=index,
                         Quantity=item.quantity,
                         QuantityUnit="PCS",
-                        Description=lib.text(item.title or item.description or "N/A", max=35),
+                        Description=lib.text(
+                            item.title or item.description or "N/A", max=35
+                        ),
                         Value=item.value_amount or 0.0,
                         IsDomestic=None,
                         CommodityCode=item.sku or "N/A",
                         ScheduleB=None,
                         ECCN=None,
-                        Weight=WeightType(
+                        Weight=dhl.WeightType(
                             Weight=item.weight,
                             WeightUnit=provider_units.WeightUnit[
                                 item.weight_unit
                             ].value,
                         ),
-                        GrossWeight=WeightType(
+                        GrossWeight=dhl.WeightType(
                             Weight=item.weight,
                             WeightUnit=provider_units.WeightUnit[
                                 item.weight_unit
@@ -283,12 +271,12 @@ def shipment_request(
             else None
         ),
         Reference=(
-            [Reference(ReferenceID=reference[:30])] if any([reference]) else None
+            [dhl.Reference(ReferenceID=reference[:30])] if any([reference]) else None
         ),
-        ShipmentDetails=DHLShipmentDetails(
-            Pieces=Pieces(
+        ShipmentDetails=dhl.ShipmentDetails(
+            Pieces=dhl_global.Pieces(
                 Piece=[
-                    Piece(
+                    dhl_global.Piece(
                         PieceID=index,
                         PackageType=(
                             package_type
@@ -310,12 +298,12 @@ def shipment_request(
                             package.parcel.content or package.parcel.description
                         ),
                         PieceReference=(
-                            [Reference(ReferenceID=package.parcel.id[:30])]
+                            [dhl.Reference(ReferenceID=package.parcel.id[:30])]
                             if package.parcel.id is not None
                             else None
                         ),
                         AdditionalInformation=(
-                            AdditionalInformation(
+                            dhl.AdditionalInformation(
                                 CustomerDescription=package.parcel.description
                             )
                             if package.parcel.description is not None
@@ -344,12 +332,12 @@ def shipment_request(
             ParentShipmentGlobalProductCode=None,
             ParentShipmentPackagesCount=None,
         ),
-        Shipper=Shipper(
+        Shipper=dhl.Shipper(
             ShipperID=settings.account_number or "N/A",
             CompanyName=shipper.company_name or "N/A",
             SuiteDepartmentName=shipper.suite,
             RegisteredAccount=settings.account_number,
-            AddressLine1=shipper.address_line1 or shipper.address_line,
+            AddressLine1=lib.text(shipper.street_number, shipper.address_line1),
             AddressLine2=lib.join(shipper.address_line2, join=True),
             AddressLine3=None,
             City=shipper.city,
@@ -360,7 +348,7 @@ def shipment_request(
             OriginFacilityCode=None,
             CountryCode=shipper.country_code,
             CountryName=shipper.country_name,
-            Contact=Contact(
+            Contact=dhl.Contact(
                 PersonName=shipper.person_name,
                 PhoneNumber=shipper.phone_number or "0000",
                 Email=shipper.email,
@@ -373,7 +361,7 @@ def shipment_request(
             BusinessPartyTypeCode=None,
         ),
         SpecialService=[
-            SpecialService(
+            dhl.SpecialService(
                 SpecialServiceType=option.code,
                 ChargeValue=lib.to_money(option.state),
                 CurrencyCode=(
@@ -385,7 +373,7 @@ def shipment_request(
             for _, option in options.items()
         ],
         Notification=(
-            Notification(
+            dhl.Notification(
                 EmailAddress=options.email_notification_to.state or recipient.email
             )
             if options.email_notification.state
@@ -401,7 +389,7 @@ def shipment_request(
         NumberOfArchiveDoc=None,
         RequestQRCode="N",
         RequestTransportLabel=None,
-        Label=Label(LabelTemplate=label_template),
+        Label=dhl.Label(LabelTemplate=label_template),
         ODDLinkReq=None,
         DGs=None,
         GetPriceEstimate="Y",
@@ -414,11 +402,16 @@ def shipment_request(
     return lib.Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: DHLShipmentRequest) -> str:
+def _request_serializer(request: dhl.ShipmentRequest) -> str:
     xml_str = lib.to_xml(
         request,
         name_="req:ShipmentRequest",
-        namespacedef_='xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+        namespacedef_=(
+            'xsi:schemaLocation="http://www.dhl.com '
+            'ship-val-global-req.xsd" '
+            'xmlns:req="http://www.dhl.com" '
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+        ),
     ).replace('schemaVersion="10"', 'schemaVersion="10.0"')
 
     return xml_str

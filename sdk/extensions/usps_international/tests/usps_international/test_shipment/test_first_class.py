@@ -109,6 +109,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "LZ333007778US",
         "tracking_number": "LZ333007778US",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=LZ333007778US"
+        },
     },
     [],
 ]

@@ -1,22 +1,17 @@
-from typing import Tuple, List
-from amazon_mws_lib.tracking_response import TrackingResponse
-from karrio.providers.amazon_mws.utils import Settings
-from karrio.core.utils import Serializable, DF, SF, DP
-from karrio.core.models import (
-    TrackingRequest,
-    TrackingDetails,
-    TrackingEvent,
-    Message,
-)
-from karrio.providers.amazon_mws.error import parse_error_response
+import amazon_mws_lib.tracking_response as amazon
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.amazon_mws.error as error
+import karrio.providers.amazon_mws.utils as provider_utils
 
 
 def parse_tracking_response(
-    responses: List[Tuple[str, dict]], settings: Settings
-) -> Tuple[List[TrackingDetails], List[Message]]:
-    errors: List[Message] = sum(
+    responses: typing.List[typing.Tuple[str, dict]], settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    errors: typing.List[models.Message] = sum(
         [
-            parse_error_response(response, settings, dict(tracking_number=id))
+            error.parse_error_response(response, settings, dict(tracking_number=id))
             for id, response in responses
             if "errors" in response
         ],
@@ -31,20 +26,24 @@ def parse_tracking_response(
     return trackers, errors
 
 
-def _extract_details(data: dict, settings: Settings) -> TrackingDetails:
-    details = DP.to_object(TrackingResponse, data)
+def _extract_details(data: dict, settings: provider_utils.Settings,) -> models.TrackingDetails:
+    details = lib.to_object(amazon.TrackingResponse, data)
+    delivered = (details.summary.status == "Delivered")
+    estimated_delivery = lib.fdate(details.promisedDeliveryDate, "%Y-%m-%dT%H:%M:%SZ")
 
-    return TrackingDetails(
+    return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=details.trackingId,
+        estimated_delivery=estimated_delivery,
+        delivered=delivered,
         events=[
-            TrackingEvent(
-                date=DF.fdate(event.eventTime, "%Y-%m-%dT%H:%M:%SZ"),
+            models.TrackingEvent(
+                date=lib.fdate(event.eventTime, "%Y-%m-%dT%H:%M:%SZ"),
                 description=event.eventCode,
                 code=event.eventCode,
-                time=DF.ftime(event.eventTime, "%Y-%m-%dT%H:%M:%SZ"),
-                location=SF.concat_str(
+                time=lib.ftime(event.eventTime, "%Y-%m-%dT%H:%M:%SZ"),
+                location=lib.join(
                     event.location.city,
                     event.location.stateOrRegion,
                     event.location.postalCode,
@@ -55,10 +54,8 @@ def _extract_details(data: dict, settings: Settings) -> TrackingDetails:
             )
             for event in details.eventHistory
         ],
-        estimated_delivery=DF.fdate(details.promisedDeliveryDate, "%Y-%m-%dT%H:%M:%SZ"),
-        delivered=(details.summary.status == "Delivered"),
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable:
-    return Serializable(payload.tracking_numbers)
+def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
+    return lib.Serializable(payload.tracking_numbers)

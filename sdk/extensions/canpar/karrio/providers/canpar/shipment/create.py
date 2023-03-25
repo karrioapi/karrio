@@ -23,7 +23,7 @@ def parse_shipment_response(
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     shipment = lib.to_object(
         Shipment,
-        next(iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None),
+        lib.find_element("shipment", response, first=True)
     )
     success = shipment is not None and shipment.id is not None
     shipment_details = _extract_details(response, settings) if success else None
@@ -34,12 +34,8 @@ def parse_shipment_response(
 def _extract_details(
     response: lib.Element, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
-    shipment_node = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="shipment")), None
-    )
-    label = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="labels")), None
-    )
+    shipment_node = lib.find_element("shipment", response, first=True)
+    label = lib.find_element("labels", response, first=True)
     shipment = lib.to_object(Shipment, shipment_node)
     tracking_number = next(iter(shipment.packages), Package()).barcode
 
@@ -50,6 +46,9 @@ def _extract_details(
         shipment_identifier=str(shipment.id),
         selected_rate=rate._extract_rate_details(shipment_node, settings),
         docs=models.Documents(label=str(label.text)),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(tracking_number),
+        ),
     )
 
 
@@ -89,7 +88,7 @@ def _process_shipment(
                 shipment=Shipment(
                     cod_type=options.canpar_cash_on_delivery.state,
                     delivery_address=Address(
-                        address_line_1=payload.recipient.address_line1,
+                        address_line_1=lib.text(payload.recipient.street_number, payload.recipient.address_line1),
                         address_line_2=payload.recipient.address_line2,
                         address_line_3=None,
                         attention=payload.recipient.person_name,
@@ -131,7 +130,7 @@ def _process_shipment(
                         for pkg in packages
                     ],
                     pickup_address=Address(
-                        address_line_1=payload.shipper.address_line1,
+                        address_line_1=lib.text(payload.shipper.street_number, payload.shipper.address_line1),
                         address_line_2=payload.shipper.address_line2,
                         address_line_3=None,
                         attention=payload.shipper.person_name,

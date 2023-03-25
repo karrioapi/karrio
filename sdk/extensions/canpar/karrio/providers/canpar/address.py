@@ -4,6 +4,7 @@ from canpar_lib.CanparRatingService import (
     SearchCanadaPostRq,
     Address as CanparAddress,
 )
+import karrio.lib as lib
 from karrio.core.models import (
     AddressValidationDetails,
     AddressValidationRequest,
@@ -60,6 +61,7 @@ def parse_address_validation_response(
 def address_validation_request(
     payload: AddressValidationRequest, settings: Settings
 ) -> Serializable[Envelope]:
+    address = lib.to_address(payload.address)
 
     request = create_envelope(
         body_content=searchCanadaPost(
@@ -69,13 +71,8 @@ def address_validation_request(
                 postal_code=payload.address.postal_code or "",
                 province=payload.address.state_code or "",
                 street_direction="",
-                street_name=SF.concat_str(
-                    payload.address.address_line1,
-                    payload.address.address_line2,
-                    join=True,
-                )
-                or "",
-                street_num="",
+                street_name=address.address_line or "",
+                street_num=address.street_number or "",
                 street_type="",
                 user_id=settings.username,
                 validate_only=True,

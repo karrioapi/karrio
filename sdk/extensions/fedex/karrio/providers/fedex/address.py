@@ -9,6 +9,7 @@ from fedex_lib.address_validation_service_v4 import (
     VersionId,
     NotificationSeverityType,
 )
+import karrio.lib as lib
 from karrio.core.utils import create_envelope, Serializable, Element, Envelope, SF, XP
 from karrio.core.models import (
     AddressValidationRequest,
@@ -69,12 +70,7 @@ def parse_address_validation_response(
 def address_validation_request(
     payload: AddressValidationRequest, settings: Settings
 ) -> Serializable[Envelope]:
-    contact = dict(
-        PersonName=payload.address.person_name,
-        CompanyName=payload.address.company_name,
-        PhoneNumber=payload.address.phone_number,
-        EMailAddress=payload.address.email,
-    )
+    address = lib.to_address(payload.address)
 
     request = create_envelope(
         body_content=FedexAddressValidationRequest(
@@ -90,29 +86,37 @@ def address_validation_request(
                     ClientReferenceId=None,
                     Contact=Contact(
                         ContactId=None,
-                        PersonName=contact["person_name"],
+                        PersonName=address.person_name,
                         Title=None,
-                        CompanyName=contact["company_name"],
-                        PhoneNumber=contact["phone_number"],
+                        CompanyName=address.company_name,
+                        PhoneNumber=address.phone_number,
                         PhoneExtension=None,
                         TollFreePhoneNumber=None,
                         PagerNumber=None,
                         FaxNumber=None,
-                        EMailAddress=contact["email"],
+                        EMailAddress=address.email,
                     )
-                    if any(contact.values())
+                    if any(
+                        [
+                            address.person_name,
+                            address.company_name,
+                            address.phone_number,
+                            address.email,
+                        ]
+                    )
                     else None,
                     Address=FedexAddress(
-                        StreetLines=SF.concat_str(
-                            payload.address.address_line1, payload.address.address_line2
+                        StreetLines=lib.join(
+                            lib.text(address.street_number, address.address_line1),
+                            address.address_line2,
                         ),
-                        City=payload.address.city,
-                        StateOrProvinceCode=payload.address.city,
-                        PostalCode=payload.address.postal_code,
+                        City=address.city,
+                        StateOrProvinceCode=address.city,
+                        PostalCode=address.postal_code,
                         UrbanizationCode=None,
-                        CountryCode=payload.address.country_code,
+                        CountryCode=address.country_code,
                         CountryName=None,
-                        Residential="" if payload.address.residential else None,
+                        Residential="" if address.residential else None,
                     ),
                 )
             ],

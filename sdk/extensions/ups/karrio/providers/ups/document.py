@@ -5,7 +5,7 @@ import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
-import karrio.providers.ups.error as provider_error
+import karrio.providers.ups.error as error
 import karrio.providers.ups.units as provider_units
 import karrio.providers.ups.utils as provider_utils
 
@@ -23,50 +23,12 @@ def parse_document_upload_response(
             and result["UploadResponse"].get("FormsHistoryDocumentID") is not None
         )
     ]
-    messages: typing.List[models.Message] = sum(
-        [
-            provider_error.parse_rest_error_response(
-                [
-                    *(  # get errors from the response object returned by UPS
-                        result["response"].get("errors", [])
-                        if "response" in result
-                        else []
-                    ),
-                    *(  # get warnings from the trackResponse object returned by UPS
-                        result["UploadResponse"]["FormsHistoryDocumentID"].get(
-                            "warnings", []
-                        )
-                        if "UploadResponse" in result
-                        else []
-                    ),
-                    *(  # get errors from the API Fault
-                        [
-                            result["Fault"]["detail"]["Errors"]["ErrorDetail"][
-                                "PrimaryErrorCode"
-                            ]
-                        ]
-                        if result.get("Fault", {})
-                        .get("detail", {})
-                        .get("Errors", {})
-                        .get("ErrorDetail", {})
-                        .get("PrimaryErrorCode")
-                        is not None
-                        else []
-                    ),
-                ],
-                settings,
-                dict(file_name=file_name),
-            )
-            for file_name, result in responses
-        ],
-        [],
+    messages: typing.List[models.Message] = error.parse_rest_error_response(
+        [response for _, response in responses],
+        settings=settings,
     )
 
-    details = (
-        _extract_details(raw_documents, settings)
-        if any(raw_documents)
-        else None
-    )
+    details = _extract_details(raw_documents, settings) if any(raw_documents) else None
 
     return details, messages
 

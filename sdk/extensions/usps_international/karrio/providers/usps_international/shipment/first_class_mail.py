@@ -38,6 +38,9 @@ def _extract_details(
         tracking_number=shipment.BarcodeNumber,
         shipment_identifier=shipment.BarcodeNumber,
         docs=models.Documents(label=shipment.LabelImage),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(shipment.BarcodeNumber),
+        ),
     )
 
 
@@ -45,6 +48,8 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[eVSFirstClassMailIntlRequest]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(
         payload.parcels,
         max_weight=units.Weight(70, units.WeightUnit.LB),
@@ -65,33 +70,33 @@ def shipment_request(
         Option=None,
         Revision=2,
         ImageParameters=ImageParametersType(ImageParameter=label_format),
-        FromFirstName=customs.signer or payload.shipper.person_name,
-        FromLastName=payload.shipper.person_name,
-        FromFirm=payload.shipper.company_name or "N/A",
-        FromAddress1=payload.shipper.address_line2,
-        FromAddress2=payload.shipper.address_line1,
+        FromFirstName=customs.signer or shipper.person_name,
+        FromLastName=shipper.person_name,
+        FromFirm=shipper.company_name or "N/A",
+        FromAddress1=shipper.address_line2,
+        FromAddress2=lib.text(shipper.street_number, shipper.address_line1),
         FromUrbanization=None,
-        FromCity=payload.shipper.city,
-        FromZip5=lib.to_zip5(payload.shipper.postal_code),
-        FromZip4=lib.to_zip4(payload.shipper.postal_code) or "",
-        FromPhone=payload.shipper.phone_number,
+        FromCity=shipper.city,
+        FromZip5=lib.to_zip5(shipper.postal_code),
+        FromZip4=lib.to_zip4(shipper.postal_code) or "",
+        FromPhone=shipper.phone_number,
         ToName=None,
-        ToFirstName=payload.recipient.person_name,
-        ToLastName=payload.recipient.person_name,
-        ToFirm=payload.recipient.company_name or "N/A",
-        ToAddress1=payload.recipient.address_line2,
-        ToAddress2=payload.recipient.address_line1,
+        ToFirstName=recipient.person_name,
+        ToLastName=recipient.person_name,
+        ToFirm=recipient.company_name or "N/A",
+        ToAddress1=recipient.address_line2,
+        ToAddress2=lib.text(recipient.street_number, recipient.address_line1),
         ToAddress3=None,
-        ToCity=payload.recipient.city,
+        ToCity=recipient.city,
         ToProvince=lib.to_state_name(
-            payload.recipient.state_code, country=payload.recipient.country_code
+            recipient.state_code, country=recipient.country_code
         ),
-        ToCountry=lib.to_country_name(payload.recipient.country_code),
-        ToPostalCode=payload.recipient.postal_code,
+        ToCountry=lib.to_country_name(recipient.country_code),
+        ToPostalCode=recipient.postal_code,
         ToPOBoxFlag=None,
-        ToPhone=payload.recipient.phone_number,
+        ToPhone=recipient.phone_number,
         ToFax=None,
-        ToEmail=payload.recipient.email,
+        ToEmail=recipient.email,
         FirstClassMailType=None,
         ShippingContents=ShippingContentsType(
             ItemDetail=[

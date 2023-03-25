@@ -49,6 +49,8 @@ def _extract_details(
 
 
 def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(
         payload.parcels,
         package_option_type=provider_units.ShippingOption,
@@ -58,7 +60,7 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    is_intl = payload.shipper.country_code != payload.recipient.country_code
+    is_intl = shipper.country_code != recipient.country_code
     customs = (
         models.Customs(commodities=(
             package.parcel.items
@@ -77,34 +79,34 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
         shipment=easypost.Shipment(
             reference=payload.reference,
             to_address=easypost.Address(
-                company=payload.recipient.company_name,
-                street1=payload.recipient.address_line1,
-                street2=payload.recipient.address_line2,
-                city=payload.recipient.city,
-                state=payload.recipient.state_code,
-                zip=payload.recipient.postal_code,
-                country=payload.recipient.country_code,
-                residential=payload.recipient.residential,
-                name=payload.recipient.person_name,
-                phone=payload.recipient.phone_number,
-                email=payload.recipient.email,
-                federal_tax_id=payload.recipient.federal_tax_id,
-                state_tax_id=payload.recipient.state_tax_id,
+                company=recipient.company_name,
+                street1=lib.text(recipient.street_number, recipient.address_line1),
+                street2=recipient.address_line2,
+                city=recipient.city,
+                state=recipient.state_code,
+                zip=recipient.postal_code,
+                country=recipient.country_code,
+                residential=recipient.residential,
+                name=recipient.person_name,
+                phone=recipient.phone_number,
+                email=recipient.email,
+                federal_tax_id=recipient.federal_tax_id,
+                state_tax_id=recipient.state_tax_id,
             ),
             from_address=easypost.Address(
-                company=payload.shipper.company_name,
-                street1=payload.shipper.address_line1,
-                street2=payload.shipper.address_line2,
-                city=payload.shipper.city,
-                state=payload.shipper.state_code,
-                zip=payload.shipper.postal_code,
-                country=payload.shipper.country_code,
-                residential=payload.shipper.residential,
-                name=payload.shipper.person_name,
-                phone=payload.shipper.phone_number,
-                email=payload.shipper.email,
-                federal_tax_id=payload.shipper.federal_tax_id,
-                state_tax_id=payload.shipper.state_tax_id,
+                company=shipper.company_name,
+                street1=lib.text(shipper.street_number, shipper.address_line1),
+                street2=shipper.address_line2,
+                city=shipper.city,
+                state=shipper.state_code,
+                zip=shipper.postal_code,
+                country=shipper.country_code,
+                residential=shipper.residential,
+                name=shipper.person_name,
+                phone=shipper.phone_number,
+                email=shipper.email,
+                federal_tax_id=shipper.federal_tax_id,
+                state_tax_id=shipper.state_tax_id,
             ),
             parcel=easypost.Parcel(
                 length=package.length.IN,
@@ -120,7 +122,7 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
                 easypost.CustomsInfo(
                     contents_type="other",
                     customs_certify=True,
-                    customs_signer=payload.shipper.person_name,
+                    customs_signer=shipper.person_name,
                     customs_items=[
                         easypost.CustomsItem(
                             description=lib.text(item.description or item.title or "N/A"),

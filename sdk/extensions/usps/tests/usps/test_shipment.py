@@ -120,6 +120,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "420063719270110101010XXXXXXXXX",
         "tracking_number": "420063719270110101010XXXXXXXXX",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=420063719270110101010XXXXXXXXX"
+        },
     },
     [],
 ]

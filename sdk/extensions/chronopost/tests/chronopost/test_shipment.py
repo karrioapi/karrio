@@ -126,9 +126,11 @@ ParsedShipmentResponse = [
         "docs": {
             "label": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADElEQVR4XmOYyfAfAALOAZlbSAeZAAAAAElFTkSuQmCC"
         },
-        "meta": {},
         "shipment_identifier": "XP696982485FR",
         "tracking_number": "XP696982485FR",
+        "meta": {
+            "carrier_tracking_link": "https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT=XP696982485FR"
+        },
     },
     [],
 ]

@@ -111,6 +111,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "EB321424860US",
         "tracking_number": "EB321424860US",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=EB321424860US"
+        },
     },
     [],
 ]

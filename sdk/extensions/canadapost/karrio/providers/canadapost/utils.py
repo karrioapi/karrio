@@ -30,6 +30,10 @@ class Settings(BaseSettings):
         )
 
     @property
+    def tracking_url(self):
+        return "https://www.canadapost-postescanada.ca/track-reperage/" + self.language + "#/resultList?searchFor={}"
+
+    @property
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
         return b64encode(pair.encode("utf-8")).decode("ascii")

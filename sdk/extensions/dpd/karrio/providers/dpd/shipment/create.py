@@ -48,8 +48,9 @@ def _extract_details(
         shipment_identifier=shipment_identifiers[0],
         docs=models.Documents(label=base64.b64encode(label).decode("utf-8")),
         meta=dict(
-            tracking_numbers=tracking_numbers,
+            carrier_tracking_link=settings.tracking_url.format(tracking_numbers[0]),
             shipment_identifiers=shipment_identifiers,
+            tracking_numbers=tracking_numbers,
         ),
     )
 

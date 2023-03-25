@@ -30,6 +30,9 @@ def _extract_shipment(
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
         docs=models.Documents(label=label),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(shipment.ShipmentIdentificationNumber),
+        ),
     )
 
 

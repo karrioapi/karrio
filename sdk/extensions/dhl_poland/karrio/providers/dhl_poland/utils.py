@@ -29,6 +29,10 @@ class Settings(BaseSettings):
         )
 
     @property
+    def tracking_url(self):
+        return "https://www.dhl.com/pl-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
+
+    @property
     def auth_data(self):
         return AuthData(
             username=self.username,

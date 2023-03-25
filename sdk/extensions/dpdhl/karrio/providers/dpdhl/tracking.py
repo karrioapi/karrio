@@ -1,9 +1,10 @@
+import dpdhl_lib.tracking_response as tracking
 import dpdhl_lib.tracking_request as dpdhl
-import dpdhl_lib.tracking_response as dpdhl_response
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.dpdhl.utils as provider_utils
+import karrio.providers.dpdhl.units as provider_units
 
 
 def parse_tracking_response(
@@ -23,6 +24,57 @@ def parse_tracking_response(
     return trackers, messages
 
 
+def _extract_details(
+    data: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
+    details = lib.to_object(tracking.dataType, data)
+    events: typing.List[tracking.dataType2] = (
+        [d for d in details.data.data] if details.data is not None else []
+    )
+    delivered = details.ice == "DLVRD"
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if details.ice in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
+
+    return models.TrackingDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        tracking_number=details.piece_identifier,
+        events=[
+            models.TrackingEvent(
+                code=event.ice,
+                description=event.event_status,
+                date=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
+                time=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
+                location=lib.join(
+                    event.event_location,
+                    event.event_country,
+                    separator=", ",
+                    join=True,
+                ),
+            )
+            for event in events
+        ],
+        status=status,
+        delivered=delivered,
+        estimated_delivery=lib.fdate(details.delivery_date),
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(details.piece_identifier),
+            customer_name=details.pan_recipient_name,
+            shipment_destication_country=details.dest_country,
+            shipment_destination_postal_code=details.pan_recipient_postalcode,
+            shipment_origin_country=details.origin_country,
+            shipment_service=details.product_name,
+        )
+    )
+
+
 def _extract_errors(
     data: lib.Element,
     settings: provider_utils.Settings,
@@ -32,40 +84,6 @@ def _extract_errors(
         carrier_name=settings.carrier_name,
         message=data.get("error"),
         code=data.get("code"),
-    )
-
-
-def _extract_details(
-    data: lib.Element,
-    settings: provider_utils.Settings,
-) -> models.TrackingDetails:
-    tracking = lib.to_object(dpdhl_response.dataType, data)
-    events: typing.List[dpdhl_response.dataType2] = (
-        [d for d in tracking.data.data] if tracking.data is not None else []
-    )
-    delivered = tracking.ice == "DLVRD"
-
-    return models.TrackingDetails(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        tracking_number=tracking.piece_identifier,
-        events=[
-            models.TrackingEvent(
-                date=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
-                description=event.event_status,
-                code=event.ice,
-                time=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
-                location=lib.join(
-                    event.event_location,
-                    event.event_country,
-                    join=True,
-                    separator=", ",
-                ),
-            )
-            for event in events
-        ],
-        estimated_delivery=lib.fdate(tracking.delivery_date),
-        delivered=delivered,
     )
 
 

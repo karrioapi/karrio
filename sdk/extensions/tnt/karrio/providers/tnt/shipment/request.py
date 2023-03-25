@@ -22,11 +22,9 @@ from tnt_lib.shipment_request import (
     REQUIRED,
 )
 
-import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
-import karrio.providers.tnt.error as provider_error
 import karrio.providers.tnt.units as provider_units
 import karrio.providers.tnt.utils as provider_utils
 
@@ -36,6 +34,8 @@ def shipment_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable[ESHIPPER]:
     ref = f"ref_{uuid4()}"
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(payload.parcels).single
     service = provider_units.ShipmentService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
@@ -57,42 +57,39 @@ def shipment_request(
         CONSIGNMENTBATCH=CONSIGNMENTBATCH(
             GROUPCODE=None,
             SENDER=SENDER(
-                COMPANYNAME=payload.shipper.company_name,
-                STREETADDRESS1=payload.shipper.address_line1,
-                STREETADDRESS2=payload.shipper.address_line2,
+                COMPANYNAME=shipper.company_name,
+                STREETADDRESS1=shipper.address_line1,
+                STREETADDRESS2=shipper.address_line2,
                 STREETADDRESS3=None,
-                CITY=payload.shipper.city,
-                PROVINCE=payload.shipper.state_code,
-                POSTCODE=payload.shipper.postal_code,
-                COUNTRY=payload.shipper.country_code,
+                CITY=shipper.city,
+                PROVINCE=shipper.state_code,
+                POSTCODE=shipper.postal_code,
+                COUNTRY=shipper.country_code,
                 ACCOUNT=settings.account_number,
-                VAT=(payload.shipper.state_tax_id or payload.shipper.federal_tax_id),
-                CONTACTNAME=payload.shipper.person_name,
+                VAT=shipper.tax_id,
+                CONTACTNAME=shipper.person_name,
                 CONTACTDIALCODE=None,
-                CONTACTTELEPHONE=payload.shipper.phone_number,
-                CONTACTEMAIL=payload.shipper.email,
+                CONTACTTELEPHONE=shipper.phone_number,
+                CONTACTEMAIL=shipper.email,
                 COLLECTION=None,
             ),
             CONSIGNMENT=CONSIGNMENT(
                 CONREF=ref,
                 DETAILS=DETAILS(
                     RECEIVER=RECEIVER(
-                        COMPANYNAME=payload.recipient.company_name,
-                        STREETADDRESS1=payload.recipient.address_line1,
-                        STREETADDRESS2=payload.recipient.address_line2,
+                        COMPANYNAME=recipient.company_name,
+                        STREETADDRESS1=recipient.address_line1,
+                        STREETADDRESS2=recipient.address_line2,
                         STREETADDRESS3=None,
-                        CITY=payload.recipient.city,
-                        PROVINCE=payload.recipient.state_code,
-                        POSTCODE=payload.recipient.postal_code,
-                        COUNTRY=payload.recipient.country_code,
-                        VAT=(
-                            payload.recipient.state_tax_id
-                            or payload.recipient.federal_tax_id
-                        ),
-                        CONTACTNAME=payload.recipient.person_name,
+                        CITY=recipient.city,
+                        PROVINCE=recipient.state_code,
+                        POSTCODE=recipient.postal_code,
+                        COUNTRY=recipient.country_code,
+                        VAT=recipient.tax_id,
+                        CONTACTNAME=recipient.person_name,
                         CONTACTDIALCODE=None,
-                        CONTACTTELEPHONE=payload.recipient.phone_number,
-                        CONTACTEMAIL=payload.recipient.email,
+                        CONTACTTELEPHONE=recipient.phone_number,
+                        CONTACTEMAIL=recipient.email,
                         ACCOUNT=None,
                         ACCOUNTCOUNTRY=None,
                     ),
@@ -162,8 +159,8 @@ def shipment_request(
                 LABEL=LABEL(CONREF=ref),
                 MANIFEST=MANIFEST(CONREF=ref),
                 INVOICE=INVOICE(CONREF=ref),
-                EMAILTO=payload.recipient.email,
-                EMAILFROM=payload.shipper.email,
+                EMAILTO=recipient.email,
+                EMAILFROM=shipper.email,
             ),
             SHOW_GROUPCODE=None,
         ),

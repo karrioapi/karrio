@@ -216,3 +216,10 @@ def shipping_services_initializer(
             services.append(ShippingService.purolator_express_international.name)  # type: ignore
 
     return units.Services(services, ShippingService)
+
+
+class TrackingStatus(Enum):
+    in_transit = [""]
+    delivered = ["Delivery"]
+    delivery_failed = ["Undeliverable"]
+    out_for_delivery = ["OnDelivery"]

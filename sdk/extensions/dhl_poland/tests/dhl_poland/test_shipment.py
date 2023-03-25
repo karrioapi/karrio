@@ -95,25 +95,27 @@ shipment_data = {
         "company_name": "Janek",
         "person_name": "3e General Partnership",
         "address_line1": "9 Lesna",
+        "street_number": "9",
         "city": "Wawa",
         "postal_code": "00909",
         "country_code": "PL",
         "phone_number": "123456789",
         "email": "testomir@gmail.pl",
         "residential": True,
-        "extra": {"street_number": "9", "suite": "59"},
+        "extra": {"suite": "59"},
     },
     "recipient": {
         "company_name": "Me",
         "person_name": "3e General Partnership",
         "address_line1": "Lesna",
+        "street_number": "9",
         "city": "Wawa",
         "postal_code": "00001",
         "country_code": "PL",
         "phone_number": "123456789",
         "email": "testomir@gmail.pl",
         "residential": False,
-        "extra": {"street_number": "9", "suite": "59"},
+        "extra": {"suite": "59"},
     },
     "parcels": [
         {
@@ -134,6 +136,7 @@ interantional_shipment_data = {
     "recipient": {
         "company_name": "CGI",
         "address_line1": "23 jardin private",
+        "street_number": "23",
         "city": "Ottawa",
         "postal_code": "k1k 4t3",
         "country_code": "CA",
@@ -141,7 +144,6 @@ interantional_shipment_data = {
         "state_code": "ON",
         "phone_number": "1 (450) 823-8432",
         "residential": False,
-        "extra": {"street_number": "23"},
     },
     "customs": {
         "duty": {"paid_by": "sender", "declared_value": "100.0"},
@@ -157,6 +159,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "string",
         "tracking_number": "string",
         "docs": {"invoice": "string", "label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://www.dhl.com/pl-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=string"
+        },
     },
     [],
 ]

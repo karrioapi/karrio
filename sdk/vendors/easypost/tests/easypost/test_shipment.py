@@ -114,6 +114,7 @@ ParsedShipmentResponse = [
         "docs": {},
         "label_type": "PNG",
         "meta": {
+            "carrier_tracking_link": "https://track.easypost.com/djE7...",
             "label_url": "https://amazonaws.com/.../a1b2c3.png",
             "rate_provider": "UPS",
             "service_name": "NextDayAir",

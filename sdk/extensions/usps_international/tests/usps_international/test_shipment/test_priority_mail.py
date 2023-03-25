@@ -146,6 +146,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "HE200448219US",
         "tracking_number": "HE200448219US",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=HE200448219US"
+        },
     },
     [],
 ]

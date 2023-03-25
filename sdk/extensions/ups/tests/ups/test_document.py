@@ -95,7 +95,6 @@ ParsedDocumentUploadErrorResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "9590004",
-            "details": {"file_name": "TestFile.txt"},
             "message": "Valid File Format is Required.",
         }
     ],

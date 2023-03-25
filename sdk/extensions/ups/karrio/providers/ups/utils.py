@@ -49,6 +49,10 @@ class Settings(BaseSettings):
 
         return "USD"
 
+    @property
+    def tracking_url(self):
+        return "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum={}/trackdetails"
+
 
 def default_request_serializer(
     prefix: str,

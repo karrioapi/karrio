@@ -1,19 +1,10 @@
-from fedex_lib.track_service_v19 import (
-    TrackDetail,
-    TrackRequest,
-    TransactionDetail,
-    Localization,
-    VersionId,
-    TrackSelectionDetail,
-    TrackPackageIdentifier,
-    TrackingDateOrTimestamp,
-)
+import fedex_lib.track_service_v19 as fedex
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.fedex.error as provider_error
 import karrio.providers.fedex.utils as provider_utils
-from karrio.core.utils.soap import create_envelope, apply_namespaceprefix
+import karrio.providers.fedex.units as provider_units
 
 estimated_date_formats = [
     "%Y-%m-%dT%H:%M:%S%z",
@@ -22,7 +13,7 @@ estimated_date_formats = [
 
 
 def parse_tracking_response(
-    response: lib.Element, 
+    response: lib.Element,
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     track_details = response.xpath(".//*[local-name() = $name]", name="TrackDetails")
@@ -37,26 +28,37 @@ def parse_tracking_response(
 
 
 def _extract_tracking(
-    detail_node: lib.Element, 
+    detail_node: lib.Element,
     settings: provider_utils.Settings,
 ) -> typing.Optional[models.TrackingDetails]:
-    track_detail = lib.to_object(TrackDetail, detail_node)
+    track_detail = lib.to_object(fedex.TrackDetail, detail_node)
 
     if track_detail.Notification.Severity == "ERROR":
         return None
 
-    date_or_timestamps = lib.find_element("DatesOrTimes", detail_node, TrackingDateOrTimestamp)
+    date_or_timestamps = lib.find_element(
+        "DatesOrTimes", detail_node, fedex.TrackingDateOrTimestamp
+    )
     estimated_delivery = (
         _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_DELIVERY")
         or _parse_date_or_timestamp(date_or_timestamps, "ACTUAL_TENDER")
         or _parse_date_or_timestamp(date_or_timestamps, "ANTICIPATED_TENDER")
         or _parse_date_or_timestamp(date_or_timestamps, "ESTIMATED_DELIVERY")
     )
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if track_detail.StatusDetail.Code in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=track_detail.TrackingNumber,
+        status=status,
         events=[
             models.TrackingEvent(
                 date=lib.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
@@ -80,11 +82,19 @@ def _extract_tracking(
         ],
         estimated_delivery=estimated_delivery,
         delivered=any(e.EventType == "DL" for e in track_detail.Events),
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(track_detail.TrackingNumber),
+            shipment_service=track_detail.Service.Description,
+            package_weight_unit=track_detail.PackageWeight.Units,
+            package_weight=lib.to_decimal(track_detail.PackageWeight.Value),
+            shipment_destication_country=track_detail.ShipperAddress.CountryCode,
+            shipment_origin_country=track_detail.DestinationAddress.CountryCode,
+        ),
     )
 
 
 def _parse_date_or_timestamp(
-    date_or_timestamps: typing.List[TrackingDateOrTimestamp], type: str
+    date_or_timestamps: typing.List[fedex.TrackingDateOrTimestamp], type: str
 ) -> typing.Optional[str]:
     return next(
         iter(
@@ -99,22 +109,22 @@ def _parse_date_or_timestamp(
 
 
 def tracking_request(
-    payload: models.TrackingRequest, 
+    payload: models.TrackingRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[TrackRequest]:
-    request = TrackRequest(
+) -> lib.Serializable[fedex.TrackRequest]:
+    request = fedex.TrackRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
-        TransactionDetail=TransactionDetail(
+        TransactionDetail=fedex.TransactionDetail(
             CustomerTransactionId="Track By Number_v18",
-            Localization=Localization(LanguageCode=payload.language_code or "en"),
+            Localization=fedex.Localization(LanguageCode=payload.language_code or "en"),
         ),
-        Version=VersionId(ServiceId="trck", Major=18, Intermediate=0, Minor=0),
+        Version=fedex.VersionId(ServiceId="trck", Major=18, Intermediate=0, Minor=0),
         SelectionDetails=[
-            TrackSelectionDetail(
+            fedex.TrackSelectionDetail(
                 CarrierCode="FDXE",  # Read doc for carrier code customization
                 OperatingCompany=None,
-                PackageIdentifier=TrackPackageIdentifier(
+                PackageIdentifier=fedex.TrackPackageIdentifier(
                     Type="TRACKING_NUMBER_OR_DOORTAG", Value=tracking_number
                 ),
                 TrackingNumberUniqueIdentifier=None,
@@ -134,11 +144,14 @@ def tracking_request(
     return lib.Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: TrackRequest) -> str:
-    namespacedef_ = 'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18"'
+def _request_serializer(request: fedex.TrackRequest) -> str:
+    namespacedef_ = (
+        'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" '
+        'xmlns:v18="http://fedex.com/ws/track/v18"'
+    )
 
-    envelope = create_envelope(body_content=request)
+    envelope = lib.create_envelope(body_content=request)
     envelope.Body.ns_prefix_ = envelope.ns_prefix_
-    apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v18")
+    lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], "v18")
 
     return lib.to_xml(envelope, namespacedef_=namespacedef_)
