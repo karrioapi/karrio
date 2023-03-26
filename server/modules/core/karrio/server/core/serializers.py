@@ -959,6 +959,16 @@ class TrackingEvent(serializers.Serializer):
         allow_null=True,
         help_text="The tracking event's time",
     )
+    latitude = serializers.FloatField(
+        required=False,
+        allow_null=True,
+        help_text="""The tracking event's latitude.""",
+    )
+    longitude = serializers.FloatField(
+        required=False,
+        allow_null=True,
+        help_text="""The tracking event's longitude.""",
+    )
 
 
 class TrackingDetails(serializers.Serializer):

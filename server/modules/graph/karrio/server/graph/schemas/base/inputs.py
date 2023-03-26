@@ -184,6 +184,7 @@ class AddressInput:
     state_code: typing.Optional[str] = strawberry.UNSET
     suburb: typing.Optional[str] = strawberry.UNSET
     residential: typing.Optional[bool] = strawberry.UNSET
+    street_number: typing.Optional[str] = strawberry.UNSET
     address_line1: typing.Optional[str] = strawberry.UNSET
     address_line2: typing.Optional[str] = strawberry.UNSET
     validate_location: typing.Optional[bool] = strawberry.UNSET

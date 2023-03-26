@@ -267,6 +267,7 @@ class AddressType:
     state_code: typing.Optional[str]
     suburb: typing.Optional[str]
     residential: typing.Optional[bool]
+    street_number: typing.Optional[str]
     address_line1: typing.Optional[str]
     address_line2: typing.Optional[str]
     created_at: typing.Optional[datetime.datetime]
@@ -456,6 +457,8 @@ class TrackingEventType:
     code: typing.Optional[str] = None
     date: typing.Optional[str] = None
     time: typing.Optional[str] = None
+    latitude: typing.Optional[float] = None
+    longitude: typing.Optional[float] = None
 
     @staticmethod
     def parse(charge: dict):
@@ -484,7 +487,7 @@ class TrackingInfoType:
     shipment_service: typing.Optional[str] = None
     shipment_origin_country: typing.Optional[str] = None
     shipment_origin_postal_code: typing.Optional[str] = None
-    shipment_destication_country: typing.Optional[str] = None
+    shipment_destination_country: typing.Optional[str] = None
     shipment_destination_postal_code: typing.Optional[str] = None
     shipping_date: typing.Optional[str] = None
     signed_by: typing.Optional[str] = None

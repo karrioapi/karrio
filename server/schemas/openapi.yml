@@ -10971,6 +10971,16 @@ components:
           type: string
           nullable: true
           description: The tracking event's time
+        latitude:
+          type: number
+          format: double
+          nullable: true
+          description: The tracking event's latitude.
+        longitude:
+          type: number
+          format: double
+          nullable: true
+          description: The tracking event's longitude.
     TrackingInfo:
       type: object
       properties:
@@ -11545,18 +11555,18 @@ tags:
     ### UPS
     | Code         | Service Name |
     | ------------ | ------------ |
-    | ups_standard_us | UPS Standard US |
-    | ups_worldwide_express_us | UPS Worldwide Express US |
-    | ups_worldwide_expedited_us | UPS Worldwide Expedited US |
-    | ups_worldwide_express_plus_us | UPS Worldwide Express Plus US |
-    | ups_worldwide_saver_us | UPS Worldwide Saver US |
-    | ups_2nd_day_air_us | UPS 2nd Day Air US |
-    | ups_2nd_day_air_am_us | UPS 2nd Day Air A.M. US |
-    | ups_3_day_select_us | UPS 3 Day Select US |
-    | ups_ground_us | UPS Ground US |
-    | ups_next_day_air_us | UPS Next Day Air US |
-    | ups_next_day_air_early_us | UPS Next Day Air Early US |
-    | ups_next_day_air_saver_us | UPS Next Day Air Saver US |
+    | ups_standard | UPS Standard |
+    | ups_worldwide_express | UPS Worldwide Express |
+    | ups_worldwide_expedited | UPS Worldwide Expedited |
+    | ups_worldwide_express_plus | UPS Worldwide Express Plus |
+    | ups_worldwide_saver | UPS Worldwide Saver |
+    | ups_2nd_day_air | UPS 2nd Day Air |
+    | ups_2nd_day_air_am | UPS 2nd Day Air A.M. |
+    | ups_3_day_select | UPS 3 Day Select |
+    | ups_ground | UPS Ground |
+    | ups_next_day_air | UPS Next Day Air |
+    | ups_next_day_air_early | UPS Next Day Air Early |
+    | ups_next_day_air_saver | UPS Next Day Air Saver |
     | ups_expedited_ca | UPS Expedited CA |
     | ups_express_saver_ca | UPS Express Saver CA |
     | ups_3_day_select_ca_us | UPS 3 Day Select CA US |

@@ -171,6 +171,7 @@ class OrderCancel(api.APIView):
             409: ErrorResponse(),
             500: ErrorResponse(),
         },
+        request=None,
     )
     def post(self, request: Request, pk: str):
         """Cancel an order."""
