@@ -77,7 +77,7 @@ def shipment_request(
         recipient=payload.recipient,
         weight_unit=weight_unit.value,
     )
-    service = provider_units.ShippingService.map(payload.service).value_or_key
+    service = provider_units.ServiceCode.map(payload.service).value_or_key
 
     payment = payload.payment or models.Payment()
     biling_address = lib.to_address(

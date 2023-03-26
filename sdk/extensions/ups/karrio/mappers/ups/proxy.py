@@ -26,7 +26,10 @@ class Proxy(proxy.Proxy):
     ) -> lib.Deserializable[str]:
         response = self._send_request("/webservices/Rate", request)
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(
+            (response, request.ctx),
+            lambda res: (lib.to_element(res[0]), res[1]),
+        )
 
     def create_shipment(
         self, request: lib.Serializable[lib.Envelope]

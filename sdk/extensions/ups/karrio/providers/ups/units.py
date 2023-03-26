@@ -109,47 +109,230 @@ class PackagingType(utils.Flag):
     your_packaging = ups_customer_supplied_package
 
 
+class ServiceCode(utils.Enum):
+    ups_express = "07"
+    ups_standard = "11"
+    ups_worldwide_expedited = "08"
+    ups_worldwide_express_plus = "54"
+    ups_worldwide_saver = "65"
+
+    ups_worldwide_express_freight = "96"
+    ups_worldwide_express_freight_midday = "71"
+    ups_worldwide_economy_ddu = "17"
+    ups_worldwide_economy_ddp = "72"
+
+    ups_2nd_day_air = "02"
+    ups_2nd_day_air_am = "59"
+    ups_3_day_select = "12"
+    ups_ground = "03"
+    ups_next_day_air = "01"
+    ups_next_day_air_early = "14"
+    ups_next_day_air_saver = "13"
+    ups_access_point_economy = "70"
+
+    """ Service type correspondence """
+    ups_standard_us = ups_standard
+    ups_worldwide_express_us = ups_express
+    ups_worldwide_expedited_us = ups_worldwide_expedited
+    ups_worldwide_express_plus_us = ups_worldwide_express_plus
+    ups_worldwide_saver_us = ups_worldwide_saver
+    ups_2nd_day_air_us = ups_2nd_day_air
+    ups_2nd_day_air_am_us = ups_2nd_day_air_am
+    ups_3_day_select_us = ups_3_day_select
+    ups_ground_us = ups_ground
+    ups_next_day_air_us = ups_next_day_air
+    ups_next_day_air_early_us = ups_next_day_air_early
+    ups_next_day_air_saver_us = ups_next_day_air_saver
+
+    ups_expedited_ca = ups_2nd_day_air
+    ups_express_saver_ca = ups_next_day_air_saver
+    ups_3_day_select_ca_us = ups_3_day_select
+    ups_access_point_economy_ca = ups_access_point_economy
+    ups_express_ca = ups_next_day_air
+    ups_express_early_ca = ups_next_day_air_early
+    ups_express_saver_intl_ca = ups_worldwide_saver
+    ups_standard_ca = ups_standard
+    ups_worldwide_expedited_ca = ups_worldwide_expedited
+    ups_worldwide_express_ca = ups_express
+    ups_worldwide_express_plus_ca = ups_worldwide_express_plus
+    ups_express_early_ca_us = ups_worldwide_express_plus
+
+    ups_access_point_economy_eu = ups_access_point_economy
+    ups_expedited_eu = ups_worldwide_expedited
+    ups_express_eu = ups_express
+    ups_standard_eu = ups_standard
+    ups_worldwide_express_plus_eu = ups_worldwide_express_plus
+    ups_worldwide_saver_eu = ups_worldwide_saver
+
+    ups_access_point_economy_mx = ups_access_point_economy
+    ups_expedited_mx = ups_worldwide_expedited
+    ups_express_mx = ups_express
+    ups_standard_mx = ups_standard
+    ups_worldwide_express_plus_mx = ups_worldwide_express_plus
+    ups_worldwide_saver_mx = ups_worldwide_saver
+
+    ups_access_point_economy_pl = ups_access_point_economy
+    ups_today_dedicated_courrier_pl = "83"
+    ups_today_express_pl = "85"
+    ups_today_express_saver_pl = "86"
+    ups_today_standard_pl = "82"
+    ups_expedited_pl = ups_worldwide_expedited
+    ups_express_pl = ups_express
+    ups_express_plus_pl = ups_worldwide_express_plus
+    ups_express_saver_pl = ups_worldwide_saver
+    ups_standard_pl = ups_standard
+
+    ups_2nd_day_air_pr = ups_2nd_day_air
+    ups_ground_pr = ups_ground
+    ups_next_day_air_pr = ups_next_day_air
+    ups_next_day_air_early_pr = ups_next_day_air_early
+    ups_worldwide_expedited_pr = ups_worldwide_expedited
+    ups_worldwide_express_pr = ups_express
+    ups_worldwide_express_plus_pr = ups_worldwide_express_plus
+    ups_worldwide_saver_pr = ups_worldwide_saver
+
+    ups_express_12_00_de = "74"
+
+
+class ServiceZone(utils.Enum):
+    ups_standard_us = ["11", "US"]
+    ups_worldwide_express_us = ["07", "US"]
+    ups_worldwide_expedited_us = ["08", "US"]
+    ups_worldwide_express_plus_us = ["54", "US"]
+    ups_worldwide_saver_us = ["65", "US"]
+    ups_2nd_day_air_us = ["02", "US"]
+    ups_2nd_day_air_am_us = ["59", "US"]
+    ups_3_day_select_us = ["12", "US"]
+    ups_ground_us = ["03", "US"]
+    ups_next_day_air_us = ["01", "US"]
+    ups_next_day_air_early_us = ["14", "US"]
+    ups_next_day_air_saver_us = ["13", "US"]
+
+    ups_expedited_ca = ["02", "CA"]
+    ups_express_saver_ca = ["13", "CA"]
+    ups_3_day_select_ca_us = ["12", "CA"]
+    ups_access_point_economy_ca = ["70", "CA"]
+    ups_express_ca = ["01", "CA"]
+    ups_express_early_ca = ["14", "CA"]
+    ups_express_saver_intl_ca = ["65", "CA"]
+    ups_standard_ca = ["11", "CA"]
+    ups_worldwide_expedited_ca = ["08", "CA"]
+    ups_worldwide_express_ca = ["07", "CA"]
+    ups_worldwide_express_plus_ca = ["54", "CA"]
+    ups_express_early_ca_us = ["54", "CA"]
+
+    ups_access_point_economy_eu = ["70", "EU"]
+    ups_expedited_eu = ["08", "EU"]
+    ups_express_eu = ["07", "EU"]
+    ups_standard_eu = ["11", "EU"]
+    ups_worldwide_express_plus_eu = ["54", "EU"]
+    ups_worldwide_saver_eu = ["65", "EU"]
+
+    ups_access_point_economy_mx = ["70", "MX"]
+    ups_expedited_mx = ["08", "MX"]
+    ups_express_mx = ["07", "MX"]
+    ups_standard_mx = ["11", "MX"]
+    ups_worldwide_express_plus_mx = ["54", "MX"]
+    ups_worldwide_saver_mx = ["65", "MX"]
+
+    ups_access_point_economy_pl = ["70", "PL"]
+    ups_today_dedicated_courrier_pl = ["83", "PL"]
+    ups_today_express_pl = ["85", "PL"]
+    ups_today_express_saver_pl = ["86", "PL"]
+    ups_today_standard_pl = ["82", "PL"]
+    ups_expedited_pl = ["08", "PL"]
+    ups_express_pl = ["07", "PL"]
+    ups_express_plus_pl = ["54", "PL"]
+    ups_express_saver_pl = ["65", "PL"]
+    ups_standard_pl = ["11", "PL"]
+
+    ups_2nd_day_air_pr = ["02", "PR"]
+    ups_ground_pr = ["03", "PR"]
+    ups_next_day_air_pr = ["01", "PR"]
+    ups_next_day_air_early_pr = ["14", "PR"]
+    ups_worldwide_expedited_pr = ["08", "PR"]
+    ups_worldwide_express_pr = ["07", "PR"]
+    ups_worldwide_express_plus_pr = ["54", "PR"]
+    ups_worldwide_saver_pr = ["65", "PR"]
+
+    ups_express_12_00_de = ["74", "DE"]
+
+    @classmethod
+    def find(cls, service_type, country_code):
+        for service in cls:
+            if service_type == service.value[0] and country_code == service.value[1]:
+                return ShippingService.map(service.name)
+        return ServiceCode.map(service_type)
+
+
 class ShippingService(utils.Enum):
-    ups_standard = utils.svcEnum("11")
-    ups_worldwide_expedited = utils.svcEnum("8")
-    ups_worldwide_express = utils.svcEnum("07")
-    ups_worldwide_express_plus = utils.svcEnum("54")
-    ups_worldwide_saver = utils.svcEnum("65")
-    ups_worldwide_economy_ddp = utils.svcEnum("72")
-    ups_worldwide_economy_ddu = utils.svcEnum("17")
-    ups_2nd_day_air = utils.svcEnum("02")
-    ups_2nd_day_air_am = utils.svcEnum("59")
-    ups_3_day_select = utils.svcEnum("12")
-    ups_expedited_mail_innovations = utils.svcEnum("M4")
-    ups_first_class_mail = utils.svcEnum("M2")
-    ups_ground = utils.svcEnum("03")
-    ups_next_day_air = utils.svcEnum("01")
-    ups_next_day_air_early = utils.svcEnum("14")
-    ups_next_day_air_saver = utils.svcEnum("13")
-    ups_priority_mail = utils.svcEnum("M3")
-    # ups_expedited = utils.svcEnum("02")
-    ups_express_saver = utils.svcEnum("13")
-    ups_access_point_economy = utils.svcEnum("70")
-    ups_express = utils.svcEnum("01")
-    # ups_express_early = utils.svcEnum("14")
-    # ups_express_saver = utils.svcEnum("65")
-    ups_express_early = utils.svcEnum("54")
-    ups_tm_worldwide_economy_ddp = utils.svcEnum("72")
-    ups_tm_worldwide_economy_ddu = utils.svcEnum("17")
-    ups_expedited = utils.svcEnum("08")
-    # ups_express = utils.svcEnum("07")
-    ups_express_12_00 = utils.svcEnum("74")
-    ups_tm_economy_ddp = utils.svcEnum("72")
-    ups_tm_economy_ddu = utils.svcEnum("17")
-    ups_express_plus = utils.svcEnum("54")
-    ups_today_dedicated_courier = utils.svcEnum("83")
-    ups_today_express = utils.svcEnum("85")
-    ups_today_express_saver = utils.svcEnum("86")
-    ups_today_standard = utils.svcEnum("82")
-    ups_worldwide_express_freight = utils.svcEnum("96")
-    ups_priority_mail_innovations = utils.svcEnum("M5")
-    ups_economy_mail_innovations = utils.svcEnum("M6")
-    ups_worldwide_express_freight_mid_day = utils.svcEnum("71")
+
+    ups_standard_us = "UPS Standard US"
+    ups_worldwide_express_us = "UPS Worldwide Express US"
+    ups_worldwide_expedited_us = "UPS Worldwide Expedited US"
+    ups_worldwide_express_plus_us = "UPS Worldwide Express Plus US"
+    ups_worldwide_saver_us = "UPS Worldwide Saver US"
+    ups_2nd_day_air_us = "UPS 2nd Day Air US"
+    ups_2nd_day_air_am_us = "UPS 2nd Day Air A.M. US"
+    ups_3_day_select_us = "UPS 3 Day Select US"
+    ups_ground_us = "UPS Ground US"
+    ups_next_day_air_us = "UPS Next Day Air US"
+    ups_next_day_air_early_us = "UPS Next Day Air Early US"
+    ups_next_day_air_saver_us = "UPS Next Day Air Saver US"
+
+    ups_expedited_ca = "UPS Expedited CA"
+    ups_express_saver_ca = "UPS Express Saver CA"
+    ups_3_day_select_ca_us = "UPS 3 Day Select CA US"
+    ups_access_point_economy_ca = "UPS Access Point Economy CA"
+    ups_express_ca = "UPS Express CA"
+    ups_express_early_ca = "UPS Express Early CA"
+    ups_express_saver_intl_ca = "UPS Express Saver Intl CA"
+    ups_standard_ca = "UPS Standard CA"
+    ups_worldwide_expedited_ca = "UPS Worldwide Expedited CA"
+    ups_worldwide_express_ca = "UPS Worldwide Express CA"
+    ups_worldwide_express_plus_ca = "UPS Worldwide Express Plus CA"
+    ups_express_early_ca_us = "UPS Express Early CA US"
+
+    ups_access_point_economy_eu = "UPS Access Point Economy EU"
+    ups_expedited_eu = "UPS Expedited EU"
+    ups_express_eu = "UPS Express EU"
+    ups_standard_eu = "UPS Standard EU"
+    ups_worldwide_express_plus_eu = "UPS Worldwide Express Plus EU"
+    ups_worldwide_saver_eu = "UPS Worldwide Saver EU"
+
+    ups_access_point_economy_mx = "UPS Access Point Economy MX"
+    ups_expedited_mx = "UPS Expedited MX"
+    ups_express_mx = "UPS Express MX"
+    ups_standard_mx = "UPS Standard MX"
+    ups_worldwide_express_plus_mx = "UPS Worldwide Express Plus MX"
+    ups_worldwide_saver_mx = "UPS Worldwide Saver MX"
+
+    ups_access_point_economy_pl = "UPS Access Point Economy PL"
+    ups_today_dedicated_courrier_pl = "UPS Today Dedicated Courrier PL"
+    ups_today_express_pl = "UPS Today Express PL"
+    ups_today_express_saver_pl = "UPS Today Express Saver PL"
+    ups_today_standard_pl = "UPS Today Standard PL"
+    ups_expedited_pl = "UPS Expedited PL"
+    ups_express_pl = "UPS Express PL"
+    ups_express_plus_pl = "UPS Express Plus PL"
+    ups_express_saver_pl = "UPS Express Saver PL"
+    ups_standard_pl = "UPS Standard PL"
+
+    ups_2nd_day_air_pr = "UPS 2nd Day Air PR"
+    ups_ground_pr = "UPS Ground PR"
+    ups_next_day_air_pr = "UPS Next Day Air PR"
+    ups_next_day_air_early_pr = "UPS Next Day Air Early PR"
+    ups_worldwide_expedited_pr = "UPS Worldwide Expedited PR"
+    ups_worldwide_express_pr = "UPS Worldwide Express PR"
+    ups_worldwide_express_plus_pr = "UPS Worldwide Express Plus PR"
+    ups_worldwide_saver_pr = "UPS Worldwide Saver PR"
+
+    ups_express_12_00_de = "UPS Express 12:00 DE"
+
+    ups_worldwide_express_freight = "UPS Worldwide Express Freight"
+    ups_worldwide_express_freight_midday = "UPS Worldwide Express Freight Midday"
+    ups_worldwide_economy_ddu = "UPS Worldwide Economy DDU"
+    ups_worldwide_economy_ddp = "UPS Worldwide Economy DDP"
 
 
 class ShippingOption(utils.Enum):
@@ -159,9 +342,7 @@ class ShippingOption(utils.Enum):
     ups_user_level_discount_indicator = utils.OptionEnum(
         "UserLevelDiscountIndicator", bool
     )
-    ups_saturday_pickup_indicator = utils.OptionEnum(
-        "SaturdayPickupIndicator", bool
-    )
+    ups_saturday_pickup_indicator = utils.OptionEnum("SaturdayPickupIndicator", bool)
     ups_saturday_delivery_indicator = utils.OptionEnum(
         "SaturdayDeliveryIndicator", bool
     )
@@ -188,10 +369,16 @@ class ShippingOption(utils.Enum):
     ups_return_service = utils.OptionEnum("ReturnService", bool)
     ups_sdl_shipment_indicator = utils.OptionEnum("SDLShipmentIndicator", bool)
     ups_epra_indicator = utils.OptionEnum("EPRAIndicator", bool)
-    ups_lift_gate_at_pickup_indicator = utils.OptionEnum("LiftGateAtPickupIndicator", bool)
+    ups_lift_gate_at_pickup_indicator = utils.OptionEnum(
+        "LiftGateAtPickupIndicator", bool
+    )
     ups_hold_for_pickup_indicator = utils.OptionEnum("HoldForPickupIndicator", bool)
-    ups_lift_gate_at_delivery_indicator = utils.OptionEnum("LiftGateAtDeliveryIndicator", bool)
-    ups_drop_off_at_ups_facility_indicator = utils.OptionEnum("DropOffAtUPSFacilityIndicator", bool)
+    ups_lift_gate_at_delivery_indicator = utils.OptionEnum(
+        "LiftGateAtDeliveryIndicator", bool
+    )
+    ups_drop_off_at_ups_facility_indicator = utils.OptionEnum(
+        "DropOffAtUPSFacilityIndicator", bool
+    )
 
     """ Custom option type """
     ups_access_point_pickup = utils.OptionEnum("01", bool)
@@ -207,8 +394,7 @@ def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
 ) -> units.Options:
-    """Apply default values to the given options.
-    """
+    """Apply default values to the given options."""
     _options = options.copy()
     _has_pickup_options = (
         "hold_at_location" in _options
@@ -240,7 +426,7 @@ def shipping_options_initializer(
 
     # Define carrier option filter.
     def items_filter(key: str) -> bool:
-        return key in ShippingOption # type:ignore
+        return key in ShippingOption  # type:ignore
 
     return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 

@@ -10,87 +10,83 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element,
+    result: typing.Tuple[lib.Element, dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    rate_reply = lib.find_element("RatedShipment", response)
-    rates: typing.List[models.RateDetails] = functools.reduce(
-        _extract_package_rate(settings), rate_reply, []
-    )
-    return rates, provider_error.parse_error_response(response, settings)
+    response, ctx = result
+    messages = provider_error.parse_error_response(response, settings)
+    rates = [
+        _extract_details(node, settings, ctx)
+        for node in lib.find_element("RatedShipment", response)
+    ]
+
+    return rates, messages
 
 
-def _extract_package_rate(
+def _extract_details(
+    detail_node: lib.Element,
     settings: provider_utils.Settings,
-) -> typing.Callable[
-    [typing.List[models.RateDetails], lib.Element], typing.List[models.RateDetails]
-]:
-    def extract(
-        rates: typing.List[models.RateDetails], detail_node: lib.Element
-    ) -> typing.List[models.RateDetails]:
-        rate = lib.to_object(ups.RatedShipmentType, detail_node)
+    ctx: dict,
+) -> typing.List[models.RateDetails]:
+    rate = lib.to_object(ups.RatedShipmentType, detail_node)
 
-        if rate.NegotiatedRateCharges is not None:
-            total_charges = (
-                rate.NegotiatedRateCharges.TotalChargesWithTaxes
-                or rate.NegotiatedRateCharges.TotalCharge
-            )
-            taxes = rate.NegotiatedRateCharges.TaxCharges
-            itemized_charges = rate.NegotiatedRateCharges.ItemizedCharges + taxes
-        else:
-            total_charges = rate.TotalChargesWithTaxes or rate.TotalCharges
-            taxes = rate.TaxCharges
-            itemized_charges = rate.ItemizedCharges + taxes
-
-        charges = [
-            ("Base charge", rate.TransportationCharges.MonetaryValue),
-            *(
-                []
-                if any(itemized_charges)
-                else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
-            ),
-            (rate.ServiceOptionsCharges.Code, rate.ServiceOptionsCharges.MonetaryValue),
-            *(
-                (getattr(c, "Code", None) or getattr(c, "Type", None), c.MonetaryValue)
-                for c in itemized_charges
-            ),
-        ]
-        estimated_arrival = (
-            lib.find_element(
-                "EstimatedArrival", detail_node, ups.EstimatedArrivalType, first=True
-            )
-            or ups.EstimatedArrivalType()
+    if rate.NegotiatedRateCharges is not None:
+        total_charges = (
+            rate.NegotiatedRateCharges.TotalChargesWithTaxes
+            or rate.NegotiatedRateCharges.TotalCharge
         )
-        transit_days = (
-            rate.GuaranteedDelivery.BusinessDaysInTransit
-            if rate.GuaranteedDelivery is not None
-            else estimated_arrival.BusinessDaysInTransit
-        )
-        currency = lib.find_element("CurrencyCode", detail_node, first=True).text
-        service = provider_units.ShippingService.map(rate.Service.Code)
+        taxes = rate.NegotiatedRateCharges.TaxCharges
+        itemized_charges = rate.NegotiatedRateCharges.ItemizedCharges + taxes
+    else:
+        total_charges = rate.TotalChargesWithTaxes or rate.TotalCharges
+        taxes = rate.TaxCharges
+        itemized_charges = rate.ItemizedCharges + taxes
 
-        return rates + [
-            models.RateDetails(
-                carrier_name=settings.carrier_name,
-                carrier_id=settings.carrier_id,
+    charges = [
+        ("Base charge", rate.TransportationCharges.MonetaryValue),
+        *(
+            []
+            if any(itemized_charges)
+            else [("Taxes", sum(lib.to_money(c.MonetaryValue) for c in taxes))]
+        ),
+        (rate.ServiceOptionsCharges.Code, rate.ServiceOptionsCharges.MonetaryValue),
+        *(
+            (getattr(c, "Code", None) or getattr(c, "Type", None), c.MonetaryValue)
+            for c in itemized_charges
+        ),
+    ]
+    estimated_arrival = (
+        lib.find_element(
+            "EstimatedArrival", detail_node, ups.EstimatedArrivalType, first=True
+        )
+        or ups.EstimatedArrivalType()
+    )
+    transit_days = (
+        rate.GuaranteedDelivery.BusinessDaysInTransit
+        if rate.GuaranteedDelivery is not None
+        else estimated_arrival.BusinessDaysInTransit
+    )
+    currency = lib.find_element("CurrencyCode", detail_node, first=True).text
+    service = provider_units.ServiceZone.find(rate.Service.Code, ctx["origin"])
+
+    return models.RateDetails(
+        carrier_name=settings.carrier_name,
+        carrier_id=settings.carrier_id,
+        currency=currency,
+        service=service.name_or_key,
+        total_charge=lib.to_money(total_charges.MonetaryValue),
+        extra_charges=[
+            models.ChargeDetails(
+                name=name,
+                amount=lib.to_money(amount),
                 currency=currency,
-                service=service.name_or_key,
-                total_charge=lib.to_money(total_charges.MonetaryValue),
-                extra_charges=[
-                    models.ChargeDetails(
-                        name=name,
-                        amount=lib.to_money(amount),
-                        currency=currency,
-                    )
-                    for name, amount in charges
-                    if name is not None or not amount
-                ],
-                transit_days=lib.to_int(transit_days),
-                meta=dict(service_name=service.name_or_key),
             )
-        ]
-
-    return extract
+            for name, amount in charges
+            if name is not None or not amount
+        ],
+        transit_days=lib.to_int(transit_days),
+        meta=dict(service_name=service.name_or_key),
+    )
 
 
 def rate_request(
@@ -101,7 +97,7 @@ def rate_request(
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    service = lib.to_services(payload.services, provider_units.ShippingService).first
+    service = lib.to_services(payload.services, provider_units.ServiceCode).first
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
@@ -360,9 +356,11 @@ def rate_request(
             ),
         ),
     )
+
     return lib.Serializable(
         lib.create_envelope(header_content=settings.Security, body_content=request),
         _request_serializer,
+        ctx=dict(origin=shipper.country_code),
     )
 
 

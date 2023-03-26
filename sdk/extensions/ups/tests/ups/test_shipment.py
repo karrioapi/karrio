@@ -109,7 +109,7 @@ package_shipment_data = {
             "weight": 10,
         }
     ],
-    "service": "ups_express",
+    "service": "ups_express_ca",
     "options": {"email_notification_to": "test@mail.com"},
     "payment": {"paid_by": "sender"},
     "reference": "Your Customer Context",
@@ -144,7 +144,7 @@ package_shipment_with_package_preset_data = {
             "package_preset": "ups_medium_express_box",
         }
     ],
-    "service": "ups_express",
+    "service": "ups_express_ca",
     "payment": {"paid_by": "sender"},
     "options": {"email_notification_to": "test@mail.com"},
     "reference": "Your Customer Context",
