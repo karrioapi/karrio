@@ -168,7 +168,7 @@ def rate_request(
                     Code=(
                         service.value
                         if service
-                        else provider_units.ShippingService.ups_ground.value
+                        else provider_units.ServiceCode.ups_standard.value
                     )
                 )
             ),

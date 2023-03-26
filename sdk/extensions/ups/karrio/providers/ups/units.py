@@ -131,18 +131,6 @@ class ServiceCode(utils.Enum):
     ups_access_point_economy = "70"
 
     """ Service type correspondence """
-    ups_standard_us = ups_standard
-    ups_worldwide_express_us = ups_express
-    ups_worldwide_expedited_us = ups_worldwide_expedited
-    ups_worldwide_express_plus_us = ups_worldwide_express_plus
-    ups_worldwide_saver_us = ups_worldwide_saver
-    ups_2nd_day_air_us = ups_2nd_day_air
-    ups_2nd_day_air_am_us = ups_2nd_day_air_am
-    ups_3_day_select_us = ups_3_day_select
-    ups_ground_us = ups_ground
-    ups_next_day_air_us = ups_next_day_air
-    ups_next_day_air_early_us = ups_next_day_air_early
-    ups_next_day_air_saver_us = ups_next_day_air_saver
 
     ups_expedited_ca = ups_2nd_day_air
     ups_express_saver_ca = ups_next_day_air_saver
@@ -195,18 +183,18 @@ class ServiceCode(utils.Enum):
 
 
 class ServiceZone(utils.Enum):
-    ups_standard_us = ["11", "US"]
-    ups_worldwide_express_us = ["07", "US"]
-    ups_worldwide_expedited_us = ["08", "US"]
-    ups_worldwide_express_plus_us = ["54", "US"]
-    ups_worldwide_saver_us = ["65", "US"]
-    ups_2nd_day_air_us = ["02", "US"]
-    ups_2nd_day_air_am_us = ["59", "US"]
-    ups_3_day_select_us = ["12", "US"]
-    ups_ground_us = ["03", "US"]
-    ups_next_day_air_us = ["01", "US"]
-    ups_next_day_air_early_us = ["14", "US"]
-    ups_next_day_air_saver_us = ["13", "US"]
+    ups_standard = ["11", "US"]
+    ups_worldwide_express = ["07", "US"]
+    ups_worldwide_expedited = ["08", "US"]
+    ups_worldwide_express_plus = ["54", "US"]
+    ups_worldwide_saver = ["65", "US"]
+    ups_2nd_day_air = ["02", "US"]
+    ups_2nd_day_air_am = ["59", "US"]
+    ups_3_day_select = ["12", "US"]
+    ups_ground = ["03", "US"]
+    ups_next_day_air = ["01", "US"]
+    ups_next_day_air_early = ["14", "US"]
+    ups_next_day_air_saver = ["13", "US"]
 
     ups_expedited_ca = ["02", "CA"]
     ups_express_saver_ca = ["13", "CA"]
@@ -266,19 +254,18 @@ class ServiceZone(utils.Enum):
 
 
 class ShippingService(utils.Enum):
-
-    ups_standard_us = "UPS Standard US"
-    ups_worldwide_express_us = "UPS Worldwide Express US"
-    ups_worldwide_expedited_us = "UPS Worldwide Expedited US"
-    ups_worldwide_express_plus_us = "UPS Worldwide Express Plus US"
-    ups_worldwide_saver_us = "UPS Worldwide Saver US"
-    ups_2nd_day_air_us = "UPS 2nd Day Air US"
-    ups_2nd_day_air_am_us = "UPS 2nd Day Air A.M. US"
-    ups_3_day_select_us = "UPS 3 Day Select US"
-    ups_ground_us = "UPS Ground US"
-    ups_next_day_air_us = "UPS Next Day Air US"
-    ups_next_day_air_early_us = "UPS Next Day Air Early US"
-    ups_next_day_air_saver_us = "UPS Next Day Air Saver US"
+    ups_standard = "UPS Standard"
+    ups_worldwide_express = "UPS Worldwide Express"
+    ups_worldwide_expedited = "UPS Worldwide Expedited"
+    ups_worldwide_express_plus = "UPS Worldwide Express Plus"
+    ups_worldwide_saver = "UPS Worldwide Saver"
+    ups_2nd_day_air = "UPS 2nd Day Air"
+    ups_2nd_day_air_am = "UPS 2nd Day Air A.M."
+    ups_3_day_select = "UPS 3 Day Select"
+    ups_ground = "UPS Ground"
+    ups_next_day_air = "UPS Next Day Air"
+    ups_next_day_air_early = "UPS Next Day Air Early"
+    ups_next_day_air_saver = "UPS Next Day Air Saver"
 
     ups_expedited_ca = "UPS Expedited CA"
     ups_express_saver_ca = "UPS Express Saver CA"

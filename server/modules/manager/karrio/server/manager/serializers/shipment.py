@@ -445,6 +445,14 @@ def buy_shipment_label(
         ),
         None,
     )
+
+    if rate is None:
+        raise exceptions.APIException(
+            "The service you selected is not available for this shipment.",
+            code="service_unavailable",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
     payload = {**data, "selected_rate_id": rate["id"]}
     carrier = gateway.Carriers.first(
         carrier_id=rate["carrier_id"],
@@ -454,7 +462,7 @@ def buy_shipment_label(
         "paperless" in carrier.capabilities
         and shipment.options.get("paperless_trade") == True
     )
-    pre_purchase_generation = any(invoice_template or "") and is_paperless_trade
+    pre_purchase_generation = invoice_template is not None and is_paperless_trade
 
     # Generate invoice in advance if is_paperless_trade
     if pre_purchase_generation:
