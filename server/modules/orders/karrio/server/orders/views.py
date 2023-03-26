@@ -138,6 +138,31 @@ class OrderDetail(api.APIView):
 
     @openapi.extend_schema(
         tags=["Orders"],
+        operation_id=f"{ENDPOINT_ID}dismiss",
+        summary="Dismiss an order",
+        deprecated=True,
+        responses={
+            200: Order(),
+            404: ErrorResponse(),
+            409: ErrorResponse(),
+            500: ErrorResponse(),
+        },
+    )
+    def delete(self, request: Request, pk: str):
+        """Dismiss an order from fulfillment.
+        """
+        order = models.Order.access_by(request).get(pk=pk)
+        can_mutate_order(order, delete=True)
+
+        order.status = OrderStatus.cancelled.value
+        order.save(update_fields=["status"])
+
+        return Response(Order(order).data)
+
+
+class OrderCancel(api.APIView):
+    @openapi.extend_schema(
+        tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}cancel",
         summary="Cancel an order",
         responses={
@@ -147,10 +172,8 @@ class OrderDetail(api.APIView):
             500: ErrorResponse(),
         },
     )
-    def delete(self, request: Request, pk: str):
-        """
-        Cancel an order.
-        """
+    def post(self, request: Request, pk: str):
+        """Cancel an order."""
         order = models.Order.access_by(request).get(pk=pk)
         can_mutate_order(order, delete=True)
 
@@ -162,3 +185,4 @@ class OrderDetail(api.APIView):
 
 router.urls.append(path("orders", OrderList.as_view(), name="order-list"))
 router.urls.append(path("orders/<str:pk>", OrderDetail.as_view(), name="order-detail"))
+router.urls.append(path("orders/<str:pk>/cancel", OrderCancel.as_view(), name="order-cancel"))

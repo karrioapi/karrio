@@ -19,10 +19,14 @@ class ShipmentStatus(enum.Enum):
 
 class TrackerStatus(enum.Enum):
     pending = "pending"
-    in_transit = "in_transit"
-    incident = "incident"
-    delivered = "delivered"
     unknown = "unknown"
+    delivered = "delivered"
+    on_hold = "on_hold"
+    in_transit = "in_transit"
+    delivery_delayed = "delivery_delayed"
+    out_for_delivery = "out_for_delivery"
+    ready_for_pickup = "ready_for_pickup"
+    delivery_failed = "delivery_failed"
 
 
 Serializer = serializers.Serializer
@@ -84,7 +88,6 @@ class APIError(serializers.Serializer):
 
 
 class Message(APIError):
-
     carrier_name = serializers.CharField(
         required=False, help_text="The targeted carrier"
     )
@@ -101,7 +104,6 @@ class AddressValidation(serializers.Serializer):
 
 
 class AddressData(validators.AugmentedAddressSerializer):
-
     postal_code = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -186,6 +188,13 @@ class AddressData(validators.AugmentedAddressSerializer):
         help_text="Indicate if the address is residential or commercial (enterprise)",
     )
 
+    street_number = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        max_length=20,
+        help_text="""The address street number""",
+    )
     address_line1 = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -220,7 +229,6 @@ class Address(serializers.EntitySerializer, AddressData):
 
 
 class CommodityData(serializers.Serializer):
-
     weight = serializers.FloatField(required=True, help_text="The commodity's weight")
     weight_unit = serializers.ChoiceField(
         required=True,
@@ -306,7 +314,6 @@ class Commodity(serializers.EntitySerializer, CommodityData):
 
 
 class ParcelData(validators.PresetSerializer):
-
     weight = serializers.FloatField(required=True, help_text="The parcel's weight")
     width = serializers.FloatField(
         required=False, allow_null=True, help_text="The parcel's width"
@@ -405,7 +412,6 @@ class Parcel(serializers.EntitySerializer, ParcelData):
 
 
 class Payment(serializers.Serializer):
-
     paid_by = serializers.ChoiceField(
         required=False,
         choices=PAYMENT_TYPES,
@@ -428,7 +434,6 @@ class Payment(serializers.Serializer):
 
 
 class Duty(serializers.Serializer):
-
     paid_by = serializers.ChoiceField(
         required=False,
         choices=PAYMENT_TYPES,
@@ -461,7 +466,6 @@ class Duty(serializers.Serializer):
     ]
 )
 class CustomsData(serializers.Serializer):
-
     commodities = CommodityData(
         many=True, allow_empty=False, help_text="The parcel content items"
     )
@@ -546,7 +550,6 @@ class Customs(serializers.EntitySerializer, CustomsData):
 
 
 class Charge(serializers.Serializer):
-
     name = serializers.CharField(
         required=False,
         allow_blank=True,
@@ -633,6 +636,70 @@ class RateRequest(validators.OptionDefaultSerializer):
     )
 
 
+class TrackingInfo(serializers.Serializer):
+    carrier_tracking_link = serializers.CharField(
+        required=False, allow_null=True, help_text="The carrier tracking link"
+    )
+    customer_name = serializers.CharField(
+        required=False, allow_null=True, help_text="The customer name"
+    )
+    expected_delivery = serializers.CharField(
+        required=False, allow_null=True, help_text="The expected delivery date"
+    )
+    note = serializers.CharField(
+        required=False, allow_null=True, help_text="A tracking note"
+    )
+    order_date = serializers.CharField(
+        required=False, allow_null=True, help_text="The package order date"
+    )
+    order_id = serializers.CharField(
+        required=False, allow_null=True, help_text="The package order id or number"
+    )
+    package_weight = serializers.CharField(
+        required=False, allow_null=True, help_text="The package weight"
+    )
+    package_weight_unit = serializers.CharField(
+        required=False, allow_null=True, help_text="The package weight unit"
+    )
+    shipment_package_count = serializers.CharField(
+        required=False, allow_null=True, help_text="The package count"
+    )
+    shipment_pickup_date = serializers.CharField(
+        required=False, allow_null=True, help_text="The shipment pickup date"
+    )
+    shipment_delivery_date = serializers.CharField(
+        required=False, allow_null=True, help_text="The shipment delivery date"
+    )
+    shipment_service = serializers.CharField(
+        required=False, allow_null=True, help_text="The shipment service"
+    )
+    shipment_origin_country = serializers.CharField(
+        required=False, allow_null=True, help_text="The shipment origin country"
+    )
+    shipment_origin_postal_code = serializers.CharField(
+        required=False, allow_null=True, help_text="The shipment origin postal code"
+    )
+    shipment_destication_country = serializers.CharField(
+        required=False, allow_null=True, help_text="The shipment destination country"
+    )
+    shipment_destination_postal_code = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The shipment destination postal code",
+    )
+    shipping_date = serializers.CharField(
+        required=False, allow_null=True, help_text="The shipping date"
+    )
+    signed_by = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The person who signed for the package",
+    )
+    source = serializers.CharField(
+        required=False, allow_null=True, help_text="The tracker source"
+    )
+
+
 class TrackingData(serializers.Serializer):
     tracking_number = serializers.CharField(
         required=True,
@@ -643,25 +710,40 @@ class TrackingData(serializers.Serializer):
         required=True,
         help_text="The tracking carrier",
     )
+    account_number = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipper account number",
+    )
+    reference = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment reference",
+    )
+    info = TrackingInfo(
+        required=False,
+        allow_null=True,
+        help_text="The package and shipment tracking details",
+    )
 
 
 class TrackingRequest(serializers.Serializer):
-
     tracking_numbers = serializers.StringListField(
         required=True, help_text="a list of tracking numbers to fetch."
     )
-    language_code = serializers.CharField(
+    account_number = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        default="en",
-        help_text="The tracking details language code",
+        help_text="The shipper account number",
     )
-    level_of_details = serializers.CharField(
+    reference = serializers.CharField(
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="The level of event details.",
+        help_text="The shipment reference",
     )
     options = serializers.PlainDictField(
         required=False,
@@ -677,7 +759,6 @@ class TrackingRequest(serializers.Serializer):
     ]
 )
 class PickupRequest(serializers.Serializer):
-
     pickup_date = serializers.CharField(
         required=True,
         validators=[validators.valid_date_format("pickup_date")],
@@ -859,7 +940,6 @@ class PickupCancelRequest(serializers.Serializer):
 
 
 class TrackingEvent(serializers.Serializer):
-
     date = serializers.CharField(required=False, help_text="The tracking event's date")
     description = serializers.CharField(
         required=False, help_text="The tracking event's description"
@@ -881,49 +961,7 @@ class TrackingEvent(serializers.Serializer):
     )
 
 
-class Rate(serializers.EntitySerializer):
-    object_type = serializers.CharField(
-        default="rate", help_text="Specifies the object type"
-    )
-    carrier_name = serializers.CharField(required=True, help_text="The rate's carrier")
-    carrier_id = serializers.CharField(
-        required=True, help_text="The targeted carrier's name (unique identifier)"
-    )
-    currency = serializers.CharField(
-        required=False, help_text="The rate monetary values currency code"
-    )
-    service = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The carrier's rate (quote) service",
-    )
-    total_charge = serializers.FloatField(
-        default=0.0,
-        help_text="""The rate's monetary amount of the total charge.<br/>
-        This is the gross amount of the rate after adding the additional charges
-        """,
-    )
-    transit_days = serializers.IntegerField(
-        required=False, allow_null=True, help_text="The estimated delivery transit days"
-    )
-    extra_charges = Charge(
-        many=True,
-        allow_empty=True,
-        default=[],
-        help_text="list of the rate's additional charges",
-    )
-    meta = serializers.PlainDictField(
-        required=False, allow_null=True, help_text="provider specific metadata"
-    )
-    test_mode = serializers.BooleanField(
-        required=True,
-        help_text="Specified whether it was created with a carrier in test mode",
-    )
-
-
 class TrackingDetails(serializers.Serializer):
-
     carrier_name = serializers.CharField(
         required=True, help_text="The tracking carrier"
     )
@@ -932,6 +970,12 @@ class TrackingDetails(serializers.Serializer):
     )
     tracking_number = serializers.CharField(
         required=True, help_text="The shipment tracking number"
+    )
+    info = TrackingInfo(
+        required=False,
+        allow_null=True,
+        default={},
+        help_text="The package and shipment tracking details",
     )
     events = TrackingEvent(
         many=True,
@@ -974,6 +1018,47 @@ class TrackingStatus(serializers.EntitySerializer, TrackingDetails):
         many=True,
         default=[],
         help_text="The list of note or warning messages",
+    )
+
+
+class Rate(serializers.EntitySerializer):
+    object_type = serializers.CharField(
+        default="rate", help_text="Specifies the object type"
+    )
+    carrier_name = serializers.CharField(required=True, help_text="The rate's carrier")
+    carrier_id = serializers.CharField(
+        required=True, help_text="The targeted carrier's name (unique identifier)"
+    )
+    currency = serializers.CharField(
+        required=False, help_text="The rate monetary values currency code"
+    )
+    service = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The carrier's rate (quote) service",
+    )
+    total_charge = serializers.FloatField(
+        default=0.0,
+        help_text="""The rate's monetary amount of the total charge.<br/>
+        This is the gross amount of the rate after adding the additional charges
+        """,
+    )
+    transit_days = serializers.IntegerField(
+        required=False, allow_null=True, help_text="The estimated delivery transit days"
+    )
+    extra_charges = Charge(
+        many=True,
+        allow_empty=True,
+        default=[],
+        help_text="list of the rate's additional charges",
+    )
+    meta = serializers.PlainDictField(
+        required=False, allow_null=True, help_text="provider specific metadata"
+    )
+    test_mode = serializers.BooleanField(
+        required=True,
+        help_text="Specified whether it was created with a carrier in test mode",
     )
 
 

@@ -55,6 +55,9 @@ class Address(OwnedEntity):
     person_name = models.CharField(max_length=30, null=True, blank=True, db_index=True)
     company_name = models.CharField(max_length=30, null=True, blank=True, db_index=True)
     phone_number = models.CharField(max_length=50, null=True, blank=True)
+    street_number = models.CharField(
+        max_length=20, null=True, blank=True, db_index=True
+    )
     address_line1 = models.CharField(
         max_length=100, null=True, blank=True, db_index=True
     )
@@ -474,6 +477,7 @@ class TrackingManager(models.Manager):
 class Tracking(OwnedEntity):
     DIRECT_PROPS = [
         "metadata",
+        "info",
     ]
     HIDDEN_PROPS = (
         "tracking_carrier",
@@ -501,6 +505,11 @@ class Tracking(OwnedEntity):
         db_index=True,
     )
     tracking_number = models.CharField(max_length=50, db_index=True)
+    account_number = models.CharField(max_length=35, null=True, blank=True)
+    reference = models.CharField(max_length=35, null=True, blank=True)
+    info = models.JSONField(
+        blank=True, null=True, default=functools.partial(identity, value={})
+    )
     events = models.JSONField(
         blank=True, null=True, default=functools.partial(identity, value=[])
     )

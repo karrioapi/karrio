@@ -469,6 +469,39 @@ class TrackingEventType:
 
 
 @strawberry.type
+class TrackingInfoType:
+    carrier_tracking_link: typing.Optional[str] = None
+    customer_name: typing.Optional[str] = None
+    expected_delivery: typing.Optional[str] = None
+    note: typing.Optional[str] = None
+    order_date: typing.Optional[str] = None
+    order_id: typing.Optional[str] = None
+    package_weight: typing.Optional[str] = None
+    package_weight_unit: typing.Optional[str] = None
+    shipment_package_count: typing.Optional[str] = None
+    shipment_pickup_date: typing.Optional[str] = None
+    shipment_delivery_date: typing.Optional[str] = None
+    shipment_service: typing.Optional[str] = None
+    shipment_origin_country: typing.Optional[str] = None
+    shipment_origin_postal_code: typing.Optional[str] = None
+    shipment_destication_country: typing.Optional[str] = None
+    shipment_destination_postal_code: typing.Optional[str] = None
+    shipping_date: typing.Optional[str] = None
+    signed_by: typing.Optional[str] = None
+    source: typing.Optional[str] = None
+
+    @staticmethod
+    def parse(charge: dict):
+        return TrackingInfoType(
+            **{
+                k: v
+                for k, v in charge.items()
+                if k in TrackingInfoType.__annotations__
+            }
+        )
+
+
+@strawberry.type
 class TrackerType:
     id: str
     object_type: str
@@ -492,6 +525,10 @@ class TrackerType:
     @strawberry.field
     def carrier_name(self: manager.Tracking) -> str:
         return getattr(self.tracking_carrier, "carrier_name", None)
+
+    @strawberry.field
+    def info(self: manager.Tracking) -> typing.Optional[TrackingInfoType]:
+        return TrackingInfoType.parse(self.info) if self.info else None
 
     @strawberry.field
     def events(self: manager.Tracking) -> typing.List[TrackingEventType]:

@@ -31,7 +31,9 @@ def _extract_shipment(
         shipment_identifier=shipment.ShipmentIdentificationNumber,
         docs=models.Documents(label=label),
         meta=dict(
-            carrier_tracking_link=settings.tracking_url.format(shipment.ShipmentIdentificationNumber),
+            carrier_tracking_link=settings.tracking_url.format(
+                shipment.ShipmentIdentificationNumber
+            ),
         ),
     )
 
@@ -454,7 +456,7 @@ def shipment_request(
                                 MultiCurrencyInvoiceLineTotal=None,
                                 HazardousMaterialsIndicator=None,
                             )
-                            if (payload.customs and customs.commercial_invoice)
+                            if payload.customs
                             else None
                         ),
                         DeliveryConfirmation=(

@@ -71,10 +71,12 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[tracking.KnownTrackingRequest]:
+    options = lib.units.Options(payload.options or {})
+
     request = tracking.KnownTrackingRequest(
         Request=settings.Request(),
-        LanguageCode=payload.language_code or "en",
-        LevelOfDetails=payload.level_of_details or "ALL_CHECK_POINTS",
+        LanguageCode=options.language_code.state or "en",
+        LevelOfDetails=options.level_of_details.state or "ALL_CHECK_POINTS",
         AWBNumber=payload.tracking_numbers,
     )
 

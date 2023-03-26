@@ -112,12 +112,14 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[fedex.TrackRequest]:
+    options = lib.units.Options(payload.options or {})
+
     request = fedex.TrackRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
         TransactionDetail=fedex.TransactionDetail(
             CustomerTransactionId="Track By Number_v18",
-            Localization=fedex.Localization(LanguageCode=payload.language_code or "en"),
+            Localization=fedex.Localization(LanguageCode=options.language_code.state or "en"),
         ),
         Version=fedex.VersionId(ServiceId="trck", Major=18, Intermediate=0, Minor=0),
         SelectionDetails=[

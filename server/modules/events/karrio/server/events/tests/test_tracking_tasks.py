@@ -123,6 +123,7 @@ TRACKERS_LIST = {
     "results": [
         {
             "id": ANY,
+            "info": None,
             "object_type": "tracker",
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
@@ -146,6 +147,7 @@ TRACKERS_LIST = {
         },
         {
             "id": ANY,
+            "info": None,
             "object_type": "tracker",
             "carrier_name": "ups",
             "carrier_id": "ups_package",
@@ -205,6 +207,7 @@ UPDATED_TRACKERS_LIST = {
     "results": [
         {
             "id": ANY,
+            "info": None,
             "object_type": "tracker",
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
@@ -235,6 +238,7 @@ UPDATED_TRACKERS_LIST = {
         },
         {
             "id": ANY,
+            "info": None,
             "object_type": "tracker",
             "carrier_name": "ups",
             "carrier_id": "ups_package",

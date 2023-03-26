@@ -245,7 +245,7 @@ class TrackersDetails(APIView):
         if len(trackers) == 0:
             models.Tracking.objects.get(__filter)
 
-        return Response(TrackingStatus(trackers.first()).data)
+        return Response(serializers.TrackingStatus(trackers.first()).data)
 
     @openapi.extend_schema(
         tags=["Trackers"],
@@ -272,7 +272,7 @@ class TrackersDetails(APIView):
                 tracker,
                 context=request,
                 data=serializers.process_dictionaries_mutations(
-                    ["metadata", "options"], payload, tracker
+                    ["metadata", "options", "info"], payload, tracker
                 ),
             )
             .save()

@@ -171,8 +171,8 @@ class TrackingRequest:
     """tracking request unified data type."""
 
     tracking_numbers: List[str]
-    language_code: str = None
-    level_of_details: str = None
+    account_numer: str = None
+    reference: str = None
     options: Dict = {}
 
 
@@ -290,6 +290,7 @@ class RateDetails:
 class TrackingInfo:
     """Karrio unified tracking details data type."""
 
+    carrier_tracking_link: str = None
     customer_name: str = None
     expected_delivery: str = None
     note: str = None
@@ -308,7 +309,6 @@ class TrackingInfo:
     shipping_date: str = None
     signed_by: str = None
     source: str = None
-    carrier_tracking_link: str = None
 
 @attr.s(auto_attribs=True)
 class TrackingDetails:
