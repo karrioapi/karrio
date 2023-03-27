@@ -1,5 +1,6 @@
 import ups_lib.ship_web_service_schema as ups
 import ups_lib.common as common
+import time
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -316,9 +317,10 @@ def shipment_request(
                                 ),
                                 UserCreatedForm=(
                                     ups.UserCreatedFormType(
-                                        DocumentID=options.doc_references.state[
-                                            "doc_id"
-                                        ],
+                                        DocumentID=[
+                                            doc["doc_id"]
+                                            for doc in options.doc_references.state
+                                        ]
                                     )
                                     if any(options.doc_references.state or [])
                                     else None
@@ -370,14 +372,14 @@ def shipment_request(
                                             item.description,
                                         ),
                                         Unit=ups.UnitType(
-                                            Number=str(idx),
+                                            Number=str(item.quantity),
                                             UnitOfMeasurement=ups.UnitOfMeasurementType(
-                                                Code="OTH"
+                                                Code="PCS"
                                             ),
                                             Value=item.value_amount,
                                         ),
-                                        CommodityCode=item.value_currency,
-                                        PartNumber=item.hs_code or item.sku,
+                                        CommodityCode=item.hs_code,
+                                        PartNumber=item.sku,
                                         OriginCountryCode=item.origin_country,
                                         JointProductionIndicator=None,
                                         NetCostCode=None,
@@ -409,7 +411,7 @@ def shipment_request(
                                 ],
                                 InvoiceNumber=customs.invoice,
                                 InvoiceDate=lib.fdatetime(
-                                    customs.invoice_date,
+                                    customs.invoice_date or time.strftime("%Y-%m-%d", time.localtime()),
                                     current_format="%Y-%m-%d",
                                     output_format="%Y%m%d",
                                 ),
@@ -580,6 +582,7 @@ def shipment_request(
                 Envelope="soapenv",
                 UPSSecurity="upss",
                 ShipmentRequest="ship",
+                InternationalForms_children="ifs",
             ),
         ),
     )
