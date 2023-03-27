@@ -1,6 +1,6 @@
 # Schemas update
--e ./schemas/dpd
--e ./schemas/ups
+# -e ./schemas/dpd
+# -e ./schemas/ups
 
 # SDK extentions
 -e ./sdk/core

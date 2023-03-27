@@ -2,72 +2,72 @@ django-debug-toolbar
 django-two-factor-auth==1.15.0
 
 # Schemas update (change schemas to setup.py before next update)
--e ./schemas/dpd
--e ./schemas/ups
+# -e ./schemas/dpd
+# -e ./schemas/ups
 
 # Carrier Extentions in Development
--e ./sdk/core
--e ./sdk/extensions/generic
--e ./sdk/extensions/amazon_mws
+# -e ./sdk/core
+# -e ./sdk/extensions/generic
+# -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
--e ./sdk/extensions/canadapost
--e ./sdk/extensions/canpar
--e ./sdk/extensions/chronopost
--e ./sdk/extensions/dhl_express
--e ./sdk/extensions/dhl_poland
--e ./sdk/extensions/dhl_universal
--e ./sdk/extensions/dicom
--e ./sdk/extensions/dpd
--e ./sdk/extensions/dpdhl
--e ./sdk/extensions/fedex
--e ./sdk/extensions/purolator
+# -e ./sdk/extensions/canadapost
+# -e ./sdk/extensions/canpar
+# -e ./sdk/extensions/chronopost
+# -e ./sdk/extensions/dhl_express
+# -e ./sdk/extensions/dhl_poland
+# -e ./sdk/extensions/dhl_universal
+# -e ./sdk/extensions/dicom
+# -e ./sdk/extensions/dpd
+# -e ./sdk/extensions/dpdhl
+# -e ./sdk/extensions/fedex
+# -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
--e ./sdk/extensions/sendle
+# -e ./sdk/extensions/sendle
 # -e ./sdk/extensions/sf_express
--e ./sdk/extensions/tnt
--e ./sdk/extensions/ups
--e ./sdk/extensions/ups_freight
--e ./sdk/extensions/usps
--e ./sdk/extensions/usps_international
+# -e ./sdk/extensions/tnt
+# -e ./sdk/extensions/ups
+# -e ./sdk/extensions/ups_freight
+# -e ./sdk/extensions/usps
+# -e ./sdk/extensions/usps_international
 # -e ./sdk/extensions/yanwen
 # -e ./sdk/extensions/yunexpress
 
-# # Carrier Hub Extentions in Development
--e ./sdk/vendors/easypost
+# Carrier Hub Extentions in Development
+# -e ./sdk/vendors/easypost
 # -e ./sdk/vendors/eshipper
 # -e ./sdk/vendors/freightcom
 
 
-# karrio
-# karrio.generic
+karrio
+karrio.generic
 karrio.amazon-mws
 karrio.aramex
 karrio.australiapost
-# karrio.canadapost
-# karrio.canpar
-# karrio.chronopost
-# karrio.dhl-express
-# karrio.dhl-poland
-# karrio.dhl-universal
-# karrio.dicom
-# karrio.dpd
-# karrio.dpdhl
-# karrio.fedex
-# karrio.purolator
+karrio.canadapost
+karrio.canpar
+karrio.chronopost
+karrio.dhl-express
+karrio.dhl-poland
+karrio.dhl-universal
+karrio.dicom
+karrio.dpd
+karrio.dpdhl
+karrio.fedex
+karrio.purolator
 karrio.royalmail
-# karrio.sendle
+karrio.sendle
 karrio.sf-express
-# karrio.tnt
-# karrio.ups
-# karrio.ups-freight
-# karrio.usps
-# karrio.usps-international
+karrio.tnt
+karrio.ups
+karrio.ups-freight
+karrio.usps
+karrio.usps-international
 karrio.yanwen
 karrio.yunexpress
-# karrio.easypost
-# karrio.eshipper
-# karrio.freightcom
+karrio.easypost
+karrio.eshipper
+karrio.freightcom
 
 
 # karrio server core modules

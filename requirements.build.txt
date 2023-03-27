@@ -12,6 +12,7 @@ karrio.dhl-express
 karrio.dhl-poland
 karrio.dhl-universal
 karrio.dicom
+karrio.dpd
 karrio.dpdhl
 karrio.easypost
 karrio.eshipper

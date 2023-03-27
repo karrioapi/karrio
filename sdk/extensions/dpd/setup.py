@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.dpd",
-    version="2023.3",
+    version="2023.3.1",
     description="Karrio - DPD Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -15,7 +15,7 @@ setup(
     author_email="hello@karrio.io",
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
-    install_requires=["karrio"],
+    install_requires=["karrio", "carrier.dpd"],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",

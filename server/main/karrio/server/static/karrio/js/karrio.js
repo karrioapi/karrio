@@ -518,6 +518,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -547,6 +548,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -664,6 +666,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -689,6 +692,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -716,6 +720,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -743,6 +748,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -831,6 +837,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -858,6 +865,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -939,6 +947,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -1012,6 +1021,37 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function TrackerUpdateDataInfoToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'carrier_tracking_link': value.carrier_tracking_link,
+            'customer_name': value.customer_name,
+            'expected_delivery': value.expected_delivery,
+            'note': value.note,
+            'order_date': value.order_date,
+            'order_id': value.order_id,
+            'package_weight': value.package_weight,
+            'package_weight_unit': value.package_weight_unit,
+            'shipment_package_count': value.shipment_package_count,
+            'shipment_pickup_date': value.shipment_pickup_date,
+            'shipment_delivery_date': value.shipment_delivery_date,
+            'shipment_service': value.shipment_service,
+            'shipment_origin_country': value.shipment_origin_country,
+            'shipment_origin_postal_code': value.shipment_origin_postal_code,
+            'shipment_destication_country': value.shipment_destication_country,
+            'shipment_destination_postal_code': value.shipment_destination_postal_code,
+            'shipping_date': value.shipping_date,
+            'signed_by': value.signed_by,
+            'source': value.source,
+        };
+    }
+
+    /* tslint:disable */
     function TrackingDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1022,6 +1062,9 @@ var Karrio = (function () {
         return {
             'tracking_number': value.tracking_number,
             'carrier_name': value.carrier_name,
+            'account_number': value.account_number,
+            'reference': value.reference,
+            'info': TrackerUpdateDataInfoToJSON(value.info),
         };
     }
 
@@ -1174,6 +1217,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -1438,6 +1482,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -1468,6 +1513,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -1598,6 +1644,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -1677,6 +1724,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -1823,6 +1871,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -1918,6 +1967,7 @@ var Karrio = (function () {
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
             'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
             'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
@@ -1946,6 +1996,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -2031,6 +2082,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -2216,6 +2268,7 @@ var Karrio = (function () {
             'state_code': value.state_code,
             'suburb': value.suburb,
             'residential': value.residential,
+            'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
@@ -2498,6 +2551,39 @@ var Karrio = (function () {
             'location': !exists(json, 'location') ? undefined : json['location'],
             'code': !exists(json, 'code') ? undefined : json['code'],
             'time': !exists(json, 'time') ? undefined : json['time'],
+            'latitude': !exists(json, 'latitude') ? undefined : json['latitude'],
+            'longitude': !exists(json, 'longitude') ? undefined : json['longitude'],
+        };
+    }
+
+    /* tslint:disable */
+    function TrackingStatusInfoFromJSON(json) {
+        return TrackingStatusInfoFromJSONTyped(json);
+    }
+    function TrackingStatusInfoFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'carrier_tracking_link': !exists(json, 'carrier_tracking_link') ? undefined : json['carrier_tracking_link'],
+            'customer_name': !exists(json, 'customer_name') ? undefined : json['customer_name'],
+            'expected_delivery': !exists(json, 'expected_delivery') ? undefined : json['expected_delivery'],
+            'note': !exists(json, 'note') ? undefined : json['note'],
+            'order_date': !exists(json, 'order_date') ? undefined : json['order_date'],
+            'order_id': !exists(json, 'order_id') ? undefined : json['order_id'],
+            'package_weight': !exists(json, 'package_weight') ? undefined : json['package_weight'],
+            'package_weight_unit': !exists(json, 'package_weight_unit') ? undefined : json['package_weight_unit'],
+            'shipment_package_count': !exists(json, 'shipment_package_count') ? undefined : json['shipment_package_count'],
+            'shipment_pickup_date': !exists(json, 'shipment_pickup_date') ? undefined : json['shipment_pickup_date'],
+            'shipment_delivery_date': !exists(json, 'shipment_delivery_date') ? undefined : json['shipment_delivery_date'],
+            'shipment_service': !exists(json, 'shipment_service') ? undefined : json['shipment_service'],
+            'shipment_origin_country': !exists(json, 'shipment_origin_country') ? undefined : json['shipment_origin_country'],
+            'shipment_origin_postal_code': !exists(json, 'shipment_origin_postal_code') ? undefined : json['shipment_origin_postal_code'],
+            'shipment_destication_country': !exists(json, 'shipment_destication_country') ? undefined : json['shipment_destication_country'],
+            'shipment_destination_postal_code': !exists(json, 'shipment_destination_postal_code') ? undefined : json['shipment_destination_postal_code'],
+            'shipping_date': !exists(json, 'shipping_date') ? undefined : json['shipping_date'],
+            'signed_by': !exists(json, 'signed_by') ? undefined : json['signed_by'],
+            'source': !exists(json, 'source') ? undefined : json['source'],
         };
     }
 
@@ -2514,6 +2600,7 @@ var Karrio = (function () {
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
+            'info': !exists(json, 'info') ? undefined : TrackingStatusInfoFromJSON(json['info']),
             'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
             'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
@@ -2551,6 +2638,7 @@ var Karrio = (function () {
             return null;
         }
         return {
+            'info': TrackerUpdateDataInfoToJSON(value.info),
             'metadata': value.metadata,
         };
     }
@@ -2568,6 +2656,7 @@ var Karrio = (function () {
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
+            'info': !exists(json, 'info') ? undefined : TrackingStatusInfoFromJSON(json['info']),
             'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
             'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
@@ -6437,8 +6526,8 @@ var Karrio = (function () {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
+                                    path: "/v1/orders/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    method: 'POST',
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
@@ -6526,6 +6615,71 @@ var Karrio = (function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Dismiss an order from fulfillment.
+         * Dismiss an order
+         */
+        OrdersApi.prototype.dismissRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.id === null || requestParameters.id === undefined) {
+                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling dismiss.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    method: 'DELETE',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Dismiss an order from fulfillment.
+         * Dismiss an order
+         */
+        OrdersApi.prototype.dismiss = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.dismissRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
