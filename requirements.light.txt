@@ -80,7 +80,7 @@ karrio.dpd==2023.3.1
 karrio.dpdhl==2023.3
 karrio.easypost==2023.3
 karrio.eshipper==2023.3
-karrio.fedex==2023.3
+karrio.fedex==2023.3.3
 karrio.freightcom==2023.3
 karrio.generic==2023.3
 karrio.purolator==2023.3
@@ -99,7 +99,7 @@ karrio.server.pricing==2023.3
 karrio.server.proxy==2023.3
 karrio.sf-express==2023.1
 karrio.tnt==2023.3
-karrio.ups==2023.3.2
+karrio.ups==2023.3.3
 karrio.ups-freight==2023.1.12
 karrio.usps==2023.3
 karrio.usps-international==2023.3

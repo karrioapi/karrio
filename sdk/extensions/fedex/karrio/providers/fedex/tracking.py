@@ -83,12 +83,20 @@ def _extract_tracking(
         estimated_delivery=estimated_delivery,
         delivered=any(e.EventType == "DL" for e in track_detail.Events),
         info=models.TrackingInfo(
-            carrier_tracking_link=settings.tracking_url.format(track_detail.TrackingNumber),
-            shipment_service=track_detail.Service.Description,
-            package_weight_unit=track_detail.PackageWeight.Units,
-            package_weight=lib.to_decimal(track_detail.PackageWeight.Value),
-            shipment_destication_country=track_detail.ShipperAddress.CountryCode,
-            shipment_origin_country=track_detail.DestinationAddress.CountryCode,
+            carrier_tracking_link=settings.tracking_url.format(
+                track_detail.TrackingNumber
+            ),
+            shipment_service=getattr(track_detail.Service, "Description", None),
+            package_weight_unit=getattr(track_detail.PackageWeight, "Units", None),
+            package_weight=lib.to_decimal(
+                getattr(track_detail.PackageWeight, "Value", None)
+            ),
+            shipment_destication_country=getattr(
+                track_detail.ShipperAddress, "CountryCode", None
+            ),
+            shipment_origin_country=getattr(
+                track_detail.DestinationAddress, "CountryCode", None
+            ),
         ),
     )
 
@@ -119,7 +127,9 @@ def tracking_request(
         ClientDetail=settings.clientDetail,
         TransactionDetail=fedex.TransactionDetail(
             CustomerTransactionId="Track By Number_v18",
-            Localization=fedex.Localization(LanguageCode=options.language_code.state or "en"),
+            Localization=fedex.Localization(
+                LanguageCode=options.language_code.state or "en"
+            ),
         ),
         Version=fedex.VersionId(ServiceId="trck", Major=18, Intermediate=0, Minor=0),
         SelectionDetails=[
