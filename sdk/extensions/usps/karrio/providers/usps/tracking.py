@@ -1,48 +1,65 @@
-from typing import List, Tuple
-from usps_lib.track_field_request import TrackFieldRequest, TrackIDType
-from usps_lib.track_response import TrackInfoType, TrackDetailType
-from karrio.core.utils import Serializable, Element, XP, DF, SF
-from karrio.core.models import (
-    TrackingRequest,
-    Message,
-    TrackingDetails,
-    TrackingEvent,
-)
-from karrio.providers.usps.error import parse_error_response
-from karrio.providers.usps import Settings
+import usps_lib.track_field_request as usps
+import usps_lib.track_response as tracking
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.usps.error as error
+import karrio.providers.usps.utils as provider_utils
+import karrio.providers.usps.units as provider_units
 
 
 def parse_tracking_response(
-    response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Message]]:
-    tracks_info = response.xpath(".//*[local-name() = $name]", name="TrackInfo")
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    tracks_info = lib.find_element("TrackInfo", response)
     details = [
         _extract_details(node, settings)
         for node in tracks_info
-        if len(node.xpath(".//*[local-name() = $name]", name="TrackDetail")) > 0
+        if len(lib.find_element("TrackDetail", node)) > 0
     ]
 
-    return details, parse_error_response(response, settings)
+    return details, error.parse_error_response(response, settings)
 
 
-def _extract_details(node: Element, settings) -> TrackingDetails:
-    info = XP.to_object(TrackInfoType, node)
-    details: List[TrackDetailType] = [*([info.TrackSummary] or []), *info.TrackDetail]
+def _extract_details(
+    node: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
+    info = lib.to_object(tracking.TrackInfoType, node)
+    events: typing.List[tracking.TrackDetailType] = [
+        *([info.TrackSummary] or []),
+        *info.TrackDetail,
+    ]
     delivered = info.StatusCategory.lower() == "delivered"
-    expected_delivery = info.ExpectedDeliveryDate or info.PredictedDeliveryDate
+    expected_delivery = lib.fdate(
+        info.ExpectedDeliveryDate or info.PredictedDeliveryDate,
+        "%B %d, %Y",
+    )
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if str(getattr(events[0], "EventCode", None)) in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
 
-    return TrackingDetails(
+
+    return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=info.ID,
+        estimated_delivery=expected_delivery,
         delivered=delivered,
+        status=status,
         events=[
-            TrackingEvent(
+            models.TrackingEvent(
                 code=str(event.EventCode),
-                date=DF.fdate(event.EventDate, "%B %d, %Y"),
-                time=DF.ftime(event.EventTime, "%H:%M %p"),
+                date=lib.fdate(event.EventDate, "%B %d, %Y"),
+                time=lib.ftime(event.EventTime, "%H:%M %p"),
                 description=event.Event,
-                location=SF.concat_str(
+                location=lib.join(
                     event.EventCity,
                     event.EventState,
                     event.EventCountry,
@@ -51,27 +68,36 @@ def _extract_details(node: Element, settings) -> TrackingDetails:
                     separator=", ",
                 ),
             )
-            for event in details
+            for event in events
         ],
-        estimated_delivery=DF.fdate(expected_delivery, "%B %d, %Y"),
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(info.ID),
+            shipment_destination_postal_code=info.DestinationZip,
+            shipment_destication_country=info.DestinationCountryCode,
+            shipment_origin_country=info.OriginCountryCode,
+            shipment_origin_postal_code=info.OriginZip,
+            shipment_service=info.Class,
+        ),
     )
 
 
 def tracking_request(
-    payload: TrackingRequest, settings: Settings
-) -> Serializable[TrackFieldRequest]:
-    request = TrackFieldRequest(
+    payload: models.TrackingRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[usps.TrackFieldRequest]:
+    request = usps.TrackFieldRequest(
         USERID=settings.username,
         Revision="1",
         ClientIp="127.0.0.1",
         SourceId="Karrio",
         TrackID=[
-            TrackIDType(ID=tracking_number, DestinationZipCode=None, MailingDate=None)
+            usps.TrackIDType(
+                ID=tracking_number,
+                DestinationZipCode=None,
+                MailingDate=None,
+            )
             for tracking_number in payload.tracking_numbers
         ],
     )
-    return Serializable(request, _request_serializer)
 
-
-def _request_serializer(request: TrackFieldRequest) -> str:
-    return XP.export(request)
+    return lib.Serializable(request, lib.to_xml)

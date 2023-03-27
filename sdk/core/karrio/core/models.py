@@ -7,7 +7,6 @@ from jstruct import JList, JStruct, REQUIRED
 @attr.s(auto_attribs=True)
 class AddressExtra:
     street_name: str = None
-    street_number: str = None
     street_type: str = None
     suburb: str = None
     suite: str = None
@@ -30,7 +29,8 @@ class Address:
     residential: bool = False
 
     address_line1: str = ""
-    address_line2: str = ""
+    address_line2: str = None
+    street_number: str = None
 
     federal_tax_id: str = None
     state_tax_id: str = None
@@ -171,8 +171,8 @@ class TrackingRequest:
     """tracking request unified data type."""
 
     tracking_numbers: List[str]
-    language_code: str = None
-    level_of_details: str = None
+    account_numer: str = None
+    reference: str = None
     options: Dict = {}
 
 
@@ -261,9 +261,13 @@ class TrackingEvent:
 
     date: str
     description: str
-    location: str = None
     code: str = None
     time: str = None
+    location: str = None
+
+    # Geolocation
+    latitude: float = None
+    longitude: float = None
 
 
 @attr.s(auto_attribs=True)
@@ -275,11 +279,36 @@ class RateDetails:
     service: str
     currency: str = None
     total_charge: float = 0.0
-    transit_days: int = None
     extra_charges: List[ChargeDetails] = JList[ChargeDetails]
+    estimated_delivery: str = None
+    transit_days: int = None
     meta: dict = None
     id: str = None
 
+
+@attr.s(auto_attribs=True)
+class TrackingInfo:
+    """Karrio unified tracking details data type."""
+
+    carrier_tracking_link: str = None
+    customer_name: str = None
+    expected_delivery: str = None
+    note: str = None
+    order_date: str = None
+    order_id: str = None
+    package_weight: str = None
+    package_weight_unit: str = None
+    shipment_package_count: str = None
+    shipment_pickup_date: str = None
+    shipment_delivery_date: str = None
+    shipment_service: str = None
+    shipment_origin_country: str = None
+    shipment_origin_postal_code: str = None
+    shipment_destication_country: str = None
+    shipment_destination_postal_code: str = None
+    shipping_date: str = None
+    signed_by: str = None
+    source: str = None
 
 @attr.s(auto_attribs=True)
 class TrackingDetails:
@@ -289,8 +318,10 @@ class TrackingDetails:
     carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
-    delivered: bool = None
     estimated_delivery: str = None
+    info: TrackingInfo = None
+    delivered: bool = None
+    status: str = None
     meta: dict = None
 
 
@@ -342,33 +373,63 @@ class ConfirmationDetails:
 
 
 @attr.s(auto_attribs=True)
+class ServiceZone:
+    """Karrio unified service zone."""
+
+    id: str = None
+    label: str = None
+    rate: float = None
+
+    # Weight restrictions
+    min_weight: float = None
+    max_weight: float = None
+
+    # Estimated delivery
+    transit_days: int = None
+    transit_time: float = None
+
+    # Geolocation
+    radius: float = None
+    latitude: float = None
+    longitude: float = None
+
+    # Location
+    cities: List[str] = []
+    country_codes: List[str] = []
+
+
+@attr.s(auto_attribs=True)
 class ServiceLevel:
     """Karrio unified service level data type."""
 
     service_name: str
     service_code: str
     description: str = ""
-    id: str = None
     active: bool = True
+    id: str = None
 
-    # Costs definition
-    cost: float = None
+    # Rate definitions
     currency: str = None
+    zones: List[ServiceZone] = JList[ServiceZone]
 
-    # Estimated delivery date
-    estimated_transit_days: int = None
+    # Weight restrictions
+    min_weight: float = None
+    max_weight: float = None
+    weight_unit: str = None
 
     # Size restrictions
-    max_weight: float = None
     max_width: float = None
     max_height: float = None
     max_length: float = None
-    weight_unit: str = None
     dimension_unit: str = None
 
     # Destination supports
     domicile: bool = None
     international: bool = None
+
+    # Estimated delivery
+    transit_days: int = None
+    transit_time: float = None
 
 
 @attr.s(auto_attribs=True)

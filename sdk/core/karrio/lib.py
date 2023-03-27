@@ -1,4 +1,3 @@
-import string
 import typing
 import logging
 import datetime
@@ -21,6 +20,7 @@ Body = utils.Body
 Element = utils.Element
 Tracer = utils.Tracer
 Trace = utils.Trace
+Cache = utils.Cache
 Job = utils.Job
 OptionEnum = utils.OptionEnum
 Enum = utils.Enum
@@ -609,6 +609,13 @@ def to_buffer(
     **kwargs,
 ):
     return utils.to_buffer(base64_string, **kwargs)
+
+def decode(byte: bytes):
+    return (
+        failsafe(lambda: byte.decode("utf-8")) or
+        failsafe(lambda: byte.decode("ISO-8859-1")) or
+        byte.decode("utf-8")
+    )
 
 
 # -----------------------------------------------------------

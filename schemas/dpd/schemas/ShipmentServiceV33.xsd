@@ -1,0 +1,398 @@
+<xs:schema elementFormDefault="qualified"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema"
+  xmlns:tns="http://dpd.com/common/service/types/ShipmentService/3.3"
+  targetNamespace="http://dpd.com/common/service/types/ShipmentService/3.3">
+  <xs:element name="storeOrders" type="tns:storeOrders" />
+  <xs:complexType name="storeOrders">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="printOptions"
+        type="tns:printOptions" />
+      <xs:element minOccurs="1" maxOccurs="30" form="unqualified" name="order" type="tns:order" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="printOptions">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="printerLanguage"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="paperFormat" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="printer" type="tns:printer" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="startPosition"
+        type="tns:StartPositionEnum" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="printerResolution"
+        type="xs:double" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="printer">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="manufacturer"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="model" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="revision" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="offsetX" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="offsetY" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="connectionType"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="barcodeCapable2D"
+        type="xs:boolean" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:simpleType name="StartPositionEnum">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="UPPER_LEFT" />
+      <xs:enumeration value="UPPER_RIGHT" />
+      <xs:enumeration value="LOWER_LEFT" />
+      <xs:enumeration value="LOWER_RIGHT" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="order">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="generalShipmentData"
+        type="tns:generalShipmentData" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" form="unqualified" name="parcels"
+        type="tns:parcels" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="productAndServiceData"
+        type="tns:productAndServiceData" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="generalShipmentData">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="cUser" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsCustomerReferenceNumber1"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsCustomerReferenceNumber2"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsCustomerReferenceNumber3"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsCustomerReferenceNumber4"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="identificationNumber"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="sendingDepot"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="product" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsCompleteDelivery"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsCompleteDeliveryLabel"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsVolume" type="xs:long" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsWeight" type="xs:long" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsExpectedSendingDate"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="mpsExpectedSendingTime"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="sender" type="tns:address" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="recipient" type="tns:address" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="address">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="name1" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="name2" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="street" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="houseNo" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="street2" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="state" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="country" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="zipCode" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="city" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="gln" type="xs:long" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customerNumber"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="type" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="contact" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="phone" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="fax" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="email" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="comment" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="iaccount" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="eoriNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="vatNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="idDocType" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="idDocNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="webSite" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="referenceNumber"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified"
+        name="destinationCountryRegistration"
+        type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="parcels">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="parcelLabelNumber"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customerReferenceNumber1"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customerReferenceNumber2"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customerReferenceNumber3"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customerReferenceNumber4"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="swap" type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="volume" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="weight" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="hazardousLimitedQuantities"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="higherInsurance"
+        type="tns:higherInsurance" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="content" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="addService" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="messageNumber" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="function" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="parameter" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="cod" type="tns:cod" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="international"
+        type="tns:international" />
+      <xs:element minOccurs="0" maxOccurs="4" form="unqualified" name="hazardous"
+        type="tns:hazardous" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="printInfo1OnParcelLabel"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="info1" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="info2" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="returns" type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customsTransportCost"
+        type="xs:long" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customsTransportCostCurrency"
+        type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="higherInsurance">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="amount" type="xs:long" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="currency" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="cod">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="amount" type="xs:long" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="currency" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="inkasso" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="purpose" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="bankCode" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="bankName" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="bankAccountNumber"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="bankAccountHolder"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="iban" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="bic" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="international">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="parcelType" type="xs:boolean" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsAmount" type="xs:long" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsCurrency"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsAmountEx"
+        type="xs:long" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsCurrencyEx"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="clearanceCleared"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="prealertStatus"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="exportReason"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsTerms"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsContent"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customsPaper"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customsEnclosure"
+        type="xs:boolean" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsInvoice"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsInvoiceDate"
+        type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customsAmountParcel"
+        type="xs:long" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="linehaul" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="shipMrn" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="collectiveCustomsClearance"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="comment1" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="comment2" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified"
+        name="commercialInvoiceConsigneeVatNumber" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="commercialInvoiceConsignee"
+        type="tns:address" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="commercialInvoiceConsignor"
+        type="tns:address" />
+      <xs:element minOccurs="1" maxOccurs="unbounded" form="unqualified"
+        name="commercialInvoiceLine"
+        type="tns:internationalLine" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="internationalLine">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="customsTarif"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="receiverCustomsTarif"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="productCode" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="content" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="grossWeight" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="itemsNumber" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="amountLine" type="xs:long" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="customsOrigin"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="invoicePosition"
+        type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="hazardous">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="identificationUnNo"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="identificationClass"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="classificationCode"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="packingGroup"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="packingCode" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="description" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="subsidiaryRisk"
+        type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="tunnelRestrictionCode"
+        type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="hazardousWeight"
+        type="xs:decimal" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="netWeight" type="xs:decimal" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="factor" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="notOtherwiseSpecified"
+        type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="productAndServiceData">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="orderType" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="saturdayDelivery"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="exWorksDelivery"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="guarantee" type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="tyres" type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="personalDelivery"
+        type="tns:personalDelivery" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="pickup" type="tns:pickup" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="parcelShopDelivery"
+        type="tns:parcelShopDelivery" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="predict"
+        type="tns:notification" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="personalDeliveryNotification"
+        type="tns:notification" />
+      <xs:element minOccurs="0" maxOccurs="5" form="unqualified" name="proactiveNotification"
+        type="tns:proactiveNotification" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="delivery" type="tns:delivery" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="invoiceAddress"
+        type="tns:address" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="countrySpecificService"
+        type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="personalDelivery">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="type" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="floor" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="building" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="department" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="name" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="phone" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="personId" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="pickup">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="tour" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="quantity" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="date" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="day" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="fromTime1" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="toTime1" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="fromTime2" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="toTime2" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="extraPickup"
+        type="xs:boolean" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="collectionRequestAddress"
+        type="tns:address" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="parcelShopDelivery">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="parcelShopId" type="xs:long" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="parcelShopNotification"
+        type="tns:notification" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="notification">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="channel" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="value" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="language" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="proactiveNotification">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="channel" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="value" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="rule" type="xs:int" />
+      <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="language" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="delivery">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="day" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="dateFrom" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="dateTo" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="timeFrom" type="xs:int" />
+      <xs:element minOccurs="0" maxOccurs="1" form="unqualified" name="timeTo" type="xs:int" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="storeOrdersResponse">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element minOccurs="0" maxOccurs="1" name="orderResult"
+          type="tns:StoreOrdersResponseDto33" />
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="StoreOrdersResponseDto33">
+    <xs:complexContent mixed="false">
+      <xs:extension base="tns:storeOrdersResponseType" />
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="storeOrdersResponseType">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="parcellabelsPDF" type="xs:base64Binary" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="shipmentResponses"
+        type="tns:shipmentResponses" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="shipmentResponses">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="identificationNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="mpsId" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="parcelInformation"
+        type="tns:parcelInformation" />
+      <xs:element minOccurs="0" maxOccurs="3" name="faults" type="tns:faults" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="parcelInformation">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="1" name="parcelLabelNumber" type="xs:string" />
+      <xs:element minOccurs="0" maxOccurs="1" name="dpdReference" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="faults" type="tns:faults" />
+  <xs:complexType name="faults">
+    <xs:sequence>
+      <xs:element minOccurs="1" maxOccurs="1" name="faultCode" type="xs:string" />
+      <xs:element minOccurs="1" maxOccurs="1" name="message" type="xs:string" />
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

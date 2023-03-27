@@ -38,6 +38,9 @@ def _extract_details(
         tracking_number=shipment.BarcodeNumber,
         shipment_identifier=shipment.BarcodeNumber,
         docs=models.Documents(label=shipment.LabelImage),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(shipment.BarcodeNumber),
+        ),
     )
 
 
@@ -45,17 +48,20 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[eVSRequest]:
-    if (
-        payload.shipper.country_code is not None
-        and payload.shipper.country_code != units.Country.US.name
-    ):
-        raise errors.OriginNotServicedError(payload.shipper.country_code)
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
 
     if (
-        payload.recipient.country_code is not None
-        and payload.recipient.country_code != units.Country.US.name
+        shipper.country_code is not None
+        and shipper.country_code != units.Country.US.name
     ):
-        raise errors.DestinationNotServicedError(payload.recipient.country_code)
+        raise errors.OriginNotServicedError(shipper.country_code)
+
+    if (
+        recipient.country_code is not None
+        and recipient.country_code != units.Country.US.name
+    ):
+        raise errors.DestinationNotServicedError(recipient.country_code)
 
     package = lib.to_packages(
         payload.parcels, package_option_type=provider_units.ShippingOption
@@ -83,30 +89,30 @@ def shipment_request(
             ImageParameter=label_format,
             LabelSequence=LabelSequenceType(PackageNumber=1, TotalPackages=1),
         ),
-        FromName=payload.shipper.person_name,
-        FromFirm=payload.shipper.company_name or "N/A",
-        FromAddress1=payload.shipper.address_line2,
-        FromAddress2=payload.shipper.address_line1,
-        FromCity=payload.shipper.city,
-        FromState=payload.shipper.state_code,
-        FromZip5=lib.to_zip5(payload.shipper.postal_code) or "",
-        FromZip4=lib.to_zip4(payload.shipper.postal_code) or "",
-        FromPhone=payload.shipper.phone_number,
+        FromName=shipper.person_name,
+        FromFirm=shipper.company_name or "N/A",
+        FromAddress1=shipper.address_line2 or "",
+        FromAddress2=lib.text(shipper.street_number, shipper.address_line1),
+        FromCity=shipper.city,
+        FromState=shipper.state_code,
+        FromZip5=lib.to_zip5(shipper.postal_code) or "",
+        FromZip4=lib.to_zip4(shipper.postal_code) or "",
+        FromPhone=shipper.phone_number,
         POZipCode=None,
         AllowNonCleansedOriginAddr=False,
-        ToName=payload.recipient.person_name,
-        ToFirm=payload.recipient.company_name or "N/A",
-        ToAddress1=payload.recipient.address_line2,
-        ToAddress2=payload.recipient.address_line1,
-        ToCity=payload.recipient.city,
-        ToState=payload.recipient.state_code,
-        ToZip5=lib.to_zip5(payload.recipient.postal_code) or "",
-        ToZip4=lib.to_zip4(payload.recipient.postal_code) or "",
-        ToPhone=payload.recipient.phone_number,
+        ToName=recipient.person_name,
+        ToFirm=recipient.company_name or "N/A",
+        ToAddress1=recipient.address_line2,
+        ToAddress2=lib.text(recipient.street_number, recipient.address_line1),
+        ToCity=recipient.city,
+        ToState=recipient.state_code,
+        ToZip5=lib.to_zip5(recipient.postal_code) or "",
+        ToZip4=lib.to_zip4(recipient.postal_code) or "",
+        ToPhone=recipient.phone_number,
         POBox=None,
         ToContactPreference=None,
-        ToContactMessaging=payload.recipient.email,
-        ToContactEmail=payload.recipient.email,
+        ToContactMessaging=recipient.email,
+        ToContactEmail=recipient.email,
         AllowNonCleansedDestAddr=False,
         WeightInOunces=package.weight.OZ,
         ServiceType=service,
@@ -137,10 +143,10 @@ def shipment_request(
         LogisticsManagerMID=settings.logistics_manager_mailer_id,
         VendorCode=None,
         VendorProductVersionNumber=None,
-        SenderName=(payload.shipper.person_name or payload.shipper.company_name),
-        SenderEMail=payload.shipper.email,
-        RecipientName=(payload.recipient.person_name or payload.recipient.company_name),
-        RecipientEMail=payload.recipient.email,
+        SenderName=shipper.contact,
+        SenderEMail=shipper.email,
+        RecipientName=recipient.contact,
+        RecipientEMail=recipient.email,
         ReceiptOption="SEPARATE PAGE",
         ImageType="PDF",
         HoldForManifest=None,

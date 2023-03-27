@@ -123,6 +123,10 @@ ParsedTrackingResponse = [
                 },
             ],
             "tracking_number": "89108749065090",
+            "info": {
+                "carrier_tracking_link": "https://www.chronopost.fr/tracking-no-cms/suivi-page?listeNumerosLT=89108749065090",
+                "shipment_destination_postal_code": "62223",
+            },
         }
     ],
     [],

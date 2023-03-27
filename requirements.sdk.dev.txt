@@ -1,7 +1,6 @@
 # Schemas update
+# -e ./schemas/dpd
 # -e ./schemas/ups
-# -e ./schemas/dpdhl
-# -e ./schemas/chronopost
 
 # SDK extentions
 -e ./sdk/core
@@ -16,6 +15,7 @@
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
+-e ./sdk/extensions/dpd
 -e ./sdk/extensions/dpdhl
 -e ./sdk/extensions/fedex
 -e ./sdk/extensions/purolator

@@ -38,14 +38,18 @@ def _extract_details(
         label_type=label_type.upper(),
         docs=models.Documents(label=label),
         meta=dict(
+            carrier_tracking_link=getattr(shipment.tracker, "public_url", None),
             rate_provider=shipment.selected_rate.carrier,
             service_name=shipment.selected_rate.service,
             label_url=shipment.postage_label.label_url,
+            fees=shipment.fees,
         ),
     )
 
 
 def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     service = provider_units.Service.map(payload.service).value_or_key
     package = lib.to_packages(
         payload.parcels,
@@ -62,7 +66,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    is_intl = payload.shipper.country_code != payload.recipient.country_code
+    is_intl = shipper.country_code != recipient.country_code
     customs = lib.to_customs_info(
         payload.customs,
         weight_unit=package.weight_unit,
@@ -94,34 +98,34 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
             shipment=easypost.Shipment(
                 reference=payload.reference,
                 to_address=easypost.Address(
-                    company=payload.recipient.company_name,
-                    street1=payload.recipient.address_line1,
-                    street2=payload.recipient.address_line2,
-                    city=payload.recipient.city,
-                    state=payload.recipient.state_code,
-                    zip=payload.recipient.postal_code,
-                    country=payload.recipient.country_code,
-                    residential=payload.recipient.residential,
-                    name=payload.recipient.person_name,
-                    phone=payload.recipient.phone_number,
-                    email=payload.recipient.email,
-                    federal_tax_id=payload.recipient.federal_tax_id,
-                    state_tax_id=payload.recipient.state_tax_id,
+                    company=recipient.company_name,
+                    street1=lib.text(recipient.street_number, recipient.address_line1),
+                    street2=recipient.address_line2,
+                    city=recipient.city,
+                    state=recipient.state_code,
+                    zip=recipient.postal_code,
+                    country=recipient.country_code,
+                    residential=recipient.residential,
+                    name=recipient.person_name,
+                    phone=recipient.phone_number,
+                    email=recipient.email,
+                    federal_tax_id=recipient.federal_tax_id,
+                    state_tax_id=recipient.state_tax_id,
                 ),
                 from_address=easypost.Address(
-                    company=payload.shipper.company_name,
-                    street1=payload.shipper.address_line1,
-                    street2=payload.shipper.address_line2,
-                    city=payload.shipper.city,
-                    state=payload.shipper.state_code,
-                    zip=payload.shipper.postal_code,
-                    country=payload.shipper.country_code,
-                    residential=payload.shipper.residential,
-                    name=payload.shipper.person_name,
-                    phone=payload.shipper.phone_number,
-                    email=payload.shipper.email,
-                    federal_tax_id=payload.shipper.federal_tax_id,
-                    state_tax_id=payload.shipper.state_tax_id,
+                    company=shipper.company_name,
+                    street1=lib.text(shipper.street_number, shipper.address_line1),
+                    street2=shipper.address_line2,
+                    city=shipper.city,
+                    state=shipper.state_code,
+                    zip=shipper.postal_code,
+                    country=shipper.country_code,
+                    residential=shipper.residential,
+                    name=shipper.person_name,
+                    phone=shipper.phone_number,
+                    email=shipper.email,
+                    federal_tax_id=shipper.federal_tax_id,
+                    state_tax_id=shipper.state_tax_id,
                 ),
                 parcel=easypost.Parcel(
                     length=package.length.IN,
@@ -138,7 +142,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                         contents_explanation=customs.content_description,
                         contents_type=customs.content_type,
                         customs_certify=customs.certify,
-                        customs_signer=(customs.signer or payload.shipper.person_name),
+                        customs_signer=(customs.signer or shipper.person_name),
                         eel_pfc=customs.options.eel_pfc.state,
                         non_delivery_option=customs.options.non_delivery_option.state,
                         restriction_type=customs.options.restriction_type.state,

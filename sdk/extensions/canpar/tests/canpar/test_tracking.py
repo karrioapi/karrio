@@ -37,8 +37,9 @@ class TestCanparTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response),
+                ParsedTrackingResponse,
             )
 
 
@@ -91,11 +92,19 @@ ParsedTrackingResponse = [
                     "time": "14:53",
                 },
             ],
+            "info": {
+                "carrier_tracking_link": "http://www.canpar.com/en/track/TrackingAction.do?locale=en&type=0&reference=D999999988030400000008",
+                "shipment_destication_country": "CA",
+                "shipment_destination_postal_code": "P3E5P9",
+                "shipment_service": "GROUND",
+                "shipping_date": "2011-03-07",
+            },
             "tracking_number": "D999999988030400000008",
         }
     ],
     [],
 ]
+
 
 TrackingRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-envelope"  xmlns:ws="http://ws.onlinerating.canshipws.canpar.com" xmlns:xsd="http://ws.dto.canshipws.canpar.com/xsd" >
     <soap:Header/>

@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Mon Aug  1 09:54:42 2022 by generateDS.py version 2.40.13.
-# Python 3.8.7 (v3.8.7:6503f05dd5, Dec 21 2020, 12:45:15)  [Clang 6.0 (clang-600.0.57)]
+# Generated Thu Mar 23 12:04:01 2023 by generateDS.py version 2.41.3.
+# Python 3.10.6 (main, Mar 10 2023, 10:55:28) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/Error1.1.xsd
 #
 # Command line:
-#   /Users/danielk/Documents/karrio/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/error_1_1.py" ./schemas/Error1.1.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./ups_lib/error_1_1.py" ./schemas/Error1.1.xsd
 #
 # Current working directory (os.getcwd()):
 #   ups

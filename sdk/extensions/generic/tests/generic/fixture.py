@@ -9,8 +9,8 @@ gateway = karrio.gateway["generic"].create(
             dict(
                 service_name="Standard Service",
                 service_code="standard_service",
-                cost=100.00,
                 currency="USD",
+                zones=[dict(rate=100.00)],
             )
         ],
         "metadata": {

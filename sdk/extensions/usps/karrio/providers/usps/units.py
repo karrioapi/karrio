@@ -358,3 +358,27 @@ class ServiceType(Enum):
     usps_priority_mail_express_sunday_holiday_delivery_padded_flat_rate_envelope = (
         usps_priority_mail_express
     )
+
+
+class TrackingStatus(Enum):
+    in_transit = [""]
+    delivered = ["1"]
+    ready_for_pickup = ["16"]
+    delivery_failed = [
+        "4",
+        "5",
+        "9",
+        "11",
+        "31",
+        "44",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+    ]
+    out_for_delivery = ["7"]

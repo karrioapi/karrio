@@ -500,3 +500,13 @@ class UploadDocumentType(utils.Flag):
 class DocumentUploadOption(utils.Enum):
     fedex_document_producer = utils.OptionEnum("fedex_document_producer")
     fedex_expiration_date = utils.OptionEnum("fedex_expiration_date")
+
+
+class TrackingStatus(utils.Enum):
+    on_hold = ["DE", "SE"]
+    delivered = ["DL"]
+    in_transit = [""]
+    delivery_failed = ["CA", "RS"]
+    delivery_delayed = ["DD"]
+    out_for_delivery = ["AD", "ED", "OD"]
+    ready_for_pickup = ["HL"]

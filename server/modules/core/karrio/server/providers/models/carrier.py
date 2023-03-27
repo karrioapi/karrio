@@ -109,20 +109,24 @@ class Carrier(core.OwnedEntity):
 
     @property
     def data(self) -> datatypes.CarrierSettings:
-        _extra: Dict = dict()
+        _computed_data: Dict = dict(
+            id=self.settings.id,
+            carrier_name=self.settings.carrier_name,
+            display_name=self.settings.carrier_display_name,
+        )
 
         if hasattr(self.settings, "services"):
-            _extra.update(
+            _computed_data.update(
                 services=[model_to_dict(s) for s in self.settings.services.all()]
             )
 
+        if hasattr(self.settings, "cache"):
+            _computed_data.update(cache=self.settings.cache)
+
         return datatypes.CarrierSettings.create(
             {
-                "id": self.settings.id,
-                "carrier_name": self.settings.carrier_name,
-                "display_name": self.settings.carrier_display_name,
+                **_computed_data,
                 **model_to_dict(self.settings),
-                **_extra,
             }
         )
 
@@ -172,24 +176,28 @@ class ServiceLevel(core.OwnedEntity):
     description = models.CharField(max_length=250, null=True, blank=True)
     active = models.BooleanField(null=True, default=True)
 
-    cost = models.FloatField(blank=True, null=True)
     currency = models.CharField(max_length=4, choices=CURRENCIES, null=True, blank=True)
 
-    estimated_transit_days = models.IntegerField(blank=True, null=True)
+    transit_days = models.IntegerField(blank=True, null=True)
+    transit_time = models.FloatField(blank=True, null=True)
 
-    max_weight = models.FloatField(blank=True, null=True)
     max_width = models.FloatField(blank=True, null=True)
     max_height = models.FloatField(blank=True, null=True)
     max_length = models.FloatField(blank=True, null=True)
-    weight_unit = models.CharField(
-        max_length=2, choices=WEIGHT_UNITS, null=True, blank=True
-    )
     dimension_unit = models.CharField(
         max_length=2, choices=DIMENSION_UNITS, null=True, blank=True
     )
 
+    min_weight = models.FloatField(blank=True, null=True)
+    max_weight = models.FloatField(blank=True, null=True)
+    weight_unit = models.CharField(
+        max_length=2, choices=WEIGHT_UNITS, null=True, blank=True
+    )
+
     domicile = models.BooleanField(null=True)
     international = models.BooleanField(null=True)
+
+    zones = models.JSONField(blank=True, null=True, default=core.field_default([]))
 
     def __str__(self):
         return f"{self.id} | {self.service_name}"

@@ -10,6 +10,7 @@ from karrio.server.core.serializers import (
     TrackingRequest,
     ShipmentStatus,
     TrackerStatus,
+    TrackingInfo,
 )
 
 import karrio.server.manager.models as models
@@ -32,6 +33,8 @@ class TrackingSerializer(TrackingDetails):
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
         carrier_filter = validated_data["carrier_filter"]
         tracking_number = validated_data["tracking_number"]
+        account_number = validated_data.get("account_number")
+        reference = validated_data.get("reference")
         options = validated_data["options"]
         pending_pickup = validated_data.get("pending_pickup")
         carrier = Carriers.first(
@@ -41,15 +44,25 @@ class TrackingSerializer(TrackingDetails):
 
         response = Shipments.track(
             TrackingRequest(
-                dict(tracking_numbers=[tracking_number], options=options)
+                dict(
+                    tracking_numbers=[tracking_number],
+                    account_number=account_number,
+                    reference=reference,
+                    options=options,
+                )
             ).data,
             carrier=carrier,
             raise_on_error=(pending_pickup is not True),
         )
+        info = {
+            **lib.to_dict(response.tracking.info or {}),
+            **(validated_data.get("info") or {}),
+        }
 
         return models.Tracking.objects.create(
             created_by=context.user,
             tracking_number=tracking_number,
+            account_number=account_number,
             events=lib.to_dict(response.tracking.events),
             test_mode=response.tracking.test_mode,
             delivered=response.tracking.delivered,
@@ -59,6 +72,8 @@ class TrackingSerializer(TrackingDetails):
             messages=lib.to_dict(response.messages),
             meta=response.tracking.meta,
             options=response.tracking.options,
+            reference=reference,
+            info=info,
         )
 
     def update(
@@ -96,6 +111,11 @@ class TrackingSerializer(TrackingDetails):
             )
             # update values only if changed; This is important for webhooks notification
             changes = []
+            info = (
+                lib.to_dict(response.tracking.info)
+                if any(response.tracking.info)
+                else None
+            )
             events = (
                 lib.to_dict(response.tracking.events)
                 if any(response.tracking.events)
@@ -126,6 +146,12 @@ class TrackingSerializer(TrackingDetails):
                 instance.options = response.tracking.options
                 changes.append("options")
 
+            if info and info != instance.info:
+                instance.info = serializers.process_dictionaries_mutations(
+                    ["info"], dict(info=info), instance
+                )
+                changes.append("info")
+
             if carrier.id != instance.tracking_carrier.id:
                 instance.carrier = carrier
                 changes.append("tracking_carrier")
@@ -139,6 +165,11 @@ class TrackingSerializer(TrackingDetails):
 
 @serializers.owned_model_serializer
 class TrackerUpdateData(serializers.Serializer):
+    info = TrackingInfo(
+        required=False,
+        allow_null=True,
+        help_text="The package and shipment tracking details",
+    )
     metadata = serializers.PlainDictField(
         required=False, help_text="User metadata for the tracker"
     )

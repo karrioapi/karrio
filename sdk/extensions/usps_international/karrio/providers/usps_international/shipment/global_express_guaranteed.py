@@ -37,12 +37,17 @@ def _extract_details(
         tracking_number=tracking_number,
         shipment_identifier=tracking_number,
         docs=models.Documents(label=shipment.LabelImage),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(tracking_number),
+        ),
     )
 
 
 def shipment_request(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
 ) -> lib.Serializable[eVSGXGGetLabelRequest]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(
         payload.parcels,
         package_option_type=provider_units.ShippingOption,
@@ -63,31 +68,31 @@ def shipment_request(
         Option=None,
         Revision=2,
         ImageParameters=None,
-        FromFirstName=(customs.signer or payload.shipper.person_name or "N/A"),
+        FromFirstName=(customs.signer or shipper.person_name or "N/A"),
         FromMiddleInitial=None,
-        FromLastName=payload.shipper.person_name,
-        FromFirm=payload.shipper.company_name or "N/A",
-        FromAddress1=payload.shipper.address_line1,
-        FromAddress2=payload.shipper.address_line2,
+        FromLastName=shipper.person_name,
+        FromFirm=shipper.company_name or "N/A",
+        FromAddress1=lib.text(shipper.street_number, shipper.address_line1),
+        FromAddress2=shipper.address_line2,
         FromUrbanization=None,
-        FromCity=payload.shipper.city,
-        FromState=lib.to_state_name(payload.shipper.state_code, country="US"),
-        FromZIP5=lib.to_zip5(payload.shipper.postal_code),
-        FromZIP4=lib.to_zip4(payload.shipper.postal_code),
-        FromPhone=payload.shipper.phone_number,
+        FromCity=shipper.city,
+        FromState=lib.to_state_name(shipper.state_code, country="US"),
+        FromZIP5=lib.to_zip5(shipper.postal_code),
+        FromZIP4=lib.to_zip4(shipper.postal_code),
+        FromPhone=shipper.phone_number,
         ShipFromZIP=None,
         ToFirstName=None,
-        ToLastName=payload.recipient.person_name,
-        ToFirm=payload.recipient.company_name or "N/A",
-        ToAddress1=payload.recipient.address_line1,
-        ToAddress2=payload.recipient.address_line2,
+        ToLastName=recipient.person_name,
+        ToFirm=recipient.company_name or "N/A",
+        ToAddress1=lib.text(recipient.street_number, recipient.address_line1),
+        ToAddress2=recipient.address_line2,
         ToAddress3=None,
-        ToPostalCode=payload.recipient.postal_code,
-        ToPhone=payload.recipient.phone_number,
-        RecipientEMail=payload.recipient.email,
+        ToPostalCode=recipient.postal_code,
+        ToPhone=recipient.phone_number,
+        RecipientEMail=recipient.email,
         ToDPID="000",  # supposedly required test and find a solution
-        ToProvince=payload.recipient.state_code,
-        ToTaxID=(payload.recipient.federal_tax_id or payload.recipient.state_tax_id),
+        ToProvince=recipient.state_code,
+        ToTaxID=(recipient.federal_tax_id or recipient.state_tax_id),
         Container=provider_units.PackagingType[
             package.packaging_type or "package"
         ].value,
@@ -138,7 +143,7 @@ def shipment_request(
             (customs.incoterm or incoterm) if incoterm == "OTHER" else None
         ),
         PackingCost=None,
-        CountryUltDest=lib.to_country_name(payload.recipient.country_code),
+        CountryUltDest=lib.to_country_name(recipient.country_code),
         CIAgreement=customs.commercial_invoice or None,
         ImageType="PDF",
         ImageLayout=None,

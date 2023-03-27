@@ -10,3 +10,4 @@ from karrio.core.utils.pipeline import Pipeline, Job
 from karrio.core.utils.enum import Enum, Flag, OptionEnum, svcEnum
 from karrio.core.utils.tracing import Tracer, Record, Trace
 from karrio.core.utils.transformer import to_multi_piece_rates, to_multi_piece_shipment
+from karrio.core.utils.caching import Cache

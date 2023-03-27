@@ -15,6 +15,7 @@ from canadapost_lib.pickuprequest import (
     PickupRequestHeaderType,
     PickupTypeType as PickupType,
 )
+import karrio.lib as lib
 from karrio.core.utils import (
     Serializable,
     Element,
@@ -132,15 +133,7 @@ def _create_pickup_request(
         five_ton_flag=payload.options.get("five_ton_flag"),
         loading_dock_flag=payload.options.get("loading_dock_flag"),
     )
-    address = dict(
-        company=payload.address.company_name or "",
-        address_line_1=SF.concat_str(
-            payload.address.address_line1, payload.address.address_line2, join=True
-        ),
-        city=payload.address.city,
-        province=payload.address.state_code,
-        postal_code=(payload.address.postal_code or "").replace(" ", "").upper(),
-    )
+    address = lib.to_address(payload.address)
 
     request = RequestType(
         customer_request_id=settings.customer_number,
@@ -148,13 +141,13 @@ def _create_pickup_request(
         pickup_location=PickupLocationType(
             business_address_flag=(not payload.address.residential),
             alternate_address=AlternateAddressType(
-                company=address["company"],
-                address_line_1=address["address_line_1"],
-                city=address["city"],
-                province=address["province"],
-                postal_code=address["postal_code"],
+                company=address.company_name or "",
+                address_line_1=address.address_line,
+                city=address.city,
+                province=address.state_code,
+                postal_code=address.postal_code,
             )
-            if any(address.values())
+            if payload.address
             else None,
         ),
         contact_info=ContactInfoType(
@@ -164,18 +157,25 @@ def _create_pickup_request(
             telephone_ext=None,
             receive_email_updates_flag=(payload.address.email is not None),
         ),
-        location_details=LocationDetailsType(
-            five_ton_flag=location_details["five_ton_flag"],
-            loading_dock_flag=location_details["loading_dock_flag"],
-            pickup_instructions=location_details["instruction"],
-        )
-        if any(location_details.values())
-        else None,
-        items_characteristics=ItemsCharacteristicsType(
-            pww_flag=None, priority_flag=None, returns_flag=None, heavy_item_flag=heavy
-        )
-        if heavy
-        else None,
+        location_details=(
+            LocationDetailsType(
+                five_ton_flag=location_details["five_ton_flag"],
+                loading_dock_flag=location_details["loading_dock_flag"],
+                pickup_instructions=location_details["instruction"],
+            )
+            if any(location_details.values())
+            else None
+        ),
+        items_characteristics=(
+            ItemsCharacteristicsType(
+                pww_flag=None,
+                priority_flag=None,
+                returns_flag=None,
+                heavy_item_flag=heavy,
+            )
+            if heavy
+            else None
+        ),
         pickup_volume=f"{len(packages) or 1}",
         pickup_times=PickupTimesType(
             on_demand_pickup_time=OnDemandPickupTimeType(

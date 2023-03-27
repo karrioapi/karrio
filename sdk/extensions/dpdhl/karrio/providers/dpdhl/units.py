@@ -52,12 +52,12 @@ class Incoterm(lib.Enum):
 
     """ Unified Incoterm mapping """
 
+    DDP = DAP
     CFR = "Cost and Freight"
     CIF = "Cost Insurance and Freight"
     CIP = "Carriage and Insurance Paid"
     CPT = "Carriage Paid To"
     DAF = "Delivered at Frontier"
-    DDP = DAP
     DDU = "Delivery Duty Unpaid"
     DEQ = "Delivered Ex Quay"
     DES = "Delivered Ex Ship"
@@ -197,47 +197,57 @@ def shipping_options_initializer(
     return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
+class TrackingStatus(lib.Enum):
+    in_transit = [""]
+    on_hold = ["EXPHD"]
+    delivered = ["DLVRD"]
+    delivery_delayed = ["FWDCF"]
+    ready_for_pickup = ["CNRFC", "HLDCC", "PCKDU"]
+    delivery_failed = ["DLVRF", "DSPSD", "NTDEL", "RETRN"]
+    out_for_delivery = ["MVARR", "MVARR", "MVDEX", "MVDPT", "MVTEX", "ULFMV"]
+
+
 DEFAULT_SERVICES = [
     models.ServiceLevel(
         service_name="DHL Paket",
         service_code="dpdhl_paket",
-        cost="0.00",
         currency="EUR",
         domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Paket International",
         service_code="dpdhl_paket_international",
-        cost="0.00",
         currency="EUR",
         international=True,
+        zones=[models.ServiceZone(rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL EuroPaket",
         service_code="dpdhl_europaket",
-        cost="0.00",
         currency="EUR",
         international=True,
+        zones=[models.ServiceZone(rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Paket Connect",
         service_code="dpdhl_paket_connect",
-        cost="0.00",
         currency="EUR",
         international=True,
+        zones=[models.ServiceZone(rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Warenpost",
         service_code="dpdhl_warenpost",
-        cost="0.00",
         currency="EUR",
         domicile=True,
+        zones=[models.ServiceZone(rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Warenpost International",
         service_code="dpdhl_warenpost_international",
-        cost="0.00",
         currency="EUR",
         international=True,
+        zones=[models.ServiceZone(rate=0.0)],
     ),
 ]

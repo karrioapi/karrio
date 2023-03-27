@@ -111,6 +111,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "EB321424860US",
         "tracking_number": "EB321424860US",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=EB321424860US"
+        },
     },
     [],
 ]
@@ -133,7 +136,6 @@ ShipmentRequestXML = """<eVSExpressMailIntlRequest USERID="username" PASSWORD="p
     <ToFirstName>John</ToFirstName>
     <ToLastName>John</ToLastName>
     <ToFirm>Coffee Five</ToFirm>
-    <ToAddress1></ToAddress1>
     <ToAddress2>R. da Quitanda, 86 - quiosque 01</ToAddress2>
     <ToCity>Centro</ToCity>
     <ToProvince>Rio de Janeiro</ToProvince>

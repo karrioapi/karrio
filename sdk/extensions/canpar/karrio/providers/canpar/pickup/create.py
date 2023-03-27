@@ -6,6 +6,7 @@ from canpar_lib.CanparAddonsService import (
     PickupV2,
     Address,
 )
+import karrio.lib as lib
 from karrio.core.models import PickupRequest, PickupDetails, Message
 from karrio.core.utils import Envelope, Element, create_envelope, Serializable, DF, XP
 from karrio.core.units import Packages
@@ -37,6 +38,7 @@ def pickup_request(
     packages = Packages(payload.parcels)
     weight = packages.weight.value
     weight_unit = WeightUnit[packages.weight.unit].value if weight is not None else None
+    address = lib.to_address(payload.address)
 
     request = create_envelope(
         body_content=schedulePickupV2(
@@ -45,21 +47,21 @@ def pickup_request(
                 pickup=PickupV2(
                     collect=None,
                     comments=payload.instruction,
-                    created_by=payload.address.person_name,
+                    created_by=address.person_name,
                     pickup_address=Address(
-                        address_line_1=payload.address.address_line1,
-                        address_line_2=payload.address.address_line2,
+                        address_line_1=lib.text(address.street_number, address.address_line1) or "",
+                        address_line_2=address.address_line2,
                         address_line_3=None,
-                        attention=payload.address.person_name,
-                        city=payload.address.city,
-                        country=payload.address.country_code,
-                        email=payload.address.email,
+                        attention=address.person_name,
+                        city=address.city,
+                        country=address.country_code,
+                        email=address.email,
                         extension=None,
-                        name=payload.address.company_name,
-                        phone=payload.address.phone_number,
-                        postal_code=payload.address.postal_code,
-                        province=payload.address.state_code,
-                        residential=payload.address.residential,
+                        name=address.company_name,
+                        phone=address.phone_number,
+                        postal_code=address.postal_code,
+                        province=address.state_code,
+                        residential=address.residential,
                     ),
                     pickup_date=DF.fdatetime(
                         f"{payload.pickup_date} {payload.ready_time}",
@@ -67,7 +69,7 @@ def pickup_request(
                         "%Y-%m-%dT%H:%M:%S",
                     ),
                     pickup_location=payload.package_location,
-                    pickup_phone=payload.address.phone_number,
+                    pickup_phone=address.phone_number,
                     shipper_num=None,
                     unit_of_measure=weight_unit,
                     weight=weight,

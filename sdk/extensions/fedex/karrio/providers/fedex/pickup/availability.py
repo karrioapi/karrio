@@ -9,6 +9,7 @@ from fedex_lib.pickup_service_v22 import (
     AssociatedAccount,
     AssociatedAccountNumberType,
 )
+import karrio.lib as lib
 from karrio.core.models import PickupRequest
 from karrio.core.utils import (
     Serializable,
@@ -26,6 +27,7 @@ def pickup_availability_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[PickupAvailabilityRequest]:
     same_day = DF.date(payload.pickup_date).date() == datetime.today().date()
+    address = lib.to_address(payload.address)
 
     request = PickupAvailabilityRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -38,8 +40,9 @@ def pickup_availability_request(
             AccountNumber=settings.account_number,
         ),
         PickupAddress=Address(
-            StreetLines=SF.concat_str(
-                payload.address.address_line1, payload.address.address_line2
+            StreetLines=lib.join(
+                lib.text(address.street_number, address.address_line1),
+                address.address_line2,
             ),
             City=payload.address.city,
             StateOrProvinceCode=payload.address.state_code,

@@ -92,7 +92,7 @@ def rate_request(
                 shipment=Shipment(
                     cod_type=options.canpar_cash_on_delivery.state,
                     delivery_address=Address(
-                        address_line_1=payload.recipient.address_line1,
+                        address_line_1=lib.text(payload.recipient.street_number, payload.recipient.address_line1),
                         address_line_2=payload.recipient.address_line2,
                         address_line_3=None,
                         attention=payload.recipient.person_name,
@@ -131,7 +131,7 @@ def rate_request(
                         for pkg in packages
                     ],
                     pickup_address=Address(
-                        address_line_1=payload.shipper.address_line1,
+                        address_line_1=lib.text(payload.shipper.street_number, payload.shipper.address_line1),
                         address_line_2=payload.shipper.address_line2,
                         address_line_3=None,
                         attention=payload.shipper.person_name,

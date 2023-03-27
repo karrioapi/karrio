@@ -1,50 +1,37 @@
-from typing import List, Tuple, cast
-from canpar_lib.CanparAddonsService import (
-    trackByBarcodeV2,
-    TrackByBarcodeV2Rq,
-    TrackingResult,
-    TrackingEvent as CanparTrackingEvent,
-)
-from karrio.core.models import (
-    Message,
-    TrackingRequest,
-    TrackingDetails,
-    TrackingEvent,
-)
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    create_envelope,
-    Envelope,
-    DF,
-    XP,
-    SF,
-)
-from karrio.providers.canpar.error import parse_error_response
-from karrio.providers.canpar.utils import Settings
+import canpar_lib.CanparAddonsService as canpar
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.canpar.error as error
+import karrio.providers.canpar.utils as provider_utils
 
 
 def parse_tracking_response(
-    response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Message]]:
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     results = response.xpath(".//*[local-name() = $name]", name="result")
-    details: List[TrackingDetails] = [
+    details: typing.List[models.TrackingDetails] = [
         _extract_tracking_details(result, settings) for result in results
     ]
 
-    return details, parse_error_response(response, settings)
+    return details, error.parse_error_response(response, settings)
 
 
-def _extract_tracking_details(node: Element, settings: Settings) -> TrackingDetails:
-    result = XP.to_object(TrackingResult, node)
+def _extract_tracking_details(
+    node: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
     is_en = settings.language == "en"
+    result = lib.to_object(canpar.TrackingResult, node)
+    estimated_delivery = lib.fdate(result.estimated_delivery_date, "%Y%m%d")
     events = [
-        TrackingEvent(
-            date=DF.fdate(event.local_date_time, "%Y%m%d %H%M%S"),
+        models.TrackingEvent(
+            date=lib.fdate(event.local_date_time, "%Y%m%d %H%M%S"),
             description=(
                 event.code_description_en if is_en else event.code_description_fr
             ),
-            location=SF.concat_str(
+            location=lib.join(
                 event.address.address_line_1,
                 event.address.address_line_2,
                 event.address.city,
@@ -54,27 +41,43 @@ def _extract_tracking_details(node: Element, settings: Settings) -> TrackingDeta
                 separator=", ",
             ),
             code=event.code,
-            time=DF.ftime(event.local_date_time, "%Y%m%d %H%M%S"),
+            time=lib.ftime(event.local_date_time, "%Y%m%d %H%M%S"),
         )
-        for event in cast(List[CanparTrackingEvent], result.events)
+        for event in typing.cast(typing.List[canpar.TrackingEvent], result.events)
     ]
+    delivered = any(event.code == "DEL" for event in events)
 
-    return TrackingDetails(
+    return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=result.barcode,
+        estimated_delivery=estimated_delivery,
+        delivered=delivered,
         events=events,
-        estimated_delivery=DF.fdate(result.estimated_delivery_date, "%Y%m%d"),
-        delivered=any(event.code == "DEL" for event in events),
+        info=models.TrackingInfo(
+            shipment_destication_country=result.consignee_address.country,
+            shipment_destination_postal_code=result.consignee_address.postal_code,
+            shipping_date=lib.fdate(result.shipping_date, current_format="%Y%m%d"),
+            carrier_tracking_link=(
+                result.tracking_url_en if is_en else result.tracking_url_fr
+            ),
+            shipment_service=(
+                result.service_description_en
+                if is_en
+                else result.service_description_fr
+            ),
+            signed_by=result.signed_by,
+        ),
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[List[Envelope]]:
-
+def tracking_request(
+    payload: models.TrackingRequest, _
+) -> lib.Serializable[typing.List[lib.Envelope]]:
     request = [
-        create_envelope(
-            body_content=trackByBarcodeV2(
-                request=TrackByBarcodeV2Rq(
+        lib.create_envelope(
+            body_content=canpar.trackByBarcodeV2(
+                request=canpar.TrackByBarcodeV2Rq(
                     barcode=barcode, filter=None, track_shipment=True
                 )
             )
@@ -82,8 +85,8 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[List[Envelope]
         for barcode in payload.tracking_numbers
     ]
 
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
-def _request_serializer(envelopes: List[Envelope]) -> List[str]:
-    return [Settings.serialize(envelope) for envelope in envelopes]
+def _request_serializer(envelopes: typing.List[lib.Envelope]) -> typing.List[str]:
+    return [provider_utils.Settings.serialize(envelope) for envelope in envelopes]

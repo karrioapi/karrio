@@ -11,6 +11,7 @@ from purolator_lib.pickup_service_1_2_1 import (
     WeightUnit,
     NotificationEmails,
 )
+import karrio.lib as lib
 from karrio.core.units import Phone, Packages
 from karrio.core.models import (
     PickupUpdateRequest,
@@ -94,8 +95,9 @@ def _schedule_pickup_request(
     :param settings: Settings
     :return: Serializable[PickupRequest]
     """
+    address = lib.to_address(payload.address)
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
-    phone = Phone(payload.address.phone_number, payload.address.country_code or "CA")
+    phone = Phone(address.phone_number, address.country_code or "CA")
     request = create_envelope(
         header_content=RequestContext(
             Version="1.2",
@@ -125,22 +127,22 @@ def _schedule_pickup_request(
                 NumberOfSkids=None,
             ),
             Address=Address(
-                Name=payload.address.person_name or "",
-                Company=payload.address.company_name,
+                Name=address.person_name or "",
+                Company=address.company_name,
                 Department=None,
-                StreetNumber="",
+                StreetNumber=address.street_number or "",
                 StreetSuffix=None,
-                StreetName=SF.concat_str(payload.address.address_line1, join=True),
+                StreetName=lib.text(address.address_line1),
                 StreetType=None,
                 StreetDirection=None,
                 Suite=None,
                 Floor=None,
-                StreetAddress2=SF.concat_str(payload.address.address_line2, join=True),
+                StreetAddress2=lib.text(address.address_line2),
                 StreetAddress3=None,
-                City=payload.address.city,
-                Province=payload.address.state_code,
-                Country=payload.address.country_code,
-                PostalCode=payload.address.postal_code,
+                City=address.city,
+                Province=address.state_code,
+                Country=address.country_code,
+                PostalCode=address.postal_code,
                 PhoneNumber=PhoneNumber(
                     CountryCode=phone.country_code or "0",
                     AreaCode=phone.area_code or "0",
@@ -151,7 +153,7 @@ def _schedule_pickup_request(
             ),
             ShipmentSummary=None,
             NotificationEmails=NotificationEmails(
-                NotificationEmail=[payload.address.email]
+                NotificationEmail=[address.email]
             ),
         ),
     )

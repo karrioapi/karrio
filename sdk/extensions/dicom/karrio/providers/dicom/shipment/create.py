@@ -10,6 +10,7 @@ from dicom_lib.shipments import (
     Broker,
     ShipmentResponse,
 )
+import karrio.lib as lib
 from karrio.core.units import Packages
 from karrio.core.utils import Serializable, DP
 from karrio.core.models import (
@@ -87,7 +88,9 @@ def shipment_request(
             postalCode=payload.shipper.postal_code,
             countryCode=payload.shipper.country_code,
             customerName=payload.shipper.company_name,
-            addressLine1=payload.shipper.address_line1,
+            addressLine1=lib.text(
+                payload.shipper.street_number, payload.shipper.address_line1
+            ),
             addressLine2=payload.shipper.address_line2,
             contact=Contact(
                 fullName=payload.shipper.person_name,
@@ -101,7 +104,9 @@ def shipment_request(
             postalCode=payload.recipient.postal_code,
             countryCode=payload.recipient.country_code,
             customerName=payload.recipient.company_name,
-            addressLine1=payload.recipient.address_line1,
+            addressLine1=lib.text(
+                payload.recipient.street_number, payload.recipient.address_line1
+            ),
             addressLine2=payload.recipient.address_line2,
             contact=Contact(
                 fullName=payload.recipient.person_name,
@@ -149,7 +154,9 @@ def shipment_request(
                         postalCode=importer_info.postal_code,
                         countryCode=importer_info.country_code,
                         customerName=importer_info.company_name,
-                        addressLine1=importer_info.address_line1,
+                        addressLine1=lib.text(
+                            importer_info.street_number, importer_info.address_line1
+                        ),
                         addressLine2=importer_info.address_line2,
                         contact=Contact(
                             fullName=importer_info.person_name,

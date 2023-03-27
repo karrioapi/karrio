@@ -1,0 +1,12 @@
+SCHEMAS=./schemas
+LIB_MODULES=./dpd_lib
+mkdir -p $LIB_MODULES
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/Authentication20.py" "${SCHEMAS}/Authentication20.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/EndOfDayServiceV10.py" "${SCHEMAS}/EndOfDayServiceV10.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/LoginServiceV21.py" "${SCHEMAS}/LoginServiceV21.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/ParcelLifecycleServiceV20.py" "${SCHEMAS}/ParcelLifecycleServiceV20.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/ParcelShopFinderServiceV50.py" "${SCHEMAS}/ParcelShopFinderServiceV50.xsd"
+generateDS --no-namespace-defs -o "${LIB_MODULES}/ShipmentServiceV33.py" "${SCHEMAS}/ShipmentServiceV33.xsd"

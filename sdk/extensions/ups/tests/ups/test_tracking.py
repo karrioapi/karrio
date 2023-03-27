@@ -32,7 +32,7 @@ class TestUPSTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
+            self.assertEqual(DP.to_dict(parsed_response), ParsedAuthError)
 
     def test_tracking_response_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
@@ -40,9 +40,7 @@ class TestUPSTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_invalid_tracking_number_response_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
@@ -50,9 +48,9 @@ class TestUPSTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(
+            self.assertListEqual(
                 DP.to_dict(parsed_response),
-                DP.to_dict(ParsedInvalidTrackingNumberResponse),
+                ParsedInvalidTrackingNumberResponse,
             )
 
     def test_tracking_number_not_found_response_parsing(self):
@@ -61,9 +59,9 @@ class TestUPSTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(
+            self.assertListEqual(
                 DP.to_dict(parsed_response),
-                DP.to_dict(ParsedTrackingNumberNotFound),
+                ParsedTrackingNumberNotFound,
             )
 
 
@@ -80,7 +78,6 @@ ParsedAuthError = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "250003",
-            "details": {"tracking_number": "1Z12345E6205277936"},
             "message": "Invalid Access License number",
         }
     ],
@@ -91,98 +88,34 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "ups",
             "carrier_name": "ups",
-            "delivered": True,
-            "estimated_delivery": "2021-10-21",
+            "delivered": False,
             "events": [
                 {
-                    "code": "FS",
-                    "date": "2021-10-21",
-                    "description": "Delivered",
-                    "location": "ADRIAN, MI, US",
-                    "time": "14:33",
-                },
-                {
-                    "code": "OT",
-                    "date": "2021-10-21",
-                    "description": "Out For Delivery Today",
-                    "location": "Adrian, MI, US",
-                    "time": "09:22",
-                },
-                {
-                    "code": "YP",
-                    "date": "2021-10-21",
-                    "description": "Processing at UPS Facility",
-                    "location": "Adrian, MI, US",
-                    "time": "04:27",
-                },
-                {
-                    "code": "AR",
-                    "date": "2021-10-21",
-                    "description": "Arrived at Facility",
-                    "location": "Adrian, MI, US",
-                    "time": "01:15",
-                },
-                {
-                    "code": "DP",
-                    "date": "2021-10-21",
-                    "description": "Departed from Facility",
-                    "location": "Maumee, OH, US",
-                    "time": "00:27",
-                },
-                {
-                    "code": "AR",
-                    "date": "2021-10-20",
-                    "description": "Arrived at Facility",
-                    "location": "Maumee, OH, US",
-                    "time": "17:57",
-                },
-                {
-                    "code": "DP",
-                    "date": "2021-10-20",
-                    "description": "Departed from Facility",
-                    "location": "Nashville, TN, US",
-                    "time": "08:20",
-                },
-                {
-                    "code": "AR",
-                    "date": "2021-10-19",
-                    "description": "Arrived at Facility",
-                    "location": "Nashville, TN, US",
-                    "time": "22:24",
-                },
-                {
-                    "code": "DP",
-                    "date": "2021-10-19",
-                    "description": "Departed from Facility",
-                    "location": "Nashville, TN, US",
-                    "time": "21:59",
-                },
-                {
-                    "code": "OR",
-                    "date": "2021-10-19",
-                    "description": "Origin Scan",
-                    "location": "Nashville, TN, US",
-                    "time": "20:09",
-                },
-                {
-                    "code": "XD",
-                    "date": "2021-10-19",
-                    "description": "Drop-Off",
-                    "location": "Nashville, TN, US",
-                    "time": "12:18",
-                },
-                {
-                    "code": "MP",
-                    "date": "2021-10-18",
-                    "description": "Shipper created a label, UPS has not received the package yet. ",
-                    "location": "US",
-                    "time": "14:02",
-                },
+                    "code": "SR",
+                    "date": "2021-02-10",
+                    "description": "Your package was released by the customs agency.",
+                    "location": "Wayne, NJ, 07470, US",
+                    "time": "07:13",
+                }
             ],
-            "tracking_number": "1ZR760R60332160282",
+            "info": {
+                "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=string/trackdetails",
+                "package_weight": "string",
+                "package_weight_unit": "string",
+                "shipment_service": "UPS Ground",
+            },
+            "status": "on_hold",
+            "tracking_number": "string",
         }
     ],
-    [],
+    [
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "code": "string",
+            "message": "string",
+        }
+    ],
 ]
 
 ParsedTrackingNumberNotFound = [
@@ -192,7 +125,6 @@ ParsedTrackingNumberNotFound = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "TW0001",
-            "details": {"tracking_number": "1Z12345E6205277936"},
             "message": "Tracking Information Not Found",
         }
     ],
@@ -205,7 +137,6 @@ ParsedInvalidTrackingNumberResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "code": "TV1002",
-            "details": {"tracking_number": "1Z12345E6205277936"},
             "message": "Invalid inquiry number",
         }
     ],
@@ -228,226 +159,147 @@ TrackingResponseJSON = """{
   "trackResponse": {
     "shipment": [
       {
+        "inquiryNumber": "1Z023E2X0214323462",
         "package": [
           {
-            "trackingNumber": "1ZR760R60332160282",
-            "deliveryDate": [
-              {
-                "type": "DEL",
-                "date": "20211021"
-              }
-            ],
-            "deliveryTime": {
-              "startTime": "",
-              "endTime": "143316",
-              "type": "DEL"
+            "accessPointInformation": {
+              "pickupByDate": "string"
             },
             "activity": [
               {
+                "date": "20210210",
                 "location": {
                   "address": {
-                    "city": "ADRIAN",
-                    "stateProvince": "MI",
-                    "postalCode": "",
-                    "country": "US"
-                  }
+                    "addressLine1": "100 Main St",
+                    "addressLine2": "Warehouse",
+                    "addressLine3": "Building 1",
+                    "city": "Wayne",
+                    "country": "US",
+                    "countryCode": "US",
+                    "postalCode": "07470",
+                    "stateProvince": "NJ"
+                  },
+                  "slic": "8566"
                 },
                 "status": {
-                  "type": "D",
-                  "description": "Delivered",
-                  "code": "FS"
+                  "code": "SR",
+                  "description": "Your package was released by the customs agency.",
+                  "simplifiedTextDescription": "Delivered",
+                  "statusCode": "003",
+                  "type": "X"
                 },
-                "date": "20211021",
-                "time": "143316"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Adrian",
-                    "stateProvince": "MI",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Out For Delivery Today",
-                  "code": "OT"
-                },
-                "date": "20211021",
-                "time": "092215"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Adrian",
-                    "stateProvince": "MI",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Processing at UPS Facility",
-                  "code": "YP"
-                },
-                "date": "20211021",
-                "time": "042712"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Adrian",
-                    "stateProvince": "MI",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Arrived at Facility",
-                  "code": "AR"
-                },
-                "date": "20211021",
-                "time": "011500"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Maumee",
-                    "stateProvince": "OH",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Departed from Facility",
-                  "code": "DP"
-                },
-                "date": "20211021",
-                "time": "002700"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Maumee",
-                    "stateProvince": "OH",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Arrived at Facility",
-                  "code": "AR"
-                },
-                "date": "20211020",
-                "time": "175700"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Nashville",
-                    "stateProvince": "TN",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Departed from Facility",
-                  "code": "DP"
-                },
-                "date": "20211020",
-                "time": "082000"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Nashville",
-                    "stateProvince": "TN",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Arrived at Facility",
-                  "code": "AR"
-                },
-                "date": "20211019",
-                "time": "222400"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Nashville",
-                    "stateProvince": "TN",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Departed from Facility",
-                  "code": "DP"
-                },
-                "date": "20211019",
-                "time": "215900"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Nashville",
-                    "stateProvince": "TN",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Origin Scan",
-                  "code": "OR"
-                },
-                "date": "20211019",
-                "time": "200952"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "Nashville",
-                    "stateProvince": "TN",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "I",
-                  "description": "Drop-Off",
-                  "code": "XD"
-                },
-                "date": "20211019",
-                "time": "121800"
-              },
-              {
-                "location": {
-                  "address": {
-                    "city": "",
-                    "stateProvince": "",
-                    "postalCode": "",
-                    "country": "US"
-                  }
-                },
-                "status": {
-                  "type": "M",
-                  "description": "Shipper created a label, UPS has not received the package yet. ",
-                  "code": "MP"
-                },
-                "date": "20211018",
-                "time": "140229"
+                "time": "071356"
               }
-            ]
+            ],
+            "additionalAttributes": [
+              "SENSOR_EVENT"
+            ],
+            "additionalServices": [
+              "ADULT_SIGNATURE_REQUIRED",
+              "SIGNATURE_REQUIRED",
+              "ADDITIONAL_HANDLING",
+              "CARBON_NEUTRAL",
+              "UPS_PREMIER_SILVER",
+              "UPS_PREMIER_GOLD",
+              "UPS_PREMIER_PLATINUM"
+            ],
+            "alternateTrackingNumber": [
+              {
+                "number": "92419900000033499522966220",
+                "type": "USPS_PIC"
+              }
+            ],
+            "currentStatus": {
+              "code": "SR",
+              "description": "Your package was released by the customs agency.",
+              "simplifiedTextDescription": "Delivered",
+              "statusCode": "003",
+              "type": "X"
+            },
+            "deliveryDate": [
+              {
+                "date": "string",
+                "type": "string"
+              }
+            ],
+            "deliveryInformation": {
+              "location": "Front Door",
+              "receivedBy": "",
+              "signature": {
+                "image": "encoding Base64"
+              }
+            },
+            "deliveryTime": {
+              "endTime": "string",
+              "startTime": "string",
+              "type": "string"
+            },
+            "milestones": [
+              {
+                "category": "string",
+                "code": "string",
+                "current": true,
+                "description": "string",
+                "linkedActivity": "string",
+                "state": "string",
+                "subMilestone": {
+                  "category": "string"
+                }
+              }
+            ],
+            "packageAddress": [
+              {
+                "address": {
+                  "addressLine1": "100 Main St",
+                  "addressLine2": "Warehouse",
+                  "addressLine3": "Building 1",
+                  "city": "Wayne",
+                  "country": "US",
+                  "countryCode": "US",
+                  "postalCode": "07470",
+                  "stateProvince": "NJ"
+                },
+                "attentionName": "string",
+                "name": "Sears",
+                "type": "ORIGIN/DESTINATION"
+              }
+            ],
+            "packageCount": 2,
+            "paymentInformation": [
+              {
+                "amount": "243.5",
+                "currency": "EUR",
+                "id": "3S35571M1L381K5O0P316L0M1R2E6H14",
+                "paid": false,
+                "paymentMethod": "C0, C1, ... C9",
+                "type": "ICOD/COD"
+              }
+            ],
+            "referenceNumber": [
+              {
+                "number": "ShipRef123",
+                "type": "SHIPMENT"
+              }
+            ],
+            "service": {
+              "code": "518",
+              "description": "UPS Ground"
+            },
+            "statusCode": "string",
+            "statusDescription": "string",
+            "suppressionIndicators": "DETAIL",
+            "trackingNumber": "string",
+            "weight": {
+              "unitOfMeasurement": "string",
+              "weight": "string"
+            }
+          }
+        ],
+        "userRelation": "MYCHOICE_HOME",
+        "warnings": [
+          {
+            "code": "string",
+            "message": "string"
           }
         ]
       }

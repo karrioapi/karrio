@@ -46,6 +46,7 @@ TRACKING_RESPONSE = {
     "messages": [],
     "tracking": {
         "id": ANY,
+        "info": None,
         "object_type": "tracker",
         "carrier_id": "ups_package",
         "carrier_name": "ups",

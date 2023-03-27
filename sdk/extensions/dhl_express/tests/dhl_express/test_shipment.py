@@ -156,6 +156,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "0057714403",
         "tracking_number": "0057714403",
         "docs": {"label": ANY, "invoice": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=0057714403"
+        },
     },
     [],
 ]

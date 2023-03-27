@@ -61,9 +61,7 @@ def _create_pickup(payload: PickupRequest) -> Job:
             postalCode=payload.address.postal_code,
             countryCode=payload.address.country_code,
             customerName=payload.address.company_name,
-            streetNumber=SF.concat_str(
-                payload.address.address_line1, payload.address.address_line2, join=True
-            ),
+            streetNumber=payload.address.street_number,
             contact=Contact(
                 fullName=payload.address.person_name,
                 email=payload.address.email,

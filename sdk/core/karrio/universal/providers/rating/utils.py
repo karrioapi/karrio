@@ -1,16 +1,21 @@
 import attr
-from typing import List, Tuple
-from jstruct import JList
+import typing
+import jstruct
+import karrio.core.models as models
+import karrio.core.settings as settings
 
-from karrio.core.settings import Settings as BaseSettings
-from karrio.core.models import ServiceLevel
-
-PackageServices = List[Tuple[str, List[ServiceLevel]]]
+PackageRates = typing.Tuple[
+    typing.List[models.RateDetails], typing.List[models.Message]
+]
 
 
 @attr.s(auto_attribs=True)
-class RatingMixinSettings(BaseSettings):
+class RatingMixinSettings(settings.Settings):
     """Universal rating settings mixin."""
 
     # Additional properties
-    services: List[ServiceLevel] = JList[ServiceLevel]
+    services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel]
+
+    @property
+    def shipping_services(self) -> typing.List[models.ServiceLevel]:
+        return self.services

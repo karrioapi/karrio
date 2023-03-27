@@ -39,9 +39,7 @@ class TestEasyPostTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
         with patch("karrio.mappers.easypost.proxy.http") as mocks:
@@ -50,9 +48,7 @@ class TestEasyPostTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedErrorResponse)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -73,6 +69,7 @@ ParsedTrackingResponse = [
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "delivered": False,
+            "estimated_delivery": "2022-04-11",
             "events": [
                 {
                     "code": "pre_transit",
@@ -88,16 +85,30 @@ ParsedTrackingResponse = [
                     "time": "16:11",
                 },
             ],
-            "tracking_number": "EZ1000000001",
+            "info": {
+                "carrier_tracking_link": "https://track.easypost.com/djE6dHJrX2ViNjkyZWJiNzczZDQwNjE5ZGZjMDQxN2QyYmIyNmMy",
+                "shipment_service": "First-Class Package Service",
+            },
             "meta": {
                 "carrier": "usps",
+                "fees": [
+                    {
+                        "amount": "0.02000",
+                        "charged": False,
+                        "object": "Fee",
+                        "refunded": False,
+                        "type": "TrackerFee",
+                    }
+                ],
                 "tracker_id": "trk_eb692ebb773d40619dfc0417d2bb26c2",
             },
+            "tracking_number": "EZ1000000001",
         },
         {
             "carrier_id": "easypost",
             "carrier_name": "easypost",
             "delivered": False,
+            "estimated_delivery": "2022-04-11",
             "events": [
                 {
                     "code": "pre_transit",
@@ -113,11 +124,24 @@ ParsedTrackingResponse = [
                     "time": "16:11",
                 },
             ],
-            "tracking_number": "EZ1000000001",
+            "info": {
+                "carrier_tracking_link": "https://track.easypost.com/djE6dHJrX2ViNjkyZWJiNzczZDQwNjE5ZGZjMDQxN2QyYmIyNmMy",
+                "shipment_service": "First-Class Package Service",
+            },
             "meta": {
                 "carrier": "usps",
+                "fees": [
+                    {
+                        "amount": "0.02000",
+                        "charged": False,
+                        "object": "Fee",
+                        "refunded": False,
+                        "type": "TrackerFee",
+                    }
+                ],
                 "tracker_id": "trk_eb692ebb773d40619dfc0417d2bb26c2",
             },
+            "tracking_number": "EZ1000000001",
         },
     ],
     [],

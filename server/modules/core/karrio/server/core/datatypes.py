@@ -22,6 +22,7 @@ from karrio.core.models import (
     ConfirmationDetails as Confirmation,
     TrackingEvent,
     TrackingDetails,
+    TrackingInfo,
     DocumentFile,
     DocumentUploadRequest,
 )
@@ -251,13 +252,14 @@ class Tracking:
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent]
 
-    status: str = ""
-    delivered: bool = None
+    status: str = "unknown"
+    info: TrackingInfo = None
     estimated_delivery: str = None
-    id: str = None
+    delivered: bool = None
     test_mode: bool = None
     options: Dict = {}
     meta: dict = None
+    id: str = None
 
 
 @attr.s(auto_attribs=True)

@@ -30,6 +30,11 @@ def _extract_shipment(
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
         docs=models.Documents(label=label),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(
+                shipment.ShipmentIdentificationNumber
+            ),
+        ),
     )
 
 
@@ -74,7 +79,7 @@ def shipment_request(
         recipient=payload.recipient,
         weight_unit=weight_unit.value,
     )
-    service = provider_units.ShippingService.map(payload.service).value_or_key
+    service = provider_units.ServiceCode.map(payload.service).value_or_key
 
     payment = payload.payment or models.Payment()
     biling_address = lib.to_address(
@@ -451,7 +456,7 @@ def shipment_request(
                                 MultiCurrencyInvoiceLineTotal=None,
                                 HazardousMaterialsIndicator=None,
                             )
-                            if (payload.customs and customs.commercial_invoice)
+                            if payload.customs
                             else None
                         ),
                         DeliveryConfirmation=(

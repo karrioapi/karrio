@@ -120,7 +120,6 @@ RateRequestXML = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-e
                 <xsd:shipment>
                     <xsd1:delivery_address>
                         <xsd1:address_line_1>1 TEST ST</xsd1:address_line_1>
-                        <xsd1:address_line_2></xsd1:address_line_2>
                         <xsd1:city>TORONTO</xsd1:city>
                         <xsd1:name>TEST ADDRESS</xsd1:name>
                         <xsd1:phone>4161234567</xsd1:phone>
@@ -138,7 +137,6 @@ RateRequestXML = f"""<soap:Envelope xmlns:soap="http://www.w3.org/2003/05/soap-e
                     </xsd1:packages>
                     <xsd1:pickup_address>
                         <xsd1:address_line_1>502 MAIN ST N</xsd1:address_line_1>
-                        <xsd1:address_line_2></xsd1:address_line_2>
                         <xsd1:attention>Bob</xsd1:attention>
                         <xsd1:city>MONTREAL</xsd1:city>
                         <xsd1:country>CA</xsd1:country>

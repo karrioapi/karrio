@@ -76,6 +76,9 @@ def _extract_shipment(
             label=getattr(label, "Data", ""),
             **(dict(invoice=invoice.Data) if invoice else {}),
         ),
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(pin.Value),
+        ),
     )
 
 
@@ -98,6 +101,8 @@ def _shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[lib.Envelope]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
@@ -113,12 +118,12 @@ def _shipment_request(
     customs = lib.to_customs_info(payload.customs)
     printing = provider_units.PrintType.map(payload.label_type or "PDF").value
     service = provider_units.ShippingService.map(payload.service).value_or_key
-    is_international = payload.shipper.country_code != payload.recipient.country_code
+    is_international = shipper.country_code != recipient.country_code
     shipper_phone_number = units.Phone(
-        payload.shipper.phone_number or "000 000 0000", payload.shipper.country_code
+        shipper.phone_number or "000 000 0000", shipper.country_code
     )
     recipient_phone_number = units.Phone(
-        payload.recipient.phone_number or "000 000 0000", payload.recipient.country_code
+        recipient.phone_number or "000 000 0000", recipient.country_code
     )
 
     request = lib.create_envelope(
@@ -133,24 +138,22 @@ def _shipment_request(
             Shipment=Shipment(
                 SenderInformation=SenderInformation(
                     Address=Address(
-                        Name=payload.shipper.person_name,
-                        Company=payload.shipper.company_name,
+                        Name=shipper.person_name,
+                        Company=shipper.company_name,
                         Department=None,
-                        StreetNumber="",
+                        StreetNumber=shipper.street_number or "",
                         StreetSuffix=None,
-                        StreetName=lib.join(payload.shipper.address_line1, join=True),
+                        StreetName=lib.text(shipper.address_line1),
                         StreetType=None,
                         StreetDirection=None,
-                        Suite=None,
+                        Suite=shipper.suite,
                         Floor=None,
-                        StreetAddress2=lib.join(
-                            payload.shipper.address_line2, join=True
-                        ),
+                        StreetAddress2=lib.text(shipper.address_line2),
                         StreetAddress3=None,
-                        City=payload.shipper.city or "",
-                        Province=payload.shipper.state_code or "",
-                        Country=payload.shipper.country_code or "",
-                        PostalCode=payload.shipper.postal_code or "",
+                        City=shipper.city or "",
+                        Province=shipper.state_code or "",
+                        Country=shipper.country_code or "",
+                        PostalCode=shipper.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=shipper_phone_number.country_code or "0",
                             AreaCode=shipper_phone_number.area_code or "0",
@@ -159,30 +162,26 @@ def _shipment_request(
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=(
-                        payload.shipper.federal_tax_id or payload.shipper.state_tax_id
-                    ),
+                    TaxNumber=(shipper.federal_tax_id or shipper.state_tax_id),
                 ),
                 ReceiverInformation=ReceiverInformation(
                     Address=Address(
-                        Name=payload.recipient.person_name,
-                        Company=payload.recipient.company_name,
+                        Name=recipient.person_name,
+                        Company=recipient.company_name,
                         Department=None,
-                        StreetNumber="",
+                        StreetNumber=recipient.street_number or "",
                         StreetSuffix=None,
-                        StreetName=lib.join(payload.recipient.address_line1, join=True),
+                        StreetName=lib.text(recipient.address_line1),
                         StreetType=None,
                         StreetDirection=None,
                         Suite=None,
                         Floor=None,
-                        StreetAddress2=lib.join(
-                            payload.recipient.address_line2, join=True
-                        ),
+                        StreetAddress2=lib.text(recipient.address_line2),
                         StreetAddress3=None,
-                        City=payload.recipient.city or "",
-                        Province=payload.recipient.state_code or "",
-                        Country=payload.recipient.country_code or "",
-                        PostalCode=payload.recipient.postal_code or "",
+                        City=recipient.city or "",
+                        Province=recipient.state_code or "",
+                        Country=recipient.country_code or "",
+                        PostalCode=recipient.postal_code or "",
                         PhoneNumber=PhoneNumber(
                             CountryCode=recipient_phone_number.country_code or "0",
                             AreaCode=recipient_phone_number.area_code or "0",
@@ -192,8 +191,8 @@ def _shipment_request(
                         FaxNumber=None,
                     ),
                     TaxNumber=(
-                        payload.recipient.federal_tax_id
-                        or payload.recipient.state_tax_id
+                        recipient.federal_tax_id
+                        or recipient.state_tax_id
                     ),
                 ),
                 FromOnLabelIndicator=None,
@@ -295,11 +294,12 @@ def _shipment_request(
                             ArrayOfContentDetail(
                                 ContentDetail=[
                                     ContentDetail(
-                                        Description=lib.text(item.title or item.description or "", max=25),
+                                        Description=lib.text(
+                                            item.title or item.description or "", max=25
+                                        ),
                                         HarmonizedCode=item.hs_code or "0000",
                                         CountryOfManufacture=(
-                                            item.origin_country
-                                            or payload.shipper.country_code
+                                            item.origin_country or shipper.country_code
                                         ),
                                         ProductCode=item.sku or "0000",
                                         UnitValue=item.value_amount,
@@ -355,12 +355,12 @@ def _shipment_request(
                     NotificationInformation(
                         ConfirmationEmailAddress=(
                             options.email_notification_to.state
-                            or payload.recipient.email
+                            or recipient.email
                         )
                     )
                     if options.email_notification.state
                     and any(
-                        [options.email_notification_to.state, payload.recipient.email]
+                        [options.email_notification_to.state, recipient.email]
                     )
                     else None
                 ),

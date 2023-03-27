@@ -5,6 +5,7 @@ from dhl_express_lib.routing_global_req_2_0 import (
     MetaData,
     Note,
 )
+import karrio.lib as lib
 from karrio.core.units import CountryState, Country
 from karrio.core.utils import Serializable, Element, SF, XP
 from karrio.core.models import (
@@ -51,6 +52,7 @@ def address_validation_request(
         )
         else None
     )
+    address = lib.to_address(payload.address)
 
     request = RouteRequest(
         schemaVersion="2.0",
@@ -59,8 +61,8 @@ def address_validation_request(
         ),
         RegionCode=CountryRegion[payload.address.country_code].value,
         RequestType=RequestType.D.value,
-        Address1=SF.concat_str(payload.address.address_line1, join=True),
-        Address2=SF.concat_str(payload.address.address_line2, join=True),
+        Address1=lib.text(address.street_number, address.address_line1),
+        Address2=address.address_line2,
         Address3=None,
         PostalCode=payload.address.postal_code,
         City=payload.address.city,

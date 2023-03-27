@@ -29,7 +29,10 @@ class TestCanadaPostTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
+            self.assertListEqual(
+                DP.to_dict(parsed_response),
+                ParsedAuthError,
+            )
 
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.canadapost.proxy.http") as mock:
@@ -38,8 +41,9 @@ class TestCanadaPostTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponse)
+            self.assertListEqual(
+                DP.to_dict(parsed_response),
+                ParsedTrackingResponse,
             )
 
     def test_tracking_unknown_response_parsing(self):
@@ -48,9 +52,9 @@ class TestCanadaPostTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(
+            self.assertListEqual(
                 DP.to_dict(parsed_response),
-                DP.to_dict(ParsedUnknownTrackingNumberResponse),
+                ParsedUnknownTrackingNumberResponse,
             )
 
 
@@ -76,7 +80,7 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "canadapost",
             "carrier_name": "canadapost",
-            "delivered": True,
+            "delivered": False,
             "estimated_delivery": "2011-04-05",
             "events": [
                 {
@@ -122,6 +126,14 @@ ParsedTrackingResponse = [
                     "time": "07:59",
                 },
             ],
+            "info": {
+                "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=7023210039414604",
+                "shipment_delivery_date": "2011-04-05",
+                "shipment_destination_postal_code": "K0J1T0",
+                "shipment_service": "Expedited Parcels",
+                "signed_by": "HETU",
+            },
+            "status": "in_transit",
             "tracking_number": "7023210039414604",
         }
     ],

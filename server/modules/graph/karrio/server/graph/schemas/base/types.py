@@ -267,6 +267,7 @@ class AddressType:
     state_code: typing.Optional[str]
     suburb: typing.Optional[str]
     residential: typing.Optional[bool]
+    street_number: typing.Optional[str]
     address_line1: typing.Optional[str]
     address_line2: typing.Optional[str]
     created_at: typing.Optional[datetime.datetime]
@@ -456,6 +457,8 @@ class TrackingEventType:
     code: typing.Optional[str] = None
     date: typing.Optional[str] = None
     time: typing.Optional[str] = None
+    latitude: typing.Optional[float] = None
+    longitude: typing.Optional[float] = None
 
     @staticmethod
     def parse(charge: dict):
@@ -464,6 +467,39 @@ class TrackingEventType:
                 k: v
                 for k, v in charge.items()
                 if k in TrackingEventType.__annotations__
+            }
+        )
+
+
+@strawberry.type
+class TrackingInfoType:
+    carrier_tracking_link: typing.Optional[str] = None
+    customer_name: typing.Optional[str] = None
+    expected_delivery: typing.Optional[str] = None
+    note: typing.Optional[str] = None
+    order_date: typing.Optional[str] = None
+    order_id: typing.Optional[str] = None
+    package_weight: typing.Optional[str] = None
+    package_weight_unit: typing.Optional[str] = None
+    shipment_package_count: typing.Optional[str] = None
+    shipment_pickup_date: typing.Optional[str] = None
+    shipment_delivery_date: typing.Optional[str] = None
+    shipment_service: typing.Optional[str] = None
+    shipment_origin_country: typing.Optional[str] = None
+    shipment_origin_postal_code: typing.Optional[str] = None
+    shipment_destination_country: typing.Optional[str] = None
+    shipment_destination_postal_code: typing.Optional[str] = None
+    shipping_date: typing.Optional[str] = None
+    signed_by: typing.Optional[str] = None
+    source: typing.Optional[str] = None
+
+    @staticmethod
+    def parse(charge: dict):
+        return TrackingInfoType(
+            **{
+                k: v
+                for k, v in charge.items()
+                if k in TrackingInfoType.__annotations__
             }
         )
 
@@ -492,6 +528,10 @@ class TrackerType:
     @strawberry.field
     def carrier_name(self: manager.Tracking) -> str:
         return getattr(self.tracking_carrier, "carrier_name", None)
+
+    @strawberry.field
+    def info(self: manager.Tracking) -> typing.Optional[TrackingInfoType]:
+        return TrackingInfoType.parse(self.info) if self.info else None
 
     @strawberry.field
     def events(self: manager.Tracking) -> typing.List[TrackingEventType]:
@@ -603,6 +643,39 @@ class ShipmentType:
 
 
 @strawberry.type
+class ServiceZoneType:
+    object_type: str
+    label: typing.Optional[str] = None
+    rate: typing.Optional[float] = None
+
+    min_weight: typing.Optional[float] = None
+    max_weight: typing.Optional[float] = None
+
+    transit_days: typing.Optional[int] = None
+    transit_time: typing.Optional[float] = None
+
+    radius: typing.Optional[float] = None
+    latitude: typing.Optional[float] = None
+    longitude: typing.Optional[float] = None
+
+    cities: typing.Optional[typing.List[str]] = None
+    country_codes: typing.Optional[typing.List[utils.CountryCodeEnum]] = None
+
+    @staticmethod
+    def parse(zone: dict):
+        return ServiceZoneType(
+            **{
+                "object_type": "zone",
+                **{
+                    k: v
+                    for k, v in zone.items()
+                    if k in ServiceZoneType.__annotations__
+                },
+            }
+        )
+
+
+@strawberry.type
 class ServiceLevelType:
     id: str
     object_type: str
@@ -611,20 +684,24 @@ class ServiceLevelType:
     description: typing.Optional[str]
     active: typing.Optional[bool]
 
-    cost: typing.Optional[float]
     currency: typing.Optional[utils.CurrencyCodeEnum]
+    transit_days: typing.Optional[int]
+    transit_time: typing.Optional[float]
 
-    estimated_transit_days: typing.Optional[int]
-
-    max_weight: typing.Optional[float]
     max_width: typing.Optional[float]
     max_height: typing.Optional[float]
     max_length: typing.Optional[float]
-    weight_unit: typing.Optional[utils.WeightUnitEnum]
     dimension_unit: typing.Optional[utils.DimensionUnitEnum]
+
+    max_weight: typing.Optional[float]
+    weight_unit: typing.Optional[utils.WeightUnitEnum]
 
     domicile: typing.Optional[bool]
     international: typing.Optional[bool]
+
+    @strawberry.field
+    def zones(self: providers.ServiceLevel) -> typing.List[ServiceZoneType]:
+        return [ServiceZoneType.parse(zone) for zone in self.zones or []]
 
 
 @strawberry.type
@@ -728,6 +805,7 @@ class ConnectionType:
 
 def create_carrier_settings_type(name: str, model):
     _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
+    EXCLUDED_FIELDS = ["cache"]
 
     @strawberry.type
     class _Settings(ConnectionType):
@@ -768,7 +846,7 @@ def create_carrier_settings_type(name: str, model):
                 **{
                     k: strawberry.UNSET
                     for k, _ in getattr(_RawSettings, "__annotations__", {}).items()
-                    if hasattr(model, k)
+                    if hasattr(model, k) and k not in EXCLUDED_FIELDS
                 },
                 "__annotations__": {
                     k: (
@@ -777,7 +855,7 @@ def create_carrier_settings_type(name: str, model):
                         else v
                     )
                     for k, v in annotations.items()
-                    if hasattr(model, k)
+                    if hasattr(model, k) and k not in EXCLUDED_FIELDS
                 },
             },
         )

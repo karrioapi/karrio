@@ -1,22 +1,18 @@
-from typing import Tuple, List
-from easypost_lib.trackers_response import Tracker
-from karrio.providers.easypost.utils import Settings
-from karrio.providers.easypost.units import CarrierId
-from karrio.core.utils import Serializable, DF, SF, DP
-from karrio.core.models import (
-    TrackingRequest,
-    TrackingDetails,
-    TrackingEvent,
-    Message,
-)
-from karrio.providers.easypost.error import parse_error_response
+import easypost_lib.trackers_response as easypost
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.easypost.error as error
+import karrio.providers.easypost.utils as provider_utils
+import karrio.providers.easypost.units as provider_units
 
 
 def parse_tracking_response(
-    responses: List[Tuple[str, dict]], settings: Settings
-) -> Tuple[List[TrackingDetails], List[Message]]:
+    responses: typing.List[typing.Tuple[str, dict]],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     errors = [
-        parse_error_response(response, settings, dict(tracking_number=code))
+        error.parse_error_response(response, settings, dict(tracking_number=code))
         for code, response in responses
         if "error" in response
     ]
@@ -29,20 +25,24 @@ def parse_tracking_response(
     return trackers, errors
 
 
-def _extract_details(data: dict, settings: Settings) -> TrackingDetails:
-    tracker = DP.to_object(Tracker, data)
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
+    tracker = lib.to_object(easypost.Tracker, data)
+    expected_delivery = lib.fdate(tracker.est_delivery_date, "%Y-%m-%dT%H:%M:%SZ")
 
-    return TrackingDetails(
+    return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=tracker.tracking_code,
         events=[
-            TrackingEvent(
-                date=DF.fdate(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
+            models.TrackingEvent(
+                date=lib.fdate(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
                 description=event.message or "",
                 code=event.status,
-                time=DF.ftime(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
-                location=SF.concat_str(
+                time=lib.ftime(event.datetime, "%Y-%m-%dT%H:%M:%SZ"),
+                location=lib.join(
                     event.tracking_location.city,
                     event.tracking_location.state,
                     event.tracking_location.zip,
@@ -55,14 +55,29 @@ def _extract_details(data: dict, settings: Settings) -> TrackingDetails:
             if event.datetime is not None
         ],
         delivered=(tracker.status == "delivered"),
+        estimated_delivery=expected_delivery,
+        info=models.TrackingInfo(
+            carrier_tracking_link=tracker.public_url,
+            package_weight=tracker.weight,
+            signed_by=tracker.signed_by,
+            shipment_destination_postal_code=getattr(
+                tracker.carrier_detail, "zip", None
+            ),
+            shipment_origin_country=getattr(tracker.carrier_detail, "country", None),
+            shipment_service=getattr(tracker.carrier_detail, "service", None),
+        ),
         meta=dict(
-            carrier=CarrierId.map(tracker.carrier).name_or_key,
+            carrier=provider_units.CarrierId.map(tracker.carrier).name_or_key,
+            shipment_id=tracker.shipment_id,
             tracker_id=tracker.id,
+            fees=tracker.fees,
         ),
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[List[dict]]:
+def tracking_request(
+    payload: models.TrackingRequest, _
+) -> lib.Serializable[typing.List[dict]]:
     """Send one or multiple tracking request(s) to EasyPost.
     the payload must match the following schema:
     {
@@ -79,6 +94,7 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[List[dict]]:
 
     for tracking_code in payload.tracking_numbers:
         options = payload.options.get(tracking_code)
+
         if options is None:
             raise ValueError(f"No options found for {tracking_code}")
 
@@ -91,9 +107,9 @@ def tracking_request(payload: TrackingRequest, _) -> Serializable[List[dict]]:
         requests.append(
             dict(
                 tracking_code=tracking_code,
-                carrier=CarrierId.map(options["carrier"]).value_or_key,
+                carrier=provider_units.CarrierId.map(options["carrier"]).value_or_key,
                 tracker_id=options.get("tracker_id"),
             )
         )
 
-    return Serializable(requests, DP.to_dict)
+    return lib.Serializable(requests, lib.to_dict)

@@ -43,7 +43,9 @@ def _extract_details(
         shipment_identifier=shipment.shipmentNumber,
         label_type="PDF",
         docs=models.Documents(label=label),
-        meta={},
+        meta=dict(
+            carrier_tracking_link=settings.tracking_url.format(shipment.shipmentNumber),
+        ),
     )
 
 

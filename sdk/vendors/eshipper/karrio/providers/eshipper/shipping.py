@@ -103,6 +103,8 @@ def shipping_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable[EShipper]:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     service = provider_units.ShippingService.map(payload.service).value_or_key
     packages = lib.to_packages(
         payload.parcels,
@@ -116,7 +118,7 @@ def shipping_request(
     )
 
     payment = payload.payment or models.Payment()
-    is_intl = payload.shipper.country_code != payload.recipient.country_code
+    is_intl = shipper.country_code != recipient.country_code
     customs = lib.to_customs_info(
         payload.customs,
         shipper=payload.shipper,
@@ -185,50 +187,50 @@ def shipping_request(
             stackable=options.eshipper_stackable.state,
             From=FromType(
                 id=None,
-                company=payload.shipper.company_name,
+                company=shipper.company_name,
                 instructions=None,
-                email=payload.shipper.email,
-                attention=payload.shipper.person_name,
-                phone=payload.shipper.phone_number,
+                email=shipper.email,
+                attention=shipper.person_name,
+                phone=shipper.phone_number,
                 tailgateRequired=None,
-                residential=payload.shipper.residential,
-                address1=lib.join(payload.shipper.address_line1, join=True),
-                address2=lib.join(payload.shipper.address_line2, join=True),
-                city=payload.shipper.city,
-                state=payload.shipper.state_code,
-                zip=payload.shipper.postal_code,
-                country=payload.shipper.country_code,
+                residential=shipper.residential,
+                address1=lib.text(shipper.street_number, shipper.address_line1),
+                address2=lib.text(shipper.address_line2),
+                city=shipper.city,
+                state=shipper.state_code,
+                zip=shipper.postal_code,
+                country=shipper.country_code,
             ),
             To=ToType(
                 id=None,
-                company=payload.recipient.company_name,
+                company=recipient.company_name,
                 notifyRecipient=None,
                 instructions=None,
-                email=payload.recipient.email,
-                attention=payload.recipient.person_name,
-                phone=payload.recipient.phone_number,
+                email=recipient.email,
+                attention=recipient.person_name,
+                phone=recipient.phone_number,
                 tailgateRequired=None,
-                residential=payload.recipient.residential,
-                address1=lib.join(payload.recipient.address_line1, join=True),
-                address2=lib.join(payload.recipient.address_line2, join=True),
-                city=payload.recipient.city,
-                state=payload.recipient.state_code,
-                zip=payload.recipient.postal_code,
-                country=payload.recipient.country_code,
+                residential=recipient.residential,
+                address1=lib.text(recipient.street_number, recipient.address_line1),
+                address2=lib.text(recipient.address_line2),
+                city=recipient.city,
+                state=recipient.state_code,
+                zip=recipient.postal_code,
+                country=recipient.country_code,
             ),
             COD=(
                 CODType(
                     paymentType=provider_units.PaymentType.recipient.value,
                     CODReturnAddress=CODReturnAddressType(
-                        codCompany=payload.recipient.company_name,
-                        codName=payload.recipient.person_name,
-                        codAddress1=lib.join(
-                            payload.recipient.address_line1, join=True
+                        codCompany=recipient.company_name,
+                        codName=recipient.person_name,
+                        codAddress1=lib.text(
+                            recipient.street_number, recipient.address_line1
                         ),
-                        codCity=payload.recipient.city,
-                        codStateCode=payload.recipient.state_code,
-                        codZip=payload.recipient.postal_code,
-                        codCountry=payload.recipient.country_code,
+                        codCity=recipient.city,
+                        codStateCode=recipient.state_code,
+                        codZip=recipient.postal_code,
+                        codCountry=recipient.country_code,
                     ),
                 )
                 if options.cash_on_delivery.state is not None
@@ -294,9 +296,7 @@ def shipping_request(
                             description=lib.text(
                                 item.description or item.title or "item"
                             ),
-                            originCountry=(
-                                item.origin_country or payload.shipper.country_code
-                            ),
+                            originCountry=(item.origin_country or shipper.country_code),
                             unitPrice=item.value_amount,
                             quantity=item.quantity or 1,
                             skuCode=item.sku,

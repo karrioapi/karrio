@@ -131,6 +131,9 @@ PARSED_SHIPMENT_RESPONSE = [
         "tracking_number": "329014521622",
         "shipment_identifier": "329014521622",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=329014521622"
+        },
     },
     [],
 ]

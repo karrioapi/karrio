@@ -1,83 +1,95 @@
-from typing import List, Optional, Tuple
-from dhl_express_lib.tracking_request_known_1_0 import KnownTrackingRequest
-from dhl_express_lib.tracking_response import AWBInfo, ShipmentEvent
-from karrio.core.utils import (
-    Serializable,
-    Element,
-    XP,
-    DF,
-)
-from karrio.core.models import (
-    TrackingEvent,
-    TrackingDetails,
-    TrackingRequest,
-    Message,
-)
-from .utils import Settings
-from .error import parse_error_response
+import dhl_express_lib.tracking_request_known_1_0 as tracking
+import dhl_express_lib.tracking_response as dhl
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.dhl_express.error as error
+import karrio.providers.dhl_express.utils as provider_utils
+import karrio.providers.dhl_express.units as provider_units
 
 
 def parse_tracking_response(
-    response: Element, settings: Settings
-) -> Tuple[List[TrackingDetails], List[Message]]:
-    awb_nodes = response.xpath(".//*[local-name() = $name]", name="AWBInfo")
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    nodes = lib.find_element("AWBInfo", response)
 
     tracking_details = [
-        _extract_tracking(info_node, settings)
-        for info_node in awb_nodes
-        if len(XP.find("ShipmentInfo", info_node)) > 0
+        _extract_tracking(node, settings)
+        for node in nodes
+        if len(lib.find_element("ShipmentInfo", node)) > 0
     ]
     return (
         tracking_details,
-        parse_error_response(response, settings),
+        error.parse_error_response(response, settings),
     )
 
 
 def _extract_tracking(
-    info_node: Element, settings: Settings
-) -> Optional[TrackingDetails]:
-    tracking_number = XP.find("AWBNumber", info_node, first=True).text
-    estimated_delivery = getattr(
-        XP.find("EstDlvyDate", info_node, first=True), "text", None
+    details: lib.Element,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
+    tracking_number = details.findtext("AWBNumber")
+    info: lib.Element = lib.find_element("ShipmentInfo", details, first=True)
+    estimated_delivery = lib.fdate(
+        info.findtext("EstDlvyDate"), "%Y-%m-%d %H:%M:%S %Z%z"
     )
-    events: List[ShipmentEvent] = XP.find("ShipmentEvent", info_node, ShipmentEvent)
+    events: typing.List[dhl.ShipmentEvent] = lib.find_element(
+        "ShipmentEvent", info, dhl.ShipmentEvent
+    )
     delivered = any(e.ServiceEvent.EventCode == "OK" for e in events)
 
-    return TrackingDetails(
+    return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
         events=[
-            TrackingEvent(
-                date=DF.fdate(e.Date),
-                time=DF.ftime(e.Time),
+            models.TrackingEvent(
+                date=lib.fdate(e.Date),
+                time=lib.ftime(e.Time),
                 code=e.ServiceEvent.EventCode,
                 location=e.ServiceArea.Description,
-                description=f"{e.ServiceEvent.Description} {e.Signatory}".strip(),
+                description=lib.text(e.ServiceEvent.Description, e.Signatory),
             )
             for e in reversed(events)
         ],
-        estimated_delivery=DF.fdate(estimated_delivery, "%Y-%m-%d %H:%M:%S %Z%z"),
+        estimated_delivery=estimated_delivery,
         delivered=delivered,
+        info=models.TrackingInfo(
+            customer_name=lib.text(info.findtext("Consignee")),
+            carrier_tracking_link=settings.tracking_url.format(tracking_number),
+            shipping_date=lib.fdate(info.findtext("ShipmentDate"), "%Y-%m-%dT%H:%M:%S"),
+            package_weight=lib.to_decimal(info.findtext("Weight")),
+            package_weight_unit=provider_units.WeightUnit.map(
+                info.findtext("WeightUnit")
+            ).name_or_key,
+        ),
     )
 
 
 def tracking_request(
-    payload: TrackingRequest, settings: Settings
-) -> Serializable[KnownTrackingRequest]:
-    request = KnownTrackingRequest(
+    payload: models.TrackingRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable[tracking.KnownTrackingRequest]:
+    options = lib.units.Options(payload.options or {})
+
+    request = tracking.KnownTrackingRequest(
         Request=settings.Request(),
-        LanguageCode=payload.language_code or "en",
-        LevelOfDetails=payload.level_of_details or "ALL_CHECK_POINTS",
+        LanguageCode=options.language_code.state or "en",
+        LevelOfDetails=options.level_of_details.state or "ALL_CHECK_POINTS",
         AWBNumber=payload.tracking_numbers,
     )
 
-    return Serializable(request, _request_serializer)
+    return lib.Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: KnownTrackingRequest) -> str:
-    return XP.export(
+def _request_serializer(request: tracking.KnownTrackingRequest) -> str:
+    return lib.to_xml(
         request,
         name_="req:KnownTrackingRequest",
-        namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"',
+        namespacedef_=(
+            'xmlns:req="http://www.dhl.com" '
+            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+            'xsi:schemaLocation="http://www.dhl.com TrackingRequestKnown.xsd"'
+        ),
     ).replace('schemaVersion="1"', 'schemaVersion="1.0"')

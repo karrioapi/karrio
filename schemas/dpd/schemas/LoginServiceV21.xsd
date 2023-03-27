@@ -1,0 +1,38 @@
+<xs:schema elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+    xmlns:tns="http://dpd.com/common/service/types/LoginService/2.1"
+    targetNamespace="http://dpd.com/common/service/types/LoginService/2.1">
+    <xs:element name="getAuth">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="delisId"
+                    type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="password"
+                    type="xs:string" />
+                <xs:element minOccurs="1" maxOccurs="1" form="unqualified" name="messageLanguage"
+                    type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="getAuthResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element minOccurs="0" maxOccurs="1" name="return" type="tns:GetAuthResponseDto" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:complexType name="GetAuthResponseDto">
+        <xs:complexContent mixed="false">
+            <xs:extension base="tns:Login" />
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="Login">
+        <xs:sequence>
+            <xs:element minOccurs="1" maxOccurs="1" name="delisId" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="customerUid" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="authToken" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="depot" type="xs:string" />
+            <xs:element minOccurs="1" maxOccurs="1" name="authTokenExpires" type="xs:dateTime" />
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

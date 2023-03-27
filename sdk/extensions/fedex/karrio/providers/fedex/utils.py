@@ -30,6 +30,10 @@ class Settings(BaseSettings):
         )
 
     @property
+    def tracking_url(self):
+        return "https://www.fedex.com/fedextrack/?trknbr={}"
+
+    @property
     def webAuthenticationDetail(self) -> WebAuthenticationDetail:
         return WebAuthenticationDetail(
             UserCredential=WebAuthenticationCredential(

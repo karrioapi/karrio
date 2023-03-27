@@ -41,6 +41,7 @@ class TestUniversalRating(unittest.TestCase):
             RateRequest(
                 **{
                     **rate_request_data,
+                    "services": ["carrier_standard", "carrier_premium"],
                     "parcels": [
                         {
                             **rate_request_data["parcels"][0],
@@ -80,6 +81,7 @@ class TestUniversalRating(unittest.TestCase):
             RateRequest(
                 **{
                     **rate_request_data,
+                    "services": ["carrier_interational_parcel"],
                     "recipient": {"postal_code": "11111", "country_code": "US"},
                     "parcels": [
                         {
@@ -129,32 +131,32 @@ settings_data = {
         {
             "service_name": "Standard",
             "service_code": "carrier_standard",
-            "cost": "10.00",
             "currency": "USD",
             "max_weight": 5.0,
             "weight_unit": "LB",
             "domicile": True,
             "international": False,
+            "zones": [{"rate": 10.00}],
         },
         {
             "service_name": "Premium",
             "service_code": "carrier_premium",
-            "cost": "15.00",
             "currency": "USD",
             "max_weight": 8.0,
             "weight_unit": "LB",
             "domicile": True,
             "international": False,
+            "zones": [{"rate": 15.00}],
         },
         {
             "service_name": "International Parcel",
             "service_code": "carrier_interational_parcel",
-            "cost": "25.00",
             "currency": "USD",
             "max_weight": 5.0,
             "weight_unit": "LB",
             "domicile": False,
             "international": True,
+            "zones": [{"rate": 25.00}],
         },
     ],
 }

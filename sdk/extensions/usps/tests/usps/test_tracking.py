@@ -22,9 +22,7 @@ class TestUSPSTracking(unittest.TestCase):
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(PARSED_TRACKING_RESPONSE)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), PARSED_TRACKING_RESPONSE)
 
 
 if __name__ == "__main__":
@@ -56,6 +54,13 @@ PARSED_TRACKING_RESPONSE = [
                 },
             ],
             "tracking_number": "XXXXXXXXXX1",
+            "info": {
+                "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=XXXXXXXXXX1",
+                "shipment_destination_postal_code": 12345,
+                "shipment_origin_postal_code": "12345",
+                "shipment_service": "First-Class Package Service - Retail",
+            },
+            "status": "in_transit",
         }
     ],
     [],

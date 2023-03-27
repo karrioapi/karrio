@@ -33,9 +33,7 @@ class TestPurolatorTracking(unittest.TestCase):
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(PARSED_TRACKING_RESPONSE)
-            )
+            self.assertListEqual(DP.to_dict(parsed_response), PARSED_TRACKING_RESPONSE)
 
 
 if __name__ == "__main__":
@@ -66,6 +64,10 @@ PARSED_TRACKING_RESPONSE = [
             ],
             "tracking_number": "M123",
             "delivered": False,
+            "info": {
+                "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=M123"
+            },
+            "status": "in_transit",
         }
     ],
     [],

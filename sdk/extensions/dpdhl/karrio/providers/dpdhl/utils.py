@@ -42,3 +42,7 @@ class Settings(core.Settings):
             (self.app_id, self.app_token)
         )
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+
+    @property
+    def tracking_url(self):
+        return "https://www.dhl.de/" + self.language_code + "/privatkunden/pakete-empfangen/verfolgen.html?piececode={}"

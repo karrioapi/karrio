@@ -8,6 +8,7 @@ from dhl_express_lib.pickupdatatypes_global_3_0 import (
     WeightSeg,
     RequestorContact,
 )
+import karrio.lib as lib
 from karrio.core.utils import (
     Serializable,
     Element,
@@ -67,38 +68,40 @@ def pickup_request(
     payload: PickupRequest, settings: Settings
 ) -> Serializable[BookPURequest]:
     packages = Packages(payload.parcels)
+    address = lib.to_address(payload.address)
 
     request = BookPURequest(
         Request=settings.Request(
             MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
         ),
         schemaVersion=3.0,
-        RegionCode=CountryRegion[payload.address.country_code].value
-        if payload.address.country_code
-        else "AM",
+        RegionCode=(
+            CountryRegion[address.country_code].value if address.country_code else "AM"
+        ),
         Requestor=Requestor(
             AccountNumber=settings.account_number,
             AccountType="D",
             RequestorContact=RequestorContact(
-                PersonName=payload.address.person_name,
-                Phone=payload.address.phone_number,
+                PersonName=address.person_name,
+                Phone=address.phone_number,
                 PhoneExtension=None,
             ),
-            CompanyName=payload.address.company_name,
+            CompanyName=address.company_name,
         ),
         Place=Place(
-            City=payload.address.city,
-            StateCode=payload.address.state_code,
-            PostalCode=payload.address.postal_code,
-            CompanyName=payload.address.company_name,
-            CountryCode=payload.address.country_code,
+            City=address.city,
+            StateCode=address.state_code,
+            PostalCode=address.postal_code,
+            CompanyName=address.company_name,
+            CountryCode=address.country_code,
             PackageLocation=payload.package_location,
-            LocationType="R" if payload.address.residential else "B",
-            Address1=payload.address.address_line1,
-            Address2=payload.address.address_line2,
+            LocationType="R" if address.residential else "B",
+            Address1=lib.text(address.street_number, address.address_line1),
+            Address2=address.address_line2,
         ),
         PickupContact=RequestorContact(
-            PersonName=payload.address.person_name, Phone=payload.address.phone_number
+            PersonName=address.contact,
+            Phone=address.phone_number,
         ),
         Pickup=Pickup(
             Pieces=len(payload.parcels),

@@ -109,6 +109,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "LZ333007778US",
         "tracking_number": "LZ333007778US",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=LZ333007778US"
+        },
     },
     [],
 ]
@@ -131,7 +134,6 @@ ShipmentRequestXML = """<eVSFirstClassMailIntlRequest USERID="username">
     <ToFirstName>John</ToFirstName>
     <ToLastName>John</ToLastName>
     <ToFirm>Coffee Five</ToFirm>
-    <ToAddress1></ToAddress1>
     <ToAddress2>R. da Quitanda, 86 - quiosque 01</ToAddress2>
     <ToCity>Centro</ToCity>
     <ToProvince>Rio de Janeiro</ToProvince>

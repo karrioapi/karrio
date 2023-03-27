@@ -445,6 +445,14 @@ def buy_shipment_label(
         ),
         None,
     )
+
+    if rate is None:
+        raise exceptions.APIException(
+            "The service you selected is not available for this shipment.",
+            code="service_unavailable",
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
     payload = {**data, "selected_rate_id": rate["id"]}
     carrier = gateway.Carriers.first(
         carrier_id=rate["carrier_id"],
@@ -454,7 +462,7 @@ def buy_shipment_label(
         "paperless" in carrier.capabilities
         and shipment.options.get("paperless_trade") == True
     )
-    pre_purchase_generation = any(invoice_template or "") and is_paperless_trade
+    pre_purchase_generation = invoice_template is not None and is_paperless_trade
 
     # Generate invoice in advance if is_paperless_trade
     if pre_purchase_generation:
@@ -463,11 +471,18 @@ def buy_shipment_label(
         document = generate_custom_invoice(invoice_template, shipment)
         invoice = dict(invoice=document["doc_file"])
 
-        # TODO:: Check support for dedicated document upload before upload...
-        upload = upload_customs_forms(shipment, document, context=context)
-        extra.update(
-            options={**shipment.options, **dict(doc_references=upload.documents)},
-        )
+        # Handle Paperless flow per carrier
+
+        if carrier.carrier_name == "ups":
+            # TODO:: Check support for dedicated document upload before upload...
+            upload = upload_customs_forms(shipment, document, context=context)
+            extra.update(
+                options={**shipment.options, **dict(doc_references=upload.documents)},
+            )
+        else :
+            extra.update(
+                options={**shipment.options, **dict(doc_files=[document])},
+            )
 
     # Submit shipment to carriers
     response: Shipment = (
@@ -612,19 +627,36 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
     if carrier is not None and "get_tracking" in carrier.gateway.proxy_methods:
         # Create shipment tracker
         try:
+            pkg_weight = sum([p.weight or 0.0 for p in shipment.parcels.all()], 0.0)
+            tracking_url = getattr(carrier.gateway.settings, "tracking_url", None)
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
-                events=utils.default_tracking_event(event_at=shipment.updated_at),
                 delivered=False,
-                status=TrackerStatus.pending.value,
-                test_mode=carrier.test_mode,
-                tracking_carrier=carrier,
-                created_by=shipment.created_by,
                 shipment=shipment,
+                tracking_carrier=carrier,
+                test_mode=carrier.test_mode,
+                created_by=shipment.created_by,
+                status=TrackerStatus.pending.value,
+                events=utils.default_tracking_event(event_at=shipment.updated_at),
+                options={shipment.tracking_number: dict(carrier=rate_provider)},
                 meta=dict(carrier=rate_provider),
-                options={
-                    shipment.tracking_number: dict(carrier=rate_provider),
-                },
+                info=dict(
+                    source="api",
+                    shipment_weight=str(pkg_weight),
+                    shipment_package_count=str(shipment.parcels.count()),
+                    customer_name=shipment.recipient.person_name,
+                    shipment_origin_country=shipment.shipper.country_code,
+                    shipment_origin_postal_code=shipment.shipper.postal_code,
+                    shipment_destination_country=shipment.recipient.country_code,
+                    shipment_destination_postal_code=shipment.recipient.postal_code,
+                    shipment_service=shipment.meta.get("service_name"),
+                    shipping_date=shipment.options.get("shipping_date"),
+                    carrier_tracking_url=(
+                        tracking_url.format(shipment.tracking_number)
+                        if tracking_url is not None
+                        else None
+                    ),
+                ),
             )
             tracker.save()
             link_org(tracker, context)
@@ -682,7 +714,7 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
     return document
 
 
-def upload_customs_forms(shipment: models.Shipment, document: dict, context = None):
+def upload_customs_forms(shipment: models.Shipment, document: dict, context=None):
     return (
         DocumentUploadSerializer.map(
             getattr(shipment, "shipment_upload_record", None),

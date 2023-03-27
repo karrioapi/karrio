@@ -76,6 +76,9 @@ ParsedTrackingResponse = [
                 },
             ],
             "tracking_number": "24333892874",
+            "info": {
+                "carrier_tracking_link": "https://www.dhl.com/pl-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=24333892874"
+            },
         }
     ],
     [],

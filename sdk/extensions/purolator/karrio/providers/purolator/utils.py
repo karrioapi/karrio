@@ -33,6 +33,10 @@ class Settings(BaseSettings):
         pair = "%s:%s" % (self.username, self.password)
         return b64encode(pair.encode("utf-8")).decode("ascii")
 
+    @property
+    def tracking_url(self):
+        return "https://tools.usps.com/go/TrackConfirmAction?tLabels={}"
+
 
 def standard_request_serializer(envelope: Envelope, version: str = "v2") -> str:
     namespacedef_ = (

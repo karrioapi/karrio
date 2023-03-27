@@ -146,6 +146,9 @@ ParsedShipmentResponse = [
         "shipment_identifier": "HE200448219US",
         "tracking_number": "HE200448219US",
         "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=HE200448219US"
+        },
     },
     [],
 ]
@@ -177,7 +180,6 @@ ShipmentRequestXML = """<eVSPriorityMailIntlRequest USERID="username">
     <FromPhone>1234567890</FromPhone>
     <ToFirstName>John</ToFirstName>
     <ToFirm>Coffee Five</ToFirm>
-    <ToAddress1></ToAddress1>
     <ToAddress2>R. da Quitanda, 86 - quiosque 01</ToAddress2>
     <ToCity>Centro</ToCity>
     <ToProvince>Rio de Janeiro</ToProvince>

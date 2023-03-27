@@ -23,7 +23,7 @@ Process = Callable[[Job], Any]
 
 class Pipeline(Generic[T]):
     def __init__(self, **steps):
-        self.steps: Steps = OrderedDict(steps.items())
+        self.steps: Steps = OrderedDict(steps.items())  # type: ignore
 
     def __getitem__(self, step_name):
         return self.steps.get(step_name)

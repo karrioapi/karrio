@@ -24,6 +24,10 @@ def _extract_details(
     detail: chronopost.listEventInfoComps,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
+    delivery: chronopost.eventInfoComp = next(
+        (event for event in detail.events if event.code == "D"), None
+    )
+
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -38,7 +42,14 @@ def _extract_details(
             )
             for event in detail.events
         ],
-        delivered=any([event.code == "D" for event in detail.events]),
+        delivered=(delivery is not None),
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(detail.skybillNumber),
+            customer_name=(
+                getattr(delivery.infoCompList, "name", None) if delivery else None
+            ),
+            shipment_destination_postal_code=getattr(delivery, "zipCode", None),
+        ),
     )
 
 
@@ -56,6 +67,7 @@ def tracking_request(
         )
         for tracking_number in payload.tracking_numbers
     ]
+
     return lib.Serializable(
         request,
         lambda requests: [
