@@ -1,5 +1,6 @@
 import ups_lib.ship_web_service_schema as ups
 import ups_lib.common as common
+import time
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -7,7 +8,6 @@ import karrio.core.models as models
 import karrio.providers.ups.error as provider_error
 import karrio.providers.ups.units as provider_units
 import karrio.providers.ups.utils as provider_utils
-import time
 
 
 def parse_shipment_response(
@@ -317,9 +317,10 @@ def shipment_request(
                                 ),
                                 UserCreatedForm=(
                                     ups.UserCreatedFormType(
-                                        DocumentID=options.doc_references.state[
-                                            "doc_id"
-                                        ],
+                                        DocumentID=[
+                                            doc["doc_id"]
+                                            for doc in options.doc_references.state
+                                        ]
                                     )
                                     if any(options.doc_references.state or [])
                                     else None
@@ -409,14 +410,10 @@ def shipment_request(
                                     for idx, item in enumerate(customs.commodities)
                                 ],
                                 InvoiceNumber=customs.invoice,
-                                InvoiceDate=(
-                                    lib.fdatetime(
-                                        customs.invoice_date,
-                                        current_format="%Y-%m-%d",
-                                        output_format="%Y%m%d",
-                                    )
-                                    if customs.invoice_date is not None
-                                    else time.strftime("%Y%m%d", time.localtime())
+                                InvoiceDate=lib.fdatetime(
+                                    customs.invoice_date or time.strftime("%Y-%m-%d", time.localtime()),
+                                    current_format="%Y-%m-%d",
+                                    output_format="%Y%m%d",
                                 ),
                                 PurchaseOrderNumber=None,
                                 TermsOfShipment=provider_units.Incoterm.map(

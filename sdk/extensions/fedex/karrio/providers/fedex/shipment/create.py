@@ -348,8 +348,10 @@ def shipment_request(
                                     [
                                         fedex.UploadDocumentReferenceDetail(
                                             LineNumber=idx,
-                                            CustomerReference=payload.reference
-                                            or getattr(payload, "id", None),
+                                            CustomerReference=(
+                                                payload.reference
+                                                or getattr(payload, "id", None)
+                                            ),
                                             Description=None,
                                             DocumentProducer=fedex.UploadDocumentProducerType.CUSTOMER,
                                             DocumentType=(
