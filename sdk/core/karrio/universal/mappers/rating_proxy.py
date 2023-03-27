@@ -143,13 +143,14 @@ def get_available_rates(
 
         for zone in service.zones or []:
             # Check Location inclusion
-            _cover_supported_cities = recipient.city in zone.cities or not any(
-                zone.cities or []
-            )
+            _cover_supported_cities = (
+                zone.cities is not None
+                and recipient.city in zone.cities
+            ) or not any(zone.cities or [])
             _cover_supported_countries = (
-                recipient.country_code in zone.country_codes
-                or not any(zone.country_codes or [])
-            )
+                zone.cities is not None
+                and recipient.country_code in zone.country_codes
+            ) or not any(zone.country_codes or [])
 
             # Check if weight and dimensions fit restrictions
             _match_zone_min_weight_requirements = (

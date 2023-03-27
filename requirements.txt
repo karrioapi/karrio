@@ -69,7 +69,7 @@ jsonfield==3.1.0
 jsonschema==4.17.3
 jstruct==2021.11
 jwcrypto==1.4.2
-karrio==2023.3
+karrio==2023.3.1
 karrio.amazon-mws==2023.3
 karrio.aramex==2023.1
 karrio.australiapost==2023.1
@@ -92,7 +92,7 @@ karrio.royalmail==2023.1
 karrio.sendle==2023.1.12
 karrio.server==2023.3
 karrio.server.apps==2023.1
-karrio.server.core==2023.3
+karrio.server.core==2023.3.1
 karrio.server.data==2023.1.10
 karrio.server.documents==2023.3
 karrio.server.events==2023.3

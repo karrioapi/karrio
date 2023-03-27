@@ -125,8 +125,8 @@ class Carrier(core.OwnedEntity):
 
         return datatypes.CarrierSettings.create(
             {
-                **_computed_data,
                 **model_to_dict(self.settings),
+                **_computed_data,
             }
         )
 
