@@ -83,16 +83,20 @@ def _extract_details(
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(package.trackingNumber),
             signed_by=getattr(package.deliveryInformation, "receivedBy", None),
-            shipment_service=package.service.description,
-            package_weight=package.weight.weight,
-            package_weight_unit=package.weight.unitOfMeasurement,
-            shipment_origin_country=origin.address.country if origin else None,
-            shipment_origin_postal_code=origin.address.postalCode if origin else None,
+            shipment_service=getattr(package.service, "description", None),
+            package_weight=getattr(package.weight, "weight", None),
+            package_weight_unit=getattr(package.weight, "unitOfMeasurement", None),
+            shipment_origin_country=(
+                getattr(origin.address, "country", None) if origin else None
+            ),
+            shipment_origin_postal_code=(
+                getattr(origin.address, "postalCode", None) if origin else None
+            ),
             shipment_destication_country=(
-                destination.address.country if destination else None
+                getattr(destination.address, "country", None) if origin else None
             ),
             shipment_destination_postal_code=(
-                destination.address.postalCode if destination else None
+                getattr(destination.address, "postalCode", None) if origin else None
             ),
             customer_name=(
                 destination.attentionName or destination.name if destination else None
