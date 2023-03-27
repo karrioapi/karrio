@@ -645,21 +645,21 @@ class ShipmentType:
 @strawberry.type
 class ServiceZoneType:
     object_type: str
-    label: typing.Optional[str]
-    rate: typing.Optional[float]
+    label: typing.Optional[str] = None
+    rate: typing.Optional[float] = None
 
-    min_weight: typing.Optional[float]
-    max_weight: typing.Optional[float]
+    min_weight: typing.Optional[float] = None
+    max_weight: typing.Optional[float] = None
 
-    transit_days: typing.Optional[int]
-    transit_time: typing.Optional[float]
+    transit_days: typing.Optional[int] = None
+    transit_time: typing.Optional[float] = None
 
-    radius: typing.Optional[float]
-    latitude: typing.Optional[float]
-    longitude: typing.Optional[float]
+    radius: typing.Optional[float] = None
+    latitude: typing.Optional[float] = None
+    longitude: typing.Optional[float] = None
 
-    cities: typing.Optional[typing.List[str]]
-    country_codes: typing.Optional[typing.List[utils.CountryCodeEnum]]
+    cities: typing.Optional[typing.List[str]] = None
+    country_codes: typing.Optional[typing.List[utils.CountryCodeEnum]] = None
 
     @staticmethod
     def parse(zone: dict):
