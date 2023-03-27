@@ -31,7 +31,7 @@ class Settings(BaseSettings):
 
     @property
     def tracking_url(self):
-        return "https://www.fedex.com/fedextrack/no-results-found?trknbr={}"
+        return "https://www.fedex.com/fedextrack/?trknbr={}"
 
     @property
     def webAuthenticationDetail(self) -> WebAuthenticationDetail:

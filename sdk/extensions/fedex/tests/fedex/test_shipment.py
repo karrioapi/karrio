@@ -190,7 +190,7 @@ ParsedShipmentResponse = [
         "shipment_identifier": "794604790138",
         "meta": {
             "tracking_numbers": ["794604790138"],
-            "carrier_tracking_link": "https://www.fedex.com/fedextrack/no-results-found?trknbr=794604790138",
+            "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=794604790138",
         },
         "docs": {"label": ANY, "invoice": ANY},
     },
@@ -205,7 +205,7 @@ ParsedMultiPieceShipmentResponse = [
         "shipment_identifier": "794604790138",
         "meta": {
             "tracking_numbers": ["794604790138", "794604790138"],
-            "carrier_tracking_link": "https://www.fedex.com/fedextrack/no-results-found?trknbr=794604790138",
+            "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=794604790138",
         },
         "docs": {"label": ANY, "invoice": ANY},
     },

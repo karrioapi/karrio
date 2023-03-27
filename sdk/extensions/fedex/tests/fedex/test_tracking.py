@@ -98,7 +98,7 @@ ParsedTrackingResponse = [
                 },
             ],
             "info": {
-                "carrier_tracking_link": "https://www.fedex.com/fedextrack/no-results-found?trknbr=794887075005",
+                "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=794887075005",
                 "package_weight": 60.0,
                 "package_weight_unit": "LB",
                 "shipment_destication_country": "US",
