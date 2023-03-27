@@ -7,6 +7,7 @@ import karrio.core.models as models
 import karrio.providers.ups.error as provider_error
 import karrio.providers.ups.units as provider_units
 import karrio.providers.ups.utils as provider_utils
+import time
 
 
 def parse_shipment_response(
@@ -370,14 +371,14 @@ def shipment_request(
                                             item.description,
                                         ),
                                         Unit=ups.UnitType(
-                                            Number=str(idx),
+                                            Number=str(item.quantity),
                                             UnitOfMeasurement=ups.UnitOfMeasurementType(
-                                                Code="OTH"
+                                                Code="PCS"
                                             ),
                                             Value=item.value_amount,
                                         ),
-                                        CommodityCode=item.value_currency,
-                                        PartNumber=item.hs_code or item.sku,
+                                        CommodityCode=item.hs_code,
+                                        PartNumber=item.sku,
                                         OriginCountryCode=item.origin_country,
                                         JointProductionIndicator=None,
                                         NetCostCode=None,
@@ -408,10 +409,14 @@ def shipment_request(
                                     for idx, item in enumerate(customs.commodities)
                                 ],
                                 InvoiceNumber=customs.invoice,
-                                InvoiceDate=lib.fdatetime(
-                                    customs.invoice_date,
-                                    current_format="%Y-%m-%d",
-                                    output_format="%Y%m%d",
+                                InvoiceDate=(
+                                    lib.fdatetime(
+                                        customs.invoice_date,
+                                        current_format="%Y-%m-%d",
+                                        output_format="%Y%m%d",
+                                    )
+                                    if customs.invoice_date is not None
+                                    else time.strftime("%Y%m%d", time.localtime())
                                 ),
                                 PurchaseOrderNumber=None,
                                 TermsOfShipment=provider_units.Incoterm.map(
@@ -580,6 +585,7 @@ def shipment_request(
                 Envelope="soapenv",
                 UPSSecurity="upss",
                 ShipmentRequest="ship",
+                InternationalForms_children="ifs",
             ),
         ),
     )
