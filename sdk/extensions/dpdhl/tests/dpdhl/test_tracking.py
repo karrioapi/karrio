@@ -1,5 +1,4 @@
 import unittest
-import urllib.parse
 from unittest.mock import patch
 from .fixture import gateway
 
@@ -45,6 +44,19 @@ class TestDPDHLTracking(unittest.TestCase):
             )
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+
+    def test_parse_multiple_error_response(self):
+        with patch("karrio.mappers.dpdhl.proxy.lib.request") as mocks:
+            mocks.side_effect = [HTMLErrorResponse, HTMLErrorResponse]
+            parsed_response = (
+                karrio.Tracking.fetch(
+                    models.TrackingRequest(tracking_numbers=["123", "456"])
+                )
+                .from_(gateway)
+                .parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedHTMLErrorResponses)
 
 
 if __name__ == "__main__":
@@ -138,6 +150,24 @@ ParsedErrorResponse = [
     ],
 ]
 
+ParsedHTMLErrorResponses = [
+    [],
+    [
+        {
+            "carrier_id": "dpdhl",
+            "carrier_name": "dpdhl",
+            "code": "Unauthorized",
+            "message": "This server could not verify that you\n            are authorized to access the document\n            requested. Either you supplied the wrong\n            credentials (e.g., bad password), or your\n            browser doesn't understand how to supply\n            the credentials required.",
+        },
+        {
+            "carrier_id": "dpdhl",
+            "carrier_name": "dpdhl",
+            "code": "Unauthorized",
+            "message": "This server could not verify that you\n            are authorized to access the document\n            requested. Either you supplied the wrong\n            credentials (e.g., bad password), or your\n            browser doesn't understand how to supply\n            the credentials required.",
+        },
+    ],
+]
+
 
 TrackingRequest = """<data appname="zt12345" password="geheim" request="d-get-piece-detail" language-code="en" piece-code="00340434161094042557"/>
 """
@@ -162,4 +192,21 @@ ErrorResponse = """<?xml version="1.0" encoding="UTF-8"?>
 <data name="piece-shipment-list" code="5" request-id="3f214081-0712-442c-9e83-163ddd9d9fb8" error="Log-in failed">
     <data name="piece-shipment" searched-piece-code="00340434161094032954" piece-code="00340434161094032954" international-flag="0" piece-status="5" piece-status-desc="Log-in failed"/>
 </data>
+"""
+
+HTMLErrorResponse = """<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+    <head>
+        <title>401 Unauthorized</title>
+    </head>
+    <body>
+        <h1>Unauthorized</h1>
+        <p>This server could not verify that you
+            are authorized to access the document
+            requested. Either you supplied the wrong
+            credentials (e.g., bad password), or your
+            browser doesn't understand how to supply
+            the credentials required.</p>
+    </body>
+</html>
 """

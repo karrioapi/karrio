@@ -2,7 +2,7 @@
 
 import io
 import warnings
-from lxml import etree
+from lxml import etree, html
 from xmltodict import parse
 from typing import Any, List, TypeVar, Type, Optional, cast, Union
 from pysoap.envelope import Envelope
@@ -133,6 +133,32 @@ class XMLPARSER:
         element = etree.fromstring(text, parser=etree.XMLParser(encoding=encoding))
 
         return cast(Element, element)
+
+    @staticmethod
+    def to_hml_element(html_str: Union[str, bytes], encoding: str = "utf-8") -> Element:
+        """Turn a HTML text into an (lxml) HTML Element.
+
+        :param html_str:
+        :return: Node Element
+        """
+        text = html_str if isinstance(html_str, bytes) else html_str.encode(encoding)
+        element = html.fromstring(text, parser=html.HTMLParser(encoding=encoding))
+
+        return cast(Element, element)
+
+    @staticmethod
+    def to_xml_or_html_element(
+        xml_str: Union[str, bytes], encoding: str = "utf-8"
+    ) -> Element:
+        """Turn a XML/HTML text into an (lxml) XML/HTML Element.
+
+        :param xml_str:
+        :return: Node Element
+        """
+        try:
+            return XMLPARSER.to_xml(xml_str, encoding)
+        except:
+            return XMLPARSER.to_hml_element(xml_str, encoding)
 
     @staticmethod
     def xml_tostring(xml_element: Element, encoding: str = "utf-8") -> str:

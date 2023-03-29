@@ -82,7 +82,9 @@ def text(
     :return: a string, list of string or None.
     """
     _text = utils.SF.concat_str(
-        *values, join=True, separator=(separator or " "),
+        *values,
+        join=True,
+        separator=(separator or " "),
     )
 
     if _text is None:
@@ -299,7 +301,7 @@ def to_element(
     if xml_text is None:
         raise Exception("Cannot parse empty XML text")
 
-    return utils.XP.to_xml(xml_text, encoding=encoding)
+    return utils.XP.to_xml_or_html_element(xml_text, encoding=encoding)
 
 
 def find_element(
@@ -610,11 +612,12 @@ def to_buffer(
 ):
     return utils.to_buffer(base64_string, **kwargs)
 
+
 def decode(byte: bytes):
     return (
-        failsafe(lambda: byte.decode("utf-8")) or
-        failsafe(lambda: byte.decode("ISO-8859-1")) or
-        byte.decode("utf-8")
+        failsafe(lambda: byte.decode("utf-8"))
+        or failsafe(lambda: byte.decode("ISO-8859-1"))
+        or byte.decode("utf-8")
     )
 
 
