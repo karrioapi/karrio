@@ -245,7 +245,7 @@ class CustomsInput:
     content_description: typing.Optional[str] = strawberry.UNSET
     incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
     invoice: typing.Optional[str] = strawberry.UNSET
-    invoice_date: typing.Optional[datetime.date] = strawberry.UNSET
+    invoice_date: typing.Optional[str] = strawberry.UNSET
     signer: typing.Optional[str] = strawberry.UNSET
     duty: typing.Optional[DutyInput] = strawberry.UNSET
     duty_billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
@@ -370,6 +370,7 @@ class ServiceZoneInput(utils.BaseInput):
 @strawberry.input
 class UpdateServiceZoneInput(ServiceZoneInput):
     rate: typing.Optional[float] = strawberry.UNSET
+
 
 @strawberry.input
 class CreateServiceLevelInput(utils.BaseInput):

@@ -80,13 +80,14 @@ class ShipmentSerializer(ShipmentData):
                 context=context,
                 partial=True,
             )
-        if is_update and data.get("customs") is not None:
+        if is_update and ("customs" in data):
             instance.customs = save_one_to_one_data(
                 "customs",
                 CustomsSerializer,
                 instance,
                 payload=data,
                 context=context,
+                partial=instance.customs is not None,
             )
 
         super().__init__(instance, **kwargs)
@@ -222,13 +223,16 @@ class ShipmentSerializer(ShipmentData):
             payload=validated_data,
             context=context,
         )
-        save_one_to_one_data(
-            "billing_address",
-            AddressSerializer,
-            instance,
-            payload=validated_data,
-            context=context,
-        )
+
+        if "billing_address" in validated_data:
+            changes.append("billing_address")
+            instance.billing_address = save_one_to_one_data(
+                "billing_address",
+                AddressSerializer,
+                instance,
+                payload=validated_data,
+                context=context,
+            )
 
         if "docs" in validated_data:
             changes.append("label")
@@ -479,7 +483,7 @@ def buy_shipment_label(
             extra.update(
                 options={**shipment.options, **dict(doc_references=upload.documents)},
             )
-        else :
+        else:
             extra.update(
                 options={**shipment.options, **dict(doc_files=[document])},
             )
