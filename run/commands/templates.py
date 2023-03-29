@@ -1099,20 +1099,18 @@ def pickup_update_request(
 )
 
 TEST_IMPORTS_TEMPLATE = Template(
-    """from tests.{{id}} import *
+    """{% if "rating" in features %}
+from tests.{{id}}.test_rate import *{% endif %}{% if "pickup" in features %}
+from tests.{{id}}.test_pickup import *{% endif %}{% if "address" in features %}
+from tests.{{id}}.test_address import *{% endif %}{% if "tracking" in features %}
+from tests.{{id}}.test_tracking import *{% endif %}{% if "shipping" in features %}
+from tests.{{id}}.test_shipment import *{% endif %}{% if "document" in features %}
+from tests.{{id}}.test_document import *
+{% endif %}
 """
 )
 
-TEST_PROVIDER_IMPORTS_TEMPLATE = Template(
-    """{% if "rating" in features %}
-from .test_rate import *{% endif %}{% if "pickup" in features %}
-from .test_pickup import *{% endif %}{% if "address" in features %}
-from .test_address import *{% endif %}{% if "tracking" in features %}
-from .test_tracking import *{% endif %}{% if "shipping" in features %}
-from .test_shipment import *{% endif %}{% if "document" in features %}
-from .test_document import *{% endif %}
-"""
-)
+TEST_PROVIDER_IMPORTS_TEMPLATE = Template("")
 
 TEST_FIXTURE_TEMPLATE = Template(
     """
