@@ -65,7 +65,9 @@ class TrackerList(GenericAPIView):
         Retrieve all shipment trackers.
         """
         trackers = self.filter_queryset(self.get_queryset())
-        response = self.paginate_queryset(serializers.TrackingStatus(trackers, many=True).data)
+        response = self.paginate_queryset(
+            serializers.TrackingStatus(trackers, many=True).data
+        )
         return self.get_paginated_response(response)
 
     @openapi.extend_schema(
@@ -94,7 +96,7 @@ class TrackerList(GenericAPIView):
                 description=(
                     "Add this flag to add the tracker whether the tracking info exist or not."
                     "When the package is eventually picked up, the tracker with capture real time updates."
-                )
+                ),
             ),
         ],
     )
@@ -109,14 +111,18 @@ class TrackerList(GenericAPIView):
         data = serializer.validated_data
 
         carrier_name = query.get("hub") if "hub" in query else data["carrier_name"]
-        pending_pickup = serializers.get_query_flag("pending_pickup", query, nullable=False)
+        pending_pickup = serializers.get_query_flag(
+            "pending_pickup", query, nullable=False
+        )
 
         instance = (
             models.Tracking.access_by(request)
-            .filter(**{
-                "tracking_number": data["tracking_number"],
-                f"tracking_carrier__{carrier_name.replace('_', '')}settings__isnull": False
-            })
+            .filter(
+                **{
+                    "tracking_number": data["tracking_number"],
+                    f"tracking_carrier__{carrier_name.replace('_', '')}settings__isnull": False,
+                }
+            )
             .first()
         )
 
@@ -126,6 +132,7 @@ class TrackerList(GenericAPIView):
             "carrier_name": carrier_name,
         }
         data = {
+            **data,
             "tracking_number": data["tracking_number"],
             "options": (
                 {data["tracking_number"]: {"carrier": data["carrier_name"]}}

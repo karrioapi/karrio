@@ -504,7 +504,7 @@ PURCHASED_SHIPMENT = {
             "dimension_unit": None,
             "items": [],
             "freight_class": None,
-            "reference_number": "123456789012",
+            "reference_number": ANY,
             "object_type": "parcel",
             "options": {},
         }

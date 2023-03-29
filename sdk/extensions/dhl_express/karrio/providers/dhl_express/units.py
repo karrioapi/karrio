@@ -333,8 +333,8 @@ def shipping_services_initializer(
         if (is_international is False) and is_document and (is_envelope is False):
             products.append("dhl_domestic_express_doc")
 
-    elif no_service_provided:
-        products.append("dhl_express_all")
+    elif region != "AM":
+        products = ["dhl_express_all"]
 
     return lib.units.Services(list(set(products)), ShippingService)
 

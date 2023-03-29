@@ -29,13 +29,19 @@ class TrackingSerializer(TrackingDetails):
         default={},
         help_text="additional tracking options",
     )
+    info = TrackingInfo(
+        required=False,
+        default={},
+        help_text="The package and shipment tracking details",
+    )
 
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
+        options = validated_data["options"]
         carrier_filter = validated_data["carrier_filter"]
         tracking_number = validated_data["tracking_number"]
         account_number = validated_data.get("account_number")
+        info = validated_data.get("info")
         reference = validated_data.get("reference")
-        options = validated_data["options"]
         pending_pickup = validated_data.get("pending_pickup")
         carrier = Carriers.first(
             context=context,
@@ -49,15 +55,12 @@ class TrackingSerializer(TrackingDetails):
                     account_number=account_number,
                     reference=reference,
                     options=options,
+                    info=info,
                 )
             ).data,
             carrier=carrier,
             raise_on_error=(pending_pickup is not True),
         )
-        info = {
-            **lib.to_dict(response.tracking.info or {}),
-            **(validated_data.get("info") or {}),
-        }
 
         return models.Tracking.objects.create(
             created_by=context.user,
@@ -70,10 +73,10 @@ class TrackingSerializer(TrackingDetails):
             tracking_carrier=carrier,
             estimated_delivery=response.tracking.estimated_delivery,
             messages=lib.to_dict(response.messages),
+            info=lib.to_dict(response.tracking.info),
             meta=response.tracking.meta,
             options=response.tracking.options,
             reference=reference,
-            info=info,
         )
 
     def update(
@@ -111,11 +114,7 @@ class TrackingSerializer(TrackingDetails):
             )
             # update values only if changed; This is important for webhooks notification
             changes = []
-            info = (
-                lib.to_dict(response.tracking.info)
-                if any(response.tracking.info)
-                else None
-            )
+            info = lib.to_dict(response.tracking.info or {})
             events = (
                 lib.to_dict(response.tracking.events)
                 if any(response.tracking.events)
@@ -146,7 +145,7 @@ class TrackingSerializer(TrackingDetails):
                 instance.options = response.tracking.options
                 changes.append("options")
 
-            if info and info != instance.info:
+            if info != instance.info:
                 instance.info = serializers.process_dictionaries_mutations(
                     ["info"], dict(info=info), instance
                 )

@@ -318,3 +318,9 @@ def default_tracking_event(
             )
         )
     ]
+
+
+def get_carrier_tracking_link(carrier, tracking_number: str):
+    tracking_url = getattr(carrier.gateway.settings, "tracking_url", None)
+
+    return tracking_url.format(tracking_number) if tracking_url is not None else None

@@ -78,6 +78,8 @@ TRACKING_RESPONSE = {
             "description": "UPS INTERNAL ACTIVITY CODE",
             "location": "BONN",
             "time": "10:39",
+            "latitude": None,
+            "longitude": None,
         }
     ],
     "messages": [],
@@ -87,7 +89,7 @@ TRACKING_RESPONSE = {
     },
     "metadata": {},
     "info": {
-        "carrier_tracking_link": None,
+        "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1Z12345E6205277936/trackdetails",
         "customer_name": None,
         "expected_delivery": None,
         "note": None,
@@ -105,6 +107,6 @@ TRACKING_RESPONSE = {
         "shipment_service": None,
         "shipping_date": None,
         "signed_by": None,
-        "source": None,
+        "source": "api",
     },
 }

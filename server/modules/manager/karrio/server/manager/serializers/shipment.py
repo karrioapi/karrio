@@ -632,7 +632,6 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
         # Create shipment tracker
         try:
             pkg_weight = sum([p.weight or 0.0 for p in shipment.parcels.all()], 0.0)
-            tracking_url = getattr(carrier.gateway.settings, "tracking_url", None)
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
                 delivered=False,
@@ -655,10 +654,8 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                     shipment_destination_postal_code=shipment.recipient.postal_code,
                     shipment_service=shipment.meta.get("service_name"),
                     shipping_date=shipment.options.get("shipping_date"),
-                    carrier_tracking_url=(
-                        tracking_url.format(shipment.tracking_number)
-                        if tracking_url is not None
-                        else None
+                    carrier_tracking_url=utils.get_carrier_tracking_link(
+                        carrier, shipment.tracking_number
                     ),
                 ),
             )

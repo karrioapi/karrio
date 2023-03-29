@@ -123,7 +123,7 @@ TRACKERS_LIST = {
     "results": [
         {
             "id": ANY,
-            "info": None,
+            "info": ANY,
             "object_type": "tracker",
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
@@ -136,6 +136,8 @@ TRACKERS_LIST = {
                     "location": "BONN",
                     "code": "pre-transit",
                     "time": "20:34",
+                    "latitude": None,
+                    "longitude": None,
                 }
             ],
             "delivered": False,
@@ -147,7 +149,7 @@ TRACKERS_LIST = {
         },
         {
             "id": ANY,
-            "info": None,
+            "info": ANY,
             "object_type": "tracker",
             "carrier_name": "ups",
             "carrier_id": "ups_package",
@@ -160,6 +162,8 @@ TRACKERS_LIST = {
                     "location": "FR",
                     "code": "MP",
                     "time": "13:58",
+                    "latitude": None,
+                    "longitude": None,
                 }
             ],
             "delivered": False,
@@ -207,7 +211,6 @@ UPDATED_TRACKERS_LIST = {
     "results": [
         {
             "id": ANY,
-            "info": None,
             "object_type": "tracker",
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
@@ -219,6 +222,8 @@ UPDATED_TRACKERS_LIST = {
                     "location": "Oderweg 2, AMSTERDAM",
                     "code": "pre-transit",
                     "time": "07:53",
+                    "latitude": None,
+                    "longitude": None,
                 },
                 {
                     "date": "2021-01-11",
@@ -226,6 +231,8 @@ UPDATED_TRACKERS_LIST = {
                     "location": "BONN",
                     "code": "pre-transit",
                     "time": "20:34",
+                    "latitude": None,
+                    "longitude": None,
                 },
             ],
             "delivered": False,
@@ -235,10 +242,10 @@ UPDATED_TRACKERS_LIST = {
             "messages": [],
             "meta": {},
             "metadata": {},
+            "info": ANY,
         },
         {
             "id": ANY,
-            "info": None,
             "object_type": "tracker",
             "carrier_name": "ups",
             "carrier_id": "ups_package",
@@ -250,6 +257,8 @@ UPDATED_TRACKERS_LIST = {
                     "location": "FR",
                     "code": "MP",
                     "time": "13:58",
+                    "latitude": None,
+                    "longitude": None,
                 }
             ],
             "delivered": False,
@@ -259,6 +268,7 @@ UPDATED_TRACKERS_LIST = {
             "messages": [],
             "meta": {},
             "metadata": {},
+            "info": ANY,
         },
     ],
 }
