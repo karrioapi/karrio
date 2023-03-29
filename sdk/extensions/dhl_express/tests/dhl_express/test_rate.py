@@ -12,6 +12,7 @@ class TestDHLRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.RateRequest = RateRequest(**RatePayload)
+        self.EURateRequest = RateRequest(**EURatePayload)
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
@@ -32,6 +33,26 @@ class TestDHLRating(unittest.TestCase):
         )
 
         self.assertEqual(serialized_request, RateRequestXML)
+
+    def test_create_eu_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.EURateRequest)
+
+        # remove MessageTime, Date and ReadyTime for testing purpose
+        serialized_request = re.sub(
+            "                <MessageTime>[^>]+</MessageTime>",
+            "",
+            re.sub(
+                "            <Date>[^>]+</Date>",
+                "",
+                re.sub(
+                    "            <ReadyTime>[^>]+</ReadyTime>",
+                    "",
+                    request.serialize(),
+                ),
+            ),
+        )
+
+        self.assertEqual(serialized_request, EURateRequestXML)
 
     def test_create_rate_request_with_package_preset(self):
         request = gateway.mapper.create_rate_request(
@@ -162,7 +183,21 @@ RatePayload = {
     "services": ["dhl_express_worldwide_doc"],
     "options": {"currency": "CAD", "insurance": 75},
 }
-
+EURatePayload = {
+    "shipper": {"postal_code": "76131", "country_code": "DE"},
+    "recipient": {"postal_code": "76131", "country_code": "NL"},
+    "parcels": [
+        {
+            "id": "1",
+            "height": 18.2,
+            "length": 10,
+            "width": 33.7,
+            "weight": 1.0,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+        }
+    ],
+}
 
 RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
@@ -264,56 +299,7 @@ ParsedRateResponse = [
 ParsedRateVolWeightHigher = [[], []]  # type: ignore
 
 
-RateParsingError = """<?xml version="1.0" encoding="UTF-8"?>
-<res:ErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com err-res.xsd'>
-    <Response>
-        <ServiceHeader>
-            <MessageTime>2018-06-22T04:55:31+01:00</MessageTime>
-            <MessageReference>1234567890123456789012345678901</MessageReference>
-            <SiteID></SiteID>
-            <Password></Password>
-        </ServiceHeader>
-        <Status>
-            <ActionStatus>Error</ActionStatus>
-            <Condition>
-                <ConditionCode>111</ConditionCode>
-                <ConditionData>Error in parsing request XML:Error: The
-                    content of element type &quot;ServiceHeader&quot;
-                    must match
-                    &quot;(MessageTime,MessageReference,SiteID,Password)&quot;.
-                    at line 9, column 30</ConditionData>
-            </Condition>
-        </Status>
-    </Response>
-</res:ErrorResponse><!-- ServiceInvocationId:20180622045531_96ab_f3e91245-69d2-422e-b943-83fbe8f8181b -->
-"""
-
-RateMissingArgsError = """<?xml version="1.0" ?>
-<DCTResponse>
-    <GetQuoteResponse>
-        <Response>
-            <ServiceHeader>
-                <MessageTime>2018-06-22T04:49:29.292000+01:00</MessageTime>
-                <MessageReference>1234567890123456789012345678901</MessageReference>
-                <SiteID></SiteID>
-            </ServiceHeader>
-        </Response>
-        <Note>
-            <ActionStatus>Failure</ActionStatus>
-            <Condition>
-                <ConditionCode>340004</ConditionCode>
-                <ConditionData>The location information is missing. At least one attribute post code, city name or suburb name should be provided</ConditionData>
-            </Condition>
-            <Condition>
-                <ConditionCode>220001</ConditionCode>
-                <ConditionData>Failure - request</ConditionData>
-            </Condition>
-        </Note>
-    </GetQuoteResponse>
-</DCTResponse>
-"""
-
-RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.0">
+RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="2.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -369,7 +355,63 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
 </p:DCTRequest>
 """
 
-RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd " schemaVersion="2.0">
+EURateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="2.0">
+    <GetQuote>
+        <Request>
+            <ServiceHeader>
+
+                <MessageReference>1234567890123456789012345678901</MessageReference>
+                <SiteID>site_id</SiteID>
+                <Password>password</Password>
+            </ServiceHeader>
+            <MetaData>
+                <SoftwareName>3PV</SoftwareName>
+                <SoftwareVersion>1.0</SoftwareVersion>
+            </MetaData>
+        </Request>
+        <From>
+            <CountryCode>DE</CountryCode>
+            <Postalcode>76131</Postalcode>
+        </From>
+        <BkgDetails>
+            <PaymentCountryCode>DE</PaymentCountryCode>
+
+
+            <DimensionUnit>CM</DimensionUnit>
+            <WeightUnit>KG</WeightUnit>
+            <NumberOfPieces>1</NumberOfPieces>
+            <ShipmentWeight>1</ShipmentWeight>
+            <Pieces>
+                <Piece>
+                    <PieceID>1</PieceID>
+                    <Height>18.2</Height>
+                    <Depth>10</Depth>
+                    <Width>33.7</Width>
+                    <Weight>1</Weight>
+                </Piece>
+            </Pieces>
+            <PaymentAccountNumber>123456789</PaymentAccountNumber>
+            <IsDutiable>Y</IsDutiable>
+            <NetworkTypeCode>AL</NetworkTypeCode>
+            <QtdShp>
+                <QtdShpExChrg>
+                    <SpecialServiceType>WY</SpecialServiceType>
+                </QtdShpExChrg>
+            </QtdShp>
+        </BkgDetails>
+        <To>
+            <CountryCode>NL</CountryCode>
+            <Postalcode>76131</Postalcode>
+        </To>
+        <Dutiable>
+            <DeclaredCurrency>EUR</DeclaredCurrency>
+            <DeclaredValue>1.</DeclaredValue>
+        </Dutiable>
+    </GetQuote>
+</p:DCTRequest>
+"""
+
+RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="2.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -599,6 +641,55 @@ RateResponseXML = """<?xml version="1.0" ?>
         </Srvs>
         <Note>
             <ActionStatus>Success</ActionStatus>
+        </Note>
+    </GetQuoteResponse>
+</DCTResponse>
+"""
+
+RateParsingError = """<?xml version="1.0" encoding="UTF-8"?>
+<res:ErrorResponse xmlns:res='http://www.dhl.com' xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:schemaLocation= 'http://www.dhl.com err-res.xsd'>
+    <Response>
+        <ServiceHeader>
+            <MessageTime>2018-06-22T04:55:31+01:00</MessageTime>
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID></SiteID>
+            <Password></Password>
+        </ServiceHeader>
+        <Status>
+            <ActionStatus>Error</ActionStatus>
+            <Condition>
+                <ConditionCode>111</ConditionCode>
+                <ConditionData>Error in parsing request XML:Error: The
+                    content of element type &quot;ServiceHeader&quot;
+                    must match
+                    &quot;(MessageTime,MessageReference,SiteID,Password)&quot;.
+                    at line 9, column 30</ConditionData>
+            </Condition>
+        </Status>
+    </Response>
+</res:ErrorResponse><!-- ServiceInvocationId:20180622045531_96ab_f3e91245-69d2-422e-b943-83fbe8f8181b -->
+"""
+
+RateMissingArgsError = """<?xml version="1.0" ?>
+<DCTResponse>
+    <GetQuoteResponse>
+        <Response>
+            <ServiceHeader>
+                <MessageTime>2018-06-22T04:49:29.292000+01:00</MessageTime>
+                <MessageReference>1234567890123456789012345678901</MessageReference>
+                <SiteID></SiteID>
+            </ServiceHeader>
+        </Response>
+        <Note>
+            <ActionStatus>Failure</ActionStatus>
+            <Condition>
+                <ConditionCode>340004</ConditionCode>
+                <ConditionData>The location information is missing. At least one attribute post code, city name or suburb name should be provided</ConditionData>
+            </Condition>
+            <Condition>
+                <ConditionCode>220001</ConditionCode>
+                <ConditionData>Failure - request</ConditionData>
+            </Condition>
         </Note>
     </GetQuoteResponse>
 </DCTResponse>

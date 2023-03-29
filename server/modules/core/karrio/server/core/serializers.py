@@ -750,6 +750,11 @@ class TrackingRequest(serializers.Serializer):
         default={},
         help_text="additional tracking options",
     )
+    info = TrackingInfo(
+        required=False,
+        allow_null=True,
+        help_text="The package and shipment tracking details",
+    )
 
 
 @serializers.allow_model_id(

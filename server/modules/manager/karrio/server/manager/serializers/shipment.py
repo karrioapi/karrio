@@ -80,13 +80,14 @@ class ShipmentSerializer(ShipmentData):
                 context=context,
                 partial=True,
             )
-        if is_update and data.get("customs") is not None:
+        if is_update and ("customs" in data):
             instance.customs = save_one_to_one_data(
                 "customs",
                 CustomsSerializer,
                 instance,
                 payload=data,
                 context=context,
+                partial=instance.customs is not None,
             )
 
         super().__init__(instance, **kwargs)
@@ -222,13 +223,16 @@ class ShipmentSerializer(ShipmentData):
             payload=validated_data,
             context=context,
         )
-        save_one_to_one_data(
-            "billing_address",
-            AddressSerializer,
-            instance,
-            payload=validated_data,
-            context=context,
-        )
+
+        if "billing_address" in validated_data:
+            changes.append("billing_address")
+            instance.billing_address = save_one_to_one_data(
+                "billing_address",
+                AddressSerializer,
+                instance,
+                payload=validated_data,
+                context=context,
+            )
 
         if "docs" in validated_data:
             changes.append("label")
@@ -479,7 +483,7 @@ def buy_shipment_label(
             extra.update(
                 options={**shipment.options, **dict(doc_references=upload.documents)},
             )
-        else :
+        else:
             extra.update(
                 options={**shipment.options, **dict(doc_files=[document])},
             )
@@ -628,7 +632,6 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
         # Create shipment tracker
         try:
             pkg_weight = sum([p.weight or 0.0 for p in shipment.parcels.all()], 0.0)
-            tracking_url = getattr(carrier.gateway.settings, "tracking_url", None)
             tracker = models.Tracking.objects.create(
                 tracking_number=shipment.tracking_number,
                 delivered=False,
@@ -651,10 +654,8 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                     shipment_destination_postal_code=shipment.recipient.postal_code,
                     shipment_service=shipment.meta.get("service_name"),
                     shipping_date=shipment.options.get("shipping_date"),
-                    carrier_tracking_url=(
-                        tracking_url.format(shipment.tracking_number)
-                        if tracking_url is not None
-                        else None
+                    carrier_tracking_url=utils.get_carrier_tracking_link(
+                        carrier, shipment.tracking_number
                     ),
                 ),
             )

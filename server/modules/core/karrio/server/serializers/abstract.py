@@ -269,6 +269,7 @@ def save_many_to_many_data(
 
         if item_instance is None:
             item = serializer.map(data=data, **kwargs).save().instance
+            getattr(parent, name).add(item)
         else:
             item = (
                 serializer.map(
@@ -279,8 +280,6 @@ def save_many_to_many_data(
                 .save()
                 .instance
             )
-
-        getattr(parent, name).add(item)
 
 
 def save_one_to_one_data(
@@ -306,7 +305,7 @@ def save_one_to_one_data(
         return new_instance
 
     return (
-        serializer.map(instance=instance, data=data, partial=True, **kwargs)
+        serializer.map(instance=instance, data=data, **{**kwargs, "partial": True})
         .save()
         .instance
     )

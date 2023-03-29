@@ -345,10 +345,11 @@ class Shipments:
             )
 
         result = next(iter(results or []), None)
+        tracking_number = payload["tracking_numbers"][0]
         details = result or datatypes.TrackingDetails(
             carrier_id=carrier.carrier_id,
             carrier_name=carrier.carrier_name,
-            tracking_number=payload["tracking_numbers"][0],
+            tracking_number=tracking_number,
             events=[
                 datatypes.TrackingEvent(
                     date=datetime.now().strftime("%Y-%m-%d"),
@@ -359,7 +360,6 @@ class Shipments:
             ],
             delivered=False,
         )
-        tracking_number = payload["tracking_numbers"][0]
         options = {
             **(payload.get("options") or {}),
             tracking_number: {
@@ -372,6 +372,14 @@ class Shipments:
             "carrier": carrier.carrier_name,
             **(details.meta or {}),
         }
+        info = {
+            "carrier_tracking_link": utils.get_carrier_tracking_link(
+                carrier, tracking_number
+            ),
+            "source": "api",
+            **(lib.to_dict(details.info or {})),
+            **(lib.to_dict(payload.get("info") or {})),
+        }
 
         return datatypes.TrackingResponse(
             tracking=lib.to_object(
@@ -383,6 +391,7 @@ class Shipments:
                     "status": utils.compute_tracking_status(result).value,
                     "options": options,
                     "meta": meta,
+                    "info": info,
                 },
             ),
             messages=messages,

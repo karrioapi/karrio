@@ -3,6 +3,7 @@ import dpdhl_lib.tracking_request as dpdhl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
+import karrio.providers.dpdhl.error as error
 import karrio.providers.dpdhl.utils as provider_utils
 import karrio.providers.dpdhl.units as provider_units
 
@@ -11,15 +12,21 @@ def parse_tracking_response(
     responses: typing.List[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response_messages = [result for result in responses if result.get("code") != "0"]
+    response_messages = [
+        result
+        for result in responses
+        if result.get("code") != "0" or result.get("body") is not None
+    ]
     response_details = [
         result[0]
         for result in responses
         if result.get("code") == "0" and next(iter(result), None) is not None
     ]
 
-    messages = [_extract_errors(result, settings) for result in response_messages]
     trackers = [_extract_details(rate, settings) for rate in response_details]
+    messages: typing.List[models.Message] = sum(
+        [error.parse_error_response(_, settings) for _ in response_messages], start=[]
+    )
 
     return trackers, messages
 
@@ -65,25 +72,15 @@ def _extract_details(
         delivered=delivered,
         estimated_delivery=lib.fdate(details.delivery_date),
         info=models.TrackingInfo(
-            carrier_tracking_link=settings.tracking_url.format(details.piece_identifier),
+            carrier_tracking_link=settings.tracking_url.format(
+                details.piece_identifier
+            ),
             customer_name=details.pan_recipient_name,
             shipment_destication_country=details.dest_country,
             shipment_destination_postal_code=details.pan_recipient_postalcode,
             shipment_origin_country=details.origin_country,
             shipment_service=details.product_name,
-        )
-    )
-
-
-def _extract_errors(
-    data: lib.Element,
-    settings: provider_utils.Settings,
-) -> models.Message:
-    return models.Message(
-        carrier_id=settings.carrier_id,
-        carrier_name=settings.carrier_name,
-        message=data.get("error"),
-        code=data.get("code"),
+        ),
     )
 
 

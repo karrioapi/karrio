@@ -22,6 +22,7 @@ class CustomsSerializer(CustomsData):
                 instance,
                 payload=data,
                 context=context,
+                partial=True,
             )
 
         super().__init__(instance, **kwargs)

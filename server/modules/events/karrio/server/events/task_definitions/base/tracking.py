@@ -9,9 +9,9 @@ from django.conf import settings
 from django.utils import timezone
 
 import karrio
+import karrio.lib as lib
 from karrio.api.gateway import Gateway
 from karrio.api.interface import IRequestFrom
-from karrio.core.utils import exec_parrallel, DP
 from karrio.core.models import TrackingDetails, Message, TrackingEvent
 
 import karrio.server.core.utils as utils
@@ -21,8 +21,10 @@ import karrio.server.manager.serializers as serializers
 
 logger = logging.getLogger(__name__)
 Delay = int
-RequestBatches = typing.Tuple[Gateway, IRequestFrom, Delay, typing.List[models.Tracking]]
-BatchResponse = typing.List[typing.Tuple[TrackingDetails,typing.List[Message]]]
+RequestBatches = typing.Tuple[
+    Gateway, IRequestFrom, Delay, typing.List[models.Tracking]
+]
+BatchResponse = typing.List[typing.Tuple[TrackingDetails, typing.List[Message]]]
 
 DEFAULT_TRACKERS_UPDATE_INTERVAL = getattr(
     settings, "DEFAULT_TRACKERS_UPDATE_INTERVAL", 7200
@@ -54,7 +56,7 @@ def update_trackers(
             [create_request_batches(group) for group in trackers_grouped_by_carrier], []
         )
 
-        responses = exec_parrallel(fetch_tracking_info, request_batches, 2)
+        responses = lib.run_concurently(fetch_tracking_info, request_batches, 2)
         save_updated_trackers(responses, active_trackers)
     else:
         logger.info("no active trackers found needing update")
@@ -62,7 +64,9 @@ def update_trackers(
     logger.info("> ending scheduled trackers update")
 
 
-def create_request_batches(trackers: typing.List[models.Tracking]) -> typing.List[RequestBatches]:
+def create_request_batches(
+    trackers: typing.List[models.Tracking],
+) -> typing.List[RequestBatches]:
     start = 0
     end = 10
     batches = []
@@ -141,6 +145,7 @@ def save_updated_trackers(
                         **(tracker.options or {}),
                         tracker.tracking_number: details.meta,
                     }
+                    info = lib.to_dict(details.info or {})
 
                     if events != tracker.events:
                         tracker.events = events
@@ -166,6 +171,12 @@ def save_updated_trackers(
                         tracker.estimated_delivery = details.estimated_delivery
                         changes.append("estimated_delivery")
 
+                    if info != tracker.info:
+                        tracker.info = serializers.process_dictionaries_mutations(
+                            ["info"], dict(info=info), tracker
+                        )
+                        changes.append("info")
+
                     if any(changes):
                         tracker.save(update_fields=changes)
                         serializers.update_shipment_tracker(tracker)
@@ -187,6 +198,6 @@ def process_events(
     current_events: typing.List[dict],
 ) -> typing.List[dict]:
     if any(response_events):
-        return DP.to_dict(response_events)
+        return lib.to_dict(response_events)
 
     return current_events

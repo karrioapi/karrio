@@ -69,6 +69,20 @@ class TestDPDHLShipping(unittest.TestCase):
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
 
+    def test_parse_html_error_response(self):
+        with patch("karrio.mappers.dpdhl.proxy.lib.request") as mock:
+            mock.return_value = HTMLErrorResponse
+            parsed_response = (
+                karrio.Shipment.cancel(self.ShipmentCancelRequest)
+                .from_(gateway)
+                .parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedHTMLErrorResponse,
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -161,6 +175,18 @@ ParsedCancelShipmentResponse = [
         "success": True,
     },
     [],
+]
+
+ParsedHTMLErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "dpdhl",
+            "carrier_name": "dpdhl",
+            "code": "Unauthorized",
+            "message": "This server could not verify that you\n            are authorized to access the document\n            requested. Either you supplied the wrong\n            credentials (e.g., bad password), or your\n            browser doesn't understand how to supply\n            the credentials required.",
+        }
+    ],
 ]
 
 
@@ -473,4 +499,21 @@ ShipmentErrorResponse = """<soap:Envelope xmlns:bcs="http://dhl.de/webservices/b
         </bcs:CreateShipmentOrderResponse>
     </soap:Body>
 </soap:Envelope>
+"""
+
+HTMLErrorResponse = """<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html>
+    <head>
+        <title>401 Unauthorized</title>
+    </head>
+    <body>
+        <h1>Unauthorized</h1>
+        <p>This server could not verify that you
+            are authorized to access the document
+            requested. Either you supplied the wrong
+            credentials (e.g., bad password), or your
+            browser doesn't understand how to supply
+            the credentials required.</p>
+    </body>
+</html>
 """

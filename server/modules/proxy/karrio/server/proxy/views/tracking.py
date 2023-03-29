@@ -59,6 +59,7 @@ class TrackingAPIView(APIView):
             ),
         }
         data = {
+            **data,
             "tracking_numbers": [data["tracking_number"]],
             "options": (
                 {data["tracking_number"]: {"carrier": data["carrier_name"]}}

@@ -7,7 +7,7 @@ from karrio.core.models import (
     Parcel,
     Message,
     Address as BaseAddress,
-    TrackingRequest,
+    TrackingRequest as BaseTrackingRequest,
     ShipmentDetails,
     Payment,
     Customs,
@@ -243,6 +243,15 @@ class Pickup:
     options: Dict = {}
     id: str = None
     test_mode: bool = None
+
+
+@attr.s(auto_attribs=True)
+class TrackingRequest(BaseTrackingRequest):
+    tracking_numbers: List[str]
+    account_numer: str = None
+    reference: str = None
+    options: Dict = {}
+    info: TrackingInfo = JStruct[TrackingInfo]
 
 
 @attr.s(auto_attribs=True)
