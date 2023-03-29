@@ -67,15 +67,15 @@ def shipment_request(
     ):
         raise errors.OriginNotServicedError(payload.shipper.country_code)
 
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
         required=["weight"],
         package_option_type=provider_units.ShippingOption,
     )
-    product = provider_units.ProductCode.map(payload.service).value_or_key
-    shipper = lib.to_address(payload.shipper)
-    recipient = lib.to_address(payload.recipient)
+    product = provider_units.ShippingService.map(payload.service).value_or_key
 
     weight_unit, dim_unit = (
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
@@ -87,7 +87,8 @@ def shipment_request(
         payload.label_type or "PDF_6x4"
     ].value
     payment = payload.payment or models.Payment(
-        paid_by="sender", account_number=settings.account_number
+        paid_by="sender",
+        account_number=settings.account_number,
     )
     customs = lib.to_customs_info(
         payload.customs,
@@ -159,14 +160,16 @@ def shipment_request(
             else None
         ),
         Dutiable=(
-            dhl.Dutiable(
+            dhl_global.Dutiable(
                 DeclaredValue=(
                     duty.declared_value or options.declared_value.state or 1.0
                 ),
                 DeclaredCurrency=(duty.currency or options.currency.state or "USD"),
                 ScheduleB=None,
                 ExportLicense=customs.options.license_number.state,
-                ShipperEIN=None,
+                ShipperEIN=(
+                    customs.options.ein.state or customs.duty_billing_address.tax_id
+                ),
                 ShipperIDType=None,
                 TermsOfTrade=customs.incoterm,
                 CommerceLicensed=None,
@@ -181,7 +184,7 @@ def shipment_request(
             ("CMI" if customs.commercial_invoice else "PFI") if is_dutiable else None
         ),
         ExportDeclaration=(
-            dhl.ExportDeclaration(
+            dhl_global.ExportDeclaration(
                 InterConsignee=None,
                 IsPartiesRelation=None,
                 ECCN=None,
@@ -194,16 +197,23 @@ def shipment_request(
                 SedNumber=None,
                 SedNumberType=None,
                 MxStateCode=None,
-                InvoiceNumber=(customs.invoice or "N/A"),
+                InvoiceNumber=(customs.invoice or "0000000"),
                 InvoiceDate=(customs.invoice_date or time.strftime("%Y-%m-%d")),
-                BillToCompanyName=customs.duty_billing_address.company_name,
-                BillToContactName=customs.duty_billing_address.person_name,
-                BillToAddressLine=customs.duty_billing_address.address_line,
+                BillToCompanyName=customs.duty_billing_address.company_name or "N/A",
+                BillToContactName=customs.duty_billing_address.person_name or "N/A",
+                BillToAddressLine1=lib.text(
+                    customs.duty_billing_address.street_number,
+                    customs.duty_billing_address.address_line1,
+                ),
+                BillToAddressLine2=lib.text(customs.duty_billing_address.address_line2),
                 BillToCity=customs.duty_billing_address.city,
                 BillToPostcode=customs.duty_billing_address.postal_code,
-                BillToSuburb=customs.duty_billing_address.extra,
+                BillToSuburb=None,
+                BillToCountryCode=customs.duty_billing_address.country_code,
                 BillToCountryName=customs.duty_billing_address.country_name,
-                BillToPhoneNumber=customs.duty_billing_address.phone_number,
+                BillToPhoneNumber=(
+                    customs.duty_billing_address.phone_number or "0000000000"
+                ),
                 BillToPhoneNumberExtn=None,
                 BillToFaxNumber=None,
                 BillToFederalTaxID=customs.duty_billing_address.federal_tax_id,
@@ -216,7 +226,7 @@ def shipment_request(
                 ExporterId=None,
                 ExporterCode=None,
                 ExportLineItem=[
-                    dhl.ExportLineItem(
+                    dhl_global.ExportLineItem(
                         LineNumber=index,
                         Quantity=item.quantity,
                         QuantityUnit="PCS",
@@ -245,7 +255,9 @@ def shipment_request(
                         ManufactureCountryCode=(
                             item.origin_country or shipper.country_code
                         ),
-                        ManufactureCountryName=lib.to_country_name(item.origin_country),
+                        ManufactureCountryName=lib.to_country_name(
+                            item.origin_country or shipper.country_code
+                        ),
                         ImportTaxManagedOutsideDhlExpress=None,
                         AdditionalInformation=None,
                         ImportCommodityCode=item.hs_code,
@@ -255,14 +267,29 @@ def shipment_request(
                     for (index, item) in enumerate(customs.commodities, start=1)
                 ],
                 ShipmentDocument=None,
-                InvoiceInstructions=None,
+                InvoiceInstructions=customs.content_description,
                 CustomerDataTextEntries=None,
                 PlaceOfIncoterm="N/A",
                 ShipmentPurpose=(
                     "COMMERCIAL" if customs.commercial_invoice else "PERSONAL"
                 ),
                 DocumentFunction=None,
-                CustomsDocuments=None,
+                CustomsDocuments=(
+                    dhl_global.CustomsDocuments(
+                        CustomsDocument=[
+                            dhl.CustomsDocument(
+                                CustomsDocumentID=doc["doc_id"],
+                                CustomsDocumentType="IN",
+                            )
+                            for doc in options.doc_references.state
+                        ]
+                    )
+                    if (
+                        options.dhl_paperless_trade.state
+                        and any(options.doc_references.state or [])
+                    )
+                    else None
+                ),
                 InvoiceTotalNetWeight=None,
                 InvoiceTotalGrossWeight=None,
                 InvoiceReferences=None,
@@ -271,7 +298,9 @@ def shipment_request(
             else None
         ),
         Reference=(
-            [dhl.Reference(ReferenceID=reference[:30])] if any([reference]) else None
+            [dhl.Reference(ReferenceID=lib.text(reference, max=30))]
+            if any(reference or "")
+            else None
         ),
         ShipmentDetails=dhl.ShipmentDetails(
             Pieces=dhl_global.Pieces(
@@ -298,7 +327,11 @@ def shipment_request(
                             package.parcel.content or package.parcel.description
                         ),
                         PieceReference=(
-                            [dhl.Reference(ReferenceID=package.parcel.id[:30])]
+                            [
+                                dhl.Reference(
+                                    ReferenceID=lib.text(package.parcel.id, max=30)
+                                )
+                            ]
                             if package.parcel.id is not None
                             else None
                         ),
@@ -383,7 +416,22 @@ def shipment_request(
         Place=None,
         EProcShip=None,
         Airwaybill=None,
-        DocImages=None,
+        DocImages=(
+            dhl.DocImages(
+                DocImage=[
+                    dhl.DocImage(
+                        Type=doc["doc_type"],
+                        Image=doc["doc_file"],
+                        ImageFormat=doc["doc_format"],
+                    )
+                    for doc in options.doc_files.state
+                ]
+            )
+            if (
+                options.dhl_paperless_trade.state and any(options.doc_files.state or [])
+            )
+            else None
+        ),
         LabelImageFormat=label_format,
         RequestArchiveDoc=None,
         NumberOfArchiveDoc=None,

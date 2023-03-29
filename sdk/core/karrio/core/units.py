@@ -888,6 +888,14 @@ class ShippingOptions(Options):
         return self[ShippingOption.signature_confirmation.name]
 
     @property
+    def hold_at_location(self) -> utils.OptionEnum:
+        return self[ShippingOption.hold_at_location.name]
+
+    @property
+    def paperless_trade(self) -> utils.OptionEnum:
+        return self[ShippingOption.paperless_trade.name]
+
+    @property
     def doc_files(self) -> utils.OptionEnum:
         return self[ShippingOption.doc_files.name]
 
