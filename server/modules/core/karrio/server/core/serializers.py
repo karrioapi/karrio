@@ -679,7 +679,7 @@ class TrackingInfo(serializers.Serializer):
     shipment_origin_postal_code = serializers.CharField(
         required=False, allow_null=True, help_text="The shipment origin postal code"
     )
-    shipment_destication_country = serializers.CharField(
+    shipment_destination_country = serializers.CharField(
         required=False, allow_null=True, help_text="The shipment destination country"
     )
     shipment_destination_postal_code = serializers.CharField(

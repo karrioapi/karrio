@@ -66,7 +66,7 @@ def _extract_details(
             shipment_origin_postal_code=lib.failsafe(
                 lambda _: envoi.expediteur.codePostal
             ),
-            shipment_destication_country=lib.failsafe(
+            shipment_destination_country=lib.failsafe(
                 lambda _: envoi.destinataire.pays.code
             ),
             shipment_destination_postal_code=lib.failsafe(

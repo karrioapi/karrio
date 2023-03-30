@@ -55,7 +55,7 @@ def _extract_tracking_details(
         delivered=delivered,
         events=events,
         info=models.TrackingInfo(
-            shipment_destication_country=result.consignee_address.country,
+            shipment_destination_country=result.consignee_address.country,
             shipment_destination_postal_code=result.consignee_address.postal_code,
             shipping_date=lib.fdate(result.shipping_date, current_format="%Y%m%d"),
             carrier_tracking_link=(

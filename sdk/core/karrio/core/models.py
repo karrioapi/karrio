@@ -304,11 +304,12 @@ class TrackingInfo:
     shipment_service: str = None
     shipment_origin_country: str = None
     shipment_origin_postal_code: str = None
-    shipment_destication_country: str = None
+    shipment_destination_country: str = None
     shipment_destination_postal_code: str = None
     shipping_date: str = None
     signed_by: str = None
     source: str = None
+
 
 @attr.s(auto_attribs=True)
 class TrackingDetails:

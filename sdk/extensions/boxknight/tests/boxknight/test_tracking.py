@@ -64,7 +64,7 @@ ParsedTrackingResponse = [
             "info": {
                 "carrier_tracking_link": "https://www.tracking.boxknight.com/tracking?trackingNo=93e11b39-0af8-40bb-742a-912375a09743",
                 "customer_name": "Charles Carmichael",
-                "shipment_destication_country": "CA",
+                "shipment_destination_country": "CA",
                 "shipment_destination_postal_code": "H4R 2A4",
                 "shipment_origin_country": "CA",
                 "shipment_origin_postal_code": "H4R 2A4",

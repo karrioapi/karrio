@@ -92,7 +92,7 @@ def _extract_details(
             shipment_origin_postal_code=(
                 getattr(origin.address, "postalCode", None) if origin else None
             ),
-            shipment_destication_country=(
+            shipment_destination_country=(
                 getattr(destination.address, "country", None) if origin else None
             ),
             shipment_destination_postal_code=(

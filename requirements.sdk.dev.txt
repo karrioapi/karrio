@@ -8,6 +8,7 @@
 -e ./sdk/extensions/amazon_mws
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
+-e ./sdk/extensions/boxknight
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 -e ./sdk/extensions/chronopost
@@ -18,6 +19,8 @@
 -e ./sdk/extensions/dpd
 -e ./sdk/extensions/dpdhl
 -e ./sdk/extensions/fedex
+-e ./sdk/extensions/geodis
+-e ./sdk/extensions/laposte
 -e ./sdk/extensions/purolator
 -e ./sdk/extensions/royalmail
 -e ./sdk/extensions/sendle
