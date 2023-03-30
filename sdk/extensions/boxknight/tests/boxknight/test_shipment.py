@@ -152,6 +152,7 @@ ParsedCancelShipmentResponse = [
 ShipmentRequest = {
     "order": {
         "merchantDisplayName": "Metro Fleury No 2",
+        "notes": "The entrance is through the green fence on the left. If no answer, leave behind the black bin.",
         "originAddress": {
             "city": "Montreal",
             "country": "Canada",
@@ -190,6 +191,7 @@ ShipmentRequest = {
         },
         "refNumber": "shopifyid1234",
         "service": "SAMEDAY",
+        "signatureRequired": False,
     },
     "label_type": "pdf",
 }

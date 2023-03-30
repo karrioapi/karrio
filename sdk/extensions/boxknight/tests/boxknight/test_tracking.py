@@ -60,7 +60,14 @@ ParsedTrackingResponse = [
             "carrier_id": "boxknight",
             "carrier_name": "boxknight",
             "delivered": False,
-            "events": [{"code": "GEOCODED"}],
+            "events": [
+                {
+                    "code": "GEOCODED",
+                    "description": "GEOCODED",
+                    "date": ANY,
+                    "time": ANY,
+                }
+            ],
             "info": {
                 "carrier_tracking_link": "https://www.tracking.boxknight.com/tracking?trackingNo=93e11b39-0af8-40bb-742a-912375a09743",
                 "customer_name": "Charles Carmichael",

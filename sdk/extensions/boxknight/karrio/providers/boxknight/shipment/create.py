@@ -59,7 +59,7 @@ def shipment_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
-        option_type=provider_units.ShippingOption,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     request = dict(
