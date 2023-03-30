@@ -22,6 +22,7 @@
 -e ./sdk/extensions/geodis
 -e ./sdk/extensions/laposte
 -e ./sdk/extensions/purolator
+-e ./sdk/extensions/roadie
 -e ./sdk/extensions/royalmail
 -e ./sdk/extensions/sendle
 -e ./sdk/extensions/sf_express

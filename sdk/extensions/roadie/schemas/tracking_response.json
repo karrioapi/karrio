@@ -1,0 +1,190 @@
+{
+  "shipments": [
+    {
+      "id": 45245234,
+      "reference_id": "ABC123",
+      "description": "General shipment description.",
+      "state": "assigned",
+      "alternate_id_1": "111",
+      "alternate_id_2": "222",
+      "items": [
+        {
+          "description": "Item description",
+          "reference_id": null,
+          "length": 1.0,
+          "width": 1.0,
+          "height": 1.0,
+          "weight": 1.0,
+          "value": 20.00,
+          "quantity": 1
+        }
+      ],
+      "pickup_location": {
+        "address": {
+          "name": "Origin Location",
+          "store_number": "12324",
+          "street1": "123 Main Street",
+          "street2": null,
+          "city": "Atlanta",
+          "state": "GA",
+          "zip": "30305",
+          "latitude": 33.74903,
+          "longitude": -85.38803
+        },
+        "contact": {
+          "name": "Origin Contact",
+          "phone": "4049999999"
+        },
+        "notes": null
+      },
+      "delivery_location": {
+        "address": {
+          "name": "Destination Location",
+          "store_number": null,
+          "street1": "456 Central Ave.",
+          "street2": null,
+          "city": "Atlanta",
+          "state": "GA",
+          "zip": "30308",
+          "latitude": 33.04131,
+          "longitude": -84.18303
+        },
+        "contact": {
+          "name": "Destination Contact",
+          "phone": "4049999999"
+        },
+        "notes": null
+      },
+      "pickup_after": "2017-12-26T06:00:00.000Z",
+      "deliver_between": {
+        "start": "2017-12-26T06:00:00.000Z",
+        "end": "2017-12-26T20:00:00.000Z"
+      },
+      "options": {
+        "signature_required": true,
+        "notifications_enabled": false,
+        "over_21_required": false,
+        "extra_compensation": 5.0,
+        "trailer_required": false,
+        "decline_insurance": true
+      },
+      "tracking_number": "RETHNKW354W3H438",
+      "driver": {
+        "name": "Jeff B.",
+        "phone": "7709999999"
+      },
+      "price": 12.00,
+      "estimated_distance": 3.456,
+      "events": [
+        {
+          "name": "at_delivery",
+          "occurred_at": "2017-12-25T10:38:43.467Z",
+          "location": {
+            "latitude": 36.123456,
+            "longitude": -82.345678
+          }
+        },
+        {
+          "name": "delivery_confirmed",
+          "occurred_at": "2017-12-25T12:23:54.325Z",
+          "location": {
+            "latitude": 36.123456,
+            "longitude": -82.345678
+          }
+        }
+      ],
+      "created_at": "2017-12-25T06:00:00.000Z",
+      "updated_at": "2017-12-25T06:00:00.000Z"
+    },
+    {
+      "id": 152040,
+      "reference_id": "ABC456",
+      "description": "General shipment description.",
+      "state": "delivered",
+      "alternate_id_1": 333,
+      "alternate_id_2": 444,
+      "items": [
+        {
+          "description": "Item description",
+          "reference_id": null,
+          "length": 1.0,
+          "width": 1.0,
+          "height": 1.0,
+          "weight": 1.0,
+          "value": 20.00,
+          "quantity": 1
+        }
+      ],
+      "pickup_location": {
+        "address": {
+          "name": "Origin Location",
+          "store_number": "12324",
+          "street1": "123 Main Street",
+          "street2": null,
+          "city": "Atlanta",
+          "state": "GA",
+          "zip": "30305",
+          "latitude": 33.74903,
+          "longitude": -85.38803
+        },
+        "contact": {
+          "name": "Origin Contact",
+          "phone": "4049999999"
+        },
+        "notes": null
+      },
+      "delivery_location": {
+        "address": {
+          "name": "Destination Location",
+          "store_number": null,
+          "street1": "456 Central Ave.",
+          "street2": null,
+          "city": "Atlanta",
+          "state": "GA",
+          "zip": "30308",
+          "latitude": 33.04131,
+          "longitude": -84.18303
+        },
+        "contact": {
+          "name": "Destination Contact",
+          "phone": "4049999999"
+        },
+        "notes": null
+      },
+      "pickup_after": "2017-12-26T06:00:00.000Z",
+      "deliver_between": {
+        "start": "2017-12-26T06:00:00.000Z",
+        "end": "2017-12-26T20:00:00.000Z"
+      },
+      "options": {
+        "signature_required": true,
+        "notifications_enabled": true,
+        "over_21_required": true
+      },
+      "tracking_number": "RETHNKW354W3H438",
+      "signatory_name": "Jane Doe",
+      "price": 12.00,
+      "estimated_distance": 3.456,
+      "events": [
+        {
+          "name": "at_delivery",
+          "occurred_at": "2017-12-25T10:38:43.467Z",
+          "location": {
+            "latitude": 36.123456,
+            "longitude": -82.345678
+          }
+        },
+        {
+          "name": "delivery_confirmed",
+          "occurred_at": "2017-12-25T12:23:54.325Z",
+          "location": {
+            "latitude": 36.123456,
+            "longitude": -82.345678
+          }
+        }
+      ],
+      "created_at": "2017-12-25T06:00:00.000Z",
+      "updated_at": "2017-12-25T06:00:00.000Z"
+    }
+  ]
+}
