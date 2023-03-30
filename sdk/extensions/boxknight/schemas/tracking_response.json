@@ -1,0 +1,51 @@
+{
+  "id": "93e11b39-0af8-40bb-742a-912375a09743",
+  "createdAt": "2019-10-25T22:56:06.000Z",
+  "createdBy": "93e66b39-0uf8-40bb-742a-911235a09743",
+  "merchantId": "13e11b39-0uf8-40bb-742a-913125a09743",
+  "orderStatus": "GEOCODED",
+  "scanningRequired": true,
+  "validAddress": true,
+  "labelUrl": "https://label12345.s3.amazonaws.com/BoxKnight-ShippingLabel-1234567.zpl",
+  "pdfLabelUrl": "https://label12345.s3.amazonaws.com/BoxKnight-ShippingLabel-1234567.pdf",
+  "recipient": {
+    "name": "Charles Carmichael",
+    "phone": "+15145573849",
+    "notes": "Do not text, call instead.",
+    "email": "charles.carmichael@boxknight.com"
+  },
+  "recipientAddress": {
+    "number": 1234,
+    "street": "Boul. Poirier",
+    "city": "Montreal",
+    "province": "Quebec",
+    "country": "Canada",
+    "postalCode": "H4R 2A4",
+    "sublocality": "Communauté-Urbaine-de-Montréal",
+    "location": {
+      "lat": 45.4755722,
+      "lng": -73.61911979999999
+    }
+  },
+  "originAddress": {
+    "number": 1234,
+    "street": "Boul. Poirier",
+    "city": "Montreal",
+    "province": "Quebec",
+    "country": "Canada",
+    "postalCode": "H4R 2A4",
+    "sublocality": "Communauté-Urbaine-de-Montréal",
+    "location": {
+      "lat": 45.4755722,
+      "lng": -73.61911979999999
+    }
+  },
+  "packageCount": 3,
+  "signatureRequired": true,
+  "service": "SAMEDAY",
+  "notes": "The entrance is through the green fence on the left. If no answer, leave behind the black bin.",
+  "refNumber": "shopifyid1234",
+  "completeAfter": 1578439750000,
+  "completeBefore": 1578439950000,
+  "merchantDisplayName": "Metro Fleury No 2"
+}

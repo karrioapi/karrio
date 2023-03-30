@@ -11,6 +11,7 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
 # -e ./sdk/extensions/australiapost
+-e ./sdk/extensions/boxknight
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
@@ -45,6 +46,7 @@ karrio.generic
 karrio.amazon-mws
 karrio.aramex
 karrio.australiapost
+# karrio.boxknight
 karrio.canadapost
 karrio.canpar
 karrio.chronopost

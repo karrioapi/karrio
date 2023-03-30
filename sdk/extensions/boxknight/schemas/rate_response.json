@@ -1,0 +1,31 @@
+{
+  "rates": [
+    {
+      "price": 10,
+      "service": "NEXTDAY",
+      "name": "BoxKnight Next-Day Delivery",
+      "description": "Get your package the next opening day of the merchant (2019-10-30)",
+      "estimateDay": "2019-10-30",
+      "estimateFrom": "2019-10-30",
+      "estimateTo": "2019-10-30"
+    },
+    {
+      "price": 12,
+      "service": "SAMEDAY",
+      "name": "BoxKnight Same-Day Delivery",
+      "description": "Get your package before the end of the day (2019-10-29)",
+      "estimateDay": "2019-10-29",
+      "estimateFrom": "2019-10-29",
+      "estimateTo": "2019-10-29"
+    },
+    {
+      "price": 12,
+      "service": "SCHEDULED",
+      "name": "Boxknight Scheduled Delivery",
+      "description": "Get your package in a 3h window within the next 2 weeks (2019-10-29 to 2019-11-11)",
+      "estimateDay": "2019-10-29 to 2019-11-11",
+      "estimateFrom": "2019-10-29",
+      "estimateTo": "2019-11-11"
+    }
+  ]
+}
