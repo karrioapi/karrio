@@ -1,3 +1,4 @@
+import datetime
 import boxknight_lib.tracking_response as boxknight
 import typing
 import karrio.lib as lib
@@ -42,11 +43,10 @@ def _extract_details(
         tracking_number=order.id,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(""),
-                description="",
+                description=order.orderStatus,
                 code=order.orderStatus,
-                time=lib.ftime(""),
-                location="",
+                date=lib.fdate(datetime.datetime.now(), "%Y-%m-%dT%H:%M:%S.%fZ"),
+                time=lib.ftime(datetime.datetime.now(), "%Y-%m-%dT%H:%M:%S.%fZ"),
             )
         ],
         delivered=delivered,
