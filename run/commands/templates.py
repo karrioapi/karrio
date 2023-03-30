@@ -607,7 +607,7 @@ def parse_tracking_response(
     response_details = []  # extract carrier response tracking details
 
     messages = error.parse_error_response(response_messages, settings)
-    tracking_details = [_extract_details(rate, settings) for rate in response_details]
+    tracking_details = [_extract_details(details, settings) for details in response_details]
 
     return tracking_details, messages
 
@@ -1321,7 +1321,7 @@ class Test{{compact_name}}Shipping(unittest.TestCase):
 
     def test_parse_cancel_shipment_response(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
-            mock.return_value = ""
+            mock.return_value = ShipmentCancelResponse
             parsed_response = (
                 karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()
             )

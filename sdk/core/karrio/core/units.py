@@ -428,6 +428,10 @@ class Products(typing.Iterable[Product]):
     def quantity(self):
         return sum((item.quantity for item in self._items), 0)
 
+    @property
+    def value_amount(self):
+        return sum((item.value_amount or 0.0 for item in self._items), 0.0)
+
 
 class Package:
     """The parcel common processing helper"""
