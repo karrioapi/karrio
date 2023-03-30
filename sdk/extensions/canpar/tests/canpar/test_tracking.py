@@ -94,7 +94,7 @@ ParsedTrackingResponse = [
             ],
             "info": {
                 "carrier_tracking_link": "http://www.canpar.com/en/track/TrackingAction.do?locale=en&type=0&reference=D999999988030400000008",
-                "shipment_destication_country": "CA",
+                "shipment_destination_country": "CA",
                 "shipment_destination_postal_code": "P3E5P9",
                 "shipment_service": "GROUND",
                 "shipping_date": "2011-03-07",

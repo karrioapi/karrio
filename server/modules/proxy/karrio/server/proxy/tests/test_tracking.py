@@ -62,7 +62,7 @@ TRACKING_RESPONSE = {
             "shipment_service": None,
             "shipment_origin_country": None,
             "shipment_origin_postal_code": None,
-            "shipment_destication_country": None,
+            "shipment_destination_country": None,
             "shipment_destination_postal_code": None,
             "shipping_date": None,
             "signed_by": None,

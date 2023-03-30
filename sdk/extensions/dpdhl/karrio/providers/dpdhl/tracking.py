@@ -76,7 +76,7 @@ def _extract_details(
                 details.piece_identifier
             ),
             customer_name=details.pan_recipient_name,
-            shipment_destication_country=details.dest_country,
+            shipment_destination_country=details.dest_country,
             shipment_destination_postal_code=details.pan_recipient_postalcode,
             shipment_origin_country=details.origin_country,
             shipment_service=details.product_name,

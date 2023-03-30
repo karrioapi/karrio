@@ -45,7 +45,6 @@ def _extract_details(
         provider_units.TrackingStatus.in_transit.name,
     )
 
-
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -73,7 +72,7 @@ def _extract_details(
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(info.ID),
             shipment_destination_postal_code=info.DestinationZip,
-            shipment_destication_country=info.DestinationCountryCode,
+            shipment_destination_country=info.DestinationCountryCode,
             shipment_origin_country=info.OriginCountryCode,
             shipment_origin_postal_code=info.OriginZip,
             shipment_service=info.Class,

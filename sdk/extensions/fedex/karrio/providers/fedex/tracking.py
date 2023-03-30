@@ -91,7 +91,7 @@ def _extract_tracking(
             package_weight=lib.to_decimal(
                 getattr(track_detail.PackageWeight, "Value", None)
             ),
-            shipment_destication_country=getattr(
+            shipment_destination_country=getattr(
                 track_detail.ShipperAddress, "CountryCode", None
             ),
             shipment_origin_country=getattr(

@@ -65,7 +65,7 @@ def _extract_details(
             shipment_destination_postal_code=getattr(
                 order.recipientAddress, "postalCode", None
             ),
-            shipment_destication_country=units.Country.map(
+            shipment_destination_country=units.Country.map(
                 getattr(order.recipientAddress, "country", None)
             ).name,
             shipping_date=lib.fdate(order.createdAt, "%Y-%m-%dT%H:%M:%S.%fZ"),

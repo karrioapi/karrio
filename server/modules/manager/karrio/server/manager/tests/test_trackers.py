@@ -98,7 +98,7 @@ TRACKING_RESPONSE = {
         "package_weight": None,
         "package_weight_unit": None,
         "shipment_delivery_date": None,
-        "shipment_destication_country": None,
+        "shipment_destination_country": None,
         "shipment_destination_postal_code": None,
         "shipment_origin_country": None,
         "shipment_origin_postal_code": None,

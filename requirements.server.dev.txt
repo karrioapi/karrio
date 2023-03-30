@@ -13,25 +13,26 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/boxknight
 # -e ./sdk/extensions/canadapost
-# -e ./sdk/extensions/canpar
+-e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
 # -e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 # -e ./sdk/extensions/dpd
-# -e ./sdk/extensions/dpdhl
-# -e ./sdk/extensions/fedex
+-e ./sdk/extensions/dpdhl
+-e ./sdk/extensions/fedex
 -e ./sdk/extensions/geodis
+-e ./sdk/extensions/laposte
 # -e ./sdk/extensions/purolator
 # -e ./sdk/extensions/royalmail
 # -e ./sdk/extensions/sendle
 # -e ./sdk/extensions/sf_express
 # -e ./sdk/extensions/tnt
-# -e ./sdk/extensions/ups
+-e ./sdk/extensions/ups
 # -e ./sdk/extensions/ups_freight
-# -e ./sdk/extensions/usps
-# -e ./sdk/extensions/usps_international
+-e ./sdk/extensions/usps
+-e ./sdk/extensions/usps_international
 # -e ./sdk/extensions/yanwen
 # -e ./sdk/extensions/yunexpress
 
