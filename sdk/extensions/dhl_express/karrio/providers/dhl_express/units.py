@@ -310,33 +310,31 @@ def shipping_services_initializer(
     is_document: bool = False,
     is_envelope: bool = False,
     origin_country: str = None,
-) -> typing.List[str]:
-    """
-    Apply default product codes to the list of products.
-    """
-    products = list(set(services))
-    no_service_provided = (
-        any([ShippingService.map(_).key is not None for _ in products]) is False
+) -> lib.units.Services:
+    """Apply default product codes to the list of products."""
+    _region = CountryRegion.map(origin_country).value
+    _services = list(set(services))
+    _no_service_provided = (
+        any([ShippingService.map(_).key is not None for _ in _services]) is False
     )
-    region = CountryRegion.map(origin_country).value
 
-    if no_service_provided and region == "AM":
+    if _no_service_provided and _region == "AM":
         if is_international and is_document:
-            products.append("dhl_express_worldwide_doc")
+            _services.append("dhl_express_worldwide_doc")
 
         if is_international and (is_document is False):
-            products.append("dhl_express_worldwide_nondoc")
+            _services.append("dhl_express_worldwide_nondoc")
 
         if (is_international is False) and (is_document and is_envelope):
-            products.append("dhl_express_envelope_doc")
+            _services.append("dhl_express_envelope_doc")
 
         if (is_international is False) and is_document and (is_envelope is False):
-            products.append("dhl_domestic_express_doc")
+            _services.append("dhl_domestic_express_doc")
 
-    elif region != "AM":
-        products = ["dhl_express_all"]
+    elif _region != "AM":
+        _services = ["dhl_express_all"]
 
-    return lib.units.Services(list(set(products)), ShippingService)
+    return lib.units.Services(_services, ShippingService)
 
 
 class ShippingOption(lib.Enum):

@@ -73,6 +73,7 @@ def shipment_request(
         payload.parcels,
         provider_units.PackagePresets,
         required=["weight"],
+        max_weight=units.Weight(300, "KG"),
         package_option_type=provider_units.ShippingOption,
     )
     product = provider_units.ShippingService.map(payload.service).value_or_key
@@ -164,7 +165,9 @@ def shipment_request(
                 DeclaredValue=(
                     duty.declared_value or options.declared_value.state or 1.0
                 ),
-                DeclaredCurrency=(duty.currency or options.currency.state or "USD"),
+                DeclaredCurrency=(
+                    duty.currency or options.currency.state or settings.default_currency
+                ),
                 ScheduleB=None,
                 ExportLicense=customs.options.license_number.state,
                 ShipperEIN=(
@@ -354,7 +357,7 @@ def shipment_request(
             DimensionUnit=provider_units.DimensionUnit[dim_unit.name].value,
             PackageType=package_type,
             IsDutiable=("Y" if is_dutiable else "N"),
-            CurrencyCode=options.currency.state or "USD",
+            CurrencyCode=options.currency.state or settings.default_currency,
             CustData=getattr(payload, "id", None),
             ShipmentCharges=(
                 options.cash_on_delivery.state
@@ -395,22 +398,24 @@ def shipment_request(
         ),
         SpecialService=[
             dhl.SpecialService(
-                SpecialServiceType=option.code,
-                ChargeValue=lib.to_money(option.state),
+                SpecialServiceType=svc.code,
+                ChargeValue=lib.to_money(svc.state),
                 CurrencyCode=(
-                    options.currency.state or "USD"
-                    if lib.to_money(option.state) is not None
+                    options.currency.state or settings.default_currency
+                    if lib.to_money(svc.state) is not None
                     else None
                 ),
             )
-            for _, option in options.items()
+            for _, svc in options.items()
         ],
         Notification=(
             dhl.Notification(
                 EmailAddress=options.email_notification_to.state or recipient.email
             )
-            if options.email_notification.state
-            and any([options.email_notification_to.state, recipient.email])
+            if (
+                options.email_notification.state
+                and any([options.email_notification_to.state, recipient.email])
+            )
             else None
         ),
         Place=None,
