@@ -18,8 +18,9 @@ import karrio.providers.usps_international.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element], settings: provider_utils.Settings
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     quotes: typing.List[models.RateDetails] = [
         _extract_details(package, settings)
         for package in lib.find_element("Service", response)
@@ -67,7 +68,7 @@ def _extract_details(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[IntlRateV2Request]:
+) -> lib.Serializable:
     """Create the appropriate USPS International rate request depending on the destination
 
     :param payload: Karrio unified API rate request data
@@ -103,8 +104,12 @@ def rate_request(
     commercial = next(("Y" for svc in services if "commercial" in svc.name), "N")
     commercial_plus = next(("Y" for svc in services if "plus" in svc.name), "N")
     acceptance_date = (
-        datetime.isoformat((options.shipment_date.state or datetime.now(timezone.utc)),
-    ) if recipient.postal_code else None)
+        datetime.isoformat(
+            (options.shipment_date.state or datetime.now(timezone.utc)),
+        )
+        if recipient.postal_code
+        else None
+    )
 
     request = IntlRateV2Request(
         USERID=settings.username,

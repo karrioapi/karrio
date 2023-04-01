@@ -24,7 +24,7 @@ parse_pickup_update_response = parse_pickup_response
 
 def pickup_update_request(
     payload: PickupUpdateRequest, settings: Settings
-) -> Serializable[Pipeline]:
+) -> Serializable:
     """
     Create a pickup request
     Steps
@@ -33,7 +33,7 @@ def pickup_update_request(
         3 - cancel old pickup
     :param payload: PickupUpdateRequest
     :param settings: Settings
-    :return: Serializable[Pipeline]
+    :return: Serializable
     """
     request: Pipeline = Pipeline(
         get_availability=lambda *_: _get_availability(

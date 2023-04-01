@@ -28,9 +28,10 @@ import karrio.providers.fedex.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     replys = lib.find_element("RateReplyDetails", response)
     rates: typing.List[models.RateDetails] = [
         _extract_rate(detail_node, settings) for detail_node in replys
@@ -105,7 +106,7 @@ def _extract_rate(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[FedexRateRequest]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(

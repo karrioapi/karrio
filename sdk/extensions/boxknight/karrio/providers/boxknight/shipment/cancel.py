@@ -7,9 +7,10 @@ import karrio.providers.boxknight.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    response: dict,
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     success = response.get("error") is None
 

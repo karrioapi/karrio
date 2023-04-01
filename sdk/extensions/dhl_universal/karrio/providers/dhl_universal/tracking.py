@@ -13,6 +13,7 @@ from karrio.core.models import (
 )
 from karrio.providers.dhl_universal.utils import Settings
 from karrio.providers.dhl_universal.error import parse_error_response
+import karrio.lib as lib
 
 date_formats = [
     "%Y-%m-%d",
@@ -24,8 +25,9 @@ date_formats = [
 
 
 def parse_tracking_response(
-    response: List[dict], settings: Settings
+    _response: lib.Deserializable[List[dict]], settings: Settings
 ) -> Tuple[List[TrackingDetails], List[Message]]:
+    response = _response.deserialize()
     errors = [e for e in response if "shipments" not in e]
     details = [
         _extract_detail(DP.to_object(Shipment, d["shipments"][0]), settings)
@@ -65,7 +67,7 @@ def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[DHLTrackingRequest]:
+def tracking_request(payload: TrackingRequest, _) -> Serializable:
     request = [
         DHLTrackingRequest(
             trackingNumber=number,

@@ -14,7 +14,7 @@ class ShippingMixinProxy:
     settings: ShippingMixinSettings
 
     def create_shipment(
-        self, request: lib.Serializable[ShipmentRequest]
+        self, request: lib.Serializable
     ) -> lib.Deserializable[
         typing.Tuple[typing.List[typing.Tuple[str, ServiceLabel]], typing.List[Message]]
     ]:

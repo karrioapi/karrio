@@ -12,9 +12,10 @@ import karrio.providers.roadie.units as provider_units
 
 
 def parse_shipment_response(
-    response: dict,
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response, settings) if response.get("errors") is None else None

@@ -16,7 +16,7 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    def get_tracking(self, request: Serializable) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         def _get_tracking(tracking_request: dict):
             query = urllib.parse.urlencode(tracking_request)
             return http(

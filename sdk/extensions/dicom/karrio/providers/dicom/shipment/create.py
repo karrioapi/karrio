@@ -35,8 +35,10 @@ from karrio.providers.dicom.utils import Settings
 
 
 def parse_shipment_response(
-    response: dict, settings: Settings
+    _response: lib.Deserializable[dict],
+    settings: Settings,
 ) -> Tuple[ShipmentDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     details = (
         _extract_details(response, settings)
@@ -60,9 +62,7 @@ def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
     )
 
 
-def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[DicomShipmentRequest]:
+def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable:
     packages = Packages(payload.parcels)
     is_international = payload.shipper.country_code != payload.recipient.country_code
     broker_info = payload.options.get("dicom_broker_info", {})

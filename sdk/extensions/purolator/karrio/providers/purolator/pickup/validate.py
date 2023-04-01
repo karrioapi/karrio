@@ -20,7 +20,7 @@ from karrio.providers.purolator.units import PackagePresets
 
 def validate_pickup_request(
     payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
-) -> Serializable[Envelope]:
+) -> Serializable:
     """
     Create a serializable typed Envelope containing a ValidatePickUpRequest
 
@@ -30,7 +30,7 @@ def validate_pickup_request(
 
     :param payload: PickupRequest
     :param settings: Settings
-    :return: Serializable[PickupRequest]
+    :return: Serializable
     """
     address = lib.to_address(payload.address)
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
@@ -89,9 +89,7 @@ def validate_pickup_request(
                 FaxNumber=None,
             ),
             ShipmentSummary=None,
-            NotificationEmails=NotificationEmails(
-                NotificationEmail=[address.email]
-            ),
+            NotificationEmails=NotificationEmails(NotificationEmail=[address.email]),
         ),
     )
 

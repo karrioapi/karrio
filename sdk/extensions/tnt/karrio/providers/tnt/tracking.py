@@ -15,12 +15,15 @@ from karrio.core.models import (
 )
 from karrio.providers.tnt.utils import Settings
 from karrio.providers.tnt.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_tracking_response(
-    response, settings: Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: Settings,
 ) -> Tuple[List[TrackingDetails], List[Message]]:
-    details = response.xpath(".//*[local-name() = $name]", name="Consignment")
+    response = _response.deserialize()
+    details = lib.find_element("Consignment", response)
     tracking_details = [_extract_detail(node, settings) for node in details]
 
     return tracking_details, parse_error_response(response, settings)
@@ -49,9 +52,7 @@ def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
     )
 
 
-def tracking_request(
-    payload: TrackingRequest, settings: Settings
-) -> Serializable[TrackRequest]:
+def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable:
     request = TrackRequest(
         locale="en_US",
         version="3.1",

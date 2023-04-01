@@ -13,11 +13,14 @@ from karrio.core.models import (
 )
 from karrio.providers.royalmail.utils import Settings
 from karrio.providers.royalmail.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_tracking_response(
-    response: List[dict], settings: Settings
+    _response: lib.Deserializable[List[dict]],
+    settings: Settings,
 ) -> Tuple[List[TrackingDetails], List[Message]]:
+    response = _response.deserialize()
     errors = [e for e in response if "mailPieces" not in e]
     details = [
         _extract_detail(DP.to_object(MailPieces, d["mailPieces"]), settings)
@@ -29,7 +32,6 @@ def parse_tracking_response(
 
 
 def _extract_detail(detail: MailPieces, settings: Settings) -> TrackingDetails:
-
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -49,7 +51,7 @@ def _extract_detail(detail: MailPieces, settings: Settings) -> TrackingDetails:
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[dict]:
+def tracking_request(payload: TrackingRequest, _) -> Serializable:
     request = payload.tracking_numbers
 
     return Serializable(request)

@@ -10,9 +10,10 @@ import karrio.providers.boxknight.units as provider_units
 
 
 def parse_tracking_response(
-    responses: typing.List[typing.Tuple[str, dict]],
+    _responses: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    responses = _responses.deserialize()
     messages: typing.List[models.Message] = sum(
         [
             error.parse_error_response(res, settings, tracking_number=number)

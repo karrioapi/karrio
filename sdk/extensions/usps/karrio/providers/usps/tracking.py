@@ -9,9 +9,10 @@ import karrio.providers.usps.units as provider_units
 
 
 def parse_tracking_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     tracks_info = lib.find_element("TrackInfo", response)
     details = [
         _extract_details(node, settings)
@@ -83,7 +84,7 @@ def _extract_details(
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[usps.TrackFieldRequest]:
+) -> lib.Serializable:
     request = usps.TrackFieldRequest(
         USERID=settings.username,
         Revision="1",

@@ -15,7 +15,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         return super().get_rates(request)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/soap",
             data=request.serialize(),
@@ -30,7 +30,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(response, to_element)
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/soap",
             data=request.serialize(),
@@ -45,7 +45,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(response, to_element)
 
-    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable[str]:
+    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         def _track(data):
             return lib.request(
                 url=f"{self.settings.server_url}/rest/sendungsverfolgung",

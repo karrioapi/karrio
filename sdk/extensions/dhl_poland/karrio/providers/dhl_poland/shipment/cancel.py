@@ -12,11 +12,13 @@ from karrio.core.utils import (
 )
 from karrio.providers.dhl_poland.error import parse_error_response
 from karrio.providers.dhl_poland.utils import Settings
+import karrio.lib as lib
 
 
 def parse_shipment_cancel_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     success = len(errors) == 0
     confirmation: ConfirmationDetails = (
@@ -35,7 +37,7 @@ def parse_shipment_cancel_response(
 
 def shipment_cancel_request(
     payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable[Envelope]:
+) -> Serializable:
     request = create_envelope(
         body_content=deleteShipment(
             authData=settings.auth_data,

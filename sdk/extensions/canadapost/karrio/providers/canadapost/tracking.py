@@ -8,9 +8,10 @@ import karrio.providers.canadapost.utils as provider_utils
 
 
 def parse_tracking_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     details = lib.find_element("tracking-detail", response)
     tracking_details: typing.List[models.TrackingDetails] = [
         _extract_tracking(node, settings)
@@ -70,7 +71,5 @@ def _extract_tracking(
     )
 
 
-def tracking_request(
-    payload: models.TrackingRequest, _
-) -> lib.Serializable[typing.List[str]]:
+def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
     return lib.Serializable(payload.tracking_numbers)

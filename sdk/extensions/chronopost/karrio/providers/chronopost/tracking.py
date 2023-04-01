@@ -7,9 +7,10 @@ import chronopost_lib.trackingservice as chronopost
 
 
 def parse_tracking_response(
-    responses: lib.Element,
+    _responses: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    responses = _responses.deserialize()
     tracking_nodes: typing.List[chronopost.listEventInfoComps] = lib.find_element(
         "listEventInfoComp", responses, chronopost.listEventInfoComps
     )

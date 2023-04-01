@@ -5,11 +5,14 @@ from karrio.core.utils import (
 )
 from karrio.providers.amazon_mws.error import parse_error_response
 from karrio.providers.amazon_mws.utils import Settings
+import karrio.lib as lib
 
 
 def parse_shipment_cancel_response(
-    response: dict, settings: Settings
+    _response: lib.Deserializable[dict],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = [
         parse_error_response(data, settings) for data in response.get("errors", [])
     ]
@@ -23,5 +26,5 @@ def parse_shipment_cancel_response(
     return details, errors
 
 
-def shipment_cancel_request(payload: ShipmentCancelRequest, _) -> Serializable[str]:
+def shipment_cancel_request(payload: ShipmentCancelRequest, _) -> Serializable:
     return Serializable(payload.shipment_identifier)

@@ -12,11 +12,13 @@ from karrio.core.models import PickupRequest, PickupDetails, Message
 
 from karrio.providers.dicom.error import parse_error_response
 from karrio.providers.dicom.utils import Settings
+import karrio.lib as lib
 
 
 def parse_pickup_response(
-    response: dict, settings: Settings
+    _response: lib.Deserializable[dict], settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     pickup = next(
         (DP.to_object(Pickup, pickup) for pickup in response.get("pickups", [])), None
@@ -27,7 +29,6 @@ def parse_pickup_response(
 
 
 def _extract_details(pickup: Pickup, settings: Settings) -> PickupDetails:
-
     return PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -39,7 +40,6 @@ def _extract_details(pickup: Pickup, settings: Settings) -> PickupDetails:
 
 
 def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
-
     request: Pipeline = Pipeline(
         create_pickup=lambda *_: _create_pickup(payload),
         retrieve_pickup=partial(_retrieve_pickup, payload=payload, settings=settings),
@@ -49,7 +49,6 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
 
 
 def _create_pickup(payload: PickupRequest) -> Job:
-
     request = DicomPickupRequest(
         date=payload.pickup_date,
         ready=payload.ready_time,

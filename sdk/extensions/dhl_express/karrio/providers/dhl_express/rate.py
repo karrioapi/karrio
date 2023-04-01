@@ -13,8 +13,10 @@ import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     quotes = lib.find_element("QtdShp", response, dhl_response.QtdShpType)
     rates: typing.List[models.RateDetails] = [
         _extract_quote(quote, settings)
@@ -68,7 +70,7 @@ def _extract_quote(
 
 def rate_request(
     payload: models.RateRequest, settings: provider_utils.Settings
-) -> lib.Serializable[dhl.DCTRequest]:
+) -> lib.Serializable:
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,

@@ -3,11 +3,14 @@ from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Messa
 from karrio.core.utils import Serializable
 from karrio.providers.easypost.error import parse_error_response
 from karrio.providers.easypost.utils import Settings
+import karrio.lib as lib
 
 
 def parse_shipment_cancel_response(
-    response: dict, settings: Settings
+    _response: lib.Deserializable[dict],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     status = response.get("status")
     errors = [parse_error_response(response, settings)] if "error" in response else []
 

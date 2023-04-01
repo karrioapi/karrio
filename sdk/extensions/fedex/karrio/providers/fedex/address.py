@@ -10,7 +10,7 @@ from fedex_lib.address_validation_service_v4 import (
     NotificationSeverityType,
 )
 import karrio.lib as lib
-from karrio.core.utils import create_envelope, Serializable, Element, Envelope, SF, XP
+from karrio.core.utils import create_envelope, Serializable, Element, SF, XP
 from karrio.core.models import (
     AddressValidationRequest,
     Message,
@@ -19,21 +19,16 @@ from karrio.core.models import (
 )
 from karrio.providers.fedex.utils import Settings, default_request_serializer
 from karrio.providers.fedex.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_address_validation_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[AddressValidationDetails, List[Message]]:
+    response = _response.deserialize()
     reply = XP.to_object(
         AddressValidationReply,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]", name="AddressValidationReply"
-                )
-            ),
-            None,
-        ),
+        lib.find_element("AddressValidationReply", response, first=True),
     )
     address: FedexAddress = next(
         (result.EffectiveAddress for result in reply.AddressResults), None
@@ -69,7 +64,7 @@ def parse_address_validation_response(
 
 def address_validation_request(
     payload: AddressValidationRequest, settings: Settings
-) -> Serializable[Envelope]:
+) -> Serializable:
     address = lib.to_address(payload.address)
 
     request = create_envelope(

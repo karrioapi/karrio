@@ -14,11 +14,14 @@ from karrio.core.models import (
 
 from karrio.providers.usps.error import parse_error_response
 from karrio.providers.usps.utils import Settings
+import karrio.lib as lib
 
 
 def parse_pickup_update_response(
-    response: dict, settings: Settings
+    _response: lib.Deserializable[dict],
+    settings: Settings,
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     details = None
 

@@ -16,9 +16,7 @@ from karrio.api.proxy import Proxy as BaseProxy
 class Proxy(BaseProxy):
     settings: Settings
 
-    def _send_request(
-        self, path: str, soapaction: str, request: Serializable[Any]
-    ) -> str:
+    def _send_request(self, path: str, soapaction: str, request: Serializable) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
             data=request.serialize(),
@@ -30,7 +28,7 @@ class Proxy(BaseProxy):
             },
         )
 
-    def validate_address(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def validate_address(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/CanparRatingService.CanparRatingServiceHttpSoap12Endpoint/",
             soapaction="urn:searchCanadaPost",
@@ -39,7 +37,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def get_rates(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/CanparRatingService.CanparRatingServiceHttpSoap12Endpoint/",
             soapaction="urn:rateShipment",
@@ -48,9 +46,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def get_tracking(
-        self, request: Serializable[List[Envelope]]
-    ) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         """
         get_tracking make parallel request for each TrackRequest
         """
@@ -66,7 +62,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
 
-    def create_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def create_shipment(self, request: Serializable) -> Deserializable:
         def process(job: Job):
             if job.data is None:
                 return job.fallback
@@ -85,7 +81,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def cancel_shipment(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def cancel_shipment(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/CanshipBusinessService.CanshipBusinessServiceHttpSoap12Endpoint/",
             soapaction="urn:voidShipment",
@@ -94,7 +90,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def schedule_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def schedule_pickup(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/CanparAddonsService.CanparAddonsServiceHttpSoap12Endpoint/",
             soapaction="urn:schedulePickupV2",
@@ -103,7 +99,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def modify_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def modify_pickup(self, request: Serializable) -> Deserializable:
         def process(job: Job):
             if job.data is None:
                 return job.fallback
@@ -122,7 +118,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def cancel_pickup(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/CanparAddonsService.CanparAddonsServiceHttpSoap12Endpoint/",
             soapaction="urn:cancelPickup",

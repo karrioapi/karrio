@@ -10,9 +10,10 @@ import karrio.providers.dpdhl.units as provider_units
 
 
 def parse_shipment_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     response_shipment: typing.Optional[dpdhl.CreationState] = lib.find_element(
         "CreationState",
         response,

@@ -9,11 +9,13 @@ import karrio.providers.canadapost.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     shipment = (
         _extract_shipment(response, settings)
-        if len(lib.find_elements("shipment-id", response)) > 0
+        if len(lib.find_element("shipment-id", response)) > 0
         else None
     )
     return shipment, provider_error.parse_error_response(response, settings)
@@ -41,9 +43,7 @@ def _extract_shipment(
     )
 
 
-def shipment_request(
-    payload: models.ShipmentRequest, _
-) -> lib.Serializable[canadapost.NonContractShipmentType]:
+def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
     service = provider_units.ServiceType.map(payload.service).value_or_key
     customs = lib.to_customs_info(payload.customs)
     package = lib.to_packages(
@@ -71,7 +71,9 @@ def shipment_request(
                 company=payload.shipper.company_name,
                 contact_phone=payload.shipper.phone_number,
                 address_details=canadapost.DomesticAddressDetailsType(
-                    address_line_1=lib.text(payload.shipper.street_number, payload.shipper.address_line1),
+                    address_line_1=lib.text(
+                        payload.shipper.street_number, payload.shipper.address_line1
+                    ),
                     address_line_2=lib.text(payload.shipper.address_line2),
                     city=payload.shipper.city,
                     prov_state=payload.shipper.state_code,
@@ -86,7 +88,9 @@ def shipment_request(
                 additional_address_info=None,
                 client_voice_number=payload.recipient.phone_number,
                 address_details=canadapost.DestinationAddressDetailsType(
-                    address_line_1=lib.text(payload.recipient.street_number, payload.recipient.address_line1),
+                    address_line_1=lib.text(
+                        payload.recipient.street_number, payload.recipient.address_line1
+                    ),
                     address_line_2=lib.text(payload.recipient.address_line2),
                     city=payload.recipient.city,
                     prov_state=payload.recipient.state_code,

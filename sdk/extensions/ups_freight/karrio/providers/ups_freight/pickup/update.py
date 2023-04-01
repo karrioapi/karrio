@@ -6,10 +6,10 @@ import karrio.providers.ups_freight.pickup.create as pickup
 
 
 def parse_pickup_update_response(
-    response: dict,
+    response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    return pickup.parse_pickup_response(response, settings)
+    return pickup.parse_pickup_response(response.deserialize(), settings)
 
 
 def pickup_update_request(

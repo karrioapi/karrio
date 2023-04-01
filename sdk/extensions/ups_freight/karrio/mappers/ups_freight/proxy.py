@@ -9,7 +9,7 @@ import karrio.mappers.ups_freight.settings as provider_settings
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(
             lib.Serializable(request.serialize(), lib.to_json),
             path="/ship/v1/freight/shipments/ground",
@@ -18,7 +18,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(
             lib.Serializable(request.serialize(), lib.to_json),
             path="/ship/v1/freight/shipments/ground",
@@ -27,7 +27,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(
             lib.Serializable(request.serialize(), lib.to_json),
             path="/ship/v1/freight/pickups",
@@ -36,7 +36,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         requests = request.serialize()
         cancel_response = self.cancel_pickup(requests["cancel"])
         cancel: dict = (
@@ -49,7 +49,7 @@ class Proxy(proxy.Proxy):
 
         return self.schedule_pickup(requests["create"])
 
-    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(
             path="/ship/v1/freight/pickups",
             headers=request.serialize(),
@@ -59,7 +59,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(
-        self, request: lib.Serializable[typing.List[str]]
+        self, request: lib.Serializable
     ) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
         """
         get_tracking makes background requests for each tracking number

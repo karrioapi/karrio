@@ -21,8 +21,6 @@ from purolator_lib.estimate_service_2_1_2 import (
     PaymentInformation,
     PaymentType,
     InternationalInformation,
-    DutyInformation,
-    BusinessRelationship,
     ArrayOfOptionIDValuePair,
     OptionIDValuePair,
 )
@@ -37,8 +35,10 @@ import karrio.providers.purolator.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     estimates = lib.find_element("ShipmentEstimate", response)
     return (
         [_extract_rate(node, settings) for node in estimates],
@@ -88,7 +88,7 @@ def _extract_rate(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[lib.Envelope]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(

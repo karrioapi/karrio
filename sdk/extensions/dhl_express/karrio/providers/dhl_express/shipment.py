@@ -14,8 +14,10 @@ import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     air_way_bill = lib.find_element("AirwayBillNumber", response, first=True)
 
     return (
@@ -61,7 +63,7 @@ def _extract_shipment(
 
 def shipment_request(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
-) -> lib.Serializable[dhl.ShipmentRequest]:
+) -> lib.Serializable:
     if any(settings.account_country_code or "") and (
         payload.shipper.country_code != settings.account_country_code
     ):

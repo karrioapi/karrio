@@ -15,16 +15,18 @@ from karrio.providers.purolator.utils import Settings
 
 def get_shipping_documents_request(
     pin: str, payload: ShipmentRequest, settings: Settings
-) -> Serializable[Envelope]:
+) -> Serializable:
     is_international = payload.shipper.country_code != payload.recipient.country_code
     label_type = PrintType.map(payload.label_type or "PDF").name
-    documents = [SF.concat_str(
-        ("International" if is_international else "Domestic"),
-        "BillOfLading",
-        ("Thermal" if label_type == "ZPL" else ""),
-        separator="",
-        join=True,
-    )]
+    documents = [
+        SF.concat_str(
+            ("International" if is_international else "Domestic"),
+            "BillOfLading",
+            ("Thermal" if label_type == "ZPL" else ""),
+            separator="",
+            join=True,
+        )
+    ]
 
     # TODO: Find what is missing to get customs invoice.
     # if is_international:

@@ -7,9 +7,10 @@ import karrio.providers.dhl_poland.utils as provider_utils
 
 
 def parse_tracking_response(
-    response: typing.Dict[str, lib.Element],
+    _response: lib.Deserializable[typing.Dict[str, lib.Element]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     details = [
         _extract_tracking_details(node, settings)
         for node in response.values()
@@ -65,7 +66,7 @@ def _extract_tracking_details(
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[typing.Dict[str, lib.Envelope]]:
+) -> lib.Serializable:
     requests = {
         tracking_number: lib.create_envelope(
             body_prefix="",

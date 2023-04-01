@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.purolator",
-    version="2023.3",
+    version="2023.4",
     description="Karrio - Purolator Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -16,8 +16,9 @@ import karrio.providers.dicom.utils as provider_utils
 
 
 def parse_rate_response(
-    response: dict, settings: provider_utils.Settings
+    _response: lib.Deserializable[dict], settings: provider_utils.Settings
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     rate_response = (
         lib.to_object(RateResponse, response) if "rates" in response else RateResponse()
@@ -62,7 +63,7 @@ def _extract_details(
 
 def rate_request(
     payload: models.RateRequest, settings: provider_utils.Settings
-) -> lib.Serializable[DicomRateRequest]:
+) -> lib.Serializable:
     packages = lib.to_packages(payload.parcels)
     service = (
         provider_units.Services(payload.services, provider_units.Service).first

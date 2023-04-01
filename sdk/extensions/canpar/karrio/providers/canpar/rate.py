@@ -16,8 +16,10 @@ import karrio.providers.canpar.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     shipment_nodes = lib.find_element("shipment", response)
     rates: typing.List[models.RateDetails] = [
         _extract_rate_details(node, settings) for node in shipment_nodes
@@ -67,7 +69,7 @@ def _extract_rate_details(
 
 def rate_request(
     payload: models.RateRequest, settings: provider_utils.Settings
-) -> lib.Serializable[lib.Envelope]:
+) -> lib.Serializable:
     packages = lib.to_packages(payload.parcels)
     service_type = lib.to_services(payload.services, provider_units.Service).first
     options = lib.to_shipping_options(
@@ -92,7 +94,10 @@ def rate_request(
                 shipment=Shipment(
                     cod_type=options.canpar_cash_on_delivery.state,
                     delivery_address=Address(
-                        address_line_1=lib.text(payload.recipient.street_number, payload.recipient.address_line1),
+                        address_line_1=lib.text(
+                            payload.recipient.street_number,
+                            payload.recipient.address_line1,
+                        ),
                         address_line_2=payload.recipient.address_line2,
                         address_line_3=None,
                         attention=payload.recipient.person_name,
@@ -131,7 +136,9 @@ def rate_request(
                         for pkg in packages
                     ],
                     pickup_address=Address(
-                        address_line_1=lib.text(payload.shipper.street_number, payload.shipper.address_line1),
+                        address_line_1=lib.text(
+                            payload.shipper.street_number, payload.shipper.address_line1
+                        ),
                         address_line_2=payload.shipper.address_line2,
                         address_line_3=None,
                         attention=payload.shipper.person_name,

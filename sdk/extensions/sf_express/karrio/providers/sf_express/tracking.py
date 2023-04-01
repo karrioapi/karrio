@@ -14,11 +14,14 @@ from karrio.core.models import (
 )
 from karrio.providers.sf_express.utils import Settings
 from karrio.providers.sf_express.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_tracking_response(
-    response, settings: Settings
+    _response: lib.Deserializable[dict],
+    settings: Settings,
 ) -> Tuple[List[TrackingDetails], List[Message]]:
+    response = _response.deserialize()
     tracking_details = [
         _extract_detail(DP.to_object(RouteResp, d), settings)
         for d in response.get("msgData", {}).get("routeResps", [])
@@ -28,7 +31,6 @@ def parse_tracking_response(
 
 
 def _extract_detail(detail: RouteResp, settings: Settings) -> TrackingDetails:
-
     return TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
@@ -46,7 +48,7 @@ def _extract_detail(detail: RouteResp, settings: Settings) -> TrackingDetails:
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[Request]:
+def tracking_request(payload: TrackingRequest, _) -> Serializable:
     request = Request(
         requestID="EXP_RECE_SEARCH_ROUTES",
         msgData=SFTrackingRequest(

@@ -7,9 +7,11 @@ import karrio.providers.sendle.utils as provider_utils
 
 
 def parse_tracking_response(
-    response: typing.List[typing.Tuple[str, dict]], settings: provider_utils.Settings,
+    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    errors = [e for ref, e in response if "error" in e]
+    response = _response.deserialize()
+    errors = [e for _, e in response if "error" in e]
     tracking_details = [
         _extract_detail((ref, lib.to_object(sendle.Tracking, d)), settings)
         for ref, d in response
@@ -42,7 +44,11 @@ def _extract_detail(
                 ),
                 description=event.description,
                 location=(
-                    lib.text(event.origin_location, event.destination_location, separator=" to ")
+                    lib.text(
+                        event.origin_location,
+                        event.destination_location,
+                        separator=" to ",
+                    )
                     if (event.origin_location and event.destination_location)
                     else event.location
                 ),
@@ -60,7 +66,7 @@ def _extract_detail(
     )
 
 
-def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable[list]:
+def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
     request = payload.tracking_numbers
 
     return lib.Serializable(request)

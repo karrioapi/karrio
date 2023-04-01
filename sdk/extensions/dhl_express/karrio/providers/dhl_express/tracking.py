@@ -9,9 +9,10 @@ import karrio.providers.dhl_express.units as provider_units
 
 
 def parse_tracking_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     nodes = lib.find_element("AWBInfo", response)
 
     tracking_details = [
@@ -70,7 +71,7 @@ def _extract_tracking(
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[tracking.KnownTrackingRequest]:
+) -> lib.Serializable:
     options = lib.units.Options(payload.options or {})
 
     request = tracking.KnownTrackingRequest(

@@ -49,19 +49,19 @@ class Mapper(BaseMapper):
     def parse_rate_response(
         self, response: Deserializable
     ) -> Tuple[List[RateDetails], List[Message]]:
-        return parse_rate_response(response.deserialize(), self.settings)
+        return parse_rate_response(response, self.settings)
 
     def parse_shipment_response(
         self, response: Deserializable
     ) -> Tuple[ShipmentDetails, List[Message]]:
-        return parse_shipment_response(response.deserialize(), self.settings)
+        return parse_shipment_response(response, self.settings)
 
     def parse_cancel_shipment_response(
         self, response: Deserializable
     ) -> Tuple[ConfirmationDetails, List[Message]]:
-        return parse_shipment_cancel_response(response.deserialize(), self.settings)
+        return parse_shipment_cancel_response(response, self.settings)
 
     def parse_tracking_response(
         self, response: Deserializable
     ) -> Tuple[List[TrackingDetails], List[Message]]:
-        return parse_tracking_response(response.deserialize(), self.settings)
+        return parse_tracking_response(response, self.settings)

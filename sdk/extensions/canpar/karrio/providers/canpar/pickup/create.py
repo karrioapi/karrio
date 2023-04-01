@@ -8,7 +8,7 @@ from canpar_lib.CanparAddonsService import (
 )
 import karrio.lib as lib
 from karrio.core.models import PickupRequest, PickupDetails, Message
-from karrio.core.utils import Envelope, Element, create_envelope, Serializable, DF, XP
+from karrio.core.utils import Element, create_envelope, Serializable, DF, XP
 from karrio.core.units import Packages
 from karrio.providers.canpar.error import parse_error_response
 from karrio.providers.canpar.utils import Settings
@@ -16,11 +16,11 @@ from karrio.providers.canpar.units import WeightUnit
 
 
 def parse_pickup_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[PickupDetails, List[Message]]:
-    pickup_node = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="pickup")), None
-    )
+    response = _response.deserialize()
+    pickup_node = lib.find_element("pickup", response, first=True)
     pickup = XP.to_object(PickupV2, pickup_node)
     details: PickupDetails = PickupDetails(
         carrier_id=settings.carrier_id,
@@ -32,9 +32,7 @@ def parse_pickup_response(
     return details, parse_error_response(response, settings)
 
 
-def pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[Envelope]:
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     packages = Packages(payload.parcels)
     weight = packages.weight.value
     weight_unit = WeightUnit[packages.weight.unit].value if weight is not None else None
@@ -49,7 +47,10 @@ def pickup_request(
                     comments=payload.instruction,
                     created_by=address.person_name,
                     pickup_address=Address(
-                        address_line_1=lib.text(address.street_number, address.address_line1) or "",
+                        address_line_1=lib.text(
+                            address.street_number, address.address_line1
+                        )
+                        or "",
                         address_line_2=address.address_line2,
                         address_line_3=None,
                         attention=address.person_name,

@@ -5,11 +5,14 @@ from karrio.core.models import PickupCancelRequest, ConfirmationDetails, Message
 
 from karrio.providers.usps.error import parse_error_response
 from karrio.providers.usps.utils import Settings
+import karrio.lib as lib
 
 
 def parse_pickup_cancel_response(
-    response: dict, settings: Settings
+    _response: lib.Deserializable[dict],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     details = (
         ConfirmationDetails(
@@ -28,7 +31,6 @@ def parse_pickup_cancel_response(
 def pickup_cancel_request(
     payload: PickupCancelRequest, settings: Settings
 ) -> Serializable:
-
     request = CarrierPickupCancelRequest(
         UserID=settings.username,
         FirmName=payload.address.company_name,

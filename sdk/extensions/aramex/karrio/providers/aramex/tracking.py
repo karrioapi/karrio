@@ -4,7 +4,6 @@ from aramex_lib.array_of_string import ArrayOfstring
 from aramex_lib.tracking import ShipmentTrackingRequest, ClientInfo, TrackingResult
 from karrio.core.utils import (
     create_envelope,
-    Envelope,
     Element,
     Serializable,
     XP,
@@ -18,21 +17,22 @@ from karrio.core.models import (
 )
 from karrio.providers.aramex.utils import Settings
 from karrio.providers.aramex.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_tracking_response(
-    response, settings: Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: Settings,
 ) -> Tuple[List[TrackingDetails], List[Message]]:
+    response = _response.deserialize()
     non_existents = next(
         (
             XP.to_object(ArrayOfstring, n)
-            for n in response.xpath(
-                ".//*[local-name() = $name]", name="NonExistingWaybills"
-            )
+            for n in lib.find_element("NonExistingWaybills", response)
         ),
         ArrayOfstring(),
     )
-    results = response.xpath(".//*[local-name() = $name]", name="TrackingResult")
+    results = lib.find_element("TrackingResult", response)
     tracking_details = [_extract_detail(node, settings) for node in results]
     errors = _extract_errors(non_existents, settings) + parse_error_response(
         response, settings
@@ -71,9 +71,7 @@ def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
     )
 
 
-def tracking_request(
-    payload: TrackingRequest, settings: Settings
-) -> Serializable[Envelope]:
+def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable:
     request = create_envelope(
         body_content=ShipmentTrackingRequest(
             ClientInfo=ClientInfo(

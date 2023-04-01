@@ -19,7 +19,7 @@ from karrio.mappers.canadapost.settings import Settings
 class Proxy(BaseProxy):
     settings: Settings
 
-    def get_rates(self, request: Serializable[mailing_scenario]) -> Deserializable[str]:
+    def get_rates(self, request: Serializable) -> Deserializable:
         response = http(
             url=f"{self.settings.server_url}/rs/ship/price",
             data=request.serialize(),
@@ -35,7 +35,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def get_tracking(self, request: Serializable[List[str]]) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         """
         get_tracking make parallel request for each pin
         """
@@ -61,7 +61,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
 
-    def create_shipment(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def create_shipment(self, request: Serializable) -> Deserializable:
         def _contract_shipment(job: Job):
             return http(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment",
@@ -161,7 +161,7 @@ class Proxy(BaseProxy):
         response = pipeline.apply(process)
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def schedule_pickup(self, request: Serializable) -> Deserializable:
         def _availability(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",
@@ -206,7 +206,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def modify_pickup(self, request: Serializable[dict]) -> Deserializable[str]:
+    def modify_pickup(self, request: Serializable) -> Deserializable:
         def _get_pickup(job: Job) -> str:
             return http(
                 url=f"{self.settings.server_url}{job.data.serialize()}",
@@ -251,7 +251,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def cancel_pickup(self, request: Serializable[str]) -> Deserializable[str]:
+    def cancel_pickup(self, request: Serializable) -> Deserializable:
         pickuprequest = request.serialize()
         response = http(
             url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{pickuprequest}",

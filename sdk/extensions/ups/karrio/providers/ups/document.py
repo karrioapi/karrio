@@ -11,9 +11,10 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_document_upload_response(
-    responses: typing.List[typing.Tuple[str, dict]],
+    _responses: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+    responses = _responses.deserialize()
     raw_documents = [
         (name, result["UploadResponse"]["FormsHistoryDocumentID"])
         for name, result in responses
@@ -59,7 +60,7 @@ def _extract_details(
 def document_upload_request(
     payload: models.DocumentUploadRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[lib.Envelope]:
+) -> lib.Serializable:
     document_files = lib.to_document_files(payload.document_files)
     options = lib.to_upload_options(payload.options)
 

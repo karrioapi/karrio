@@ -32,8 +32,10 @@ from karrio.providers.dhl_express.error import parse_error_response
 
 
 def parse_pickup_response(
-    response, settings: Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: Settings,
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     successful = (
         len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
     )
@@ -64,9 +66,7 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
     )
 
 
-def pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[BookPURequest]:
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     packages = Packages(payload.parcels)
     address = lib.to_address(payload.address)
 

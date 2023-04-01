@@ -28,8 +28,10 @@ import karrio.providers.freightcom.utils as provider_utils
 
 
 def parse_shipping_reply(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     shipping_node = lib.find_element("ShippingReply", response, first=True)
     shipment = (
         _extract_shipment(shipping_node, settings)
@@ -99,7 +101,7 @@ def _extract_shipment(
 def shipping_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[Freightcom]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     service = provider_units.ShippingService.map(payload.service).value_or_key

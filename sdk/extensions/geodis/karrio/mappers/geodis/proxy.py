@@ -9,7 +9,7 @@ import karrio.mappers.geodis.settings as provider_settings
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
-    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable[str]:
+    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         service = "api/zoomclient/recherche-envoi"
         track = lambda data: (
             data["noSuivi"],

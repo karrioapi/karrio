@@ -9,9 +9,10 @@ import karrio.providers.dpdhl.units as provider_units
 
 
 def parse_tracking_response(
-    responses: typing.List[lib.Element],
+    _responses: lib.Deserializable[typing.List[lib.Element]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    responses = _responses.deserialize()
     response_messages = [
         result
         for result in responses

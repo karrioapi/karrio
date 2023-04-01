@@ -9,13 +9,14 @@ from karrio.core.models import (
 from karrio.universal.providers.shipping.utils import ShippingMixinSettings
 from karrio.core.models import ServiceLabel
 from karrio.core.utils.transformer import to_multi_piece_shipment
+import karrio.lib as lib
 
 
 def parse_shipment_response(
-    response: Tuple[List[Tuple[str, ServiceLabel]], List[Message]],
+    _response: lib.Deserializable[Tuple[List[Tuple[str, ServiceLabel]], List[Message]]],
     settings: ShippingMixinSettings,
 ) -> Tuple[ShipmentDetails, List[Message]]:
-    service_labels, errors = response
+    service_labels, errors = _response.deserialize()
     shipment = to_multi_piece_shipment(
         [
             (package_ref, _extract_details(service_label, settings))
@@ -40,5 +41,5 @@ def _extract_details(
     )
 
 
-def shipment_request(payload: ShipmentRequest, _) -> Serializable[ShipmentRequest]:
+def shipment_request(payload: ShipmentRequest, _) -> Serializable:
     return Serializable(payload)

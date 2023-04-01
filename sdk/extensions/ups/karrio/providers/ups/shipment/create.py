@@ -11,8 +11,10 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     details = lib.find_element("ShipmentResults", response, first=True)
     shipment = _extract_shipment(details, settings) if details is not None else None
 
@@ -20,7 +22,8 @@ def parse_shipment_response(
 
 
 def _extract_shipment(
-    node: lib.Element, settings: provider_utils.Settings
+    node: lib.Element,
+    settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(ups.ShipmentResultsType, node)
     label = _process_label(shipment)
@@ -60,7 +63,7 @@ def _process_label(shipment: ups.ShipmentResultsType):
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[ups.ShipmentRequest]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(
@@ -411,7 +414,8 @@ def shipment_request(
                                 ],
                                 InvoiceNumber=customs.invoice,
                                 InvoiceDate=lib.fdatetime(
-                                    customs.invoice_date or time.strftime("%Y-%m-%d", time.localtime()),
+                                    customs.invoice_date
+                                    or time.strftime("%Y-%m-%d", time.localtime()),
                                     current_format="%Y-%m-%d",
                                     output_format="%Y%m%d",
                                 ),

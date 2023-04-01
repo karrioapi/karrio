@@ -10,9 +10,10 @@ import karrio.providers.dpd.units as provider_units
 
 
 def parse_shipment_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     response_shipment = lib.find_element("shipmentResponses", response)
 
     messages = error.parse_error_response(response, settings)

@@ -16,7 +16,6 @@ from karrio.core.units import Packages
 from karrio.core.utils import (
     Serializable,
     create_envelope,
-    Envelope,
     Element,
     Job,
     Pipeline,
@@ -39,8 +38,9 @@ from karrio.providers.ups.utils import Settings, default_request_serializer
 
 
 def parse_pickup_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     reply = XP.find(
         "PickupCreationResponse", response, PickupCreationResponse, first=True
     )
@@ -72,9 +72,7 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
     )
 
 
-def pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[Pipeline]:
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     """
     Create a pickup request
     Steps
@@ -82,7 +80,7 @@ def pickup_request(
         2 - create pickup
     :param payload: PickupRequest
     :param settings: Settings
-    :return: Serializable[Pipeline]
+    :return: Serializable
     """
     request: Pipeline = Pipeline(
         rate=lambda *_: _rate_pickup(payload=payload, settings=settings),
@@ -91,9 +89,7 @@ def pickup_request(
     return Serializable(request)
 
 
-def _create_pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[Envelope]:
+def _create_pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     address = lib.to_address(payload.address)
     packages = Packages(payload.parcels, PackagePresets)
     has_overweight = any(package for package in packages if package.weight.KG > 32)

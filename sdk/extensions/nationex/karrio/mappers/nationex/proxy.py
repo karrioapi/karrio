@@ -9,7 +9,7 @@ import karrio.mappers.nationex.settings as provider_settings
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/Customers/{self.settings.customer_id}/rates",
             data=request.serialize(),
@@ -20,7 +20,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         payload = request.serialize()
         response = lib.request(
             url=f"{self.settings.server_url}/Shipments",
@@ -36,7 +36,7 @@ class Proxy(proxy.Proxy):
             dict(label=payload["label"]),
         )
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/Shipments/{request.serialize()['shipment_id']}",
             trace=self.trace_as("json"),
@@ -46,7 +46,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable[str]:
+    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         track = lambda shipment_id: (
             shipment_id,
             lib.request(

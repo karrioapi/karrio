@@ -10,11 +10,13 @@ from karrio.core.models import (
 from karrio.providers.dhl_express.utils import Settings, reformat_time
 from karrio.providers.dhl_express.error import parse_error_response
 from karrio.providers.dhl_express.units import CountryRegion
+import karrio.lib as lib
 
 
 def parse_pickup_cancel_response(
-    response, settings
+    _response: lib.Deserializable[lib.Element], settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     successful = (
         len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
     )
@@ -34,8 +36,7 @@ def parse_pickup_cancel_response(
 
 def pickup_cancel_request(
     payload: PickupCancelRequest, settings: Settings
-) -> Serializable[CancelPURequest]:
-
+) -> Serializable:
     request = CancelPURequest(
         Request=settings.Request(
             MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)

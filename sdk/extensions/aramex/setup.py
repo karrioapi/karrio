@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.aramex",
-    version="2023.1",
+    version="2023.4",
     description="Karrio - Aramex Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

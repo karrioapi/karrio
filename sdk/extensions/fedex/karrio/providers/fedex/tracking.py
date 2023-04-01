@@ -13,9 +13,10 @@ estimated_date_formats = [
 
 
 def parse_tracking_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     track_details = response.xpath(".//*[local-name() = $name]", name="TrackDetails")
     tracking_details = [
         _extract_tracking(track_detail_node, settings)
@@ -119,7 +120,7 @@ def _parse_date_or_timestamp(
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[fedex.TrackRequest]:
+) -> lib.Serializable:
     options = lib.units.Options(payload.options or {})
 
     request = fedex.TrackRequest(

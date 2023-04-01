@@ -12,9 +12,7 @@ logger = logging.getLogger(__name__)
 class Proxy(BaseProxy):
     settings: Settings
 
-    def _send_request(
-        self, path: str, soapaction: str, request: Serializable[Any]
-    ) -> str:
+    def _send_request(self, path: str, soapaction: str, request: Serializable) -> str:
         return http(
             url=f"{self.settings.server_url}{path}",
             data=request.serialize(),
@@ -27,7 +25,7 @@ class Proxy(BaseProxy):
             },
         )
 
-    def validate_address(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def validate_address(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/EWS/V2/ServiceAvailability/ServiceAvailabilityService.asmx",
             soapaction="http://purolator.com/pws/service/v2/ValidateCityPostalCodeZip",
@@ -36,7 +34,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def get_rates(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def get_rates(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/EWS/V2/Estimating/EstimatingService.asmx",
             soapaction="http://purolator.com/pws/service/v2/GetFullEstimate",
@@ -45,7 +43,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def get_tracking(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/PWS/V1/Tracking/TrackingService.asmx",
             soapaction="http://purolator.com/pws/service/v1/TrackPackagesByPin",
@@ -54,7 +52,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def create_shipment(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def create_shipment(self, request: Serializable) -> Deserializable:
         def process(job: Job):
             if job.data is None:
                 return job.fallback
@@ -84,7 +82,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, XP.to_xml)
 
-    def schedule_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def schedule_pickup(self, request: Serializable) -> Deserializable:
         def process(job: Job):
             if job.data is None:
                 return job.fallback
@@ -103,7 +101,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def modify_pickup(self, request: Serializable[Pipeline]) -> Deserializable[str]:
+    def modify_pickup(self, request: Serializable) -> Deserializable:
         def process(job: Job):
             if job.data is None:
                 return job.fallback
@@ -122,7 +120,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(XP.bundle_xml(response), XP.to_xml)
 
-    def cancel_pickup(self, request: Serializable[Envelope]) -> Deserializable[str]:
+    def cancel_pickup(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/EWS/V1/PickUp/PickUpService.asmx",
             soapaction="http://purolator.com/pws/service/v1/VoidPickUp",

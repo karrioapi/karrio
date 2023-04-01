@@ -1,7 +1,6 @@
 import ups_lib.rate_web_service_schema as ups
 import time
 import typing
-import functools
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.ups.error as provider_error
@@ -10,13 +9,13 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_rate_response(
-    result: typing.Tuple[lib.Element, dict],
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response, ctx = result
+    response = _response.deserialize()
     messages = provider_error.parse_error_response(response, settings)
     rates = [
-        _extract_details(node, settings, ctx)
+        _extract_details(node, settings, _response.ctx)
         for node in lib.find_element("RatedShipment", response)
     ]
 
@@ -92,7 +91,7 @@ def _extract_details(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[ups.RateRequest]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)

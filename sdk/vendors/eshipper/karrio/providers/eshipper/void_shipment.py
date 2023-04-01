@@ -11,11 +11,14 @@ from karrio.core.utils import (
 )
 from karrio.providers.eshipper.error import parse_error_response
 from karrio.providers.eshipper.utils import Settings, standard_request_serializer
+import karrio.lib as lib
 
 
 def parse_shipment_cancel_reply(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     success = len(errors) == 0
     confirmation: ConfirmationDetails = (
@@ -34,8 +37,7 @@ def parse_shipment_cancel_reply(
 
 def shipment_cancel_request(
     payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable[str]:
-
+) -> Serializable:
     request = EShipper(
         username=settings.username,
         password=settings.password,

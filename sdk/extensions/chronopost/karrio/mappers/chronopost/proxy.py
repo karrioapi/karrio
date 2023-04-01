@@ -25,19 +25,17 @@ class Proxy(proxy.Proxy):
         response = self._send_request(request, path="/quickcost-cxf/QuickcostServiceWS")
         return lib.Deserializable(response, lib.to_element)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request, path="/shipping-cxf/ShippingServiceWS")
 
         return lib.Deserializable(response, lib.to_element)
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request, path="/tracking-cxf/TrackingServiceWS")
 
         return lib.Deserializable(response, lib.to_element)
 
-    def get_tracking(
-        self, request: lib.Serializable[typing.List[lib.Envelope]]
-    ) -> lib.Deserializable[str]:
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         def get_tracking(track_request: str):
             return self._send_request(
                 path="/tracking-cxf/TrackingServiceWS",

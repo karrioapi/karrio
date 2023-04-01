@@ -17,9 +17,7 @@ from karrio.core.models import PickupRequest
 from karrio.providers.ups.utils import Settings, default_request_serializer
 
 
-def pickup_rate_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[Envelope]:
+def pickup_rate_request(payload: PickupRequest, settings: Settings) -> Serializable:
     pickup_date = DF.date(payload.pickup_date)
     same_day = pickup_date.date() == datetime.today().date()
 

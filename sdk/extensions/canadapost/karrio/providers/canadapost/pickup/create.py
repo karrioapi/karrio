@@ -21,7 +21,6 @@ from karrio.core.utils import (
     Element,
     Job,
     Pipeline,
-    SF,
     DF,
     NF,
     XP,
@@ -42,38 +41,26 @@ PickupRequestDetails = Union[PickupRequestDetailsType, PickupRequestUpdateDetail
 
 
 def parse_pickup_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = (
+        _response.deserialize() if hasattr(_response, "deserialize") else _response
+    )
     pickup = (
         _extract_pickup_details(response, settings)
-        if len(
-            response.xpath(".//*[local-name() = $name]", name="pickup-request-header")
-        )
-        > 0
+        if len(lib.find_element("pickup-request-header", response)) > 0
         else None
     )
     return pickup, parse_error_response(response, settings)
 
 
 def _extract_pickup_details(response: Element, settings: Settings) -> PickupDetails:
-    header = next(
-        (
-            XP.to_object(PickupRequestHeaderType, elt)
-            for elt in response.xpath(
-                ".//*[local-name() = $name]", name="pickup-request-header"
-            )
-        )
+    header = lib.find_element(
+        "pickup-request-header", response, PickupRequestHeaderType, first=True
     )
-    price = next(
-        (
-            XP.to_object(PickupRequestPriceType, elt)
-            for elt in response.xpath(
-                ".//*[local-name() = $name]", name="pickup-request-price"
-            )
-        ),
-        None,
+    price = lib.find_element(
+        "pickup-request-price", response, PickupRequestPriceType, first=True
     )
-
     price_amount = (
         sum(
             [
@@ -100,9 +87,7 @@ def _extract_pickup_details(response: Element, settings: Settings) -> PickupDeta
     )
 
 
-def pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[Pipeline]:
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     request: Pipeline = Pipeline(
         get_availability=lambda *_: _get_pickup_availability(payload),
         create_pickup=partial(_create_pickup, payload=payload, settings=settings),
@@ -112,7 +97,7 @@ def pickup_request(
 
 def _create_pickup_request(
     payload: PickupRequest, settings: Settings, update: bool = False
-) -> Serializable[PickupRequestDetails]:
+) -> Serializable:
     """
     pickup_request create a serializable typed PickupRequestDetailsType
 
@@ -123,7 +108,7 @@ def _create_pickup_request(
     :param update: bool
     :param payload: PickupRequest
     :param settings: Settings
-    :return: Serializable[PickupRequest]
+    :return: Serializable
     """
     RequestType = PickupRequestUpdateDetailsType if update else PickupRequestDetailsType
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])

@@ -16,7 +16,7 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    def get_tracking(self, request: Serializable) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         response = self._send_request(request, "/expressconnect/track.do")
 
         return Deserializable(response, XP.to_xml)

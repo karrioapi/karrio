@@ -22,19 +22,17 @@ from karrio.core.utils import (
 )
 from karrio.providers.fedex.error import parse_error_response
 from karrio.providers.fedex.utils import Settings
+import karrio.lib as lib
 
 
 def parse_pickup_cancel_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     reply = XP.to_object(
         CancelPickupReply,
-        next(
-            iter(
-                response.xpath(".//*[local-name() = $name]", name="CancelPickupReply")
-            ),
-            None,
-        ),
+        lib.find_element("CancelPickupReply", response, first=True),
     )
     cancellation = ConfirmationDetails(
         carrier_id=settings.carrier_id,
@@ -48,8 +46,7 @@ def parse_pickup_cancel_response(
 
 def pickup_cancel_request(
     payload: PickupCancelRequest, settings: Settings
-) -> Serializable[CancelPickupRequest]:
-
+) -> Serializable:
     request = CancelPickupRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,

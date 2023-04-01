@@ -9,9 +9,10 @@ import karrio.providers.dpd.units as provider_units
 
 
 def parse_tracking_response(
-    responses: typing.List[typing.Tuple[str, lib.Element]],
+    _responses: lib.Deserializable[typing.List[typing.Tuple[str, lib.Element]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    responses = _responses.deserialize()
     response_messages = []
     response_details = []
 
@@ -81,7 +82,7 @@ def _extract_details(
         status=status,
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(tracking_number),
-        )
+        ),
     )
 
 

@@ -14,7 +14,7 @@ from karrio.mappers.dhl_express.settings import Settings
 class Proxy(BaseProxy):
     settings: Settings
 
-    def _send_request(self, request: Serializable[Any]) -> str:
+    def _send_request(self, request: Serializable) -> str:
         return http(
             url=self.settings.server_url,
             data=request.serialize(),
@@ -23,49 +23,37 @@ class Proxy(BaseProxy):
             method="POST",
         )
 
-    def validate_address(
-        self, request: Serializable[RouteRequest]
-    ) -> Deserializable[str]:
+    def validate_address(self, request: Serializable) -> Deserializable:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)
 
-    def get_rates(self, request: Serializable[DCTRequest]) -> Deserializable[str]:
+    def get_rates(self, request: Serializable) -> Deserializable:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)
 
-    def get_tracking(
-        self, request: Serializable[KnownTrackingRequest]
-    ) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)
 
-    def create_shipment(
-        self, request: Serializable[ShipmentRequest]
-    ) -> Deserializable[str]:
+    def create_shipment(self, request: Serializable) -> Deserializable:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)
 
-    def schedule_pickup(
-        self, request: Serializable[BookPURequest]
-    ) -> Deserializable[str]:
+    def schedule_pickup(self, request: Serializable) -> Deserializable:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)
 
-    def modify_pickup(
-        self, request: Serializable[ModifyPURequest]
-    ) -> Deserializable[str]:
+    def modify_pickup(self, request: Serializable) -> Deserializable:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)
 
-    def cancel_pickup(
-        self, request: Serializable[CancelPURequest]
-    ) -> Deserializable[str]:
+    def cancel_pickup(self, request: Serializable) -> Deserializable:
         response = self._send_request(request)
 
         return Deserializable(response, XP.to_xml)

@@ -1,3 +1,4 @@
+import karrio.lib as lib
 from typing import List, Tuple
 from canpar_lib.CanshipBusinessService import (
     voidShipment,
@@ -6,7 +7,6 @@ from canpar_lib.CanshipBusinessService import (
 from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
 from karrio.core.utils import (
     create_envelope,
-    Envelope,
     Element,
     Serializable,
 )
@@ -15,8 +15,9 @@ from karrio.providers.canpar.utils import Settings
 
 
 def parse_shipment_cancel_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     success = len(errors) == 0
     confirmation: ConfirmationDetails = (
@@ -35,8 +36,7 @@ def parse_shipment_cancel_response(
 
 def shipment_cancel_request(
     payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable[Envelope]:
-
+) -> Serializable:
     request = create_envelope(
         body_content=voidShipment(
             request=VoidShipmentRq(

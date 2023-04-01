@@ -8,7 +8,7 @@ import karrio.mappers.laposte.settings as provider_settings
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
-    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         idships = ",".join(request.serialize())
         response = lib.request(
             url=f"{self.settings.server_url}/idships/{idships}?lang={self.settings.lang}",

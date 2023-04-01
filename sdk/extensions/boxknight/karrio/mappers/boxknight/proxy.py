@@ -10,7 +10,7 @@ import karrio.mappers.boxknight.settings as provider_settings
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/rates",
             data=request.serialize(),
@@ -21,7 +21,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         payload = request.serialize()
         result = lib.to_dict(
             lib.request(
@@ -51,7 +51,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response)
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/orders/{request.serialize()['order_id']}",
             trace=self.trace_as("json"),
@@ -61,7 +61,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable[str]:
+    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         track = lambda data: (
             data["order_id"],
             lib.request(

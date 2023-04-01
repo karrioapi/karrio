@@ -10,8 +10,9 @@ import karrio.providers.dhl_poland.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element], settings: provider_utils.Settings
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response, settings)
@@ -50,7 +51,7 @@ def _extract_details(
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[str]:
+) -> lib.Serializable:
     packages = lib.to_packages(
         payload.parcels,
         required=["weight"],
@@ -158,7 +159,9 @@ def shipment_request(
                             name=(shipper.company_name or shipper.person_name),
                             postalCode=(shipper.postal_code or "").replace("-", ""),
                             city=shipper.city,
-                            street=lib.text(shipper.address_line1, shipper.address_line2),
+                            street=lib.text(
+                                shipper.address_line1, shipper.address_line2
+                            ),
                             houseNumber=(shipper.street_number or "N/A"),
                             apartmentNumber=shipper.suite,
                         ),
@@ -203,7 +206,9 @@ def shipment_request(
                             name=(recipient.company_name or recipient.person_name),
                             postalCode=(recipient.postal_code or "").replace("-", ""),
                             city=recipient.city,
-                            street=lib.text(recipient.address_line1, recipient.address_line2),
+                            street=lib.text(
+                                recipient.address_line1, recipient.address_line2
+                            ),
                             houseNumber=(shipper.street_number or "N/A"),
                             apartmentNumber=shipper.suite,
                         ),

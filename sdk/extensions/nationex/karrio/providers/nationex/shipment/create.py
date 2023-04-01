@@ -12,15 +12,15 @@ import karrio.providers.nationex.units as provider_units
 
 
 def parse_shipment_response(
-    response: lib.Deserializable,
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_data = response.deserialize()
+    response_data = _response.deserialize()
     messages = error.parse_error_response(response_data, settings)
     shipment = (
         None
         if any(messages)
-        else _extract_details(response_data, settings, response.ctx)
+        else _extract_details(response_data, settings, _response.ctx)
     )
 
     return shipment, messages

@@ -11,9 +11,10 @@ import karrio.providers.boxknight.units as provider_units
 
 
 def parse_rate_response(
-    response: typing.Union[dict, typing.List[dict]],
+    _response: lib.Deserializable[typing.Union[dict, typing.List[dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     rates = [
         _extract_details(rate, settings)
@@ -42,9 +43,7 @@ def _extract_details(
         total_charge=lib.to_money(rate.price),
         currency=units.Currency.CAD.name,
         transit_days=transit_days if transit_days > 0 else 1,
-        meta=dict(
-            service_name=rate.name,
-        ),
+        meta=dict(service_name=rate.name),
     )
 
 

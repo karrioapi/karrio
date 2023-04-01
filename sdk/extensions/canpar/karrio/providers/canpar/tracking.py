@@ -7,10 +7,11 @@ import karrio.providers.canpar.utils as provider_utils
 
 
 def parse_tracking_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    results = response.xpath(".//*[local-name() = $name]", name="result")
+    response = _response.deserialize()
+    results = lib.find_element("result", response)
     details: typing.List[models.TrackingDetails] = [
         _extract_tracking_details(result, settings) for result in results
     ]
@@ -71,9 +72,7 @@ def _extract_tracking_details(
     )
 
 
-def tracking_request(
-    payload: models.TrackingRequest, _
-) -> lib.Serializable[typing.List[lib.Envelope]]:
+def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
     request = [
         lib.create_envelope(
             body_content=canpar.trackByBarcodeV2(

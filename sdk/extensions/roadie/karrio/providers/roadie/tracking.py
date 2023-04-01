@@ -9,9 +9,10 @@ import karrio.providers.roadie.units as provider_units
 
 
 def parse_tracking_response(
-    response: typing.Union[dict, typing.List[dict]],
+    _response: lib.Deserializable[typing.Union[dict, typing.List[dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     responses = response if isinstance(response, list) else [response]
     messages = error.parse_error_response(responses, settings)
 

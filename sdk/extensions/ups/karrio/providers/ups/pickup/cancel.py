@@ -12,17 +12,17 @@ from karrio.core.models import (
 )
 from karrio.providers.ups.utils import Settings, default_request_serializer
 from karrio.providers.ups.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_pickup_cancel_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     status = XP.to_object(
         CodeDescriptionType,
-        next(
-            iter(response.xpath(".//*[local-name() = $name]", name="ResponseStatus")),
-            None,
-        ),
+        lib.find_element("ResponseStatus", response, first=True),
     )
     success = status is not None and status.Code == "1"
     cancellation = (
@@ -41,8 +41,7 @@ def parse_pickup_cancel_response(
 
 def pickup_cancel_request(
     payload: PickupCancelRequest, settings: Settings
-) -> Serializable[Envelope]:
-
+) -> Serializable:
     request = create_envelope(
         header_content=settings.Security,
         body_content=UPSPickupCancelRequest(

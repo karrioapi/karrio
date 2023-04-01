@@ -7,9 +7,10 @@ import karrio.providers.nationex.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    response: typing.Union[bool, dict],
+    _response: lib.Deserializable[typing.Union[bool, dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     response_data = response if isinstance(response, dict) else {}
     messages = error.parse_error_response(response_data, settings)
     success = any(messages) is False
