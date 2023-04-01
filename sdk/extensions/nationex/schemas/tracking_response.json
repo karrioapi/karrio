@@ -1,0 +1,112 @@
+{
+  "CustomerId": 113300,
+  "ShipmentId": 103882774,
+  "ExpeditionDate": "2021-03-30",
+  "TotalParcels": 2,
+  "TotalWeight": 5.5,
+  "ShipmentStatus": "Creation",
+  "ShipmentStatusFr": "Données reçues",
+  "ShipmentStatusEn": "Data received",
+  "StatusHistories": [
+    {
+      "ShipmentStatus": "DataReceived",
+      "ShipmentStatusFr": "Données reçues",
+      "ShipmentStatusEn": "Data received",
+      "StatusDate": "2019-08-24T14:15:22Z",
+      "LastLocation": "St-Hubert"
+    }
+  ],
+  "ShipmentType": "Delivery",
+  "ReferenceNumber": "CX4335",
+  "Note": "If no answer leave under the stairs",
+  "BillingAccount": 165556,
+  "Sender": {
+    "Contact": "Sonia",
+    "AccountNumber": "NC33233",
+    "AccountName": "Coffee Shop",
+    "Address1": "433 Apple street",
+    "Address2": "3rd floor",
+    "PostalCode": "H2H2S2",
+    "City": "Montreal",
+    "ProvinceState": "QC",
+    "Phone": "555123456",
+    "SmsNotification": true,
+    "EmailNotification": true,
+    "NoCivic": "880",
+    "Suite": "400",
+    "StreetName": "Rue Claudia",
+    "Email": "example@gmail.com"
+  },
+  "Destination": {
+    "Contact": "Sonia",
+    "AccountNumber": "NC33233",
+    "AccountName": "Coffee Shop",
+    "Address1": "433 Apple street",
+    "Address2": "3rd floor",
+    "PostalCode": "H2H2S2",
+    "City": "Montreal",
+    "ProvinceState": "QC",
+    "Phone": "4183776671",
+    "SmsNotification": true,
+    "EmailNotification": true,
+    "NoCivic": "880",
+    "Suite": "400",
+    "StreetName": "Rue Claudia",
+    "Email": "example@gmail.com"
+  },
+  "Accessory": {
+    "InsuranceAmount": 0,
+    "FrozenProtection": true,
+    "DangerousGoods": true,
+    "SNR": true
+  },
+  "Parcels": [
+    {
+      "ParcelId": 50133944801,
+      "ParcelNumber": 0,
+      "ReferenceNumber": "JDI394",
+      "NCV": true,
+      "Weight": 0,
+      "Status": "Creation",
+      "StatusDescriptionEn": "In transit",
+      "StatusDescriptionFr": "En transit",
+      "EstimatedDeliveryDate": "2021-04-16",
+      "EstimatedDeliveryTime": "13:15",
+      "EstimatedDeliveryTimeFr": "Entre 12:45 et 13:45",
+      "EstimatedDeliveryTimeEn": "Between 12:45 and 13:45",
+      "EstimatedPercentageBeforeDelivery": 88,
+      "Dimensions": {
+        "Height": 6.5,
+        "Length": 12,
+        "Width": 8,
+        "Cubing": 2.6
+      },
+      "History": [
+        {
+          "ParcelHistoryId": 3049373748,
+          "ProcessedDate": "2021-03-31 13:31:00",
+          "ExceptionId": 5,
+          "CityDepot": "Blainville",
+          "DescriptionFr": "Destinataire indisponible - Tentative de livraison le jour ouvrable suivant",
+          "DescriptionEn": "Unavailable consignee - Delivery attempt on next business day",
+          "PhotoId": 18840452,
+          "SignatureId": 0,
+          "Geocoding": {
+            "Longitude": -78.098725,
+            "Latitude": 48.575377
+          }
+        }
+      ]
+    }
+  ],
+  "ConsolId": 103882771,
+  "IsInvoiced": false,
+  "IsScanned": false,
+  "IsConsolidated": false,
+  "Photos": [
+    {
+      "Id": 18840452,
+      "Data": "iVBORw0KGgoAAAANSUhEUgAAAZsAAACBCAYAAAAWohexAAAEtUlEQVR4Xu3VwQkAMAwDsXj/pTPF /dQBGhCG23kECBAgQCAWWPy/7wkQIECAwImNERAgQIBALiA2ObEDBAgQICA2NkCAAAECuYDY5MQO ECBAgIDY2AABAgQI5AJikxM7QIAAAQJiYwMECBAgkAuITU7sAAECBAiIjQ0QIECAQC4gNjmxAwQI ECAgNjZAgAABArmA2OTEDhAgQICA2NgAAQIECOQCYpMTO0CAAAECYmMDBAgQIJALiE1O7AABAgQI iI0NECBAgEAuIDY5sQMECBAgIDY2QIAAAQK5gNjkxA4QIECAgNjYAAECBAjkAmKTEztAgAABAmJj AwQIECCQC4hNTuwAAQIECIiNDRAgQIBALiA2ObEDBAgQICA2NkCAAAECuYDY5MQOECBAgIDY2AAB AgQI5AJikxM7QIAAAQJiYwMECBAgkAuITU7sAAECBAiIjQ0QIECAQC4gNjmxAwQIECAgNjZAgAAB ArmA2OTEDhAgQICA2NgAAQIECOQCYpMTO0CAAAECYmMDBAgQIJALiE1O7AABAgQIiI0NECBAgEAu IDY5sQMECBAgIDY2QIAAAQK5gNjkxA4QIECAgNjYAAECBAjkAmKTEztAgAABAmJjAwQIECCQC4hN TuwAAQIECIiNDRAgQIBALiA2ObEDBAgQICA2NkCAAAECuYDY5MQOECBAgIDY2AABAgQI5AJikxM7 QIAAAQJiYwMECBAgkAuITU7sAAECBAiIjQ0QIECAQC4gNjmxAwQIECAgNjZAgAABArmA2OTEDhAg QICA2NgAAQIECOQCYpMTO0CAAAECYmMDBAgQIJALiE1O7AABAgQIiI0NECBAgEAuIDY5sQMECBAg IDY2QIAAAQK5gNjkxA4QIECAgNjYAAECBAjkAmKTEztAgAABAmJjAwQIECCQC4hNTuwAAQIECIiN DRAgQIBALiA2ObEDBAgQICA2NkCAAAECuYDY5MQOECBAgIDY2AABAgQI5AJikxM7QIAAAQJiYwME CBAgkAuITU7sAAECBAiIjQ0QIECAQC4gNjmxAwQIECAgNjZAgAABArmA2OTEDhAgQICA2NgAAQIE COQCYpMTO0CAAAECYmMDBAgQIJALiE1O7AABAgQIiI0NECBAgEAuIDY5sQMECBAgIDY2QIAAAQK5 gNjkxA4QIECAgNjYAAECBAjkAmKTEztAgAABAmJjAwQIECCQC4hNTuwAAQIECIiNDRAgQIBALiA2 ObEDBAgQICA2NkCAAAECuYDY5MQOECBAgIDY2AABAgQI5AJikxM7QIAAAQJiYwMECBAgkAuITU7s AAECBAiIjQ0QIECAQC4gNjmxAwQIECAgNjZAgAABArmA2OTEDhAgQICA2NgAAQIECOQCYpMTO0CA AAECYmMDBAgQIJALiE1O7AABAgQIiI0NECBAgEAuIDY5sQMECBAgIDY2QIAAAQK5gNjkxA4QIECA gNjYAAECBAjkAmKTEztAgAABAmJjAwQIECCQC4hNTuwAAQIECIiNDRAgQIBALiA2ObEDBAgQICA2 NkCAAAECuYDY5MQOECBAgIDY2AABAgQI5AJikxM7QIAAAQJiYwMECBAgkAs8wZUAgqa0VWgAAAAA SUVORK5CYII="
+    }
+  ]
+}

@@ -368,7 +368,11 @@ def to_shipping_options(
     if initializer is not None:
         return initializer(options, **kwargs)
 
-    return units.ShippingOptions(options)
+    return units.ShippingOptions(
+        options,
+        option_type=kwargs.get("option_type"),
+        items_filter=kwargs.get("items_filter"),
+    )
 
 
 def to_services(

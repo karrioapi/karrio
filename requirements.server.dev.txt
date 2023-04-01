@@ -15,7 +15,7 @@ django-two-factor-auth==1.15.0
 # -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
-# -e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
@@ -24,6 +24,7 @@ django-two-factor-auth==1.15.0
 -e ./sdk/extensions/fedex
 -e ./sdk/extensions/geodis
 -e ./sdk/extensions/laposte
+-e ./sdk/extensions/nationex
 # -e ./sdk/extensions/purolator
 -e ./sdk/extensions/roadie
 # -e ./sdk/extensions/royalmail
@@ -50,25 +51,27 @@ karrio.aramex
 karrio.australiapost
 # karrio.boxknight
 karrio.canadapost
-karrio.canpar
+# karrio.canpar
 karrio.chronopost
-karrio.dhl-express
+# karrio.dhl-express
 karrio.dhl-poland
 karrio.dhl-universal
 karrio.dicom
 karrio.dpd
-karrio.dpdhl
-karrio.fedex
+# karrio.dpdhl
+# karrio.fedex
 # karrio.geodis
+# karrio.laposte
+# karrio.nationex
 karrio.purolator
 karrio.royalmail
 karrio.sendle
 karrio.sf-express
 karrio.tnt
-karrio.ups
+# karrio.ups
 karrio.ups-freight
-karrio.usps
-karrio.usps-international
+# karrio.usps
+# karrio.usps-international
 karrio.yanwen
 karrio.yunexpress
 karrio.easypost

@@ -1,0 +1,65 @@
+{
+  "CustomerId": 113300,
+  "ShipmentId": -1,
+  "ExpeditionDate": "2021-03-30",
+  "ShipmentType": "Delivery",
+  "TotalParcels": 2,
+  "TotalWeight": 5.5,
+  "ReferenceNumber": "CX4335",
+  "CustomBarcode": "string",
+  "Note": "If no answer leave under the stairs",
+  "BillingAccount": 165556,
+  "Sender": {
+    "Contact": "Sonia",
+    "AccountNumber": "NC33233",
+    "AccountName": "Coffee Shop",
+    "Address1": "433 Apple street",
+    "Address2": "3rd floor",
+    "PostalCode": "H2H2S2",
+    "City": "Montreal",
+    "ProvinceState": "QC",
+    "Phone": "555123456",
+    "SmsNotification": true,
+    "EmailNotification": true,
+    "NoCivic": "880",
+    "Suite": "400",
+    "StreetName": "Rue Claudia",
+    "Email": "example@gmail.com"
+  },
+  "Destination": {
+    "Contact": "Sonia",
+    "AccountNumber": "NC33233",
+    "AccountName": "Coffee Shop",
+    "Address1": "433 Apple street",
+    "Address2": "3rd floor",
+    "PostalCode": "H2H2S2",
+    "City": "Montreal",
+    "ProvinceState": "QC",
+    "Phone": "4183776671",
+    "SmsNotification": true,
+    "EmailNotification": true,
+    "NoCivic": "880",
+    "Suite": "400",
+    "StreetName": "Rue Claudia",
+    "Email": "example@gmail.com"
+  },
+  "Accessory": {
+    "InsuranceAmount": 0.0,
+    "FrozenProtection": true,
+    "DangerousGoods": true,
+    "SNR": true
+  },
+  "Parcels": [
+    {
+      "NCV": true,
+      "Weight": 15.5,
+      "Dimensions": {
+        "Height": 6.5,
+        "Length": 12,
+        "Width": 8,
+        "Cubing": 2.6
+      }
+    }
+  ],
+  "UnitsOfMeasurement": "LI"
+}
