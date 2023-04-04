@@ -227,6 +227,7 @@ ParsedTrackingResponse = [
                 "package_weight_unit": "KG",
                 "shipping_date": "2009-08-28",
             },
+            "status": "delivered",
             "tracking_number": "3180831640",
         },
         {
@@ -247,6 +248,7 @@ ParsedTrackingResponse = [
                 "package_weight_unit": "KG",
                 "shipping_date": "2009-08-26",
             },
+            "status": "in_transit",
             "tracking_number": "7740842550",
         },
         {
@@ -275,6 +277,7 @@ ParsedTrackingResponse = [
                 "package_weight_unit": "KG",
                 "shipping_date": "2009-08-13",
             },
+            "status": "in_transit",
             "tracking_number": "1815115363",
         },
     ],
@@ -297,6 +300,7 @@ ParsedInTransitTrackingResponse = [
                     "time": "09:42",
                 }
             ],
+            "status": "in_transit",
             "tracking_number": "9053283201",
             "info": {
                 "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=9053283201",

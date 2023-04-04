@@ -39,11 +39,20 @@ def _extract_tracking(
         "ShipmentEvent", info, dhl.ShipmentEvent
     )
     delivered = any(e.ServiceEvent.EventCode == "OK" for e in events)
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if events[-1].ServiceEvent.EventCode in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=tracking_number,
+        status=status,
         events=[
             models.TrackingEvent(
                 date=lib.fdate(e.Date),

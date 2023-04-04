@@ -617,6 +617,16 @@ def shipping_options_initializer(
     )
 
 
+class TrackingStatus(lib.Enum):
+    on_hold = ["BA", "HP", "OH"]
+    delivered = ["OK"]
+    in_transit = [""]
+    delivery_failed = ["CM", "DM", "DP", "DS", "NH", "RD", "RT", "SS", "ST"]
+    delivery_delayed = ["IR", "MD", "TD", "UD"]
+    out_for_delivery = ["WC"]
+    ready_for_pickup = [""]
+
+
 class CountryRegion(lib.Enum):
     AD = "EU"
     AE = "AP"
