@@ -19,3 +19,7 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return "https://api-eu.dhl.com"
+
+    @property
+    def tracking_url(self):
+        return "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"

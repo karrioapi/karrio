@@ -624,7 +624,6 @@ class TrackingStatus(lib.Enum):
     delivery_failed = ["CM", "DM", "DP", "DS", "NH", "RD", "RT", "SS", "ST"]
     delivery_delayed = ["IR", "MD", "TD", "UD"]
     out_for_delivery = ["WC"]
-    ready_for_pickup = [""]
 
 
 class CountryRegion(lib.Enum):
