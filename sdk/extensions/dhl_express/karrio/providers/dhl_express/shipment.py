@@ -84,7 +84,6 @@ def shipment_request(
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
-
     package_type = provider_units.PackageType.map(packages.package_type).value
     label_format, label_template = provider_units.LabelType[
         payload.label_type or "PDF_6x4"
@@ -100,7 +99,8 @@ def shipment_request(
         weight_unit=weight_unit.value,
     )
     is_document = all(p.parcel.is_document for p in packages)
-    is_dutiable = is_document is False and customs.duty is not None
+    is_international = shipper.country_code != recipient.country_code
+    is_dutiable = is_international and not is_document
     options = lib.to_shipping_options(
         payload.options,
         is_dutiable=is_dutiable,
@@ -112,6 +112,11 @@ def shipment_request(
     duty = customs.duty or models.Duty(paid_by="sender")
     content = packages[0].parcel.content or customs.content_description or "N/A"
     reference = payload.reference or getattr(payload, "id", None)
+    currency = (
+        options.currency.state
+        or units.CountryCurrency.map(payload.shipper.country_code).value
+        or settings.default_currency
+    )
 
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
@@ -144,7 +149,7 @@ def shipment_request(
                 PhoneNumber=recipient.phone_number or "0000",
                 Email=recipient.email,
             ),
-            Suburb=recipient.suburb,
+            Suburb=None,
             StreetName=recipient.street_name,
             BuildingName=None,
             StreetNumber=recipient.street_number,
@@ -167,16 +172,14 @@ def shipment_request(
                 DeclaredValue=(
                     duty.declared_value or options.declared_value.state or 1.0
                 ),
-                DeclaredCurrency=(
-                    duty.currency or options.currency.state or settings.default_currency
-                ),
+                DeclaredCurrency=(duty.currency or currency),
                 ScheduleB=None,
                 ExportLicense=customs.options.license_number.state,
                 ShipperEIN=(
                     customs.options.ein.state or customs.duty_billing_address.tax_id
                 ),
                 ShipperIDType=None,
-                TermsOfTrade=customs.incoterm,
+                TermsOfTrade=customs.incoterm or "DDP",
                 CommerceLicensed=None,
                 Filing=None,
             )
@@ -359,7 +362,7 @@ def shipment_request(
             DimensionUnit=provider_units.DimensionUnit[dim_unit.name].value,
             PackageType=package_type,
             IsDutiable=("Y" if is_dutiable else "N"),
-            CurrencyCode=options.currency.state or settings.default_currency,
+            CurrencyCode=currency,
             CustData=getattr(payload, "id", None),
             ShipmentCharges=(
                 options.cash_on_delivery.state
@@ -391,7 +394,7 @@ def shipment_request(
                 PhoneNumber=shipper.phone_number or "0000",
                 Email=shipper.email,
             ),
-            Suburb=shipper.suburb,
+            Suburb=None,
             StreetName=shipper.street_name,
             BuildingName=None,
             StreetNumber=shipper.street_number,
@@ -403,9 +406,7 @@ def shipment_request(
                 SpecialServiceType=svc.code,
                 ChargeValue=lib.to_money(svc.state),
                 CurrencyCode=(
-                    options.currency.state or settings.default_currency
-                    if lib.to_money(svc.state) is not None
-                    else None
+                    currency if lib.to_money(svc.state) is not None else None
                 ),
             )
             for _, svc in options.items()

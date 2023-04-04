@@ -1,21 +1,13 @@
-from typing import Any
-from karrio.core.utils import XP, request as http, Serializable, Deserializable
+import karrio.lib as lib
 from karrio.api.proxy import Proxy as BaseProxy
-from dhl_express_lib.dct_req_global_2_0 import DCTRequest
-from dhl_express_lib.tracking_request_known_1_0 import KnownTrackingRequest
-from dhl_express_lib.ship_val_global_req_10_0 import ShipmentRequest
-from dhl_express_lib.book_pickup_global_req_3_0 import BookPURequest
-from dhl_express_lib.modify_pickup_global_req_3_0 import ModifyPURequest
-from dhl_express_lib.cancel_pickup_global_req_3_0 import CancelPURequest
-from dhl_express_lib.routing_global_req_2_0 import RouteRequest
 from karrio.mappers.dhl_express.settings import Settings
 
 
 class Proxy(BaseProxy):
     settings: Settings
 
-    def _send_request(self, request: Serializable) -> str:
-        return http(
+    def _send_request(self, request: lib.Serializable) -> str:
+        return lib.request(
             url=self.settings.server_url,
             data=request.serialize(),
             headers={"Content-Type": "application/xml"},
@@ -23,37 +15,37 @@ class Proxy(BaseProxy):
             method="POST",
         )
 
-    def validate_address(self, request: Serializable) -> Deserializable:
+    def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def get_rates(self, request: Serializable) -> Deserializable:
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
-    def get_tracking(self, request: Serializable) -> Deserializable:
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def create_shipment(self, request: Serializable) -> Deserializable:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def schedule_pickup(self, request: Serializable) -> Deserializable:
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def modify_pickup(self, request: Serializable) -> Deserializable:
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)
 
-    def cancel_pickup(self, request: Serializable) -> Deserializable:
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(request)
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(response, lib.to_element)

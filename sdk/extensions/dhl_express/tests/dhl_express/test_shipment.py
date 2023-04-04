@@ -25,7 +25,7 @@ class TestDHLShipment(unittest.TestCase):
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
-    @patch("karrio.mappers.dhl_express.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.dhl_express.proxy.lib.request", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -33,7 +33,7 @@ class TestDHLShipment(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_shipment_error(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentParsingError
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -43,7 +43,7 @@ class TestDHLShipment(unittest.TestCase):
             )
 
     def test_shipment_missing_args_error_parsing(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentMissingArgsError
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -53,7 +53,7 @@ class TestDHLShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseXml
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()

@@ -29,14 +29,14 @@ class TestDHLAddressValidation(unittest.TestCase):
         )
 
     def test_validate_address(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = "<a></a>"
             karrio.Address.validate(self.AddressValidationRequest).from_(gateway)
 
             self.assertEqual(mock.call_args[1]["url"], gateway.settings.server_url)
 
     def test_parse_address_validation_response(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = AddressValidationResponseXML
             parsed_response = (
                 karrio.Address.validate(self.AddressValidationRequest)

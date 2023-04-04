@@ -27,7 +27,7 @@ class TestDHLTracking(unittest.TestCase):
             TrackingRequestXML,
         )
 
-    @patch("karrio.mappers.dhl_express.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.dhl_express.proxy.lib.request", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -35,7 +35,7 @@ class TestDHLTracking(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_tracking_auth_error_parsing(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = AuthError
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -43,7 +43,7 @@ class TestDHLTracking(unittest.TestCase):
             self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -52,7 +52,7 @@ class TestDHLTracking(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_in_transit_tracking_response(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = IntransitTrackingResponseXML
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -63,7 +63,7 @@ class TestDHLTracking(unittest.TestCase):
             )
 
     def test_tracking_single_not_found_parsing(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = TrackingSingleNotFound
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

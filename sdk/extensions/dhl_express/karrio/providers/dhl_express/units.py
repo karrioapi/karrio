@@ -267,38 +267,39 @@ class PackageType(lib.Flag):
 
 class ShippingService(lib.Enum):
     dhl_logistics_services = "0"
-    dhl_domestic_express_12_00_doc = "1"
-    dhl_b2c_doc = "2"
-    dhl_b2c_nondoc = "3"
+    dhl_domestic_express_12_00 = "1"
+    dhl_express_choice = "2"
+    dhl_express_choice_nondoc = "3"
     dhl_jetline = "4"
     dhl_sprintline = "5"
-    dhl_express_easy_doc = "7"
+    dhl_air_capacity_sales = "6"
+    dhl_express_easy = "7"
     dhl_express_easy_nondoc = "8"
-    dhl_europack_doc = "9"
-    dhl_auto_reversals = "A"
-    dhl_breakbulk_express_doc = "B"
-    dhl_medical_express_doc = "C"
+    dhl_parcel_product = "9"
+    dhl_accounting = "A"
+    dhl_breakbulk_express = "B"
+    dhl_medical_express = "C"
     dhl_express_worldwide_doc = "D"
     dhl_express_9_00_nondoc = "E"
     dhl_freight_worldwide_nondoc = "F"
-    dhl_domestic_economy_select_doc = "G"
+    dhl_economy_select_domestic = "G"
     dhl_economy_select_nondoc = "H"
-    dhl_domestic_express_9_00_doc = "I"
+    dhl_express_domestic_9_00 = "I"
     dhl_jumbo_box_nondoc = "J"
-    dhl_express_9_00_doc = "K"
-    dhl_express_10_30_doc = "L"
+    dhl_express_9_00 = "K"
+    dhl_express_10_30 = "L"
     dhl_express_10_30_nondoc = "M"
-    dhl_domestic_express_doc = "N"
-    dhl_domestic_express_10_30_doc = "O"
+    dhl_express_domestic = "N"
+    dhl_express_domestic_10_30 = "O"
     dhl_express_worldwide_nondoc = "P"
     dhl_medical_express_nondoc = "Q"
-    dhl_globalmail_business_doc = "R"
-    dhl_same_day_doc = "S"
-    dhl_express_12_00_doc = "T"
-    dhl_express_worldwide_ecx_doc = "U"
-    dhl_europack_nondoc = "V"
-    dhl_economy_select_doc = "W"
-    dhl_express_envelope_doc = "X"
+    dhl_globalmail = "R"
+    dhl_same_day = "S"
+    dhl_express_12_00 = "T"
+    dhl_express_worldwide = "U"
+    dhl_parcel_product_nondoc = "V"
+    dhl_economy_select = "W"
+    dhl_express_envelope = "X"
     dhl_express_12_00_nondoc = "Y"
     dhl_destination_charges = "Z"
     dhl_express_all = None
@@ -571,8 +572,7 @@ class ShippingOption(lib.Enum):
 
 def shipping_options_initializer(
     options: dict,
-    is_international: bool = True,
-    is_dutiable: bool = True,
+    is_dutiable: bool = False,
     package_options: lib.units.Options = None,
     shipper_country: str = "",
 ) -> lib.units.Options:
@@ -582,8 +582,7 @@ def shipping_options_initializer(
     _options = options.copy()
 
     if (
-        is_international
-        and is_dutiable
+        is_dutiable
         and ShippingOption.dhl_paperless_trade.name not in options
         and shipper_country not in UNSUPPORTED_PAPERLESS_COUNTRIES
     ):
