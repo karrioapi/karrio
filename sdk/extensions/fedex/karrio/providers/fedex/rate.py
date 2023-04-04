@@ -34,14 +34,15 @@ def parse_rate_response(
     response = _response.deserialize()
     replys = lib.find_element("RateReplyDetails", response)
     rates: typing.List[models.RateDetails] = [
-        _extract_rate(detail_node, settings) for detail_node in replys
+        _extract_details(detail_node, settings, _response.ctx) for detail_node in replys
     ]
     return rates, provider_error.parse_error_response(response, settings)
 
 
-def _extract_rate(
+def _extract_details(
     detail_node: lib.Element,
     settings: provider_utils.Settings,
+    ctx: dict,
 ) -> typing.Optional[models.RateDetails]:
     rate: RateReplyDetail = lib.to_object(RateReplyDetail, detail_node)
     service = provider_units.ServiceType.map(rate.ServiceType)
@@ -70,8 +71,9 @@ def _extract_rate(
         ),
     ]
     estimated_delivery = lib.to_date(rate.DeliveryTimestamp)
+    shipping_date = lib.to_date(ctx.get("shipment_date") or datetime.now())
     transit = (
-        ((estimated_delivery.date() - datetime.today().date()).days or None)
+        ((estimated_delivery.date() - shipping_date.date()).days or None)
         if estimated_delivery is not None
         else None
     )
@@ -122,6 +124,7 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
+    shipment_date = lib.to_date(options.shipment_date.state or datetime.now())
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
@@ -137,7 +140,7 @@ def rate_request(
         ),
         ConsolidationKey=None,
         RequestedShipment=RequestedShipment(
-            ShipTimestamp=lib.to_date(options.shipment_date.state or datetime.now()),
+            ShipTimestamp=shipment_date,
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
             PackagingType=provider_units.PackagingType.map(
@@ -300,7 +303,11 @@ def rate_request(
         ),
     )
 
-    return lib.Serializable(request, _request_serializer)
+    return lib.Serializable(
+        request,
+        _request_serializer,
+        dict(shipment_date=shipment_date),
+    )
 
 
 def _request_serializer(request: FedexRateRequest) -> str:

@@ -25,7 +25,7 @@ class Proxy(proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/rate", request)
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/track", request)
