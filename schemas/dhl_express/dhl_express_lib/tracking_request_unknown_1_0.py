@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Tue Apr  4 08:40:36 2023 by generateDS.py version 2.41.3.
+# Generated Tue Apr  4 08:40:35 2023 by generateDS.py version 2.41.3.
 # Python 3.10.6 (main, Mar 10 2023, 10:55:28) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './dhl_express_lib/tracking_response.py')
+#   ('-o', './dhl_express_lib/tracking_request_unknown_1_0.py')
 #
 # Command line arguments:
-#   ./schemas/TrackingResponse.xsd
+#   ./schemas/TrackingRequestUnknown-1.0.xsd
 #
 # Command line:
-#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dhl_express_lib/tracking_response.py" ./schemas/TrackingResponse.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./dhl_express_lib/tracking_request_unknown_1_0.py" ./schemas/TrackingRequestUnknown-1.0.xsd
 #
 # Current working directory (os.getcwd()):
 #   dhl_express
@@ -1675,68 +1675,88 @@ class YesNo(str, Enum):
     N='N'
 
 
-class TrackingResponse(GeneratedsSuper):
-    """TrackingResponse -- Comment describing your root element
+class UnknownTrackingRequest(GeneratedsSuper):
+    """UnknownTrackingRequest -- Comment describing your root element
     
     """
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, Response=None, AWBInfo=None, Fault=None, LanguageCode=None, gds_collector_=None, **kwargs_):
+    def __init__(self, schemaVersion=1.0, Request=None, LanguageCode=None, AccountNumber=None, ShipperReference=None, ShipmentDate=None, CountryCode=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
         self.parent_object_ = kwargs_.get('parent_object_')
         self.ns_prefix_ = None
-        self.Response = Response
-        self.Response_nsprefix_ = None
-        if AWBInfo is None:
-            self.AWBInfo = []
-        else:
-            self.AWBInfo = AWBInfo
-        self.AWBInfo_nsprefix_ = None
-        self.Fault = Fault
-        self.Fault_nsprefix_ = None
+        self.schemaVersion = _cast(float, schemaVersion)
+        self.schemaVersion_nsprefix_ = None
+        self.Request = Request
+        self.Request_nsprefix_ = None
         self.LanguageCode = LanguageCode
         self.validate_LanguageCode(self.LanguageCode)
         self.LanguageCode_nsprefix_ = None
+        self.AccountNumber = AccountNumber
+        self.validate_AccountNumber(self.AccountNumber)
+        self.AccountNumber_nsprefix_ = None
+        if ShipperReference is None:
+            self.ShipperReference = []
+        else:
+            self.ShipperReference = ShipperReference
+        self.ShipperReference_nsprefix_ = None
+        self.ShipmentDate = ShipmentDate
+        self.ShipmentDate_nsprefix_ = None
+        self.CountryCode = CountryCode
+        self.validate_CountryCode(self.CountryCode)
+        self.CountryCode_nsprefix_ = None
     def factory(*args_, **kwargs_):
         if CurrentSubclassModule_ is not None:
             subclass = getSubclassFromModule_(
-                CurrentSubclassModule_, TrackingResponse)
+                CurrentSubclassModule_, UnknownTrackingRequest)
             if subclass is not None:
                 return subclass(*args_, **kwargs_)
-        if TrackingResponse.subclass:
-            return TrackingResponse.subclass(*args_, **kwargs_)
+        if UnknownTrackingRequest.subclass:
+            return UnknownTrackingRequest.subclass(*args_, **kwargs_)
         else:
-            return TrackingResponse(*args_, **kwargs_)
+            return UnknownTrackingRequest(*args_, **kwargs_)
     factory = staticmethod(factory)
     def get_ns_prefix_(self):
         return self.ns_prefix_
     def set_ns_prefix_(self, ns_prefix):
         self.ns_prefix_ = ns_prefix
-    def get_Response(self):
-        return self.Response
-    def set_Response(self, Response):
-        self.Response = Response
-    def get_AWBInfo(self):
-        return self.AWBInfo
-    def set_AWBInfo(self, AWBInfo):
-        self.AWBInfo = AWBInfo
-    def add_AWBInfo(self, value):
-        self.AWBInfo.append(value)
-    def insert_AWBInfo_at(self, index, value):
-        self.AWBInfo.insert(index, value)
-    def replace_AWBInfo_at(self, index, value):
-        self.AWBInfo[index] = value
-    def get_Fault(self):
-        return self.Fault
-    def set_Fault(self, Fault):
-        self.Fault = Fault
+    def get_Request(self):
+        return self.Request
+    def set_Request(self, Request):
+        self.Request = Request
     def get_LanguageCode(self):
         return self.LanguageCode
     def set_LanguageCode(self, LanguageCode):
         self.LanguageCode = LanguageCode
+    def get_AccountNumber(self):
+        return self.AccountNumber
+    def set_AccountNumber(self, AccountNumber):
+        self.AccountNumber = AccountNumber
+    def get_ShipperReference(self):
+        return self.ShipperReference
+    def set_ShipperReference(self, ShipperReference):
+        self.ShipperReference = ShipperReference
+    def add_ShipperReference(self, value):
+        self.ShipperReference.append(value)
+    def insert_ShipperReference_at(self, index, value):
+        self.ShipperReference.insert(index, value)
+    def replace_ShipperReference_at(self, index, value):
+        self.ShipperReference[index] = value
+    def get_ShipmentDate(self):
+        return self.ShipmentDate
+    def set_ShipmentDate(self, ShipmentDate):
+        self.ShipmentDate = ShipmentDate
+    def get_CountryCode(self):
+        return self.CountryCode
+    def set_CountryCode(self, CountryCode):
+        self.CountryCode = CountryCode
+    def get_schemaVersion(self):
+        return self.schemaVersion
+    def set_schemaVersion(self, schemaVersion):
+        self.schemaVersion = schemaVersion
     def validate_LanguageCode(self, value):
         result = True
         # Validate type LanguageCode, a restriction on xsd:string.
@@ -1747,59 +1767,101 @@ class TrackingResponse(GeneratedsSuper):
                 return False
             pass
         return result
+    def validate_AccountNumber(self, value):
+        result = True
+        # Validate type AccountNumber, a restriction on xsd:positiveInteger.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, int):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (int)' % {"value": value, "lineno": lineno, })
+                return False
+            if value < 100000000:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minInclusive restriction on AccountNumber' % {"value": value, "lineno": lineno} )
+                result = False
+            if value > 9999999999:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on AccountNumber' % {"value": value, "lineno": lineno} )
+                result = False
+        return result
+    def validate_CountryCode(self, value):
+        result = True
+        # Validate type CountryCode, a restriction on xsd:string.
+        if value is not None and Validate_simpletypes_ and self.gds_collector_ is not None:
+            if not isinstance(value, str):
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
+                return False
+            if len(value) != 2:
+                lineno = self.gds_get_node_lineno_()
+                self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd length restriction on CountryCode' % {"value": encode_str_2_3(value), "lineno": lineno} )
+                result = False
+        return result
     def _hasContent(self):
         if (
-            self.Response is not None or
-            self.AWBInfo or
-            self.Fault is not None or
-            self.LanguageCode is not None
+            self.Request is not None or
+            self.LanguageCode is not None or
+            self.AccountNumber is not None or
+            self.ShipperReference or
+            self.ShipmentDate is not None or
+            self.CountryCode is not None
         ):
             return True
         else:
             return False
-    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TrackingResponse', pretty_print=True):
-        imported_ns_def_ = GenerateDSNamespaceDefs_.get('TrackingResponse')
+    def export(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='UnknownTrackingRequest', pretty_print=True):
+        imported_ns_def_ = GenerateDSNamespaceDefs_.get('UnknownTrackingRequest')
         if imported_ns_def_ is not None:
             namespacedef_ = imported_ns_def_
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.original_tagname_ is not None and name_ == 'TrackingResponse':
+        if self.original_tagname_ is not None and name_ == 'UnknownTrackingRequest':
             name_ = self.original_tagname_
         if UseCapturedNS_ and self.ns_prefix_:
             namespaceprefix_ = self.ns_prefix_ + ':'
         showIndent(outfile, level, pretty_print)
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
-        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='TrackingResponse')
+        self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='UnknownTrackingRequest')
         if self._hasContent():
             outfile.write('>%s' % (eol_, ))
-            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='TrackingResponse', pretty_print=pretty_print)
+            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='UnknownTrackingRequest', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
         else:
             outfile.write('/>%s' % (eol_, ))
-    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='TrackingResponse'):
-        pass
-    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='TrackingResponse', fromsubclass_=False, pretty_print=True):
+    def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='UnknownTrackingRequest'):
+        if self.schemaVersion is not None and 'schemaVersion' not in already_processed:
+            already_processed.add('schemaVersion')
+            outfile.write(' schemaVersion="%s"' % self.gds_format_decimal(self.schemaVersion, input_name='schemaVersion'))
+    def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='UnknownTrackingRequest', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
         else:
             eol_ = ''
-        if self.Response is not None:
-            namespaceprefix_ = self.Response_nsprefix_ + ':' if (UseCapturedNS_ and self.Response_nsprefix_) else ''
-            self.Response.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Response', pretty_print=pretty_print)
-        for AWBInfo_ in self.AWBInfo:
-            namespaceprefix_ = self.AWBInfo_nsprefix_ + ':' if (UseCapturedNS_ and self.AWBInfo_nsprefix_) else ''
-            AWBInfo_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='AWBInfo', pretty_print=pretty_print)
-        if self.Fault is not None:
-            namespaceprefix_ = self.Fault_nsprefix_ + ':' if (UseCapturedNS_ and self.Fault_nsprefix_) else ''
-            self.Fault.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Fault', pretty_print=pretty_print)
+        if self.Request is not None:
+            namespaceprefix_ = self.Request_nsprefix_ + ':' if (UseCapturedNS_ and self.Request_nsprefix_) else ''
+            self.Request.export(outfile, level, namespaceprefix_, namespacedef_='', name_='Request', pretty_print=pretty_print)
         if self.LanguageCode is not None:
             namespaceprefix_ = self.LanguageCode_nsprefix_ + ':' if (UseCapturedNS_ and self.LanguageCode_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
             outfile.write('<%sLanguageCode>%s</%sLanguageCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.LanguageCode), input_name='LanguageCode')), namespaceprefix_ , eol_))
+        if self.AccountNumber is not None:
+            namespaceprefix_ = self.AccountNumber_nsprefix_ + ':' if (UseCapturedNS_ and self.AccountNumber_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sAccountNumber>%s</%sAccountNumber>%s' % (namespaceprefix_ , self.gds_format_integer(self.AccountNumber, input_name='AccountNumber'), namespaceprefix_ , eol_))
+        for ShipperReference_ in self.ShipperReference:
+            namespaceprefix_ = self.ShipperReference_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipperReference_nsprefix_) else ''
+            ShipperReference_.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipperReference', pretty_print=pretty_print)
+        if self.ShipmentDate is not None:
+            namespaceprefix_ = self.ShipmentDate_nsprefix_ + ':' if (UseCapturedNS_ and self.ShipmentDate_nsprefix_) else ''
+            self.ShipmentDate.export(outfile, level, namespaceprefix_, namespacedef_='', name_='ShipmentDate', pretty_print=pretty_print)
+        if self.CountryCode is not None:
+            namespaceprefix_ = self.CountryCode_nsprefix_ + ':' if (UseCapturedNS_ and self.CountryCode_nsprefix_) else ''
+            showIndent(outfile, level, pretty_print)
+            outfile.write('<%sCountryCode>%s</%sCountryCode>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.CountryCode), input_name='CountryCode')), namespaceprefix_ , eol_))
     def build(self, node, gds_collector_=None):
         self.gds_collector_ = gds_collector_
         if SaveElementTreeNode:
@@ -1812,23 +1874,17 @@ class TrackingResponse(GeneratedsSuper):
             self._buildChildren(child, node, nodeName_, gds_collector_=gds_collector_)
         return self
     def _buildAttributes(self, node, attrs, already_processed):
-        pass
+        value = find_attr_value_('schemaVersion', node)
+        if value is not None and 'schemaVersion' not in already_processed:
+            already_processed.add('schemaVersion')
+            value = self.gds_parse_decimal(value, node, 'schemaVersion')
+            self.schemaVersion = value
     def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
-        if nodeName_ == 'Response':
-            obj_ = Response.factory(parent_object_=self)
+        if nodeName_ == 'Request':
+            obj_ = Request.factory(parent_object_=self)
             obj_.build(child_, gds_collector_=gds_collector_)
-            self.Response = obj_
-            obj_.original_tagname_ = 'Response'
-        elif nodeName_ == 'AWBInfo':
-            obj_ = AWBInfo.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.AWBInfo.append(obj_)
-            obj_.original_tagname_ = 'AWBInfo'
-        elif nodeName_ == 'Fault':
-            obj_ = Fault.factory(parent_object_=self)
-            obj_.build(child_, gds_collector_=gds_collector_)
-            self.Fault = obj_
-            obj_.original_tagname_ = 'Fault'
+            self.Request = obj_
+            obj_.original_tagname_ = 'Request'
         elif nodeName_ == 'LanguageCode':
             value_ = child_.text
             value_ = self.gds_parse_string(value_, node, 'LanguageCode')
@@ -1837,7 +1893,35 @@ class TrackingResponse(GeneratedsSuper):
             self.LanguageCode_nsprefix_ = child_.prefix
             # validate type LanguageCode
             self.validate_LanguageCode(self.LanguageCode)
-# end class TrackingResponse
+        elif nodeName_ == 'AccountNumber' and child_.text:
+            sval_ = child_.text
+            ival_ = self.gds_parse_integer(sval_, node, 'AccountNumber')
+            if ival_ <= 0:
+                raise_parse_error(child_, 'requires positiveInteger')
+            ival_ = self.gds_validate_integer(ival_, node, 'AccountNumber')
+            self.AccountNumber = ival_
+            self.AccountNumber_nsprefix_ = child_.prefix
+            # validate type AccountNumber
+            self.validate_AccountNumber(self.AccountNumber)
+        elif nodeName_ == 'ShipperReference':
+            obj_ = Reference.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipperReference.append(obj_)
+            obj_.original_tagname_ = 'ShipperReference'
+        elif nodeName_ == 'ShipmentDate':
+            obj_ = ShipmentDate.factory(parent_object_=self)
+            obj_.build(child_, gds_collector_=gds_collector_)
+            self.ShipmentDate = obj_
+            obj_.original_tagname_ = 'ShipmentDate'
+        elif nodeName_ == 'CountryCode':
+            value_ = child_.text
+            value_ = self.gds_parse_string(value_, node, 'CountryCode')
+            value_ = self.gds_validate_string(value_, node, 'CountryCode')
+            self.CountryCode = value_
+            self.CountryCode_nsprefix_ = child_.prefix
+            # validate type CountryCode
+            self.validate_CountryCode(self.CountryCode)
+# end class UnknownTrackingRequest
 
 
 class DataTypes(GeneratedsSuper):
@@ -19314,8 +19398,8 @@ def parse(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'TrackingResponse'
-        rootClass = TrackingResponse
+        rootTag = 'UnknownTrackingRequest'
+        rootClass = UnknownTrackingRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     CapturedNsmap_, namespacedefs = get_required_ns_prefix_defs(rootNode)
@@ -19346,8 +19430,8 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'TrackingResponse'
-        rootClass = TrackingResponse
+        rootTag = 'UnknownTrackingRequest'
+        rootClass = UnknownTrackingRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if mapping is None:
@@ -19392,8 +19476,8 @@ def parseString(inString, silence=False, print_warnings=True):
     gds_collector = GdsCollector_()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'TrackingResponse'
-        rootClass = TrackingResponse
+        rootTag = 'UnknownTrackingRequest'
+        rootClass = UnknownTrackingRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     if not SaveElementTreeNode:
@@ -19420,8 +19504,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
     rootNode = doc.getroot()
     rootTag, rootClass = get_root_tag(rootNode)
     if rootClass is None:
-        rootTag = 'TrackingResponse'
-        rootClass = TrackingResponse
+        rootTag = 'UnknownTrackingRequest'
+        rootClass = UnknownTrackingRequest
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
     # Enable Python to collect the space used by the DOM.
@@ -19429,8 +19513,8 @@ def parseLiteral(inFileName, silence=False, print_warnings=True):
         doc = None
         rootNode = None
     if not silence:
-        sys.stdout.write('#from tracking_response import *\n\n')
-        sys.stdout.write('import tracking_response as model_\n\n')
+        sys.stdout.write('#from tracking_request_unknown_1_0 import *\n\n')
+        sys.stdout.write('import tracking_request_unknown_1_0 as model_\n\n')
         sys.stdout.write('rootObj = model_.rootClass(\n')
         rootObj.exportLiteral(sys.stdout, 0, name_=rootTag)
         sys.stdout.write(')\n')
@@ -20097,7 +20181,7 @@ __all__ = [
     "TermsOfTrade",
     "TrackedBy",
     "TrackingPieces",
-    "TrackingResponse",
+    "UnknownTrackingRequest",
     "WeightSeg",
     "WeightType"
 ]

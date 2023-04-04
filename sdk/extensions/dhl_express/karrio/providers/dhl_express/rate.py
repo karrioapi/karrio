@@ -1,6 +1,6 @@
 import dhl_express_lib.dct_requestdatatypes_global as dhl_global
-import dhl_express_lib.dct_response_global_2_0 as dhl_response
-import dhl_express_lib.dct_req_global_2_0 as dhl
+import dhl_express_lib.dct_response_global_3_0 as dhl_response
+import dhl_express_lib.dct_req_global_3_0 as dhl
 import time
 import typing
 import karrio.lib as lib
@@ -234,4 +234,4 @@ def _request_serializer(request: dhl.DCTRequest) -> str:
         request,
         name_="p:DCTRequest",
         namespacedef_=namespacedef_,
-    ).replace('schemaVersion="2"', 'schemaVersion="2.0"')
+    ).replace('schemaVersion="3"', 'schemaVersion="3.0"')

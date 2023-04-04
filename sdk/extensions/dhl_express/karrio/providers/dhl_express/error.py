@@ -1,29 +1,22 @@
-from typing import List, Callable
-from functools import reduce
-from karrio.core.utils.xml import Element
-from karrio.providers.dhl_express import Settings
-from karrio.core.models import Message
-from dhl_express_lib.dct_response_global_2_0 import ConditionType
+import dhl_express_lib.dct_response_global_3_0 as dhl
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.dhl_express.utils as provider_utils
 
 
-def parse_error_response(response, settings: Settings) -> List[Message]:
-    conditions = response.xpath(".//*[local-name() = $name]", name="Condition")
-    return reduce(_extract_error(settings), conditions, [])
+def parse_error_response(
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.List[models.Message]:
+    errors = lib.find_element("Condition", response, dhl.ConditionType)
 
-
-def _extract_error(
-    settings: Settings,
-) -> Callable[[List[Message], Element], List[Message]]:
-    def extract(errors: List[Message], condition_node: Element) -> List[Message]:
-        condition = ConditionType()
-        condition.build(condition_node)
-        return errors + [
-            Message(
-                code=condition.ConditionCode,
-                message=condition.ConditionData,
-                carrier_name=settings.carrier_name,
-                carrier_id=settings.carrier_id,
-            )
-        ]
-
-    return extract
+    return [
+        models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code=error.ConditionCode,
+            message=error.ConditionData,
+        )
+        for error in errors
+    ]

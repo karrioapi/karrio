@@ -36,9 +36,7 @@ def parse_pickup_response(
     settings: Settings,
 ) -> Tuple[PickupDetails, List[Message]]:
     response = _response.deserialize()
-    successful = (
-        len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
-    )
+    successful = len(lib.find_element("ConfirmationNumber", response)) > 0
     pickup = _extract_pickup(response, settings) if successful else None
     return pickup, parse_error_response(response, settings)
 

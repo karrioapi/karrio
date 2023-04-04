@@ -272,14 +272,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
     <ExportDeclaration>
         <InvoiceNumber>N/A</InvoiceNumber>
         <InvoiceDate>2021-05-03</InvoiceDate>
-        <BillToCompanyName>shipper company privated limited 12</BillToCompanyName>
-        <BillToContactName>Ms Lucian</BillToContactName>
-        <BillToAddressLine1>238 850925434 Drive</BillToAddressLine1>
-        <BillToCity>Scottsdale</BillToCity>
-        <BillToPostcode>85260</BillToPostcode>
-        <BillToCountryCode>US</BillToCountryCode>
-        <BillToCountryName>United States</BillToCountryName>
-        <BillToPhoneNumber>1 23 8613402</BillToPhoneNumber>
         <ExportLineItem>
             <LineNumber>1</LineNumber>
             <Quantity>1</Quantity>
