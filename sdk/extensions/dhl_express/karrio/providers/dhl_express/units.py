@@ -203,6 +203,24 @@ class DeliveryType(lib.Enum):
     door_to_door_c = "DC"
 
 
+class UploadDocumentType(lib.Enum):
+    HWB = "HWB"
+    INV = "INV"
+    PNV = "PNV"
+    COO = "COO"
+    NAF = "NAF"
+    CIN = "CIN"
+    DCL = "DCL"
+
+    """ Unified Packaging type mapping """
+
+    certificate_of_origin = COO
+    commercial_invoice = CIN
+    pro_forma_invoice = PNV
+    packing_list = DCL
+    other = INV
+
+
 class DCTPackageType(lib.Enum):
     dhl_flyer_smalls = "FLY"
     dhl_parcels_conveyables = "COY"

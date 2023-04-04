@@ -428,9 +428,11 @@ def shipment_request(
             dhl.DocImages(
                 DocImage=[
                     dhl.DocImage(
-                        Type=doc["doc_type"],
-                        Image=doc["doc_file"],
-                        ImageFormat=doc["doc_format"],
+                        Image=base64.b64decode(doc["doc_file"]),
+                        ImageFormat=doc.get("doc_format") or "PDF",
+                        Type=provider_units.UploadDocumentType.map(
+                            doc.get("doc_type") or "CIN"
+                        ).value_or_key,
                     )
                     for doc in options.doc_files.state
                 ]
@@ -455,19 +457,21 @@ def shipment_request(
         Importer=None,
     )
 
-    return lib.Serializable(request, _request_serializer)
-
-
-def _request_serializer(request: dhl.ShipmentRequest) -> str:
-    xml_str = lib.to_xml(
+    return lib.Serializable(
         request,
-        name_="req:ShipmentRequest",
-        namespacedef_=(
-            'xsi:schemaLocation="http://www.dhl.com '
-            'ship-val-global-req.xsd" '
-            'xmlns:req="http://www.dhl.com" '
-            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+        lambda _: (
+            lib.to_xml(
+                _,
+                name_="req:ShipmentRequest",
+                namespacedef_=(
+                    'xsi:schemaLocation="http://www.dhl.com '
+                    'ship-val-global-req.xsd" '
+                    'xmlns:req="http://www.dhl.com" '
+                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+                ),
+            )
+            .replace('schemaVersion="10"', 'schemaVersion="10.0"')
+            .replace("<Image>b'", "<Image>")
+            .replace("'</Image>", "</Image>")
         ),
-    ).replace('schemaVersion="10"', 'schemaVersion="10.0"')
-
-    return xml_str
+    )

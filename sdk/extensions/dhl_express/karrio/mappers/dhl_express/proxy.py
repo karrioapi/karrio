@@ -49,3 +49,6 @@ class Proxy(BaseProxy):
         response = self._send_request(request)
 
         return lib.Deserializable(response, lib.to_element)
+
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
+        return super().upload_document(request)
