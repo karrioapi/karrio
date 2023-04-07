@@ -110,6 +110,6 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
 
 This project uses the [Apache v2 license](LICENSE). The core karrio platform will always remain open and free.
 
-We are develping some commercial enterprise add-ons (contained in the `/ee` directory) only offered on our Cloud and Enterprise editions.
+We are developing some commercial enterprise add-ons (contained in the `/ee` directory) only offered on our Cloud and Enterprise editions.
 
 Any other questions, mail us at hello@karrio.io We’d love to meet you!
