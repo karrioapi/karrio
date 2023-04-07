@@ -19,7 +19,7 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 
-Karrio is an open-source platform that make shipping simple and accessible. With karrio, you can access a network of shipping carriers with a single API integration, build shipping functionalities seamlessly, and improve fulfilment operations.
+Karrio is an open-source platform that makes shipping simple and accessible. With karrio, you can access a network of shipping carriers with a single API integration, build shipping functionalities seamlessly, and improve fulfilment operations.
 
 **Get up and running in 1 minute with:**
 
@@ -77,7 +77,7 @@ We are an open-source alternative to manual in-house carrier integration and Mul
 
 ### Shipping for platforms
 
-With Karrio, you can extend your platform with native shipping capabilities. Improve merchants, shippers and customers experience on your Marketplace, eCommerce, ERP, WMS, OMS, 3PL and Logistics platform.
+With Karrio, you can extend your platform with native shipping capabilities. Improve shippers, merchants and customers experience on your Marketplace, eCommerce, ERP, WMS, OMS, 3PL and Logistics platform.
 
 ### Shipping for enterprise
 
@@ -91,9 +91,7 @@ If you run into any problems or issues, please create a Github issue and we'll t
 
 We strive to provide good support through our issue trackers on Github. However, if you'd like to receive private & prioritized support with:
 
--   Guaranteed SLAs
 -   Phone / video calls to discuss your specific use case and get recommendations on best practices
--   Private discussions over Discord
 -   Guidance around deployment, ops and scaling best practices
 -   Prioritized feature requests
 -   Prioritized carriers integrations
@@ -110,7 +108,7 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
 
 ## Open-source vs. paid
 
-This project uses the [Apache 2 license](LICENSE). The core karrio platform will always remain open and free.
+This project uses the [Apache v2 license](LICENSE). The core karrio platform will always remain open and free.
 
 We are develping some commercial enterprise add-ons (contained in the `/ee` directory) only offered on our Cloud and Enterprise editions.
 
