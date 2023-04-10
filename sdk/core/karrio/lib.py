@@ -604,6 +604,16 @@ def bundle_zpls(
     return utils.bundle_zpls(base64_strings)
 
 
+def zpl_to_pdf(
+    zpl_str: str,
+    width: int,
+    height: int,
+    dpmm: int = 12,
+) -> str:
+    """Return a PDF base64 string from a ZPL string."""
+    return utils.zpl_to_pdf(zpl_str, width, height, dpmm=dpmm)
+
+
 def bundle_base64(
     base64_strings: typing.List[str],
     format: str = "PDF",

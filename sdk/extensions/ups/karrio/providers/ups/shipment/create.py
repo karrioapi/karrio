@@ -16,7 +16,11 @@ def parse_shipment_response(
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     details = lib.find_element("ShipmentResults", response, first=True)
-    shipment = _extract_shipment(details, settings) if details is not None else None
+    shipment = (
+        _extract_shipment(details, settings, _response.ctx)
+        if details is not None
+        else None
+    )
 
     return shipment, provider_error.parse_error_response(response, settings)
 
@@ -24,9 +28,19 @@ def parse_shipment_response(
 def _extract_shipment(
     node: lib.Element,
     settings: provider_utils.Settings,
+    ctx: dict,
 ) -> models.ShipmentDetails:
+    enforce_zpl = getattr(settings, "config", {}).get("enforce_zpl")
     shipment = lib.to_object(ups.ShipmentResultsType, node)
     label = _process_label(shipment)
+
+    if enforce_zpl and ctx["label"]["type"] == "PDF":
+        label = lib.zpl_to_pdf(
+            label,
+            ctx["label"]["width"],
+            ctx["label"]["height"],
+            dpmm=8,
+        )
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -114,6 +128,7 @@ def shipment_request(
     mps_packaging = (
         provider_units.PackagingType.your_packaging.value if len(packages) > 1 else None
     )
+    enforce_zpl = getattr(settings, "config", {}).get("enforce_zpl")
     label_format, label_height, label_width = (
         provider_units.LabelType.map(payload.label_type).value
         or provider_units.LabelType.PDF_6x4.value
@@ -556,7 +571,9 @@ def shipment_request(
                     ],
                 ),
                 LabelSpecification=ups.LabelSpecificationType(
-                    LabelImageFormat=ups.LabelImageFormatType(Code=label_format),
+                    LabelImageFormat=ups.LabelImageFormatType(
+                        Code="ZPL" if enforce_zpl else label_format
+                    ),
                     HTTPUserAgent=None,
                     LabelStockSize=ups.LabelStockSizeType(
                         Height=label_height,

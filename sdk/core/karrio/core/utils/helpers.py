@@ -127,6 +127,21 @@ def bundle_base64(base64_strings: List[str], format: str = "PDF") -> str:
     return base64.b64encode(result.getvalue()).decode("utf-8")
 
 
+def zpl_to_pdf(zpl_str: str, width: int, height: int, dpmm: int = 12) -> str:
+    """Return a PDF base64 string from a ZPL string."""
+    import karrio.lib as lib
+
+    data = lib.to_json(dict(file=base64.b64decode(zpl_str).decode("utf-8")))
+    doc = request(
+        url=f"http://api.labelary.com/v1/printers/{dpmm}dpmm/labels/{width}x{height}/",
+        data=data,
+        headers={"Accept": "application/pdf"},
+        decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
+    )
+
+    return doc
+
+
 def decode_bytes(byte):
     return (
         failsafe(lambda: byte.decode("utf-8"))
