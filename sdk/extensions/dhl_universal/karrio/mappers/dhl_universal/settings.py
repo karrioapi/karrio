@@ -11,10 +11,11 @@ class Settings(BaseSettings):
     # Carrier specific properties
     consumer_key: str
     consumer_secret: str
+    language: str = "en"
 
     # Base properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "dhl_universal"
-    account_country_code: str = None
+    account_country_code: str = "DE"
     metadata: dict = {}

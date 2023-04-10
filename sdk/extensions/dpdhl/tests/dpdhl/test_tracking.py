@@ -169,7 +169,8 @@ ParsedHTMLErrorResponses = [
 ]
 
 
-TrackingRequest = """<data appname="zt12345" password="geheim" request="d-get-piece-detail" language-code="en" piece-code="00340434161094042557"/>
+TrackingRequest = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<data appname="zt12345" password="geheim" request="d-get-piece-detail" language-code="en" piece-code="00340434161094042557"/>
 """
 
 TrackingResponse = """<?xml version="1.0" encoding="UTF-8"?>

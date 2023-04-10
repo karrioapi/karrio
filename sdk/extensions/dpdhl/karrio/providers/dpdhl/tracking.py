@@ -101,5 +101,9 @@ def tracking_request(
     ]
 
     return lib.Serializable(
-        request, lambda requests: [lib.to_xml(req) for req in requests]
+        request,
+        lambda requests: [
+            f'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n{lib.to_xml(req)}'
+            for req in requests
+        ],
     )

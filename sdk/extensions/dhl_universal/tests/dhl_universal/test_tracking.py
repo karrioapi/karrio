@@ -68,7 +68,7 @@ ParsedTrackingResponse = [
                 }
             ],
             "info": {
-                "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=7777777770",
+                "carrier_tracking_link": "https://www.dhl.com/de-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=7777777770",
                 "customer_name": "John Doe",
                 "package_weight": 253.5,
                 "package_weight_unit": "kg",
