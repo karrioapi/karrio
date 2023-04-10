@@ -50,7 +50,11 @@ def _process_label(shipment: ups.ShipmentResultsType):
     )
     labels = [
         (
-            lib.image_to_pdf(pkg.ShippingLabel.GraphicImage, rotate=-90)
+            lib.image_to_pdf(
+                pkg.ShippingLabel.GraphicImage,
+                rotate=-90,
+                resize=dict(height=1800, width=1200),
+            )
             if label_type == "PDF"
             else pkg.ShippingLabel.GraphicImage
         )
@@ -587,6 +591,13 @@ def shipment_request(
                 UPSSecurity="upss",
                 ShipmentRequest="ship",
                 InternationalForms_children="ifs",
+            ),
+        ),
+        dict(
+            label=dict(
+                height=label_height,
+                width=label_width,
+                type=label_format,
             ),
         ),
     )

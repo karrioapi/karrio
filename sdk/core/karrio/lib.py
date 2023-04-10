@@ -581,8 +581,9 @@ def request(
 def image_to_pdf(
     image_str: str,
     rotate: int = None,
+    resize: dict = None,
 ) -> str:
-    return utils.image_to_pdf(image_str, rotate=rotate)
+    return utils.image_to_pdf(image_str, rotate=rotate, resize=resize)
 
 
 def bundle_pdfs(

@@ -44,17 +44,28 @@ def to_buffer(encoded_file: str, **kwargs) -> io.BytesIO:
     return buffer
 
 
-def image_to_pdf(image_str: str, rotate: int = None) -> str:
+def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str:
     buffer = to_buffer(image_str)
     _image = Image.open(buffer)
+
     image = (
-        _image.rotate(rotate, Image.NEAREST, expand = True)
+        _image.rotate(rotate, Image.NEAREST, expand=True)
         if rotate is not None
         else _image
     )
 
+    if resize is not None:
+        img = image.copy()
+        wpercent = resize["width"] / float(img.size[0])
+        hsize = int((float(img.size[1]) * float(wpercent)))
+        image = img.resize((resize["width"], hsize), Image.Resampling.LANCZOS)
+
+    if resize is not None:
+        img = image.copy()
+        image = img.resize((resize["width"], resize["height"]), Image.ANTIALIAS)
+
     new_buffer = io.BytesIO()
-    image.save(new_buffer, format="PDF")
+    image.save(new_buffer, format="PDF", dpi=(300, 300))
 
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
@@ -118,9 +129,9 @@ def bundle_base64(base64_strings: List[str], format: str = "PDF") -> str:
 
 def decode_bytes(byte):
     return (
-        failsafe(lambda: byte.decode("utf-8")) or
-        failsafe(lambda: byte.decode("ISO-8859-1")) or
-        byte.decode("utf-8")
+        failsafe(lambda: byte.decode("utf-8"))
+        or failsafe(lambda: byte.decode("ISO-8859-1"))
+        or byte.decode("utf-8")
     )
 
 

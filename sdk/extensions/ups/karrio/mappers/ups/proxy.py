@@ -29,7 +29,7 @@ class Proxy(proxy.Proxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/webservices/Ship", request)
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/webservices/Void", request)
