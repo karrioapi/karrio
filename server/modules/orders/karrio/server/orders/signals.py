@@ -15,6 +15,9 @@ logger = logging.getLogger(__name__)
 
 
 def register_signals():
+    signals.m2m_changed.connect(
+        shipments_updated, sender=models.Order.shipments.through
+    )
     signals.post_delete.connect(commodity_mutated, sender=manager.Commodity)
     signals.post_save.connect(commodity_mutated, sender=manager.Commodity)
     signals.post_save.connect(shipment_updated, sender=manager.Shipment)
@@ -26,27 +29,24 @@ def register_signals():
 @utils.disable_for_loaddata
 def commodity_mutated(sender, instance, *args, **kwargs):
     """Commodity mutations (added or removed)"""
+    parent = utils.failsafe(lambda: instance.parent)
 
-    try:
-        parent = getattr(instance, "parent", None)
-    except Exception as e:
+    if parent is None or parent.order is None:
         return
 
-    if parent is None:
-        return
+    order_shipments = manager.Shipment.objects.filter(
+        parcels__items__parent_id__in=parent.order.line_items.values_list(
+            "id", flat=True
+        )
+    ).distinct()
 
-    if parent.order is None:
-        return
+    for shipment in order_shipments:
+        if parent.order.shipments.filter(id=shipment.id).exists() == False:
+            parent.order.shipments.add(shipment)
 
-    # Retrieve all orders associated with this commodity and update their status if needed
-    for order in models.Order.objects.filter(
-        line_items__id=instance.parent_id
-    ).distinct():
-        status = compute_order_status(order)
-        if status != order.status:
-            order.status = status
-            order.save(update_fields=["status"])
-            logger.info("commodity related order successfully updated")
+    for shipment in parent.order.shipments.all():
+        if order_shipments.filter(id=shipment.id).exists() == False:
+            parent.order.shipments.remove(shipment)
 
 
 @utils.disable_for_loaddata
@@ -62,11 +62,22 @@ def shipment_updated(
     ).exists():
         return
 
-    if instance.status != serializers.ShipmentStatus.draft.value:
-        # Retrieve all orders associated with this shipment and update their status if needed
-        for order in models.Order.objects.filter(
-            line_items__children__commodity_parcel__parcel_shipment__id=instance.id
-        ).distinct():
+    # Retrieve all orders associated with this shipment and update their status if needed
+    related_orders = models.Order.objects.filter(
+        line_items__children__commodity_parcel__parcel_shipment__id=instance.id
+    ).distinct()
+
+    if related_orders.exists():
+        instance.meta = {
+            **(instance.meta or {}),
+            "orders": [_.id for _ in related_orders],
+        }
+
+    for order in related_orders:
+        if order.shipments.filter(id=instance.id).exists() == False:
+            order.shipments.add(instance)
+
+        if instance.status != serializers.ShipmentStatus.draft.value:
             status = compute_order_status(order)
             if status != order.status:
                 order.status = status
@@ -129,3 +140,16 @@ def order_updated(sender, instance, *args, **kwargs):
         return
 
     tasks.notify_webhooks(event, data, event_at, context, schema=settings.schema)
+
+
+@utils.disable_for_loaddata
+def shipments_updated(
+    sender, instance, action, reverse, model, pk_set, *args, **kwargs
+):
+    """Order shipments updated"""
+
+    status = compute_order_status(instance)
+    if status != instance.status:
+        instance.status = status
+        instance.save(update_fields=["status"])
+        logger.info("shipment related order successfully updated")

@@ -49,6 +49,7 @@ class OrderManager(models.Manager):
             )
             .prefetch_related(
                 "line_items",
+                "shipments",
             )
         )
 
@@ -104,6 +105,9 @@ class Order(OwnedEntity):
     line_items = models.ManyToManyField(
         LineItem, related_name="commodity_order", through="OrderLineItemLink"
     )
+    shipments = models.ManyToManyField(
+        "manager.Shipment", related_name="shipment_order"
+    )
     options = models.JSONField(
         blank=True, null=True, default=partial(identity, value={})
     )
@@ -116,14 +120,6 @@ class Order(OwnedEntity):
     @property
     def object_type(self):
         return "order"
-
-    # computed fields
-
-    @property
-    def shipments(self):
-        return manager.Shipment.objects.filter(
-            parcels__items__parent_id__in=self.line_items.values_list("id", flat=True)
-        ).distinct()
 
 
 """Models orders linking (for reverse OneToMany relations)"""
