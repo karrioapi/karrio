@@ -34,6 +34,7 @@ CURRENCIES = [(c.name, c.name) for c in units.Currency]
 WEIGHT_UNITS = [(c.name, c.name) for c in units.WeightUnit]
 DIMENSION_UNITS = [(c.name, c.name) for c in units.DimensionUnit]
 CAPABILITIES_CHOICES = [(c, c) for c in units.CarrierCapabilities.get_capabilities()]
+LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
 
 
 class CarrierSettings:

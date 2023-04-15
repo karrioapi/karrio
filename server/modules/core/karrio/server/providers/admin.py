@@ -4,18 +4,132 @@ from django.db import models
 from django.contrib import admin
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.utils.translation import gettext_lazy as _
 
 import karrio.references as ref
+import karrio.server.serializers as serializers
 import karrio.server.providers.models as carriers
 
 User = get_user_model()
+SUPPORTED_CONNECTION_CONFIGS = [
+    "cost_center",
+    "enforce_zpl",
+    "default_currency",
+    "language_code",
+    "label_type",
+    "shipping_options",
+    "shipping_services",
+]
 
 
-def model_admin(carrier):
+def model_admin(ext: str, carrier):
+    import karrio.server.core.datatypes as datatypes
+    import karrio.server.core.dataunits as dataunits
+    import karrio.server.graph.serializers as graph_serializers
+
     class_name = carrier.__name__
+    references = dataunits.contextual_reference(reduced=False)
+    connection_configs = [
+        _
+        for _ in (references["connection_configs"].get(ext) or {}).keys()
+        if _ in SUPPORTED_CONNECTION_CONFIGS
+    ]
+    carrier_services = (references["services"].get(ext) or {}).keys()
+    carrier_options = (references["options"].get(ext) or {}).keys()
+
+    class _Form(forms.ModelForm):
+        for key in connection_configs:
+            if key == "cost_center":
+                cost_center = forms.CharField(
+                    required=False,
+                )
+            if key == "language_code":
+                language_code = forms.ChoiceField(
+                    choices=[("en", "EN"), ("fr", "FR")],
+                    widget=forms.Select(attrs={"class": "vTextField"}),
+                    required=False,
+                )
+            if key == "default_currency":
+                default_currency = forms.ChoiceField(
+                    choices=datatypes.CURRENCIES,
+                    widget=forms.Select(attrs={"class": "vTextField"}),
+                    required=False,
+                )
+            if key == "label_type":
+                label_type = forms.ChoiceField(
+                    choices=datatypes.LABEL_TYPES,
+                    widget=forms.Select(attrs={"class": "vTextField"}),
+                    required=False,
+                )
+            if key == "enforce_zpl":
+                enforce_zpl = forms.NullBooleanField(
+                    required=False,
+                )
+            if key == "shipping_services":
+                shipping_services = forms.MultipleChoiceField(
+                    choices=[(_, _) for _ in carrier_services],
+                    widget=forms.SelectMultiple(attrs={"class": "vTextField"}),
+                    required=False,
+                )
+            if key == "shipping_options":
+                shipping_options = forms.MultipleChoiceField(
+                    choices=[(_, _) for _ in carrier_options],
+                    widget=forms.SelectMultiple(attrs={"class": "vTextField"}),
+                    required=False,
+                )
+
+        class Meta:
+            model = carrier
+            fields = "__all__"
+
+        def save(self, commit: bool = True):
+            config_data = {
+                key: self.cleaned_data.get(key) for key in connection_configs
+            }
+            carrier = super(_Form, self).save(commit)
+
+            config = carriers.Carrier.resolve_config(carrier)
+            graph_serializers.CarrierConfigModelSerializer.map(
+                instance=config,
+                context=dict(user=self.request.user),
+                data={
+                    "carrier": carrier.pk,
+                    "created_by": self.request.user.pk,
+                    "config": serializers.process_dictionaries_mutations(
+                        ["config"], config_data, config
+                    ),
+                },
+            ).save()
+
+            return carrier
+
+    form_fields = _Form.base_fields.keys()
 
     class _Admin(admin.ModelAdmin):
+        form = _Form
         list_display = ("__str__", "test_mode", "active")
+        fieldsets = [
+            (
+                None,
+                {
+                    "fields": [
+                        _
+                        for _ in form_fields
+                        if _ not in [*connection_configs, "active_users", "services"]
+                    ],
+                },
+            ),
+        ]
+        if any(connection_configs):
+            fieldsets += [
+                (  # type: ignore
+                    "Connection Config",
+                    {
+                        "classes": ["collapse"],
+                        "fields": [_ for _ in connection_configs if _ in form_fields],
+                    },
+                ),
+            ]
         exclude = (
             ["active_users", "services"]
             if hasattr(carrier, "services")
@@ -133,8 +247,9 @@ def model_admin(carrier):
             query = super().get_queryset(request)
             return query.filter(created_by=None)
 
-        def get_form(self, *args, **kwargs):
-            form = super().get_form(*args, **kwargs)
+        def get_form(self, request, *args, **kwargs):
+            form = super(_Admin, self).get_form(request, *args, **kwargs)
+            form.request = request
 
             # Customize capabilities options specific to a carrier.
             carrier_name = next(
@@ -178,4 +293,4 @@ class LabelTemplateAdmin(admin.ModelAdmin):
 
 
 for name, model in carriers.MODELS.items():
-    admin.site.register(model, model_admin(model))
+    admin.site.register(model, model_admin(name, model))
