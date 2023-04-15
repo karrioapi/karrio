@@ -23,6 +23,7 @@ class Settings(BaseSettings, RatingMixinSettings, ShippingMixinSettings):
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}
 
     label_template: LabelTemplate = JStruct[LabelTemplate]
     services: List[ServiceLevel] = JList[ServiceLevel, False, dict(default=DEFAULT_SERVICES)]  # type: ignore

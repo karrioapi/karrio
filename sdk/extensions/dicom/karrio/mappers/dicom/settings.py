@@ -19,3 +19,4 @@ class Settings(BaseSettings):
     carrier_id: str = "dicom"
     account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}

@@ -30,7 +30,7 @@ def _extract_shipment(
     settings: provider_utils.Settings,
     ctx: dict,
 ) -> models.ShipmentDetails:
-    enforce_zpl = getattr(settings, "config", {}).get("enforce_zpl")
+    enforce_zpl = settings.connection_config.enforce_zpl.state
     shipment = lib.to_object(ups.ShipmentResultsType, node)
     label = _process_label(shipment)
 
@@ -128,9 +128,11 @@ def shipment_request(
     mps_packaging = (
         provider_units.PackagingType.your_packaging.value if len(packages) > 1 else None
     )
-    enforce_zpl = getattr(settings, "config", {}).get("enforce_zpl")
+    enforce_zpl = settings.connection_config.enforce_zpl.state
     label_format, label_height, label_width = (
-        provider_units.LabelType.map(payload.label_type).value
+        provider_units.LabelType.map(
+            payload.label_type or settings.connection_config.label_type.state
+        ).value
         or provider_units.LabelType.PDF_6x4.value
     )
 

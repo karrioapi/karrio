@@ -426,6 +426,16 @@ def to_upload_options(
     )
 
 
+def to_connection_config(
+    options: dict,
+    option_type: typing.Optional[typing.Type[utils.Enum]] = None,
+) -> units.ConnectionConfigOptions:
+    return units.ConnectionConfigOptions(
+        options,
+        option_type=option_type,
+    )
+
+
 # -----------------------------------------------------------
 # Address utility functions.
 # -----------------------------------------------------------

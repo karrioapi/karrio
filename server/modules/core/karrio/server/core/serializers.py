@@ -77,6 +77,12 @@ class CarrierSettings(serializers.Serializer):
         allow_null=True,
         help_text="""The carrier supported and enabled capabilities.""",
     )
+    metadata = serializers.PlainDictField(
+        required=False, default={}, help_text="The carrier user metadata."
+    )
+    config = serializers.PlainDictField(
+        required=False, default={}, help_text="The carrier connection config."
+    )
 
 
 class APIError(serializers.Serializer):

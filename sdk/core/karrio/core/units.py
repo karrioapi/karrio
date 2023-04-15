@@ -1013,6 +1013,43 @@ class DocumentUploadOption(utils.Enum):
     destination_country_code = utils.OptionEnum("destination_country_code")
 
 
+class ConnectionConfigOption(utils.Enum):
+    """common shipment document upload options"""
+
+    label_type = utils.OptionEnum("label_type")
+    language_code = utils.OptionEnum("language_code")
+    default_currency = utils.OptionEnum("default_currency")
+    shipping_options = utils.OptionEnum("shipping_options", list)
+    shipping_services = utils.OptionEnum("shipping_services", list)
+
+
+class ConnectionConfigOptions(Options):
+    """The options common processing helper"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, base_option_type=ConnectionConfigOption)
+
+    @property
+    def label_type(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.label_type.name]
+
+    @property
+    def language_code(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.language_code.name]
+
+    @property
+    def default_currency(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.default_currency.name]
+
+    @property
+    def shipping_options(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.shipping_options.name]
+
+    @property
+    def shipping_services(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.shipping_services.name]
+
+
 class Services:
     """The services common processing helper"""
 

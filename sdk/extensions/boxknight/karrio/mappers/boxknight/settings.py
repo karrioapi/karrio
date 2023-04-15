@@ -21,3 +21,4 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "boxknight"
     account_country_code: str = "CA"
     metadata: dict = {}
+    config: dict = {}

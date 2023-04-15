@@ -18,3 +18,4 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "laposte"
     account_country_code: str = "FR"
     metadata: dict = {}
+    config: dict = {}

@@ -19,3 +19,4 @@ class Settings(BaseSettings):
     carrier_id: str = "dhl_universal"
     account_country_code: str = "DE"
     metadata: dict = {}
+    config: dict = {}

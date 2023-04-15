@@ -236,7 +236,7 @@ def shipment_request(
             references=ReferencesType(
                 cost_centre=(
                     options.canadapost_cost_center.state
-                    or settings.metadata.get("cost-center")
+                    or settings.connection_config.cost_center.state
                     or payload.reference
                 ),
                 customer_ref_1=payload.reference,

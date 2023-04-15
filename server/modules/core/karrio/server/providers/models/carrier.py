@@ -1,14 +1,13 @@
-from functools import partial
-from typing import Dict
-
-from django.db import models
-from django.conf import settings
-from django.forms.models import model_to_dict
-from django.core.validators import RegexValidator
+import typing
+import functools
+import django.conf as conf
+import django.forms as forms
+import django.db.models as models
+import django.core.validators as validators
 
 import karrio
-import karrio.core.units as units
 import karrio.core.utils as utils
+import karrio.core.units as units
 import karrio.api.gateway as gateway
 import karrio.server.core.models as core
 import karrio.server.core.fields as fields
@@ -29,7 +28,10 @@ class CarrierManager(models.Manager):
         return (
             super()
             .get_queryset()
-            .prefetch_related(*[Model.__name__.lower() for Model in MODELS.values()])
+            .prefetch_related(
+                "configs",
+                *[Model.__name__.lower() for Model in MODELS.values()],
+            )
         )
 
 
@@ -40,7 +42,7 @@ class Carrier(core.OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(core.uuid, prefix="car_"),
+        default=functools.partial(core.uuid, prefix="car_"),
         editable=False,
     )
     carrier_id = models.CharField(
@@ -55,17 +57,19 @@ class Carrier(core.OwnedEntity):
         default=True, help_text="Disable/Hide carrier from clients", db_index=True
     )
     created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        conf.settings.AUTH_USER_MODEL,
         blank=True,
         null=True,
         on_delete=models.CASCADE,
         editable=False,
     )
     active_users = models.ManyToManyField(
-        settings.AUTH_USER_MODEL, blank=True, related_name="active_users"
+        conf.settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="active_users",
     )
     capabilities = fields.MultiChoiceField(
-        choices=CAPABILITIES_CHOICES,
+        choices=datatypes.CAPABILITIES_CHOICES,
         default=core.field_default([]),
         help_text="Select the capabilities of the carrier that you want to enable",
     )
@@ -109,7 +113,7 @@ class Carrier(core.OwnedEntity):
 
     @property
     def data(self) -> datatypes.CarrierSettings:
-        _computed_data: Dict = dict(
+        _computed_data: typing.Dict = dict(
             id=self.settings.id,
             carrier_name=self.settings.carrier_name,
             display_name=self.settings.carrier_display_name,
@@ -117,7 +121,7 @@ class Carrier(core.OwnedEntity):
 
         if hasattr(self.settings, "services"):
             _computed_data.update(
-                services=[model_to_dict(s) for s in self.settings.services.all()]
+                services=[forms.model_to_dict(s) for s in self.settings.services.all()]
             )
 
         if hasattr(self.settings, "cache"):
@@ -125,7 +129,7 @@ class Carrier(core.OwnedEntity):
 
         return datatypes.CarrierSettings.create(
             {
-                **model_to_dict(self.settings),
+                **forms.model_to_dict(self.settings),
                 **_computed_data,
             }
         )
@@ -154,54 +158,38 @@ class Carrier(core.OwnedEntity):
             self.settings.carrier_name
         )
 
-
-@core.register_model
-class ServiceLevel(core.OwnedEntity):
-    class Meta:
-        db_table = "service-level"
-        verbose_name = "Service Level"
-        verbose_name_plural = "Service Levels"
-        ordering = ["-created_at"]
-
-    id = models.CharField(
-        max_length=50,
-        primary_key=True,
-        default=partial(core.uuid, prefix="svc_"),
-        editable=False,
-    )
-    service_name = models.CharField(max_length=50)
-    service_code = models.CharField(
-        max_length=50, validators=[RegexValidator(r"^[a-z0-9_]+$")]
-    )
-    description = models.CharField(max_length=250, null=True, blank=True)
-    active = models.BooleanField(null=True, default=True)
-
-    currency = models.CharField(max_length=4, choices=CURRENCIES, null=True, blank=True)
-
-    transit_days = models.IntegerField(blank=True, null=True)
-    transit_time = models.FloatField(blank=True, null=True)
-
-    max_width = models.FloatField(blank=True, null=True)
-    max_height = models.FloatField(blank=True, null=True)
-    max_length = models.FloatField(blank=True, null=True)
-    dimension_unit = models.CharField(
-        max_length=2, choices=DIMENSION_UNITS, null=True, blank=True
-    )
-
-    min_weight = models.FloatField(blank=True, null=True)
-    max_weight = models.FloatField(blank=True, null=True)
-    weight_unit = models.CharField(
-        max_length=2, choices=WEIGHT_UNITS, null=True, blank=True
-    )
-
-    domicile = models.BooleanField(null=True)
-    international = models.BooleanField(null=True)
-
-    zones = models.JSONField(blank=True, null=True, default=core.field_default([]))
-
-    def __str__(self):
-        return f"{self.id} | {self.service_name}"
-
     @property
-    def object_type(self):
-        return "service_level"
+    def config(self):
+        carrier = self.__class__.resolve_config(self)
+
+        return getattr(carrier, "config", None)
+
+    @staticmethod
+    def resolve_config(carrier, context=None):
+        """Resolve the config for a carrier.
+        Here are the rules:
+        - If the carrier is a system carrier, return the first config with no org
+        - If the carrier is an org carrier, return the first config from the org
+        - If the carrier is a user carrier, return the first config from the user
+        """
+        from karrio.server.providers.models.config import CarrierConfig
+        from karrio.server import serializers
+
+        ctx = context or serializers.get_object_context(carrier)
+        is_system = ctx.org is None and ctx.user is None
+
+        queryset = (
+            CarrierConfig.objects.filter(carrier=carrier)
+            if is_system
+            else CarrierConfig.access_by(ctx).filter(carrier=carrier)
+        )
+
+        if is_system:
+            return queryset.filter(
+                **{**({"org__isnull": True} if hasattr(carrier, "org") else {})}
+            ).first()
+
+        if ctx.org is not None:
+            return queryset.filter(org=ctx.org).first()
+
+        return queryset.filter(created_by=ctx.user).first()

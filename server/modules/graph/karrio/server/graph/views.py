@@ -35,7 +35,9 @@ class GraphQLView(AccessMixin, views.GraphQLView):
 
         return super().dispatch(request, *args, **kwargs)
 
-    def process_result(self, request, result: types.ExecutionResult) -> http.GraphQLHTTPResponse:
+    def process_result(
+        self, request, result: types.ExecutionResult
+    ) -> http.GraphQLHTTPResponse:
         data: http.GraphQLHTTPResponse = {"data": result.data}
 
         if result.errors:
@@ -48,6 +50,9 @@ class GraphQLView(AccessMixin, views.GraphQLView):
     def format_graphql_error(self, error: graphql.GraphQLError):
         logger.error(error)
 
+        if getattr(error, "original_error", None):
+            logger.exception(error.original_error)
+
         formatted_error: dict = (
             graphql.format_error(error)  # type: ignore
             if isinstance(error, graphql.GraphQLError)
@@ -59,7 +64,11 @@ class GraphQLView(AccessMixin, views.GraphQLView):
             formatted_error["code"] = (
                 error.original_error.get_codes()
                 if hasattr(error.original_error, "get_codes")
-                else getattr(error.original_error, "code", getattr(error.original_error, "default_code", None))
+                else getattr(
+                    error.original_error,
+                    "code",
+                    getattr(error.original_error, "default_code", None),
+                )
             )
             formatted_error["status_code"] = error.original_error.status_code
 
@@ -71,6 +80,14 @@ class GraphQLView(AccessMixin, views.GraphQLView):
 
 
 urlpatterns = [
-    path("graphql/", csrf_exempt(GraphQLView.as_view(schema=schema.schema)), name="graphql"),
-    path("graphql", csrf_exempt(GraphQLView.as_view(schema=schema.schema)), name="graphql-api"),
+    path(
+        "graphql/",
+        csrf_exempt(GraphQLView.as_view(schema=schema.schema)),
+        name="graphql",
+    ),
+    path(
+        "graphql",
+        csrf_exempt(GraphQLView.as_view(schema=schema.schema)),
+        name="graphql-api",
+    ),
 ]

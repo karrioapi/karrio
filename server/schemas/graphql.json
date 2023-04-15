@@ -1553,6 +1553,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "seller_id",
             "description": null,
             "args": [],
@@ -2089,6 +2101,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "account_number",
             "description": null,
             "args": [],
@@ -2326,6 +2350,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "account_number",
             "description": null,
             "args": [],
@@ -2519,6 +2555,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "username",
             "description": null,
             "args": [],
@@ -2689,6 +2737,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -2913,6 +2973,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "username",
             "description": null,
             "args": [],
@@ -3083,6 +3155,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -3272,6 +3356,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -3477,6 +3573,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -6473,6 +6581,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "consumer_key",
             "description": null,
             "args": [],
@@ -6643,6 +6763,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -6836,6 +6968,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -7061,6 +7205,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -7333,6 +7489,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "api_key",
             "description": null,
             "args": [],
@@ -7487,6 +7655,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -7668,6 +7848,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -7900,6 +8092,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "username",
             "description": null,
             "args": [],
@@ -8070,6 +8274,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -8440,6 +8656,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "api_key",
             "description": null,
             "args": [],
@@ -8633,6 +8861,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "api_key",
             "description": null,
             "args": [],
@@ -8799,6 +9039,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -9015,6 +9267,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "account_number",
             "description": null,
             "args": [],
@@ -9220,6 +9484,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "api_key",
             "description": null,
             "args": [],
@@ -9374,6 +9650,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -9566,6 +9854,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "sendle_id",
             "description": null,
             "args": [],
@@ -9747,6 +10047,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "partner_id",
             "description": null,
             "args": [],
@@ -9917,6 +10229,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -10122,6 +10446,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -10354,6 +10690,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "account_number",
             "description": null,
             "args": [],
@@ -10564,6 +10912,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -10792,6 +11152,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "username",
             "description": null,
             "args": [],
@@ -11009,6 +11381,18 @@
             "deprecationReason": null
           },
           {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "customer_number",
             "description": null,
             "args": [],
@@ -11179,6 +11563,18 @@
           },
           {
             "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
             "description": null,
             "args": [],
             "type": {
@@ -11394,6 +11790,18 @@
                 "name": "Boolean",
                 "ofType": null
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -26020,6 +26428,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -26155,6 +26573,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -26280,6 +26708,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -26377,6 +26815,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -26458,6 +26906,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -26571,6 +27029,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -26664,6 +27132,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -26755,6 +27233,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -26870,6 +27358,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -27315,6 +27813,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -27396,6 +27904,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -27519,6 +28037,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -27628,6 +28156,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -27763,6 +28301,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -27830,6 +28378,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -27923,6 +28481,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -28034,6 +28602,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -28155,6 +28733,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -28343,6 +28931,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -28436,6 +29034,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -28513,6 +29121,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -28616,6 +29234,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -28725,6 +29353,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -28792,6 +29430,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -28877,6 +29525,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -28958,6 +29616,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -29051,6 +29719,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -29158,6 +29836,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -29281,6 +29969,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -29390,6 +30088,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -29505,6 +30213,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -29618,6 +30336,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -29699,6 +30427,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -30186,6 +30924,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -30311,6 +31059,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -30426,6 +31184,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -30521,6 +31289,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -30604,6 +31382,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -30711,6 +31499,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -30806,6 +31604,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -30899,6 +31707,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -31012,6 +31830,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -31445,6 +32273,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -31528,6 +32366,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -31653,6 +32501,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -31764,6 +32622,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -31901,6 +32769,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -31974,6 +32852,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -32069,6 +32957,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -32174,6 +33072,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -32299,6 +33207,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -32392,6 +33310,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -32489,6 +33417,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -32572,6 +33510,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -32679,6 +33627,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -32784,6 +33742,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -32857,6 +33825,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -32944,6 +33922,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -33027,6 +34015,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -33122,6 +34120,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -33227,6 +34235,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -33344,6 +34362,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -33447,6 +34475,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -33564,6 +34602,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -33679,6 +34727,16 @@
             "defaultValue": "true"
           },
           {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "metadata",
             "description": null,
             "type": {
@@ -33762,6 +34820,16 @@
               "ofType": null
             },
             "defaultValue": "true"
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -33889,13 +34957,19 @@
             "name": "enable",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Boolean",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "Boolean",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "config",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
             },
             "defaultValue": null
           }

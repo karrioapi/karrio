@@ -496,11 +496,7 @@ class TrackingInfoType:
     @staticmethod
     def parse(charge: dict):
         return TrackingInfoType(
-            **{
-                k: v
-                for k, v in charge.items()
-                if k in TrackingInfoType.__annotations__
-            }
+            **{k: v for k, v in charge.items() if k in TrackingInfoType.__annotations__}
         )
 
 
@@ -741,6 +737,11 @@ class SystemConnectionType:
 
         return self.active_users.filter(id=info.context.request.user.id).exists()
 
+    @strawberry.field
+    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+        config = providers.Carrier.resolve_config(self, context=info.context.request)
+        return getattr(config, "config", None)
+
     @staticmethod
     @utils.authentication_required
     def resolve_list(
@@ -797,6 +798,7 @@ class ConnectionType:
         return CarrierSettings[carrier_name](
             id=carrier.id,
             active=carrier.active,
+            config=carrier.config,
             carrier_name=carrier_name,
             capabilities=carrier.capabilities,
             **{**settings, **services, **display_name},
@@ -810,6 +812,7 @@ def create_carrier_settings_type(name: str, model):
     @strawberry.type
     class _Settings(ConnectionType):
         metadata: utils.JSON = strawberry.UNSET
+        config: typing.Optional[utils.JSON] = None
 
         if hasattr(model, "account_number"):
             account_number: typing.Optional[str] = strawberry.UNSET

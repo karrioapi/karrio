@@ -20,3 +20,4 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "ups_freight"
     account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}

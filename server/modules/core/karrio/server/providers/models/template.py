@@ -1,8 +1,8 @@
-from functools import partial
-from django.db import models
-from django.core.validators import RegexValidator
+import functools
+import django.db.models as models
+import django.core.validators as validators
+import karrio.server.core.models as core
 
-from karrio.server.core.models import OwnedEntity, uuid, register_model
 
 LABEL_TEMPLATE_TYPES = [
     ("SVG", "SVG"),
@@ -10,8 +10,8 @@ LABEL_TEMPLATE_TYPES = [
 ]
 
 
-@register_model
-class LabelTemplate(OwnedEntity):
+@core.register_model
+class LabelTemplate(core.OwnedEntity):
     class Meta:
         db_table = "label-template"
         verbose_name = "Label Template"
@@ -21,10 +21,13 @@ class LabelTemplate(OwnedEntity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="tpl_"),
+        default=functools.partial(core.uuid, prefix="tpl_"),
         editable=False,
     )
-    slug = models.SlugField(max_length=30, validators=[RegexValidator(r"^[a-z0-9_]+$")])
+    slug = models.SlugField(
+        max_length=30,
+        validators=[validators.RegexValidator(r"^[a-z0-9_]+$")],
+    )
     template = models.TextField()
     template_type = models.CharField(max_length=3, choices=LABEL_TEMPLATE_TYPES)
     width = models.IntegerField(null=True, blank=True)

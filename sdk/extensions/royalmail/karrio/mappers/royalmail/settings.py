@@ -18,3 +18,4 @@ class Settings(BaseSettings):
     carrier_id: str = "royalmail"
     account_country_code: str = "UK"
     metadata: dict = {}
+    config: dict = {}

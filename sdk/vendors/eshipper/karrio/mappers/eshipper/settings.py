@@ -16,3 +16,4 @@ class Settings(BaseSettings):
     carrier_id: str = "eshipper"
     account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}

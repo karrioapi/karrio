@@ -21,3 +21,4 @@ class Settings(BaseSettings):
     carrier_id: str = "usps"
     account_country_code: str = "US"
     metadata: dict = {}
+    config: dict = {}

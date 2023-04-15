@@ -18,4 +18,5 @@ METADATA = Metadata(
     package_presets=units.PackagePresets,
     packaging_types=units.PackagingType,
     services=units.ShippingService,
+    connection_configs=units.ConnectionConfig,
 )

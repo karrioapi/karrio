@@ -19,3 +19,4 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "geodis"
     account_country_code: str = "FR"
     metadata: dict = {}
+    config: dict = {}

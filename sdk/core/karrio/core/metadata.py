@@ -23,10 +23,11 @@ class Metadata:
     Settings: Type[Settings]
 
     # Data Units
-    services: Optional[Type[Enum]] = None
     options: Optional[Type[Enum]] = None
+    services: Optional[Type[Enum]] = None
     package_presets: Optional[Type[Enum]] = None
     packaging_types: Optional[Type[Enum]] = None
+    connection_configs: Optional[Type[Enum]] = None
     service_levels: Optional[List[ServiceLevel]] = None
 
     id: Optional[str] = None

@@ -433,6 +433,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
                 services: typing.Optional[_service_type] = strawberry.UNSET
 
             active: typing.Optional[bool] = True
+            config: typing.Optional[utils.JSON] = strawberry.UNSET
             metadata: typing.Optional[utils.JSON] = strawberry.UNSET
 
         annotations = {
@@ -508,4 +509,5 @@ UpdateCarrierConnectionMutationInput = strawberry.input(
 @strawberry.input
 class SystemCarrierMutationInput(utils.BaseInput):
     id: str
-    enable: bool
+    enable: typing.Optional[bool] = strawberry.UNSET
+    config: typing.Optional[utils.JSON] = strawberry.UNSET

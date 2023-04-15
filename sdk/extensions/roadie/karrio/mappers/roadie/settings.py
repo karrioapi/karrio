@@ -17,3 +17,4 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "roadie"
     account_country_code: str = "US"
     metadata: dict = {}
+    config: dict = {}

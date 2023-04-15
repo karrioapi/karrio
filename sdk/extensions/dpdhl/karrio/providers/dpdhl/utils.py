@@ -20,7 +20,6 @@ class Settings(core.Settings):
     zt_id: str = None
     zt_password: str = None
     account_number: str = None
-    language_code: str = "en"
 
     @property
     def carrier_name(self):
@@ -35,14 +34,31 @@ class Settings(core.Settings):
         )
 
     @property
+    def tracking_url(self):
+        return (
+            "https://www.dhl.de/"
+            + self.language_code
+            + "/privatkunden/pakete-empfangen/verfolgen.html?piececode={}"
+        )
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.dpdhl.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
+
+    @property
+    def language_code(self):
+        return self.connection_config.language_code.state or "en"
+
+    @property
     def basic_authentication(self):
         pair = "%s:%s" % (
             (self.username, self.password)
-            if self.test_mode else
-            (self.app_id, self.app_token)
+            if self.test_mode
+            else (self.app_id, self.app_token)
         )
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
-
-    @property
-    def tracking_url(self):
-        return "https://www.dhl.de/" + self.language_code + "/privatkunden/pakete-empfangen/verfolgen.html?piececode={}"

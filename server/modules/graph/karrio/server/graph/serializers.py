@@ -231,6 +231,14 @@ class LabelTemplateModelSerializer(serializers.ModelSerializer):
         extra_kwargs = {field: {"read_only": True} for field in ["id"]}
 
 
+@serializers.owned_model_serializer
+class CarrierConfigModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = providers.CarrierConfig
+        exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
+
+
 def create_carrier_model_serializers(partial: bool = False):
     def _create_model_serializer(carrier_name: str, carrier_model):
         _name = carrier_name
@@ -238,7 +246,9 @@ def create_carrier_model_serializers(partial: bool = False):
 
         if hasattr(carrier_model, "account_country_code"):
             _extra_fields.update(
-                account_country_code=serializers.CharField(required=False, allow_null=True)
+                account_country_code=serializers.CharField(
+                    required=False, allow_null=True
+                )
             )
 
         if hasattr(carrier_model, "services"):
@@ -279,6 +289,7 @@ def create_carrier_model_serializers(partial: bool = False):
                 {
                     "Meta": Meta,
                     "carrier_id": serializers.CharField(required=not partial),
+                    "config": serializers.JSONField(required=False, allow_null=True),
                     **_extra_fields,
                 },
             )
@@ -322,7 +333,7 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
         payload = {
             key: value
             for key, value in settings_data.items()
-            if key not in ["id", "services", "label_template"]
+            if key not in ["id", "services", "label_template", "config"]
         }
         label_template = serializers.save_one_to_one_data(
             "label_template",
@@ -348,11 +359,24 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
                 payload=dict(services=services),
                 context=context,
             )
+
         if label_template:
             settings.label_template = label_template
             settings.save()
 
-        return getattr(settings, "carrier_ptr", None)
+        carrier = getattr(settings, "carrier_ptr", None)
+        if settings_data.get("config"):
+            (
+                CarrierConfigModelSerializer.map(
+                    context=context,
+                    data={
+                        "carrier": carrier.pk,
+                        "config": (settings_data.get("config") or {}),
+                    },
+                ).save()
+            )
+
+        return carrier
 
     @transaction.atomic
     def update(
@@ -369,7 +393,7 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
         payload = {
             key: value
             for key, value in validated_data.get(carrier_name, {}).items()
-            if key not in ["id", "services", "label_template"]
+            if key not in ["id", "services", "label_template", "config"]
         }
 
         settings = serializers.save_one_to_one_data(
@@ -381,7 +405,6 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
         )
 
         template = validated_data.get(carrier_name, {}).get("label_template")
-
         if template:
             settings.label_template = serializers.save_one_to_one_data(
                 "label_template",
@@ -392,7 +415,22 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             )
             settings.save()
 
-        return getattr(settings, "carrier_ptr", instance)
+        carrier = getattr(settings, "carrier_ptr", instance)
+        config = providers.Carrier.resolve_config(carrier, context=context)
+        config_data = validated_data.get(carrier_name, {}).get("config")
+        if config_data:
+            CarrierConfigModelSerializer.map(
+                instance=config,
+                context=context,
+                data={
+                    "carrier": carrier.pk,
+                    "config": serializers.process_dictionaries_mutations(
+                        ["config"], config_data, config
+                    ),
+                },
+            ).save()
+
+        return carrier
 
 
 ConnectionModelSerializer = type(

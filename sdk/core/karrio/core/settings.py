@@ -1,26 +1,35 @@
 """Karrio Settings abstract class definition"""
 
+import abc
 import attr
-from typing import Optional
-from abc import ABC
+import typing
 
 
 @attr.s(auto_attribs=True)
-class Settings(ABC):
-    """
-    Unified API carrier Connection settings (Interface)
-    """
+class Settings(abc.ABC):
+    """Unified API carrier Connection settings (Interface)"""
 
     carrier_id: str
-    id: str = None
-    test_mode: bool = False
     account_country_code: str = None
+    test_mode: bool = False
     metadata: dict = {}
+    config: dict = {}
+    id: str = None
 
     @property
-    def server_url(self) -> Optional[str]:
+    def carrier_name(self) -> typing.Optional[str]:
         return None
 
     @property
-    def carrier_name(self) -> Optional[str]:
+    def server_url(self) -> typing.Optional[str]:
         return None
+
+    @property
+    def tracking_url(self) -> typing.Optional[str]:
+        return None
+
+    @property
+    def connection_config(self):
+        import karrio.lib as lib
+
+        return lib.to_connection_config(self.config or {})

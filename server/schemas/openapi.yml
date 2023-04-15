@@ -2360,6 +2360,7 @@ paths:
                     incoterms: {}
                     states: {}
                     services: {}
+                    connection_configs: {}
                     service_names: {}
                     options: {}
                     option_names: {}
@@ -4840,6 +4841,16 @@ components:
             type: string
           nullable: true
           description: The carrier supported and enabled capabilities.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier user metadata.
+        config:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier connection config.
       required:
       - active
       - carrier_id
@@ -11583,7 +11594,6 @@ tags:
     | dpdhl | Deutsche Post DHL |
     | dpd | DPD |
     | dicom | Dicom |
-    | dhl_universal | DHL Universal |
     | dhl_poland | DHL Parcel Poland |
     | dhl_express | DHL Express |
     | chronopost | Chronopost |
@@ -11593,6 +11603,7 @@ tags:
     | australiapost | Australia Post |
     | aramex | Aramex |
     | amazon_mws | AmazonMws |
+    | dhl_universal | DHL Universal |
 
     ---
     ## Services

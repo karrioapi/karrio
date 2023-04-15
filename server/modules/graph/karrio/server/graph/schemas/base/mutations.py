@@ -609,17 +609,35 @@ class SystemCarrierMutation(utils.BaseMutation):
     def mutate(
         info: Info, **input: inputs.SystemCarrierMutationInput
     ) -> "SystemCarrierMutation":
-        carrier = providers.Carrier.objects.get(id=input.get("id"), created_by=None)
+        pk = input.get("id")
+        context = info.context.request
+        carrier = providers.Carrier.objects.get(pk=pk, created_by=None)
 
-        if input.get("enable"):
-            if hasattr(carrier, "active_orgs"):
-                carrier.active_orgs.add(info.context.request.org)
+        if "enable" in input:
+            if input.get("enable"):
+                if hasattr(carrier, "active_orgs"):
+                    carrier.active_orgs.add(info.context.request.org)
+                else:
+                    carrier.active_users.add(info.context.request.user)
             else:
-                carrier.active_users.add(info.context.request.user)
-        else:
-            if hasattr(carrier, "active_orgs"):
-                carrier.active_orgs.remove(info.context.request.org)
-            else:
-                carrier.active_users.remove(info.context.request.user)
+                if hasattr(carrier, "active_orgs"):
+                    carrier.active_orgs.remove(info.context.request.org)
+                else:
+                    carrier.active_users.remove(info.context.request.user)
 
-        return SystemCarrierMutation(carrier=carrier)  # type: ignore
+        if "config" in input:
+            config = providers.Carrier.resolve_config(carrier, context=context)
+            serializers.CarrierConfigModelSerializer.map(
+                instance=config,
+                context=context,
+                data={
+                    "carrier": carrier.pk,
+                    "config": process_dictionaries_mutations(
+                        ["config"], (input["config"] or {}), config
+                    ),
+                },
+            ).save()
+
+        return SystemCarrierMutation(
+            carrier=providers.Carrier.objects.get(pk=pk, created_by=None)
+        )  # type: ignore

@@ -35,6 +35,7 @@ References = openapi.OpenApiResponse(
                 "incoterms": {},
                 "states": {},
                 "services": {},
+                "connection_configs": {},
                 "service_names": {},
                 "options": {},
                 "option_names": {},
