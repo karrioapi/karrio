@@ -673,6 +673,16 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: carrier_name
+        schema:
+          type: string
+        description: 'The unique carrier slug. <br/>Values: `amazon_mws`, `aramex`,
+          `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
+          `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
+          `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
+          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+      - in: query
         name: system_only
         schema:
           type: boolean
@@ -2463,8 +2473,11 @@ paths:
           enum:
           - cancelled
           - delivered
+          - delivery_failed
           - draft
           - in_transit
+          - needs_attention
+          - out_for_delivery
           - purchased
           - shipped
       - in: query
@@ -9347,6 +9360,9 @@ components:
             - shipment_purchased
             - shipment_cancelled
             - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
             - tracker_created
             - tracker_updated
             - order_created
@@ -9364,6 +9380,9 @@ components:
               * `shipment_purchased` - shipment_purchased
               * `shipment_cancelled` - shipment_cancelled
               * `shipment_fulfilled` - shipment_fulfilled
+              * `shipment_out_for_delivery` - shipment_out_for_delivery
+              * `shipment_needs_attention` - shipment_needs_attention
+              * `shipment_delivery_failed` - shipment_delivery_failed
               * `tracker_created` - tracker_created
               * `tracker_updated` - tracker_updated
               * `order_created` - order_created
@@ -10304,6 +10323,9 @@ components:
           - shipped
           - in_transit
           - delivered
+          - needs_attention
+          - out_for_delivery
+          - delivery_failed
           type: string
           default: draft
           description: |-
@@ -10315,6 +10337,9 @@ components:
             * `shipped` - shipped
             * `in_transit` - in_transit
             * `delivered` - delivered
+            * `needs_attention` - needs_attention
+            * `out_for_delivery` - out_for_delivery
+            * `delivery_failed` - delivery_failed
         carrier_name:
           type: string
           nullable: true
@@ -10853,6 +10878,9 @@ components:
           - shipped
           - in_transit
           - delivered
+          - needs_attention
+          - out_for_delivery
+          - delivery_failed
           type: string
           default: draft
           description: |-
@@ -10864,6 +10892,9 @@ components:
             * `shipped` - shipped
             * `in_transit` - in_transit
             * `delivered` - delivered
+            * `needs_attention` - needs_attention
+            * `out_for_delivery` - out_for_delivery
+            * `delivery_failed` - delivery_failed
         carrier_name:
           type: string
           nullable: true
@@ -11337,6 +11368,9 @@ components:
             - shipment_purchased
             - shipment_cancelled
             - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
             - tracker_created
             - tracker_updated
             - order_created
@@ -11354,6 +11388,9 @@ components:
               * `shipment_purchased` - shipment_purchased
               * `shipment_cancelled` - shipment_cancelled
               * `shipment_fulfilled` - shipment_fulfilled
+              * `shipment_out_for_delivery` - shipment_out_for_delivery
+              * `shipment_needs_attention` - shipment_needs_attention
+              * `shipment_delivery_failed` - shipment_delivery_failed
               * `tracker_created` - tracker_created
               * `tracker_updated` - tracker_updated
               * `order_created` - order_created
@@ -11409,6 +11446,9 @@ components:
             - shipment_purchased
             - shipment_cancelled
             - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
             - tracker_created
             - tracker_updated
             - order_created
@@ -11426,6 +11466,9 @@ components:
               * `shipment_purchased` - shipment_purchased
               * `shipment_cancelled` - shipment_cancelled
               * `shipment_fulfilled` - shipment_fulfilled
+              * `shipment_out_for_delivery` - shipment_out_for_delivery
+              * `shipment_needs_attention` - shipment_needs_attention
+              * `shipment_delivery_failed` - shipment_delivery_failed
               * `tracker_created` - tracker_created
               * `tracker_updated` - tracker_updated
               * `order_created` - order_created

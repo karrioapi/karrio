@@ -15,6 +15,9 @@ class ShipmentStatus(enum.Enum):
     shipped = "shipped"
     in_transit = "in_transit"
     delivered = "delivered"
+    needs_attention = "needs_attention"
+    out_for_delivery = "out_for_delivery"
+    delivery_failed = "delivery_failed"
 
 
 class TrackerStatus(enum.Enum):
