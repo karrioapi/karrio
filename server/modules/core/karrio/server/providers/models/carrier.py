@@ -47,14 +47,23 @@ class Carrier(core.OwnedEntity):
     )
     carrier_id = models.CharField(
         max_length=200,
-        help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
         db_index=True,
+        help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
     )
     test_mode = models.BooleanField(
-        default=True, db_column="test_mode", help_text="Toggle carrier connection mode"
+        default=True,
+        db_column="test_mode",
+        help_text="Toggle carrier connection mode",
     )
     active = models.BooleanField(
-        default=True, help_text="Disable/Hide carrier from clients", db_index=True
+        default=True,
+        db_index=True,
+        help_text="Disable/Hide carrier from clients",
+    )
+    is_system = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Determine that the carrier connection is available system wide.",
     )
     created_by = models.ForeignKey(
         conf.settings.AUTH_USER_MODEL,
@@ -73,7 +82,12 @@ class Carrier(core.OwnedEntity):
         default=core.field_default([]),
         help_text="Select the capabilities of the carrier that you want to enable",
     )
-    metadata = models.JSONField(blank=True, null=True, default=dict)
+    metadata = models.JSONField(
+        blank=True,
+        null=True,
+        default=core.field_default({}),
+        help_text="User defined metadata",
+    )
 
     objects = CarrierManager()
 
@@ -175,16 +189,18 @@ class Carrier(core.OwnedEntity):
         from karrio.server.providers.models.config import CarrierConfig
         from karrio.server import serializers
 
+        if carrier.id is None:
+            return None
+
         ctx = context or serializers.get_object_context(carrier)
-        is_system = ctx.org is None and ctx.user is None
 
         queryset = (
             CarrierConfig.objects.filter(carrier=carrier)
-            if is_system
+            if carrier.is_system
             else CarrierConfig.access_by(ctx).filter(carrier=carrier)
         )
 
-        if is_system:
+        if carrier.is_system:
             return queryset.filter(
                 **{**({"org__isnull": True} if hasattr(carrier, "org") else {})}
             ).first()

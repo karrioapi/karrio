@@ -39,9 +39,9 @@ class Carriers:
         )
         access_id = getattr(access_entity, "id", None)
         system_carrier_user = (
-            Q(**{"active": True, "created_by__isnull": True, active_key: access_id})
+            Q(**{"is_system": True, active_key: access_id})
             if access_id is not None
-            else Q(**{"active": True, "created_by__isnull": True})
+            else Q(**{"is_system": True})
         )
         creator_filter = (
             Q(
@@ -52,11 +52,11 @@ class Carriers:
             else Q()
         )
 
-        # Check if the system_only flag is not specified and there is a provided user, get the users carriers
+        # Check if the system_only flag is not specified and there is a provided owner, get the users carriers
         if (not list_filter.get("system_only")) and (len(user_filter) > 0):
             query += (user_filter | system_carrier_user | creator_filter,)
         elif list_filter.get("system_only") is True:
-            query += (Q(created_by__isnull=True, active=True),)
+            query += (system_carrier_user,)
 
         # Check if the test filter is specified then set it otherwise return all carriers live and test mode
         if test_mode is not None:
@@ -65,11 +65,9 @@ class Carriers:
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get("active") is not None:
             active = False if list_filter["active"] is False else True
-            carrier_is_active = Q(active=active, created_by__isnull=False)
+            carrier_is_active = Q(active=active, is_system=False)
             system_carrier_is_active = (
-                system_carrier_user
-                if active
-                else Q(active=active, created_by__isnull=True)
+                system_carrier_user if active else Q(active=active, is_system=True)
             )
             query += (carrier_is_active | system_carrier_is_active,)
 
@@ -121,7 +119,7 @@ class Carriers:
 
             query += (Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False}),)
 
-        carriers = providers.Carrier.objects.filter(*query)
+        carriers = providers.Carrier.objects.filter(*query).distinct()
 
         # Raise an error if no carrier is found
         if list_filter.get("raise_not_found") and len(carriers) == 0:

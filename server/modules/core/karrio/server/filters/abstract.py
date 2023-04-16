@@ -1,4 +1,5 @@
 import django_filters
+import karrio.lib as lib
 
 
 class CharInFilter(django_filters.BaseInFilter, django_filters.CharFilter):
@@ -19,3 +20,7 @@ class FilterSet(django_filters.FilterSet):
             },
         }
         super().__init__(data, queryset, request=request, prefix=prefix)
+
+    def to_dict(self):
+        self.form.is_valid()
+        return lib.to_dict(self.form.cleaned_data)

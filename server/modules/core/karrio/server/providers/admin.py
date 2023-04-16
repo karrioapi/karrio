@@ -88,18 +88,19 @@ def model_admin(ext: str, carrier):
             }
             carrier = super(_Form, self).save(commit)
 
-            config = carriers.Carrier.resolve_config(carrier)
-            graph_serializers.CarrierConfigModelSerializer.map(
-                instance=config,
-                context=dict(user=self.request.user),
-                data={
-                    "carrier": carrier.pk,
-                    "created_by": self.request.user.pk,
-                    "config": serializers.process_dictionaries_mutations(
-                        ["config"], config_data, config
-                    ),
-                },
-            ).save()
+            if any(connection_configs) and commit:
+                config = carriers.Carrier.resolve_config(carrier)
+                graph_serializers.CarrierConfigModelSerializer.map(
+                    instance=config,
+                    context=dict(user=self.request.user),
+                    data={
+                        "carrier": carrier.pk,
+                        "created_by": self.request.user.pk,
+                        "config": serializers.process_dictionaries_mutations(
+                            ["config"], config_data, config
+                        ),
+                    },
+                ).save()
 
             return carrier
 
@@ -245,7 +246,7 @@ def model_admin(ext: str, carrier):
 
         def get_queryset(self, request):
             query = super().get_queryset(request)
-            return query.filter(created_by=None)
+            return query.filter(models.Q(is_system=True) | models.Q(created_by=None))
 
         def get_form(self, request, *args, **kwargs):
             form = super(_Admin, self).get_form(request, *args, **kwargs)

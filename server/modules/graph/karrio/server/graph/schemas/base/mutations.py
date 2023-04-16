@@ -611,7 +611,7 @@ class SystemCarrierMutation(utils.BaseMutation):
     ) -> "SystemCarrierMutation":
         pk = input.get("id")
         context = info.context.request
-        carrier = providers.Carrier.objects.get(pk=pk, created_by=None)
+        carrier = providers.Carrier.objects.get(pk=pk, is_system=True)
 
         if "enable" in input:
             if input.get("enable"):
@@ -639,5 +639,5 @@ class SystemCarrierMutation(utils.BaseMutation):
             ).save()
 
         return SystemCarrierMutation(
-            carrier=providers.Carrier.objects.get(pk=pk, created_by=None)
+            carrier=providers.Carrier.objects.get(pk=pk, is_system=True)
         )  # type: ignore
