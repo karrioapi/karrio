@@ -158,6 +158,7 @@ NegotiatedParsedShipmentResponse = [
         "carrier_id": "ups",
         "tracking_number": "1ZWA82900191640782",
         "shipment_identifier": "1ZWA82900191640782",
+        "label_type": "PDF",
         "docs": {"label": ANY},
         "meta": {
             "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1ZWA82900191640782/trackdetails"
@@ -172,6 +173,7 @@ ParsedShipmentResponse = [
         "carrier_id": "ups",
         "tracking_number": "1ZWA82900191640782",
         "shipment_identifier": "1ZWA82900191640782",
+        "label_type": "PDF",
         "docs": {"label": ANY},
         "meta": {
             "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1ZWA82900191640782/trackdetails"

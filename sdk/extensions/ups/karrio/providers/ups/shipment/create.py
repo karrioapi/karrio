@@ -30,24 +30,34 @@ def _extract_shipment(
     settings: provider_utils.Settings,
     ctx: dict,
 ) -> models.ShipmentDetails:
+    label_type = "ZPL" if ctx["label"]["type"] == "ZPL" else "PDF"
     enforce_zpl = settings.connection_config.enforce_zpl.state
     shipment = lib.to_object(ups.ShipmentResultsType, node)
     label = _process_label(shipment)
+    zpl_label = None
 
-    if enforce_zpl and ctx["label"]["type"] == "PDF":
-        label = lib.zpl_to_pdf(
-            label,
-            ctx["label"]["width"],
-            ctx["label"]["height"],
-            dpmm=8,
+    if enforce_zpl and label_type == "PDF":
+        _label = lib.failsafe(
+            lambda: lib.zpl_to_pdf(
+                label,
+                ctx["label"]["width"],
+                ctx["label"]["height"],
+                dpmm=8,
+            )
         )
+        zpl_label = label  # save the original label
+
+        # if the conversion fails, use the original label and label type.
+        label = _label or label
+        label_type = "ZPL" if _label is None else label_type
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
-        docs=models.Documents(label=label),
+        label_type=label_type,
+        docs=models.Documents(label=label, zpl_label=zpl_label),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(
                 shipment.ShipmentIdentificationNumber
