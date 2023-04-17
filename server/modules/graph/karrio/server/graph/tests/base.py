@@ -58,12 +58,14 @@ class GraphTestCase(BaseAPITestCase):
             password="password",
             meter_number="000000",
             account_number="000000",
+            is_system=True,
         )
         self.dhl_carrier = MODELS["dhl_universal"].objects.create(
             carrier_id="dhl_universal",
             test_mode=False,
             consumer_key="test",
             consumer_secret="password",
+            is_system=True,
         )
 
     def query(
