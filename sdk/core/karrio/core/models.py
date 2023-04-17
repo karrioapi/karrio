@@ -331,6 +331,9 @@ class Documents:
     """Karrio unified shipment details data type."""
 
     label: str
+    zpl_label: str = None
+    pdf_label: str = None
+
     invoice: str = None
 
 
