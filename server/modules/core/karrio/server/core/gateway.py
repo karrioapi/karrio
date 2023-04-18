@@ -129,8 +129,6 @@ class Carriers:
 
         carriers = _queryset.distinct()
 
-        print(_queryset, list_filter)
-
         # Raise an error if no carrier is found
         if list_filter.get("raise_not_found") and len(carriers) == 0:
             raise NotFound("No active carrier connection found to process the request")

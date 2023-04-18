@@ -10,6 +10,7 @@ def forwards_func(apps, schema_editor):
     orders = (
         Order.objects.using(db_alias)
         .filter(line_items__children__commodity_parcel__parcel_shipment__isnull=False)
+        .distinct()
         .iterator()
     )
 

@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             field=models.BooleanField(
                 db_index=True,
                 default=False,
-                help_text="Determine that the carrier connection is available for all orgs",
+                help_text="Determine that the carrier connection is available system wide.",
             ),
         ),
         migrations.AlterField(
