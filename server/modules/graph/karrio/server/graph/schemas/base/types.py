@@ -86,9 +86,7 @@ class LogType:
             # exclude system carriers records if user is not staff
             system_carriers = [
                 item["id"]
-                for item in providers.Carrier.objects.filter(is_system=True).values(
-                    "id"
-                )
+                for item in providers.Carrier.system_carriers.all().values("id")
             ]
             queryset = queryset.exclude(meta__carrier_account_id__in=system_carriers)
 
@@ -747,8 +745,8 @@ class SystemConnectionType:
     def resolve_list(
         info,
     ) -> typing.List["SystemConnectionType"]:
-        return providers.Carrier.objects.filter(
-            is_system=True,
+        return providers.Carrier.system_carriers.filter(
+            active=True,
             test_mode=getattr(info.context.request, "test_mode", False),
         )
 

@@ -116,7 +116,13 @@ def model_admin(ext: str, carrier):
                     "fields": [
                         _
                         for _ in form_fields
-                        if _ not in [*connection_configs, "active_users", "services"]
+                        if _
+                        not in [
+                            *connection_configs,
+                            "active_users",
+                            "services",
+                            "is_system",
+                        ]
                     ],
                 },
             ),
@@ -263,6 +269,10 @@ def model_admin(ext: str, carrier):
             form.base_fields["capabilities"].initial = raw_capabilities
 
             return form
+
+        def save_model(self, request, obj, form, change):
+            obj.is_system = True
+            return super().save_model(request, obj, form, change)
 
     return type(f"{class_name}Admin", (_Admin,), {})
 

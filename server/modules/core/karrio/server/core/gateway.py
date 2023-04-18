@@ -30,18 +30,16 @@ class Carriers:
         query: typing.Any = tuple()
         list_filter = kwargs.copy()
         user_filter = core.get_access_filter(context) if context is not None else []
+
         test_mode = list_filter.get("test_mode") or getattr(context, "test_mode", None)
+        system_only = list_filter.get("system_only") is True
         active_key = (
             "active_orgs__id" if settings.MULTI_ORGANIZATIONS else "active_users__id"
         )
-        access_entity = getattr(
-            context, "org" if settings.MULTI_ORGANIZATIONS else "user", None
-        )
-        access_id = getattr(access_entity, "id", None)
-        system_carrier_user = (
-            Q(**{"is_system": True, active_key: access_id})
-            if access_id is not None
-            else Q(**{"is_system": True})
+        access_id = getattr(
+            getattr(context, "org" if settings.MULTI_ORGANIZATIONS else "user", None),
+            "id",
+            None,
         )
         creator_filter = (
             Q(
@@ -52,36 +50,44 @@ class Carriers:
             else Q()
         )
 
-        # Check if the system_only flag is not specified and there is a provided owner, get the users carriers
-        if (not list_filter.get("system_only")) and (len(user_filter) > 0):
-            query += (user_filter | system_carrier_user | creator_filter,)
-        elif list_filter.get("system_only") is True:
-            query += (system_carrier_user,)
+        _user_carriers = providers.Carrier.user_carriers.filter(
+            user_filter if len(user_filter) > 0 else Q(),
+            creator_filter,
+        )
+        _system_carriers = providers.Carrier.system_carriers.filter(
+            Q(
+                **{
+                    "active": True,
+                    **({active_key: access_id} if access_id is not None else {}),
+                }
+            )
+        )
+        _queryset = (
+            _system_carriers if system_only else _user_carriers | _system_carriers
+        )
 
         # Check if the test filter is specified then set it otherwise return all carriers live and test mode
         if test_mode is not None:
-            query += (Q(test_mode=test_mode),)
+            _queryset = _queryset.filter(test_mode=test_mode)
 
         # Check if the active flag is specified and return all active carrier is active is not set to false
         if list_filter.get("active") is not None:
             active = False if list_filter["active"] is False else True
-            carrier_is_active = Q(active=active, is_system=False)
-            system_carrier_is_active = (
-                system_carrier_user if active else Q(active=active, is_system=True)
-            )
-            query += (carrier_is_active | system_carrier_is_active,)
+            _queryset = _queryset.filter(Q(active=active))
 
         # Check if a specific carrier_id is provided, to add it to the query
         if "carrier_id" in list_filter:
-            query += (Q(carrier_id=list_filter["carrier_id"]),)
+            _queryset = _queryset.filter(carrier_id=list_filter["carrier_id"])
 
         # Check if a specific carrier_id is provided, to add it to the query
         if "capability" in list_filter:
-            query += (Q(capabilities__icontains=list_filter["capability"]),)
+            _queryset = _queryset.filter(
+                capabilities__icontains=list_filter["capability"]
+            )
 
         # Check if a list of carrier_ids are provided, to add the list to the query
         if any(list_filter.get("carrier_ids", [])):
-            query += (Q(carrier_id__in=list_filter["carrier_ids"]),)
+            _queryset = _queryset.filter(carrier_id__in=list_filter["carrier_ids"])
 
         if any(list_filter.get("services", [])):
             carrier_names = [
@@ -107,7 +113,7 @@ class Carriers:
                         else Q(genericsettings__custom_carrier_name=carrier_name)
                     )
 
-                query += (_queries,)
+                _queryset = _queryset.filter(_queries)
 
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
@@ -117,9 +123,13 @@ class Carriers:
                     f"No extension installed for the carrier: '{carrier_name}'"
                 )
 
-            query += (Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False}),)
+            _queryset = _queryset.filter(
+                Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False})
+            )
 
-        carriers = providers.Carrier.objects.filter(*query).distinct()
+        carriers = _queryset.distinct()
+
+        print(_queryset, list_filter)
 
         # Raise an error if no carrier is found
         if list_filter.get("raise_not_found") and len(carriers) == 0:

@@ -21,7 +21,7 @@ DIMENSION_UNITS = [(c.name, c.name) for c in units.DimensionUnit]
 CAPABILITIES_CHOICES = [(c, c) for c in units.CarrierCapabilities.get_capabilities()]
 
 
-class CarrierManager(models.Manager):
+class Manager(models.Manager):
     def get_queryset(self):
         from karrio.server.providers.models import MODELS
 
@@ -33,6 +33,18 @@ class CarrierManager(models.Manager):
                 *[Model.__name__.lower() for Model in MODELS.values()],
             )
         )
+
+        return queryset.filter(is_system=False)
+
+
+class CarrierManager(Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_system=False)
+
+
+class SystemCarrierManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(is_system=True)
 
 
 class Carrier(core.OwnedEntity):
@@ -89,7 +101,9 @@ class Carrier(core.OwnedEntity):
         help_text="User defined metadata",
     )
 
-    objects = CarrierManager()
+    objects = Manager()
+    user_carriers = CarrierManager()
+    system_carriers = SystemCarrierManager()
 
     def __str__(self):
         return self.carrier_id
@@ -205,7 +219,7 @@ class Carrier(core.OwnedEntity):
                 **{**({"org__isnull": True} if hasattr(carrier, "org") else {})}
             ).first()
 
-        if ctx.org is not None:
+        if hasattr(carrier, "org") and ctx.org is not None:
             return queryset.filter(org=ctx.org).first()
 
         return queryset.filter(created_by=ctx.user).first()
