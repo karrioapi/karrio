@@ -1,5 +1,6 @@
 """Karrio GEODIS client proxy."""
 
+import json
 import typing
 import karrio.lib as lib
 import karrio.api.proxy as proxy
@@ -17,7 +18,7 @@ class Proxy(proxy.Proxy):
                 url=f"{self.settings.server_url}/{service}",
                 trace=self.trace_as("json"),
                 method="POST",
-                data=data,
+                data=json.dumps(data, separators=(",", ":")),
                 headers={
                     "Content-Type": "application/json",
                     "X-GEODIS-Service": self.settings.get_token(service, data),

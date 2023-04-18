@@ -1,3 +1,4 @@
+import json
 import time
 import hashlib
 import karrio.lib as lib
@@ -33,7 +34,7 @@ class Settings(core.Settings):
                     timestamp,
                     self.language,
                     service,
-                    lib.to_json(data),
+                    json.dumps(data, separators=(",", ":")),
                 ]
             ).encode("utf-8")
         ).hexdigest()
