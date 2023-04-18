@@ -10,7 +10,7 @@ class RoadieSettings(providers.Carrier):
         verbose_name = "Roadie Settings"
         verbose_name_plural = "Roadie Settings"
 
-    api_key = models.CharField(max_length=50)
+    api_key = models.CharField(max_length=100)
 
     @property
     def carrier_name(self) -> str:

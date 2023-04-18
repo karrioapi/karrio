@@ -14,15 +14,18 @@ def parse_error_response(
     errors = [
         lib.to_object(laposte.Error, res)
         for res in responses
-        if not str(res.get("returnCode")).startswith("20")
+        if (
+            not str(res.get("returnCode")).startswith("20")
+            or res.get("code") is not None
+        )
     ]
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code=error.returnCode,
-            message=error.returnMessage,
+            code=error.returnCode or error.code,
+            message=error.returnMessage or error.message,
             details={**kwargs},
         )
         for error in errors

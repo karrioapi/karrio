@@ -51,7 +51,7 @@ class Migration(migrations.Migration):
                         to="providers.carrier",
                     ),
                 ),
-                ("api_key", models.CharField(max_length=50)),
+                ("api_key", models.CharField(max_length=100)),
                 ("identifier", models.CharField(max_length=50)),
                 ("language", models.CharField(default="fr", max_length=10, null=True)),
             ],
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                         to="providers.carrier",
                     ),
                 ),
-                ("api_key", models.CharField(max_length=50)),
+                ("api_key", models.CharField(max_length=100)),
                 ("lang", models.CharField(default="fr_FR", max_length=10, null=True)),
             ],
             options={
@@ -100,7 +100,7 @@ class Migration(migrations.Migration):
                         to="providers.carrier",
                     ),
                 ),
-                ("api_key", models.CharField(max_length=50)),
+                ("api_key", models.CharField(max_length=100)),
                 ("customer_id", models.CharField(max_length=50)),
                 (
                     "billing_account",
@@ -129,7 +129,7 @@ class Migration(migrations.Migration):
                         to="providers.carrier",
                     ),
                 ),
-                ("api_key", models.CharField(max_length=50)),
+                ("api_key", models.CharField(max_length=100)),
             ],
             options={
                 "verbose_name": "Roadie Settings",

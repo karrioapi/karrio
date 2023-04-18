@@ -14,10 +14,10 @@ class Proxy(proxy.Proxy):
             url=f"{self.settings.server_url}/idships/{idships}?lang={self.settings.lang}",
             trace=self.trace_as("json"),
             headers={
-                "Content-Type": "application/json",
-                "Accept": "application/json",
+                "accept": "application/json",
                 "X-Okapi-Key": self.settings.api_key,
             },
+            method="GET",
         )
 
         return lib.Deserializable(response, lib.to_dict)

@@ -10,7 +10,7 @@ class LaPosteSettings(providers.Carrier):
         verbose_name = "LaPoste Settings"
         verbose_name_plural = "LaPoste Settings"
 
-    api_key = models.CharField(max_length=50)
+    api_key = models.CharField(max_length=100)
     lang = models.CharField(max_length=10, null=True, default="fr_FR")
 
     @property

@@ -9,3 +9,5 @@ class Error:
     lang: Optional[str] = None
     scope: Optional[str] = None
     idShip: Optional[str] = None
+    code: Optional[str] = None
+    message: Optional[str] = None

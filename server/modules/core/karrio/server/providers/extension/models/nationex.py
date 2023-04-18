@@ -10,7 +10,7 @@ class NationexSettings(providers.Carrier):
         verbose_name = "Nationex Settings"
         verbose_name_plural = "Nationex Settings"
 
-    api_key = models.CharField(max_length=50)
+    api_key = models.CharField(max_length=100)
     customer_id = models.CharField(max_length=50)
     billing_account = models.CharField(max_length=50, null=True, blank=True)
     language = models.CharField(max_length=10, null=True, default="en")

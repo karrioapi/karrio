@@ -10,7 +10,7 @@ class GEODISSettings(providers.Carrier):
         verbose_name = "GEODIS Settings"
         verbose_name_plural = "GEODIS Settings"
 
-    api_key = models.CharField(max_length=50)
+    api_key = models.CharField(max_length=100)
     identifier = models.CharField(max_length=50)
     language = models.CharField(max_length=10, null=True, default="fr")
 
