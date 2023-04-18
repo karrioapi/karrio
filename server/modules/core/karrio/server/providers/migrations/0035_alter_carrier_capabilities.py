@@ -9,7 +9,7 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Carrier = apps.get_model("providers", "Carrier")
 
-    for carrier in Carrier.objects.using(db_alias).all():
+    for carrier in Carrier.objects.using(db_alias).all().iterator():
         carrier.capabilities = list(set([*carrier.capabilities, "paperless"]))
         carrier.save()
 
@@ -19,7 +19,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0034_amazonmwssettings_dpdhlsettings"),
     ]

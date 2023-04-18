@@ -8,7 +8,7 @@ def forwards_func(apps, schema_editor):
     Event = apps.get_model("events", "Event")
     Webhook = apps.get_model("events", "Webhook")
 
-    for event in Event.objects.using(db_alias).filter(type__icontains="."):
+    for event in Event.objects.using(db_alias).filter(type__icontains=".").iterator():
         event.type = event.type.replace(".", "_")
         event.save()
 
@@ -22,7 +22,7 @@ def reverse_func(apps, schema_editor):
     Event = apps.get_model("events", "Event")
     Webhook = apps.get_model("events", "Webhook")
 
-    for event in Event.objects.using(db_alias).filter(type__icontains="."):
+    for event in Event.objects.using(db_alias).filter(type__icontains=".").iterator():
         event.type = event.type.replace("_", ".")
         event.save()
 
@@ -32,7 +32,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("events", "0003_auto_20220303_1210"),
     ]

@@ -15,7 +15,7 @@ def forwards_func(apps, schema_editor):
     Carrier = apps.get_model("providers", "Carrier")
     _carriers = []
 
-    for _carrier in Carrier.objects.using(db_alias).all():
+    for _carrier in Carrier.objects.using(db_alias).all().iterator():
         carrier = providers.Carrier.objects.get(id=_carrier.id)
         raw_capabilities = ref.get_carrier_capabilities(carrier.ext)
         _carrier.carrier_capabilities = [
@@ -32,7 +32,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0043_alter_genericsettings_account_number_and_more"),
     ]

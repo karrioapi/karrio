@@ -7,8 +7,10 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Tracker = apps.get_model("manager", "Tracking")
 
-    trackers = Tracker.objects.using(db_alias).filter(
-        info__shipment_destication_country__isnull=False
+    trackers = (
+        Tracker.objects.using(db_alias)
+        .filter(info__shipment_destication_country__isnull=False)
+        .iterator()
     )
 
     for _tracker in trackers:

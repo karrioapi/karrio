@@ -9,7 +9,7 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     ServiceLevel = apps.get_model("providers", "ServiceLevel")
 
-    for _service in ServiceLevel.objects.using(db_alias).all():
+    for _service in ServiceLevel.objects.using(db_alias).all().iterator():
         _service.zones = [dict(rate=_service.cost)]
         _service.transit_days = _service.estimated_transit_days
 

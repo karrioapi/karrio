@@ -9,8 +9,10 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     APILog = apps.get_model("core", "APILog")
     APILogIndex = apps.get_model("core", "APILogIndex")
-    logs = APILog.objects.using(db_alias).filter(
-        models.Q(response__icontains="test_mode")
+    logs = (
+        APILog.objects.using(db_alias)
+        .filter(models.Q(response__icontains="test_mode"))
+        .iterator()
     )
 
     for log in logs:
@@ -44,7 +46,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("core", "0002_apilogindex"),
     ]

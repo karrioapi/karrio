@@ -7,8 +7,8 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Shipment = apps.get_model("manager", "Shipment")
 
-    for shipment in Shipment.objects.using(db_alias).filter(
-        meta__invoice__isnull=False
+    for shipment in (
+        Shipment.objects.using(db_alias).filter(meta__invoice__isnull=False).iterator()
     ):
         shipment.invoice = shipment.meta.get("invoice")
         shipment.meta = {k: v for k, v in shipment.meta.items() if k != "invoice"}
@@ -20,7 +20,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0030_alter_shipment_status"),
     ]

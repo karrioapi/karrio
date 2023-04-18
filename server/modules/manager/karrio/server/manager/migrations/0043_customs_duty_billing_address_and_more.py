@@ -10,7 +10,9 @@ def forwards_func(apps, schema_editor):
     Customs = apps.get_model("manager", "Customs")
     _customs_infos = []
 
-    for customs in Customs.objects.using(db_alias).filter(duty__bill_to__isnull=False):
+    for customs in (
+        Customs.objects.using(db_alias).filter(duty__bill_to__isnull=False).iterator()
+    ):
         try:
             customs.duty_billing_address = Address.objects.create(
                 **customs.duty["bill_to"]
@@ -31,7 +33,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0042_remove_shipment_shipment_tracking_number_idx_and_more"),
     ]

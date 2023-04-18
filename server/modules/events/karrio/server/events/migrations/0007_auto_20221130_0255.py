@@ -9,7 +9,7 @@ def forwards_func(apps, schema_editor):
     Webhook = apps.get_model("events", "Webhook")
     _webhooks = []
 
-    for webhook in Webhook.objects.using(db_alias).all():
+    for webhook in Webhook.objects.using(db_alias).all().iterator():
         webhook.enabled_events = lib.to_dict(webhook.enabled_events)
         _webhooks.append(webhook)
 
@@ -21,7 +21,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("events", "0006_webhook_events_alter_event_data"),
     ]
