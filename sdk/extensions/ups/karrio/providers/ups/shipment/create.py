@@ -390,7 +390,11 @@ def shipment_request(
                                                 AddressLine=recipient.address_lines,
                                                 City=recipient.city,
                                                 StateProvinceCode=recipient.state_code,
-                                                PostalCode=recipient.postal_code,
+                                                PostalCode=lib.text(
+                                                    (
+                                                        recipient.postal_code or ""
+                                                    ).replace("-", "")
+                                                ),
                                                 CountryCode=recipient.country_code,
                                             ),
                                             EMailAddress=recipient.email,
@@ -401,10 +405,12 @@ def shipment_request(
                                 ),
                                 Product=[
                                     ups.ProductType(
-                                        Description=lib.join(
-                                            item.title,
-                                            item.description,
-                                        ),
+                                        Description=[
+                                            lib.text(
+                                                item.title or item.description,
+                                                max=35,
+                                            )
+                                        ],
                                         Unit=ups.UnitType(
                                             Number=str(item.quantity),
                                             UnitOfMeasurement=ups.UnitOfMeasurementType(
