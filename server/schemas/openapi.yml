@@ -11637,6 +11637,7 @@ tags:
     | dpdhl | Deutsche Post DHL |
     | dpd | DPD |
     | dicom | Dicom |
+    | dhl_universal | DHL Universal |
     | dhl_poland | DHL Parcel Poland |
     | dhl_express | DHL Express |
     | chronopost | Chronopost |
@@ -11646,7 +11647,6 @@ tags:
     | australiapost | Australia Post |
     | aramex | Aramex |
     | amazon_mws | AmazonMws |
-    | dhl_universal | DHL Universal |
 
     ---
     ## Services

@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.server.pricing",
-    version="2023.3.4",
+    version="2023.4",
     description="Multi-carrier shipping API Pricing panel",
     long_description=long_description,
     long_description_content_type="text/markdown",

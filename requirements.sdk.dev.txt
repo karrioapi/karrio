@@ -1,5 +1,5 @@
 # Schemas update
--e ./schemas/dhl_express
+# -e ./schemas/dhl_express
 
 # SDK extentions
 -e ./sdk/core

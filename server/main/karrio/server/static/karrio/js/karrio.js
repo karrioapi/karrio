@@ -1043,7 +1043,7 @@ var Karrio = (function () {
             'shipment_service': value.shipment_service,
             'shipment_origin_country': value.shipment_origin_country,
             'shipment_origin_postal_code': value.shipment_origin_postal_code,
-            'shipment_destication_country': value.shipment_destication_country,
+            'shipment_destination_country': value.shipment_destination_country,
             'shipment_destination_postal_code': value.shipment_destination_postal_code,
             'shipping_date': value.shipping_date,
             'signed_by': value.signed_by,
@@ -1098,6 +1098,8 @@ var Karrio = (function () {
             'test_mode': json['test_mode'],
             'active': json['active'],
             'capabilities': !exists(json, 'capabilities') ? undefined : json['capabilities'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'config': !exists(json, 'config') ? undefined : json['config'],
         };
     }
 
@@ -2579,7 +2581,7 @@ var Karrio = (function () {
             'shipment_service': !exists(json, 'shipment_service') ? undefined : json['shipment_service'],
             'shipment_origin_country': !exists(json, 'shipment_origin_country') ? undefined : json['shipment_origin_country'],
             'shipment_origin_postal_code': !exists(json, 'shipment_origin_postal_code') ? undefined : json['shipment_origin_postal_code'],
-            'shipment_destication_country': !exists(json, 'shipment_destication_country') ? undefined : json['shipment_destication_country'],
+            'shipment_destination_country': !exists(json, 'shipment_destination_country') ? undefined : json['shipment_destination_country'],
             'shipment_destination_postal_code': !exists(json, 'shipment_destination_postal_code') ? undefined : json['shipment_destination_postal_code'],
             'shipping_date': !exists(json, 'shipping_date') ? undefined : json['shipping_date'],
             'signed_by': !exists(json, 'signed_by') ? undefined : json['signed_by'],
@@ -3474,6 +3476,9 @@ var Karrio = (function () {
                             queryParameters = {};
                             if (requestParameters.active !== undefined) {
                                 queryParameters['active'] = requestParameters.active;
+                            }
+                            if (requestParameters.carrierName !== undefined) {
+                                queryParameters['carrier_name'] = requestParameters.carrierName;
                             }
                             if (requestParameters.systemOnly !== undefined) {
                                 queryParameters['system_only'] = requestParameters.systemOnly;
