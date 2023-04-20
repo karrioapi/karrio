@@ -4,16 +4,16 @@
 source "bin/activate-env" > /dev/null 2>&1
 
 echo 'run server tests...'
-karrio test --failfast karrio.server.proxy.tests &&
-karrio test --failfast karrio.server.pricing.tests &&
-karrio test --failfast karrio.server.manager.tests &&
-karrio test --failfast karrio.server.events.tests &&
-karrio test --failfast karrio.server.graph.tests &&
-karrio test --failfast karrio.server.orders.tests &&
+karrio test --failfast --keepdb karrio.server.proxy.tests &&
+karrio test --failfast --keepdb karrio.server.pricing.tests &&
+karrio test --failfast --keepdb karrio.server.manager.tests &&
+karrio test --failfast --keepdb karrio.server.events.tests &&
+karrio test --failfast --keepdb karrio.server.graph.tests &&
+karrio test --failfast --keepdb karrio.server.orders.tests &&
 
 if [[ "$*" != *--light* ]];
 then
-    karrio test --failfast karrio.server.documents.tests
+    karrio test --failfast --keepdb karrio.server.documents.tests
 else
     echo "skip.."
 fi
@@ -22,5 +22,5 @@ if [[ "$*" != *--cloud* ]];
 then
     echo "done..."
 else
-    karrio test --failfast karrio.server.orgs.tests
+    karrio test --failfast --keepdb karrio.server.orgs.tests
 fi
