@@ -11,6 +11,7 @@ from django_downloadview import VirtualDownloadView
 from django.core.files.base import ContentFile
 from django.urls import path, re_path
 
+import karrio.lib as lib
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
@@ -260,15 +261,14 @@ class ShipmentDocs(VirtualDownloadView):
         format: str = "pdf",
         **kwargs,
     ):
-        """
-        Retrieve a shipment label.
-        """
-        shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
-        query_params = request.GET.dict()
+        """Retrieve a shipment label."""
+        self.shipment = models.Shipment.objects.get(pk=pk, label__isnull=False)
+        self.document = getattr(self.shipment, doc, None)
+        self.name = f"{doc}_{self.shipment.tracking_number}.{format}"
 
-        self.document = getattr(shipment, doc, None)
-        self.name = f"{doc}_{shipment.tracking_number}.{format}"
-        self.attachment = query_params.get("download", False)
+        query_params = request.GET.dict()
+        self.preview = "preview" in query_params
+        self.attachment = "download" in query_params
 
         response = super(ShipmentDocs, self).get(request, pk, doc, format, **kwargs)
         response["X-Frame-Options"] = "ALLOWALL"
@@ -277,6 +277,26 @@ class ShipmentDocs(VirtualDownloadView):
     def get_file(self):
         content = base64.b64decode(self.document or "")
         buffer = io.BytesIO()
+
+        if self.preview and "ZPL" in self.shipment.label_type or "":
+            width, height, dpmm = (4, 6, 8)
+
+            if "8" in self.shipment.label_type:
+                width, height, dpmm = (8, 4, 12)
+
+            _label = lib.failsafe(
+                lambda: lib.zpl_to_pdf(
+                    self.document,
+                    width,
+                    height,
+                    dpmm=dpmm,
+                )
+            )
+
+            if _label is not None:
+                content = base64.b64decode(_label)
+                self.name = self.name.replace("zpl", "pdf")
+
         buffer.write(content)
 
         return ContentFile(buffer.getvalue(), name=self.name)
