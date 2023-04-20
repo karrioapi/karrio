@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
+import karrio.lib as lib
 import karrio.references as ref
 import karrio.server.serializers as serializers
 import karrio.server.providers.models as carriers
@@ -57,65 +58,102 @@ def model_admin(ext: str, carrier):
                 )
             if key == "label_type":
                 label_type = forms.ChoiceField(
-                    choices=datatypes.LABEL_TYPES,
+                    choices=[(None, ""), *datatypes.LABEL_TYPES],
                     widget=forms.Select(attrs={"class": "vTextField"}),
                     required=False,
+                    initial=None,
                 )
             if key == "enforce_zpl":
                 enforce_zpl = forms.NullBooleanField(
                     required=False,
+                    initial=None,
                 )
             if key == "shipping_services":
                 shipping_services = forms.MultipleChoiceField(
                     choices=[(_, _) for _ in carrier_services],
                     widget=forms.SelectMultiple(attrs={"class": "vTextField"}),
                     required=False,
+                    initial=None,
                 )
             if key == "shipping_options":
                 shipping_options = forms.MultipleChoiceField(
                     choices=[(_, _) for _ in carrier_options],
                     widget=forms.SelectMultiple(attrs={"class": "vTextField"}),
                     required=False,
+                    initial=None,
                 )
 
         class Meta:
             model = carrier
             fields = "__all__"
 
+        def __init__(self, *args, instance: carriers.Carrier = None, **kwargs):
+            if instance is not None:
+                kwargs.update({"instance": instance})
+                config = carriers.Carrier.resolve_config(
+                    instance, is_system_config=True
+                )
+
+                for key in connection_configs:
+                    self.base_fields[key].initial = (
+                        None if config is None else config.config.get(key)
+                    )
+
+            super(_Form, self).__init__(*args, **kwargs)
+
         def save(self, commit: bool = True):
-            config_data = {
-                key: self.cleaned_data.get(key) for key in connection_configs
-            }
+            config_data = lib.to_dict(
+                {key: self.cleaned_data.get(key) for key in connection_configs}
+            )
             carrier = super(_Form, self).save(commit)
 
-            if any(connection_configs) and commit:
-                config = carriers.Carrier.resolve_config(carrier)
-                graph_serializers.CarrierConfigModelSerializer.map(
-                    instance=config,
-                    context=dict(user=self.request.user),
-                    data={
-                        "carrier": carrier.pk,
-                        "created_by": self.request.user.pk,
-                        "config": serializers.process_dictionaries_mutations(
-                            ["config"], config_data, config
-                        ),
-                    },
-                ).save()
+            if any(connection_configs) and (commit or carrier.pk is not None):
+                config = carriers.Carrier.resolve_config(carrier, is_system_config=True)
+                created_by = getattr(config, "created_by", self.request.user)
+                config_value = lib.to_dict(
+                    serializers.process_dictionaries_mutations(
+                        ["config"], config_data, config
+                    )
+                )
+
+                if config is None and len(config_value.keys()) == 0:
+                    # Skip configuration persistence...
+                    return carrier
+
+                # Save or update the carrier config...
+                (
+                    carriers.CarrierConfig.objects.create(
+                        created_by=created_by,
+                        carrier=carrier,
+                        config=config_value,
+                    )
+                    if config is None
+                    else carriers.CarrierConfig.objects.filter(carrier=carrier).update(
+                        config=config_value
+                    )
+                )
 
             return carrier
 
-    form_fields = _Form.base_fields.keys()
+    _form: forms.ModelForm = type(f"{class_name}AdminForm", (_Form,), {})
+    _fields = _form.base_fields.keys()
 
     class _Admin(admin.ModelAdmin):
-        form = _Form
+        form = _form
+        inlines = []
         list_display = ("__str__", "test_mode", "active")
+        exclude = (
+            ["active_users", "services"]
+            if hasattr(carrier, "services")
+            else ["active_users"]
+        )
         fieldsets = [
             (
                 None,
                 {
                     "fields": [
                         _
-                        for _ in form_fields
+                        for _ in _fields
                         if _
                         not in [
                             *connection_configs,
@@ -127,22 +165,17 @@ def model_admin(ext: str, carrier):
                 },
             ),
         ]
+
         if any(connection_configs):
             fieldsets += [
                 (  # type: ignore
                     "Connection Config",
                     {
-                        "classes": ["collapse"],
-                        "fields": [_ for _ in connection_configs if _ in form_fields],
+                        "fields": [_ for _ in connection_configs if _ in _fields],
                     },
                 ),
             ]
-        exclude = (
-            ["active_users", "services"]
-            if hasattr(carrier, "services")
-            else ["active_users"]
-        )
-        inlines = []
+
         formfield_overrides = {
             models.CharField: {
                 "widget": forms.TextInput(
@@ -221,6 +254,7 @@ def model_admin(ext: str, carrier):
                     return formset
 
             inlines += [ActiveOrgInline]
+
         else:
 
             class ActiveUserInline(admin.TabularInline):

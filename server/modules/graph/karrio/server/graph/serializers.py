@@ -416,16 +416,15 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             settings.save()
 
         carrier = getattr(settings, "carrier_ptr", instance)
-        config = providers.Carrier.resolve_config(carrier, context=context)
         config_data = validated_data.get(carrier_name, {}).get("config")
         if config_data:
             CarrierConfigModelSerializer.map(
-                instance=config,
+                instance=carrier.config,
                 context=context,
                 data={
                     "carrier": carrier.pk,
                     "config": serializers.process_dictionaries_mutations(
-                        ["config"], config_data, config
+                        ["config"], config_data, carrier.config
                     ),
                 },
             ).save()

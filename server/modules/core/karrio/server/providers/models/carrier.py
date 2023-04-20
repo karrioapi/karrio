@@ -6,6 +6,7 @@ import django.db.models as models
 import django.core.validators as validators
 
 import karrio
+import karrio.lib as lib
 import karrio.core.utils as utils
 import karrio.core.units as units
 import karrio.api.gateway as gateway
@@ -145,6 +146,7 @@ class Carrier(core.OwnedEntity):
             id=self.settings.id,
             carrier_name=self.settings.carrier_name,
             display_name=self.settings.carrier_display_name,
+            config=self.config,
         )
 
         if hasattr(self.settings, "services"):
@@ -154,6 +156,11 @@ class Carrier(core.OwnedEntity):
 
         if hasattr(self.settings, "cache"):
             _computed_data.update(cache=self.settings.cache)
+
+        if self.is_system and self.config is None:
+            _computed_data.update(
+                config=self.__class__.resolve_config(self, is_system_config=True)
+            )
 
         return datatypes.CarrierSettings.create(
             {
@@ -193,7 +200,9 @@ class Carrier(core.OwnedEntity):
         return getattr(carrier, "config", None)
 
     @staticmethod
-    def resolve_config(carrier, context=None):
+    def resolve_config(
+        carrier, is_user_config: bool = False, is_system_config: bool = False
+    ):
         """Resolve the config for a carrier.
         Here are the rules:
         - If the carrier is a system carrier, return the first config with no org
@@ -202,11 +211,18 @@ class Carrier(core.OwnedEntity):
         """
         from karrio.server.providers.models.config import CarrierConfig
         from karrio.server import serializers
+        import karrio.server.core.middleware as middleware
 
         if carrier.id is None:
             return None
 
-        ctx = context or serializers.get_object_context(carrier)
+        _ctx = serializers.get_object_context(carrier)
+        ctx = (
+            _ctx
+            if (_ctx.user or _ctx.org)
+            else lib.failsafe(lambda: middleware.SessionContext.get_current_request())
+        )
+        has_ctx_user = ctx and (ctx.user or ctx.org)
 
         queryset = (
             CarrierConfig.objects.filter(carrier=carrier)
@@ -215,11 +231,20 @@ class Carrier(core.OwnedEntity):
         )
 
         if carrier.is_system:
-            return queryset.filter(
-                **{**({"org__isnull": True} if hasattr(carrier, "org") else {})}
+            _config = queryset.filter(
+                created_by__is_staff=True,
+                **({"org": None} if hasattr(carrier, "org") else {}),
             ).first()
 
-        if hasattr(carrier, "org") and ctx.org is not None:
-            return queryset.filter(org=ctx.org).first()
+            if has_ctx_user:
+                return queryset.filter(
+                    **(
+                        {"org": (None if is_system_config else ctx.org)}
+                        if hasattr(carrier, "org")
+                        else {"created_by": ctx.user}
+                    )
+                ).first() or (None if is_user_config else _config)
 
-        return queryset.filter(created_by=ctx.user).first()
+            return _config
+
+        return queryset.first()

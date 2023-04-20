@@ -27,7 +27,6 @@ logger = logging.getLogger(__name__)
 class Carriers:
     @staticmethod
     def list(context=None, **kwargs) -> typing.List[providers.Carrier]:
-        query: typing.Any = tuple()
         list_filter = kwargs.copy()
         user_filter = core.get_access_filter(context) if context is not None else []
 
@@ -540,19 +539,15 @@ class Rates:
         carriers: typing.List[providers.Carrier] = None,
         **carrier_filters,
     ) -> datatypes.RateResponse:
-        carrier_ids = payload.get("carrier_ids", [])
         services = payload.get("services", [])
+        carrier_ids = payload.get("carrier_ids", [])
         shipper_country_code = payload["shipper"].get("country_code")
         carriers = carriers or Carriers.list(
-            **{
-                **dict(
-                    active=True,
-                    capability="rating",
-                    carrier_ids=carrier_ids,
-                    services=services,
-                ),
-                **carrier_filters,
-            }
+            active=True,
+            capability="rating",
+            carrier_ids=carrier_ids,
+            services=services,
+            **carrier_filters,
         )
 
         gateways = utils.filter_rate_carrier_compatible_gateways(

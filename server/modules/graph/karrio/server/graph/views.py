@@ -14,6 +14,7 @@ import strawberry.types as types
 import strawberry.django.views as views
 import graphql.error.graphql_error as graphql
 
+import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.graph.schema as schema
 
@@ -28,7 +29,11 @@ AccessMixin: typing.Any = pydoc.locate(ACCESS_METHOD)
 
 class GraphQLView(AccessMixin, views.GraphQLView):
     def dispatch(self, request, *args, **kwargs):
-        if self.should_render_graphiql(request):
+        should_render_graphiql = lib.failsafe(
+            lambda: self.should_render_graphiql(request)
+        )
+
+        if should_render_graphiql:
             context = dict(APP_NAME=conf.settings.APP_NAME)
 
             return self._render_graphiql(request, context=context)

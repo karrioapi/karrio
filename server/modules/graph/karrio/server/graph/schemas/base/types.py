@@ -737,8 +737,7 @@ class SystemConnectionType:
 
     @strawberry.field
     def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
-        config = providers.Carrier.resolve_config(self, context=info.context.request)
-        return getattr(config, "config", None)
+        return getattr(self, "config", None)
 
     @staticmethod
     @utils.authentication_required

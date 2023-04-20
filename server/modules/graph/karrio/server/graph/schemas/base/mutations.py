@@ -626,7 +626,7 @@ class SystemCarrierMutation(utils.BaseMutation):
                     carrier.active_users.remove(info.context.request.user)
 
         if "config" in input:
-            config = providers.Carrier.resolve_config(carrier, context=context)
+            config = providers.Carrier.resolve_config(carrier, is_user_config=True)
             serializers.CarrierConfigModelSerializer.map(
                 instance=config,
                 context=context,
