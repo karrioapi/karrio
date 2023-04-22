@@ -50,10 +50,11 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             return lib.request(
                 url=f"{self.settings.server_url}/rest/sendungsverfolgung",
                 trace=self.trace_as("xml"),
+                data=dict(xml=data),
                 method="POST",
-                data=data,
                 headers={
                     "Authorization": f"Basic {self.settings.basic_authentication}",
+                    "Content-Type": "application/x-www-form-urlencoded",
                 },
             )
 
