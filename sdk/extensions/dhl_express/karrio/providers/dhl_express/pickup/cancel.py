@@ -1,25 +1,21 @@
+import dhl_express_lib.cancel_pickup_global_req_3_0 as dhl
 import time
-from typing import Tuple, List
-from dhl_express_lib.cancel_pickup_global_req_3_0 import CancelPURequest, MetaData
-from karrio.core.utils import XP, Serializable
-from karrio.core.models import (
-    PickupCancelRequest,
-    Message,
-    ConfirmationDetails,
-)
-from karrio.providers.dhl_express.utils import Settings, reformat_time
-from karrio.providers.dhl_express.error import parse_error_response
-from karrio.providers.dhl_express.units import CountryRegion
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.dhl_express.units as provider_units
+import karrio.providers.dhl_express.error as provider_error
+import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_pickup_cancel_response(
-    response, settings
-) -> Tuple[ConfirmationDetails, List[Message]]:
-    successful = (
-        len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
-    )
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
+    successful = len(lib.find_element("ConfirmationNumber", response)) > 0
     cancellation = (
-        ConfirmationDetails(
+        models.ConfirmationDetails(
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
             success=successful,
@@ -29,20 +25,20 @@ def parse_pickup_cancel_response(
         else None
     )
 
-    return cancellation, parse_error_response(response, settings)
+    return cancellation, provider_error.parse_error_response(response, settings)
 
 
 def pickup_cancel_request(
-    payload: PickupCancelRequest, settings: Settings
-) -> Serializable[CancelPURequest]:
-
-    request = CancelPURequest(
+    payload: models.PickupCancelRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    request = dhl.CancelPURequest(
         Request=settings.Request(
-            MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
+            MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
         ),
         schemaVersion=3.0,
         RegionCode=(
-            CountryRegion[payload.address.country_code].value
+            provider_units.CountryRegion[payload.address.country_code].value
             if payload.address is not None and payload.address.country_code is not None
             else "AM"
         ),
@@ -54,15 +50,18 @@ def pickup_cancel_request(
         CancelTime=time.strftime("%H:%M:%S"),
     )
 
-    return Serializable(request, _request_serializer)
-
-
-def _request_serializer(request: CancelPURequest) -> str:
-    xml_str = XP.export(
+    return lib.Serializable(
         request,
-        name_="req:CancelPURequest",
-        namespacedef_='xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd"',
-    ).replace('schemaVersion="3"', 'schemaVersion="3.0"')
-
-    xml_str = reformat_time("CancelTime", xml_str)
-    return xml_str
+        lambda _: provider_utils.reformat_time(
+            "CancelTime",
+            lib.to_xml(
+                _,
+                name_="req:CancelPURequest",
+                namespacedef_=(
+                    'xmlns:req="http://www.dhl.com" '
+                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" '
+                    'xsi:schemaLocation="http://www.dhl.com cancel-pickup-global-req.xsd"'
+                ),
+            ).replace('schemaVersion="3"', 'schemaVersion="3.0"'),
+        ),
+    )

@@ -20,8 +20,10 @@ NOTIFICATION_EVENTS = [
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     details = lib.find_element("CompletedPackageDetails", response)
     documents = lib.find_element("ShipmentDocuments", response)
 
@@ -76,7 +78,7 @@ def _extract_details(
         ),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(master_id),
-            tracking_numbers=tracking_numbers
+            tracking_numbers=tracking_numbers,
         ),
     )
 
@@ -84,7 +86,7 @@ def _extract_details(
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[fedex.ProcessShipmentRequest]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(

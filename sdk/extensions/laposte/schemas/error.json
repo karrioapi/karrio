@@ -1,0 +1,9 @@
+{
+  "returnCode": 400,
+  "returnMessage": "Le numéro que vous avez saisi n’est pas valide. Nous vous invitons à vérifier votre saisie, en particulier le nombre de caractères.",
+  "lang": "fr_FR",
+  "scope": "open",
+  "idShip": "123982738923",
+  "code": "TOO_MANY_REQUESTS",
+  "message": "max quota reached (100 calls per 1s)"
+}

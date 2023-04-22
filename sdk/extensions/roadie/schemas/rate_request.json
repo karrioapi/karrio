@@ -1,0 +1,33 @@
+{
+  "items": [
+    {
+      "length": 1.0,
+      "width": 1.0,
+      "height": 1.0,
+      "weight": 1.0,
+      "quantity": 1,
+      "value": 20.0
+    }
+  ],
+  "pickup_location": {
+    "address": {
+      "street1": "123 Main Street",
+      "city": "Atlanta",
+      "state": "GA",
+      "zip": "30305"
+    }
+  },
+  "delivery_location": {
+    "address": {
+      "street1": "456 Central Ave.",
+      "city": "Atlanta",
+      "state": "GA",
+      "zip": "30308"
+    }
+  },
+  "pickup_after": "2019-01-01T13:00:00Z",
+  "deliver_between": {
+    "start": "2019-01-01T21:00:00Z",
+    "end": "2019-01-01T23:00:00Z"
+  }
+}

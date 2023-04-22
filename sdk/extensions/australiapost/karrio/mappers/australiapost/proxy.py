@@ -9,7 +9,7 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    def get_tracking(self, request: Serializable) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         query = urllib.parse.urlencode(request.serialize())
         response = http(
             url=f"{self.settings.server_url}/shipping/v1/track?{query}",

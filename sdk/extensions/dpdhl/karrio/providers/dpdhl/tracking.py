@@ -9,9 +9,10 @@ import karrio.providers.dpdhl.units as provider_units
 
 
 def parse_tracking_response(
-    responses: typing.List[lib.Element],
+    _responses: lib.Deserializable[typing.List[lib.Element]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    responses = _responses.deserialize()
     response_messages = [
         result
         for result in responses
@@ -76,7 +77,7 @@ def _extract_details(
                 details.piece_identifier
             ),
             customer_name=details.pan_recipient_name,
-            shipment_destication_country=details.dest_country,
+            shipment_destination_country=details.dest_country,
             shipment_destination_postal_code=details.pan_recipient_postalcode,
             shipment_origin_country=details.origin_country,
             shipment_service=details.product_name,
@@ -100,5 +101,9 @@ def tracking_request(
     ]
 
     return lib.Serializable(
-        request, lambda requests: [lib.to_xml(req) for req in requests]
+        request,
+        lambda requests: [
+            f'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n{lib.to_xml(req)}'
+            for req in requests
+        ],
     )

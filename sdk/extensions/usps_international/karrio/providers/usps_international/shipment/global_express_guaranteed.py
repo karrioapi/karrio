@@ -45,7 +45,7 @@ def _extract_details(
 
 def shipment_request(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
-) -> lib.Serializable[eVSGXGGetLabelRequest]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(

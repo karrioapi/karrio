@@ -17,14 +17,12 @@ import karrio.lib as lib
 
 
 def parse_shipment_cancel_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     status = XP.to_object(
         CodeDescriptionType,
-        next(
-            iter(response.xpath(".//*[local-name() = $name]", name="ResponseStatus")),
-            None,
-        ),
+        lib.find_element("ResponseStatus", response, first=True),
     )
     success = status is not None and status.Code == "1"
     cancellation = (
@@ -43,8 +41,7 @@ def parse_shipment_cancel_response(
 
 def shipment_cancel_request(
     payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable[Envelope]:
-
+) -> Serializable:
     request = create_envelope(
         header_content=settings.Security,
         body_content=VoidShipmentRequest(

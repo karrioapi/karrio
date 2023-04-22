@@ -22,7 +22,7 @@ from karrio.providers.tnt.utils import Settings
 
 def create_label_request(
     activity: document, payload: ShipmentRequest, settings: Settings
-) -> Serializable[labelRequest]:
+) -> Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     package = Packages(payload.parcels).single
@@ -51,7 +51,9 @@ def create_label_request(
                 ),
                 delivery=nameAndAddressRequestType(
                     name=recipient.contact,
-                    addressLine1=lib.text(recipient.street_number, recipient.address_line1),
+                    addressLine1=lib.text(
+                        recipient.street_number, recipient.address_line1
+                    ),
                     addressLine2=recipient.address_line2,
                     addressLine3=None,
                     town=recipient.city,

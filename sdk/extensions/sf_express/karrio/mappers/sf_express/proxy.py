@@ -8,7 +8,7 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    def get_tracking(self, request: Serializable) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         data = self.settings.parse(request.serialize(), "EXP_RECE_SEARCH_ROUTES")
         response = http(
             url=self.settings.server_url,

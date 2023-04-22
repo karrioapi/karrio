@@ -14,32 +14,32 @@ def forwards_func(apps, schema_editor):
     Shipment = apps.get_model("manager", "Shipment")
     Tracking = apps.get_model("manager", "Tracking")
 
-    for address in Address.objects.using(db_alias).all():
-        address.validation=DP.to_dict(address.validation)
+    for address in Address.objects.using(db_alias).all().iterator():
+        address.validation = DP.to_dict(address.validation)
         address.save()
 
-    for customs in Customs.objects.using(db_alias).all():
-        customs.duty=DP.to_dict(customs.duty)
-        customs.options=DP.to_dict(customs.options)
+    for customs in Customs.objects.using(db_alias).all().iterator():
+        customs.duty = DP.to_dict(customs.duty)
+        customs.options = DP.to_dict(customs.options)
         customs.save()
 
-    for pickup in Pickup.objects.using(db_alias).all():
-        pickup.pickup_charge=DP.to_dict(pickup.pickup_charge)
-        pickup.options=DP.to_dict(pickup.options)
+    for pickup in Pickup.objects.using(db_alias).all().iterator():
+        pickup.pickup_charge = DP.to_dict(pickup.pickup_charge)
+        pickup.options = DP.to_dict(pickup.options)
         pickup.save()
 
-    for shipment in Shipment.objects.using(db_alias).all():
-        shipment.messages=DP.to_dict(shipment.messages)
-        shipment.meta=DP.to_dict(shipment.meta)
-        shipment.rates=DP.to_dict(shipment.rates)
-        shipment.selected_rate=DP.to_dict(shipment.selected_rate)
-        shipment.payment=DP.to_dict(shipment.payment)
-        shipment.options=DP.to_dict(shipment.options)
-        shipment.services=DP.to_dict(shipment.services)
+    for shipment in Shipment.objects.using(db_alias).all().iterator():
+        shipment.messages = DP.to_dict(shipment.messages)
+        shipment.meta = DP.to_dict(shipment.meta)
+        shipment.rates = DP.to_dict(shipment.rates)
+        shipment.selected_rate = DP.to_dict(shipment.selected_rate)
+        shipment.payment = DP.to_dict(shipment.payment)
+        shipment.options = DP.to_dict(shipment.options)
+        shipment.services = DP.to_dict(shipment.services)
         shipment.save()
 
-    for tracking in Tracking.objects.using(db_alias).all():
-        tracking.events=DP.to_dict(tracking.events)
+    for tracking in Tracking.objects.using(db_alias).all().iterator():
+        tracking.events = DP.to_dict(tracking.events)
         tracking.save()
 
 
@@ -48,76 +48,135 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('manager', '0014_auto_20210515_0928'),
+        ("manager", "0014_auto_20210515_0928"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='address',
-            name='validation',
+            model_name="address",
+            name="validation",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='customs',
-            name='duty',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': None}), null=True),
+            model_name="customs",
+            name="duty",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": None}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='customs',
-            name='options',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            model_name="customs",
+            name="options",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": {}}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='pickup',
-            name='options',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            model_name="pickup",
+            name="options",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": {}}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='pickup',
-            name='pickup_charge',
+            model_name="pickup",
+            name="pickup_charge",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='messages',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': []}), null=True),
+            model_name="shipment",
+            name="messages",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": []}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='meta',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            model_name="shipment",
+            name="meta",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": {}}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='options',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': {}}), null=True),
+            model_name="shipment",
+            name="options",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": {}}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='payment',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': None}), null=True),
+            model_name="shipment",
+            name="payment",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": None}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='rates',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': []}), null=True),
+            model_name="shipment",
+            name="rates",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": []}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='selected_rate',
+            model_name="shipment",
+            name="selected_rate",
             field=models.JSONField(blank=True, null=True),
         ),
         migrations.AlterField(
-            model_name='shipment',
-            name='services',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': []}), null=True),
+            model_name="shipment",
+            name="services",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": []}
+                ),
+                null=True,
+            ),
         ),
         migrations.AlterField(
-            model_name='tracking',
-            name='events',
-            field=models.JSONField(blank=True, default=functools.partial(karrio.server.core.utils.identity, *(), **{'value': []}), null=True),
+            model_name="tracking",
+            name="events",
+            field=models.JSONField(
+                blank=True,
+                default=functools.partial(
+                    karrio.server.core.utils.identity, *(), **{"value": []}
+                ),
+                null=True,
+            ),
         ),
         migrations.RunPython(forwards_func, reverse_func),
     ]

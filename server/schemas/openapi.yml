@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.3.4`.
+    The current version is `2023.4.1`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.3.4
+  version: 2023.4.1
 paths:
   /:
     get:
@@ -673,6 +673,16 @@ paths:
         schema:
           type: boolean
       - in: query
+        name: carrier_name
+        schema:
+          type: string
+        description: 'The unique carrier slug. <br/>Values: `amazon_mws`, `aramex`,
+          `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
+          `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
+          `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
+          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+      - in: query
         name: system_only
         schema:
           type: boolean
@@ -710,6 +720,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -724,7 +735,11 @@ paths:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -1771,6 +1786,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -1785,7 +1801,11 @@ paths:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -1849,6 +1869,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -1863,7 +1884,11 @@ paths:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -1927,6 +1952,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -1941,7 +1967,11 @@ paths:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -2096,6 +2126,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -2110,7 +2141,11 @@ paths:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -2218,6 +2253,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -2229,7 +2265,11 @@ paths:
           - dpdhl
           - fedex
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -2330,6 +2370,7 @@ paths:
                     incoterms: {}
                     states: {}
                     services: {}
+                    connection_configs: {}
                     service_names: {}
                     options: {}
                     option_names: {}
@@ -2357,6 +2398,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -2371,7 +2413,11 @@ paths:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -2427,8 +2473,11 @@ paths:
           enum:
           - cancelled
           - delivered
+          - delivery_failed
           - draft
           - in_transit
+          - needs_attention
+          - out_for_delivery
           - purchased
           - shipped
       - in: query
@@ -2791,6 +2840,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -2805,7 +2855,11 @@ paths:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -2947,6 +3001,7 @@ paths:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -2958,7 +3013,11 @@ paths:
           - dpdhl
           - fedex
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -4711,6 +4770,7 @@ components:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -4725,7 +4785,11 @@ components:
           - fedex
           - freightcom
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -4743,6 +4807,7 @@ components:
             * `amazon_mws` - amazon_mws
             * `aramex` - aramex
             * `australiapost` - australiapost
+            * `boxknight` - boxknight
             * `canadapost` - canadapost
             * `canpar` - canpar
             * `chronopost` - chronopost
@@ -4757,7 +4822,11 @@ components:
             * `fedex` - fedex
             * `freightcom` - freightcom
             * `generic` - generic
+            * `geodis` - geodis
+            * `laposte` - laposte
+            * `nationex` - nationex
             * `purolator` - purolator
+            * `roadie` - roadie
             * `royalmail` - royalmail
             * `sendle` - sendle
             * `sf_express` - sf_express
@@ -4785,6 +4854,16 @@ components:
             type: string
           nullable: true
           description: The carrier supported and enabled capabilities.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier user metadata.
+        config:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier connection config.
       required:
       - active
       - carrier_id
@@ -9281,6 +9360,9 @@ components:
             - shipment_purchased
             - shipment_cancelled
             - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
             - tracker_created
             - tracker_updated
             - order_created
@@ -9298,6 +9380,9 @@ components:
               * `shipment_purchased` - shipment_purchased
               * `shipment_cancelled` - shipment_cancelled
               * `shipment_fulfilled` - shipment_fulfilled
+              * `shipment_out_for_delivery` - shipment_out_for_delivery
+              * `shipment_needs_attention` - shipment_needs_attention
+              * `shipment_delivery_failed` - shipment_delivery_failed
               * `tracker_created` - tracker_created
               * `tracker_updated` - tracker_updated
               * `order_created` - order_created
@@ -10050,12 +10135,21 @@ components:
           description: "<details>\n        <summary>The options available for the\
             \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
             ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
-            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
-            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
-            \            \"email_notification\": true,\n            \"email_notification_to\"\
-            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \            \"preferred_service\": \"fedex_express_saver\",\n       \
-            \ }\n        "
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        "
         reference:
           type: string
           nullable: true
@@ -10134,12 +10228,21 @@ components:
           description: "<details>\n        <summary>The options available for the\
             \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
             ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
-            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
-            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
-            \            \"email_notification\": true,\n            \"email_notification_to\"\
-            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \            \"preferred_service\": \"fedex_express_saver\",\n       \
-            \ }\n        "
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -10220,6 +10323,9 @@ components:
           - shipped
           - in_transit
           - delivered
+          - needs_attention
+          - out_for_delivery
+          - delivery_failed
           type: string
           default: draft
           description: |-
@@ -10231,6 +10337,9 @@ components:
             * `shipped` - shipped
             * `in_transit` - in_transit
             * `delivered` - delivered
+            * `needs_attention` - needs_attention
+            * `out_for_delivery` - out_for_delivery
+            * `delivery_failed` - delivery_failed
         carrier_name:
           type: string
           nullable: true
@@ -10328,12 +10437,21 @@ components:
           description: "<details>\n        <summary>The options available for the\
             \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
             ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
-            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
-            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
-            \            \"email_notification\": true,\n            \"email_notification_to\"\
-            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \            \"preferred_service\": \"fedex_express_saver\",\n       \
-            \ }\n        "
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -10550,12 +10668,21 @@ components:
           description: "<details>\n        <summary>The options available for the\
             \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
             ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
-            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
-            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
-            \            \"email_notification\": true,\n            \"email_notification_to\"\
-            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \            \"preferred_service\": \"fedex_express_saver\",\n       \
-            \ }\n        "
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -10656,12 +10783,21 @@ components:
           description: "<details>\n        <summary>The options available for the\
             \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
             ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
-            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
-            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
-            \            \"email_notification\": true,\n            \"email_notification_to\"\
-            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \            \"preferred_service\": \"fedex_express_saver\",\n       \
-            \ }\n        "
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -10742,6 +10878,9 @@ components:
           - shipped
           - in_transit
           - delivered
+          - needs_attention
+          - out_for_delivery
+          - delivery_failed
           type: string
           default: draft
           description: |-
@@ -10753,6 +10892,9 @@ components:
             * `shipped` - shipped
             * `in_transit` - in_transit
             * `delivered` - delivered
+            * `needs_attention` - needs_attention
+            * `out_for_delivery` - out_for_delivery
+            * `delivery_failed` - delivery_failed
         carrier_name:
           type: string
           nullable: true
@@ -10884,6 +11026,7 @@ components:
           - amazon_mws
           - aramex
           - australiapost
+          - boxknight
           - canadapost
           - canpar
           - chronopost
@@ -10895,7 +11038,11 @@ components:
           - dpdhl
           - fedex
           - generic
+          - geodis
+          - laposte
+          - nationex
           - purolator
+          - roadie
           - royalmail
           - sendle
           - sf_express
@@ -10913,6 +11060,7 @@ components:
             * `amazon_mws` - amazon_mws
             * `aramex` - aramex
             * `australiapost` - australiapost
+            * `boxknight` - boxknight
             * `canadapost` - canadapost
             * `canpar` - canpar
             * `chronopost` - chronopost
@@ -10924,7 +11072,11 @@ components:
             * `dpdhl` - dpdhl
             * `fedex` - fedex
             * `generic` - generic
+            * `geodis` - geodis
+            * `laposte` - laposte
+            * `nationex` - nationex
             * `purolator` - purolator
+            * `roadie` - roadie
             * `royalmail` - royalmail
             * `sendle` - sendle
             * `sf_express` - sf_express
@@ -11040,7 +11192,7 @@ components:
           type: string
           nullable: true
           description: The shipment origin postal code
-        shipment_destication_country:
+        shipment_destination_country:
           type: string
           nullable: true
           description: The shipment destination country
@@ -11106,7 +11258,7 @@ components:
             shipment_service: null
             shipment_origin_country: null
             shipment_origin_postal_code: null
-            shipment_destication_country: null
+            shipment_destination_country: null
             shipment_destination_postal_code: null
             shipping_date: null
             signed_by: null
@@ -11216,6 +11368,9 @@ components:
             - shipment_purchased
             - shipment_cancelled
             - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
             - tracker_created
             - tracker_updated
             - order_created
@@ -11233,6 +11388,9 @@ components:
               * `shipment_purchased` - shipment_purchased
               * `shipment_cancelled` - shipment_cancelled
               * `shipment_fulfilled` - shipment_fulfilled
+              * `shipment_out_for_delivery` - shipment_out_for_delivery
+              * `shipment_needs_attention` - shipment_needs_attention
+              * `shipment_delivery_failed` - shipment_delivery_failed
               * `tracker_created` - tracker_created
               * `tracker_updated` - tracker_updated
               * `order_created` - order_created
@@ -11288,6 +11446,9 @@ components:
             - shipment_purchased
             - shipment_cancelled
             - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
             - tracker_created
             - tracker_updated
             - order_created
@@ -11305,6 +11466,9 @@ components:
               * `shipment_purchased` - shipment_purchased
               * `shipment_cancelled` - shipment_cancelled
               * `shipment_fulfilled` - shipment_fulfilled
+              * `shipment_out_for_delivery` - shipment_out_for_delivery
+              * `shipment_needs_attention` - shipment_needs_attention
+              * `shipment_delivery_failed` - shipment_delivery_failed
               * `tracker_created` - tracker_created
               * `tracker_updated` - tracker_updated
               * `order_created` - order_created
@@ -11454,18 +11618,25 @@ tags:
     | amazon_mws | AmazonMws |
     | aramex | Aramex |
     | australiapost | Australia Post |
+    | boxknight | BoxKnight |
     | canadapost | Canada Post |
     | canpar | Canpar |
     | chronopost | Chronopost |
+    | dhl_express | DHL Express |
     | dhl_poland | DHL Parcel Poland |
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
     | dpd | DPD |
+    | dpdhl | Deutsche Post DHL |
     | easypost | EasyPost |
     | eshipper | eShipper |
     | fedex | FedEx |
     | freightcom | Freightcom |
+    | geodis | GEODIS |
+    | laposte | La Poste |
+    | nationex | Nationex |
     | purolator | Purolator |
+    | roadie | Roadie |
     | royalmail | Royal Mail |
     | sendle | Sendle |
     | sf_express | SF-Express |
@@ -11476,8 +11647,6 @@ tags:
     | usps_international | USPS International |
     | yanwen | Yanwen |
     | yunexpress | Yunexpress |
-    | dhl_express | DHL Express |
-    | dpdhl | Deutsche Post DHL |
 
     ---
     ## Services
@@ -11491,6 +11660,13 @@ tags:
     | amazon_shipping_ground | Amazon Shipping Ground |
     | amazon_shipping_standard | Amazon Shipping Standard |
     | amazon_shipping_premium | Amazon Shipping Premium |
+
+    ### BoxKnight
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | boxknight_sameday | SAMEDAY |
+    | boxknight_nextday | NEXTDAY |
+    | boxknight_scheduled | SCHEDULED |
 
     ### Canada Post
     | Code         | Service Name |
@@ -11531,6 +11707,47 @@ tags:
     | chronopost_premium_international | 37 |
     | chronopost_classic_international | 44 |
 
+    ### DHL Express
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dhl_logistics_services | 0 |
+    | dhl_domestic_express_12_00 | 1 |
+    | dhl_express_choice | 2 |
+    | dhl_express_choice_nondoc | 3 |
+    | dhl_jetline | 4 |
+    | dhl_sprintline | 5 |
+    | dhl_air_capacity_sales | 6 |
+    | dhl_express_easy | 7 |
+    | dhl_express_easy_nondoc | 8 |
+    | dhl_parcel_product | 9 |
+    | dhl_accounting | A |
+    | dhl_breakbulk_express | B |
+    | dhl_medical_express | C |
+    | dhl_express_worldwide_doc | D |
+    | dhl_express_9_00_nondoc | E |
+    | dhl_freight_worldwide_nondoc | F |
+    | dhl_economy_select_domestic | G |
+    | dhl_economy_select_nondoc | H |
+    | dhl_express_domestic_9_00 | I |
+    | dhl_jumbo_box_nondoc | J |
+    | dhl_express_9_00 | K |
+    | dhl_express_10_30 | L |
+    | dhl_express_10_30_nondoc | M |
+    | dhl_express_domestic | N |
+    | dhl_express_domestic_10_30 | O |
+    | dhl_express_worldwide_nondoc | P |
+    | dhl_medical_express_nondoc | Q |
+    | dhl_globalmail | R |
+    | dhl_same_day | S |
+    | dhl_express_12_00 | T |
+    | dhl_express_worldwide | U |
+    | dhl_parcel_product_nondoc | V |
+    | dhl_economy_select | W |
+    | dhl_express_envelope | X |
+    | dhl_express_12_00_nondoc | Y |
+    | dhl_destination_charges | Z |
+    | dhl_express_all | None |
+
     ### DHL Parcel Poland
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -11540,6 +11757,26 @@ tags:
     | dhl_poland_12 | 12 |
     | dhl_poland_connect | EK |
     | dhl_poland_international | PI |
+
+    ### DPD
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dpd_cl | CL |
+    | dpd_express_10h | E10 |
+    | dpd_express_12h | E12 |
+    | dpd_express_18h_guarantee | E18 |
+    | dpd_express_b2b_predict | B2B MSG option |
+
+    ### Deutsche Post DHL
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dpdhl_paket | V01PAK |
+    | dpdhl_paket_international | V53WPAK |
+    | dpdhl_europaket | V54EPAK |
+    | dpdhl_paket_connect | V55PAK |
+    | dpdhl_warenpost | V62WP |
+    | dpdhl_warenpost_international | V66WPI |
+    | dpdhl_retoure |  |
 
     ### EasyPost
     | Code         | Service Name |
@@ -12431,6 +12668,11 @@ tags:
     | purolator_express_international_box_10_30_am | PurolatorExpressInternationalBox10:30AM |
     | purolator_express_international_box_12_00 | PurolatorExpressInternationalBox12:00 |
 
+    ### Roadie
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | roadie_local_delivery | Roadie Local Delivery |
+
     ### TNT
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12561,57 +12803,6 @@ tags:
     | usps_plus | Plus |
     | usps_bpm | BPM |
 
-    ### DHL Express
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dhl_logistics_services | 0 |
-    | dhl_domestic_express_12_00_doc | 1 |
-    | dhl_b2c_doc | 2 |
-    | dhl_b2c_nondoc | 3 |
-    | dhl_jetline | 4 |
-    | dhl_sprintline | 5 |
-    | dhl_express_easy_doc | 7 |
-    | dhl_express_easy_nondoc | 8 |
-    | dhl_europack_doc | 9 |
-    | dhl_auto_reversals | A |
-    | dhl_breakbulk_express_doc | B |
-    | dhl_medical_express_doc | C |
-    | dhl_express_worldwide_doc | D |
-    | dhl_express_9_00_nondoc | E |
-    | dhl_freight_worldwide_nondoc | F |
-    | dhl_domestic_economy_select_doc | G |
-    | dhl_economy_select_nondoc | H |
-    | dhl_domestic_express_9_00_doc | I |
-    | dhl_jumbo_box_nondoc | J |
-    | dhl_express_9_00_doc | K |
-    | dhl_express_10_30_doc | L |
-    | dhl_express_10_30_nondoc | M |
-    | dhl_domestic_express_doc | N |
-    | dhl_domestic_express_10_30_doc | O |
-    | dhl_express_worldwide_nondoc | P |
-    | dhl_medical_express_nondoc | Q |
-    | dhl_globalmail_business_doc | R |
-    | dhl_same_day_doc | S |
-    | dhl_express_12_00_doc | T |
-    | dhl_express_worldwide_ecx_doc | U |
-    | dhl_europack_nondoc | V |
-    | dhl_economy_select_doc | W |
-    | dhl_express_envelope_doc | X |
-    | dhl_express_12_00_nondoc | Y |
-    | dhl_destination_charges | Z |
-    | dhl_express_all | None |
-
-    ### Deutsche Post DHL
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dpdhl_paket | V01PAK |
-    | dpdhl_paket_international | V53WPAK |
-    | dpdhl_europaket | V54EPAK |
-    | dpdhl_paket_connect | V55PAK |
-    | dpdhl_warenpost | V62WP |
-    | dpdhl_warenpost_international | V66WPI |
-    | dpdhl_retoure |  |
-
 
     ---
     ## Parcel Templates
@@ -12630,6 +12821,24 @@ tags:
     | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
     | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
     | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
+
+    ### DHL Express
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
+    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
+    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
+    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
+    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
+    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
+    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
+    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
+    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
+    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
+    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
+    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
+    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
+    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
 
     ### FedEx
     | Code         | Dimensions   |
@@ -12675,23 +12884,5 @@ tags:
     | ups_express_tube | 38.0 x 6.0 x 6.0 in |
     | ups_express_pak | 16.0 x 11.75 x 1.5 in |
     | ups_world_document_box | 17.5 x 12.5 x 3.0 in |
-
-    ### DHL Express
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
-    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
-    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
-    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
-    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
-    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
-    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
-    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
-    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
-    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
-    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
-    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
-    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
-    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
 
 ...

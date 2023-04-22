@@ -7,8 +7,10 @@ import karrio.providers.chronopost.utils as provider_utils
 
 
 def parse_shipment_cancel_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     success = len(errors) == 0
     confirmation: models.ConfirmationDetails = (
@@ -27,7 +29,7 @@ def parse_shipment_cancel_response(
 
 def shipment_cancel_request(
     payload: models.ShipmentCancelRequest, settings: provider_utils.Settings
-) -> lib.Serializable[lib.Envelope]:
+) -> lib.Serializable:
     request = lib.Envelope(
         Body=lib.Body(
             cancelSkybill(

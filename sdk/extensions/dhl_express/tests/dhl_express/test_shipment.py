@@ -25,7 +25,7 @@ class TestDHLShipment(unittest.TestCase):
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
 
-    @patch("karrio.mappers.dhl_express.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.dhl_express.proxy.lib.request", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
         karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -33,7 +33,7 @@ class TestDHLShipment(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_shipment_error(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentParsingError
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -43,7 +43,7 @@ class TestDHLShipment(unittest.TestCase):
             )
 
     def test_shipment_missing_args_error_parsing(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentMissingArgsError
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -53,7 +53,7 @@ class TestDHLShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseXml
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -272,14 +272,6 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
     <ExportDeclaration>
         <InvoiceNumber>N/A</InvoiceNumber>
         <InvoiceDate>2021-05-03</InvoiceDate>
-        <BillToCompanyName>shipper company privated limited 12</BillToCompanyName>
-        <BillToContactName>Ms Lucian</BillToContactName>
-        <BillToAddressLine1>238 850925434 Drive</BillToAddressLine1>
-        <BillToCity>Scottsdale</BillToCity>
-        <BillToPostcode>85260</BillToPostcode>
-        <BillToCountryCode>US</BillToCountryCode>
-        <BillToCountryName>United States</BillToCountryName>
-        <BillToPhoneNumber>1 23 8613402</BillToPhoneNumber>
         <ExportLineItem>
             <LineNumber>1</LineNumber>
             <Quantity>1</Quantity>

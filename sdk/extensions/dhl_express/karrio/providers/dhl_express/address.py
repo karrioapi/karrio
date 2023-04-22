@@ -19,9 +19,11 @@ from karrio.providers.dhl_express.error import parse_error_response
 
 
 def parse_address_validation_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[AddressValidationDetails, List[Message]]:
-    notes = response.xpath(".//*[local-name() = $name]", name="Note")
+    response = _response.deserialize()
+    notes = lib.find_element("Note", response)
     success = next(
         (True for note in notes if XP.to_object(Note, note).ActionNote == "Success"),
         False,
@@ -37,7 +39,7 @@ def parse_address_validation_response(
 
 def address_validation_request(
     payload: AddressValidationRequest, settings: Settings
-) -> Serializable[RouteRequest]:
+) -> Serializable:
     country = (
         Country[payload.address.country_code]
         if payload.address.country_code is not None

@@ -76,7 +76,7 @@ class TestDHLRating(unittest.TestCase):
 
         self.assertEqual(serialized_request, RateRequestFromPresetXML)
 
-    @patch("karrio.mappers.dhl_express.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.dhl_express.proxy.lib.request", return_value="<a></a>")
     def test_get_rates(self, http_mock):
         Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -84,7 +84,7 @@ class TestDHLRating(unittest.TestCase):
         self.assertEqual(url, gateway.settings.server_url)
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = RateResponseXML
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
@@ -137,7 +137,7 @@ class TestDHLRating(unittest.TestCase):
         )
 
     def test_parse_rate_parsing_error(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = RateParsingError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -145,7 +145,7 @@ class TestDHLRating(unittest.TestCase):
             )
 
     def test_parse_rate_missing_args_error(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = RateMissingArgsError
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -153,7 +153,7 @@ class TestDHLRating(unittest.TestCase):
             )
 
     def test_parse_rate_vol_weight_higher_response(self):
-        with patch("karrio.mappers.dhl_express.proxy.http") as mock:
+        with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
             mock.return_value = RateVolWeightHigher
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
             self.assertEqual(
@@ -287,8 +287,8 @@ ParsedRateResponse = [
             "extra_charges": [
                 {"amount": 213.47, "currency": "CAD", "name": "Base charge"}
             ],
-            "meta": {"service_name": "dhl_express_easy_doc"},
-            "service": "dhl_express_easy_doc",
+            "meta": {"service_name": "dhl_express_easy"},
+            "service": "dhl_express_easy",
             "total_charge": 213.47,
             "transit_days": 5,
         },
@@ -299,7 +299,7 @@ ParsedRateResponse = [
 ParsedRateVolWeightHigher = [[], []]  # type: ignore
 
 
-RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="2.0">
+RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="3.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -355,7 +355,7 @@ RateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://
 </p:DCTRequest>
 """
 
-EURateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="2.0">
+EURateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="3.0">
     <GetQuote>
         <Request>
             <ServiceHeader>
@@ -411,7 +411,7 @@ EURateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:
 </p:DCTRequest>
 """
 
-RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="2.0">
+RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http://www.dhl.com/datatypes" xmlns:p2="http://www.dhl.com/DCTRequestdatatypes" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com DCT-req.xsd" schemaVersion="3.0">
     <GetQuote>
         <Request>
             <ServiceHeader>

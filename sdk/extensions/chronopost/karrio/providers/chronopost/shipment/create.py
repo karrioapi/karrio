@@ -10,8 +10,10 @@ import karrio.providers.chronopost.units as provider_units
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     shipment_node = lib.find_element("resultMultiParcelValue", response, first=True)
     shipment = (
@@ -41,7 +43,7 @@ def _extract_details(
 
 def shipment_request(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
-) -> lib.Serializable[str]:
+) -> lib.Serializable:
     package = lib.to_packages(
         payload.parcels,
         required=["weight"],
@@ -66,7 +68,9 @@ def shipment_request(
                 headerValue=settings.header_value,
                 shipperValue=(
                     chronopost.shipperValue(
-                        shipperAdress1=lib.text(shipper.street_number, shipper.address_line1),
+                        shipperAdress1=lib.text(
+                            shipper.street_number, shipper.address_line1
+                        ),
                         shipperAdress2=shipper.address_line2,
                         shipperCity=shipper.city,
                         shipperContactName=shipper.person_name,
@@ -82,7 +86,9 @@ def shipment_request(
                     ),
                 ),
                 customerValue=chronopost.customerValue(
-                    customerAdress1=lib.text(recipient.street_number, recipient.address_line1),
+                    customerAdress1=lib.text(
+                        recipient.street_number, recipient.address_line1
+                    ),
                     customerAdress2=recipient.address_line2,
                     customerCity=recipient.city,
                     customerContactName=recipient.person_name,
@@ -99,7 +105,9 @@ def shipment_request(
                 ),
                 recipientValue=(
                     chronopost.recipientValue(
-                        recipientAdress1=lib.text(recipient.street_number, recipient.address_line1),
+                        recipientAdress1=lib.text(
+                            recipient.street_number, recipient.address_line1
+                        ),
                         recipientAdress2=recipient.address_line2,
                         recipientCity=recipient.city,
                         recipientContactName=recipient.person_name,

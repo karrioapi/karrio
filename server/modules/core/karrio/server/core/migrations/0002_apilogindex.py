@@ -9,8 +9,9 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     APILog = apps.get_model("core", "APILog")
     APILogIndex = apps.get_model("core", "APILogIndex")
+    logs = APILog.objects.using(db_alias).filter(response__isnull=False).iterator()
 
-    for log in APILog.objects.using(db_alias).filter(response__isnull=False):
+    for log in logs:
         response = utils.failsafe(
             lambda: utils.DP.to_dict(utils.DP.to_dict(log.response))
         )
@@ -33,7 +34,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("rest_framework_tracking", "0011_auto_20201117_2016"),
         ("core", "0001_initial"),

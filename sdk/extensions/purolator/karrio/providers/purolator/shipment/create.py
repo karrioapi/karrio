@@ -43,8 +43,9 @@ import karrio.providers.purolator.shipment.documents as documents
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element], settings: provider_utils.Settings
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     pin = lib.find_element("ShipmentPIN", response, PIN, first=True)
     shipment = (
         _extract_shipment(response, settings)
@@ -85,7 +86,7 @@ def _extract_shipment(
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[lib.Pipeline]:
+) -> lib.Serializable:
     requests: lib.Pipeline = lib.Pipeline(
         create=lambda *_: functools.partial(
             _create_shipment, payload=payload, settings=settings
@@ -100,7 +101,7 @@ def shipment_request(
 def _shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[lib.Envelope]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(
@@ -190,10 +191,7 @@ def _shipment_request(
                         ),
                         FaxNumber=None,
                     ),
-                    TaxNumber=(
-                        recipient.federal_tax_id
-                        or recipient.state_tax_id
-                    ),
+                    TaxNumber=(recipient.federal_tax_id or recipient.state_tax_id),
                 ),
                 FromOnLabelIndicator=None,
                 FromOnLabelInformation=None,
@@ -354,14 +352,11 @@ def _shipment_request(
                 NotificationInformation=(
                     NotificationInformation(
                         ConfirmationEmailAddress=(
-                            options.email_notification_to.state
-                            or recipient.email
+                            options.email_notification_to.state or recipient.email
                         )
                     )
                     if options.email_notification.state
-                    and any(
-                        [options.email_notification_to.state, recipient.email]
-                    )
+                    and any([options.email_notification_to.state, recipient.email])
                     else None
                 ),
                 TrackingReferenceInformation=(

@@ -30,8 +30,12 @@ import karrio.providers.canadapost.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = (
+        _response.deserialize() if hasattr(_response, "deserialize") else _response
+    )
     shipment = (
         _extract_shipment(response, settings)
         if len(lib.find_element("shipment-id", response)) > 0
@@ -64,7 +68,7 @@ def _extract_shipment(
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[ShipmentType]:
+) -> lib.Serializable:
     service = provider_units.ServiceType.map(payload.service).value_or_key
     package = lib.to_packages(
         payload.parcels,
@@ -232,7 +236,7 @@ def shipment_request(
             references=ReferencesType(
                 cost_centre=(
                     options.canadapost_cost_center.state
-                    or settings.metadata.get("cost-center")
+                    or settings.connection_config.cost_center.state
                     or payload.reference
                 ),
                 customer_ref_1=payload.reference,

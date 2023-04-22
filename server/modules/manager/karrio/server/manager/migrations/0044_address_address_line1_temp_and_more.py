@@ -10,24 +10,40 @@ def forwards_func(apps, schema_editor):
     Shipment = apps.get_model("manager", "Shipment")
     Commodity = apps.get_model("manager", "Commodity")
 
-    shipments = Shipment.objects.using(db_alias).filter(models.Q(reference__gt=25))
-    commodities = Commodity.objects.using(db_alias).filter(
-        models.Q(description__gt=25) | models.Q(sku__gt=25) | models.Q(hs_code__gt=25)
+    shipments = (
+        Shipment.objects.using(db_alias).filter(models.Q(reference__gt=25)).iterator()
     )
-    parcels = Parcel.objects.using(db_alias).filter(
-        models.Q(description__gt=35)
-        | models.Q(content__gt=35)
-        | models.Q(reference_number__gt=50)
+    commodities = (
+        Commodity.objects.using(db_alias)
+        .filter(
+            models.Q(description__gt=25)
+            | models.Q(sku__gt=25)
+            | models.Q(hs_code__gt=25)
+        )
+        .iterator()
     )
-    addresses = Address.objects.using(db_alias).filter(
-        models.Q(city__gt=30)
-        | models.Q(person_name__gt=30)
-        | models.Q(company_name__gt=30)
-        | models.Q(phone_number__gt=20)
-        | models.Q(federal_tax_id__gt=20)
-        | models.Q(state_tax_id__gt=20)
-        | models.Q(address_line1__gt=35)
-        | models.Q(address_line2__gt=35)
+    parcels = (
+        Parcel.objects.using(db_alias)
+        .filter(
+            models.Q(description__gt=35)
+            | models.Q(content__gt=35)
+            | models.Q(reference_number__gt=50)
+        )
+        .iterator()
+    )
+    addresses = (
+        Address.objects.using(db_alias)
+        .filter(
+            models.Q(city__gt=30)
+            | models.Q(person_name__gt=30)
+            | models.Q(company_name__gt=30)
+            | models.Q(phone_number__gt=20)
+            | models.Q(federal_tax_id__gt=20)
+            | models.Q(state_tax_id__gt=20)
+            | models.Q(address_line1__gt=35)
+            | models.Q(address_line2__gt=35)
+        )
+        .iterator()
     )
 
     for shipment in shipments:
@@ -84,7 +100,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0043_customs_duty_billing_address_and_more"),
     ]

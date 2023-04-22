@@ -19,11 +19,13 @@ import karrio.providers.canpar.rate as rate
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     shipment = lib.to_object(
         Shipment,
-        lib.find_element("shipment", response, first=True)
+        lib.find_element("shipment", response, first=True),
     )
     success = shipment is not None and shipment.id is not None
     shipment_details = _extract_details(response, settings) if success else None
@@ -54,8 +56,7 @@ def _extract_details(
 
 def shipment_request(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
-) -> lib.Serializable[lib.Pipeline]:
-
+) -> lib.Serializable:
     request: lib.Pipeline = lib.Pipeline(
         process=lambda *_: _process_shipment(payload, settings),
         get_label=partial(_get_label, settings=settings),
@@ -88,7 +89,10 @@ def _process_shipment(
                 shipment=Shipment(
                     cod_type=options.canpar_cash_on_delivery.state,
                     delivery_address=Address(
-                        address_line_1=lib.text(payload.recipient.street_number, payload.recipient.address_line1),
+                        address_line_1=lib.text(
+                            payload.recipient.street_number,
+                            payload.recipient.address_line1,
+                        ),
                         address_line_2=payload.recipient.address_line2,
                         address_line_3=None,
                         attention=payload.recipient.person_name,
@@ -130,7 +134,9 @@ def _process_shipment(
                         for pkg in packages
                     ],
                     pickup_address=Address(
-                        address_line_1=lib.text(payload.shipper.street_number, payload.shipper.address_line1),
+                        address_line_1=lib.text(
+                            payload.shipper.street_number, payload.shipper.address_line1
+                        ),
                         address_line_2=payload.shipper.address_line2,
                         address_line_3=None,
                         attention=payload.shipper.person_name,

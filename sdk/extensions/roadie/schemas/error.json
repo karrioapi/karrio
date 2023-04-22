@@ -1,0 +1,9 @@
+{
+  "errors": [
+    {
+      "code": 1001,
+      "parameter": "pickup_location",
+      "message": "Pickup location can't be blank."
+    }
+  ]
+}

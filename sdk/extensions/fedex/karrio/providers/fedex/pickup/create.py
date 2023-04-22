@@ -37,19 +37,16 @@ from karrio.providers.fedex.pickup.availability import pickup_availability_reque
 from karrio.providers.fedex.utils import Settings
 from karrio.providers.fedex.units import PackagePresets
 from karrio.providers.fedex.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_pickup_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     reply = XP.to_object(
         CreatePickupReply,
-        next(
-            iter(
-                response.xpath(".//*[local-name() = $name]", name="CreatePickupReply")
-            ),
-            None,
-        ),
+        lib.find_element("CreatePickupReply", response, first=True),
     )
     pickup = (
         _extract_pickup_details(reply, settings)
@@ -69,9 +66,7 @@ def _extract_pickup_details(
     )
 
 
-def pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[Pipeline]:
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     """
     Create a pickup request
     Steps
@@ -79,7 +74,7 @@ def pickup_request(
         2 - create pickup
     :param payload: PickupRequest
     :param settings: Settings
-    :return: Serializable[Pipeline]
+    :return: Serializable
     """
     request: Pipeline = Pipeline(
         get_availability=lambda *_: _get_availability(
@@ -90,9 +85,7 @@ def pickup_request(
     return Serializable(request)
 
 
-def _pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[CreatePickupRequest]:
+def _pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     same_day = DF.date(payload.pickup_date).date() == datetime.today().date()
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
 

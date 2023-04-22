@@ -1,16 +1,19 @@
 from typing import Tuple, List
 from usps_lib.evsi_cancel_request import eVSICancelRequest
 from usps_lib.evsi_cancel_response import eVSICancelResponse
-from karrio.core.utils import Serializable, Element, XP
+from karrio.core.utils import Serializable, XP
 from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
 
 from karrio.providers.usps_international.error import parse_error_response
 from karrio.providers.usps_international.utils import Settings
+import karrio.lib as lib
 
 
 def parse_shipment_cancel_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     errors: List[Message] = parse_error_response(response, settings)
     cancel_response = XP.to_object(eVSICancelResponse, response)
 
@@ -41,7 +44,6 @@ def parse_shipment_cancel_response(
 def shipment_cancel_request(
     payload: ShipmentCancelRequest, settings: Settings
 ) -> Serializable:
-
     request = eVSICancelRequest(
         USERID=settings.username, BarcodeNumber=payload.shipment_identifier
     )

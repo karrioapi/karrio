@@ -10,20 +10,21 @@ from karrio.core.models import PickupUpdateRequest, PickupDetails, Message
 from karrio.core.utils import (
     Serializable,
     create_envelope,
-    Envelope,
+    Pipeline,
     Element,
     XP,
-    Pipeline,
     Job,
 )
 from karrio.providers.purolator.pickup.create import _validate_pickup
 from karrio.providers.purolator.error import parse_error_response
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
+import karrio.lib as lib
 
 
 def parse_pickup_update_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     reply = XP.find("ModifyPickUpResponse", response, ModifyPickUpResponse, first=True)
     pickup = (
         _extract_pickup_details(reply, settings)
@@ -37,7 +38,6 @@ def parse_pickup_update_response(
 def _extract_pickup_details(
     reply: ModifyPickUpResponse, settings: Settings
 ) -> PickupDetails:
-
     return PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -47,7 +47,7 @@ def _extract_pickup_details(
 
 def pickup_update_request(
     payload: PickupUpdateRequest, settings: Settings
-) -> Serializable[Pipeline]:
+) -> Serializable:
     """
     Modify a pickup request
     Steps
@@ -55,7 +55,7 @@ def pickup_update_request(
         2 - modify pickup
     :param payload: PickupUpdateRequest
     :param settings: Settings
-    :return: Serializable[Pipeline]
+    :return: Serializable
     """
     request: Pipeline = Pipeline(
         validate=lambda *_: _validate_pickup(payload=payload, settings=settings),
@@ -67,7 +67,7 @@ def pickup_update_request(
 
 def _modify_pickup_request(
     payload: PickupUpdateRequest, settings: Settings
-) -> Serializable[Envelope]:
+) -> Serializable:
     request = create_envelope(
         header_content=RequestContext(
             Version="1.2",

@@ -1,3 +1,4 @@
+import karrio.lib as lib
 from typing import List, Tuple
 from canpar_lib.CanparRatingService import (
     searchCanadaPost,
@@ -14,7 +15,6 @@ from karrio.core.models import (
 from karrio.core.utils import (
     create_envelope,
     Element,
-    Envelope,
     Serializable,
     SF,
     XP,
@@ -24,13 +24,13 @@ from karrio.providers.canpar.utils import Settings
 
 
 def parse_address_validation_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[AddressValidationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
-    address_node = next(
-        iter(response.xpath(".//*[local-name() = $name]", name="address")), None
-    )
-    address = XP.to_object(CanparAddress, address_node)
+    address = lib.find_element("address", response, CanparAddress, first=True)
+
     success = len(errors) == 0
     validation_details = (
         AddressValidationDetails(
@@ -59,8 +59,9 @@ def parse_address_validation_response(
 
 
 def address_validation_request(
-    payload: AddressValidationRequest, settings: Settings
-) -> Serializable[Envelope]:
+    payload: AddressValidationRequest,
+    settings: Settings,
+) -> Serializable:
     address = lib.to_address(payload.address)
 
     request = create_envelope(

@@ -25,7 +25,7 @@ from karrio.providers.fedex.utils import Settings
 
 def pickup_availability_request(
     payload: PickupRequest, settings: Settings
-) -> Serializable[PickupAvailabilityRequest]:
+) -> Serializable:
     same_day = DF.date(payload.pickup_date).date() == datetime.today().date()
     address = lib.to_address(payload.address)
 

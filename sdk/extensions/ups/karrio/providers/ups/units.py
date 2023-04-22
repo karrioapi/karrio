@@ -109,6 +109,13 @@ class PackagingType(utils.Flag):
     your_packaging = ups_customer_supplied_package
 
 
+class ConnectionConfig(utils.Enum):
+    label_type = utils.OptionEnum("label_type")
+    enforce_zpl = utils.OptionEnum("enforce_zpl", bool)
+    shipping_options = utils.OptionEnum("shipping_options", list)
+    shipping_services = utils.OptionEnum("shipping_services", list)
+
+
 class ServiceCode(utils.Enum):
     ups_express = "07"
     ups_standard = "11"

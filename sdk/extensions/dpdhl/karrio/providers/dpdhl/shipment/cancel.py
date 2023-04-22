@@ -8,9 +8,10 @@ import karrio.providers.dpdhl.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     deletion: dpdhl.DeletionState = lib.find_element(
         "DeletionState",
@@ -38,7 +39,6 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-
     request = lib.Envelope(
         Header=lib.Header(
             provider_utils.AuthentificationType(

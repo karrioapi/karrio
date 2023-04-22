@@ -6,7 +6,7 @@ from purolator_lib.service_availability_service_2_0_2 import (
     ShortAddress,
     RequestContext,
 )
-from karrio.core.utils import Serializable, Element, create_envelope, Envelope, XP
+from karrio.core.utils import Serializable, Element, create_envelope, XP
 from karrio.core.models import (
     AddressValidationRequest,
     Message,
@@ -15,23 +15,17 @@ from karrio.core.models import (
 )
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
 from karrio.providers.purolator.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_address_validation_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[AddressValidationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     reply = XP.to_object(
         ValidateCityPostalCodeZipResponse,
-        next(
-            iter(
-                response.xpath(
-                    ".//*[local-name() = $name]",
-                    name="ValidateCityPostalCodeZipResponse",
-                )
-            ),
-            None,
-        ),
+        lib.find_element("ValidateCityPostalCodeZipResponse", response, first=True),
     )
     address: ShortAddress = next(
         (result.Address for result in reply.SuggestedAddresses.SuggestedAddress), None
@@ -60,8 +54,7 @@ def parse_address_validation_response(
 
 def address_validation_request(
     payload: AddressValidationRequest, settings: Settings
-) -> Serializable[Envelope]:
-
+) -> Serializable:
     request = create_envelope(
         header_content=RequestContext(
             Version="2.1",

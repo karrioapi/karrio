@@ -1,5 +1,6 @@
-import functools
 import typing
+import functools
+
 from karrio.server.core.models.base import (
     ControlledAccessModel,
     get_access_filter,

@@ -7,9 +7,10 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Commodity = apps.get_model("manager", "Commodity")
 
-    commodities = Commodity.objects.using(db_alias).filter(
-        models.Q(description__isnull=False) &
-        models.Q(title__isnull=True)
+    commodities = (
+        Commodity.objects.using(db_alias)
+        .filter(models.Q(description__isnull=False) & models.Q(title__isnull=True))
+        .iterator()
     )
 
     for commodity in commodities:

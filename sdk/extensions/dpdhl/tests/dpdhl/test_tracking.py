@@ -127,7 +127,7 @@ ParsedTrackingResponse = [
             "info": {
                 "carrier_tracking_link": "https://www.dhl.de/en/privatkunden/pakete-empfangen/verfolgen.html?piececode=340434161094042557",
                 "customer_name": "Deutsche Post DHL",
-                "shipment_destication_country": "DE",
+                "shipment_destination_country": "DE",
                 "shipment_destination_postal_code": 53113,
                 "shipment_origin_country": "DE",
                 "shipment_service": "DHL PAKET (parcel)",
@@ -169,7 +169,8 @@ ParsedHTMLErrorResponses = [
 ]
 
 
-TrackingRequest = """<data appname="zt12345" password="geheim" request="d-get-piece-detail" language-code="en" piece-code="00340434161094042557"/>
+TrackingRequest = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<data appname="zt12345" password="geheim" request="d-get-piece-detail" language-code="en" piece-code="00340434161094042557"/>
 """
 
 TrackingResponse = """<?xml version="1.0" encoding="UTF-8"?>

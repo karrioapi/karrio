@@ -17,7 +17,7 @@ class TestUniversalRating(unittest.TestCase):
     def test_rate_without_service_selection_request(self):
         RateRequestWithoutSelection = Serializable(RateRequest(**rate_request_data))
         response_data = self.proxy.get_rates(RateRequestWithoutSelection)
-        rates = parse_rate_response(response_data.deserialize(), self.settings)
+        rates = parse_rate_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(rates),
@@ -29,7 +29,7 @@ class TestUniversalRating(unittest.TestCase):
             RateRequest(**{**rate_request_data, "services": ["carrier_standard"]})
         )
         response_data = self.proxy.get_rates(RateRequestStandardService)
-        rates = parse_rate_response(response_data.deserialize(), self.settings)
+        rates = parse_rate_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(rates),
@@ -52,7 +52,7 @@ class TestUniversalRating(unittest.TestCase):
             )
         )
         response_data = self.proxy.get_rates(RateRequestHighWeight)
-        rates = parse_rate_response(response_data.deserialize(), self.settings)
+        rates = parse_rate_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(rates),
@@ -69,7 +69,7 @@ class TestUniversalRating(unittest.TestCase):
             )
         )
         response_data = self.proxy.get_rates(InternationalRateRequest)
-        rates = parse_rate_response(response_data.deserialize(), self.settings)
+        rates = parse_rate_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(rates),
@@ -93,7 +93,7 @@ class TestUniversalRating(unittest.TestCase):
             )
         )
         response_data = self.proxy.get_rates(InternationalRateRequestHighWeight)
-        rates = parse_rate_response(response_data.deserialize(), self.settings)
+        rates = parse_rate_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(rates),
@@ -113,7 +113,7 @@ class TestUniversalRating(unittest.TestCase):
             )
         )
         response_data = self.proxy.get_rates(MultiPieceRateRequest)
-        rates = parse_rate_response(response_data.deserialize(), self.settings)
+        rates = parse_rate_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(rates),

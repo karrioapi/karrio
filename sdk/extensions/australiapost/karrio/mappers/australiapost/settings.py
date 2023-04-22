@@ -19,3 +19,4 @@ class Settings(BaseSettings):
     carrier_id: str = "australiapost"
     account_country_code: str = "AU"
     metadata: dict = {}
+    config: dict = {}

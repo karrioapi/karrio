@@ -11,7 +11,7 @@ def forwards_func(apps, schema_editor):
     Markup = apps.get_model("pricing", "Surcharge")
     _charges = []
 
-    for markup in Markup.objects.using(db_alias).all():
+    for markup in Markup.objects.using(db_alias).all().iterator():
         markup.markup_carriers = lib.to_dict(markup.carriers)
         markup.markup_services = lib.to_dict(markup.services)
         _charges.append(markup)
@@ -26,7 +26,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("pricing", "0027_alter_surcharge_services"),
     ]
@@ -34,10 +33,13 @@ class Migration(migrations.Migration):
 
     if "postgres" in settings.DB_ENGINE:
         operations += [
-            migrations.RunSQL('ALTER TABLE "surcharge" ALTER COLUMN "carriers" TYPE jsonb USING to_jsonb(carriers)'),
-            migrations.RunSQL('ALTER TABLE "surcharge" ALTER COLUMN "services" TYPE jsonb USING to_jsonb(services)'),
+            migrations.RunSQL(
+                'ALTER TABLE "surcharge" ALTER COLUMN "carriers" TYPE jsonb USING to_jsonb(carriers)'
+            ),
+            migrations.RunSQL(
+                'ALTER TABLE "surcharge" ALTER COLUMN "services" TYPE jsonb USING to_jsonb(services)'
+            ),
         ]
-
 
     operations += [
         migrations.AddField(

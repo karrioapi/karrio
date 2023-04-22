@@ -18,8 +18,10 @@ import karrio.providers.usps.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     rates: typing.List[models.RateDetails] = [
         _extract_details(package, settings)
         for package in lib.find_element("Postage", response)
@@ -36,11 +38,13 @@ def _extract_details(
     charges: typing.List[SpecialServiceType] = getattr(
         postage.SpecialServices, "SpecialService", []
     )
-    rate = lib.to_decimal((
-        lib.find_element("CommercialPlusRate", postage_node, first=True) or
-        lib.find_element("CommercialRate", postage_node, first=True) or
-        lib.find_element("Rate", postage_node, first=True)
-    ).text)
+    rate = lib.to_decimal(
+        (
+            lib.find_element("CommercialPlusRate", postage_node, first=True)
+            or lib.find_element("CommercialRate", postage_node, first=True)
+            or lib.find_element("Rate", postage_node, first=True)
+        ).text
+    )
     commitment_date_node = lib.find_element("CommitmentDate", postage_node, first=True)
     estimated_date = lib.to_date(getattr(commitment_date_node, "text", None))
     transit = (
@@ -71,7 +75,7 @@ def _extract_details(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[RateV4Request]:
+) -> lib.Serializable:
     """Create the appropriate USPS rate request depending on the destination
 
     :param payload: Karrio unified API rate request data

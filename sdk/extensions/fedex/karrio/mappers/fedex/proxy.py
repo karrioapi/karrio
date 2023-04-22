@@ -17,30 +17,22 @@ class Proxy(proxy.Proxy):
             headers={"Content-Type": "application/xml"},
         )
 
-    def validate_address(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/addressvalidation", request)
 
         return lib.Deserializable(response, lib.to_element)
 
-    def get_rates(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/rate", request)
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
-    def get_tracking(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/track", request)
 
         return lib.Deserializable(response, lib.to_element)
 
-    def create_shipment(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         requests = request.serialize()
         response = self._send_request("/ship", lib.Serializable(requests[0]))
         master_id = lib.find_element(
@@ -63,16 +55,12 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_element)
 
-    def cancel_shipment(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/ship", request)
 
         return lib.Deserializable(response, lib.to_element)
 
-    def schedule_pickup(
-        self, request: lib.Serializable[lib.Pipeline]
-    ) -> lib.Deserializable[str]:
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         def process(job: lib.Job):
             if job.data is None:
                 return job.fallback
@@ -84,9 +72,7 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_element)
 
-    def modify_pickup(
-        self, request: lib.Serializable[lib.Pipeline]
-    ) -> lib.Deserializable[str]:
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         def process(job: lib.Job):
             if job.data is None:
                 return job.fallback
@@ -100,15 +86,15 @@ class Proxy(proxy.Proxy):
 
     def cancel_pickup(
         self,
-        request: lib.Serializable[lib.Envelope],
-    ) -> lib.Deserializable[str]:
+        request: lib.Serializable,
+    ) -> lib.Deserializable:
         response = self._send_request("/pickup", request)
 
         return lib.Deserializable(response, lib.to_element)
 
     def upload_document(
         self,
-        request: lib.Serializable[lib.Envelope],
+        request: lib.Serializable,
     ) -> lib.Deserializable:
         response = self._send_request("/uploaddocument", request)
 

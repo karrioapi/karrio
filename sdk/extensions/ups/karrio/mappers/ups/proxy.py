@@ -7,7 +7,7 @@ from karrio.mappers.ups.settings import Settings
 class Proxy(proxy.Proxy):
     settings: Settings
 
-    def _send_request(self, path: str, request: lib.Serializable[typing.Any]) -> str:
+    def _send_request(self, path: str, request: lib.Serializable) -> str:
         return lib.request(
             url=f"{self.settings.server_url}{path}",
             data=request.serialize(),
@@ -16,36 +16,27 @@ class Proxy(proxy.Proxy):
             headers={"Content-Type": "application/xml"},
         )
 
-    def validate_address(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/webservices/AV", request)
 
         return lib.Deserializable(response, lib.to_element)
 
-    def get_rates(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/webservices/Rate", request)
 
-        return lib.Deserializable(
-            (response, request.ctx),
-            lambda res: (lib.to_element(res[0]), res[1]),
-        )
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
-    def create_shipment(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/webservices/Ship", request)
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/webservices/Void", request)
 
         return lib.Deserializable(response, lib.to_element)
 
-    def schedule_pickup(
-        self, request: lib.Serializable[lib.Pipeline]
-    ) -> lib.Deserializable[str]:
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         def process(job: lib.Job):
             if job.data is None:
                 return job.fallback
@@ -56,9 +47,7 @@ class Proxy(proxy.Proxy):
         response = pipeline.apply(process)
         return lib.Deserializable(response, lib.to_element)
 
-    def modify_pickup(
-        self, request: lib.Serializable[lib.Pipeline]
-    ) -> lib.Deserializable[str]:
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         def process(job: lib.Job):
             if job.data is None:
                 return job.fallback
@@ -70,15 +59,13 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_element)
 
-    def cancel_pickup(
-        self, request: lib.Serializable[lib.Envelope]
-    ) -> lib.Deserializable[str]:
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/webservices/Pickup", request)
 
         return lib.Deserializable(response, lib.to_element)
 
     def get_tracking(
-        self, request: lib.Serializable[typing.List[str]]
+        self, request: lib.Serializable
     ) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
         """
         get_tracking makes background requests for each tracking number

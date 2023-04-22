@@ -13,18 +13,14 @@ from karrio.core.models import (
 )
 from karrio.providers.ups.utils import Settings
 from karrio.providers.ups.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_address_validation_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[AddressValidationDetails, List[Message]]:
-    status = XP.to_object(
-        Response,
-        next(
-            iter(response.xpath(".//*[local-name() = $name]", name="Response")),
-            None,
-        ),
-    )
+    response = _response.deserialize()
+    status = XP.to_object(Response, lib.find_element("Response", response, first=True))
     success = status is not None and status.ResponseStatusCode == "1"
     validation_details = (
         AddressValidationDetails(
@@ -39,10 +35,7 @@ def parse_address_validation_response(
     return validation_details, parse_error_response(response, settings)
 
 
-def address_validation_request(
-    payload: AddressValidationRequest, _
-) -> Serializable[UPSAddressValidationRequest]:
-
+def address_validation_request(payload: AddressValidationRequest, _) -> Serializable:
     request = UPSAddressValidationRequest(
         Request=RequestType(
             TransactionReference=None,
@@ -60,5 +53,4 @@ def address_validation_request(
 
 
 def _request_serializer(request: UPSAddressValidationRequest) -> str:
-
     return XP.export(request, namespacedef_='xml:lang="en-US"')

@@ -174,6 +174,6 @@ def generate_document(slug: str, shipment, **kwargs) -> dict:
     return dict(
         doc_format="PDF",
         doc_name=f"{template.name}.pdf",
-        doc_type=(template.metadata or {}).get("doc_type"),
+        doc_type=(template.metadata or {}).get("doc_type") or "commercial_invoice",
         doc_file=base64.b64encode(document).decode("utf-8"),
     )

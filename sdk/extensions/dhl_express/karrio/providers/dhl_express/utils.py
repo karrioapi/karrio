@@ -1,9 +1,11 @@
+import dhl_express_lib.datatypes_global_v62 as dhl
 import time
-from dhl_express_lib.datatypes_global_v62 import ServiceHeader, Request
-from karrio.core import Settings as BaseSettings
+import typing
+import karrio.core as core
+import karrio.core.units as units
 
 
-class Settings(BaseSettings):
+class Settings(core.Settings):
     """DHL connection settings."""
 
     site_id: str
@@ -30,9 +32,13 @@ class Settings(BaseSettings):
     def tracking_url(self):
         return "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
 
-    def Request(self, **kwargs) -> Request:
-        return Request(
-            ServiceHeader=ServiceHeader(
+    @property
+    def default_currency(self) -> typing.Optional[str]:
+        return units.CountryCurrency.map(self.account_country_code).value or "USD"
+
+    def Request(self, **kwargs) -> dhl.Request:
+        return dhl.Request(
+            ServiceHeader=dhl.ServiceHeader(
                 MessageReference="1234567890123456789012345678901",
                 MessageTime=time.strftime("%Y-%m-%dT%H:%M:%S"),
                 SiteID=self.site_id,
@@ -43,9 +49,7 @@ class Settings(BaseSettings):
 
 
 def reformat_time(tag: str, xml_str: str) -> str:
-    """
-    Change time format from 00:00:00 to 00:00
-    """
+    """Change time format from 00:00:00 to 00:00"""
     parts = xml_str.split(tag)
     subs = parts[1].split(":")
     return f"{parts[0]}{tag}{subs[0]}:{subs[1]}</{tag}{parts[2]}"

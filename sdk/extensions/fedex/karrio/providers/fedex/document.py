@@ -9,9 +9,10 @@ import karrio.providers.fedex.utils as provider_utils
 
 
 def parse_document_upload_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     document_statuses = lib.find_element(
         "DocumentStatuses", response, fedex.UploadDocumentStatusDetail
@@ -48,7 +49,7 @@ def _extract_details(
 def document_upload_request(
     payload: models.DocumentUploadRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[lib.Envelope]:
+) -> lib.Serializable:
     document_files = lib.to_document_files(payload.document_files)
     options = lib.to_upload_options(
         payload.options,
@@ -110,7 +111,9 @@ def document_upload_request(
     return lib.Serializable(
         request,
         lambda _: (
-            provider_utils.default_request_serializer("v19", 'xmlns:v19="http://fedex.com/ws/uploaddocument/v19"')(_)
+            provider_utils.default_request_serializer(
+                "v19", 'xmlns:v19="http://fedex.com/ws/uploaddocument/v19"'
+            )(_)
             .replace("<v19:DocumentContent>b'", "<v19:DocumentContent>")
             .replace("'</v19:DocumentContent>", "</v19:DocumentContent>")
         ),

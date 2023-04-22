@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<xsd:schema targetNamespace="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.dhl.com" xmlns:dhl="http://www.dhl.com/datatypes_global" elementFormDefault="unqualified">
+	<xsd:import namespace="http://www.dhl.com/datatypes_global" schemaLocation="datatypes_global.xsd"/>
+	<xsd:element name="RouteResponse">
+		<xsd:annotation>
+			<xsd:documentation>Routing response root element</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Response" type="dhl:Response"/>
+				<xsd:element name="Note" type="dhl:Note"/>
+				<xsd:element name="RegionCode" type="dhl:RegionCode"/>
+				<xsd:element name="GMTNegativeIndicator" type="xsd:string"/>
+				<xsd:element name="GMTOffset" type="xsd:string"/>
+				<xsd:element name="ServiceArea" type="dhl:ServiceArea" />
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

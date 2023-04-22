@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.dhl_universal",
-    version="2023.1",
+    version="2023.4",
     description="DHL Universal Tracking karrio extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -14,7 +14,7 @@ setup(
     author_email="hello@karrio.io",
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
-    install_requires=["karrio", "carrier.dhl_universal"],
+    install_requires=["karrio"],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",

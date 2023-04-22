@@ -1,10 +1,11 @@
 """Karrio Canada post client settings."""
 
-from base64 import b64encode
-from karrio.core.settings import Settings as BaseSettings
+import base64
+import karrio.lib as lib
+import karrio.core.settings as settings
 
 
-class Settings(BaseSettings):
+class Settings(settings.Settings):
     """Canada post connection settings."""
 
     username: str
@@ -31,12 +32,25 @@ class Settings(BaseSettings):
 
     @property
     def tracking_url(self):
-        return "https://www.canadapost-postescanada.ca/track-reperage/" + self.language + "#/resultList?searchFor={}"
+        return (
+            "https://www.canadapost-postescanada.ca/track-reperage/"
+            + self.language
+            + "#/resultList?searchFor={}"
+        )
 
     @property
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
-        return b64encode(pair.encode("utf-8")).decode("ascii")
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.canadapost.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
 
 
 def format_ca_postal_code(code: str = None) -> str:

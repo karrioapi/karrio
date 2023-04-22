@@ -1,3 +1,4 @@
+import yaml  # type: ignore
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.permissions import AllowAny
@@ -35,6 +36,7 @@ References = openapi.OpenApiResponse(
                 "incoterms": {},
                 "states": {},
                 "services": {},
+                "connection_configs": {},
                 "service_names": {},
                 "options": {},
                 "option_names": {},
@@ -62,7 +64,12 @@ References = openapi.OpenApiResponse(
 @renderer_classes([JSONRenderer])
 def references(request: Request):
     try:
-        return Response(dataunits.contextual_reference(), status=status.HTTP_200_OK)
+        reduced = bool(yaml.safe_load(request.query_params.get("reduced", "true")))
+
+        return Response(
+            dataunits.contextual_reference(reduced=reduced),
+            status=status.HTTP_200_OK,
+        )
     except Exception as e:
         import logging
 

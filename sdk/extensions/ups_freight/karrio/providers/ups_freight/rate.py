@@ -10,9 +10,10 @@ import karrio.providers.ups_freight.units as provider_units
 
 
 def parse_rate_response(
-    response: dict,
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     rate_response = response.get("FreightRateResponse") or {}
     response_messages = [
         *response.get("response", {}).get("errors", []),

@@ -1,6 +1,6 @@
 import dhl_express_lib.dct_requestdatatypes_global as dhl_global
-import dhl_express_lib.dct_response_global_2_0 as dhl_response
-import dhl_express_lib.dct_req_global_2_0 as dhl
+import dhl_express_lib.dct_response_global_3_0 as dhl_response
+import dhl_express_lib.dct_req_global_3_0 as dhl
 import time
 import typing
 import karrio.lib as lib
@@ -13,11 +13,17 @@ import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    quotes = lib.find_element("QtdShp", response, dhl_response.QtdShpType)
+    response = _response.deserialize()
+
+    messages = provider_error.parse_error_response(response, settings)
+    quotes: typing.List[dhl_response.QtdShpType] = lib.find_element(
+        "QtdShp", response, dhl_response.QtdShpType
+    )
     rates: typing.List[models.RateDetails] = [
-        _extract_quote(quote, settings)
+        _extract_quote(quote, settings, _response.ctx)
         for quote in quotes
         if (
             quote.ShippingCharge is not None
@@ -25,14 +31,26 @@ def parse_rate_response(
         )
     ]
 
-    return rates, provider_error.parse_error_response(response, settings)
+    return [_ for _ in rates if _ is not None], messages
 
 
 def _extract_quote(
     quote: dhl_response.QtdShpType,
     settings: provider_utils.Settings,
+    ctx: typing.Dict[str, typing.Any] = {},
 ) -> models.RateDetails:
-    service = provider_units.ShippingService.map(quote.GlobalProductCode)
+    is_document = ctx.get("is_document", False)
+    is_international = ctx.get("is_international", False)
+    service = provider_units.ShippingService.map(
+        quote.GlobalProductCode if is_international else quote.LocalProductCode,
+    )
+    invalid_service = (
+        not is_international and service.name_or_key.endswith("_nondoc")
+    ) or (is_international and not is_document and service.name_or_key.endswith("_doc"))
+
+    if invalid_service:
+        return None
+
     charges = [
         ("Base charge", quote.WeightCharge),
         *((s.LocalServiceTypeName, s.ChargeValue) for s in quote.QtdShpExChrg),
@@ -62,13 +80,13 @@ def _extract_quote(
             for name, amount in charges
             if amount
         ],
-        meta=dict(service_name=(service.name or quote.ProductShortName)),
+        meta=dict(service_name=(service.name or quote.LocalProductName)),
     )
 
 
 def rate_request(
     payload: models.RateRequest, settings: provider_utils.Settings
-) -> lib.Serializable[dhl.DCTRequest]:
+) -> lib.Serializable:
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
@@ -86,7 +104,7 @@ def rate_request(
         raise errors.DestinationNotServicedError(payload.shipper.country_code)
 
     is_document = all([parcel.is_document for parcel in payload.parcels])
-    is_dutiable = not is_document  # parcel and not document only so it is dutiable.
+    is_dutiable = is_international and not is_document
     services = lib.to_services(
         payload.services,
         is_document=is_document,
@@ -97,15 +115,19 @@ def rate_request(
     )
     options = lib.to_shipping_options(
         payload.options,
-        is_international=is_international,
         is_dutiable=is_dutiable,
         package_options=packages.options,
+        shipper_country=payload.shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
 
     weight_unit, dim_unit = (
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
+    )
+    currency = (
+        options.currency.state
+        or units.CountryCurrency[payload.shipper.country_code].value
     )
 
     request = dhl.DCTRequest(
@@ -157,9 +179,7 @@ def rate_request(
                 Volume=None,
                 PaymentAccountNumber=lib.text(settings.account_number),
                 InsuredCurrency=(
-                    options.currency.state
-                    if options.dhl_shipment_insurance.state
-                    else None
+                    currency if options.dhl_shipment_insurance.state else None
                 ),
                 InsuredValue=options.dhl_shipment_insurance.state,
                 PaymentType=None,
@@ -180,17 +200,14 @@ def rate_request(
                         )
                         for svc in services
                     ]
-                    if any(services)
+                    if any(options.items())
                     else None
                 ),
             ),
             Dutiable=(
                 dhl_global.DCTDutiable(
                     DeclaredValue=(options.declared_value.state or 1.0),
-                    DeclaredCurrency=(
-                        options.currency.state
-                        or units.CountryCurrency[payload.shipper.country_code].value
-                    ),
+                    DeclaredCurrency=currency,
                 )
                 if is_dutiable
                 else None
@@ -198,7 +215,11 @@ def rate_request(
         ),
     )
 
-    return lib.Serializable(request, _request_serializer)
+    return lib.Serializable(
+        request,
+        _request_serializer,
+        dict(is_international=is_international, is_document=is_document),
+    )
 
 
 def _request_serializer(request: dhl.DCTRequest) -> str:
@@ -213,4 +234,4 @@ def _request_serializer(request: dhl.DCTRequest) -> str:
         request,
         name_="p:DCTRequest",
         namespacedef_=namespacedef_,
-    ).replace('schemaVersion="2"', 'schemaVersion="2.0"')
+    ).replace('schemaVersion="3"', 'schemaVersion="3.0"')

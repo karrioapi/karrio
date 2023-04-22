@@ -203,6 +203,24 @@ class DeliveryType(lib.Enum):
     door_to_door_c = "DC"
 
 
+class UploadDocumentType(lib.Enum):
+    HWB = "HWB"
+    INV = "INV"
+    PNV = "PNV"
+    COO = "COO"
+    NAF = "NAF"
+    CIN = "CIN"
+    DCL = "DCL"
+
+    """ Unified Packaging type mapping """
+
+    certificate_of_origin = COO
+    commercial_invoice = CIN
+    pro_forma_invoice = PNV
+    packing_list = DCL
+    other = INV
+
+
 class DCTPackageType(lib.Enum):
     dhl_flyer_smalls = "FLY"
     dhl_parcels_conveyables = "COY"
@@ -267,38 +285,39 @@ class PackageType(lib.Flag):
 
 class ShippingService(lib.Enum):
     dhl_logistics_services = "0"
-    dhl_domestic_express_12_00_doc = "1"
-    dhl_b2c_doc = "2"
-    dhl_b2c_nondoc = "3"
+    dhl_domestic_express_12_00 = "1"
+    dhl_express_choice = "2"
+    dhl_express_choice_nondoc = "3"
     dhl_jetline = "4"
     dhl_sprintline = "5"
-    dhl_express_easy_doc = "7"
+    dhl_air_capacity_sales = "6"
+    dhl_express_easy = "7"
     dhl_express_easy_nondoc = "8"
-    dhl_europack_doc = "9"
-    dhl_auto_reversals = "A"
-    dhl_breakbulk_express_doc = "B"
-    dhl_medical_express_doc = "C"
+    dhl_parcel_product = "9"
+    dhl_accounting = "A"
+    dhl_breakbulk_express = "B"
+    dhl_medical_express = "C"
     dhl_express_worldwide_doc = "D"
     dhl_express_9_00_nondoc = "E"
     dhl_freight_worldwide_nondoc = "F"
-    dhl_domestic_economy_select_doc = "G"
+    dhl_economy_select_domestic = "G"
     dhl_economy_select_nondoc = "H"
-    dhl_domestic_express_9_00_doc = "I"
+    dhl_express_domestic_9_00 = "I"
     dhl_jumbo_box_nondoc = "J"
-    dhl_express_9_00_doc = "K"
-    dhl_express_10_30_doc = "L"
+    dhl_express_9_00 = "K"
+    dhl_express_10_30 = "L"
     dhl_express_10_30_nondoc = "M"
-    dhl_domestic_express_doc = "N"
-    dhl_domestic_express_10_30_doc = "O"
+    dhl_express_domestic = "N"
+    dhl_express_domestic_10_30 = "O"
     dhl_express_worldwide_nondoc = "P"
     dhl_medical_express_nondoc = "Q"
-    dhl_globalmail_business_doc = "R"
-    dhl_same_day_doc = "S"
-    dhl_express_12_00_doc = "T"
-    dhl_express_worldwide_ecx_doc = "U"
-    dhl_europack_nondoc = "V"
-    dhl_economy_select_doc = "W"
-    dhl_express_envelope_doc = "X"
+    dhl_globalmail = "R"
+    dhl_same_day = "S"
+    dhl_express_12_00 = "T"
+    dhl_express_worldwide = "U"
+    dhl_parcel_product_nondoc = "V"
+    dhl_economy_select = "W"
+    dhl_express_envelope = "X"
     dhl_express_12_00_nondoc = "Y"
     dhl_destination_charges = "Z"
     dhl_express_all = None
@@ -310,33 +329,31 @@ def shipping_services_initializer(
     is_document: bool = False,
     is_envelope: bool = False,
     origin_country: str = None,
-) -> typing.List[str]:
-    """
-    Apply default product codes to the list of products.
-    """
-    products = list(set(services))
-    no_service_provided = (
-        any([ShippingService.map(_).key is not None for _ in products]) is False
+) -> lib.units.Services:
+    """Apply default product codes to the list of products."""
+    _region = CountryRegion.map(origin_country).value
+    _services = list(set(services))
+    _no_service_provided = (
+        any([ShippingService.map(_).key is not None for _ in _services]) is False
     )
-    region = CountryRegion.map(origin_country).value
 
-    if no_service_provided and region == "AM":
+    if _no_service_provided and _region == "AM":
         if is_international and is_document:
-            products.append("dhl_express_worldwide_doc")
+            _services.append("dhl_express_worldwide_doc")
 
         if is_international and (is_document is False):
-            products.append("dhl_express_worldwide_nondoc")
+            _services.append("dhl_express_worldwide_nondoc")
 
         if (is_international is False) and (is_document and is_envelope):
-            products.append("dhl_express_envelope_doc")
+            _services.append("dhl_express_envelope_doc")
 
         if (is_international is False) and is_document and (is_envelope is False):
-            products.append("dhl_domestic_express_doc")
+            _services.append("dhl_domestic_express_doc")
 
-    elif region != "AM":
-        products = ["dhl_express_all"]
+    elif _region != "AM":
+        _services = ["dhl_express_all"]
 
-    return lib.units.Services(list(set(products)), ShippingService)
+    return lib.units.Services(_services, ShippingService)
 
 
 class ShippingOption(lib.Enum):
@@ -573,8 +590,7 @@ class ShippingOption(lib.Enum):
 
 def shipping_options_initializer(
     options: dict,
-    is_international: bool = True,
-    is_dutiable: bool = True,
+    is_dutiable: bool = False,
     package_options: lib.units.Options = None,
     shipper_country: str = "",
 ) -> lib.units.Options:
@@ -584,8 +600,7 @@ def shipping_options_initializer(
     _options = options.copy()
 
     if (
-        is_international
-        and is_dutiable
+        is_dutiable
         and ShippingOption.dhl_paperless_trade.name not in options
         and shipper_country not in UNSUPPORTED_PAPERLESS_COUNTRIES
     ):
@@ -600,6 +615,15 @@ def shipping_options_initializer(
     return lib.units.ShippingOptions(
         _options, ShippingOption, items_filter=items_filter
     )
+
+
+class TrackingStatus(lib.Enum):
+    on_hold = ["BA", "HP", "OH"]
+    delivered = ["OK"]
+    in_transit = [""]
+    delivery_failed = ["CM", "DM", "DP", "DS", "NH", "RD", "RT", "SS", "ST"]
+    delivery_delayed = ["IR", "MD", "TD", "UD"]
+    out_for_delivery = ["WC"]
 
 
 class CountryRegion(lib.Enum):

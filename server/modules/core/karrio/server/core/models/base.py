@@ -21,7 +21,7 @@ def uuid(prefix: str = None):
 
 class ControlledAccessModel:
     @classmethod
-    def access_by(cls, context):
+    def access_by(cls: models.Model, context, manager: str = "objects"):
         test_mode = (
             context.get("test_mode")
             if isinstance(context, dict)
@@ -42,7 +42,9 @@ class ControlledAccessModel:
                 models.Q(test_mode=context.test_mode) | models.Q(test_mode__isnull=True)
             )
 
-        return cls.objects.filter(query)
+        queryset = getattr(cls, manager, cls.objects)
+
+        return queryset.filter(query)
 
 
 def register_model(model: T) -> T:

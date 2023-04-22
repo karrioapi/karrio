@@ -23,9 +23,10 @@ import karrio.providers.purolator.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     price_response = lib.find_element(
         "priceResponse", response, priceResponse, first=True
     )
@@ -77,7 +78,7 @@ def _extract_detail(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[priceRequest]:
+) -> lib.Serializable:
     package = lib.to_packages(payload.parcels).single
     service = lib.to_services(payload.services, provider_units.ShipmentService).first
     options = lib.to_shipping_options(

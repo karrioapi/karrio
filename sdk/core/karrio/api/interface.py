@@ -81,6 +81,27 @@ def check_operation(gateway: gateway.Gateway, request: str, **kwargs):
     return True, None
 
 
+def filter_rates(rates: typing.List[models.RateDetails], gateway: gateway.Gateway):
+    """Filter rates by gateway
+
+    Args:
+        rates (List[models.Rate]): the rates to filter
+        gateways (List[gateway.Gateway]): the gateways to filter by
+
+    Returns:
+        List[models.Rate]: the filtered rates
+    """
+    restricted_services = (
+        gateway.settings.connection_config.shipping_services.state or []
+    )
+
+    return [
+        rate
+        for rate in rates
+        if (not any(restricted_services) or rate.service in restricted_services)
+    ]
+
+
 @attr.s(auto_attribs=True)
 class IDeserialize:
     """A lazy deserializer type class"""
@@ -290,7 +311,29 @@ class Rating:
 
             def flatten(*args):
                 responses = [p.parse() for p in deserializable_collection]
-                flattened_rates = sum((r for r, _ in responses if r is not None), [])
+                flattened_rates = sum(
+                    (
+                        (
+                            (lambda gateway: filter_rates(rates, gateway))(
+                                # find the gateway that matches the carrier_id of the rates
+                                next(
+                                    (
+                                        g
+                                        for g in gateways
+                                        if (
+                                            g.settings.carrier_id == rates[0].carrier_id
+                                        )
+                                    )
+                                )
+                            )
+                            if len(rates) > 0
+                            else rates
+                        )
+                        for rates, _ in responses
+                        if rates is not None
+                    ),
+                    [],
+                )
                 messages = sum((m for _, m in responses), [])
                 return flattened_rates, messages
 

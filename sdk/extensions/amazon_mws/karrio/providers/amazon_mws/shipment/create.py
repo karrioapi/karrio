@@ -11,8 +11,9 @@ import karrio.providers.amazon_mws.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: dict, settings: provider_utils.Settings
+    _response: lib.Deserializable[dict], settings: provider_utils.Settings
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     errors: typing.List[models.Message] = sum(
         [
             provider_error.parse_error_response(data, settings)
@@ -60,7 +61,9 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         shipFrom=amazon.Ship(
             name=payload.shipper.person_name,
             city=payload.shipper.city,
-            addressLine1=lib.text(payload.shipper.street_number, payload.shipper.address_line1),
+            addressLine1=lib.text(
+                payload.shipper.street_number, payload.shipper.address_line1
+            ),
             addressLine2=payload.shipper.address_line2,
             stateOrRegion=payload.shipper.state_code,
             email=payload.shipper.email,
@@ -69,7 +72,9 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         shipTo=amazon.Ship(
             name=payload.recipient.person_name,
             city=payload.recipient.city,
-            addressLine1=lib.text(payload.recipient.street_number, payload.recipient.address_line1),
+            addressLine1=lib.text(
+                payload.recipient.street_number, payload.recipient.address_line1
+            ),
             addressLine2=payload.recipient.address_line2,
             stateOrRegion=payload.recipient.state_code,
             email=payload.recipient.email,

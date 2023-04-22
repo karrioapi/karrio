@@ -8,9 +8,10 @@ import karrio.providers.purolator.units as provider_units
 
 
 def parse_tracking_response(
-    response: lib.Element,
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     track_infos = lib.find_element("TrackingInformation", response)
     return (
         [_extract_details(node, settings) for node in track_infos],
@@ -51,14 +52,14 @@ def _extract_details(
         ],
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(track.PIN.Value)
-        )
+        ),
     )
 
 
 def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[lib.Envelope]:
+) -> lib.Serializable:
     request = lib.Envelope(
         Header=lib.Header(
             purolator.RequestContext(

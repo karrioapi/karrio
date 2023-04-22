@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.dhl.com" xmlns:dhlPickup="http://www.dhl.com/pickupdatatypes_global" xmlns:dhl="http://www.dhl.com/datatypes_global" xmlns="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified">
+	<xsd:import namespace="http://www.dhl.com/datatypes_global" schemaLocation="datatypes_global_v62.xsd"/> 
+	<xsd:import namespace="http://www.dhl.com/pickupdatatypes_global" schemaLocation="pickupdatatypes_global-3.0.xsd"/> 
+	<xsd:element name="BookPUResponse">
+		<xsd:annotation>
+			<xsd:documentation>Root element of Book Pickup Request</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Response" type="dhl:Response"/>
+				<xsd:element name="RegionCode" type="dhl:RegionCode"/>
+				<xsd:element name="Note" type="dhl:Note"/>
+				<xsd:element name="ConfirmationNumber" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation>Confirmation number of the pickup</xsd:documentation>
+					</xsd:annotation>
+						<xsd:simpleType>
+							<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="15"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="ReadyByTime" type="dhlPickup:TimeHM" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Time to be ready by. This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="SecondReadyByTime" type="dhlPickup:TimeHM" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Second time to be ready. This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="NextPickupDate" type="xsd:date" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Next possible pickup date. This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="PickupCharge" type="dhl:Money" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="CurrencyCode" type="dhl:CurrencyCode" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="CallInTime" type="dhlPickup:TimeHM" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Time for calling in order. This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="SecondCallInTime" type="dhlPickup:TimeHM" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Second time for calling in order. This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="OriginSvcArea" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Three letter code identifying the service area of origin. This field is not returned for cancel pickup request</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="3"/>
+							<xsd:maxLength value="3"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="CountryCode" type="dhl:CountryCode" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Two letter ISO country Code</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="RequestorCountryCode" type="dhl:CountryCode" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Two letter ISO country Code</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="RemotePickupFlag" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Boolean flag</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:length value="1"/>
+							<xsd:enumeration value="Y"/>
+							<xsd:enumeration value="N"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

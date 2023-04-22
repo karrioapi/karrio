@@ -56,7 +56,7 @@ class OrderType:
 
     @strawberry.field
     def shipments(self: models.Order) -> typing.List[base.types.ShipmentType]:
-        return self.shipments
+        return self.shipments.all()
 
     @staticmethod
     @utils.authentication_required

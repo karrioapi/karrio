@@ -5,6 +5,7 @@ karrio
 karrio.amazon-mws
 karrio.aramex
 karrio.australiapost
+karrio.boxknight
 karrio.canadapost
 karrio.canpar
 karrio.chronopost
@@ -19,7 +20,11 @@ karrio.eshipper
 karrio.fedex
 karrio.freightcom
 karrio.generic
+karrio.geodis
+karrio.laposte
+karrio.nationex
 karrio.purolator
+karrio.roadie
 karrio.royalmail
 karrio.sendle
 karrio.server

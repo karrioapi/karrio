@@ -17,8 +17,10 @@ import karrio.providers.eshipper.utils as provider_utils
 
 
 def parse_quote_reply(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     estimates = lib.find_element("Quote", response)
     return (
         [_extract_rate(node, settings) for node in estimates],
@@ -62,7 +64,7 @@ def _extract_rate(
 def quote_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[EShipper]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(

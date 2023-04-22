@@ -11,8 +11,10 @@ import karrio.providers.easypost.utils as provider_utils
 
 
 def parse_rate_response(
-    response: dict, settings: provider_utils.Settings
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.RateDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = (
         [provider_error.parse_error_response(response, settings)]
         if "error" in response
@@ -62,17 +64,22 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
     )
     is_intl = shipper.country_code != recipient.country_code
     customs = (
-        models.Customs(commodities=(
-            package.parcel.items
-            if any(package.parcel.items)
-            else [models.Commodity(
-                sku="0000",
-                quantity=1,
-                weight=package.weight.value,
-                weight_unit=package.weight_unit.value,
-            )]
-        ))
-        if is_intl else None
+        models.Customs(
+            commodities=(
+                package.parcel.items
+                if any(package.parcel.items)
+                else [
+                    models.Commodity(
+                        sku="0000",
+                        quantity=1,
+                        weight=package.weight.value,
+                        weight_unit=package.weight_unit.value,
+                    )
+                ]
+            )
+        )
+        if is_intl
+        else None
     )
 
     requests = easypost.ShipmentRequest(
@@ -125,7 +132,9 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
                     customs_signer=shipper.person_name,
                     customs_items=[
                         easypost.CustomsItem(
-                            description=lib.text(item.description or item.title or "N/A"),
+                            description=lib.text(
+                                item.description or item.title or "N/A"
+                            ),
                             origin_country=item.origin_country,
                             quantity=item.quantity,
                             value=item.value_amount,
@@ -136,9 +145,12 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
                             eccn=(item.metadata or {}).get("eccn"),
                             printed_commodity_identifier=(item.sku or item.id),
                             hs_tariff_number=item.hs_code,
-                        ) for item in customs.commodities
+                        )
+                        for item in customs.commodities
                     ],
-                ) if customs else None
+                )
+                if customs
+                else None
             ),
         )
     )

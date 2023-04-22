@@ -21,18 +21,20 @@ from karrio.core.models import (
     ChargeDetails,
     PickupUpdateRequest,
 )
-from karrio.core.units import WeightUnit, Weight, Packages
+from karrio.core.units import Packages
 from karrio.providers.dhl_express.units import (
     CountryRegion,
     WeightUnit as DHLWeightUnit,
 )
 from karrio.providers.dhl_express.utils import Settings, reformat_time
 from karrio.providers.dhl_express.error import parse_error_response
+import karrio.lib as lib
 
 
 def parse_pickup_update_response(
-    response, settings: Settings
+    _response: lib.Deserializable[lib.Element], settings: Settings
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     successful = (
         len(response.xpath(".//*[local-name() = $name]", name="ConfirmationNumber")) > 0
     )
@@ -69,7 +71,7 @@ def _extract_pickup(response: Element, settings: Settings) -> PickupDetails:
 
 def pickup_update_request(
     payload: PickupUpdateRequest, settings: Settings
-) -> Serializable[ModifyPURequest]:
+) -> Serializable:
     packages = Packages(payload.parcels)
 
     request = ModifyPURequest(

@@ -71,13 +71,27 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         },
     }
 
-    if is_authenticated and "generic" in providers.MODELS:
+    def _get_generic_carriers():
+        system_custom_carriers = [
+            c.settings
+            for c in gateway.Carriers.list(system_only=True, carrier_name="generic")
+        ]
         custom_carriers = [
             c.settings
-            for c in gateway.Carriers.list(context=request, carrier_name="generic")
+            for c in (
+                gateway.Carriers.list(context=request, carrier_name="generic").exclude(
+                    is_system=True
+                )
+                if is_authenticated
+                else []
+            )
         ]
+
         extra_carriers = {
             c.custom_carrier_name: c.display_name for c in custom_carriers
+        }
+        system_carriers = {
+            c.custom_carrier_name: c.display_name for c in system_custom_carriers
         }
         extra_services = {
             c.custom_carrier_name: {
@@ -94,8 +108,12 @@ def contextual_reference(request: Request = None, reduced: bool = True):
             dict(
                 custom_carriers=extra_carriers,
                 services={**references["services"], **extra_services},
+                carriers={**references["carriers"], **system_carriers},
                 service_names={**references["service_names"], **extra_service_names},
             )
         )
+
+    if request is not None and "generic" in providers.MODELS:
+        _get_generic_carriers()
 
     return references

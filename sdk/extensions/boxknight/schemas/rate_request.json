@@ -1,0 +1,19 @@
+{
+  "postalCode": "H4X1Z5",
+  "originPostalCode": "H4R2A4",
+  "packages": [
+    {
+      "refNumber": "12345",
+      "weightOptions": {
+        "weight": 2.5,
+        "unit": "kg"
+      },
+      "sizeOptions": {
+        "length": 20.0,
+        "width": 15.0,
+        "height": 15.0,
+        "unit": "inch"
+      }
+    }
+  ]
+}

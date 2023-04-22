@@ -11,8 +11,10 @@ import karrio.providers.easypost.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: dict, settings: provider_utils.Settings
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = (
         [provider_error.parse_error_response(response, settings)]
         if "error" in response
@@ -149,7 +151,9 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                         declaration=customs.options.declaration.state,
                         customs_items=[
                             easypost.CustomsItem(
-                                description=lib.text(item.description or item.title or "N/A"),
+                                description=lib.text(
+                                    item.description or item.title or "N/A"
+                                ),
                                 origin_country=item.origin_country,
                                 quantity=item.quantity,
                                 value=item.value_amount,

@@ -79,6 +79,13 @@ class PaymentType(lib.Flag):
     credit_card = card
 
 
+class ConnectionConfig(lib.Enum):
+    label_type = lib.OptionEnum("label_type")
+    cost_center = lib.OptionEnum("cost_center")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+
+
 class ServiceType(lib.Enum):
     canadapost_regular_parcel = "DOM.RP"
     canadapost_expedited_parcel = "DOM.EP"

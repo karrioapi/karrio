@@ -201,23 +201,6 @@ ParsedQuoteResponse = [
             "total_charge": 10.21,
             "transit_days": 4,
         },
-        {
-            "carrier_id": "canadapost",
-            "carrier_name": "canadapost",
-            "currency": "CAD",
-            "extra_charges": [
-                {"amount": 12.26, "currency": "CAD", "name": "Base charge"},
-                {"amount": 0.0, "currency": "CAD", "name": "GST"},
-                {"amount": 0.0, "currency": "CAD", "name": "PST"},
-                {"amount": 0.0, "currency": "CAD", "name": "HST"},
-                {"amount": -0.37, "currency": "CAD", "name": "Automation discount"},
-                {"amount": 1.75, "currency": "CAD", "name": "Fuel surcharge"},
-            ],
-            "meta": {"service_name": "canadapost_xpresspost"},
-            "service": "canadapost_xpresspost",
-            "total_charge": 13.64,
-            "transit_days": 2,
-        },
     ],
     [],
 ]

@@ -14,8 +14,10 @@ import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     air_way_bill = lib.find_element("AirwayBillNumber", response, first=True)
 
     return (
@@ -61,7 +63,7 @@ def _extract_shipment(
 
 def shipment_request(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
-) -> lib.Serializable[dhl.ShipmentRequest]:
+) -> lib.Serializable:
     if any(settings.account_country_code or "") and (
         payload.shipper.country_code != settings.account_country_code
     ):
@@ -73,6 +75,7 @@ def shipment_request(
         payload.parcels,
         provider_units.PackagePresets,
         required=["weight"],
+        max_weight=units.Weight(300, "KG"),
         package_option_type=provider_units.ShippingOption,
     )
     product = provider_units.ShippingService.map(payload.service).value_or_key
@@ -81,7 +84,6 @@ def shipment_request(
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
     )
-
     package_type = provider_units.PackageType.map(packages.package_type).value
     label_format, label_template = provider_units.LabelType[
         payload.label_type or "PDF_6x4"
@@ -97,7 +99,8 @@ def shipment_request(
         weight_unit=weight_unit.value,
     )
     is_document = all(p.parcel.is_document for p in packages)
-    is_dutiable = is_document is False and customs.duty is not None
+    is_international = shipper.country_code != recipient.country_code
+    is_dutiable = is_international and not is_document
     options = lib.to_shipping_options(
         payload.options,
         is_dutiable=is_dutiable,
@@ -109,6 +112,11 @@ def shipment_request(
     duty = customs.duty or models.Duty(paid_by="sender")
     content = packages[0].parcel.content or customs.content_description or "N/A"
     reference = payload.reference or getattr(payload, "id", None)
+    currency = (
+        options.currency.state
+        or units.CountryCurrency.map(payload.shipper.country_code).value
+        or settings.default_currency
+    )
 
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
@@ -141,7 +149,7 @@ def shipment_request(
                 PhoneNumber=recipient.phone_number or "0000",
                 Email=recipient.email,
             ),
-            Suburb=recipient.suburb,
+            Suburb=None,
             StreetName=recipient.street_name,
             BuildingName=None,
             StreetNumber=recipient.street_number,
@@ -164,14 +172,14 @@ def shipment_request(
                 DeclaredValue=(
                     duty.declared_value or options.declared_value.state or 1.0
                 ),
-                DeclaredCurrency=(duty.currency or options.currency.state or "USD"),
+                DeclaredCurrency=(duty.currency or currency),
                 ScheduleB=None,
                 ExportLicense=customs.options.license_number.state,
                 ShipperEIN=(
                     customs.options.ein.state or customs.duty_billing_address.tax_id
                 ),
                 ShipperIDType=None,
-                TermsOfTrade=customs.incoterm,
+                TermsOfTrade=customs.incoterm or "DDP",
                 CommerceLicensed=None,
                 Filing=None,
             )
@@ -199,24 +207,6 @@ def shipment_request(
                 MxStateCode=None,
                 InvoiceNumber=(customs.invoice or "0000000"),
                 InvoiceDate=(customs.invoice_date or time.strftime("%Y-%m-%d")),
-                BillToCompanyName=customs.duty_billing_address.company_name or "N/A",
-                BillToContactName=customs.duty_billing_address.person_name or "N/A",
-                BillToAddressLine1=lib.text(
-                    customs.duty_billing_address.street_number,
-                    customs.duty_billing_address.address_line1,
-                ),
-                BillToAddressLine2=lib.text(customs.duty_billing_address.address_line2),
-                BillToCity=customs.duty_billing_address.city,
-                BillToPostcode=customs.duty_billing_address.postal_code,
-                BillToSuburb=None,
-                BillToCountryCode=customs.duty_billing_address.country_code,
-                BillToCountryName=customs.duty_billing_address.country_name,
-                BillToPhoneNumber=(
-                    customs.duty_billing_address.phone_number or "0000000000"
-                ),
-                BillToPhoneNumberExtn=None,
-                BillToFaxNumber=None,
-                BillToFederalTaxID=customs.duty_billing_address.federal_tax_id,
                 Remarks=customs.content_description,
                 DestinationPort=None,
                 TermsOfPayment=None,
@@ -354,7 +344,7 @@ def shipment_request(
             DimensionUnit=provider_units.DimensionUnit[dim_unit.name].value,
             PackageType=package_type,
             IsDutiable=("Y" if is_dutiable else "N"),
-            CurrencyCode=options.currency.state or "USD",
+            CurrencyCode=currency,
             CustData=getattr(payload, "id", None),
             ShipmentCharges=(
                 options.cash_on_delivery.state
@@ -386,7 +376,7 @@ def shipment_request(
                 PhoneNumber=shipper.phone_number or "0000",
                 Email=shipper.email,
             ),
-            Suburb=shipper.suburb,
+            Suburb=None,
             StreetName=shipper.street_name,
             BuildingName=None,
             StreetNumber=shipper.street_number,
@@ -395,22 +385,22 @@ def shipment_request(
         ),
         SpecialService=[
             dhl.SpecialService(
-                SpecialServiceType=option.code,
-                ChargeValue=lib.to_money(option.state),
+                SpecialServiceType=svc.code,
+                ChargeValue=lib.to_money(svc.state),
                 CurrencyCode=(
-                    options.currency.state or "USD"
-                    if lib.to_money(option.state) is not None
-                    else None
+                    currency if lib.to_money(svc.state) is not None else None
                 ),
             )
-            for _, option in options.items()
+            for _, svc in options.items()
         ],
         Notification=(
             dhl.Notification(
                 EmailAddress=options.email_notification_to.state or recipient.email
             )
-            if options.email_notification.state
-            and any([options.email_notification_to.state, recipient.email])
+            if (
+                options.email_notification.state
+                and any([options.email_notification_to.state, recipient.email])
+            )
             else None
         ),
         Place=None,
@@ -420,9 +410,11 @@ def shipment_request(
             dhl.DocImages(
                 DocImage=[
                     dhl.DocImage(
-                        Type=doc["doc_type"],
-                        Image=doc["doc_file"],
-                        ImageFormat=doc["doc_format"],
+                        Image=base64.b64decode(doc["doc_file"]),
+                        ImageFormat=doc.get("doc_format") or "PDF",
+                        Type=provider_units.UploadDocumentType.map(
+                            doc.get("doc_type") or "CIN"
+                        ).value_or_key,
                     )
                     for doc in options.doc_files.state
                 ]
@@ -447,19 +439,21 @@ def shipment_request(
         Importer=None,
     )
 
-    return lib.Serializable(request, _request_serializer)
-
-
-def _request_serializer(request: dhl.ShipmentRequest) -> str:
-    xml_str = lib.to_xml(
+    return lib.Serializable(
         request,
-        name_="req:ShipmentRequest",
-        namespacedef_=(
-            'xsi:schemaLocation="http://www.dhl.com '
-            'ship-val-global-req.xsd" '
-            'xmlns:req="http://www.dhl.com" '
-            'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+        lambda _: (
+            lib.to_xml(
+                _,
+                name_="req:ShipmentRequest",
+                namespacedef_=(
+                    'xsi:schemaLocation="http://www.dhl.com '
+                    'ship-val-global-req.xsd" '
+                    'xmlns:req="http://www.dhl.com" '
+                    'xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+                ),
+            )
+            .replace('schemaVersion="10"', 'schemaVersion="10.0"')
+            .replace("<Image>b'", "<Image>")
+            .replace("'</Image>", "</Image>")
         ),
-    ).replace('schemaVersion="10"', 'schemaVersion="10.0"')
-
-    return xml_str
+    )

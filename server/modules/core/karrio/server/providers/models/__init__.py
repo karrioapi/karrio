@@ -4,8 +4,10 @@ import logging
 
 import karrio
 from karrio.server.core.models.base import register_model
+from karrio.server.providers.models.carrier import Carrier
+from karrio.server.providers.models.config import CarrierConfig
+from karrio.server.providers.models.service import ServiceLevel
 from karrio.server.providers.models.template import LabelTemplate
-from karrio.server.providers.models.carrier import Carrier, ServiceLevel
 import karrio.server.providers.extension.models as extensions
 
 logger = logging.getLogger(__name__)

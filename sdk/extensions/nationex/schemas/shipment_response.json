@@ -1,0 +1,124 @@
+{
+  "ShipmentId": 501883938,
+  "ConsolId": 501883122,
+  "BillingAccount": 165556,
+  "ParcelIds": [
+    "50188393801",
+    "50188393802"
+  ],
+  "Barcodes": [
+    "501883938010",
+    "501883938027"
+  ],
+  "RatesDetail": {
+    "BasePrice": 47.22,
+    "SurchargeCharges": [
+      {
+        "Id": "99",
+        "Charge": 2.404,
+        "BeyondId": 0,
+        "NameFr": "Colis hors-norme - Longueur",
+        "NameEn": "Oversized parcel - Lenght"
+      },
+      {
+        "Id": "519",
+        "Charge": 8.404,
+        "BeyondId": 102,
+        "NameFr": "SURCHARGE RÉGION ÉLOIGNÉE",
+        "NameEn": "BEYOND SURCHARGE"
+      },
+      {
+        "Id": "0",
+        "Charge": 4.323,
+        "BeyondId": 0,
+        "NameFr": "Classe B",
+        "NameEn": "Class B"
+      },
+      {
+        "Id": "0",
+        "Charge": 6.323,
+        "BeyondId": 0,
+        "NameFr": "Classe C",
+        "NameEn": "Class C"
+      },
+      {
+        "Id": "0",
+        "Charge": 12.13,
+        "BeyondId": 0,
+        "NameFr": "Classe D",
+        "NameEn": "Class D"
+      },
+      {
+        "Id": "0",
+        "Charge": 20.76,
+        "BeyondId": 0,
+        "NameFr": "Classe P",
+        "NameEn": "Class P"
+      }
+    ],
+    "TaxCharges": [
+      {
+        "Id": "GST",
+        "Charge": 0.287,
+        "Rate": 0.05,
+        "NameFr": "TPS",
+        "NameEn": "GST"
+      },
+      {
+        "Id": "PST",
+        "Charge": 1.548,
+        "Rate": 0.1,
+        "NameFr": "TVQ",
+        "NameEn": "PST"
+      },
+      {
+        "Id": "HST",
+        "Charge": 0,
+        "Rate": 0,
+        "NameFr": "TVH",
+        "NameEn": "HST"
+      }
+    ],
+    "AccessoryCharges": [
+      {
+        "Id": "1",
+        "Charge": 12.97,
+        "NameFr": "ASSURANCE SUPPL├ëMENTAIRE",
+        "NameEn": "ADDITIONNAL INSURANCE"
+      },
+      {
+        "Id": "2",
+        "Charge": 5.125,
+        "NameFr": "PAYABLE SUR LIVRAISON",
+        "NameEn": "CASH OR CHEQUE ON DELIVERY"
+      },
+      {
+        "Id": "3",
+        "Charge": 11.366,
+        "NameFr": "MATI├êRE DANGEREUSES",
+        "NameEn": "DANGEROUS GOODS"
+      },
+      {
+        "Id": "4",
+        "Charge": 16.351,
+        "NameFr": "LIVRAISON AVANT 10H30",
+        "NameEn": "DELIVERY BEFORE 10H30"
+      },
+      {
+        "Id": "5",
+        "Charge": 7.577,
+        "NameFr": "PROTECTION CONTRE LE GEL",
+        "NameEn": "FREEZE PROTECTION"
+      }
+    ],
+    "NCVCharge": 4,
+    "FuelRate": 0.1425,
+    "FuelCharge": 2.51,
+    "SubTotal": 55.89,
+    "Total": 61.12,
+    "TotalBillableWeight": 0,
+    "BillingZone": "NL",
+    "DelayTransitDays": 2,
+    "EstimatedDeliveryDate": "2021-05-05"
+  }
+}

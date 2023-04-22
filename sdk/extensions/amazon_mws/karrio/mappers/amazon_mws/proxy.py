@@ -9,7 +9,7 @@ from karrio.core.utils.serializable import Serializable, Deserializable
 class Proxy(BaseProxy):
     settings: Settings
 
-    def get_rates(self, request: Serializable) -> Deserializable[str]:
+    def get_rates(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/shipping/v1/rates",
             request=Serializable(request, DP.jsonify),
@@ -17,7 +17,7 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, DP.to_dict)
 
-    def create_shipment(self, request: Serializable) -> Deserializable[str]:
+    def create_shipment(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path="/shipping/v1/purchaseShipment",
             request=Serializable(request, DP.jsonify),
@@ -25,14 +25,14 @@ class Proxy(BaseProxy):
 
         return Deserializable(response, DP.to_dict)
 
-    def cancel_shipment(self, request: Serializable) -> Deserializable[str]:
+    def cancel_shipment(self, request: Serializable) -> Deserializable:
         response = self._send_request(
             path=f"/shipping/v1/shipments/{request.serialize()}/cancel",
         )
 
         return Deserializable(response if any(response) else "{}", DP.to_dict)
 
-    def get_tracking(self, request: Serializable) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         track = lambda trackingId: (
             trackingId,
             self._send_request(

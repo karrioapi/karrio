@@ -32,7 +32,7 @@ import karrio.providers.tnt.utils as provider_utils
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[ESHIPPER]:
+) -> lib.Serializable:
     ref = f"ref_{uuid4()}"
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
@@ -127,13 +127,17 @@ def shipment_request(
                             [
                                 ARTICLE(
                                     ITEMS=item.quantity,
-                                    DESCRIPTION=lib.text(item.title or item.description or "N/A", max=35),
+                                    DESCRIPTION=lib.text(
+                                        item.title or item.description or "N/A", max=35
+                                    ),
                                     WEIGHT=units.Weight(
                                         item.weight,
                                         units.WeightUnit[item.weight_unit],
                                     ).KG,
                                     INVOICEVALUE=item.value_amount,
-                                    INVOICEDESC=lib.text(item.title or item.description, max=35),
+                                    INVOICEDESC=lib.text(
+                                        item.title or item.description, max=35
+                                    ),
                                     HTS=item.hs_code or item.sku,
                                     COUNTRY=item.origin_country,
                                 )

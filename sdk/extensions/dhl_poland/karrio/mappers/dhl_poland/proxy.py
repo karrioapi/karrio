@@ -42,7 +42,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             },
         )
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(
             request,
             soapaction=f"{self.settings.server_url}#createShipment",
@@ -50,7 +50,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_element)
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(
             request,
             soapaction=f"{self.settings.server_url}#deleteShipment",

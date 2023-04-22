@@ -18,3 +18,4 @@ class Settings(BaseSettings):
     carrier_id: str = "sf_express"
     account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}

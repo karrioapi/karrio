@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema targetNamespace="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.dhl.com" xmlns:dhl="http://www.dhl.com/datatypes" elementFormDefault="unqualified">
+	<xsd:import namespace="http://www.dhl.com/datatypes" schemaLocation="datatypes.xsd"/>
+	<xsd:element name="TrackingResponse">
+		<xsd:annotation>
+			<xsd:documentation>Comment describing your root element</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Response" type="dhl:Response"/>
+				<xsd:element name="AWBInfo" type="dhl:AWBInfo" maxOccurs="unbounded"/>
+				<xsd:element name="Fault" type="dhl:Fault" minOccurs="0"/>
+				  
+				<xsd:element name="LanguageCode" type="dhl:LanguageCode" minOccurs="0"/>
+				  
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

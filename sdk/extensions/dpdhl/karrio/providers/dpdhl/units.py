@@ -67,6 +67,12 @@ class Incoterm(lib.Enum):
     FOB = "Free On Board"
 
 
+class ConnectionConfig(lib.Enum):
+    language_code = lib.OptionEnum("language_code")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+
+
 class ShippingService(lib.Enum):
     """Carrier specific services"""
 

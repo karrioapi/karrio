@@ -196,7 +196,10 @@ def can_mutate_tracker(
     update: bool = False,
     payload: dict = None,
 ):
-    if update and [*(payload or {}).keys()] == ["metadata"]:
+    if update and tracker.delivered and [*(payload or {}).keys()] == ["metadata"]:
+        return
+
+    if update and all([key in ["metadata", "info"] for key in (payload or {}).keys()]):
         return
 
 
@@ -204,8 +207,17 @@ def update_shipment_tracker(tracker: models.Tracking):
     try:
         if tracker.status == TrackerStatus.delivered.value:
             status = ShipmentStatus.delivered.value
-        elif tracker == TrackerStatus.pending.value:
+        elif tracker.status == TrackerStatus.pending.value:
             status = tracker.shipment.status
+        elif tracker.status == TrackerStatus.out_for_delivery.value:
+            status = ShipmentStatus.out_for_delivery.value
+        elif tracker.status == TrackerStatus.delivery_failed.value:
+            status = ShipmentStatus.delivery_failed.value
+        elif tracker.status in [
+            TrackerStatus.on_hold.value,
+            TrackerStatus.delivery_delayed.value,
+        ]:
+            status = ShipmentStatus.needs_attention.value
         else:
             status = ShipmentStatus.in_transit.value
 

@@ -11,11 +11,13 @@ import karrio.providers.usps_international.shipment.priority_express as priority
 import karrio.providers.usps_international.shipment.global_express_guaranteed as global_express_guaranteed
 from karrio.providers.usps_international.units import ServiceType
 from karrio.providers.usps_international.utils import Settings
+import karrio.lib as lib
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
+    response = _response.deserialize()
     if response.tag == "eVSFirstClassMailIntlResponse":
         return first_class_mail.parse_shipment_response(response, settings)
 
@@ -30,7 +32,6 @@ def parse_shipment_response(
 
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable:
-
     if (
         payload.shipper.country_code is not None
         and payload.shipper.country_code != Country.US.name

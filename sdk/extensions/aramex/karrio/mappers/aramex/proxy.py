@@ -8,7 +8,7 @@ class Proxy(BaseProxy):
 
     """ Proxy Methods """
 
-    def get_tracking(self, request: Serializable) -> Deserializable[str]:
+    def get_tracking(self, request: Serializable) -> Deserializable:
         response = http(
             url=f"{self.settings.server_url}/ShippingAPI.V2/Tracking/Service_1_0.svc",
             data=request.serialize(),

@@ -12,6 +12,7 @@ class Settings(BaseSettings):
 
     account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}
 
     @property
     def server_url(self):

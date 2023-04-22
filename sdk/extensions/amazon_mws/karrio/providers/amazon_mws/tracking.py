@@ -7,8 +7,10 @@ import karrio.providers.amazon_mws.utils as provider_utils
 
 
 def parse_tracking_response(
-    responses: typing.List[typing.Tuple[str, dict]], settings: provider_utils.Settings,
+    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    responses = _response.deserialize()
     errors: typing.List[models.Message] = sum(
         [
             error.parse_error_response(response, settings, dict(tracking_number=id))
@@ -26,9 +28,12 @@ def parse_tracking_response(
     return trackers, errors
 
 
-def _extract_details(data: dict, settings: provider_utils.Settings,) -> models.TrackingDetails:
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
     details = lib.to_object(amazon.TrackingResponse, data)
-    delivered = (details.summary.status == "Delivered")
+    delivered = details.summary.status == "Delivered"
     estimated_delivery = lib.fdate(details.promisedDeliveryDate, "%Y-%m-%dT%H:%M:%SZ")
 
     return models.TrackingDetails(

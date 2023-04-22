@@ -11,10 +11,7 @@ import karrio.server.openapi as openapi
 
 
 class CarrierFilters(filters.FilterSet):
-
-    carrier_name = filters.MultipleChoiceFilter(
-        method="carrier_filter",
-        choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+    carrier_name = filters.CharFilter(
         help_text=f"""
         carrier_name used to fulfill the shipment
         Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
@@ -24,12 +21,19 @@ class CarrierFilters(filters.FilterSet):
         help_text="This flag indicates whether to return active carriers only",
     )
     system_only = filters.BooleanFilter(
-        required=False,
-        default=False,
         help_text="This flag indicates that only system carriers should be returned",
     )
 
     parameters = [
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            description=(
+                "The unique carrier slug. <br/>"
+                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+            ),
+        ),
         openapi.OpenApiParameter(
             "active",
             type=openapi.OpenApiTypes.BOOL,
@@ -41,6 +45,12 @@ class CarrierFilters(filters.FilterSet):
             location=openapi.OpenApiParameter.QUERY,
         ),
     ]
+
+    class Meta:
+        import karrio.server.providers.models as providers
+
+        model = providers.Carrier
+        fields: typing.List[str] = []
 
 
 class ShipmentFilters(filters.FilterSet):

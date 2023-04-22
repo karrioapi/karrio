@@ -22,8 +22,10 @@ import karrio.providers.canadapost.utils as provider_utils
 
 
 def parse_rate_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     price_quotes = lib.find_element("price-quote", response)
     quotes: typing.List[models.RateDetails] = [
         _extract_quote(price_quote_node, settings) for price_quote_node in price_quotes
@@ -69,7 +71,7 @@ def _extract_quote(
 def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[mailing_scenario]:
+) -> lib.Serializable:
     """Create the appropriate Canada Post rate request depending on the destination
 
     :param settings: Karrio carrier connection settings

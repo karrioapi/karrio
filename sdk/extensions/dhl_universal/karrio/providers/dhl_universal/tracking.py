@@ -1,18 +1,10 @@
-from typing import List, Tuple
-from dhl_universal_lib.tracking import TrackingRequest as DHLTrackingRequest, Shipment
-from karrio.core.utils import (
-    Serializable,
-    DP,
-    DF,
-)
-from karrio.core.models import (
-    TrackingEvent,
-    TrackingDetails,
-    TrackingRequest,
-    Message,
-)
-from karrio.providers.dhl_universal.utils import Settings
-from karrio.providers.dhl_universal.error import parse_error_response
+import dhl_universal_lib.tracking as dhl
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.dhl_universal.error as error
+import karrio.providers.dhl_universal.utils as provider_utils
+import karrio.providers.dhl_universal.units as provider_units
 
 date_formats = [
     "%Y-%m-%d",
@@ -24,29 +16,48 @@ date_formats = [
 
 
 def parse_tracking_response(
-    response: List[dict], settings: Settings
-) -> Tuple[List[TrackingDetails], List[Message]]:
+    _response: lib.Deserializable[typing.List[dict]],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     errors = [e for e in response if "shipments" not in e]
     details = [
-        _extract_detail(DP.to_object(Shipment, d["shipments"][0]), settings)
+        _extract_detail(lib.to_object(dhl.Shipment, d["shipments"][0]), settings)
         for d in response
         if "shipments" in d
     ]
 
-    return details, parse_error_response(errors, settings)
+    return details, error.parse_error_response(errors, settings)
 
 
-def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
-    delivered = (getattr(detail.status, "statusCode", None) or "") == "delivered" or (
-        getattr(detail.status, "status", None) or ""
-    ).lower() == "delivered"
-    return TrackingDetails(
+def _extract_detail(
+    shipment: dhl.Shipment,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
+    latest_status = lib.failsafe(
+        lambda: (
+            shipment.status.statusCode
+            or shipment.status.status
+            or shipment.events[0].statusCode
+        )
+    ).lower()
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if latest_status in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
+
+    return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=str(detail.id),
+        tracking_number=str(shipment.id),
+        status=status,
         events=[
-            TrackingEvent(
-                date=DF.fdate(event.timestamp, try_formats=date_formats),
+            models.TrackingEvent(
+                date=lib.fdate(event.timestamp, try_formats=date_formats),
                 description=event.description or event.status or " ",
                 location=(
                     event.location.address.addressLocality
@@ -54,24 +65,64 @@ def _extract_detail(detail: Shipment, settings: Settings) -> TrackingDetails:
                     else None
                 ),
                 code=event.statusCode or "",
-                time=DF.ftime(event.timestamp, try_formats=date_formats),
+                time=lib.ftime(event.timestamp, try_formats=date_formats),
             )
-            for event in detail.events or []
+            for event in shipment.events or []
         ],
-        estimated_delivery=DF.fdate(
-            detail.estimatedTimeOfDelivery, try_formats=date_formats
+        estimated_delivery=lib.fdate(
+            shipment.estimatedTimeOfDelivery, try_formats=date_formats
         ),
-        delivered=delivered,
+        delivered=status == "delivered",
+        info=models.TrackingInfo(
+            carrier_tracking_link=settings.tracking_url.format(shipment.id),
+            shipment_service=lib.failsafe(lambda: shipment.details.product.productName),
+            customer_name=lib.failsafe(
+                lambda: (
+                    lib.text(
+                        shipment.details.receiver.givenName,
+                        shipment.details.receiver.familyName,
+                    )
+                    or lib.text(shipment.details.receiver.name)
+                    or lib.text(shipment.details.receiver.organizationName)
+                )
+            ),
+            shipment_destination_country=lib.failsafe(
+                lambda: shipment.destination.address.countryCode
+            ),
+            shipment_destination_postal_code=lib.failsafe(
+                lambda: shipment.destination.address.postalCode
+            ),
+            shipment_origin_country=lib.failsafe(
+                lambda: shipment.origin.address.countryCode
+            ),
+            shipment_origin_postal_code=lib.failsafe(
+                lambda: shipment.origin.address.postalCode
+            ),
+            package_weight=lib.failsafe(lambda: shipment.details.weight.value),
+            package_weight_unit=lib.failsafe(lambda: shipment.details.weight.unitText),
+            signed_by=lib.failsafe(
+                lambda: (
+                    lib.text(
+                        shipment.details.proofOfDelivery.signed.givenName,
+                        shipment.details.proofOfDelivery.signed.familyName,
+                    )
+                    or lib.text(shipment.details.proofOfDelivery.signed.name)
+                )
+            ),
+        ),
+        meta=dict(
+            reference=lib.failsafe(lambda: shipment.details.references.number),
+        ),
     )
 
 
-def tracking_request(payload: TrackingRequest, _) -> Serializable[DHLTrackingRequest]:
+def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
     request = [
-        DHLTrackingRequest(
+        dhl.TrackingRequest(
             trackingNumber=number,
             language="en",
         )
         for number in payload.tracking_numbers
     ]
 
-    return Serializable(request, DP.to_dict)
+    return lib.Serializable(request, lib.to_dict)

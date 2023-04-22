@@ -7,13 +7,16 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     DocumentUploadRecord = apps.get_model("manager", "DocumentUploadRecord")
 
-    records = DocumentUploadRecord.objects.using(db_alias).all()
+    records = DocumentUploadRecord.objects.using(db_alias).all().iterator()
 
     for _record in records:
-        _documents = sum((
-            doc if isinstance(doc, list) else [doc]
-            for doc in _record.documents or []
-        ), start=[])
+        _documents = sum(
+            (
+                doc if isinstance(doc, list) else [doc]
+                for doc in _record.documents or []
+            ),
+            start=[],
+        )
         _record.documents = [
             dict(doc_id=doc["document_id"], file_name=doc["file_name"])
             for doc in _documents

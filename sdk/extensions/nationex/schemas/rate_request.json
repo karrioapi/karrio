@@ -1,0 +1,28 @@
+{
+  "CustomerId": 113300,
+  "ExpeditionDate": "2021-03-31",
+  "ShipmentType": "Delivery",
+  "SourcePostalCode": "J3Y5T7",
+  "DestinationPostalCode": "H2H2S2",
+  "TotalWeight": 12.2,
+  "TotalParcels": 2,
+  "UnitsOfMeasurement": "LI",
+  "Accessory": {
+    "InsuranceAmount": 0.0,
+    "FrozenProtection": true,
+    "DangerousGoods": true,
+    "SNR": true
+  },
+  "Parcels": [
+    {
+      "NCV": true,
+      "Weight": 15.5,
+      "Dimensions": {
+        "Height": 6.5,
+        "Length": 12.0,
+        "Width": 8.0,
+        "Cubing": 2.6
+      }
+    }
+  ]
+}

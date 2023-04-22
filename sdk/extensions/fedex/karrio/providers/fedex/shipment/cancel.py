@@ -9,18 +9,20 @@ from fedex_lib.ship_service_v26 import (
 )
 from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
 from karrio.core.utils import (
-    Envelope,
     Element,
     Serializable,
     create_envelope,
 )
 from karrio.providers.fedex.error import parse_error_response
 from karrio.providers.fedex.utils import Settings, default_request_serializer
+import karrio.lib as lib
 
 
 def parse_shipment_cancel_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
+    response = _response.deserialize()
     errors = parse_error_response(response, settings)
     success = len(errors) == 0
     confirmation: ConfirmationDetails = (
@@ -39,7 +41,7 @@ def parse_shipment_cancel_response(
 
 def shipment_cancel_request(
     payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable[Envelope]:
+) -> Serializable:
     tracking_type = next(
         (t for t in list(TrackingIdType) if t.name.lower() in payload.service),
         TrackingIdType.EXPRESS,

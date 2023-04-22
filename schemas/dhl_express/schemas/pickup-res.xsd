@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.dhl.com"
+	xmlns:dhlPickup="http://www.dhl.com/pickupdatatypes_global" xmlns:dhl="http://www.dhl.com/datatypes_global"
+	xmlns="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	elementFormDefault="unqualified">
+	<xsd:import namespace="http://www.dhl.com/datatypes_global"
+		schemaLocation="datatypes_global.xsd" />
+	<xsd:import namespace="http://www.dhl.com/pickupdatatypes_global"
+		schemaLocation="pickupdatatypes_global.xsd" />
+
+	<xsd:element name="PickupResponse">
+		<xsd:annotation>
+			<xsd:documentation>Root element of Book Pickup Request
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Response" type="dhl:Response" />
+				<xsd:element name="Note" type="dhl:Note" />
+				<xsd:element name="ConfirmationNumber">
+					<xsd:annotation>
+						<xsd:documentation>Confirmation number of the pickup
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:positiveInteger">
+							<xsd:minInclusive value="1" />
+							<xsd:maxInclusive value="999999999" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="ReadyByTime" type="dhlPickup:TimeHM"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Time to be ready by. This field is not returned
+							for cancel pickup request
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="SecondReadyByTime" type="dhlPickup:TimeHM"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Second time to be ready. This field is not
+							returned for cancel pickup request
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="NextPickupDate" type="xsd:date"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Next possible pickup date. This field is not
+							returned for cancel pickup request
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="PickupCharge" type="dhl:Money"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>This field is not returned for cancel pickup
+							request
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="CurrencyCode" type="dhl:CurrencyCode"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>This field is not returned for cancel pickup
+							request
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="CallInTime" type="dhlPickup:TimeHM"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Time for calling in order. This field is not
+							returned for cancel pickup request
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="SecondCallInTime" type="dhlPickup:TimeHM"
+					minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Second time for calling in order. This field is
+							not returned for cancel pickup request
+						</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="OriginSvcArea" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation>Three letter code identifying the service area
+							of origin. This field is not returned for cancel pickup request
+						</xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:minLength value="3" />
+							<xsd:maxLength value="3" />
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="CountryCode" type="dhl:CountryCode">
+					<xsd:annotation>
+						<xsd:documentation>Two letter ISO country Code</xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

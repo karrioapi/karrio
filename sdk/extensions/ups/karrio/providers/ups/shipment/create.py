@@ -11,26 +11,53 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_shipment_response(
-    response: lib.Element, settings: provider_utils.Settings
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     details = lib.find_element("ShipmentResults", response, first=True)
-    shipment = _extract_shipment(details, settings) if details is not None else None
+    shipment = (
+        _extract_shipment(details, settings, _response.ctx)
+        if details is not None
+        else None
+    )
 
     return shipment, provider_error.parse_error_response(response, settings)
 
 
 def _extract_shipment(
-    node: lib.Element, settings: provider_utils.Settings
+    node: lib.Element,
+    settings: provider_utils.Settings,
+    ctx: dict,
 ) -> models.ShipmentDetails:
+    label_type = "ZPL" if ctx["label"]["type"] == "ZPL" else "PDF"
+    enforce_zpl = settings.connection_config.enforce_zpl.state
     shipment = lib.to_object(ups.ShipmentResultsType, node)
     label = _process_label(shipment)
+    zpl_label = None
+
+    if enforce_zpl and label_type == "PDF":
+        _label = lib.failsafe(
+            lambda: lib.zpl_to_pdf(
+                label,
+                ctx["label"]["width"],
+                ctx["label"]["height"],
+                dpmm=8,
+            )
+        )
+        zpl_label = label  # save the original label
+
+        # if the conversion fails, use the original label and label type.
+        label = _label or label
+        label_type = "ZPL" if _label is None else label_type
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=shipment.ShipmentIdentificationNumber,
         shipment_identifier=shipment.ShipmentIdentificationNumber,
-        docs=models.Documents(label=label),
+        label_type=label_type,
+        docs=models.Documents(label=label, zpl_label=zpl_label),
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(
                 shipment.ShipmentIdentificationNumber
@@ -47,7 +74,11 @@ def _process_label(shipment: ups.ShipmentResultsType):
     )
     labels = [
         (
-            lib.image_to_pdf(pkg.ShippingLabel.GraphicImage, rotate=-90)
+            lib.image_to_pdf(
+                pkg.ShippingLabel.GraphicImage,
+                rotate=-90,
+                resize=dict(height=1800, width=1200),
+            )
             if label_type == "PDF"
             else pkg.ShippingLabel.GraphicImage
         )
@@ -60,7 +91,7 @@ def _process_label(shipment: ups.ShipmentResultsType):
 def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
-) -> lib.Serializable[ups.ShipmentRequest]:
+) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(
@@ -107,8 +138,11 @@ def shipment_request(
     mps_packaging = (
         provider_units.PackagingType.your_packaging.value if len(packages) > 1 else None
     )
+    enforce_zpl = settings.connection_config.enforce_zpl.state
     label_format, label_height, label_width = (
-        provider_units.LabelType.map(payload.label_type).value
+        provider_units.LabelType.map(
+            payload.label_type or settings.connection_config.label_type.state
+        ).value
         or provider_units.LabelType.PDF_6x4.value
     )
 
@@ -356,7 +390,11 @@ def shipment_request(
                                                 AddressLine=recipient.address_lines,
                                                 City=recipient.city,
                                                 StateProvinceCode=recipient.state_code,
-                                                PostalCode=recipient.postal_code,
+                                                PostalCode=lib.text(
+                                                    (
+                                                        recipient.postal_code or ""
+                                                    ).replace("-", "")
+                                                ),
                                                 CountryCode=recipient.country_code,
                                             ),
                                             EMailAddress=recipient.email,
@@ -367,10 +405,12 @@ def shipment_request(
                                 ),
                                 Product=[
                                     ups.ProductType(
-                                        Description=lib.join(
-                                            item.title,
-                                            item.description,
-                                        ),
+                                        Description=[
+                                            lib.text(
+                                                item.title or item.description,
+                                                max=35,
+                                            )
+                                        ],
                                         Unit=ups.UnitType(
                                             Number=str(item.quantity),
                                             UnitOfMeasurement=ups.UnitOfMeasurementType(
@@ -411,7 +451,8 @@ def shipment_request(
                                 ],
                                 InvoiceNumber=customs.invoice,
                                 InvoiceDate=lib.fdatetime(
-                                    customs.invoice_date or time.strftime("%Y-%m-%d", time.localtime()),
+                                    customs.invoice_date
+                                    or time.strftime("%Y-%m-%d", time.localtime()),
                                     current_format="%Y-%m-%d",
                                     output_format="%Y%m%d",
                                 ),
@@ -548,7 +589,9 @@ def shipment_request(
                     ],
                 ),
                 LabelSpecification=ups.LabelSpecificationType(
-                    LabelImageFormat=ups.LabelImageFormatType(Code=label_format),
+                    LabelImageFormat=ups.LabelImageFormatType(
+                        Code="ZPL" if enforce_zpl else label_format
+                    ),
                     HTTPUserAgent=None,
                     LabelStockSize=ups.LabelStockSizeType(
                         Height=label_height,
@@ -583,6 +626,13 @@ def shipment_request(
                 UPSSecurity="upss",
                 ShipmentRequest="ship",
                 InternationalForms_children="ifs",
+            ),
+        ),
+        dict(
+            label=dict(
+                height=label_height,
+                width=label_width,
+                type=label_format,
             ),
         ),
     )

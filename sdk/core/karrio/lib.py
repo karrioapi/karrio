@@ -368,7 +368,11 @@ def to_shipping_options(
     if initializer is not None:
         return initializer(options, **kwargs)
 
-    return units.ShippingOptions(options)
+    return units.ShippingOptions(
+        options,
+        option_type=kwargs.get("option_type"),
+        items_filter=kwargs.get("items_filter"),
+    )
 
 
 def to_services(
@@ -419,6 +423,16 @@ def to_upload_options(
         options,
         option_type=option_type,
         base_option_type=units.DocumentUploadOption,
+    )
+
+
+def to_connection_config(
+    options: dict,
+    option_type: typing.Optional[typing.Type[utils.Enum]] = None,
+) -> units.ConnectionConfigOptions:
+    return units.ConnectionConfigOptions(
+        options,
+        option_type=option_type,
     )
 
 
@@ -577,8 +591,9 @@ def request(
 def image_to_pdf(
     image_str: str,
     rotate: int = None,
+    resize: dict = None,
 ) -> str:
-    return utils.image_to_pdf(image_str, rotate=rotate)
+    return utils.image_to_pdf(image_str, rotate=rotate, resize=resize)
 
 
 def bundle_pdfs(
@@ -597,6 +612,16 @@ def bundle_zpls(
     base64_strings: typing.List[str],
 ) -> str:
     return utils.bundle_zpls(base64_strings)
+
+
+def zpl_to_pdf(
+    zpl_str: str,
+    width: int,
+    height: int,
+    dpmm: int = 12,
+) -> str:
+    """Return a PDF base64 string from a ZPL string."""
+    return utils.zpl_to_pdf(zpl_str, width, height, dpmm=dpmm)
 
 
 def bundle_base64(

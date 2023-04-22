@@ -8,11 +8,17 @@ def forwards_func(apps, schema_editor):
 
     db_alias = schema_editor.connection.alias
     Shipment = apps.get_model("manager", "Shipment")
-    shipments = Shipment.objects.using(db_alias).filter(
-        selected_rate_carrier__isnull=False
+    shipments = (
+        Shipment.objects.using(db_alias)
+        .filter(selected_rate_carrier__isnull=False)
+        .iterator()
     )
     Tracker = apps.get_model("manager", "Tracking")
-    trackers = Tracker.objects.using(db_alias).filter(tracking_carrier__isnull=False)
+    trackers = (
+        Tracker.objects.using(db_alias)
+        .filter(tracking_carrier__isnull=False)
+        .iterator()
+    )
 
     _shipments = []
     _trackers = []
@@ -62,7 +68,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("providers", "0044_carrier_carrier_capabilities"),
         ("manager", "0045_alter_customs_duty_billing_address_and_more"),

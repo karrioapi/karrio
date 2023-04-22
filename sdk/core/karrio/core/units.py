@@ -139,6 +139,11 @@ class MeasurementOptionsType(typing.NamedTuple):
     min_lb: typing.Optional[float] = None
     min_kg: typing.Optional[float] = None
     min_oz: typing.Optional[float] = None
+    max_in: typing.Optional[float] = None
+    max_cm: typing.Optional[float] = None
+    max_lb: typing.Optional[float] = None
+    max_kg: typing.Optional[float] = None
+    max_oz: typing.Optional[float] = None
     quant: typing.Optional[float] = None
 
 
@@ -427,6 +432,10 @@ class Products(typing.Iterable[Product]):
     @property
     def quantity(self):
         return sum((item.quantity for item in self._items), 0)
+
+    @property
+    def value_amount(self):
+        return sum((item.value_amount or 0.0 for item in self._items), 0.0)
 
 
 class Package:
@@ -830,11 +839,13 @@ class ShippingOption(utils.Enum):
     currency = utils.OptionEnum("currency")
     insurance = utils.OptionEnum("insurance", float)
     cash_on_delivery = utils.OptionEnum("COD", float)
+    shipment_note = utils.OptionEnum("shipment_note")
     shipment_date = utils.OptionEnum("shipment_date")
     dangerous_good = utils.OptionEnum("dangerous_good", bool)
     declared_value = utils.OptionEnum("declared_value", float)
     paperless_trade = utils.OptionEnum("paperless_trade", bool)
     hold_at_location = utils.OptionEnum("hold_at_location", bool)
+    sms_notification = utils.OptionEnum("email_notification", bool)
     email_notification = utils.OptionEnum("email_notification", bool)
     email_notification_to = utils.OptionEnum("email_notification_to")
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
@@ -876,6 +887,10 @@ class ShippingOptions(Options):
         return ShippingOption.email_notification.value(True)
 
     @property
+    def sms_notification(self) -> utils.OptionEnum:
+        return self[ShippingOption.sms_notification.name]
+
+    @property
     def email_notification_to(self) -> utils.OptionEnum:
         return self[ShippingOption.email_notification_to.name]
 
@@ -902,6 +917,10 @@ class ShippingOptions(Options):
     @property
     def doc_references(self) -> utils.OptionEnum:
         return self[ShippingOption.doc_references.name]
+
+    @property
+    def shipment_note(self) -> utils.OptionEnum:
+        return self[ShippingOption.shipment_note.name]
 
 
 class CustomsOption(utils.Enum):
@@ -992,6 +1011,43 @@ class DocumentUploadOption(utils.Enum):
     origin_country_code = utils.OptionEnum("origin_country_code")
     destination_postal_code = utils.OptionEnum("destination_postal_code")
     destination_country_code = utils.OptionEnum("destination_country_code")
+
+
+class ConnectionConfigOption(utils.Enum):
+    """common shipment document upload options"""
+
+    label_type = utils.OptionEnum("label_type")
+    language_code = utils.OptionEnum("language_code")
+    default_currency = utils.OptionEnum("default_currency")
+    shipping_options = utils.OptionEnum("shipping_options", list)
+    shipping_services = utils.OptionEnum("shipping_services", list)
+
+
+class ConnectionConfigOptions(Options):
+    """The options common processing helper"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, base_option_type=ConnectionConfigOption)
+
+    @property
+    def label_type(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.label_type.name]
+
+    @property
+    def language_code(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.language_code.name]
+
+    @property
+    def default_currency(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.default_currency.name]
+
+    @property
+    def shipping_options(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.shipping_options.name]
+
+    @property
+    def shipping_services(self) -> utils.OptionEnum:
+        return self[ConnectionConfigOption.shipping_services.name]
 
 
 class Services:

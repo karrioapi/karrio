@@ -10,10 +10,7 @@ class LabelRequest:
     thermal: bool = False
 
 
-def get_label_request(
-    payload: LabelRequest, settings: Settings
-) -> Serializable[Envelope]:
-
+def get_label_request(payload: LabelRequest, settings: Settings) -> Serializable:
     request = create_envelope(
         body_content=getLabelsAdvanced(
             request=GetLabelsAdvancedRq(

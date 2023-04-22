@@ -7,9 +7,9 @@ class Settings(BaseSettings):
     # Carrier specific properties
     consumer_key: str
     consumer_secret: str
+    language: str = "en"
 
-    id: str = None
-    account_country_code: str = None
+    account_country_code: str = "DE"
     metadata: dict = {}
 
     @property
@@ -19,3 +19,14 @@ class Settings(BaseSettings):
     @property
     def server_url(self):
         return "https://api-eu.dhl.com"
+
+    @property
+    def tracking_url(self):
+        country = self.account_country_code or "DE"
+        language = self.language or "en"
+        locale = f"{country}-{language}".lower()
+        return (
+            "https://www.dhl.com/"
+            + locale
+            + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
+        )

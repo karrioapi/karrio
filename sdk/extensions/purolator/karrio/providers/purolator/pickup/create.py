@@ -22,22 +22,23 @@ from karrio.core.models import (
 from karrio.core.utils import (
     Serializable,
     create_envelope,
-    Envelope,
     Element,
     Pipeline,
     Job,
-    SF,
     XP,
 )
 from karrio.providers.purolator.pickup.validate import validate_pickup_request
 from karrio.providers.purolator.error import parse_error_response
 from karrio.providers.purolator.utils import Settings, standard_request_serializer
 from karrio.providers.purolator.units import PackagePresets
+import karrio.lib as lib
 
 
 def parse_pickup_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element],
+    settings: Settings,
 ) -> Tuple[PickupDetails, List[Message]]:
+    response = _response.deserialize()
     reply = XP.find(
         "SchedulePickUpResponse", response, SchedulePickUpResponse, first=True
     )
@@ -53,7 +54,6 @@ def parse_pickup_response(
 def _extract_pickup_details(
     reply: SchedulePickUpResponse, settings: Settings
 ) -> PickupDetails:
-
     return PickupDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
@@ -61,9 +61,7 @@ def _extract_pickup_details(
     )
 
 
-def pickup_request(
-    payload: PickupRequest, settings: Settings
-) -> Serializable[Pipeline]:
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     """
     Create a pickup request
     Steps
@@ -71,7 +69,7 @@ def pickup_request(
         2 - create pickup
     :param payload: PickupRequest
     :param settings: Settings
-    :return: Serializable[Pipeline]
+    :return: Serializable
     """
     request: Pipeline = Pipeline(
         validate=lambda *_: _validate_pickup(payload=payload, settings=settings),
@@ -83,7 +81,7 @@ def pickup_request(
 
 def _schedule_pickup_request(
     payload: Union[PickupRequest, PickupUpdateRequest], settings: Settings
-) -> Serializable[Envelope]:
+) -> Serializable:
     """
     Create a serializable typed Envelope containing a SchedulePickUpRequest
 
@@ -93,7 +91,7 @@ def _schedule_pickup_request(
 
     :param payload: PickupRequest
     :param settings: Settings
-    :return: Serializable[PickupRequest]
+    :return: Serializable
     """
     address = lib.to_address(payload.address)
     packages = Packages(payload.parcels, PackagePresets, required=["weight"])
@@ -152,9 +150,7 @@ def _schedule_pickup_request(
                 FaxNumber=None,
             ),
             ShipmentSummary=None,
-            NotificationEmails=NotificationEmails(
-                NotificationEmail=[address.email]
-            ),
+            NotificationEmails=NotificationEmails(NotificationEmail=[address.email]),
         ),
     )
 

@@ -20,11 +20,13 @@ from karrio.providers.tnt.shipment.label import (
 from karrio.providers.tnt.shipment.request import create_shipment_request
 from karrio.providers.tnt.error import parse_error_response
 from karrio.providers.tnt.utils import Settings
+import karrio.lib as lib
 
 
 def parse_shipment_response(
-    response: Element, settings: Settings
+    _response: lib.Deserializable[Element], settings: Settings
 ) -> Tuple[ShipmentDetails, List[Message]]:
+    response = _response.deserialize()
     shipment = _extract_detail(response, settings)
 
     return shipment, parse_error_response(response, settings)
@@ -49,9 +51,7 @@ def _extract_detail(response: Element, settings: Settings) -> Optional[ShipmentD
     )
 
 
-def shipment_request(
-    payload: ShipmentRequest, settings: Settings
-) -> Serializable[Pipeline]:
+def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable:
     def _create_shipment_request(_) -> Job:
         return Job(id="create", data=create_shipment_request(payload, settings))
 

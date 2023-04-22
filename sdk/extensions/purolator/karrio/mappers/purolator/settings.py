@@ -18,3 +18,4 @@ class Settings(BaseSettings):
     carrier_id: str = "purolator"
     account_country_code: str = "CA"
     metadata: dict = {}
+    config: dict = {}

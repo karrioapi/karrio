@@ -6,9 +6,10 @@ import karrio.providers.ups_freight.utils as provider_utils
 
 
 def parse_pickup_cancel_response(
-    response: dict,
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    response = _response.deserialize()
     cancel_response = response.get("FreightCancelPickupResponse") or {}
     response_messages = [
         *response.get("response", {}).get("errors", []),
@@ -35,7 +36,6 @@ def pickup_cancel_request(
     payload: models.PickupCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-
     request = dict(PickupRequestConfirmationNumber=payload.confirmation_number)
 
     return lib.Serializable(request)

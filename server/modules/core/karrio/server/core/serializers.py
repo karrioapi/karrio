@@ -15,6 +15,9 @@ class ShipmentStatus(enum.Enum):
     shipped = "shipped"
     in_transit = "in_transit"
     delivered = "delivered"
+    needs_attention = "needs_attention"
+    out_for_delivery = "out_for_delivery"
+    delivery_failed = "delivery_failed"
 
 
 class TrackerStatus(enum.Enum):
@@ -76,6 +79,12 @@ class CarrierSettings(serializers.Serializer):
         required=False,
         allow_null=True,
         help_text="""The carrier supported and enabled capabilities.""",
+    )
+    metadata = serializers.PlainDictField(
+        required=False, default={}, help_text="The carrier user metadata."
+    )
+    config = serializers.PlainDictField(
+        required=False, default={}, help_text="The carrier connection config."
     )
 
 
@@ -613,13 +622,31 @@ class RateRequest(validators.OptionDefaultSerializer):
             "currency": "USD",
             "insurance": 100.00,
             "cash_on_delivery": 30.00,
-            "shipment_date": "2020-01-01",
             "dangerous_good": true,
             "declared_value": 150.00,
+            "sms_notification": true,
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
-            "signature_confirmation": true,
+            "hold_at_location": true,
+            "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
+            "shipment_date": "2020-01-01",
+            "shipment_note": "This is a shipment note",
+            "signature_confirmation": true,
+            "doc_files": [
+                {
+                    "doc_type": "commercial_invoice",
+                    "doc_file": "base64 encoded file",
+                    "doc_name": "commercial_invoice.pdf",
+                    "doc_format": "pdf",
+                }
+            ],
+            "doc_references": [
+                {
+                    "doc_id": "123456789",
+                    "doc_type": "commercial_invoice",
+                }
+            ],
         }
         """,
     )
@@ -679,7 +706,7 @@ class TrackingInfo(serializers.Serializer):
     shipment_origin_postal_code = serializers.CharField(
         required=False, allow_null=True, help_text="The shipment origin postal code"
     )
-    shipment_destication_country = serializers.CharField(
+    shipment_destination_country = serializers.CharField(
         required=False, allow_null=True, help_text="The shipment destination country"
     )
     shipment_destination_postal_code = serializers.CharField(
@@ -1114,13 +1141,31 @@ class ShippingData(validators.OptionDefaultSerializer):
             "currency": "USD",
             "insurance": 100.00,
             "cash_on_delivery": 30.00,
-            "shipment_date": "2020-01-01",
             "dangerous_good": true,
             "declared_value": 150.00,
+            "sms_notification": true,
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
-            "signature_confirmation": true,
+            "hold_at_location": true,
+            "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
+            "shipment_date": "2020-01-01",
+            "shipment_note": "This is a shipment note",
+            "signature_confirmation": true,
+            "doc_files": [
+                {
+                    "doc_type": "commercial_invoice",
+                    "doc_file": "base64 encoded file",
+                    "doc_name": "commercial_invoice.pdf",
+                    "doc_format": "pdf",
+                }
+            ],
+            "doc_references": [
+                {
+                    "doc_id": "123456789",
+                    "doc_type": "commercial_invoice",
+                }
+            ],
         }
         """,
     )
@@ -1316,13 +1361,31 @@ class ShipmentContent(serializers.Serializer):
             "currency": "USD",
             "insurance": 100.00,
             "cash_on_delivery": 30.00,
-            "shipment_date": "2020-01-01",
             "dangerous_good": true,
             "declared_value": 150.00,
+            "sms_notification": true,
             "email_notification": true,
             "email_notification_to": "shipper@mail.com",
-            "signature_confirmation": true,
+            "hold_at_location": true,
+            "paperless_trade": true,
             "preferred_service": "fedex_express_saver",
+            "shipment_date": "2020-01-01",
+            "shipment_note": "This is a shipment note",
+            "signature_confirmation": true,
+            "doc_files": [
+                {
+                    "doc_type": "commercial_invoice",
+                    "doc_file": "base64 encoded file",
+                    "doc_name": "commercial_invoice.pdf",
+                    "doc_format": "pdf",
+                }
+            ],
+            "doc_references": [
+                {
+                    "doc_id": "123456789",
+                    "doc_type": "commercial_invoice",
+                }
+            ],
         }
         """,
     )

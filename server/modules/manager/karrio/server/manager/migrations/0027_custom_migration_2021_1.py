@@ -7,7 +7,7 @@ def forwards_func(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Shipment = apps.get_model("manager", "Shipment")
 
-    for shipment in Shipment.objects.using(db_alias).all():
+    for shipment in Shipment.objects.using(db_alias).all().iterator():
         # replace shipment' rate.carrier_ref by rate.meta.carrier_connection_id
         shipment.rates = [
             {
@@ -38,7 +38,6 @@ def reverse_func(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("manager", "0026_parcel_reference_number"),
     ]

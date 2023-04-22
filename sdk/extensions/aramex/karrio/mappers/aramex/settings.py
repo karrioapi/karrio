@@ -21,3 +21,4 @@ class Settings(BaseSettings):
     test_mode: bool = False
     carrier_id: str = "aramex"
     metadata: dict = {}
+    config: dict = {}

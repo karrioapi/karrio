@@ -1,0 +1,47 @@
+{
+  "recipient": {
+    "name": "Charles Carmichael",
+    "phone": "+15145573849",
+    "notes": "Do not text, call instead.",
+    "email": "charles.carmichael@boxknight.com"
+  },
+  "recipientAddress": {
+    "street": "4455A Boul. Poirier",
+    "unit": "unit204 - BoxKnight HQ",
+    "city": "Montreal",
+    "province": "Quebec",
+    "country": "Canada",
+    "postalCode": "H4R 2A4",
+    "isBusinessAddress": true
+  },
+  "originAddress": {
+    "street": "4455A Boul. Poirier",
+    "unit": "unit204 - BoxKnight HQ",
+    "city": "Montreal",
+    "province": "Quebec",
+    "country": "Canada",
+    "postalCode": "H4R 2A4",
+    "isBusinessAddress": true
+  },
+  "packageCount": 3,
+  "service": "SAMEDAY",
+  "notes": "The entrance is through the green fence on the left. If no answer, leave behind the black bin.",
+  "refNumber": "shopifyid1234",
+  "merchantDisplayName": "Metro Fleury No 2",
+  "signatureRequired": false,
+  "packages": [
+    {
+      "refNumber": "12345",
+      "weightOptions": {
+        "weight": 2.5,
+        "unit": "kg"
+      },
+      "sizeOptions": {
+        "length": 20.0,
+        "width": 15.0,
+        "height": 15.0,
+        "unit": "inch"
+      }
+    }
+  ]
+}

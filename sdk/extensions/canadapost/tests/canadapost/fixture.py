@@ -1,4 +1,5 @@
 import karrio
+import karrio.providers.canadapost.units as units
 
 gateway = karrio.gateway["canadapost"].create(
     dict(
@@ -6,7 +7,14 @@ gateway = karrio.gateway["canadapost"].create(
         password="password",
         customer_number="2004381",
         contract_id="42708517",
-        metadata={"cost-center": "karrio-app"},
+        config={
+            "cost_center": "karrio-app",
+            "shipping_services": [
+                _.name
+                for _ in list(units.ServiceType)
+                if _.name != "canadapost_xpresspost"
+            ],
+        },
     )
 )
 

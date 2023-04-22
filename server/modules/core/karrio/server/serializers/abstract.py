@@ -234,8 +234,12 @@ def bulk_link_org(entities: typing.List[models.Model], context: Context):
 
 
 def get_object_context(entity) -> Context:
-    org = (
-        entity.org.first() if (hasattr(entity, "org") and entity.org.exists()) else None
+    org = lib.failsafe(
+        lambda: (
+            entity.org.first()
+            if (hasattr(entity, "org") and entity.org.exists())
+            else None
+        )
     )
 
     return Context(

@@ -86,9 +86,7 @@ class LogType:
             # exclude system carriers records if user is not staff
             system_carriers = [
                 item["id"]
-                for item in providers.Carrier.objects.filter(
-                    created_by__isnull=True
-                ).values("id")
+                for item in providers.Carrier.system_carriers.all().values("id")
             ]
             queryset = queryset.exclude(meta__carrier_account_id__in=system_carriers)
 
@@ -496,11 +494,7 @@ class TrackingInfoType:
     @staticmethod
     def parse(charge: dict):
         return TrackingInfoType(
-            **{
-                k: v
-                for k, v in charge.items()
-                if k in TrackingInfoType.__annotations__
-            }
+            **{k: v for k, v in charge.items() if k in TrackingInfoType.__annotations__}
         )
 
 
@@ -741,16 +735,18 @@ class SystemConnectionType:
 
         return self.active_users.filter(id=info.context.request.user.id).exists()
 
+    @strawberry.field
+    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+        return getattr(self, "config", None)
+
     @staticmethod
     @utils.authentication_required
     def resolve_list(
         info,
-        test_mode: typing.Optional[bool] = strawberry.UNSET,
     ) -> typing.List["SystemConnectionType"]:
-        return gateway.Carriers.list(
-            info.context.request,
-            system_only=True,
-            **(dict(test_mode=test_mode) if test_mode != strawberry.UNSET else {}),
+        return providers.Carrier.system_carriers.filter(
+            active=True,
+            test_mode=getattr(info.context.request, "test_mode", False),
         )
 
 
@@ -768,7 +764,7 @@ class ConnectionType:
     @utils.authentication_required
     def resolve_list(info) -> typing.List["CarrierConnectionType"]:
         connections = providers.Carrier.access_by(info.context.request).filter(
-            created_by__isnull=False,
+            is_system=False,
             test_mode=getattr(info.context.request, "test_mode", False),
         )
 
@@ -797,6 +793,7 @@ class ConnectionType:
         return CarrierSettings[carrier_name](
             id=carrier.id,
             active=carrier.active,
+            config=carrier.config,
             carrier_name=carrier_name,
             capabilities=carrier.capabilities,
             **{**settings, **services, **display_name},
@@ -810,6 +807,7 @@ def create_carrier_settings_type(name: str, model):
     @strawberry.type
     class _Settings(ConnectionType):
         metadata: utils.JSON = strawberry.UNSET
+        config: typing.Optional[utils.JSON] = None
 
         if hasattr(model, "account_number"):
             account_number: typing.Optional[str] = strawberry.UNSET

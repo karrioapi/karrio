@@ -22,7 +22,7 @@ class TestUniversalShipping(unittest.TestCase):
     def test_shipment_request(self):
         ShipmentRequestData = Serializable(ShipmentRequest(**shipment_request_data))
         response_data = self.proxy.create_shipment(ShipmentRequestData)
-        shipment = parse_shipment_response(response_data.deserialize(), self.settings)
+        shipment = parse_shipment_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(shipment),
@@ -43,7 +43,7 @@ class TestUniversalShipping(unittest.TestCase):
             )
         )
         response_data = self.proxy.create_shipment(ShipmentRequestData)
-        shipment = parse_shipment_response(response_data.deserialize(), self.settings)
+        shipment = parse_shipment_response(response_data, self.settings)
 
         self.assertListEqual(
             DP.to_dict(shipment),

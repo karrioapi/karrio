@@ -8,9 +8,10 @@ import karrio.providers.easypost.units as provider_units
 
 
 def parse_tracking_response(
-    responses: typing.List[typing.Tuple[str, dict]],
+    _responses: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
+    responses = _responses.deserialize()
     errors = [
         error.parse_error_response(response, settings, dict(tracking_number=code))
         for code, response in responses
@@ -75,9 +76,7 @@ def _extract_details(
     )
 
 
-def tracking_request(
-    payload: models.TrackingRequest, _
-) -> lib.Serializable[typing.List[dict]]:
+def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
     """Send one or multiple tracking request(s) to EasyPost.
     the payload must match the following schema:
     {

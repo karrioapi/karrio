@@ -78,6 +78,11 @@ def collect_references() -> dict:
         for key, mapper in PROVIDERS_DATA.items()
         if mapper.get("options") is not None
     }
+    connection_configs = {
+        key: {c.name: dict(code=c.value.code) for c in list(mapper["connection_configs"])}  # type: ignore
+        for key, mapper in PROVIDERS_DATA.items()
+        if mapper.get("connection_configs") is not None
+    }
 
     REFERENCES = {
         "countries": {c.name: c.value for c in list(units.Country)},
@@ -103,6 +108,7 @@ def collect_references() -> dict:
         },
         "services": services,
         "options": options,
+        "connection_configs": connection_configs,
         "carrier_capabilities": {
             key: detect_capabilities(detect_proxy_methods(mapper["Proxy"]))
             for key, mapper in PROVIDERS_DATA.items()

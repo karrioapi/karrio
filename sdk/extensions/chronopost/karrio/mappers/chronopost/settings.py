@@ -18,3 +18,4 @@ class Settings(BaseSettings):
     carrier_id: str = "chronopost"
     account_country_code: str = "FR"
     metadata: dict = {}
+    config: dict = {}

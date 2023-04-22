@@ -40,6 +40,9 @@ class Organization(AbstractOrganization):
     system_carriers = models.ManyToManyField(
         providers.Carrier, related_name="active_orgs"
     )
+    carrier_configs = models.ManyToManyField(
+        providers.CarrierConfig, related_name="org", through="CarrierConfigLink"
+    )
 
     parcels = models.ManyToManyField(
         manager.Parcel, related_name="org", through="ParcelLink"
@@ -165,6 +168,15 @@ class CarrierLink(models.Model):
     )
     item = models.OneToOneField(
         providers.Carrier, on_delete=models.CASCADE, related_name="link"
+    )
+
+
+class CarrierConfigLink(models.Model):
+    org = models.ForeignKey(
+        Organization, on_delete=models.CASCADE, related_name="carrier_config_links"
+    )
+    item = models.OneToOneField(
+        providers.CarrierConfig, on_delete=models.CASCADE, related_name="link"
     )
 
 

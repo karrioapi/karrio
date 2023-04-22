@@ -12,7 +12,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         return super().get_rates(request)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/soap/services/ShipmentService/V3_3",
             data=request.serialize(),
@@ -20,13 +20,13 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             method="POST",
             headers={
                 "Content-Type": "text/xml;charset=UTF-8",
-                "SOAPAction": "http://dpd.com/common/service/types/ShipmentService/3.3/storeOrders"
+                "SOAPAction": "http://dpd.com/common/service/types/ShipmentService/3.3/storeOrders",
             },
         )
 
         return lib.Deserializable(response, lib.to_element)
 
-    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable[str]:
+    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         def _track(payload):
             tracking_number, data = payload
             return tracking_number, lib.request(
@@ -36,7 +36,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 data=data,
                 headers={
                     "Content-Type": "text/xml;charset=UTF-8",
-                    "SOAPAction": "http://dpd.com/common/service/types/ParcelLifeCycleService/2.0/getTrackingData"
+                    "SOAPAction": "http://dpd.com/common/service/types/ParcelLifeCycleService/2.0/getTrackingData",
                 },
             )
 
