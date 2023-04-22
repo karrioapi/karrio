@@ -1,5 +1,6 @@
 """Karrio Deutsche Post DHL client proxy."""
 import functools
+import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.universal.mappers.rating_proxy as rating_proxy
@@ -50,7 +51,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             return lib.request(
                 url=f"{self.settings.server_url}/rest/sendungsverfolgung",
                 trace=self.trace_as("xml"),
-                data=dict(xml=data),
+                data=urllib.parse.urlencode(dict(xml=data)),
                 method="POST",
                 headers={
                     "Authorization": f"Basic {self.settings.basic_authentication}",

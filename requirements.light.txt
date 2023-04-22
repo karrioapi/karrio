@@ -77,7 +77,7 @@ karrio.dhl-poland==2023.4
 karrio.dhl-universal==2023.4
 karrio.dicom==2023.4
 karrio.dpd==2023.4
-karrio.dpdhl==2023.4
+karrio.dpdhl==2023.4.2
 karrio.easypost==2023.4
 karrio.eshipper==2023.4
 karrio.fedex==2023.4
