@@ -50,8 +50,7 @@ class Carriers:
         )
 
         _user_carriers = providers.Carrier.user_carriers.filter(
-            user_filter if len(user_filter) > 0 else Q(),
-            creator_filter,
+            user_filter if len(user_filter) > 0 else Q() | creator_filter
         )
         _system_carriers = providers.Carrier.system_carriers.filter(
             Q(

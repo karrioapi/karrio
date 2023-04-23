@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sun Feb 26 19:05:51 2023 by generateDS.py version 2.41.1.
-# Python 3.10.6 (main, Nov 14 2022, 16:10:14) [GCC 11.3.0]
+# Generated Sat Apr 22 21:02:03 2023 by generateDS.py version 2.41.3.
+# Python 3.10.6 (main, Mar 10 2023, 10:55:28) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -16866,13 +16866,10 @@ class ZipType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ZipType')
-        if self._hasContent():
-            outfile.write('>')
-            outfile.write(self.convert_unicode(self.valueOf_))
-            self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ZipType', pretty_print=pretty_print)
-            outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
-        else:
-            outfile.write('/>%s' % (eol_, ))
+        outfile.write('>')
+        self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_, pretty_print=pretty_print)
+        outfile.write(self.convert_unicode(self.valueOf_))
+        outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
     def _exportAttributes(self, outfile, level, already_processed, namespaceprefix_='', name_='ZipType'):
         pass
     def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ZipType', fromsubclass_=False, pretty_print=True):

@@ -297,6 +297,22 @@ var Karrio = (function () {
             var middlewares = postMiddlewares.map(function (post) { return ({ post: post }); });
             return this.withMiddleware.apply(this, middlewares);
         };
+        /**
+         * Check if the given MIME is a JSON MIME.
+         * JSON MIME examples:
+         *   application/json
+         *   application/json; charset=UTF8
+         *   APPLICATION/JSON
+         *   application/vnd.company+json
+         * @param mime - MIME (Multipurpose Internet Mail Extensions)
+         * @return True if the given MIME is JSON, false otherwise.
+         */
+        BaseAPI.prototype.isJsonMime = function (mime) {
+            if (!mime) {
+                return false;
+            }
+            return BaseAPI.jsonRegex.test(mime);
+        };
         BaseAPI.prototype.request = function (context, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var _a, url, init, response;
@@ -370,6 +386,7 @@ var Karrio = (function () {
             next.middleware = this.middleware.slice();
             return next;
         };
+        BaseAPI.jsonRegex = new RegExp('^(:?application\/json|[^;/ \t]+\/[^;/ \t]+[+]json)[ \t]*(:?;.*)?$', 'i');
         return BaseAPI;
     }());
     function isBlob(value) {
@@ -2790,9 +2807,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -2804,10 +2818,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses",
@@ -2856,9 +2873,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -2870,10 +2884,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -2918,9 +2935,6 @@ var Karrio = (function () {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -2932,10 +2946,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses",
@@ -2983,9 +3000,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -2997,10 +3011,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3049,9 +3066,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3063,10 +3077,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3413,9 +3430,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3427,10 +3441,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/carriers/{carrier_name}/services".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
@@ -3484,9 +3501,6 @@ var Karrio = (function () {
                                 queryParameters['system_only'] = requestParameters.systemOnly;
                             }
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3498,10 +3512,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/carriers",
@@ -3563,9 +3580,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3577,10 +3591,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info",
@@ -3629,9 +3646,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3643,10 +3657,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3691,9 +3708,6 @@ var Karrio = (function () {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3705,10 +3719,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info",
@@ -3756,9 +3773,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3770,10 +3784,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3822,9 +3839,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3836,10 +3850,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -3901,9 +3918,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3915,10 +3929,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels",
@@ -3967,9 +3984,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -3981,10 +3995,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4029,9 +4046,6 @@ var Karrio = (function () {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4043,10 +4057,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels",
@@ -4094,9 +4111,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4108,10 +4122,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4160,9 +4177,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4174,10 +4188,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4239,9 +4256,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4253,10 +4267,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4302,9 +4319,6 @@ var Karrio = (function () {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4316,10 +4330,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups",
@@ -4367,9 +4384,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4381,10 +4395,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4436,9 +4453,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4450,10 +4464,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{carrier_name}/schedule".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
@@ -4506,9 +4523,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4520,10 +4534,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -4585,9 +4602,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4599,10 +4613,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/shipping",
@@ -4655,9 +4672,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4669,10 +4683,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
@@ -4722,9 +4739,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4736,10 +4750,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/rates",
@@ -4792,9 +4809,6 @@ var Karrio = (function () {
                             }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4806,10 +4820,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/tracking",
@@ -4862,9 +4879,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4876,10 +4890,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/pickups/{carrier_name}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
@@ -4934,9 +4951,6 @@ var Karrio = (function () {
                                 queryParameters['hub'] = requestParameters.hub;
                             }
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -4948,10 +4962,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))),
@@ -5003,9 +5020,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5017,10 +5031,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/pickups/{carrier_name}/update".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
@@ -5073,9 +5090,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5087,10 +5101,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
@@ -5151,9 +5168,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5165,10 +5179,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5217,9 +5234,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5231,10 +5245,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments",
@@ -5319,9 +5336,6 @@ var Karrio = (function () {
                                 queryParameters['tracking_number'] = requestParameters.trackingNumber;
                             }
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5333,10 +5347,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments",
@@ -5389,9 +5406,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5403,10 +5417,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}/purchase".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5456,9 +5473,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5470,10 +5484,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}/rates".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5522,9 +5539,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5536,10 +5550,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5588,9 +5605,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5602,10 +5616,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -5673,9 +5690,6 @@ var Karrio = (function () {
                             }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5687,10 +5701,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers",
@@ -5751,9 +5768,6 @@ var Karrio = (function () {
                                 queryParameters['hub'] = requestParameters.hub;
                             }
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5765,10 +5779,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))),
@@ -5828,9 +5845,6 @@ var Karrio = (function () {
                                 queryParameters['tracking_number'] = requestParameters.trackingNumber;
                             }
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5842,10 +5856,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers",
@@ -5894,9 +5911,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5908,10 +5922,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
@@ -5959,9 +5976,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -5973,10 +5987,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
@@ -6025,9 +6042,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6039,10 +6053,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
@@ -6104,9 +6121,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6118,10 +6132,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks",
@@ -6167,9 +6184,6 @@ var Karrio = (function () {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6181,10 +6195,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks",
@@ -6232,9 +6249,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6246,10 +6260,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6297,9 +6314,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6311,10 +6325,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6366,9 +6383,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6380,10 +6394,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}/test".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6433,9 +6450,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6447,10 +6461,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6511,9 +6528,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6525,10 +6539,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6577,9 +6594,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6591,10 +6605,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders",
@@ -6643,9 +6660,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6657,10 +6671,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6705,9 +6722,6 @@ var Karrio = (function () {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6719,10 +6733,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders",
@@ -6770,9 +6787,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6784,10 +6798,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6836,9 +6853,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6850,10 +6864,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -6915,9 +6932,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6929,10 +6943,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/batches/orders",
@@ -6982,9 +6999,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -6996,10 +7010,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/batches/shipments",
@@ -7049,9 +7066,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7063,10 +7077,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/batches/trackers",
@@ -7121,9 +7138,6 @@ var Karrio = (function () {
                                 queryParameters['resource_type'] = requestParameters.resourceType;
                             }
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7135,10 +7149,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             consumes = [
                                 { contentType: 'multipart/form-data' },
@@ -7207,9 +7224,6 @@ var Karrio = (function () {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7221,10 +7235,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/batches/operations",
@@ -7272,9 +7289,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7286,10 +7300,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/batches/operations/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -7355,9 +7372,6 @@ var Karrio = (function () {
                                 queryParameters['shipment_id'] = requestParameters.shipmentId;
                             }
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7369,10 +7383,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/documents",
@@ -7421,9 +7438,6 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7435,10 +7449,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/documents/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
@@ -7487,9 +7504,6 @@ var Karrio = (function () {
                             queryParameters = {};
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7501,10 +7515,13 @@ var Karrio = (function () {
                             _c.label = 2;
                         case 2:
                             if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
                             }
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/documents",

@@ -123,7 +123,7 @@ ParsedTrackingResponse = [
                     "time": "2016-03-18",
                 },
             ],
-            "tracking_number": 340434161094042557,
+            "tracking_number": "340434161094042557",
             "info": {
                 "carrier_tracking_link": "https://www.dhl.de/en/privatkunden/pakete-empfangen/verfolgen.html?piececode=340434161094042557",
                 "customer_name": "Deutsche Post DHL",

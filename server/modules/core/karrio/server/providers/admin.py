@@ -320,8 +320,6 @@ class ServiceLevelAdmin(admin.ModelAdmin):
 
     def get_form(self, request, obj=None, **kwargs):
         form = super().get_form(request, obj, **kwargs)
-        form.base_fields["cost"].required = True
-        form.base_fields["cost"].initial = 10
         form.base_fields["currency"].required = True
         form.base_fields["currency"].initial = "USD"
 
