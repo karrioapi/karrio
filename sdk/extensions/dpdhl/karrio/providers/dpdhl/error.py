@@ -58,26 +58,67 @@ def _parse_xml_error_response(
             message=error.statusText,
             details={
                 **(
-                    {"message": lib.join(*error.statusMessage, join=" ")}
-                    if any(error.statusMessage)
-                    else {}
-                ),
-                **(
-                    {
-                        "error": lib.join(
-                            *[
-                                f"{_.statusElement}: {_.statusMessage}"
-                                for _ in error.errorMessage
-                            ],
-                            join=" ",
+                    lib.failsafe(
+                        lambda: lib.to_dict(
+                            {
+                                "message": lib.join(
+                                    *[
+                                        _
+                                        for _ in error.statusMessage
+                                        if isinstance(_, str)
+                                    ],
+                                    join=" ",
+                                )
+                            }
                         )
-                    }
-                    if any(error.errorMessage or "")
+                    )
+                    or {}
+                    if any(error.statusMessage or [])
                     else {}
                 ),
                 **(
-                    {"warning": error.warningMessage}
-                    if any(error.warningMessage or "")
+                    lib.failsafe(
+                        lambda: lib.to_dict(
+                            {
+                                "error": lib.join(
+                                    *[
+                                        f"{_.statusElement}: {_.statusMessage}"
+                                        for _ in error.errorMessage
+                                    ],
+                                    join=" ",
+                                )
+                            }
+                        )
+                    )
+                    or {}
+                    if any(error.errorMessage or [])
+                    else {}
+                ),
+                **(
+                    lib.failsafe(
+                        lambda: lib.to_dict(
+                            {
+                                "warning": lib.join(
+                                    *(
+                                        [
+                                            _
+                                            for _ in error.warningMessage
+                                            if isinstance(_, str)
+                                        ]
+                                        if isinstance(error.warningMessage, list)
+                                        else (
+                                            [error.warningMessage]
+                                            if isinstance(error.warningMessage, str)
+                                            else []
+                                        )
+                                    ),
+                                    join=" ",
+                                )
+                            }
+                        )
+                    )
+                    or {}
+                    if any(error.warningMessage or [])
                     else {}
                 ),
                 **kwargs,
