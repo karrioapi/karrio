@@ -1,5 +1,5 @@
 # Schemas update
--e ./schemas/dpdhl
+# -e ./schemas/dpdhl
 
 # SDK extentions
 -e ./sdk/core

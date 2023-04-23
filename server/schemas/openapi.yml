@@ -11627,7 +11627,6 @@ tags:
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
     | dpd | DPD |
-    | dpdhl | Deutsche Post DHL |
     | easypost | EasyPost |
     | eshipper | eShipper |
     | fedex | FedEx |
@@ -11647,6 +11646,7 @@ tags:
     | usps_international | USPS International |
     | yanwen | Yanwen |
     | yunexpress | Yunexpress |
+    | dpdhl | Deutsche Post DHL |
 
     ---
     ## Services
@@ -11766,17 +11766,6 @@ tags:
     | dpd_express_12h | E12 |
     | dpd_express_18h_guarantee | E18 |
     | dpd_express_b2b_predict | B2B MSG option |
-
-    ### Deutsche Post DHL
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dpdhl_paket | V01PAK |
-    | dpdhl_paket_international | V53WPAK |
-    | dpdhl_europaket | V54EPAK |
-    | dpdhl_paket_connect | V55PAK |
-    | dpdhl_warenpost | V62WP |
-    | dpdhl_warenpost_international | V66WPI |
-    | dpdhl_retoure |  |
 
     ### EasyPost
     | Code         | Service Name |
@@ -12802,6 +12791,17 @@ tags:
     | usps_online | Online |
     | usps_plus | Plus |
     | usps_bpm | BPM |
+
+    ### Deutsche Post DHL
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dpdhl_paket | V01PAK |
+    | dpdhl_paket_international | V53WPAK |
+    | dpdhl_europaket | V54EPAK |
+    | dpdhl_paket_connect | V55PAK |
+    | dpdhl_warenpost | V62WP |
+    | dpdhl_warenpost_international | V66WPI |
+    | dpdhl_retoure |  |
 
 
     ---
