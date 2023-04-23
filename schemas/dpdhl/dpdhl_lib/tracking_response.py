@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sun Feb 26 19:05:53 2023 by generateDS.py version 2.41.1.
-# Python 3.10.6 (main, Nov 14 2022, 16:10:14) [GCC 11.3.0]
+# Generated Sat Apr 22 21:02:04 2023 by generateDS.py version 2.41.3.
+# Python 3.10.6 (main, Mar 10 2023, 10:55:28) [GCC 11.3.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -1162,11 +1162,11 @@ class dataType(GeneratedsSuper):
         self.piece_id_nsprefix_ = None
         self.shipment_code = _cast(None, shipment_code)
         self.shipment_code_nsprefix_ = None
-        self.piece_identifier = _cast(int, piece_identifier)
+        self.piece_identifier = _cast(None, piece_identifier)
         self.piece_identifier_nsprefix_ = None
         self.identifier_type = _cast(int, identifier_type)
         self.identifier_type_nsprefix_ = None
-        self.piece_code = _cast(int, piece_code)
+        self.piece_code = _cast(None, piece_code)
         self.piece_code_nsprefix_ = None
         self.event_location = _cast(None, event_location)
         self.event_location_nsprefix_ = None
@@ -1246,7 +1246,7 @@ class dataType(GeneratedsSuper):
         self.delivery_timeframe_from_nsprefix_ = None
         self.delivery_timeframe_to = _cast(None, delivery_timeframe_to)
         self.delivery_timeframe_to_nsprefix_ = None
-        self.searched_piece_code = _cast(int, searched_piece_code)
+        self.searched_piece_code = _cast(None, searched_piece_code)
         self.searched_piece_code_nsprefix_ = None
         self.searched_ref_no = _cast(None, searched_ref_no)
         self.searched_ref_no_nsprefix_ = None
@@ -1266,7 +1266,7 @@ class dataType(GeneratedsSuper):
         self.airway_bill_number_nsprefix_ = None
         self.ruecksendung = _cast(bool, ruecksendung)
         self.ruecksendung_nsprefix_ = None
-        self.pslz_nr = _cast(int, pslz_nr)
+        self.pslz_nr = _cast(None, pslz_nr)
         self.pslz_nr_nsprefix_ = None
         self.order_preferred_delivery_day = _cast(bool, order_preferred_delivery_day)
         self.order_preferred_delivery_day_nsprefix_ = None
@@ -1568,13 +1568,13 @@ class dataType(GeneratedsSuper):
             outfile.write(' shipment-code=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.shipment_code), input_name='shipment-code')), ))
         if self.piece_identifier is not None and 'piece_identifier' not in already_processed:
             already_processed.add('piece_identifier')
-            outfile.write(' piece-identifier="%s"' % self.gds_format_integer(self.piece_identifier, input_name='piece-identifier'))
+            outfile.write(' piece-identifier=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.piece_identifier), input_name='piece-identifier')), ))
         if self.identifier_type is not None and 'identifier_type' not in already_processed:
             already_processed.add('identifier_type')
             outfile.write(' identifier-type="%s"' % self.gds_format_integer(self.identifier_type, input_name='identifier-type'))
         if self.piece_code is not None and 'piece_code' not in already_processed:
             already_processed.add('piece_code')
-            outfile.write(' piece-code="%s"' % self.gds_format_integer(self.piece_code, input_name='piece-code'))
+            outfile.write(' piece-code=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.piece_code), input_name='piece-code')), ))
         if self.event_location is not None and 'event_location' not in already_processed:
             already_processed.add('event_location')
             outfile.write(' event-location=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.event_location), input_name='event-location')), ))
@@ -1694,7 +1694,7 @@ class dataType(GeneratedsSuper):
             outfile.write(' delivery-timeframe-to=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.delivery_timeframe_to), input_name='delivery-timeframe-to')), ))
         if self.searched_piece_code is not None and 'searched_piece_code' not in already_processed:
             already_processed.add('searched_piece_code')
-            outfile.write(' searched-piece-code="%s"' % self.gds_format_integer(self.searched_piece_code, input_name='searched-piece-code'))
+            outfile.write(' searched-piece-code=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.searched_piece_code), input_name='searched-piece-code')), ))
         if self.searched_ref_no is not None and 'searched_ref_no' not in already_processed:
             already_processed.add('searched_ref_no')
             outfile.write(' searched-ref-no=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.searched_ref_no), input_name='searched-ref-no')), ))
@@ -1724,7 +1724,7 @@ class dataType(GeneratedsSuper):
             outfile.write(' ruecksendung="%s"' % self.gds_format_boolean(self.ruecksendung, input_name='ruecksendung'))
         if self.pslz_nr is not None and 'pslz_nr' not in already_processed:
             already_processed.add('pslz_nr')
-            outfile.write(' pslz-nr="%s"' % self.gds_format_integer(self.pslz_nr, input_name='pslz-nr'))
+            outfile.write(' pslz-nr=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.pslz_nr), input_name='pslz-nr')), ))
         if self.order_preferred_delivery_day is not None and 'order_preferred_delivery_day' not in already_processed:
             already_processed.add('order_preferred_delivery_day')
             outfile.write(' order-preferred-delivery-day="%s"' % self.gds_format_boolean(self.order_preferred_delivery_day, input_name='order-preferred-delivery-day'))
@@ -1767,7 +1767,7 @@ class dataType(GeneratedsSuper):
         value = find_attr_value_('piece-identifier', node)
         if value is not None and 'piece-identifier' not in already_processed:
             already_processed.add('piece-identifier')
-            self.piece_identifier = self.gds_parse_integer(value, node, 'piece-identifier')
+            self.piece_identifier = value
         value = find_attr_value_('identifier-type', node)
         if value is not None and 'identifier-type' not in already_processed:
             already_processed.add('identifier-type')
@@ -1775,7 +1775,7 @@ class dataType(GeneratedsSuper):
         value = find_attr_value_('piece-code', node)
         if value is not None and 'piece-code' not in already_processed:
             already_processed.add('piece-code')
-            self.piece_code = self.gds_parse_integer(value, node, 'piece-code')
+            self.piece_code = value
         value = find_attr_value_('event-location', node)
         if value is not None and 'event-location' not in already_processed:
             already_processed.add('event-location')
@@ -1939,7 +1939,7 @@ class dataType(GeneratedsSuper):
         value = find_attr_value_('searched-piece-code', node)
         if value is not None and 'searched-piece-code' not in already_processed:
             already_processed.add('searched-piece-code')
-            self.searched_piece_code = self.gds_parse_integer(value, node, 'searched-piece-code')
+            self.searched_piece_code = value
         value = find_attr_value_('searched-ref-no', node)
         if value is not None and 'searched-ref-no' not in already_processed:
             already_processed.add('searched-ref-no')
@@ -1984,7 +1984,7 @@ class dataType(GeneratedsSuper):
         value = find_attr_value_('pslz-nr', node)
         if value is not None and 'pslz-nr' not in already_processed:
             already_processed.add('pslz-nr')
-            self.pslz_nr = self.gds_parse_integer(value, node, 'pslz-nr')
+            self.pslz_nr = value
         value = find_attr_value_('order-preferred-delivery-day', node)
         if value is not None and 'order-preferred-delivery-day' not in already_processed:
             already_processed.add('order-preferred-delivery-day')
@@ -2015,19 +2015,19 @@ class dataType1(GeneratedsSuper):
         self.ns_prefix_ = None
         self.name = _cast(None, name)
         self.name_nsprefix_ = None
-        self.piece_identifier = _cast(int, piece_identifier)
+        self.piece_identifier = _cast(None, piece_identifier)
         self.piece_identifier_nsprefix_ = None
         self._build_time = _cast(None, _build_time)
         self._build_time_nsprefix_ = None
         self.piece_id = _cast(None, piece_id)
         self.piece_id_nsprefix_ = None
-        self.leitcode = _cast(int, leitcode)
+        self.leitcode = _cast(None, leitcode)
         self.leitcode_nsprefix_ = None
         self.routing_code_ean = _cast(None, routing_code_ean)
         self.routing_code_ean_nsprefix_ = None
         self.ruecksendung = _cast(bool, ruecksendung)
         self.ruecksendung_nsprefix_ = None
-        self.pslz_nr = _cast(int, pslz_nr)
+        self.pslz_nr = _cast(None, pslz_nr)
         self.pslz_nr_nsprefix_ = None
         self.order_preferred_delivery_day = _cast(bool, order_preferred_delivery_day)
         self.order_preferred_delivery_day_nsprefix_ = None
@@ -2133,7 +2133,7 @@ class dataType1(GeneratedsSuper):
             outfile.write(' name=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.name), input_name='name')), ))
         if self.piece_identifier is not None and 'piece_identifier' not in already_processed:
             already_processed.add('piece_identifier')
-            outfile.write(' piece-identifier="%s"' % self.gds_format_integer(self.piece_identifier, input_name='piece-identifier'))
+            outfile.write(' piece-identifier=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.piece_identifier), input_name='piece-identifier')), ))
         if self._build_time is not None and '_build_time' not in already_processed:
             already_processed.add('_build_time')
             outfile.write(' _build-time=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self._build_time), input_name='_build-time')), ))
@@ -2142,7 +2142,7 @@ class dataType1(GeneratedsSuper):
             outfile.write(' piece-id=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.piece_id), input_name='piece-id')), ))
         if self.leitcode is not None and 'leitcode' not in already_processed:
             already_processed.add('leitcode')
-            outfile.write(' leitcode="%s"' % self.gds_format_integer(self.leitcode, input_name='leitcode'))
+            outfile.write(' leitcode=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.leitcode), input_name='leitcode')), ))
         if self.routing_code_ean is not None and 'routing_code_ean' not in already_processed:
             already_processed.add('routing_code_ean')
             outfile.write(' routing-code-ean=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.routing_code_ean), input_name='routing-code-ean')), ))
@@ -2151,7 +2151,7 @@ class dataType1(GeneratedsSuper):
             outfile.write(' ruecksendung="%s"' % self.gds_format_boolean(self.ruecksendung, input_name='ruecksendung'))
         if self.pslz_nr is not None and 'pslz_nr' not in already_processed:
             already_processed.add('pslz_nr')
-            outfile.write(' pslz-nr="%s"' % self.gds_format_integer(self.pslz_nr, input_name='pslz-nr'))
+            outfile.write(' pslz-nr=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.pslz_nr), input_name='pslz-nr')), ))
         if self.order_preferred_delivery_day is not None and 'order_preferred_delivery_day' not in already_processed:
             already_processed.add('order_preferred_delivery_day')
             outfile.write(' order-preferred-delivery-day="%s"' % self.gds_format_boolean(self.order_preferred_delivery_day, input_name='order-preferred-delivery-day'))
@@ -2182,7 +2182,7 @@ class dataType1(GeneratedsSuper):
         value = find_attr_value_('piece-identifier', node)
         if value is not None and 'piece-identifier' not in already_processed:
             already_processed.add('piece-identifier')
-            self.piece_identifier = self.gds_parse_integer(value, node, 'piece-identifier')
+            self.piece_identifier = value
         value = find_attr_value_('_build-time', node)
         if value is not None and '_build-time' not in already_processed:
             already_processed.add('_build-time')
@@ -2194,7 +2194,7 @@ class dataType1(GeneratedsSuper):
         value = find_attr_value_('leitcode', node)
         if value is not None and 'leitcode' not in already_processed:
             already_processed.add('leitcode')
-            self.leitcode = self.gds_parse_integer(value, node, 'leitcode')
+            self.leitcode = value
         value = find_attr_value_('routing-code-ean', node)
         if value is not None and 'routing-code-ean' not in already_processed:
             already_processed.add('routing-code-ean')
@@ -2211,7 +2211,7 @@ class dataType1(GeneratedsSuper):
         value = find_attr_value_('pslz-nr', node)
         if value is not None and 'pslz-nr' not in already_processed:
             already_processed.add('pslz-nr')
-            self.pslz_nr = self.gds_parse_integer(value, node, 'pslz-nr')
+            self.pslz_nr = value
         value = find_attr_value_('order-preferred-delivery-day', node)
         if value is not None and 'order-preferred-delivery-day' not in already_processed:
             already_processed.add('order-preferred-delivery-day')
