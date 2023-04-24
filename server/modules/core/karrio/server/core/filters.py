@@ -397,6 +397,7 @@ class TrackerFilters(filters.FilterSet):
 
 class LogFilter(filters.FilterSet):
     api_endpoint = filters.CharFilter(field_name="path", lookup_expr="icontains")
+    remote_addr = filters.CharFilter(field_name="remote_addr", lookup_expr="exact")
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
     entity_id = filters.CharFilter(field_name="entity_id")
