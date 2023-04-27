@@ -19,8 +19,8 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 
-Karrio is an open-source shipping infrastructure for platform. With karrio, you can
-build shipping experience into your platform. access a network of shipping carriers
+Karrio is an open-source shipping infrastructure for platform. With Karrio, you can
+build shipping experience into your platform, access a network of shipping carriers
 with a single API integration, automate fulfilment and improve logistics operations.
 
 **Get up and running in 1 minute with:**
@@ -50,6 +50,10 @@ Default Login: admin@example.com | demo
 <img alt="Karrio Dashboard" src="screenshots/dashboard.png" />
 
 ## Get started
+
+### Quick start demo
+
+[A short video (less than 4 minutes)](https://youtu.be/dFHZosJPaLI) that goes over creating your first label and tracking your first package.
 
 ### Open-source hobby deploy
 
@@ -82,7 +86,7 @@ We believe that the logistics industry can greatly benefit from a unified, open 
 
 Karrio is the only **platform-focused** open-source shipping platform with label generation, document generation and package tracking API that **you can host on your own infrastructure**.
 
-We are an open-source alternative to expensive in-house carrier integration and Multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
+We are an open-source alternative to expensive in-house carrier integration and multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
 
 ### Shipping for platforms
 
@@ -117,7 +121,7 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
 
 ## Open-source vs. paid
 
-This project uses the [Apache v2 license](LICENSE). The core karrio platform will always remain open and free.
+This project uses the [Apache v2 license](LICENSE). The core Karrio platform will always remain open and free.
 
 We are developing some commercial enterprise add-ons (contained in the `/ee` directory) only offered on our Cloud and Enterprise editions.
 
