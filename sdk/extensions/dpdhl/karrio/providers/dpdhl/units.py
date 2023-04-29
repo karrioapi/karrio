@@ -178,6 +178,7 @@ class ShippingOption(lib.Enum):
     dpdhl_cash_on_delivery = lib.OptionEnum("CashOnDelivery", float)
     dpdhl_premium = lib.OptionEnum("Premium", bool)
     dpdhl_parcel_outlet_routing = lib.OptionEnum("ParcelOutletRouting", bool)
+    dpdhl_packstation = lib.OptionEnum("Packstation")
 
     """ Unified Option type mapping """
     insurance = dpdhl_additional_insurance
