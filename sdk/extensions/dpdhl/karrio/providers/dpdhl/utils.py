@@ -1,3 +1,4 @@
+import typing
 import base64
 import karrio.lib as lib
 import karrio.core as core
@@ -51,8 +52,15 @@ class Settings(core.Settings):
         )
 
     @property
-    def language_code(self):
+    def language_code(self) -> str:
         return self.connection_config.language_code.state or "en"
+
+    @property
+    def service_suffix(self) -> typing.Optional[str]:
+        return typing.cast(
+            typing.Optional[str],
+            self.connection_config.service_suffix.state,
+        )
 
     @property
     def basic_authentication(self):

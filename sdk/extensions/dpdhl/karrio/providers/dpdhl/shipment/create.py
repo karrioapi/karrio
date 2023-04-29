@@ -69,6 +69,7 @@ def shipment_request(
         settings.account_number,
         service=service,
         options=options,
+        settings=settings,
         is_international=shipper.country_code != recipient.country_code,
     )
     return_account_number = (
@@ -76,6 +77,7 @@ def shipment_request(
             options.return_account_number.state,
             service=service,
             options=options,
+            settings=settings,
             is_international=shipper.country_code != recipient.country_code,
         )
         if options.return_account_number.state is not None

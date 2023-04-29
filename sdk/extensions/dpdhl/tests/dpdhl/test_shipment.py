@@ -247,9 +247,9 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                     </Shipper>
                     <ShipperReference>Ref. 123456</ShipperReference>
                     <Receiver>
-                        <cis:name1>50a Empfänger Zeile 1</cis:name1>
+                        <cis:name1>Empfänger Zeile 1</cis:name1>
                         <Address>
-                            <cis:streetName>50a Empfänger Zeile 1</cis:streetName>
+                            <cis:streetName>Empfänger Zeile 1</cis:streetName>
                             <cis:streetNumber>50a</cis:streetNumber>
                             <cis:zip>28195</cis:zip>
                             <cis:city>Bremen</cis:city>
