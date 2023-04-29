@@ -1106,6 +1106,12 @@ class ComputedAddress(models.Address):
         self.address = address
 
     def __getattr__(self, item):
+        if item == "street_number":
+            return self._compute_street_number()
+
+        if item == "address_line1":
+            return self._compute_address_line1()
+
         if hasattr(self.address, item):
             return getattr(self.address, item)
 
@@ -1191,6 +1197,26 @@ class ComputedAddress(models.Address):
             )  # type:ignore
 
         return None
+
+    def _compute_street_number(self):
+        _value = getattr(self.address, "street_number", None)
+
+        return (
+            _value
+            if any(_value or "")
+            # find word with digits in it if street number is not explicitly defined
+            else next(
+                (
+                    word
+                    for word in self.address.address_line1.split(" ")
+                    if any(_.isdigit() for _ in word)
+                ),
+                None,
+            )
+        )
+
+    def _compute_address_line1(self):
+        return self.address.address_line1.replace(self.street_number, "").strip()
 
 
 class ComputedDocumentFile(models.DocumentFile):

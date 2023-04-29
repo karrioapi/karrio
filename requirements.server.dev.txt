@@ -6,7 +6,7 @@ drf-api-tracking==1.8.0
 # -e ./schemas/dpdhl
 
 # Carrier Extentions in Development
-# -e ./sdk/core
+-e ./sdk/core
 # -e ./sdk/extensions/generic
 # -e ./sdk/extensions/amazon_mws
 # -e ./sdk/extensions/aramex
@@ -15,12 +15,12 @@ drf-api-tracking==1.8.0
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
-# -e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
 # -e ./sdk/extensions/dpd
-# -e ./sdk/extensions/dpdhl
+-e ./sdk/extensions/dpdhl
 # -e ./sdk/extensions/fedex
 # -e ./sdk/extensions/geodis
 # -e ./sdk/extensions/laposte
@@ -44,7 +44,7 @@ drf-api-tracking==1.8.0
 # -e ./sdk/vendors/freightcom
 
 
-karrio
+# karrio
 karrio.generic
 karrio.amazon-mws
 karrio.aramex
@@ -53,12 +53,12 @@ karrio.boxknight
 karrio.canadapost
 karrio.canpar
 karrio.chronopost
-karrio.dhl-express
+# karrio.dhl-express
 karrio.dhl-poland
 karrio.dhl-universal
 karrio.dicom
 karrio.dpd
-karrio.dpdhl
+# karrio.dpdhl
 karrio.fedex
 karrio.geodis
 karrio.laposte
