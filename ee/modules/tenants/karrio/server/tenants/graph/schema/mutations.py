@@ -6,10 +6,11 @@ from django.db import transaction
 from django.contrib.auth import get_user_model
 from django_tenants.utils import tenant_context
 
+import karrio.server.conf as conf
 import karrio.server.user.models as auth
 import karrio.server.graph.utils as utils
-import karrio.server.admin.schemas.tenants.types as types
-import karrio.server.admin.schemas.tenants.inputs as inputs
+import karrio.server.tenants.graph.schema.types as types
+import karrio.server.tenants.graph.schema.inputs as inputs
 import karrio.server.tenants.serializers as serializers
 import karrio.server.tenants.models as models
 
@@ -17,7 +18,6 @@ import karrio.server.tenants.models as models
 @strawberry.type
 class CreateTenantMutation(utils.BaseMutation):
     tenant: typing.Optional[types.TenantType] = None
-    api_key: typing.Optional[str] = None
 
     @staticmethod
     @utils.authentication_required
@@ -27,6 +27,17 @@ class CreateTenantMutation(utils.BaseMutation):
         domain: str,
         **input,
     ) -> "CreateTenantMutation":
+        data = {
+            **input,
+            "feature_flags": (
+                input.get("feature_flags")
+                or {
+                    **conf.FEATURE_FLAGS,
+                    "ORG_LEVEL_BILLING": False,
+                    "TENANT_LEVEL_BILLING": False,
+                }
+            ),
+        }
         # Create tenant client
         serializer = serializers.TenantModelSerializer(data=input)
         serializer.is_valid(raise_exception=True)
@@ -39,11 +50,11 @@ class CreateTenantMutation(utils.BaseMutation):
         with tenant_context(tenant):
             UserModel = get_user_model()
             root_user = UserModel.objects.first()
+            root_user.email = input["admin_email"]
             root_user.set_password(str(uuid.uuid4().hex))
             root_user.save()
-            token = auth.Token.objects.create(user=root_user)
 
-        return CreateTenantMutation(tenant=tenant, api_key=token.key)  # type:ignore
+        return CreateTenantMutation(tenant=tenant)  # type:ignore
 
 
 @strawberry.type
