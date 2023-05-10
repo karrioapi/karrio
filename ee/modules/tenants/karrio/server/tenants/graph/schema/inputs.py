@@ -9,6 +9,7 @@ class CreateTenantMutationInput(utils.BaseInput):
     name: str
     domain: str
     schema_name: str
+    admin_email: str
     feature_flags: typing.Optional[utils.JSON] = strawberry.UNSET
     app_domains: typing.Optional[typing.List[str]] = strawberry.UNSET
 

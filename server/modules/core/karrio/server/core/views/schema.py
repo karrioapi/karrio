@@ -10,21 +10,26 @@ import karrio.server.conf as conf
 VERSION = getattr(settings, "VERSION", "")
 non_null = lambda items: [i for i in items if i is not None]
 RedocView = SpectacularRedocView.as_view(
-    url_name='shipping-openapi',
-    template_name='openapi/openapi.html',
+    url_name="shipping-openapi",
+    template_name="openapi/openapi.html",
 )
 
-class ShippingOpenAPIView(SpectacularAPIView):
 
+class ShippingOpenAPIView(SpectacularAPIView):
     def _get_schema_response(self, request):
-        version = self.api_version or request.version or self._get_version_parameter(request)
-        generator = self.generator_class(urlconf=self.urlconf, api_version=version, patterns=self.patterns)
+        version = (
+            self.api_version or request.version or self._get_version_parameter(request)
+        )
+        generator = self.generator_class(
+            urlconf=self.urlconf, api_version=version, patterns=self.patterns
+        )
         data = generator.get_schema(request=request, public=self.serve_public)
 
         data["tags"] = render_tags(request, conf.settings.APP_NAME)
-        data['components']['securitySchemes'] = {
-            k: v for k, v in data['components']['securitySchemes'].items()
-            if k in ['JWT', 'OAuth2', 'Token', 'TokenBasic']
+        data["components"]["securitySchemes"] = {
+            k: v
+            for k, v in data["components"]["securitySchemes"].items()
+            if k in ["JWT", "OAuth2", "Token", "TokenBasic"]
         }
         data["info"] = dict(
             description=render_schema_description(conf.settings.APP_NAME),
@@ -34,15 +39,16 @@ class ShippingOpenAPIView(SpectacularAPIView):
 
         return Response(
             data=data,
-            headers={"Content-Disposition": f'inline; filename="{self._get_filename(request, version)}"'}
+            headers={
+                "Content-Disposition": f'inline; filename="{self._get_filename(request, version)}"'
+            },
         )
 
 
 urlpatterns = [
     path(settings.OPEN_API_PATH, RedocView, name="schema-rapi"),
-    path('shipping-openapi', ShippingOpenAPIView.as_view(), name='shipping-openapi'),
+    path("shipping-openapi", ShippingOpenAPIView.as_view(), name="shipping-openapi"),
 ]
-
 
 
 def render_schema_description(APP_NAME):
@@ -134,7 +140,7 @@ API requests without authentication will also fail.
 
 
 def render_reference_descriptions(request):
-    refs = dataunits.contextual_reference(reduced=False)
+    refs = dataunits.contextual_reference(request, reduced=False)
 
     def format_preset(preset: dict):
         vals = [
@@ -283,4 +289,3 @@ def render_tags(request, APP_NAME):
             },
         ]
     )
-

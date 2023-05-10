@@ -28,7 +28,15 @@ class Client(TenantMixin):
     def __str__(self):
         return self.name
 
+    @property
+    def object_type(self):
+        return "tenant"
+
 
 class Domain(DomainMixin):
     def __str__(self):
         return self.domain
+
+    @property
+    def object_type(self):
+        return "domain"

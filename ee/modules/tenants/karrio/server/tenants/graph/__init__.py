@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
 import karrio.server.graph.views as views
-import karrio.server.admin.schema as schema
+import karrio.server.tenants.graph.schema as schema
 
 
 urlpatterns = [

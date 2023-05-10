@@ -2,11 +2,12 @@ import typing
 import datetime
 import strawberry
 from django.urls import reverse
+import karrio.server.user.admin as user_admin
 
 import karrio.server.graph.utils as utils
 import karrio.server.tenants.models as models
 import karrio.server.tenants.filters as filters
-import karrio.server.admin.schemas.tenants.inputs as inputs
+import karrio.server.tenants.graph.schema.inputs as inputs
 
 
 @strawberry.type
@@ -30,7 +31,7 @@ class TenantType:
 
     @strawberry.field
     def domains(self: models.Client, info) -> typing.List[DomainType]:
-        return self.domains.all()
+        return self.domains.all().order_by("-is_primary")
 
     @strawberry.field
     def api_domains(self: models.Client, info) -> typing.Optional[typing.List[str]]:
@@ -45,7 +46,7 @@ class TenantType:
                 if domain in d.domain
                 else uri.replace(host, d.domain)
             )
-            for d in self.domains.all().order_by("is_primary")
+            for d in self.domains.all().order_by("-is_primary")
         ]
 
     @staticmethod
