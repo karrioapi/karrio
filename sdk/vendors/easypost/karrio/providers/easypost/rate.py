@@ -87,7 +87,7 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
             reference=payload.reference,
             to_address=easypost.Address(
                 company=recipient.company_name,
-                street1=lib.text(recipient.street_number, recipient.address_line1),
+                street1=recipient.street,
                 street2=recipient.address_line2,
                 city=recipient.city,
                 state=recipient.state_code,
@@ -102,7 +102,7 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
             ),
             from_address=easypost.Address(
                 company=shipper.company_name,
-                street1=lib.text(shipper.street_number, shipper.address_line1),
+                street1=shipper.street,
                 street2=shipper.address_line2,
                 city=shipper.city,
                 state=shipper.state_code,

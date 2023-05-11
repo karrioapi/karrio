@@ -72,7 +72,7 @@ def validate_pickup_request(
                 StreetName=lib.text(address.address_line1),
                 StreetType=None,
                 StreetDirection=None,
-                Suite=address.suite,
+                Suite=None,
                 Floor=None,
                 StreetAddress2=lib.text(address.address_line2),
                 StreetAddress3=None,

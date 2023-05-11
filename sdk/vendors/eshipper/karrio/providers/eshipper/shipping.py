@@ -196,7 +196,7 @@ def shipping_request(
                 phone=shipper.phone_number,
                 tailgateRequired=None,
                 residential=shipper.residential,
-                address1=lib.text(shipper.street_number, shipper.address_line1),
+                address1=shipper.street,
                 address2=lib.text(shipper.address_line2),
                 city=shipper.city,
                 state=shipper.state_code,
@@ -213,7 +213,7 @@ def shipping_request(
                 phone=recipient.phone_number,
                 tailgateRequired=None,
                 residential=recipient.residential,
-                address1=lib.text(recipient.street_number, recipient.address_line1),
+                address1=recipient.street,
                 address2=lib.text(recipient.address_line2),
                 city=recipient.city,
                 state=recipient.state_code,
@@ -226,9 +226,7 @@ def shipping_request(
                     CODReturnAddress=CODReturnAddressType(
                         codCompany=recipient.company_name,
                         codName=recipient.person_name,
-                        codAddress1=lib.text(
-                            recipient.street_number, recipient.address_line1
-                        ),
+                        codAddress1=recipient.street,
                         codCity=recipient.city,
                         codStateCode=recipient.state_code,
                         codZip=recipient.postal_code,

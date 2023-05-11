@@ -120,7 +120,7 @@ ShipmentRequestXML = """<eVSGXGGetLabelRequest USERID="username" PASSWORD="passw
     <FromPhone>1234567890</FromPhone>
     <ToLastName>John</ToLastName>
     <ToFirm>Coffee Five</ToFirm>
-    <ToAddress1>R. da Quitanda, 86 - quiosque 01</ToAddress1>
+    <ToAddress1>01 R. da Quitanda, 86 - quiosque</ToAddress1>
     <ToPostalCode>29440</ToPostalCode>
     <ToPhone>8005554526</ToPhone>
     <ToDPID>000</ToDPID>

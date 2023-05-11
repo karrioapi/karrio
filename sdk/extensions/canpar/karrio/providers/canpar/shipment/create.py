@@ -68,6 +68,8 @@ def shipment_request(
 def _process_shipment(
     payload: models.ShipmentRequest, settings: provider_utils.Settings
 ) -> lib.Job:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     service_type = provider_units.Service.map(payload.service).value_or_key
     packages = lib.to_packages(payload.parcels)
     options = lib.to_shipping_options(
@@ -89,22 +91,19 @@ def _process_shipment(
                 shipment=Shipment(
                     cod_type=options.canpar_cash_on_delivery.state,
                     delivery_address=Address(
-                        address_line_1=lib.text(
-                            payload.recipient.street_number,
-                            payload.recipient.address_line1,
-                        ),
-                        address_line_2=payload.recipient.address_line2,
+                        address_line_1=recipient.street,
+                        address_line_2=recipient.address_line2,
                         address_line_3=None,
-                        attention=payload.recipient.person_name,
-                        city=payload.recipient.city,
-                        country=payload.recipient.country_code,
-                        email=payload.recipient.email,
+                        attention=recipient.person_name,
+                        city=recipient.city,
+                        country=recipient.country_code,
+                        email=recipient.email,
                         extension=None,
-                        name=payload.recipient.company_name,
-                        phone=payload.recipient.phone_number,
-                        postal_code=payload.recipient.postal_code,
-                        province=payload.recipient.state_code,
-                        residential=payload.recipient.residential,
+                        name=recipient.company_name,
+                        phone=recipient.phone_number,
+                        postal_code=recipient.postal_code,
+                        province=recipient.state_code,
+                        residential=recipient.residential,
                     ),
                     description=None,
                     dg=options.canpar_dangerous_goods.state,
@@ -134,27 +133,25 @@ def _process_shipment(
                         for pkg in packages
                     ],
                     pickup_address=Address(
-                        address_line_1=lib.text(
-                            payload.shipper.street_number, payload.shipper.address_line1
-                        ),
-                        address_line_2=payload.shipper.address_line2,
+                        address_line_1=shipper.street,
+                        address_line_2=shipper.address_line2,
                         address_line_3=None,
-                        attention=payload.shipper.person_name,
-                        city=payload.shipper.city,
-                        country=payload.shipper.country_code,
-                        email=payload.shipper.email,
+                        attention=shipper.person_name,
+                        city=shipper.city,
+                        country=shipper.country_code,
+                        email=shipper.email,
                         extension=None,
-                        name=payload.shipper.company_name,
-                        phone=payload.shipper.phone_number,
-                        postal_code=payload.shipper.postal_code,
-                        province=payload.shipper.state_code,
-                        residential=payload.shipper.residential,
+                        name=shipper.company_name,
+                        phone=shipper.phone_number,
+                        postal_code=shipper.postal_code,
+                        province=shipper.state_code,
+                        residential=shipper.residential,
                     ),
                     premium=provider_units.ShippingOption.is_premium(options),
                     proforma=None,
                     reported_weight_unit=provider_units.WeightUnit.LB.value,
-                    send_email_to_delivery=payload.recipient.email,
-                    send_email_to_pickup=payload.shipper.email,
+                    send_email_to_delivery=recipient.email,
+                    send_email_to_pickup=shipper.email,
                     service_type=service_type,
                     shipper_num=None,
                     shipping_date=shipping_date,

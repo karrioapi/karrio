@@ -53,34 +53,32 @@ def _extract_details(
 
 
 def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
     options = lib.to_shipping_options(payload.options)
     services = lib.to_services(payload.services, provider_units.Service)
 
     request = amazon.RateRequest(
         shipFrom=amazon.Ship(
-            name=payload.shipper.person_name,
-            city=payload.shipper.city,
-            addressLine1=lib.text(
-                payload.shipper.street_number, payload.shipper.address_line1
-            ),
-            addressLine2=payload.shipper.address_line2,
-            stateOrRegion=payload.shipper.state_code,
-            email=payload.shipper.email,
-            copyEmails=lib.join(payload.shipper.email),
-            phoneNumber=payload.shipper.phone_number,
+            name=shipper.person_name,
+            city=shipper.city,
+            addressLine1=shipper.street,
+            addressLine2=shipper.address_line2,
+            stateOrRegion=shipper.state_code,
+            email=shipper.email,
+            copyEmails=lib.join(shipper.email),
+            phoneNumber=shipper.phone_number,
         ),
         shipTo=amazon.Ship(
-            name=payload.recipient.person_name,
-            city=payload.recipient.city,
-            addressLine1=lib.text(
-                payload.recipient.street_number, payload.recipient.address_line1
-            ),
-            addressLine2=payload.recipient.address_line2,
-            stateOrRegion=payload.recipient.state_code,
-            email=payload.recipient.email,
-            copyEmails=lib.join(payload.recipient.email),
-            phoneNumber=payload.recipient.phone_number,
+            name=recipient.person_name,
+            city=recipient.city,
+            addressLine1=recipient.street,
+            addressLine2=recipient.address_line2,
+            stateOrRegion=recipient.state_code,
+            email=recipient.email,
+            copyEmails=lib.join(recipient.email),
+            phoneNumber=recipient.phone_number,
         ),
         serviceTypes=list(services),
         shipDate=lib.fdatetime(

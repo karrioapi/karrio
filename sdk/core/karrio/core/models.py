@@ -5,14 +5,6 @@ from jstruct import JList, JStruct, REQUIRED
 
 
 @attr.s(auto_attribs=True)
-class AddressExtra:
-    street_name: str = None
-    street_type: str = None
-    suburb: str = None
-    suite: str = None
-
-
-@attr.s(auto_attribs=True)
 class Address:
     """shipping party (contact and address) data type."""
 
@@ -34,8 +26,6 @@ class Address:
 
     federal_tax_id: str = None
     state_tax_id: str = None
-
-    extra: AddressExtra = JStruct[AddressExtra]
 
 
 @attr.s(auto_attribs=True)

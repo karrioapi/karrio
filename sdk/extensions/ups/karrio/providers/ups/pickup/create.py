@@ -118,7 +118,7 @@ def _create_pickup_request(payload: PickupRequest, settings: Settings) -> Serial
                 CompanyName=address.company_name,
                 ContactName=address.person_name,
                 AddressLine=lib.join(
-                    lib.text(address.street_number, address.address_line1),
+                    address.street,
                     address.address_line2,
                 ),
                 Room=None,

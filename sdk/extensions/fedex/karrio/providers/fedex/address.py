@@ -102,7 +102,7 @@ def address_validation_request(
                     else None,
                     Address=FedexAddress(
                         StreetLines=lib.join(
-                            lib.text(address.street_number, address.address_line1),
+                            address.street,
                             address.address_line2,
                         ),
                         City=address.city,

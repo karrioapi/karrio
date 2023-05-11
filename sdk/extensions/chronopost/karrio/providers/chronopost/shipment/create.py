@@ -68,9 +68,7 @@ def shipment_request(
                 headerValue=settings.header_value,
                 shipperValue=(
                     chronopost.shipperValue(
-                        shipperAdress1=lib.text(
-                            shipper.street_number, shipper.address_line1
-                        ),
+                        shipperAdress1=shipper.street,
                         shipperAdress2=shipper.address_line2,
                         shipperCity=shipper.city,
                         shipperContactName=shipper.person_name,
@@ -86,9 +84,7 @@ def shipment_request(
                     ),
                 ),
                 customerValue=chronopost.customerValue(
-                    customerAdress1=lib.text(
-                        recipient.street_number, recipient.address_line1
-                    ),
+                    customerAdress1=recipient.street,
                     customerAdress2=recipient.address_line2,
                     customerCity=recipient.city,
                     customerContactName=recipient.person_name,
@@ -105,9 +101,7 @@ def shipment_request(
                 ),
                 recipientValue=(
                     chronopost.recipientValue(
-                        recipientAdress1=lib.text(
-                            recipient.street_number, recipient.address_line1
-                        ),
+                        recipientAdress1=recipient.street,
                         recipientAdress2=recipient.address_line2,
                         recipientCity=recipient.city,
                         recipientContactName=recipient.person_name,

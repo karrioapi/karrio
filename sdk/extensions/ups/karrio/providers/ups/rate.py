@@ -128,7 +128,7 @@ def rate_request(
                 ShipperNumber=settings.account_number,
                 Address=ups.ShipAddressType(
                     AddressLine=lib.join(
-                        lib.text(shipper.street_number, shipper.address_line1),
+                        shipper.street,
                         shipper.address_line2,
                     ),
                     City=shipper.city,
@@ -141,7 +141,7 @@ def rate_request(
                 Name=recipient.company_name,
                 Address=ups.ShipToAddressType(
                     AddressLine=lib.join(
-                        lib.text(recipient.street_number, recipient.address_line1),
+                        recipient.street,
                         recipient.address_line2,
                     ),
                     City=recipient.city,

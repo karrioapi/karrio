@@ -1109,9 +1109,6 @@ class ComputedAddress(models.Address):
         if item == "street_number":
             return self._compute_street_number()
 
-        if item == "address_line1":
-            return self._compute_address_line1()
-
         if hasattr(self.address, item):
             return getattr(self.address, item)
 
@@ -1128,6 +1125,33 @@ class ComputedAddress(models.Address):
     @property
     def address_lines(self) -> str:
         return self._compute_address_line(join=False)
+
+    @property
+    def street(self) -> typing.Optional[str]:
+        return typing.cast(
+            str,
+            utils.SF.concat_str(
+                self.street_number,
+                self.street_name,
+                join=True,
+            ),
+        )
+
+    @property
+    def street_name(self) -> typing.Optional[str]:
+        """The address line 1 without the street number"""
+        return typing.cast(
+            str,
+            utils.SF.concat_str(
+                *[
+                    _
+                    for _ in self.address.address_line1.split(" ")
+                    if _ != self.street_number
+                ],
+                join=True,
+            ),
+        )
+        return self.address.address_line1.replace(self.street_number, "").strip()
 
     @property
     def tax_id(self) -> typing.Optional[str]:
@@ -1155,45 +1179,24 @@ class ComputedAddress(models.Address):
         return any([self.address.federal_tax_id, self.address.state_tax_id])
 
     @property
-    def suite(self) -> typing.Optional[str]:
-        return getattr(self.address.extra, "suite", None)
-
-    @property
     def contact(self) -> typing.Optional[str]:
         return getattr(self.address, "person_name", None) or getattr(
             self.address, "company_name", None
         )
 
-    @property
-    def street_name(self) -> typing.Optional[str]:
-        return getattr(self.address.extra, "street_name", None)
-
-    @property
-    def street_type(self) -> typing.Optional[str]:
-        return getattr(self.address.extra, "street_type", None)
-
     def _compute_address_line(self, join: bool = True) -> typing.Optional[str]:
         if any(
             [
-                self.address.street_number,
-                self.address.address_line1,
-                self.address.address_line2,
+                self.street_number,
+                self.street_name,
+                self.address_line2,
             ]
         ):
             return utils.SF.concat_str(
-                self.address.street_number,
-                self.address.address_line1,
-                self.address.address_line2,
+                self.street_number,
+                self.street_name,
+                self.address_line2,
                 join=join,
-            )  # type:ignore
-
-        if self.address.extra is not None:
-            return utils.SF.concat_str(
-                self.address.extra.suite,
-                self.address.street_number,
-                self.address.extra.street_name,
-                self.address.extra.street_type,
-                join=True,
             )  # type:ignore
 
         return None
@@ -1201,22 +1204,16 @@ class ComputedAddress(models.Address):
     def _compute_street_number(self):
         _value = getattr(self.address, "street_number", None)
 
-        return (
-            _value
-            if any(_value or "")
-            # find word with digits in it if street number is not explicitly defined
-            else next(
-                (
-                    word
-                    for word in self.address.address_line1.split(" ")
-                    if any(_.isdigit() for _ in word)
-                ),
-                None,
-            )
-        )
+        if _value is None:
+            words = self.address.address_line1.split(" ")
 
-    def _compute_address_line1(self):
-        return self.address.address_line1.replace(self.street_number, "").strip()
+            if any(_.isdigit() for _ in words[0]):
+                return words[0]
+
+            if any(_.isdigit() for _ in words[-1]):
+                return words[-1]
+
+        return _value
 
 
 class ComputedDocumentFile(models.DocumentFile):

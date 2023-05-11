@@ -95,6 +95,7 @@ shipment_data = {
         "company_name": "Janek",
         "person_name": "3e General Partnership",
         "address_line1": "9 Lesna",
+        "address_line2": "59",
         "street_number": "9",
         "city": "Wawa",
         "postal_code": "00909",
@@ -102,12 +103,12 @@ shipment_data = {
         "phone_number": "123456789",
         "email": "testomir@gmail.pl",
         "residential": True,
-        "extra": {"suite": "59"},
     },
     "recipient": {
         "company_name": "Me",
         "person_name": "3e General Partnership",
         "address_line1": "Lesna",
+        "address_line2": "59",
         "street_number": "9",
         "city": "Wawa",
         "postal_code": "00001",
@@ -115,7 +116,6 @@ shipment_data = {
         "phone_number": "123456789",
         "email": "testomir@gmail.pl",
         "residential": False,
-        "extra": {"suite": "59"},
     },
     "parcels": [
         {
@@ -136,6 +136,7 @@ interantional_shipment_data = {
     "recipient": {
         "company_name": "CGI",
         "address_line1": "23 jardin private",
+        "address_line2": "59",
         "street_number": "23",
         "city": "Ottawa",
         "postal_code": "k1k 4t3",

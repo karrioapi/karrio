@@ -257,6 +257,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
             <PhoneNumber>506-851-2271</PhoneNumber>
             <Email>c_orlander@gc.ca</Email>
         </Contact>
+        <StreetName>Business Park Central 13th Floor The IBM Place</StreetName>
         <StreetNumber>9</StreetNumber>
     </Consignee>
     <Commodity>
@@ -333,6 +334,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
             <PhoneNumber>1 23 8613402</PhoneNumber>
             <Email>test@email.com</Email>
         </Contact>
+        <StreetName>850925434 Drive</StreetName>
         <StreetNumber>238</StreetNumber>
     </Shipper>
     <SpecialService>

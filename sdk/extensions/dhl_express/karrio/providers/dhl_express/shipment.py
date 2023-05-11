@@ -134,8 +134,8 @@ def shipment_request(
         ),
         Consignee=dhl.Consignee(
             CompanyName=recipient.company_name or "N/A",
-            SuiteDepartmentName=recipient.suite,
-            AddressLine1=lib.text(recipient.street_number, recipient.address_line1),
+            SuiteDepartmentName=None,
+            AddressLine1=recipient.street,
             AddressLine2=lib.text(recipient.address_line2),
             AddressLine3=None,
             City=recipient.city,
@@ -358,9 +358,9 @@ def shipment_request(
         Shipper=dhl.Shipper(
             ShipperID=settings.account_number or "N/A",
             CompanyName=shipper.company_name or "N/A",
-            SuiteDepartmentName=shipper.suite,
+            SuiteDepartmentName=None,
             RegisteredAccount=settings.account_number,
-            AddressLine1=lib.text(shipper.street_number, shipper.address_line1),
+            AddressLine1=shipper.street,
             AddressLine2=lib.join(shipper.address_line2, join=True),
             AddressLine3=None,
             City=shipper.city,

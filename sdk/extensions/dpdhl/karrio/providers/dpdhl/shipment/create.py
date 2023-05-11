@@ -227,7 +227,7 @@ def shipment_request(
                                     name3=None,
                                 ),
                                 Address=dpdhl.NativeAddressTypeNew(
-                                    streetName=shipper.address_line1,
+                                    streetName=shipper.street_name,
                                     streetNumber=shipper.street_number,
                                     addressAddition=None,
                                     dispatchingInformation=None,
@@ -259,7 +259,7 @@ def shipment_request(
                                     ),
                                     name3=None,
                                     streetName=(
-                                        recipient.address_line1
+                                        recipient.street_name
                                         if (options.dpdhl_packstation.state is None)
                                         else "Packstation"
                                     ),

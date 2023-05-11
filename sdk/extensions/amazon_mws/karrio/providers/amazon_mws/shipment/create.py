@@ -53,32 +53,30 @@ def _extract_details(
 
 
 def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     packages = lib.to_packages(payload.parcels)
     options = lib.to_shipping_options(payload.options)
 
     request = amazon.PurchaseShipmentRequest(
         clientReferenceId=payload.reference or payload.id,
         shipFrom=amazon.Ship(
-            name=payload.shipper.person_name,
-            city=payload.shipper.city,
-            addressLine1=lib.text(
-                payload.shipper.street_number, payload.shipper.address_line1
-            ),
-            addressLine2=payload.shipper.address_line2,
-            stateOrRegion=payload.shipper.state_code,
-            email=payload.shipper.email,
-            phoneNumber=payload.shipper.phone_number,
+            name=shipper.person_name,
+            city=shipper.city,
+            addressLine1=shipper.street,
+            addressLine2=shipper.address_line2,
+            stateOrRegion=shipper.state_code,
+            email=shipper.email,
+            phoneNumber=shipper.phone_number,
         ),
         shipTo=amazon.Ship(
-            name=payload.recipient.person_name,
-            city=payload.recipient.city,
-            addressLine1=lib.text(
-                payload.recipient.street_number, payload.recipient.address_line1
-            ),
-            addressLine2=payload.recipient.address_line2,
-            stateOrRegion=payload.recipient.state_code,
-            email=payload.recipient.email,
-            phoneNumber=payload.recipient.phone_number,
+            name=recipient.person_name,
+            city=recipient.city,
+            addressLine1=recipient.street,
+            addressLine2=recipient.address_line2,
+            stateOrRegion=recipient.state_code,
+            email=recipient.email,
+            phoneNumber=recipient.phone_number,
         ),
         shipDate=lib.fdatetime(options.shipment_date.state, "%Y-%m-%d"),
         serviceType=provider_units.Service.map(payload.service).name_or_key,

@@ -47,10 +47,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
                     comments=payload.instruction,
                     created_by=address.person_name,
                     pickup_address=Address(
-                        address_line_1=lib.text(
-                            address.street_number, address.address_line1
-                        )
-                        or "",
+                        address_line_1=address.street,
                         address_line_2=address.address_line2,
                         address_line_3=None,
                         attention=address.person_name,

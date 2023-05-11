@@ -272,10 +272,7 @@ def shipment_request(
                                             destinationCountryRegistration=None,
                                         ),
                                         commercialInvoiceConsignor=dpd.address(
-                                            name1=(
-                                                shipper.person_name
-                                                or shipper.company_name
-                                            ),
+                                            name1=shipper.contact,
                                             name2=shipper.company_name,
                                             street=shipper.address_line1,
                                             houseNo=shipper.street_number,

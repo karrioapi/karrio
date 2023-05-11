@@ -69,6 +69,8 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     service = provider_units.ServiceType.map(payload.service).value_or_key
     package = lib.to_packages(
         payload.parcels,
@@ -80,8 +82,7 @@ def shipment_request(
         options=payload.options,
         package_options=package.options,
         is_international=(
-            payload.recipient.country_code is not None
-            and payload.recipient.country_code != "CA"
+            recipient.country_code is not None and recipient.country_code != "CA"
         ),
         initializer=provider_units.shipping_options_initializer,
     )
@@ -98,7 +99,7 @@ def shipment_request(
         quickship_label_requested=None,
         cpc_pickup_indicator=None,
         requested_shipping_point=provider_utils.format_ca_postal_code(
-            payload.shipper.postal_code
+            shipper.postal_code
         ),
         shipping_point_id=None,
         expected_mailing_date=options.shipment_date.state,
@@ -107,38 +108,34 @@ def shipment_request(
         delivery_spec=DeliverySpecType(
             service_code=service,
             sender=SenderType(
-                name=payload.shipper.person_name,
-                company=(payload.shipper.company_name or "Not Applicable"),
-                contact_phone=(payload.shipper.phone_number or "000 000 0000"),
+                name=shipper.person_name,
+                company=(shipper.company_name or "Not Applicable"),
+                contact_phone=(shipper.phone_number or "000 000 0000"),
                 address_details=AddressDetailsType(
-                    city=payload.shipper.city,
-                    prov_state=payload.shipper.state_code,
-                    country_code=payload.shipper.country_code,
+                    city=shipper.city,
+                    prov_state=shipper.state_code,
+                    country_code=shipper.country_code,
                     postal_zip_code=provider_utils.format_ca_postal_code(
-                        payload.shipper.postal_code
+                        shipper.postal_code
                     ),
-                    address_line_1=lib.text(
-                        payload.shipper.street_number, payload.shipper.address_line1
-                    ),
-                    address_line_2=lib.text(payload.shipper.address_line2),
+                    address_line_1=shipper.street,
+                    address_line_2=lib.text(shipper.address_line2),
                 ),
             ),
             destination=DestinationType(
-                name=payload.recipient.person_name,
-                company=payload.recipient.company_name,
+                name=recipient.person_name,
+                company=recipient.company_name,
                 additional_address_info=None,
-                client_voice_number=payload.recipient.phone_number or "000 000 0000",
+                client_voice_number=recipient.phone_number or "000 000 0000",
                 address_details=DestinationAddressDetailsType(
-                    city=payload.recipient.city,
-                    prov_state=payload.recipient.state_code,
-                    country_code=payload.recipient.country_code,
+                    city=recipient.city,
+                    prov_state=recipient.state_code,
+                    country_code=recipient.country_code,
                     postal_zip_code=provider_utils.format_ca_postal_code(
-                        payload.recipient.postal_code
+                        recipient.postal_code
                     ),
-                    address_line_1=lib.text(
-                        payload.recipient.street_number, payload.recipient.address_line1
-                    ),
-                    address_line_2=lib.text(payload.recipient.address_line2),
+                    address_line_1=recipient.street,
+                    address_line_2=lib.text(recipient.address_line2),
                 ),
             ),
             parcel_characteristics=ParcelCharacteristicsType(
@@ -168,15 +165,13 @@ def shipment_request(
             ),
             notification=(
                 NotificationType(
-                    email=(
-                        options.email_notification_to.state or payload.recipient.email
-                    ),
+                    email=(options.email_notification_to.state or recipient.email),
                     on_shipment=True,
                     on_exception=True,
                     on_delivery=True,
                 )
                 if options.email_notification.state
-                and any([options.email_notification_to.state, payload.recipient.email])
+                and any([options.email_notification_to.state, recipient.email])
                 else None
             ),
             print_preferences=PrintPreferencesType(
@@ -217,11 +212,9 @@ def shipment_request(
                                     customs_value_per_unit=item.value_amount,
                                     customs_unit_of_measure=None,
                                     country_of_origin=(
-                                        item.origin_country
-                                        or payload.shipper.country_code
+                                        item.origin_country or shipper.country_code
                                     ),
-                                    province_of_origin=payload.shipper.state_code
-                                    or "N/B",
+                                    province_of_origin=shipper.state_code or "N/B",
                                 )
                                 for item in customs.commodities
                             ]

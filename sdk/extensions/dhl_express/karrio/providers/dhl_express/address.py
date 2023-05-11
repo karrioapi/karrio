@@ -63,7 +63,7 @@ def address_validation_request(
         ),
         RegionCode=CountryRegion[payload.address.country_code].value,
         RequestType=RequestType.D.value,
-        Address1=lib.text(address.street_number, address.address_line1),
+        Address1=address.street,
         Address2=address.address_line2,
         Address3=None,
         PostalCode=payload.address.postal_code,

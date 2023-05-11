@@ -196,7 +196,7 @@ PickupValidationRequestXML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoa
             <v1:Address>
                 <v1:Name>John Doe</v1:Name>
                 <v1:Company>Jim Duggan</v1:Company>
-                <v1:StreetNumber></v1:StreetNumber>
+                <v1:StreetNumber>2271</v1:StreetNumber>
                 <v1:StreetName>2271 Herring Cove</v1:StreetName>
                 <v1:City>Halifax</v1:City>
                 <v1:Province>NS</v1:Province>
@@ -242,7 +242,7 @@ PickupRequestXML = """<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap
             <v1:Address>
                 <v1:Name>John Doe</v1:Name>
                 <v1:Company>Jim Duggan</v1:Company>
-                <v1:StreetNumber></v1:StreetNumber>
+                <v1:StreetNumber>2271</v1:StreetNumber>
                 <v1:StreetName>2271 Herring Cove</v1:StreetName>
                 <v1:City>Halifax</v1:City>
                 <v1:Province>NS</v1:Province>

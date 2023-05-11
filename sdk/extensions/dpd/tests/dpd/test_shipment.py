@@ -190,6 +190,7 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                         <name1>Senders NV</name1>
                         <name2>Jan Janssens</name2>
                         <street>Egide Walschaertsstraat 20</street>
+                        <houseNo>20</houseNo>
                         <country>BE</country>
                         <zipCode>2800</zipCode>
                         <city>Mechelen</city>
@@ -199,6 +200,7 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                     <recipient>
                         <name1>Receivers NV</name1>
                         <street>Teststraat 5</street>
+                        <houseNo>5</houseNo>
                         <country>BE</country>
                         <zipCode>2800</zipCode>
                         <city>Mechelen</city>
@@ -240,6 +242,7 @@ MultiPieceShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.x
                         <name1>Senders NV</name1>
                         <name2>Jan Janssens</name2>
                         <street>Egide Walschaertsstraat 20</street>
+                        <houseNo>20</houseNo>
                         <country>BE</country>
                         <zipCode>2800</zipCode>
                         <city>Mechelen</city>
@@ -249,6 +252,7 @@ MultiPieceShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.x
                     <recipient>
                         <name1>Receivers NV</name1>
                         <street>Teststraat 5</street>
+                        <houseNo>5</houseNo>
                         <country>BE</country>
                         <zipCode>2800</zipCode>
                         <city>Mechelen</city>
@@ -295,6 +299,7 @@ IntlShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap
                         <name1>Senders NV</name1>
                         <name2>Jan Janssens</name2>
                         <street>Egide Walschaertsstraat 20</street>
+                        <houseNo>20</houseNo>
                         <country>BE</country>
                         <zipCode>2800</zipCode>
                         <city>Mechelen</city>
@@ -335,6 +340,7 @@ IntlShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap
                             <name1>Senders NV</name1>
                             <name2>Jan Janssens</name2>
                             <street>Egide Walschaertsstraat 20</street>
+                            <houseNo>20</houseNo>
                             <country>BE</country>
                             <zipCode>2800</zipCode>
                             <city>Mechelen</city>
@@ -345,6 +351,7 @@ IntlShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap
                             <name1>Senders NV</name1>
                             <name2>Jan Janssens</name2>
                             <street>Egide Walschaertsstraat 20</street>
+                            <houseNo>20</houseNo>
                             <country>BE</country>
                             <zipCode>2800</zipCode>
                             <city>Mechelen</city>

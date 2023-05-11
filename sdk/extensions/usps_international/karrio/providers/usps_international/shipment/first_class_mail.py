@@ -75,7 +75,7 @@ def shipment_request(
         FromLastName=shipper.person_name,
         FromFirm=shipper.company_name or "N/A",
         FromAddress1=shipper.address_line2,
-        FromAddress2=lib.text(shipper.street_number, shipper.address_line1),
+        FromAddress2=shipper.street,
         FromUrbanization=None,
         FromCity=shipper.city,
         FromZip5=lib.to_zip5(shipper.postal_code),
@@ -86,7 +86,7 @@ def shipment_request(
         ToLastName=recipient.person_name,
         ToFirm=recipient.company_name or "N/A",
         ToAddress1=recipient.address_line2,
-        ToAddress2=lib.text(recipient.street_number, recipient.address_line1),
+        ToAddress2=recipient.street,
         ToAddress3=None,
         ToCity=recipient.city,
         ToProvince=lib.to_state_name(
