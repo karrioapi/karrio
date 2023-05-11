@@ -41,9 +41,7 @@ def _extract_quote(
 ) -> models.RateDetails:
     is_document = ctx.get("is_document", False)
     is_international = ctx.get("is_international", False)
-    service = provider_units.ShippingService.map(
-        quote.GlobalProductCode if is_international else quote.LocalProductCode,
-    )
+    service = provider_units.ShippingService.map(quote.GlobalProductCode)
     invalid_service = (
         not is_international and service.name_or_key.endswith("_nondoc")
     ) or (is_international and not is_document and service.name_or_key.endswith("_doc"))
