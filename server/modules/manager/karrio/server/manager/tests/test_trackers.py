@@ -5,6 +5,7 @@ from django.urls import reverse
 from rest_framework import status
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
+import karrio.server.manager.models as models
 
 
 class TestTrackers(APITestCase):
@@ -38,6 +39,49 @@ class TestTrackers(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertDictEqual(response_data, TRACKING_RESPONSE)
         self.assertEqual(len(self.user.tracking_set.all()), 1)
+
+
+class TestTrackersUpdate(APITestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.tracker = models.Tracking.objects.create(
+            **{
+                "tracking_number": "00340434292135100124",
+                "test_mode": True,
+                "delivered": False,
+                "events": [
+                    {
+                        "date": "2021-01-11",
+                        "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
+                        "location": "BONN",
+                        "code": "pre-transit",
+                        "time": "20:34",
+                    }
+                ],
+                "status": "in_transit",
+                "created_by": self.user,
+                "tracking_carrier": self.dhl_carrier,
+                "info": {
+                    "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=00340434292135100124",
+                    "package_weight": 0.74,
+                    "package_weight_unit": "KG",
+                    "shipping_date": "2021-01-11",
+                },
+            }
+        )
+
+    def test_update_tracker_info(self):
+        url = reverse(
+            "karrio.server.manager:tracker-details",
+            kwargs=dict(id_or_tracking_number=self.tracker.pk),
+        )
+        data = dict(info=TRACKING_INFO)
+
+        response = self.client.put(url, data)
+        response_data = json.loads(response.content)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertDictEqual(response_data, UPDATE_TRACKING_RESPONSE)
 
 
 RETURNED_VALUE = (
@@ -108,5 +152,57 @@ TRACKING_RESPONSE = {
         "shipping_date": None,
         "signed_by": None,
         "source": "api",
+    },
+}
+
+TRACKING_INFO = {
+    "shipment_service": "dhl_express_worldwide",
+    "signed_by": "Jane Doe",
+}
+
+UPDATE_TRACKING_RESPONSE = {
+    "id": ANY,
+    "object_type": "tracker",
+    "carrier_name": "dhl_universal",
+    "carrier_id": "dhl_universal",
+    "tracking_number": "00340434292135100124",
+    "events": [
+        {
+            "date": "2021-01-11",
+            "description": "The instruction data for this shipment have been provided by the sender to DHL electronically",
+            "code": "pre-transit",
+            "latitude": None,
+            "location": "BONN",
+            "longitude": None,
+            "time": "20:34",
+        }
+    ],
+    "delivered": False,
+    "test_mode": True,
+    "status": "in_transit",
+    "estimated_delivery": None,
+    "messages": [],
+    "meta": {},
+    "metadata": {},
+    "info": {
+        "carrier_tracking_link": "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id=00340434292135100124",
+        "customer_name": None,
+        "expected_delivery": None,
+        "note": None,
+        "order_date": None,
+        "order_id": None,
+        "package_weight": "0.74",
+        "package_weight_unit": "KG",
+        "shipment_delivery_date": None,
+        "shipment_destination_country": None,
+        "shipment_destination_postal_code": None,
+        "shipment_origin_country": None,
+        "shipment_origin_postal_code": None,
+        "shipment_package_count": None,
+        "shipment_pickup_date": None,
+        "shipment_service": "dhl_express_worldwide",
+        "shipping_date": "2021-01-11",
+        "signed_by": "Jane Doe",
+        "source": None,
     },
 }
