@@ -67,7 +67,10 @@ class CarrierServices(APIView):
                 "carrier_name",
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
-                enum=[c for c, _ in CARRIERS],
+                description=(
+                    "The unique carrier slug. <br/>"
+                    f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+                ),
             )
         ],
         responses={
