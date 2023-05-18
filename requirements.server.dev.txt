@@ -39,9 +39,9 @@ drf-api-tracking==1.8.0
 # -e ./sdk/extensions/yunexpress
 
 # Carrier Hub Extentions in Development
-# -e ./sdk/vendors/easypost
-# -e ./sdk/vendors/eshipper
-# -e ./sdk/vendors/freightcom
+-e ./sdk/vendors/easypost
+-e ./sdk/vendors/eshipper
+-e ./sdk/vendors/freightcom
 
 
 # karrio
@@ -75,9 +75,10 @@ karrio.ups-freight
 # karrio.usps-international
 karrio.yanwen
 karrio.yunexpress
-karrio.easypost
-karrio.eshipper
-karrio.freightcom
+
+# karrio.easypost
+# karrio.eshipper
+# karrio.freightcom
 
 
 # karrio server core modules

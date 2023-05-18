@@ -7,3 +7,4 @@ mypy
 twine
 wheel
 typer[all]
+setuptools

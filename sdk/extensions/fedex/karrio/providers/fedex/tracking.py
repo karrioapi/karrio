@@ -17,10 +17,9 @@ def parse_tracking_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-    track_details = response.xpath(".//*[local-name() = $name]", name="TrackDetails")
     tracking_details = [
         _extract_tracking(track_detail_node, settings)
-        for track_detail_node in track_details
+        for track_detail_node in lib.find_element("TrackDetails", response)
     ]
     return (
         [details for details in tracking_details if details is not None],
