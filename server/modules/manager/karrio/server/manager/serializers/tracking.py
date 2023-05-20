@@ -145,10 +145,10 @@ class TrackingSerializer(TrackingDetails):
                 instance.options = response.tracking.options
                 changes.append("options")
 
-            if info != instance.info:
+            if any(info.keys()) and info != instance.info:
                 instance.info = serializers.process_dictionaries_mutations(
                     ["info"], dict(info=info), instance
-                )
+                )["info"]
                 changes.append("info")
 
             if carrier.id != instance.tracking_carrier.id:

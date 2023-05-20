@@ -41,7 +41,7 @@ def pickup_availability_request(
         ),
         PickupAddress=Address(
             StreetLines=lib.join(
-                lib.text(address.street_number, address.address_line1),
+                address.street,
                 address.address_line2,
             ),
             City=payload.address.city,

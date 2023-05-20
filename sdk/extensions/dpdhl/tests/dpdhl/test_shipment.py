@@ -91,9 +91,10 @@ if __name__ == "__main__":
 ShipmentPayload = {
     "service": "dpdhl_paket",
     "shipper": {
-        "company_name": "Absender Zeile 2",
-        "person_name": "Absender Zeile 1",
-        "address_line1": "Vegesacker Heerstr.",
+        "company_name": "Vegesacker Heerstr.",
+        "person_name": "Kontaktperson Absender",
+        "address_line1": "Absender Zeile 1",
+        "address_line2": "Absender Zeile 2",
         "street_number": "111",
         "city": "Bremen",
         "postal_code": "28757",
@@ -102,10 +103,9 @@ ShipmentPayload = {
         "email": "absender@dhl.local",
     },
     "recipient": {
-        "company_name": "Empfänger Zeile 2",
+        "company_name": "An der Weide",
         "person_name": "Kontaktperson Empfänger",
-        "address_line1": "An der Weide",
-        "street_number": "50a",
+        "address_line1": "50a Empfänger Zeile 1",
         "city": "Bremen",
         "postal_code": "28195",
         "country_code": "DE",
@@ -230,7 +230,7 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                             <cis:name2>Absender Zeile 2</cis:name2>
                         </Name>
                         <Address>
-                            <cis:streetName>Vegesacker Heerstr.</cis:streetName>
+                            <cis:streetName>Absender Zeile 1</cis:streetName>
                             <cis:streetNumber>111</cis:streetNumber>
                             <cis:zip>28757</cis:zip>
                             <cis:city>Bremen</cis:city>
@@ -242,15 +242,14 @@ ShipmentRequest = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org
                         <Communication>
                             <cis:phone>+49421987654321</cis:phone>
                             <cis:email>absender@dhl.local</cis:email>
-                            <cis:contactPerson>Absender Zeile 1</cis:contactPerson>
+                            <cis:contactPerson>Kontaktperson Absender</cis:contactPerson>
                         </Communication>
                     </Shipper>
                     <ShipperReference>Ref. 123456</ShipperReference>
                     <Receiver>
-                        <cis:name1>Kontaktperson Empfänger</cis:name1>
+                        <cis:name1>50a Empfänger Zeile 1</cis:name1>
                         <Address>
-                            <cis:name2>Empfänger Zeile 2</cis:name2>
-                            <cis:streetName>An der Weide</cis:streetName>
+                            <cis:streetName>Empfänger Zeile 1</cis:streetName>
                             <cis:streetNumber>50a</cis:streetNumber>
                             <cis:zip>28195</cis:zip>
                             <cis:city>Bremen</cis:city>

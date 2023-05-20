@@ -134,7 +134,7 @@ ShipmentRequestXML = """<eVSFirstClassMailIntlRequest USERID="username">
     <ToFirstName>John</ToFirstName>
     <ToLastName>John</ToLastName>
     <ToFirm>Coffee Five</ToFirm>
-    <ToAddress2>R. da Quitanda, 86 - quiosque 01</ToAddress2>
+    <ToAddress2>01 R. da Quitanda, 86 - quiosque</ToAddress2>
     <ToCity>Centro</ToCity>
     <ToProvince>Rio de Janeiro</ToProvince>
     <ToCountry>Brazil</ToCountry>

@@ -72,7 +72,7 @@ def address_validation_request(
                 postal_code=payload.address.postal_code or "",
                 province=payload.address.state_code or "",
                 street_direction="",
-                street_name=address.address_line or "",
+                street_name=address.street_name or "",
                 street_num=address.street_number or "",
                 street_type="",
                 user_id=settings.username,

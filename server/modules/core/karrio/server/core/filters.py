@@ -142,7 +142,10 @@ class ShipmentFilters(filters.FilterSet):
             "carrier_name",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
-            enum=[c for c in dataunits.CARRIER_NAMES],
+            description=(
+                "The unique carrier slug. <br/>"
+                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+            ),
         ),
         openapi.OpenApiParameter(
             "reference",
@@ -158,7 +161,10 @@ class ShipmentFilters(filters.FilterSet):
             "status",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
-            enum=[c.value for c in list(serializers.ShipmentStatus)],
+            description=(
+                "Valid shipment status. <br/>"
+                f"Values: {', '.join([f'`{c.value}`' for c in list(serializers.ShipmentStatus)])}"
+            ),
         ),
         openapi.OpenApiParameter(
             "option_key",
@@ -366,13 +372,19 @@ class TrackerFilters(filters.FilterSet):
             "carrier_name",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
-            enum=[c for c in dataunits.CARRIER_NAMES],
+            description=(
+                "The unique carrier slug. <br/>"
+                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+            ),
         ),
         openapi.OpenApiParameter(
             "status",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
-            enum=[c.value for c in list(serializers.TrackerStatus)],
+            description=(
+                "Valid tracker status. <br/>"
+                f"Values: {', '.join([f'`{c.value}`' for c in list(serializers.TrackerStatus)])}"
+            ),
         ),
     ]
 
@@ -397,6 +409,7 @@ class TrackerFilters(filters.FilterSet):
 
 class LogFilter(filters.FilterSet):
     api_endpoint = filters.CharFilter(field_name="path", lookup_expr="icontains")
+    remote_addr = filters.CharFilter(field_name="remote_addr", lookup_expr="exact")
     date_after = filters.DateTimeFilter(field_name="requested_at", lookup_expr="gte")
     date_before = filters.DateTimeFilter(field_name="requested_at", lookup_expr="lte")
     entity_id = filters.CharFilter(field_name="entity_id")

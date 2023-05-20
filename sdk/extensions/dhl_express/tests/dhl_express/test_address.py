@@ -54,8 +54,8 @@ if __name__ == "__main__":
 
 address_validation_data = {
     "address": {
-        "address_line1": "Suit 333",
-        "address_line2": "333 Twin",
+        "address_line1": "333 Twin",
+        "address_line2": "Suit 333",
         "postal_code": "94089",
         "city": "North Dakhota",
         "country_code": "US",
@@ -88,8 +88,8 @@ AddressValidationRequestXML = """<RouteRequest xmlns:ns1="http://www.dhl.com" xm
     </Request>
     <RegionCode>AM</RegionCode>
     <RequestType>D</RequestType>
-    <Address1>Suit 333</Address1>
-    <Address2>333 Twin</Address2>
+    <Address1>333 Twin</Address1>
+    <Address2>Suit 333</Address2>
     <PostalCode>94089</PostalCode>
     <City>North Dakhota</City>
     <Division>California</Division>

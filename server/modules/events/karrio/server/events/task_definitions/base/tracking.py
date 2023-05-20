@@ -171,10 +171,10 @@ def save_updated_trackers(
                         tracker.estimated_delivery = details.estimated_delivery
                         changes.append("estimated_delivery")
 
-                    if info != tracker.info:
+                    if any(info.keys()) and info != tracker.info:
                         tracker.info = serializers.process_dictionaries_mutations(
                             ["info"], dict(info=info), tracker
-                        )
+                        )['info']
                         changes.append("info")
 
                     if any(changes):

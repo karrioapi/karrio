@@ -653,8 +653,8 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
                     shipment_destination_country=shipment.recipient.country_code,
                     shipment_destination_postal_code=shipment.recipient.postal_code,
                     shipment_service=shipment.meta.get("service_name"),
-                    shipping_date=shipment.options.get("shipping_date"),
-                    carrier_tracking_url=utils.get_carrier_tracking_link(
+                    shipping_date=shipment.options.get("shipment_date"),
+                    carrier_tracking_link=utils.get_carrier_tracking_link(
                         carrier, shipment.tracking_number
                     ),
                 ),

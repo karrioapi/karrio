@@ -102,7 +102,7 @@ def shipment_request(
             address=roadie.Address(
                 name=shipper.company_name,
                 store_number=None,
-                street1=lib.text(shipper.street_number, shipper.address_line1),
+                street1=shipper.street,
                 street2=shipper.address_line2,
                 city=shipper.city,
                 state=shipper.state_code,
@@ -117,7 +117,7 @@ def shipment_request(
             address=roadie.Address(
                 name=recipient.company_name,
                 store_number=None,
-                street1=lib.text(recipient.street_number, recipient.address_line1),
+                street1=recipient.street,
                 street2=recipient.address_line2,
                 city=recipient.city,
                 state=recipient.state_code,

@@ -44,6 +44,8 @@ def _extract_shipment(
 
 
 def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     service = provider_units.ServiceType.map(payload.service).value_or_key
     customs = lib.to_customs_info(payload.customs)
     package = lib.to_packages(
@@ -56,8 +58,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         options=payload.options,
         package_options=package.options,
         is_international=(
-            payload.recipient.country_code is not None
-            and payload.recipient.country_code != "CA"
+            recipient.country_code is not None and recipient.country_code != "CA"
         ),
         initializer=provider_units.shipping_options_initializer,
     )
@@ -67,36 +68,32 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         delivery_spec=canadapost.DeliverySpecType(
             service_code=service,
             sender=canadapost.SenderType(
-                name=payload.shipper.person_name,
-                company=payload.shipper.company_name,
-                contact_phone=payload.shipper.phone_number,
+                name=shipper.person_name,
+                company=shipper.company_name,
+                contact_phone=shipper.phone_number,
                 address_details=canadapost.DomesticAddressDetailsType(
-                    address_line_1=lib.text(
-                        payload.shipper.street_number, payload.shipper.address_line1
-                    ),
-                    address_line_2=lib.text(payload.shipper.address_line2),
-                    city=payload.shipper.city,
-                    prov_state=payload.shipper.state_code,
+                    address_line_1=shipper.street,
+                    address_line_2=lib.text(shipper.address_line2),
+                    city=shipper.city,
+                    prov_state=shipper.state_code,
                     postal_zip_code=provider_utils.format_ca_postal_code(
-                        payload.shipper.postal_code
+                        shipper.postal_code
                     ),
                 ),
             ),
             destination=canadapost.DestinationType(
-                name=payload.recipient.person_name,
-                company=payload.recipient.company_name,
+                name=recipient.person_name,
+                company=recipient.company_name,
                 additional_address_info=None,
-                client_voice_number=payload.recipient.phone_number,
+                client_voice_number=recipient.phone_number,
                 address_details=canadapost.DestinationAddressDetailsType(
-                    address_line_1=lib.text(
-                        payload.recipient.street_number, payload.recipient.address_line1
-                    ),
-                    address_line_2=lib.text(payload.recipient.address_line2),
-                    city=payload.recipient.city,
-                    prov_state=payload.recipient.state_code,
-                    country_code=payload.recipient.country_code,
+                    address_line_1=recipient.street,
+                    address_line_2=lib.text(recipient.address_line2),
+                    city=recipient.city,
+                    prov_state=recipient.state_code,
+                    country_code=recipient.country_code,
                     postal_zip_code=provider_utils.format_ca_postal_code(
-                        payload.recipient.postal_code
+                        recipient.postal_code
                     ),
                 ),
             ),
@@ -127,12 +124,12 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
             ),
             notification=(
                 canadapost.NotificationType(
-                    email=options.notification_email.state or payload.recipient.email,
+                    email=options.notification_email.state or recipient.email,
                     on_shipment=True,
                     on_exception=True,
                     on_delivery=True,
                 )
-                if any([options.notification_email.state, payload.recipient.email])
+                if any([options.notification_email.state, recipient.email])
                 else None
             ),
             preferences=canadapost.PreferencesType(
@@ -169,7 +166,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                                 unit_weight=units.WeightUnit.KG.value,
                                 customs_value_per_unit=item.value_amount,
                                 customs_unit_of_measure=None,
-                                country_of_origin=payload.shipper.country_code,
+                                country_of_origin=shipper.country_code,
                                 province_of_origin=None,
                             )
                             for item in customs.commodities or []

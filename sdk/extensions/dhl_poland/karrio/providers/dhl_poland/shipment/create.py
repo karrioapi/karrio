@@ -159,11 +159,9 @@ def shipment_request(
                             name=(shipper.company_name or shipper.person_name),
                             postalCode=(shipper.postal_code or "").replace("-", ""),
                             city=shipper.city,
-                            street=lib.text(
-                                shipper.address_line1, shipper.address_line2
-                            ),
+                            street=shipper.address_line1,
                             houseNumber=(shipper.street_number or "N/A"),
-                            apartmentNumber=shipper.suite,
+                            apartmentNumber=shipper.address_line2,
                         ),
                     ),
                     receiver=dhl.ReceiverAddressat(
@@ -206,11 +204,9 @@ def shipment_request(
                             name=(recipient.company_name or recipient.person_name),
                             postalCode=(recipient.postal_code or "").replace("-", ""),
                             city=recipient.city,
-                            street=lib.text(
-                                recipient.address_line1, recipient.address_line2
-                            ),
+                            street=recipient.address_line1,
                             houseNumber=(shipper.street_number or "N/A"),
-                            apartmentNumber=shipper.suite,
+                            apartmentNumber=recipient.address_line2,
                         ),
                     ),
                     neighbour=None,

@@ -57,8 +57,8 @@ if __name__ == "__main__":
 
 AddressValidationPayload = {
     "address": {
-        "address_line1": "Suit 333",
-        "address_line2": "333 Twin",
+        "address_line1": "333 Twin",
+        "address_line2": "Suit 333",
         "postal_code": "V5E4H9",
         "city": "Burnaby",
         "country_code": "CA",
@@ -94,8 +94,8 @@ AddressValidationRequestXML = """<soap:Envelope xmlns:soap="http://www.w3.org/20
                 <xsd:postal_code>V5E4H9</xsd:postal_code>
                 <xsd:province>BC</xsd:province>
                 <xsd:street_direction></xsd:street_direction>
-                <xsd:street_name>Suit 333 333 Twin</xsd:street_name>
-                <xsd:street_num></xsd:street_num>
+                <xsd:street_name>Twin</xsd:street_name>
+                <xsd:street_num>333</xsd:street_num>
                 <xsd:street_type></xsd:street_type>
                 <xsd:user_id>user_id</xsd:user_id>
                 <xsd:validate_only>true</xsd:validate_only>

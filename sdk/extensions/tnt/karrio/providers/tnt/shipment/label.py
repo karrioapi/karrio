@@ -40,7 +40,7 @@ def create_label_request(
                 collectionDateTime=None,
                 sender=nameAndAddressRequestType(
                     name=recipient.contact,
-                    addressLine1=lib.text(shipper.street_number, shipper.address_line1),
+                    addressLine1=shipper.street,
                     addressLine2=shipper.address_line2,
                     addressLine3=None,
                     town=shipper.city,
@@ -51,9 +51,7 @@ def create_label_request(
                 ),
                 delivery=nameAndAddressRequestType(
                     name=recipient.contact,
-                    addressLine1=lib.text(
-                        recipient.street_number, recipient.address_line1
-                    ),
+                    addressLine1=recipient.street,
                     addressLine2=recipient.address_line2,
                     addressLine3=None,
                     town=recipient.city,

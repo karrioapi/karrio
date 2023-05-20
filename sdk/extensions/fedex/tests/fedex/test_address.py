@@ -49,8 +49,8 @@ if __name__ == "__main__":
 
 address_validation_data = {
     "address": {
-        "address_line1": "Suit 333",
-        "address_line2": "333 Twin",
+        "address_line1": "333 Twin",
+        "address_line2": "Suit 333",
         "postal_code": "94089",
         "city": "North Dakhota",
         "country_code": "US",
@@ -98,8 +98,8 @@ AddressValidationRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap
             </v4:Version>
             <v4:AddressesToValidate>
                 <v4:Address>
-                    <v4:StreetLines>Suit 333</v4:StreetLines>
                     <v4:StreetLines>333 Twin</v4:StreetLines>
+                    <v4:StreetLines>Suit 333</v4:StreetLines>
                     <v4:City>North Dakhota</v4:City>
                     <v4:StateOrProvinceCode>North Dakhota</v4:StateOrProvinceCode>
                     <v4:PostalCode>94089</v4:PostalCode>

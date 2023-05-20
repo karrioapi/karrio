@@ -44,6 +44,10 @@ def model_admin(ext: str, carrier):
                 cost_center = forms.CharField(
                     required=False,
                 )
+            if key == "service_suffix":
+                service_suffix = forms.CharField(
+                    required=False,
+                )
             if key == "language_code":
                 language_code = forms.ChoiceField(
                     choices=[("en", "EN"), ("fr", "FR")],

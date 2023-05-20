@@ -147,7 +147,7 @@ def _shipment_request(
                         StreetName=lib.text(shipper.address_line1),
                         StreetType=None,
                         StreetDirection=None,
-                        Suite=shipper.suite,
+                        Suite=None,
                         Floor=None,
                         StreetAddress2=lib.text(shipper.address_line2),
                         StreetAddress3=None,

@@ -64,7 +64,9 @@ def _extract_details(response: dict, settings: Settings) -> ShipmentDetails:
 
 def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable:
     packages = Packages(payload.parcels)
-    is_international = payload.shipper.country_code != payload.recipient.country_code
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    is_international = shipper.country_code != recipient.country_code
     broker_info = payload.options.get("dicom_broker_info", {})
     importer_info = (
         Address(**payload.options.get("importer_info"))
@@ -83,35 +85,31 @@ def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializab
         paymentType=PaymentType[payment.paid_by or "prepaid"].value,
         billingAccount=settings.billing_account,
         sender=DicomAddress(
-            city=payload.shipper.city,
-            provinceCode=payload.shipper.state_code,
-            postalCode=payload.shipper.postal_code,
-            countryCode=payload.shipper.country_code,
-            customerName=payload.shipper.company_name,
-            addressLine1=lib.text(
-                payload.shipper.street_number, payload.shipper.address_line1
-            ),
-            addressLine2=payload.shipper.address_line2,
+            city=shipper.city,
+            provinceCode=shipper.state_code,
+            postalCode=shipper.postal_code,
+            countryCode=shipper.country_code,
+            customerName=shipper.company_name,
+            addressLine1=shipper.street,
+            addressLine2=shipper.address_line2,
             contact=Contact(
-                fullName=payload.shipper.person_name,
-                email=payload.shipper.email,
-                telephone=payload.shipper.phone_number,
+                fullName=shipper.person_name,
+                email=shipper.email,
+                telephone=shipper.phone_number,
             ),
         ),
         consignee=DicomAddress(
-            city=payload.recipient.city,
-            provinceCode=payload.recipient.state_code,
-            postalCode=payload.recipient.postal_code,
-            countryCode=payload.recipient.country_code,
-            customerName=payload.recipient.company_name,
-            addressLine1=lib.text(
-                payload.recipient.street_number, payload.recipient.address_line1
-            ),
-            addressLine2=payload.recipient.address_line2,
+            city=recipient.city,
+            provinceCode=recipient.state_code,
+            postalCode=recipient.postal_code,
+            countryCode=recipient.country_code,
+            customerName=recipient.company_name,
+            addressLine1=recipient.street,
+            addressLine2=recipient.address_line2,
             contact=Contact(
-                fullName=payload.recipient.person_name,
-                email=payload.recipient.email,
-                telephone=payload.recipient.phone_number,
+                fullName=recipient.person_name,
+                email=recipient.email,
+                telephone=recipient.phone_number,
             ),
         ),
         parcels=[

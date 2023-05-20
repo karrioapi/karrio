@@ -2,6 +2,7 @@ import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
+import karrio.core.settings as settings
 
 
 class PackagingType(lib.Flag):
@@ -69,6 +70,7 @@ class Incoterm(lib.Enum):
 
 class ConnectionConfig(lib.Enum):
     language_code = lib.OptionEnum("language_code")
+    service_suffix = lib.OptionEnum("service_suffix")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
 
@@ -99,13 +101,23 @@ class ServicePrefix(lib.Enum):
         account: str,
         service: str,
         options: units.Options,
+        settings: settings.Settings = None,
         is_international: bool = None,
     ):
         if len(account) > 10:
             return account
 
         _prefix = cls[service].value
-        _suffix = "01"
+        _svc_suffix = getattr(settings, "service_suffix", None)
+        _suffix = _svc_suffix if any(_svc_suffix or "") else "01"
+
+        if (
+            # is fixed suffix provided in settings use it
+            any(_svc_suffix or "")
+            # if not shipping options are defined, use default suffix
+            or options.has_content is False
+        ):
+            return f"{account}{_prefix}{_suffix}"
 
         if service == cls.V01PAK.name and (
             options.dpdhl_additional_insurance.state is not None
@@ -178,6 +190,7 @@ class ShippingOption(lib.Enum):
     dpdhl_cash_on_delivery = lib.OptionEnum("CashOnDelivery", float)
     dpdhl_premium = lib.OptionEnum("Premium", bool)
     dpdhl_parcel_outlet_routing = lib.OptionEnum("ParcelOutletRouting", bool)
+    dpdhl_packstation = lib.OptionEnum("Packstation")
 
     """ Unified Option type mapping """
     insurance = dpdhl_additional_insurance

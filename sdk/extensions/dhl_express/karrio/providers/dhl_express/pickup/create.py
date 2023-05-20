@@ -94,7 +94,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
             CountryCode=address.country_code,
             PackageLocation=payload.package_location,
             LocationType="R" if address.residential else "B",
-            Address1=lib.text(address.street_number, address.address_line1),
+            Address1=address.street,
             Address2=address.address_line2,
         ),
         PickupContact=RequestorContact(

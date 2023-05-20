@@ -69,6 +69,7 @@ def shipment_request(
         settings.account_number,
         service=service,
         options=options,
+        settings=settings,
         is_international=shipper.country_code != recipient.country_code,
     )
     return_account_number = (
@@ -76,6 +77,7 @@ def shipment_request(
             options.return_account_number.state,
             service=service,
             options=options,
+            settings=settings,
             is_international=shipper.country_code != recipient.country_code,
         )
         if options.return_account_number.state is not None
@@ -220,18 +222,13 @@ def shipment_request(
                             ),
                             Shipper=dpdhl.ShipperType(
                                 Name=dpdhl.NameType(
-                                    *lib.join(
-                                        shipper.person_name,
-                                        shipper.company_name or " ",
-                                    )
+                                    name1=shipper.address_line1,
+                                    name2=shipper.address_line2,
+                                    name3=None,
                                 ),
                                 Address=dpdhl.NativeAddressTypeNew(
-                                    streetName=(
-                                        shipper.street_name or shipper.address_line1
-                                    ),
-                                    streetNumber=(
-                                        shipper.street_number or shipper.address_line2
-                                    ),
+                                    streetName=shipper.street_name,
+                                    streetNumber=shipper.street_number,
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(shipper.postal_code),
@@ -254,17 +251,19 @@ def shipment_request(
                             ),
                             ShipperReference=payload.reference,
                             Receiver=dpdhl.ReceiverType(
-                                name1=(recipient.person_name or recipient.company_name),
+                                name1=recipient.address_line1,
                                 Address=dpdhl.ReceiverNativeAddressType(
-                                    name2=recipient.company_name,
-                                    name3=None,
-                                    streetName=(
-                                        recipient.street_name or recipient.address_line1
-                                    ),
-                                    streetNumber=(
-                                        recipient.street_number
+                                    name2=(
+                                        options.dpdhl_packstation.state
                                         or recipient.address_line2
                                     ),
+                                    name3=None,
+                                    streetName=(
+                                        recipient.street_name
+                                        if (options.dpdhl_packstation.state is None)
+                                        else "Packstation"
+                                    ),
+                                    streetNumber=recipient.street_number,
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(recipient.postal_code),
@@ -281,7 +280,10 @@ def shipment_request(
                                     dpdhl.CommunicationType(
                                         phone=recipient.phone_number,
                                         email=recipient.email,
-                                        contactPerson=recipient.person_name,
+                                        contactPerson=(
+                                            recipient.person_name
+                                            or recipient.company_name
+                                        ),
                                     )
                                     if recipient.has_contact_info
                                     else None
