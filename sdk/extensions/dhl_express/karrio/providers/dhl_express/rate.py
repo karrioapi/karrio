@@ -43,9 +43,7 @@ def _extract_quote(
     is_international = ctx.get("is_international", False)
     service = provider_units.ShippingService.map(quote.GlobalProductCode)
 
-    invalid_service = (
-        not is_international and service.name_or_key.endswith("_nondoc")
-    ) or (is_international and not is_document and service.name_or_key.endswith("_doc"))
+    invalid_service = is_document is False and "DOC" in quote.LocalProductCode
 
     if invalid_service:
         return None
@@ -79,7 +77,7 @@ def _extract_quote(
             for name, amount in charges
             if amount
         ],
-        meta=dict(service_name=quote.LocalProductName),
+        meta=dict(service_name=f"DHL {quote.LocalProductName}"),
     )
 
 
