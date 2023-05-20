@@ -108,11 +108,12 @@ class ServicePrefix(lib.Enum):
             return account
 
         _prefix = cls[service].value
-        _suffix = getattr(settings, "service_suffix", None) or "01"
+        _svc_suffix = getattr(settings, "service_suffix", None)
+        _suffix = _svc_suffix if any(_svc_suffix or "") else "01"
 
         if (
             # is fixed suffix provided in settings use it
-            getattr(settings, "service_suffix", None) is not None
+            any(_svc_suffix or "")
             # if not shipping options are defined, use default suffix
             or options.has_content is False
         ):
