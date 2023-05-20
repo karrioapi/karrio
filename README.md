@@ -19,8 +19,8 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 
-Karrio is an open-source shipping infrastructure for platform. With Karrio, you can
-build shipping experience into your platform, access a network of shipping carriers
+Karrio is an open-source shipping infrastructure for platforms. With Karrio, you can
+build shipping experiences into your platform, access a network of shipping carriers
 with a single API integration, automate fulfilment and improve logistics operations.
 
 **Get up and running in 1 minute with:**
@@ -106,14 +106,14 @@ We strive to provide good support through our issue trackers on Github. However,
 
 - Phone / video calls to discuss your specific use case and get recommendations on best practices
 - Guidance around deployment, ops and scaling best practices
-- Prioritized feature requests
 - Prioritized carriers integrations
+- Prioritized feature requests
 
 We do offer paid support options. Please reach out to us at hello@karrio.io to sign up.
 
-## Developing locally & Contributing
+## Contributing
 
-See our Docs for instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development).
+See our Docs for instructions on [development setup](https://docs.karrio.io/contributing/development).
 
 We <3 contributions big or small, check out our [guide on how to get started](https://docs.karrio.io/contributing/guidlines).
 
