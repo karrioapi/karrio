@@ -1,14 +1,14 @@
-import enum
 import rest_framework as drf
 
 import karrio.core.units as units
+import karrio.core.utils as utils
 import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 import karrio.server.core.validators as validators
 import karrio.server.providers.models as providers
 
 
-class ShipmentStatus(enum.Enum):
+class ShipmentStatus(utils.Enum):
     draft = "draft"
     purchased = "purchased"
     cancelled = "cancelled"
@@ -20,7 +20,7 @@ class ShipmentStatus(enum.Enum):
     delivery_failed = "delivery_failed"
 
 
-class TrackerStatus(enum.Enum):
+class TrackerStatus(utils.Enum):
     pending = "pending"
     unknown = "unknown"
     delivered = "delivered"

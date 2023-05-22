@@ -210,8 +210,11 @@ def compute_tracking_status(
     ):
         return serializers.TrackerStatus.pending
 
-    if any(details.status or ""):
-        return details.status
+    if (
+        any(details.status or "") and
+        serializers.TrackerStatus.map(details.status).value is not None
+    ):
+        return serializers.TrackerStatus.map(details.status)
 
     return serializers.TrackerStatus.in_transit
 
