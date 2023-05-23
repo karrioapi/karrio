@@ -220,18 +220,14 @@ def shipment_request(
                             ),
                             Shipper=dpdhl.ShipperType(
                                 Name=dpdhl.NameType(
-                                    *lib.join(
-                                        shipper.person_name,
-                                        shipper.company_name or " ",
-                                    )
+                                    name1=(shipper.company_name or shipper.person_name),
+                                    name2=shipper.address_line2,
                                 ),
                                 Address=dpdhl.NativeAddressTypeNew(
                                     streetName=(
                                         shipper.street_name or shipper.address_line1
                                     ),
-                                    streetNumber=(
-                                        shipper.street_number or shipper.address_line2
-                                    ),
+                                    streetNumber=shipper.street_number,
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(shipper.postal_code),
@@ -246,7 +242,7 @@ def shipment_request(
                                     dpdhl.CommunicationType(
                                         phone=shipper.phone_number,
                                         email=shipper.email,
-                                        contactPerson=shipper.person_name,
+                                        contactPerson=(shipper.person_name if shipper.company_name else ""),
                                     )
                                     if shipper.has_contact_info
                                     else None
@@ -254,17 +250,14 @@ def shipment_request(
                             ),
                             ShipperReference=payload.reference,
                             Receiver=dpdhl.ReceiverType(
-                                name1=(recipient.person_name or recipient.company_name),
+                                name1=(recipient.company_name or recipient.person_name),
                                 Address=dpdhl.ReceiverNativeAddressType(
-                                    name2=recipient.company_name,
+                                    name2=recipient.address_line2,
                                     name3=None,
                                     streetName=(
                                         recipient.street_name or recipient.address_line1
                                     ),
-                                    streetNumber=(
-                                        recipient.street_number
-                                        or recipient.address_line2
-                                    ),
+                                    streetNumber=recipient.street_number,
                                     addressAddition=None,
                                     dispatchingInformation=None,
                                     zip=dpdhl.ZipType(recipient.postal_code),
@@ -281,7 +274,7 @@ def shipment_request(
                                     dpdhl.CommunicationType(
                                         phone=recipient.phone_number,
                                         email=recipient.email,
-                                        contactPerson=recipient.person_name,
+                                        contactPerson=(recipient.person_name if recipient.company_name else ""),
                                     )
                                     if recipient.has_contact_info
                                     else None
