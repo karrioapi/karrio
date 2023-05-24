@@ -109,6 +109,7 @@ def rate_request(
                         option_amount=lib.to_money(option.state),
                     )
                     for _, option in options.items()
+                    if option.state is not False
                 ]
             )
             if any(options.items())

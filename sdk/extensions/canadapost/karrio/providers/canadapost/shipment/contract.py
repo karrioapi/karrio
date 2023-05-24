@@ -158,6 +158,7 @@ def shipment_request(
                             option_qualifier_2=None,
                         )
                         for _, option in options.items()
+                        if option.state is not False
                     ]
                 )
                 if any(options.items())
