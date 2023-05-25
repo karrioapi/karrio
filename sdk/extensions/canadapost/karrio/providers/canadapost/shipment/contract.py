@@ -86,6 +86,10 @@ def shipment_request(
         ),
         initializer=provider_units.shipping_options_initializer,
     )
+    options_items = [
+        option for _, option in options.items()
+        if option.state is not False
+    ]
 
     customs = lib.to_customs_info(payload.customs)
     duty = getattr(customs, "duty", None) or models.Duty()
@@ -157,11 +161,10 @@ def shipment_request(
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for _, option in options.items()
-                        if option.state is not False
+                        for option in options_items
                     ]
                 )
-                if any(options.items())
+                if any(options_items)
                 else None
             ),
             notification=(

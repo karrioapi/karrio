@@ -94,6 +94,10 @@ def rate_request(
         package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    options_items = [
+        option for _, option in options.items()
+        if option.state is not False
+    ]
 
     request = mailing_scenario(
         customer_number=settings.customer_number,
@@ -108,11 +112,10 @@ def rate_request(
                         option_code=option.code,
                         option_amount=lib.to_money(option.state),
                     )
-                    for _, option in options.items()
-                    if option.state is not False
+                    for option in options_items
                 ]
             )
-            if any(options.items())
+            if any(options_items)
             else None
         ),
         parcel_characteristics=parcel_characteristicsType(
