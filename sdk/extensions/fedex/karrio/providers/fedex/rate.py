@@ -1,4 +1,3 @@
-from datetime import datetime
 from fedex_lib.rate_service_v28 import (
     RateRequest as FedexRateRequest,
     RateReplyDetail,
@@ -19,6 +18,7 @@ from fedex_lib.rate_service_v28 import (
 )
 
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -70,18 +70,20 @@ def _extract_details(
             for s in shipment_rate.Surcharges + shipment_rate.Taxes
         ),
     ]
-    estimated_delivery = lib.to_date(rate.DeliveryTimestamp)
-    shipping_date = lib.to_date(ctx.get("shipment_date") or datetime.now())
-    transit = (
-        ((estimated_delivery.date() - shipping_date.date()).days or None)
-        if estimated_delivery is not None
-        else None
-    )
     applied_options = (
         dict(applied_options=applied_options)
         if (applied_options is not None and len(applied_options) > 0)
         else {}
     )
+    transit = None
+    estimated_delivery = lib.to_date(rate.DeliveryTimestamp)
+    shipping_date = lib.to_date(ctx.get("shipment_date") or datetime.datetime.now())
+    if estimated_delivery is not None:
+        days = (
+            shipping_date + datetime.timedelta(x + 1)
+            for x in range((estimated_delivery.date() - shipping_date.date()).days)
+        )
+        transit = sum(1 for day in days if day.weekday() < 5)
 
     return models.RateDetails(
         carrier_name=settings.carrier_name,
@@ -124,7 +126,7 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
-    shipment_date = lib.to_date(options.shipment_date.state or datetime.now())
+    shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
 
     request = FedexRateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,

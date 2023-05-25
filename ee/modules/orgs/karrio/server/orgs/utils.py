@@ -78,8 +78,9 @@ def send_invitation_emails(
     redirect_url: str,
     invited_by: User,  # type:ignore
 ):
+    @utils.tenant_aware
     @transaction.atomic
-    def action(email: str, org: models.Organization):
+    def action(email: str, org: models.Organization, **kwargs):
         invitation = models.OrganizationInvitation.objects.create(
             invitee_identifier=email,
             invited_by=invited_by,
@@ -89,14 +90,16 @@ def send_invitation_emails(
         send_invitation(invitation, org, redirect_url)
         org.organization_invites.add(invitation)
 
+    schema = conf.settings.schema
     exclusion = [
         *organization.users.all().values_list("email", flat=True),
         *organization.organization_invites.all().values_list(
             "invitee_identifier", flat=True
         ),
     ]
+
     return lib.run_concurently(
-        lambda _: action(_, organization),
+        lambda _: action(_, organization, schema=schema),
         [email for email in emails if email not in exclusion],
     )
 

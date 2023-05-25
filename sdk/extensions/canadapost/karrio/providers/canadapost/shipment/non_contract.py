@@ -107,6 +107,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                             option_qualifier_2=None,
                         )
                         for _, option in options.items()
+                        if option.state is not False
                     ]
                 )
                 if any(options.items())

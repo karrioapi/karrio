@@ -189,6 +189,7 @@ shipment_data = {
         "canadapost_signature": True,
         "cash_on_delivery": 10.5,
         "canadapost_cost_center": "karrio",
+        "canadapost_leave_at_door": False,
     },
     "reference": "#Order 11111",
 }

@@ -78,6 +78,7 @@ RatePayload = {
     ],
     "services": ["canadapost_expedited_parcel"],
     "options": {
+        "canadapost_leave_at_door": False,
         "signature_confirmation": True,
         "shipment_date": "2020-12-18",
         "insurance": 1000,

@@ -663,9 +663,9 @@ class Packages(typing.Iterable[Package]):
 
     @property
     def description(self) -> typing.Optional[str]:
-        descriptions = [item.description for item in self._items]
+        descriptions = set([item.description for item in self._items])
         description: typing.Optional[str] = utils.SF.concat_str(
-            *descriptions, join=True
+            *list(descriptions), join=True
         )  # type:ignore
 
         return description
@@ -1187,14 +1187,12 @@ class ComputedAddress(models.Address):
     def _compute_address_line(self, join: bool = True) -> typing.Optional[str]:
         if any(
             [
-                self.street_number,
-                self.street_name,
+                self.street,
                 self.address_line2,
             ]
         ):
             return utils.SF.concat_str(
-                self.street_number,
-                self.street_name,
+                self.street,
                 self.address_line2,
                 join=join,
             )  # type:ignore
