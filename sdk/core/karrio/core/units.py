@@ -663,9 +663,9 @@ class Packages(typing.Iterable[Package]):
 
     @property
     def description(self) -> typing.Optional[str]:
-        descriptions = [item.description for item in self._items]
+        descriptions = set([item.description for item in self._items])
         description: typing.Optional[str] = utils.SF.concat_str(
-            *descriptions, join=True
+            *list(descriptions), join=True
         )  # type:ignore
 
         return description
