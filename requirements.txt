@@ -73,7 +73,7 @@ karrio.amazon-mws==2023.4.4
 karrio.aramex==2023.4
 karrio.australiapost==2023.4
 karrio.boxknight==2023.4
-karrio.canadapost==2023.4.6
+karrio.canadapost==2023.4.7
 karrio.canpar==2023.4.4
 karrio.chronopost==2023.4.4
 karrio.dhl-express==2023.4.4

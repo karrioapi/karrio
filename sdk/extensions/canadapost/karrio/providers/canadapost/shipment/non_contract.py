@@ -62,6 +62,10 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         ),
         initializer=provider_units.shipping_options_initializer,
     )
+    options_items = [
+        option for _, option in options.items()
+        if option.state is not False
+    ]
 
     request = canadapost.NonContractShipmentType(
         requested_shipping_point=None,
@@ -106,11 +110,10 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
                             option_qualifier_1=None,
                             option_qualifier_2=None,
                         )
-                        for _, option in options.items()
-                        if option.state is not False
+                        for option in options_items
                     ]
                 )
-                if any(options.items())
+                if any(options_items)
                 else None
             ),
             parcel_characteristics=canadapost.ParcelCharacteristicsType(
