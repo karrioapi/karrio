@@ -19,6 +19,7 @@
                     "city": "PARAMUS",
                     "stateProvince": "NJ",
                     "countryCode": "US",
+                    "postalCode": "07652",
                     "country": "US"
                   },
                   "slic": "0761"
@@ -107,6 +108,7 @@
                   "city": "PARAMUS",
                   "stateProvince": "NJ",
                   "countryCode": "US",
+                  "postalCode": "07652",
                   "country": "US"
                 },
                 "attentionName": "",
@@ -129,12 +131,10 @@
                 "type": ""
               }
             ],
-            "service": [
-              {
-                "code": "",
-                "description": ""
-              }
-            ],
+            "service": {
+              "code": "",
+              "description": ""
+            },
             "statusCode": "",
             "statusDescription": "",
             "suppressionIndicators": [

@@ -24,6 +24,7 @@ class UserCreatedFormType:
 @s(auto_attribs=True)
 class UploadRequestType:
     Request: Optional[RequestType] = JStruct[RequestType]
+    ShipperNumber: Optional[str] = None
     UserCreatedForm: List[UserCreatedFormType] = JList[UserCreatedFormType]
 
 
