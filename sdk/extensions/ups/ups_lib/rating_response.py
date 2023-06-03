@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List, Any
+from typing import Optional, List
 from jstruct import JStruct, JList
 
 
@@ -65,6 +65,12 @@ class FRSShipmentDataType:
 
 
 @s(auto_attribs=True)
+class GuaranteedDeliveryType:
+    BusinessDaysInTransit: Optional[int] = None
+    DeliveryByTime: Optional[str] = None
+
+
+@s(auto_attribs=True)
 class ItemizedChargeType:
     Code: Optional[str] = None
     Description: Optional[str] = None
@@ -89,7 +95,7 @@ class NegotiatedRateChargesType:
 
 @s(auto_attribs=True)
 class NegotiatedChargesType:
-    ItemizedCharges: List[Any] = []
+    ItemizedCharges: List[ItemizedChargeType] = JList[ItemizedChargeType]
 
 
 @s(auto_attribs=True)
@@ -116,8 +122,8 @@ class RatedPackageType:
 
 @s(auto_attribs=True)
 class ArrivalType:
-    Date: Any = None
-    Time: Any = None
+    Date: Optional[str] = None
+    Time: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -179,6 +185,7 @@ class RatedShipmentType:
     TotalChargesWithTaxes: Optional[BaseServiceChargeType] = JStruct[BaseServiceChargeType]
     NegotiatedRateCharges: Optional[NegotiatedRateChargesType] = JStruct[NegotiatedRateChargesType]
     RatedPackage: List[RatedPackageType] = JList[RatedPackageType]
+    GuaranteedDelivery: Optional[GuaranteedDeliveryType] = JStruct[GuaranteedDeliveryType]
     TimeInTransit: Optional[TimeInTransitType] = JStruct[TimeInTransitType]
     ScheduledDeliveryDate: Optional[str] = None
     RoarRatedIndicator: Optional[str] = None

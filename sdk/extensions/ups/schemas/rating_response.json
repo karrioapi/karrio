@@ -99,8 +99,8 @@
             },
             "Dimensions": {
               "UnitOfMeasurement": {
-                "Code": null,
-                "Description": null
+                "Code": "string",
+                "Description": "string"
               },
               "Length": "string",
               "Width": "string",
@@ -109,8 +109,8 @@
             "AdjustedHeight": {
               "Value": "string",
               "UnitOfMeasurement": {
-                "Code": null,
-                "Description": null
+                "Code": "string",
+                "Description": "string"
               }
             }
           }
@@ -179,29 +179,35 @@
             "Weight": "string",
             "BillingWeight": {
               "UnitOfMeasurement": {
-                "Code": null,
-                "Description": null
+                "Code": "string",
+                "Description": "string"
               },
               "Weight": "string"
             },
             "Accessorial": [
               {
-                "Code": null,
-                "Description": null
+                "Code": "string",
+                "Description": "string"
               }
             ],
             "ItemizedCharges": [
               {
-                "Code": null,
-                "Description": null,
-                "CurrencyCode": null,
-                "MonetaryValue": null,
-                "SubType": null
+                "Code": "string",
+                "Description": "string",
+                "CurrencyCode": "string",
+                "MonetaryValue": "string",
+                "SubType": "string"
               }
             ],
             "NegotiatedCharges": {
               "ItemizedCharges": [
-                null
+                {
+                  "Code": "string",
+                  "Description": "string",
+                  "CurrencyCode": "string",
+                  "MonetaryValue": "string",
+                  "SubType": "string"
+                }
               ]
             },
             "RateModifier": {
@@ -212,6 +218,10 @@
             }
           }
         ],
+        "GuaranteedDelivery": {
+          "BusinessDaysInTransit": "1",
+          "DeliveryByTime": "3: 00 P.M."
+        },
         "TimeInTransit": {
           "PickupDate": "string",
           "DocumentsOnlyIndicator": "string",
@@ -224,13 +234,13 @@
             "Disclaimer": "string",
             "EstimatedArrival": {
               "Arrival": {
-                "Date": null,
-                "Time": null
+                "Date": "string",
+                "Time": "string"
               },
               "BusinessDaysInTransit": "string",
               "Pickup": {
-                "Date": null,
-                "Time": null
+                "Date": "string",
+                "Time": "string"
               },
               "DayOfWeek": "string",
               "CustomerCenterCutoff": "string",
