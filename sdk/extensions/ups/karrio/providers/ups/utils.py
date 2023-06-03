@@ -1,6 +1,6 @@
-import ups_lib.ups_security as ups
 import typing
 import base64
+import jstruct
 import datetime
 import karrio.lib as lib
 import karrio.core.units as units
@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     account_country_code: str = None
     metadata: dict = {}
     config: dict = {}
+    cache: lib.Cache = jstruct.JStruct[lib.Cache]
 
     id: str = None
 
@@ -93,7 +94,7 @@ def login(settings: Settings):
     )
 
     response = lib.to_dict(result)
-    errors = error.parse_rest_error_response(response, settings)
+    errors = error.parse_error_response(response, settings)
 
     if any(errors):
         raise Exception(errors)
@@ -102,30 +103,6 @@ def login(settings: Settings):
         float(response.get("issued_at")) / 1000
     ) + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
     return {**response, "expiry": lib.fdatetime(expiry)}
-
-
-def default_request_serializer(
-    prefix: str,
-    namespace: str,
-) -> typing.Callable[[lib.Envelope], str]:
-    def serializer(envelope: lib.Envelope):
-        namespace_ = (
-            'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
-            ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
-            ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
-            ' xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"'
-            f" {namespace}"
-        )
-        envelope.Body.ns_prefix_ = envelope.ns_prefix_
-        envelope.Header.ns_prefix_ = envelope.ns_prefix_
-        lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], prefix)
-        lib.apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
-        lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
-
-        return lib.to_xml(envelope, namespacedef_=namespace_)
-
-    return serializer
 
 
 SUPPORTED_COUNTRY_CURRENCY = ["US", "CA", "FR", "FR", "AU"]

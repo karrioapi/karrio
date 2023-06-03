@@ -5,6 +5,7 @@
         "CustomerContext": ""
       }
     },
+    "ShipperNumber": "YourShipperNumber",
     "UserCreatedForm": [
       {
         "UserCreatedFormFileName": "TestFile.txt",

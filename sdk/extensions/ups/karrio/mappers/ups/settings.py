@@ -1,6 +1,8 @@
 """Karrio UPS connection settings."""
 
 import attr
+import jstruct
+import karrio.lib as lib
 from karrio.providers.ups.utils import Settings as BaseSettings
 
 
@@ -18,3 +20,4 @@ class Settings(BaseSettings):
     id: str = None
     test_mode: bool = False
     carrier_id: str = "ups"
+    cache: lib.Cache = jstruct.JStruct[lib.Cache]

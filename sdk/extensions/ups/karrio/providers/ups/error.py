@@ -1,29 +1,10 @@
-import ups_lib.error_1_1 as ups
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.ups.utils as provider_utils
 from karrio.providers.ups.utils import Settings
 
 
 def parse_error_response(
-    response: lib.Element,
-    settings: provider_utils.Settings,
-) -> typing.List[models.Message]:
-    errors = lib.find_element("PrimaryErrorCode", response, ups.CodeType)
-
-    return [
-        models.Message(
-            code=error.Code,
-            message=error.Description,
-            carrier_name=settings.carrier_name,
-            carrier_id=settings.carrier_id,
-        )
-        for error in errors
-    ]
-
-
-def parse_rest_error_response(
     responses: typing.Union[typing.List[dict], dict],
     settings: Settings,
     details: dict = None,

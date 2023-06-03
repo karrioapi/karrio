@@ -16,6 +16,7 @@ class AddressType:
     city: Optional[str] = None
     stateProvince: Optional[str] = None
     countryCode: Optional[str] = None
+    postalCode: Optional[str] = None
     country: Optional[str] = None
 
 
@@ -131,7 +132,7 @@ class PackageType:
     packageCount: Optional[int] = None
     paymentInformation: Optional[PaymentInformationType] = JStruct[PaymentInformationType]
     referenceNumber: List[NumberType] = JList[NumberType]
-    service: List[ServiceType] = JList[ServiceType]
+    service: Optional[ServiceType] = JStruct[ServiceType]
     statusCode: Optional[str] = None
     statusDescription: Optional[str] = None
     suppressionIndicators: List[str] = []

@@ -16,12 +16,13 @@
         }
       ],
       "TransactionReference": {
-        "CustomerContext": "string",
-        "TransactionIdentifier": "string"
+        "CustomerContext": "string"
       }
     },
-    "FormsHistoryDocumentID": {
-      "DocumentID": "2016-01-18-11.01.07.589501"
-    }
+    "FormsHistoryDocumentID": [
+      {
+        "DocumentID": "2016-01-18-11.01.07.589501"
+      }
+    ]
   }
 }

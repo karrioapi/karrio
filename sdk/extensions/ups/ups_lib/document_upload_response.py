@@ -17,7 +17,6 @@ class ResponseStatusType:
 @s(auto_attribs=True)
 class TransactionReferenceType:
     CustomerContext: Optional[str] = None
-    TransactionIdentifier: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -30,7 +29,7 @@ class ResponseType:
 @s(auto_attribs=True)
 class UploadResponseType:
     Response: Optional[ResponseType] = JStruct[ResponseType]
-    FormsHistoryDocumentID: Optional[FormsHistoryDocumentIDType] = JStruct[FormsHistoryDocumentIDType]
+    FormsHistoryDocumentID: List[FormsHistoryDocumentIDType] = JList[FormsHistoryDocumentIDType]
 
 
 @s(auto_attribs=True)
