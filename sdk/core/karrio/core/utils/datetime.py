@@ -75,4 +75,4 @@ class DATEFORMAT:
     def ftimestamp(timestamp: Union[str, int] = None):
         if timestamp is None:
             return None
-        return datetime.utcfromtimestamp(int(timestamp)).strftime("%H:%M")
+        return datetime.utcfromtimestamp(float(timestamp)).strftime("%H:%M")
