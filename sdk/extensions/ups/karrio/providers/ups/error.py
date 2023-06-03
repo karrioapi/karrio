@@ -24,8 +24,11 @@ def parse_error_response(
 
 
 def parse_rest_error_response(
-    responses: typing.List[dict], settings: Settings, details: dict = None
+    responses: typing.Union[typing.List[dict], dict],
+    settings: Settings,
+    details: dict = None,
 ) -> typing.List[models.Message]:
+    results = responses if isinstance(responses, list) else [responses]
     errors: typing.List[dict] = sum(
         [
             [
@@ -59,7 +62,7 @@ def parse_rest_error_response(
                     else []
                 ),
             ]
-            for result in responses
+            for result in results
         ],
         [],
     )

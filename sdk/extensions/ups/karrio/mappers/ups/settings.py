@@ -8,9 +8,8 @@ from karrio.providers.ups.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """UPS connection settings."""
 
-    username: str  # type:ignore
-    password: str  # type:ignore
-    access_license_number: str  # type:ignore
+    client_id: str  # type:ignore
+    client_secret: str  # type:ignore
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}

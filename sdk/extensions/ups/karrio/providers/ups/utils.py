@@ -1,5 +1,7 @@
 import ups_lib.ups_security as ups
 import typing
+import base64
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 from karrio.core import Settings as BaseSettings
@@ -8,9 +10,8 @@ from karrio.core import Settings as BaseSettings
 class Settings(BaseSettings):
     """UPS connection settings."""
 
-    username: str
-    password: str
-    access_license_number: str
+    client_id: str
+    client_secret: str
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}
@@ -28,17 +29,6 @@ class Settings(BaseSettings):
             "https://wwwcie.ups.com"
             if self.test_mode
             else "https://onlinetools.ups.com"
-        )
-
-    @property
-    def Security(self):
-        return ups.UPSSecurity(
-            UsernameToken=ups.UsernameTokenType(
-                Username=self.username, Password=self.password
-            ),
-            ServiceAccessToken=ups.ServiceAccessTokenType(
-                AccessLicenseNumber=self.access_license_number
-            ),
         )
 
     @property
@@ -60,6 +50,58 @@ class Settings(BaseSettings):
             self.config or {},
             option_type=ConnectionConfig,
         )
+
+    @property
+    def authorization(self):
+        pair = "%s:%s" % (self.client_id, self.client_secret)
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+
+    @property
+    def access_token(self):
+        """Retrieve the access_token using the client_id|client_secret pair
+        or collect it from the cache if an unexpired access_token exist.
+        """
+        cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
+        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
+
+        auth = self.cache.get(cache_key) or {}
+        token = auth.get("access_token")
+        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
+
+        if token is not None and expiry is not None and expiry > now:
+            return token
+
+        self.cache.set(cache_key, lambda: login(self))
+        new_auth = self.cache.get(cache_key)
+
+        return new_auth["access_token"]
+
+
+def login(settings: Settings):
+    import karrio.providers.ups.error as error
+
+    merchant_id = settings.connection_config.merchant_id.state
+    result = lib.request(
+        url=f"{settings.server_url}/security/v1/oauth/token",
+        data=dict(grant_type="client_credentials"),
+        method="POST",
+        headers={
+            "authorization": settings.authorization,
+            "content-Type": "application/x-www-form-urlencoded",
+            **({"x-merchant-id": merchant_id} if merchant_id else {}),
+        },
+    )
+
+    response = lib.to_dict(result)
+    errors = error.parse_rest_error_response(response, settings)
+
+    if any(errors):
+        raise Exception(errors)
+
+    expiry = datetime.datetime.fromtimestamp(
+        float(response.get("issued_at")) / 1000
+    ) + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
+    return {**response, "expiry": lib.fdatetime(expiry)}
 
 
 def default_request_serializer(
