@@ -23,11 +23,7 @@
         "AttentionName": "ShipperName",
         "ShipperNumber": "ShipperNumber",
         "Address": {
-          "AddressLine": [
-            "ShipperAddressLine",
-            "ShipperAddressLine",
-            "ShipperAddressLine"
-          ],
+          "AddressLine": "ShipperAddressLine",
           "City": "TIMONIUM",
           "StateProvinceCode": "MD",
           "PostalCode": "21093",
@@ -38,11 +34,7 @@
         "Name": "ShipToName",
         "AttentionName": "ShipToName",
         "Address": {
-          "AddressLine": [
-            "ShipToAddressLine",
-            "ShipToAddressLine",
-            "ShipToAddressLine"
-          ],
+          "AddressLine": "ShipToAddressLine",
           "City": "Alpharetta",
           "StateProvinceCode": "GA",
           "PostalCode": "30005",
@@ -54,11 +46,7 @@
         "Name": "ShipFromName",
         "AttentionName": "ShipFromName",
         "Address": {
-          "AddressLine": [
-            "ShipFromAddressLine",
-            "ShipFromAddressLine",
-            "ShipFromAddressLine"
-          ],
+          "AddressLine": "ShipFromAddressLine",
           "City": "TIMONIUM",
           "StateProvinceCode": "MD",
           "PostalCode": "21093",
@@ -68,11 +56,7 @@
       "AlternateDeliveryAddress": {
         "Name": "ShipFromName",
         "Address": {
-          "AddressLine": [
-            "ShipFromAddressLine",
-            "ShipFromAddressLine",
-            "ShipFromAddressLine"
-          ],
+          "AddressLine": "ShipFromAddressLine",
           "City": "TIMONIUM",
           "StateProvinceCode": "MD",
           "PostalCode": "21093",

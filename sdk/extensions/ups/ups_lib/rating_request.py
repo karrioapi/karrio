@@ -24,7 +24,7 @@ class RequestType:
 
 @s(auto_attribs=True)
 class AlternateDeliveryAddressAddressType:
-    AddressLine: List[str] = []
+    AddressLine: Optional[str] = None
     City: Optional[str] = None
     StateProvinceCode: Optional[str] = None
     PostalCode: Optional[int] = None
@@ -259,7 +259,7 @@ class PromotionalDiscountInformationType:
 
 @s(auto_attribs=True)
 class ShipFromAddressType:
-    AddressLine: List[str] = []
+    AddressLine: Optional[str] = None
     City: Optional[str] = None
     StateProvinceCode: Optional[str] = None
     PostalCode: Optional[int] = None
