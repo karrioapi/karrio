@@ -34,9 +34,15 @@ class TrackingSerializer(TrackingDetails):
         default={},
         help_text="The package and shipment tracking details",
     )
+    metadata = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="The carrier user metadata.",
+    )
 
     def create(self, validated_data: dict, context, **kwargs) -> models.Tracking:
         options = validated_data["options"]
+        metadata = validated_data["metadata"]
         carrier_filter = validated_data["carrier_filter"]
         tracking_number = validated_data["tracking_number"]
         account_number = validated_data.get("account_number")
@@ -77,6 +83,7 @@ class TrackingSerializer(TrackingDetails):
             meta=response.tracking.meta,
             options=response.tracking.options,
             reference=reference,
+            metadata=metadata,
         )
 
     def update(

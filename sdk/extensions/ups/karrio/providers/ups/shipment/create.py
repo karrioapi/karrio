@@ -394,7 +394,7 @@ def shipment_request(
                                     recipient.email,
                                 ]
                             )
-                            else None
+                            else []
                         ),
                         LabelDelivery=None,
                         InternationalForms=(

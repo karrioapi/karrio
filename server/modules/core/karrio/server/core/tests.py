@@ -32,10 +32,9 @@ class APITestCase(BaseAPITestCase):
         self.ups_carrier = MODELS["ups"].objects.create(
             carrier_id="ups_package",
             test_mode=True,
-            username="test",
+            client_id="test",
+            client_secret="test",
             account_number="000000",
-            access_license_number="000000",
-            password="test",
             created_by=self.user,
         )
         self.fedex_carrier = MODELS["fedex"].objects.create(

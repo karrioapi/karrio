@@ -46,9 +46,8 @@ class TestUserConnections(GraphTestCase):
                     carrier_name
                     test_mode
                     active
-                    username
-                    password
-                    access_license_number
+                    client_id
+                    client_secret
                     account_number
                   }
                 }
@@ -151,9 +150,8 @@ USER_CONNECTIONS = {
                 "carrier_name": "ups",
                 "test_mode": False,
                 "active": True,
-                "username": "test",
-                "password": "test",
-                "access_license_number": "000000",
+                "client_id": "test",
+                "client_secret": "test",
                 "account_number": "000000",
             },
             {
