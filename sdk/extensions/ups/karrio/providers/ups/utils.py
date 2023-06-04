@@ -4,6 +4,7 @@ import jstruct
 import datetime
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.core.errors as errors
 from karrio.core import Settings as BaseSettings
 
 
@@ -84,20 +85,19 @@ def login(settings: Settings):
     merchant_id = settings.connection_config.merchant_id.state
     result = lib.request(
         url=f"{settings.server_url}/security/v1/oauth/token",
-        data=dict(grant_type="client_credentials"),
+        data="grant_type=client_credentials",
         method="POST",
         headers={
-            "authorization": settings.authorization,
+            "authorization": f"Basic {settings.authorization}",
             "content-Type": "application/x-www-form-urlencoded",
             **({"x-merchant-id": merchant_id} if merchant_id else {}),
         },
     )
-
     response = lib.to_dict(result)
-    errors = error.parse_error_response(response, settings)
+    messages = error.parse_error_response(response, settings)
 
-    if any(errors):
-        raise Exception(errors)
+    if any(messages):
+        raise errors.ShippingSDKError(messages)
 
     expiry = datetime.datetime.fromtimestamp(
         float(response.get("issued_at")) / 1000

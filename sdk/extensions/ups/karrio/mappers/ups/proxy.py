@@ -25,7 +25,7 @@ class Proxy(proxy.Proxy):
                 "authorization": f"Bearer {self.settings.access_token}",
                 **(headers or {}),
             },
-            **({"data": request.serialize()} if request else {}),
+            **({"data": lib.to_json(request.serialize())} if request else {}),
         )
 
     def get_rates(

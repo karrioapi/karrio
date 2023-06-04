@@ -244,10 +244,11 @@ ShipmentRequestJSON = {
                     "PostalCode": "PostalCode",
                     "StateProvinceCode": "StateProvinceCode",
                 },
-                "AttentionName": "Ship To Attn Name",
-                "CompanyDisplayableName": "Ship To Name",
-                "Name": "Ship To Name",
+                "AttentionName": "Shipper Attn Name",
+                "CompanyDisplayableName": "Shipper Name",
+                "Name": "Shipper Name",
                 "Phone": {"Number": "1234567890"},
+                "TaxIdentificationNumber": "123456",
             },
             "ShipTo": {
                 "Address": {
@@ -347,10 +348,11 @@ ShipmentRequestWithPresetJSON = {
                     "PostalCode": "PostalCode",
                     "StateProvinceCode": "StateProvinceCode",
                 },
-                "AttentionName": "Ship To Attn Name",
-                "CompanyDisplayableName": "Ship To Name",
-                "Name": "Ship To Name",
+                "AttentionName": "Shipper Attn Name",
+                "CompanyDisplayableName": "Shipper Name",
+                "Name": "Shipper Name",
                 "Phone": {"Number": "1234567890"},
+                "TaxIdentificationNumber": "123456",
             },
             "ShipTo": {
                 "Address": {

@@ -209,22 +209,22 @@ def shipment_request(
                 ),
                 AlternateDeliveryAddress=None,
                 ShipFrom=ups.ShipFromType(
-                    Name=(recipient.company_name or recipient.person_name),
-                    AttentionName=recipient.contact,
-                    CompanyDisplayableName=recipient.company_name,
-                    TaxIdentificationNumber=recipient.tax_id,
+                    Name=(shipper.company_name or shipper.person_name),
+                    AttentionName=shipper.contact,
+                    CompanyDisplayableName=shipper.company_name,
+                    TaxIdentificationNumber=shipper.tax_id,
                     Phone=ups.ShipFromPhoneType(
-                        Number=recipient.phone_number or "000-000-0000",
+                        Number=shipper.phone_number or "000-000-0000",
                     ),
                     FaxNumber=None,
                     Address=ups.AlternateDeliveryAddressAddressType(
-                        AddressLine=recipient.address_line,
-                        City=recipient.city,
-                        StateProvinceCode=recipient.state_code,
-                        PostalCode=recipient.postal_code,
-                        CountryCode=recipient.country_code,
+                        AddressLine=shipper.address_line,
+                        City=shipper.city,
+                        StateProvinceCode=shipper.state_code,
+                        PostalCode=shipper.postal_code,
+                        CountryCode=shipper.country_code,
                         ResidentialAddressIndicator=(
-                            "Y" if recipient.is_residential else None
+                            "Y" if shipper.is_residential else None
                         ),
                     ),
                     VendorInfo=None,
@@ -402,16 +402,10 @@ def shipment_request(
                                 FormType=(
                                     "07" if options.paperless_trade.state else "01"
                                 ),
-                                UserCreatedForm=(
-                                    [
-                                        ups.UserCreatedFormType(
-                                            DocumentID=doc["doc_id"]
-                                        )
-                                        for doc in options.doc_references.state
-                                    ]
-                                    if any(options.doc_references.state or [])
-                                    else None
-                                ),
+                                UserCreatedForm=[
+                                    ups.UserCreatedFormType(DocumentID=doc["doc_id"])
+                                    for doc in (options.doc_references.state or [])
+                                ],
                                 UPSPremiumCareForm=None,
                                 CN22Form=None,
                                 AdditionalDocumentIndicator=None,
@@ -429,7 +423,7 @@ def shipment_request(
                                             Name=recipient.contact,
                                             AttentionName=recipient.contact,
                                             TaxIdentificationNumber=recipient.tax_id,
-                                            Phone=ups.ShipPhoneType(
+                                            Phone=ups.ShipToPhoneType(
                                                 Number=recipient.phone_number
                                                 or "000-000-0000"
                                             ),
@@ -468,7 +462,7 @@ def shipment_request(
                                                 Code="PCS",
                                                 Description="PCS",
                                             ),
-                                            Value=item.value_amount,
+                                            Value=str(item.value_amount),
                                         ),
                                         CommodityCode=item.hs_code,
                                         PartNumber=item.sku,
@@ -479,7 +473,7 @@ def shipment_request(
                                         PreferenceCriteria=None,
                                         ProducerInfo=None,
                                         MarksAndNumbers=None,
-                                        NumberOfPackagesPerCommodity=1,
+                                        NumberOfPackagesPerCommodity="1",
                                         ProductWeight=ups.WeightType(
                                             UnitOfMeasurement=ups.LabelImageFormatType(
                                                 Code=provider_units.WeightUnit.map(
