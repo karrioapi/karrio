@@ -10482,7 +10482,7 @@
             "deprecationReason": null
           },
           {
-            "name": "username",
+            "name": "client_id",
             "description": null,
             "args": [],
             "type": {
@@ -10498,23 +10498,7 @@
             "deprecationReason": null
           },
           {
-            "name": "password",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "access_license_number",
+            "name": "client_secret",
             "description": null,
             "args": [],
             "type": {
@@ -29893,7 +29877,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "client_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -29907,21 +29891,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "String",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "access_license_number",
+            "name": "client_secret",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -34292,7 +34262,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "client_id",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -34302,17 +34272,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "access_license_number",
+            "name": "client_secret",
             "description": null,
             "type": {
               "kind": "SCALAR",
