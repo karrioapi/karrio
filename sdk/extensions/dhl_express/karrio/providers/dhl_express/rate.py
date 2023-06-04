@@ -45,7 +45,7 @@ def _extract_quote(
 
     # Filter out services that are not specific to package content
     if settings.connection_config.skip_service_filter.state != True and (
-        is_document is False and "DOC" in quote.LocalProductCode
+        is_document is False and " DOC" in quote.LocalProductCode
     ):
         return None
 
