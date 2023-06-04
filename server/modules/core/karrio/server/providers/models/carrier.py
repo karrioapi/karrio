@@ -195,9 +195,9 @@ class Carrier(core.OwnedEntity):
 
     @property
     def config(self):
-        carrier = self.__class__.resolve_config(self)
+        config = self.__class__.resolve_config(self)
 
-        return getattr(carrier, "config", None)
+        return config
 
     @staticmethod
     def resolve_config(

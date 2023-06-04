@@ -88,7 +88,7 @@ class ModelSerializer(serializers.ModelSerializer, AbstractSerializer):
 
     def update(self, instance, data: dict, **kwargs):  # type: ignore
         for name, value in data.items():
-            if name != "created_by":
+            if name != "created_by" and hasattr(instance, name):
                 setattr(instance, name, value)
 
         instance.save()
