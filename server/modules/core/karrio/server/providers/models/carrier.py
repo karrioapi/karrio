@@ -146,7 +146,7 @@ class Carrier(core.OwnedEntity):
             id=self.settings.id,
             carrier_name=self.settings.carrier_name,
             display_name=self.settings.carrier_display_name,
-            config=self.config,
+            config=getattr(self.config, "config", None),
         )
 
         if hasattr(self.settings, "services"):
@@ -158,8 +158,9 @@ class Carrier(core.OwnedEntity):
             _computed_data.update(cache=self.settings.cache)
 
         if self.is_system and self.config is None:
+            _config = self.__class__.resolve_config(self, is_system_config=True)
             _computed_data.update(
-                config=self.__class__.resolve_config(self, is_system_config=True)
+                config=getattr(_config, "config", None),
             )
 
         return datatypes.CarrierSettings.create(
