@@ -213,7 +213,7 @@ RateRequestData = {
                     "Type": "01",
                 }
             },
-            "RatingMethodRequestedIndicator": " ",
+            "RatingMethodRequestedIndicator": "Y",
             "Service": {"Code": "11", "Description": "Weight"},
             "ShipFrom": {
                 "Address": {
@@ -233,7 +233,7 @@ RateRequestData = {
                     "StateProvinceCode": "NB",
                 }
             },
-            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": " "},
+            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
             "ShipmentTotalWeight": {
                 "UnitOfMeasurement": {"Code": "KGS", "Description": "Dimension"},
                 "Weight": "0.5",
@@ -248,7 +248,7 @@ RateRequestData = {
                 },
                 "ShipperNumber": "Your Account Number",
             },
-            "TaxInformationIndicator": " ",
+            "TaxInformationIndicator": "Y",
         },
     }
 }
@@ -287,7 +287,7 @@ RateRequestWithPackagePresetData = {
                     "Type": "01",
                 }
             },
-            "RatingMethodRequestedIndicator": " ",
+            "RatingMethodRequestedIndicator": "Y",
             "Service": {"Code": "11", "Description": "Weight"},
             "ShipFrom": {
                 "Address": {
@@ -308,7 +308,7 @@ RateRequestWithPackagePresetData = {
                 },
                 "AttentionName": "Ship To Name",
             },
-            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": " "},
+            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
             "ShipmentTotalWeight": {
                 "UnitOfMeasurement": {"Code": "LBS", "Description": "Dimension"},
                 "Weight": "4.0",
@@ -323,7 +323,7 @@ RateRequestWithPackagePresetData = {
                 "AttentionName": "Shipper Name",
                 "ShipperNumber": "Your Account Number",
             },
-            "TaxInformationIndicator": " ",
+            "TaxInformationIndicator": "Y",
         },
     }
 }

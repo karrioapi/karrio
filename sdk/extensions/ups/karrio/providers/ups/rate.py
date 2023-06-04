@@ -109,7 +109,7 @@ def rate_request(
                 RequestOption="Shoptimeintransit",
                 SubVersion="2205",
                 TransactionReference=ups.TransactionReferenceType(
-                    CustomerContext=payload.reference,
+                    CustomerContext=payload.reference or "fetch rates",
                 ),
             ),
             PickupType=None,
@@ -138,7 +138,7 @@ def rate_request(
                         PostalCode=recipient.postal_code,
                         CountryCode=recipient.country_code,
                         ResidentialAddressIndicator=(
-                            "" if recipient.residential else None
+                            "Y" if recipient.residential else None
                         ),
                         POBoxIndicator=None,
                     ),
@@ -190,7 +190,7 @@ def rate_request(
                     ),
                     Weight=str(packages.weight.value),
                 ),  # Only required for "timeintransit" requests
-                DocumentsOnlyIndicator=("" if is_document else None),
+                DocumentsOnlyIndicator=("Y" if is_document else None),
                 Package=[
                     ups.PackageType(
                         PackagingType=ups.CustomerClassificationType(
@@ -237,38 +237,38 @@ def rate_request(
                 ShipmentServiceOptions=(
                     ups.ShipmentServiceOptionsType(
                         SaturdayDeliveryIndicator=(
-                            "" if options.ups_saturday_delivery.state else None
+                            "Y" if options.ups_saturday_delivery.state else None
                         ),
                         SaturdayPickupIndicator=(
-                            "" if options.ups_saturday_pickup.state else None
+                            "Y" if options.ups_saturday_pickup.state else None
                         ),
                         SundayDeliveryIndicator=(
-                            "" if options.ups_sunday_delivery.state else None
+                            "Y" if options.ups_sunday_delivery.state else None
                         ),
                         AvailableServicesOption=None,
                         AccessPointCOD=None,
                         DeliverToAddresseeOnlyIndicator=(
-                            "" if options.ups_deliver_to_addressee_only.state else None
+                            "Y" if options.ups_deliver_to_addressee_only.state else None
                         ),
                         DirectDeliveryOnlyIndicator=(
-                            "" if options.ups_direct_delivery_only.state else None
+                            "Y" if options.ups_direct_delivery_only.state else None
                         ),
                         COD=None,
                         DeliveryConfirmation=None,
                         ReturnOfDocumentIndicator=(
-                            "" if options.ups_return_of_document.state else None
+                            "Y" if options.ups_return_of_document.state else None
                         ),
                         UPScarbonneutralIndicator=(
-                            "" if options.ups_carbonneutral.state else None
+                            "Y" if options.ups_carbonneutral.state else None
                         ),
                         CertificateOfOriginIndicator=(
-                            "" if options.ups_certificate_of_origin.state else None
+                            "Y" if options.ups_certificate_of_origin.state else None
                         ),
                         PickupOptions=(
                             ups.PickupOptionsType(
-                                HoldForPickupIndicator=" ",
+                                HoldForPickupIndicator="Y",
                                 LiftGateForPickUpIndicator=(
-                                    ""
+                                    "Y"
                                     if options.ups_lift_gate_for_pickup.state
                                     else None
                                 ),
@@ -278,9 +278,9 @@ def rate_request(
                         ),
                         DeliveryOptions=(
                             ups.DeliveryOptionsType(
-                                DropOffAtUPSFacilityIndicator=" ",
+                                DropOffAtUPSFacilityIndicator="Y",
                                 LiftGateForDeliveryIndicator=(
-                                    ""
+                                    "Y"
                                     if options.ups_lift_gate_for_delivery.state
                                     else None
                                 ),
@@ -295,25 +295,29 @@ def rate_request(
                                 PerishablesIndicator=None,
                                 PlantsIndicator=None,
                                 SeedsIndicator=None,
-                                SpecialExceptionsIndicator=" ",
+                                SpecialExceptionsIndicator="Y",
                                 TobaccoIndicator=None,
                             )
                             if options.dangerous_goods.state
                             else None
                         ),
                         ShipperExportDeclarationIndicator=(
-                            "" if options.ups_shipper_export_declaration.state else None
+                            "Y"
+                            if options.ups_shipper_export_declaration.state
+                            else None
                         ),
                         CommercialInvoiceRemovalIndicator=(
-                            "" if options.ups_commercial_invoice_removal.state else None
+                            "Y"
+                            if options.ups_commercial_invoice_removal.state
+                            else None
                         ),
                         ImportControl=None,
                         ReturnService=None,
                         SDLShipmentIndicator=(
-                            "" if options.ups_sdl_shipment.state else None
+                            "Y" if options.ups_sdl_shipment.state else None
                         ),
                         EPRAIndicator=(
-                            "" if options.ups_epra_indicator.state else None
+                            "Y" if options.ups_epra_indicator.state else None
                         ),
                         InsideDelivery=None,
                         ItemDisposalIndicator=None,
@@ -322,7 +326,7 @@ def rate_request(
                     else None
                 ),
                 ShipmentRatingOptions=ups.ShipmentRatingOptionsType(
-                    NegotiatedRatesIndicator=" ",
+                    NegotiatedRatesIndicator="Y",
                     FRSShipmentIndicator=None,
                     RateChartIndicator=None,
                     UserLevelDiscountIndicator=None,
@@ -332,8 +336,8 @@ def rate_request(
                     CurrencyCode=currency,
                     MonetaryValue=str(options.declared_value.state or 1.0),
                 ),
-                RatingMethodRequestedIndicator=" ",
-                TaxInformationIndicator=" ",
+                RatingMethodRequestedIndicator="Y",
+                TaxInformationIndicator="Y",
                 PromotionalDiscountInformation=None,
                 DeliveryTimeInformation=ups.DeliveryTimeInformationType(
                     PackageBillType=("02" if is_document else "03"),

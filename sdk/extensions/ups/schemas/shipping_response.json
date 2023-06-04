@@ -112,8 +112,8 @@
             },
             "Dimensions": {
               "UnitOfMeasurement": {
-                "Code": null,
-                "Description": null
+                "Code": "string",
+                "Description": "string"
               },
               "Length": "string",
               "Width": "string",
@@ -122,8 +122,8 @@
             "AdjustedHeight": {
               "Value": "string",
               "UnitOfMeasurement": {
-                "Code": null,
-                "Description": null
+                "Code": "string",
+                "Description": "string"
               }
             }
           }
@@ -191,8 +191,8 @@
             "Description": "string",
             "Image": {
               "ImageFormat": {
-                "Code": null,
-                "Description": null
+                "Code": "string",
+                "Description": "string"
               },
               "GraphicImage": "string"
             },
@@ -211,11 +211,11 @@
           "NegotiatedCharges": {
             "ItemizedCharges": [
               {
-                "Code": null,
-                "Description": null,
-                "CurrencyCode": null,
-                "MonetaryValue": null,
-                "SubType": null
+                "Code": "string",
+                "Description": "string",
+                "CurrencyCode": "string",
+                "MonetaryValue": "string",
+                "SubType": "string"
               }
             ]
           }
