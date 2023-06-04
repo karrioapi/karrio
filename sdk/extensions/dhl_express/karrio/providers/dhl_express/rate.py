@@ -43,9 +43,10 @@ def _extract_quote(
     is_international = ctx.get("is_international", False)
     service = provider_units.ShippingService.map(quote.GlobalProductCode)
 
-    invalid_service = is_document is False and "DOC" in quote.LocalProductCode
-
-    if invalid_service:
+    # Filter out services that are not specific to package content
+    if settings.connection_config.skip_service_filter.state != True and (
+        is_document is False and " DOC" in quote.LocalProductCode
+    ):
         return None
 
     charges = [

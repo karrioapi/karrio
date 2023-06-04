@@ -1,6 +1,8 @@
 """Karrio UPS connection settings."""
 
 import attr
+import jstruct
+import karrio.lib as lib
 from karrio.providers.ups.utils import Settings as BaseSettings
 
 
@@ -8,9 +10,8 @@ from karrio.providers.ups.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """UPS connection settings."""
 
-    username: str  # type:ignore
-    password: str  # type:ignore
-    access_license_number: str  # type:ignore
+    client_id: str  # type:ignore
+    client_secret: str  # type:ignore
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}
@@ -19,3 +20,4 @@ class Settings(BaseSettings):
     id: str = None
     test_mode: bool = False
     carrier_id: str = "ups"
+    cache: lib.Cache = jstruct.JStruct[lib.Cache]

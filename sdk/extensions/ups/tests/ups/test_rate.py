@@ -3,7 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import RateRequest
 from .fixture import gateway
-from karrio import Rating
+import karrio
 
 
 class TestUPSRating(unittest.TestCase):
@@ -13,43 +13,31 @@ class TestUPSRating(unittest.TestCase):
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
-        self.assertEqual(request.serialize(), RateRequestXML)
+        self.assertEqual(request.serialize(), RateRequestData)
 
     def test_create_rate_with_package_preset_request(self):
         request = gateway.mapper.create_rate_request(
             RateRequest(**rate_req_with_package_preset_data)
         )
-        self.assertEqual(request.serialize(), RateRequestWithPackagePresetXML)
+        self.assertEqual(request.serialize(), RateRequestWithPackagePresetData)
 
     @patch("karrio.mappers.ups.proxy.lib.request", return_value="<a></a>")
-    def test_package_get_quotes(self, http_mock):
-        Rating.fetch(self.RateRequest).from_(gateway)
+    def test_get_rates(self, http_mock):
+        karrio.Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, f"{gateway.settings.server_url}/webservices/Rate")
+        self.assertEqual(
+            url,
+            f"{gateway.settings.server_url}/api/rating/v2205/Shop?additionalinfo=timeintransit",
+        )
 
-    def test_parse_package_quote_response(self):
+    def test_parse_rate_response(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
-            mock.return_value = RateResponseXML
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
-
-    def test_parse_rate_error(self):
-        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
-            mock.return_value = RateteParsingErrorXML
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateteParsingError)
-
-    def test_parse_rate_missing_args_error(self):
-        with patch("karrio.mappers.ups.proxy.lib.request") as mock:
-            mock.return_value = RateMissingArgsErrorXML
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertListEqual(
-                DP.to_dict(parsed_response), ParsedRateMissingArgsError
+            mock.return_value = RateResponseJSON
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
             )
+            self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
 
 if __name__ == "__main__":
@@ -58,27 +46,29 @@ if __name__ == "__main__":
 
 rate_req_data = {
     "shipper": {
-        "company_name": "Shipper Name",
-        "postal_code": "H3N1S4",
+        "postal_code": "V6M2V9",
+        "city": "Vancouver",
         "country_code": "CA",
-        "city": "Montreal",
-        "address_line1": "Address Line",
+        "state_code": "BC",
+        "residential": True,
+        "address_line1": "5840 Oak St",
     },
     "recipient": {
-        "company_name": "Ship To Name",
-        "address_line1": "Address Line",
-        "postal_code": "89109",
-        "city": "Las Vegas",
-        "country_code": "US",
-        "state_code": "StateProvinceCode",
+        "postal_code": "E1C4Z8",
+        "city": "Moncton",
+        "country_code": "CA",
+        "state_code": "NB",
+        "residential": False,
+        "address_line1": "125 Church St",
     },
     "parcels": [
         {
             "height": 3,
             "length": 10,
             "width": 3,
-            "weight": 4.0,
-            "packaging_type": "ups_small_express_box",
+            "weight": 0.5,
+            "weight_unit": "KG",
+            "packaging_type": "ups_large_express_box",
             "description": "TV",
         }
     ],
@@ -89,7 +79,6 @@ rate_req_data = {
         "negotiated_rates_indicator": True,
     },
 }
-
 
 rate_req_with_package_preset_data = {
     "shipper": {
@@ -123,367 +112,608 @@ rate_req_with_package_preset_data = {
 }
 
 
-ParsedRateteParsingError = [
-    [],
-    [
-        {
-            "carrier_name": "ups",
-            "carrier_id": "ups",
-            "code": "9380216",
-            "message": "Missing or Invalid Handling Unit One Quantity",
-        },
-        {
-            "carrier_name": "ups",
-            "carrier_id": "ups",
-            "code": "9360541",
-            "message": "Missing or Invalid Pickup Date.",
-        },
-    ],
-]
-
-ParsedRateMissingArgsError = [
-    [],
-    [
-        {
-            "carrier_name": "ups",
-            "carrier_id": "ups",
-            "code": "250002",
-            "message": "Invalid Authentication Information.",
-        }
-    ],
-]
-
 ParsedRateResponse = [
     [
         {
             "carrier_id": "ups",
             "carrier_name": "ups",
-            "currency": "USD",
+            "currency": "CAD",
             "extra_charges": [
-                {"amount": 9.86, "currency": "USD", "name": "Base charge"},
-                {"amount": 0.0, "currency": "USD", "name": "Taxes"},
+                {"amount": 137.87, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "14"},
+                {"amount": 21.52, "currency": "CAD", "name": "375"},
+                {"amount": 20.68, "currency": "CAD", "name": "HST"},
             ],
-            "meta": {"service_name": "ups_ground"},
-            "service": "ups_ground",
-            "total_charge": 9.86,
-        }
+            "meta": {"service_name": "ups_express_early_ca"},
+            "service": "ups_express_early_ca",
+            "total_charge": 158.55,
+            "transit_days": 2,
+        },
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "currency": "CAD",
+            "extra_charges": [
+                {"amount": 85.26, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "01"},
+                {"amount": 13.31, "currency": "CAD", "name": "375"},
+                {"amount": 12.79, "currency": "CAD", "name": "HST"},
+            ],
+            "meta": {"service_name": "ups_express_ca"},
+            "service": "ups_express_ca",
+            "total_charge": 98.05,
+            "transit_days": 2,
+        },
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "currency": "CAD",
+            "extra_charges": [
+                {"amount": 84.02, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "13"},
+                {"amount": 13.12, "currency": "CAD", "name": "375"},
+                {"amount": 12.6, "currency": "CAD", "name": "HST"},
+            ],
+            "meta": {"service_name": "ups_express_saver_ca"},
+            "service": "ups_express_saver_ca",
+            "total_charge": 96.62,
+            "transit_days": 2,
+        },
+        {
+            "carrier_id": "ups",
+            "carrier_name": "ups",
+            "currency": "CAD",
+            "extra_charges": [
+                {"amount": 79.51, "currency": "CAD", "name": "Base charge"},
+                {"amount": 0.0, "currency": "CAD", "name": "02"},
+                {"amount": 12.41, "currency": "CAD", "name": "375"},
+                {"amount": 11.93, "currency": "CAD", "name": "HST"},
+            ],
+            "meta": {"service_name": "ups_expedited_ca"},
+            "service": "ups_expedited_ca",
+            "total_charge": 91.44,
+            "transit_days": 3,
+        },
     ],
     [],
 ]
 
 
-RateteParsingErrorXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-    <soapenv:Header/>
-    <soapenv:Body>
-        <soapenv:Fault>
-            <faultcode>Client</faultcode>
-            <faultstring>An exception has been raised as a result of client data.</faultstring>
-            <detail>
-                <err:Errors xmlns:err="http://www.ups.com/XMLSchema/XOLTWS/Error/v1.1">
-                    <err:ErrorDetail>
-                        <err:Severity>Hard</err:Severity>
-                        <err:PrimaryErrorCode>
-                            <err:Code>9380216</err:Code>
-                            <err:Description>Missing or Invalid Handling Unit One Quantity</err:Description>
-                        </err:PrimaryErrorCode>
-                    </err:ErrorDetail>
-                    <err:ErrorDetail>
-                        <err:Severity>Hard</err:Severity>
-                        <err:PrimaryErrorCode>
-                            <err:Code>9360541</err:Code>
-                            <err:Description>Missing or Invalid Pickup Date.</err:Description>
-                        </err:PrimaryErrorCode>
-                    </err:ErrorDetail>
-                </err:Errors>
-            </detail>
-        </soapenv:Fault>
-    </soapenv:Body>
-</soapenv:Envelope>
-"""
+RateRequestData = {
+    "RateRequest": {
+        "Request": {
+            "RequestOption": "Shoptimeintransit",
+            "SubVersion": "2205",
+            "TransactionReference": {"CustomerContext": "Your Customer Context"},
+        },
+        "Shipment": {
+            "DeliveryTimeInformation": {
+                "PackageBillType": "03",
+                "Pickup": {"Date": "20230227"},
+            },
+            "InvoiceLineTotal": {"CurrencyCode": "USD", "MonetaryValue": "1.0"},
+            "Package": [
+                {
+                    "Dimensions": {
+                        "Height": "3.0",
+                        "Length": "10.0",
+                        "UnitOfMeasurement": {"Code": "CM", "Description": "Dimension"},
+                        "Width": "3.0",
+                    },
+                    "PackageWeight": {
+                        "UnitOfMeasurement": {"Code": "KGS", "Description": "Weight"},
+                        "Weight": "0.5",
+                    },
+                    "PackagingType": {"Code": "2c", "Description": "Packaging Type"},
+                }
+            ],
+            "PaymentDetails": {
+                "ShipmentCharge": {
+                    "BillShipper": {"AccountNumber": "Your Account Number"},
+                    "Type": "01",
+                }
+            },
+            "RatingMethodRequestedIndicator": "Y",
+            "Service": {"Code": "11", "Description": "Weight"},
+            "ShipFrom": {
+                "Address": {
+                    "AddressLine": "5840 Oak St",
+                    "City": "Vancouver",
+                    "CountryCode": "CA",
+                    "PostalCode": "V6M2V9",
+                    "StateProvinceCode": "BC",
+                }
+            },
+            "ShipTo": {
+                "Address": {
+                    "AddressLine": "125 Church St",
+                    "City": "Moncton",
+                    "CountryCode": "CA",
+                    "PostalCode": "E1C4Z8",
+                    "StateProvinceCode": "NB",
+                }
+            },
+            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
+            "ShipmentTotalWeight": {
+                "UnitOfMeasurement": {"Code": "KGS", "Description": "Dimension"},
+                "Weight": "0.5",
+            },
+            "Shipper": {
+                "Address": {
+                    "AddressLine": "5840 Oak St",
+                    "City": "Vancouver",
+                    "CountryCode": "CA",
+                    "PostalCode": "V6M2V9",
+                    "StateProvinceCode": "BC",
+                },
+                "ShipperNumber": "Your Account Number",
+            },
+            "TaxInformationIndicator": "Y",
+        },
+    }
+}
 
-RateMissingArgsErrorXML = """<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-    <soapenv:Header/>
-    <soapenv:Body>
-        <soapenv:Fault>
-            <faultcode>Client</faultcode>
-            <faultstring>An exception has been raised as a result of client data.</faultstring>
-            <detail>
-                <err:Errors xmlns:err="http://www.ups.com/XMLSchema/XOLTWS/Error/v1.1">
-                    <err:ErrorDetail>
-                        <err:Severity>Authentication</err:Severity>
-                        <err:PrimaryErrorCode>
-                            <err:Code>250002</err:Code>
-                            <err:Description>Invalid Authentication Information.</err:Description>
-                        </err:PrimaryErrorCode>
-                        <err:Location>
-                            <err:LocationElementName>upss:Password</err:LocationElementName>
-                            <err:XPathOfElement>/env:Envelope[1]/env:Header[1]/upss:UPSSecurity[1]/upss:UsernameToken[1]/upss:Password[1]</err:XPathOfElement>
-                            <err:OriginalValue/>
-                        </err:Location>
-                        <err:SubErrorCode>
-                            <err:Code>01</err:Code>
-                            <err:Description>Missing required element</err:Description>
-                        </err:SubErrorCode>
-                    </err:ErrorDetail>
-                </err:Errors>
-            </detail>
-        </soapenv:Fault>
-    </soapenv:Body>
-</soapenv:Envelope>
-"""
+RateRequestWithPackagePresetData = {
+    "RateRequest": {
+        "Request": {
+            "RequestOption": "Shoptimeintransit",
+            "SubVersion": "2205",
+            "TransactionReference": {"CustomerContext": "Your Customer Context"},
+        },
+        "Shipment": {
+            "DeliveryTimeInformation": {
+                "PackageBillType": "03",
+                "Pickup": {"Date": "20230227"},
+            },
+            "InvoiceLineTotal": {"CurrencyCode": "USD", "MonetaryValue": "1.0"},
+            "Package": [
+                {
+                    "Dimensions": {
+                        "Height": "11.75",
+                        "Length": "1.5",
+                        "UnitOfMeasurement": {"Code": "IN", "Description": "Dimension"},
+                        "Width": "16.0",
+                    },
+                    "PackageWeight": {
+                        "UnitOfMeasurement": {"Code": "LBS", "Description": "Weight"},
+                        "Weight": "4.0",
+                    },
+                    "PackagingType": {"Code": "02", "Description": "Packaging Type"},
+                }
+            ],
+            "PaymentDetails": {
+                "ShipmentCharge": {
+                    "BillShipper": {"AccountNumber": "Your Account Number"},
+                    "Type": "01",
+                }
+            },
+            "RatingMethodRequestedIndicator": "Y",
+            "Service": {"Code": "11", "Description": "Weight"},
+            "ShipFrom": {
+                "Address": {
+                    "AddressLine": "Address Line",
+                    "City": "Montreal",
+                    "CountryCode": "CA",
+                    "PostalCode": "H3N1S4",
+                },
+                "AttentionName": "Shipper Name",
+            },
+            "ShipTo": {
+                "Address": {
+                    "AddressLine": "Address Line",
+                    "City": "Las Vegas",
+                    "CountryCode": "US",
+                    "PostalCode": "89109",
+                    "StateProvinceCode": "StateProvinceCode",
+                },
+                "AttentionName": "Ship To Name",
+            },
+            "ShipmentRatingOptions": {"NegotiatedRatesIndicator": "Y"},
+            "ShipmentTotalWeight": {
+                "UnitOfMeasurement": {"Code": "LBS", "Description": "Dimension"},
+                "Weight": "4.0",
+            },
+            "Shipper": {
+                "Address": {
+                    "AddressLine": "Address Line",
+                    "City": "Montreal",
+                    "CountryCode": "CA",
+                    "PostalCode": "H3N1S4",
+                },
+                "AttentionName": "Shipper Name",
+                "ShipperNumber": "Your Account Number",
+            },
+            "TaxInformationIndicator": "Y",
+        },
+    }
+}
 
-RateRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
-    <tns:Header>
-        <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
-        </upss:UPSSecurity>
-    </tns:Header>
-    <tns:Body>
-        <rate:RateRequest>
-            <common:Request>
-                <common:RequestOption>Shoptimeintransit</common:RequestOption>
-                <common:TransactionReference>
-                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
-                </common:TransactionReference>
-            </common:Request>
-            <rate:Shipment>
-                <rate:Shipper>
-                    <rate:Name>Shipper Name</rate:Name>
-                    <rate:ShipperNumber>Your Account Number</rate:ShipperNumber>
-                    <rate:Address>
-                        <rate:AddressLine>Address Line</rate:AddressLine>
-                        <rate:City>Montreal</rate:City>
-                        <rate:PostalCode>H3N1S4</rate:PostalCode>
-                        <rate:CountryCode>CA</rate:CountryCode>
-                    </rate:Address>
-                </rate:Shipper>
-                <rate:ShipTo>
-                    <rate:Name>Ship To Name</rate:Name>
-                    <rate:Address>
-                        <rate:AddressLine>Address Line</rate:AddressLine>
-                        <rate:City>Las Vegas</rate:City>
-                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
-                        <rate:PostalCode>89109</rate:PostalCode>
-                        <rate:CountryCode>US</rate:CountryCode>
-                    </rate:Address>
-                </rate:ShipTo>
-                <rate:Service>
-                    <rate:Code>11</rate:Code>
-                </rate:Service>
-                <rate:ShipmentTotalWeight>
-                    <rate:UnitOfMeasurement>
-                        <rate:Code>LBS</rate:Code>
-                    </rate:UnitOfMeasurement>
-                    <rate:Weight>4.0</rate:Weight>
-                </rate:ShipmentTotalWeight>
-                <rate:Package>
-                    <rate:PackagingType>
-                        <rate:Code>2a</rate:Code>
-                    </rate:PackagingType>
-                    <rate:Dimensions>
-                        <rate:UnitOfMeasurement>
-                            <rate:Code>IN</rate:Code>
-                        </rate:UnitOfMeasurement>
-                        <rate:Length>10.0</rate:Length>
-                        <rate:Width>3.0</rate:Width>
-                        <rate:Height>3.0</rate:Height>
-                    </rate:Dimensions>
-                    <rate:PackageWeight>
-                        <rate:UnitOfMeasurement>
-                            <rate:Code>LBS</rate:Code>
-                        </rate:UnitOfMeasurement>
-                        <rate:Weight>4.0</rate:Weight>
-                    </rate:PackageWeight>
-                </rate:Package>
-                <rate:ShipmentRatingOptions>
-                    <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
-                    <rate:RateChartIndicator></rate:RateChartIndicator>
-                </rate:ShipmentRatingOptions>
-                <rate:InvoiceLineTotal>
-                    <rate:CurrencyCode>USD</rate:CurrencyCode>
-                    <rate:MonetaryValue>1.0</rate:MonetaryValue>
-                </rate:InvoiceLineTotal>
-                <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
-                <rate:TaxInformationIndicator></rate:TaxInformationIndicator>
-                <rate:DeliveryTimeInformation>
-                    <rate:PackageBillType>03</rate:PackageBillType>
-                    <rate:Pickup>
-                        <rate:Date>20230227</rate:Date>
-                    </rate:Pickup>
-                </rate:DeliveryTimeInformation>
-            </rate:Shipment>
-        </rate:RateRequest>
-    </tns:Body>
-</tns:Envelope>
-"""
-
-RateRequestWithPackagePresetXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0" xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
-    <tns:Header>
-        <upss:UPSSecurity>
-            <upss:UsernameToken>
-                <upss:Username>username</upss:Username>
-                <upss:Password>password</upss:Password>
-            </upss:UsernameToken>
-            <upss:ServiceAccessToken>
-                <upss:AccessLicenseNumber>FG09H9G8H09GH8G0</upss:AccessLicenseNumber>
-            </upss:ServiceAccessToken>
-        </upss:UPSSecurity>
-    </tns:Header>
-    <tns:Body>
-        <rate:RateRequest>
-            <common:Request>
-                <common:RequestOption>Shoptimeintransit</common:RequestOption>
-                <common:TransactionReference>
-                    <common:CustomerContext>Your Customer Context</common:CustomerContext>
-                </common:TransactionReference>
-            </common:Request>
-            <rate:Shipment>
-                <rate:Shipper>
-                    <rate:Name>Shipper Name</rate:Name>
-                    <rate:ShipperNumber>Your Account Number</rate:ShipperNumber>
-                    <rate:Address>
-                        <rate:AddressLine>Address Line</rate:AddressLine>
-                        <rate:City>Montreal</rate:City>
-                        <rate:PostalCode>H3N1S4</rate:PostalCode>
-                        <rate:CountryCode>CA</rate:CountryCode>
-                    </rate:Address>
-                </rate:Shipper>
-                <rate:ShipTo>
-                    <rate:Name>Ship To Name</rate:Name>
-                    <rate:Address>
-                        <rate:AddressLine>Address Line</rate:AddressLine>
-                        <rate:City>Las Vegas</rate:City>
-                        <rate:StateProvinceCode>StateProvinceCode</rate:StateProvinceCode>
-                        <rate:PostalCode>89109</rate:PostalCode>
-                        <rate:CountryCode>US</rate:CountryCode>
-                    </rate:Address>
-                </rate:ShipTo>
-                <rate:Service>
-                    <rate:Code>11</rate:Code>
-                </rate:Service>
-                <rate:ShipmentTotalWeight>
-                    <rate:UnitOfMeasurement>
-                        <rate:Code>LBS</rate:Code>
-                    </rate:UnitOfMeasurement>
-                    <rate:Weight>4.0</rate:Weight>
-                </rate:ShipmentTotalWeight>
-                <rate:Package>
-                    <rate:PackagingType>
-                        <rate:Code>02</rate:Code>
-                    </rate:PackagingType>
-                    <rate:Dimensions>
-                        <rate:UnitOfMeasurement>
-                            <rate:Code>IN</rate:Code>
-                        </rate:UnitOfMeasurement>
-                        <rate:Length>1.5</rate:Length>
-                        <rate:Width>16.0</rate:Width>
-                        <rate:Height>11.75</rate:Height>
-                    </rate:Dimensions>
-                    <rate:PackageWeight>
-                        <rate:UnitOfMeasurement>
-                            <rate:Code>LBS</rate:Code>
-                        </rate:UnitOfMeasurement>
-                        <rate:Weight>4.0</rate:Weight>
-                    </rate:PackageWeight>
-                </rate:Package>
-                <rate:ShipmentRatingOptions>
-                    <rate:NegotiatedRatesIndicator></rate:NegotiatedRatesIndicator>
-                    <rate:RateChartIndicator></rate:RateChartIndicator>
-                </rate:ShipmentRatingOptions>
-                <rate:InvoiceLineTotal>
-                    <rate:CurrencyCode>USD</rate:CurrencyCode>
-                    <rate:MonetaryValue>1.0</rate:MonetaryValue>
-                </rate:InvoiceLineTotal>
-                <rate:RatingMethodRequestedIndicator></rate:RatingMethodRequestedIndicator>
-                <rate:TaxInformationIndicator></rate:TaxInformationIndicator>
-                <rate:DeliveryTimeInformation>
-                    <rate:PackageBillType>03</rate:PackageBillType>
-                    <rate:Pickup>
-                        <rate:Date>20230227</rate:Date>
-                    </rate:Pickup>
-                </rate:DeliveryTimeInformation>
-            </rate:Shipment>
-        </rate:RateRequest>
-    </tns:Body>
-</tns:Envelope>
-"""
-
-RateResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-   <soapenv:Header />
-   <soapenv:Body>
-      <rate:RateResponse xmlns:rate="http://www.ups.com/XMLSchema/XOLTWS/Rate/v1.1">
-         <common:Response xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0">
-            <common:ResponseStatus>
-               <common:Code>1</common:Code>
-               <common:Description>Success</common:Description>
-            </common:ResponseStatus>
-            <common:Alert>
-               <common:Code>110971</common:Code>
-               <common:Description>Your invoice may vary from the displayed reference rates</common:Description>
-            </common:Alert>
-            <common:TransactionReference>
-               <common:CustomerContext>Your Customer Context</common:CustomerContext>
-            </common:TransactionReference>
-         </common:Response>
-         <rate:RatedShipment>
-            <rate:Service>
-               <rate:Code>03</rate:Code>
-               <rate:Description />
-            </rate:Service>
-            <rate:RatedShipmentAlert>
-               <rate:Code>110971</rate:Code>
-               <rate:Description>Your invoice may vary from the displayed reference rates</rate:Description>
-            </rate:RatedShipmentAlert>
-            <rate:BillingWeight>
-               <rate:UnitOfMeasurement>
-                  <rate:Code>LBS</rate:Code>
-                  <rate:Description>Pounds</rate:Description>
-               </rate:UnitOfMeasurement>
-               <rate:Weight>2.0</rate:Weight>
-            </rate:BillingWeight>
-            <rate:TransportationCharges>
-               <rate:CurrencyCode>USD</rate:CurrencyCode>
-               <rate:MonetaryValue>9.86</rate:MonetaryValue>
-            </rate:TransportationCharges>
-            <rate:ServiceOptionsCharges>
-               <rate:CurrencyCode>USD</rate:CurrencyCode>
-               <rate:MonetaryValue>0.00</rate:MonetaryValue>
-            </rate:ServiceOptionsCharges>
-            <rate:TotalCharges>
-               <rate:CurrencyCode>USD</rate:CurrencyCode>
-               <rate:MonetaryValue>9.86</rate:MonetaryValue>
-            </rate:TotalCharges>
-            <rate:RatedPackage>
-               <rate:TransportationCharges>
-                  <rate:CurrencyCode>USD</rate:CurrencyCode>
-                  <rate:MonetaryValue>9.86</rate:MonetaryValue>
-               </rate:TransportationCharges>
-               <rate:ServiceOptionsCharges>
-                  <rate:CurrencyCode>USD</rate:CurrencyCode>
-                  <rate:MonetaryValue>0.00</rate:MonetaryValue>
-               </rate:ServiceOptionsCharges>
-               <rate:TotalCharges>
-                  <rate:CurrencyCode>USD</rate:CurrencyCode>
-                  <rate:MonetaryValue>9.86</rate:MonetaryValue>
-               </rate:TotalCharges>
-               <rate:Weight>1.0</rate:Weight>
-               <rate:BillingWeight>
-                  <rate:UnitOfMeasurement>
-                     <rate:Code>LBS</rate:Code>
-                     <rate:Description>Pounds</rate:Description>
-                  </rate:UnitOfMeasurement>
-                  <rate:Weight>2.0</rate:Weight>
-               </rate:BillingWeight>
-            </rate:RatedPackage>
-         </rate:RatedShipment>
-      </rate:RateResponse>
-   </soapenv:Body>
-</soapenv:Envelope>
+RateResponseJSON = """{
+  "RateResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "1",
+        "Description": "Success"
+      },
+      "Alert": [
+        {
+          "Code": "110971",
+          "Description": "Your invoice may vary from the displayed reference rates"
+        },
+        {
+          "Code": "120900",
+          "Description": "User Id and Shipper Number combination is not qualified to receive negotiated rates"
+        }
+      ],
+      "TransactionReference": {
+        "CustomerContext": "testing",
+        "TransactionIdentifier": "iewssoat2634G4WGGx4hfZ"
+      }
+    },
+    "RatedShipment": [
+      {
+        "Disclaimer": {
+          "Code": "01",
+          "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+        },
+        "Service": {
+          "Code": "14",
+          "Description": ""
+        },
+        "RatedShipmentAlert": [
+          {
+            "Code": "120900",
+            "Description": "User Id and Shipper Number combination is not qualified to receive negotiated rates."
+          },
+          {
+            "Code": "110971",
+            "Description": "Your invoice may vary from the displayed reference rates"
+          }
+        ],
+        "RatingMethod": "01",
+        "BillableWeightCalculationMethod": "02",
+        "BillingWeight": {
+          "UnitOfMeasurement": {
+            "Code": "KGS",
+            "Description": "Kilograms"
+          },
+          "Weight": "0.5"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "137.87"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "116.35"
+        },
+        "ItemizedCharges": {
+          "Code": "375",
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "21.52"
+        },
+        "TaxCharges": {
+          "Type": "HST",
+          "MonetaryValue": "20.68"
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "0.00"
+        },
+        "TotalCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "137.87"
+        },
+        "TotalChargesWithTaxes": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "158.55"
+        },
+        "GuaranteedDelivery": {
+          "BusinessDaysInTransit": "1",
+          "DeliveryByTime": "9:00 A.M."
+        },
+        "RatedPackage": {
+          "Weight": "0.5"
+        },
+        "TimeInTransit": {
+          "PickupDate": "20230605",
+          "PackageBillType": "03",
+          "AutoDutyCode": "02",
+          "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+          "ServiceSummary": {
+            "Service": {
+              "Description": "UPS Express Early"
+            },
+            "EstimatedArrival": {
+              "Arrival": {
+                "Date": "20230607",
+                "Time": "090000"
+              },
+              "BusinessDaysInTransit": "2",
+              "Pickup": {
+                "Date": "20230605",
+                "Time": "150000"
+              },
+              "DayOfWeek": "WED",
+              "CustomerCenterCutoff": "140000",
+              "TotalTransitDays": "2"
+            },
+            "GuaranteedIndicator": "",
+            "SaturdayDelivery": "0"
+          }
+        }
+      },
+      {
+        "Disclaimer": {
+          "Code": "01",
+          "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+        },
+        "Service": {
+          "Code": "01",
+          "Description": ""
+        },
+        "RatedShipmentAlert": [
+          {
+            "Code": "120900",
+            "Description": "User Id and Shipper Number combination is not qualified to receive negotiated rates."
+          },
+          {
+            "Code": "110971",
+            "Description": "Your invoice may vary from the displayed reference rates"
+          }
+        ],
+        "RatingMethod": "01",
+        "BillableWeightCalculationMethod": "02",
+        "BillingWeight": {
+          "UnitOfMeasurement": {
+            "Code": "KGS",
+            "Description": "Kilograms"
+          },
+          "Weight": "0.5"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "85.26"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "71.95"
+        },
+        "ItemizedCharges": {
+          "Code": "375",
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "13.31"
+        },
+        "TaxCharges": {
+          "Type": "HST",
+          "MonetaryValue": "12.79"
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "0.00"
+        },
+        "TotalCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "85.26"
+        },
+        "TotalChargesWithTaxes": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "98.05"
+        },
+        "GuaranteedDelivery": {
+          "BusinessDaysInTransit": "1"
+        },
+        "RatedPackage": {
+          "Weight": "0.5"
+        },
+        "TimeInTransit": {
+          "PickupDate": "20230605",
+          "PackageBillType": "03",
+          "AutoDutyCode": "02",
+          "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+          "ServiceSummary": {
+            "Service": {
+              "Description": "UPS Express"
+            },
+            "EstimatedArrival": {
+              "Arrival": {
+                "Date": "20230607",
+                "Time": "103000"
+              },
+              "BusinessDaysInTransit": "2",
+              "Pickup": {
+                "Date": "20230605",
+                "Time": "150000"
+              },
+              "DayOfWeek": "WED",
+              "CustomerCenterCutoff": "140000",
+              "TotalTransitDays": "2"
+            },
+            "GuaranteedIndicator": "",
+            "SaturdayDelivery": "0"
+          }
+        }
+      },
+      {
+        "Disclaimer": {
+          "Code": "01",
+          "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+        },
+        "Service": {
+          "Code": "13",
+          "Description": ""
+        },
+        "RatedShipmentAlert": [
+          {
+            "Code": "120900",
+            "Description": "User Id and Shipper Number combination is not qualified to receive negotiated rates."
+          },
+          {
+            "Code": "110971",
+            "Description": "Your invoice may vary from the displayed reference rates"
+          }
+        ],
+        "RatingMethod": "01",
+        "BillableWeightCalculationMethod": "02",
+        "BillingWeight": {
+          "UnitOfMeasurement": {
+            "Code": "KGS",
+            "Description": "Kilograms"
+          },
+          "Weight": "0.5"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "84.02"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "70.90"
+        },
+        "ItemizedCharges": {
+          "Code": "375",
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "13.12"
+        },
+        "TaxCharges": {
+          "Type": "HST",
+          "MonetaryValue": "12.60"
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "0.00"
+        },
+        "TotalCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "84.02"
+        },
+        "TotalChargesWithTaxes": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "96.62"
+        },
+        "GuaranteedDelivery": {
+          "BusinessDaysInTransit": "1",
+          "DeliveryByTime": "3:00 P.M."
+        },
+        "RatedPackage": {
+          "Weight": "0.5"
+        },
+        "TimeInTransit": {
+          "PickupDate": "20230605",
+          "PackageBillType": "03",
+          "AutoDutyCode": "02",
+          "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+          "ServiceSummary": {
+            "Service": {
+              "Description": "UPS Express Saver"
+            },
+            "EstimatedArrival": {
+              "Arrival": {
+                "Date": "20230607",
+                "Time": "150000"
+              },
+              "BusinessDaysInTransit": "2",
+              "Pickup": {
+                "Date": "20230605",
+                "Time": "150000"
+              },
+              "DayOfWeek": "WED",
+              "CustomerCenterCutoff": "140000",
+              "TotalTransitDays": "2"
+            },
+            "GuaranteedIndicator": "",
+            "SaturdayDelivery": "0"
+          }
+        }
+      },
+      {
+        "Disclaimer": {
+          "Code": "01",
+          "Description": "Taxes are included in the shipping cost and apply to the transportation charges but additional duties/taxes may apply and are not reflected in the total amount due."
+        },
+        "Service": {
+          "Code": "02",
+          "Description": ""
+        },
+        "RatedShipmentAlert": [
+          {
+            "Code": "120900",
+            "Description": "User Id and Shipper Number combination is not qualified to receive negotiated rates."
+          },
+          {
+            "Code": "110971",
+            "Description": "Your invoice may vary from the displayed reference rates"
+          }
+        ],
+        "RatingMethod": "01",
+        "BillableWeightCalculationMethod": "02",
+        "BillingWeight": {
+          "UnitOfMeasurement": {
+            "Code": "KGS",
+            "Description": "Kilograms"
+          },
+          "Weight": "0.5"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "79.51"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "67.10"
+        },
+        "ItemizedCharges": {
+          "Code": "375",
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "12.41"
+        },
+        "TaxCharges": {
+          "Type": "HST",
+          "MonetaryValue": "11.93"
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "0.00"
+        },
+        "TotalCharges": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "79.51"
+        },
+        "TotalChargesWithTaxes": {
+          "CurrencyCode": "CAD",
+          "MonetaryValue": "91.44"
+        },
+        "RatedPackage": {
+          "Weight": "0.5"
+        },
+        "TimeInTransit": {
+          "PickupDate": "20230605",
+          "PackageBillType": "03",
+          "AutoDutyCode": "02",
+          "Disclaimer": "All services are guaranteed if shipment is paid for in full by a payee in Canada. Services listed as guaranteed are backed by a money-back guarantee for transportation charges only. See Terms and Conditions in the Service Guide for details. Certain commodities and high value shipments may require additional transit time for customs clearance.",
+          "ServiceSummary": {
+            "Service": {
+              "Description": "UPS Expedited"
+            },
+            "EstimatedArrival": {
+              "Arrival": {
+                "Date": "20230608",
+                "Time": "233000"
+              },
+              "BusinessDaysInTransit": "3",
+              "Pickup": {
+                "Date": "20230605",
+                "Time": "150000"
+              },
+              "DayOfWeek": "THU",
+              "CustomerCenterCutoff": "140000",
+              "TotalTransitDays": "3"
+            },
+            "SaturdayDelivery": "0"
+          }
+        }
+      }
+    ]
+  }
+}
 """

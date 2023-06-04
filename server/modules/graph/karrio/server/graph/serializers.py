@@ -417,6 +417,7 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
 
         carrier = getattr(settings, "carrier_ptr", instance)
         config_data = validated_data.get(carrier_name, {}).get("config")
+
         if config_data:
             CarrierConfigModelSerializer.map(
                 instance=carrier.config,

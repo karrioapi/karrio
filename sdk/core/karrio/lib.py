@@ -204,6 +204,12 @@ def fdatetime(
     )
 
 
+def ftimestamp(
+    timestamp: str = None,
+) -> typing.Optional[str]:
+    return utils.DF.ftimestamp(timestamp)
+
+
 def to_date(
     date_value: typing.Union[str, datetime.datetime] = None,
     current_format: str = "%Y-%m-%d",

@@ -7,81 +7,69 @@ from karrio.mappers.ups.settings import Settings
 class Proxy(proxy.Proxy):
     settings: Settings
 
-    def _send_request(self, path: str, request: lib.Serializable) -> str:
+    def _send_request(
+        self,
+        path: str,
+        request: lib.Serializable = None,
+        method: str = "POST",
+        headers: dict = None,
+    ) -> str:
         return lib.request(
             url=f"{self.settings.server_url}{path}",
-            data=request.serialize(),
-            trace=self.trace_as("xml"),
-            method="POST",
-            headers={"Content-Type": "application/xml"},
+            trace=self.trace_as("json"),
+            method=method,
+            headers={
+                "transId": "x-trans-id",
+                "transactionSrc": "x-trans-src",
+                "content-Type": "application/json",
+                "authorization": f"Bearer {self.settings.access_token}",
+                **(headers or {}),
+            },
+            **({"data": lib.to_json(request.serialize())} if request else {}),
         )
 
-    def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/webservices/AV", request)
+    def get_rates(
+        self,
+        request: lib.Serializable,
+    ) -> lib.Deserializable:
+        response = self._send_request(
+            "/api/rating/v2205/Shop?additionalinfo=timeintransit",
+            request,
+        )
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/webservices/Rate", request)
+    def create_shipment(
+        self,
+        request: lib.Serializable,
+    ) -> lib.Deserializable:
+        response = self._send_request(
+            "/api/shipments/v2205/ship",
+            request,
+        )
 
-        return lib.Deserializable(response, lib.to_element, request.ctx)
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/webservices/Ship", request)
+    def cancel_shipment(
+        self,
+        request: lib.Serializable,
+    ) -> lib.Deserializable:
+        response = self._send_request(
+            f"/api/shipments/v2205/void/cancel/{request.serialize().get('shipmentidentificationnumber')}",
+            method="DELETE",
+        )
 
-        return lib.Deserializable(response, lib.to_element, request.ctx)
-
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/webservices/Void", request)
-
-        return lib.Deserializable(response, lib.to_element)
-
-    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
-        def process(job: lib.Job):
-            if job.data is None:
-                return job.fallback
-
-            return self._send_request("/webservices/Pickup", job.data)
-
-        pipeline: lib.Pipeline = request.serialize()
-        response = pipeline.apply(process)
-        return lib.Deserializable(response, lib.to_element)
-
-    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
-        def process(job: lib.Job):
-            if job.data is None:
-                return job.fallback
-
-            return self._send_request("/webservices/Pickup", job.data)
-
-        pipeline: lib.Pipeline = request.serialize()
-        response = pipeline.apply(process)
-
-        return lib.Deserializable(response, lib.to_element)
-
-    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/webservices/Pickup", request)
-
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(
         self, request: lib.Serializable
     ) -> lib.Deserializable[typing.List[typing.Tuple[str, dict]]]:
-        """
-        get_tracking makes background requests for each tracking number
-        """
+        """get_tracking makes background requests for each tracking number"""
+        locale = self.settings.connection_config.locale.state or "en_US"
 
         def _get_tracking(tracking_number: str):
-            return tracking_number, lib.request(
-                url=f"{self.settings.server_url}/track/v1/details/{tracking_number}",
-                trace=self.trace_as("json"),
-                headers={
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "AccessLicenseNumber": self.settings.access_license_number,
-                    "Username": self.settings.username,
-                    "Password": self.settings.password,
-                },
+            return tracking_number, self._send_request(
+                f"/api/track/v1/details/{tracking_number}?locale={locale}&returnSignature=true",
                 method="GET",
             )
 
@@ -95,30 +83,16 @@ class Proxy(proxy.Proxy):
             ],
         )
 
-    def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
-        url = (
-            "https://wwwcie.ups.com/rest/PaperlessDocumentAPI"
-            if self.settings.test_mode
-            else "https://filexfer.ups.com/rest/PaperlessDocumentAPI"
+    def upload_document(
+        self,
+        request: lib.Serializable,
+    ) -> lib.Deserializable:
+        payload = request.serialize()
+        shipper_number = payload["UploadRequest"]["ShipperNumber"]
+
+        response = self._send_request(
+            f"/api/paperlessdocuments/v1/upload",
+            headers=dict(ShipperNumber=shipper_number),
         )
 
-        def _upload(data: dict):
-            name = data["UploadRequest"]["UserCreatedForm"]["UserCreatedFormFileName"]
-            return name, lib.request(
-                url=url,
-                data=lib.to_json(data),
-                trace=self.trace_as("json"),
-                headers={
-                    "Accept": "application/json",
-                    "Content-Type": "application/json",
-                    "AccessLicenseNumber": self.settings.access_license_number,
-                    "Username": self.settings.username,
-                    "Password": self.settings.password,
-                },
-                method="POST",
-            )
-
-        responses = lib.run_concurently(_upload, request.serialize())
-        return lib.Deserializable(
-            responses, lambda values: [(n, lib.to_dict(r)) for n, r in values]
-        )
+        return lib.Deserializable(response, lib.to_dict)

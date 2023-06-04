@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.ups",
-    version="2023.4.6",
+    version="2023.5",
     description="Karrio - UPS Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -14,7 +14,7 @@ setup(
     author_email="hello@karrio.io",
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
-    install_requires=["karrio", "carrier.ups"],
+    install_requires=["karrio"],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",

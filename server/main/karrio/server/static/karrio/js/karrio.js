@@ -1082,6 +1082,7 @@ var Karrio = (function () {
             'account_number': value.account_number,
             'reference': value.reference,
             'info': TrackerUpdateDataInfoToJSON(value.info),
+            'metadata': value.metadata,
         };
     }
 

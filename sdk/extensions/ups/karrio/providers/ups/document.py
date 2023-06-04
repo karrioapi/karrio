@@ -11,36 +11,29 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_document_upload_response(
-    _responses: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
-    responses = _responses.deserialize()
-    raw_documents = [
-        (name, result["UploadResponse"]["FormsHistoryDocumentID"])
-        for name, result in responses
-        if (
-            "Fault" not in result
-            and "UploadResponse" in result
-            and result["UploadResponse"].get("FormsHistoryDocumentID") is not None
-        )
-    ]
-    messages: typing.List[models.Message] = error.parse_rest_error_response(
-        [response for _, response in responses],
+    response = _response.deserialize()
+    raw_documents = response.get("UploadResponse", {}).get("FormsHistoryDocumentID")
+    details = _extract_details(raw_documents, settings) if raw_documents else None
+    messages: typing.List[models.Message] = error.parse_error_response(
+        response,
         settings=settings,
     )
-
-    details = _extract_details(raw_documents, settings) if any(raw_documents) else None
 
     return details, messages
 
 
 def _extract_details(
-    raw_documents: typing.List[typing.Tuple[str, dict]],
+    raw_documents: typing.Union[typing.List[dict], dict],
     settings: provider_utils.Settings,
 ) -> models.DocumentUploadDetails:
-    documents: typing.List[typing.Tuple[str, FormsHistoryDocumentIDType]] = [
-        (name, lib.to_object(FormsHistoryDocumentIDType, doc))
-        for name, doc in raw_documents
+    documents: typing.List[FormsHistoryDocumentIDType] = [
+        lib.to_object(FormsHistoryDocumentIDType, doc)
+        for doc in (
+            raw_documents if isinstance(raw_documents, list) else [raw_documents]
+        )
     ]
 
     return models.DocumentUploadDetails(
@@ -49,9 +42,9 @@ def _extract_details(
         documents=[
             models.DocumentDetails(
                 doc_id=doc.DocumentID,
-                file_name=name,
+                file_name=doc.DocumentID,
             )
-            for name, doc in documents
+            for doc in documents
         ],
         meta=dict(),
     )
@@ -64,32 +57,22 @@ def document_upload_request(
     document_files = lib.to_document_files(payload.document_files)
     options = lib.to_upload_options(payload.options)
 
-    request = [
-        ups.DocumentUploadRequestType(
-            UPSSecurity=ups.UPSSecurityType(
-                UsernameToken=ups.UsernameTokenType(
-                    Username=settings.username,
-                    Password=settings.password,
-                ),
-                ServiceAccessToken=ups.ServiceAccessTokenType(
-                    AccessLicenseNumber=settings.access_license_number,
-                ),
-            ),
-            UploadRequest=ups.UploadRequestType(
-                ShipperNumber=(
-                    options.ups_shipper_number.state or settings.account_number
-                ),
-                UserCreatedForm=ups.UserCreatedFormType(
+    request = ups.DocumentUploadRequestType(
+        UploadRequest=ups.UploadRequestType(
+            Request=ups.RequestType(TransactionReference="document upload"),
+            ShipperNumber=(options.ups_shipper_number.state or settings.account_number),
+            UserCreatedForm=[
+                ups.UserCreatedFormType(
                     UserCreatedFormFileName=document.doc_name,
                     UserCreatedFormFileFormat=document.doc_format,
                     UserCreatedFormDocumentType=provider_units.UploadDocumentType.map(
                         document.doc_type or units.UploadDocumentType.other.value
                     ).value,
                     UserCreatedFormFile=document.doc_file,
-                ),
-            ),
-        )
-        for document in document_files
-    ]
+                )
+                for document in document_files
+            ],
+        ),
+    )
 
     return lib.Serializable(request, lib.to_dict)

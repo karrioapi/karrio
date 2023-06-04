@@ -14,7 +14,9 @@ import karrio.server.providers.models as carriers
 User = get_user_model()
 SUPPORTED_CONNECTION_CONFIGS = [
     "cost_center",
+    "merchant_id",
     "enforce_zpl",
+    "skip_service_filter",
     "default_currency",
     "language_code",
     "label_type",
@@ -44,6 +46,10 @@ def model_admin(ext: str, carrier):
                 cost_center = forms.CharField(
                     required=False,
                 )
+            if key == "merchant_id":
+                merchant_id = forms.CharField(
+                    required=False,
+                )
             if key == "service_suffix":
                 service_suffix = forms.CharField(
                     required=False,
@@ -69,6 +75,11 @@ def model_admin(ext: str, carrier):
                 )
             if key == "enforce_zpl":
                 enforce_zpl = forms.NullBooleanField(
+                    required=False,
+                    initial=None,
+                )
+            if key == "skip_service_filter":
+                skip_service_filter = forms.NullBooleanField(
                     required=False,
                     initial=None,
                 )

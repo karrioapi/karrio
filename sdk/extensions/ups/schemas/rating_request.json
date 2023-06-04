@@ -1,0 +1,358 @@
+{
+  "RateRequest": {
+    "Request": {
+      "RequestOption": "Shop",
+      "SubVersion": "",
+      "TransactionReference": {
+        "CustomerContext": "CustomerContext",
+        "TransactionIdentifier": "TransactionIdentifier"
+      }
+    },
+    "PickupType": {
+      "Code": "01",
+      "Description": "Daily Pickup"
+    },
+    "CustomerClassification": {
+      "Code": "01",
+      "Description": "Classification"
+    },
+    "Shipment": {
+      "OriginRecordTransactionTimestamp": "2016-07-14T12:01:33.999",
+      "Shipper": {
+        "Name": "ShipperName",
+        "AttentionName": "ShipperName",
+        "ShipperNumber": "ShipperNumber",
+        "Address": {
+          "AddressLine": "ShipperAddressLine",
+          "City": "TIMONIUM",
+          "StateProvinceCode": "MD",
+          "PostalCode": "21093",
+          "CountryCode": "US"
+        }
+      },
+      "ShipTo": {
+        "Name": "ShipToName",
+        "AttentionName": "ShipToName",
+        "Address": {
+          "AddressLine": "ShipToAddressLine",
+          "City": "Alpharetta",
+          "StateProvinceCode": "GA",
+          "PostalCode": "30005",
+          "CountryCode": "US",
+          "ResidentialAddressIndicator": ""
+        }
+      },
+      "ShipFrom": {
+        "Name": "ShipFromName",
+        "AttentionName": "ShipFromName",
+        "Address": {
+          "AddressLine": "ShipFromAddressLine",
+          "City": "TIMONIUM",
+          "StateProvinceCode": "MD",
+          "PostalCode": "21093",
+          "CountryCode": "US"
+        }
+      },
+      "AlternateDeliveryAddress": {
+        "Name": "ShipFromName",
+        "Address": {
+          "AddressLine": "ShipFromAddressLine",
+          "City": "TIMONIUM",
+          "StateProvinceCode": "MD",
+          "PostalCode": "21093",
+          "CountryCode": "US",
+          "ResidentialAddressIndicator": "",
+          "POBoxIndicator": ""
+        }
+      },
+      "ShipmentIndicatorType": [
+        {
+          "Code": "01",
+          "Description": "01"
+        }
+      ],
+      "PaymentDetails": {
+        "ShipmentCharge": {
+          "Type": "01",
+          "BillShipper": {
+            "AccountNumber": "ShipperNumber"
+          },
+          "BillReceiver": {
+            "AccountNumber": "ShipperNumber",
+            "Address": {
+              "PostalCode": "21093"
+            }
+          },
+          "BillThirdParty": {
+            "AccountNumber": "ShipperNumber",
+            "Address": {
+              "PostalCode": "21093",
+              "CountryCode": "US"
+            }
+          },
+          "ConsigneeBilledIndicator": ""
+        },
+        "SplitDutyVATIndicator": ""
+      },
+      "FRSPaymentInformation": {
+        "Type": {
+          "Code": "01",
+          "Description": "BillShipper"
+        },
+        "AccountNumber": "",
+        "Address": {
+          "PostalCode": "21093",
+          "CountryCode": "US"
+        }
+      },
+      "FreightShipmentInformation": {
+        "FreightDensityInfo": {
+          "AdjustedHeightIndicator": "",
+          "AdjustedHeight": {
+            "Value": "1",
+            "UnitOfMeasurement": {
+              "Code": "IN",
+              "Description": "Inches"
+            }
+          },
+          "HandlingUnits": {
+            "Quantity": "1",
+            "Type": {
+              "Code": "PLT",
+              "Description": "Pallet"
+            },
+            "Dimensions": {
+              "UnitOfMeasurement": {
+                "Code": "IN",
+                "Description": "Inches"
+              },
+              "Length": "5",
+              "Width": "5",
+              "Height": "5"
+            }
+          }
+        },
+        "DensityEligibleIndicator": ""
+      },
+      "GoodsNotInFreeCirculationIndicator": "",
+      "Service": {
+        "Code": "03",
+        "Description": "Ground"
+      },
+      "NumOfPieces": "1",
+      "ShipmentTotalWeight": {
+        "UnitOfMeasurement": {
+          "Code": "LBS",
+          "Description": "Pounds"
+        },
+        "Weight": "1"
+      },
+      "DocumentsOnlyIndicator": "",
+      "Package": [
+        {
+          "PackagingType": {
+            "Code": "02",
+            "Description": "Packaging"
+          },
+          "Dimensions": {
+            "UnitOfMeasurement": {
+              "Code": "IN",
+              "Description": "Inches"
+            },
+            "Length": "5",
+            "Width": "5",
+            "Height": "5"
+          },
+          "DimWeight": {
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
+            "Weight": "1"
+          },
+          "PackageWeight": {
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
+            "Weight": "1"
+          },
+          "Commodity": {
+            "FreightClass": "",
+            "NMFC": {
+              "PrimeCode": "",
+              "SubCode": ""
+            }
+          },
+          "LargePackageIndicator": "",
+          "PackageServiceOptions": {
+            "DeliveryConfirmation": {
+              "DCISType": "2"
+            },
+            "AccessPointCOD": {
+              "CurrencyCode": "USD",
+              "MonetaryValue": "1"
+            },
+            "COD": {
+              "CODFundsCode": "0",
+              "CODAmount": {
+                "CurrencyCode": "USD",
+                "MonetaryValue": "1"
+              }
+            },
+            "DeclaredValue": {
+              "CurrencyCode": "USD",
+              "MonetaryValue": "1"
+            },
+            "ShipperDeclaredValue": {
+              "CurrencyCode": "USD",
+              "MonetaryValue": "1"
+            },
+            "ShipperReleaseIndicator": "",
+            "ProactiveIndicator": "",
+            "RefrigerationIndicator": "",
+            "UPSPremiumCareIndicator": "",
+            "HazMat": {
+              "PackageIdentifier": "",
+              "QValue": "",
+              "OverPackedIndicator": "",
+              "AllPackedInOneIndicator": "",
+              "HazMatChemicalRecord": {
+                "ChemicalRecordIdentifier": "",
+                "ClassDivisionNumber": "",
+                "IDNumber": "",
+                "TransportationMode": "",
+                "RegulationSet": "",
+                "EmergencyPhone": "",
+                "EmergencyContact": "",
+                "ReportableQuantity": "",
+                "SubRiskClass": "",
+                "PackagingGroupType": "",
+                "PackagingInstructionCode": "",
+                "Quantity": "",
+                "UOM": "",
+                "ProperShippingName": "",
+                "TechnicalName": "",
+                "AdditionalDescription": "",
+                "PackagingType": "",
+                "HazardLabelRequired": "",
+                "PackagingTypeQuantity": "",
+                "CommodityRegulatedLevelCode": "",
+                "TransportCategory": "",
+                "TunnelRestrictionCode": ""
+              }
+            },
+            "DryIce": {
+              "RegulationSet": "",
+              "DryIceWeight": {
+                "UnitOfMeasurement": {
+                  "Code": "LBS",
+                  "Description": "Pounds"
+                },
+                "Weight": "1"
+              },
+              "MedicalUseIndicator": "",
+              "AuditRequired": ""
+            }
+          },
+          "AdditionalHandlingIndicator": "",
+          "UPSPremier": {
+            "Category": ""
+          },
+          "OversizeIndicator": "",
+          "MinimumBillableWeightIndicator": ""
+        }
+      ],
+      "ShipmentServiceOptions": {
+        "SaturdayPickupIndicator": "",
+        "SaturdayDeliveryIndicator": "",
+        "SundayDeliveryIndicator": "",
+        "AvailableServicesOption": "",
+        "AccessPointCOD": {
+          "CurrencyCode": "USD",
+          "MonetaryValue": "1"
+        },
+        "DeliverToAddresseeOnlyIndicator": "",
+        "DirectDeliveryOnlyIndicator": "",
+        "COD": {
+          "CODFundsCode": "0",
+          "CODAmount": {
+            "CurrencyCode": "USD",
+            "MonetaryValue": "1"
+          }
+        },
+        "DeliveryConfirmation": {
+          "DCISType": "2"
+        },
+        "ReturnOfDocumentIndicator": "",
+        "UPScarbonneutralIndicator": "",
+        "CertificateOfOriginIndicator": "",
+        "PickupOptions": {
+          "LiftGateAtPickupIndicator": "",
+          "HoldForPickupIndicator": ""
+        },
+        "DeliveryOptions": {
+          "LiftGateAtDeliveryIndicator": "",
+          "DropOffAtUPSFacilityIndicator": ""
+        },
+        "RestrictedArticles": {
+          "AlcoholicBeveragesIndicator": "",
+          "DiagnosticSpecimensIndicator": "",
+          "PerishablesIndicator": "",
+          "PlantsIndicator": "",
+          "SeedsIndicator": "",
+          "SpecialExceptionsIndicator": "",
+          "TobaccoIndicator": "",
+          "ECigarettesIndicator": "",
+          "HempCBDIndicator": ""
+        },
+        "ShipperExportDeclarationIndicator": "",
+        "CommercialInvoiceRemovalIndicator": "",
+        "ImportControl": {
+          "Code": "",
+          "Description": ""
+        },
+        "ReturnService": {
+          "Code": "",
+          "Description": ""
+        },
+        "SDLShipmentIndicator": "",
+        "EPRAIndicator": "",
+        "InsideDelivery": "",
+        "ItemDisposalIndicator": ""
+      },
+      "ShipmentRatingOptions": {
+        "NegotiatedRatesIndicator": "",
+        "FRSShipmentIndicator": "",
+        "RateChartIndicator": "",
+        "UserLevelDiscountIndicator": "",
+        "TPFCNegotiatedRatesIndicator": ""
+      },
+      "InvoiceLineTotal": {
+        "CurrencyCode": "USD",
+        "MonetaryValue": "1"
+      },
+      "RatingMethodRequestedIndicator": "",
+      "TaxInformationIndicator": "",
+      "PromotionalDiscountInformation": {
+        "PromoCode": "",
+        "PromoAliasCode": ""
+      },
+      "DeliveryTimeInformation": {
+        "PackageBillType": "",
+        "Pickup": {
+          "Date": "",
+          "Time": ""
+        },
+        "ReturnContractServices": [
+          {
+            "Code": "",
+            "Description": ""
+          }
+        ],
+        "MasterCartonIndicator": "",
+        "WWEShipmentIndicator": ""
+      }
+    }
+  }
+}

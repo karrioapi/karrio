@@ -1,20 +1,23 @@
-import ups_lib.ups_security as ups
 import typing
+import base64
+import jstruct
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.core.errors as errors
 from karrio.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):
     """UPS connection settings."""
 
-    username: str
-    password: str
-    access_license_number: str
+    client_id: str
+    client_secret: str
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}
     config: dict = {}
+    cache: lib.Cache = jstruct.JStruct[lib.Cache]
 
     id: str = None
 
@@ -28,17 +31,6 @@ class Settings(BaseSettings):
             "https://wwwcie.ups.com"
             if self.test_mode
             else "https://onlinetools.ups.com"
-        )
-
-    @property
-    def Security(self):
-        return ups.UPSSecurity(
-            UsernameToken=ups.UsernameTokenType(
-                Username=self.username, Password=self.password
-            ),
-            ServiceAccessToken=ups.ServiceAccessTokenType(
-                AccessLicenseNumber=self.access_license_number
-            ),
         )
 
     @property
@@ -61,29 +53,56 @@ class Settings(BaseSettings):
             option_type=ConnectionConfig,
         )
 
+    @property
+    def authorization(self):
+        pair = "%s:%s" % (self.client_id, self.client_secret)
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
-def default_request_serializer(
-    prefix: str,
-    namespace: str,
-) -> typing.Callable[[lib.Envelope], str]:
-    def serializer(envelope: lib.Envelope):
-        namespace_ = (
-            'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
-            ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
-            ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
-            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
-            ' xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"'
-            f" {namespace}"
-        )
-        envelope.Body.ns_prefix_ = envelope.ns_prefix_
-        envelope.Header.ns_prefix_ = envelope.ns_prefix_
-        lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0], prefix)
-        lib.apply_namespaceprefix(envelope.Header.anytypeobjs_[0], "upss")
-        lib.apply_namespaceprefix(envelope.Body.anytypeobjs_[0].Request, "common")
+    @property
+    def access_token(self):
+        """Retrieve the access_token using the client_id|client_secret pair
+        or collect it from the cache if an unexpired access_token exist.
+        """
+        cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
+        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        return lib.to_xml(envelope, namespacedef_=namespace_)
+        auth = self.cache.get(cache_key) or {}
+        token = auth.get("access_token")
+        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
-    return serializer
+        if token is not None and expiry is not None and expiry > now:
+            return token
+
+        self.cache.set(cache_key, lambda: login(self))
+        new_auth = self.cache.get(cache_key)
+
+        return new_auth["access_token"]
+
+
+def login(settings: Settings):
+    import karrio.providers.ups.error as error
+
+    merchant_id = settings.connection_config.merchant_id.state
+    result = lib.request(
+        url=f"{settings.server_url}/security/v1/oauth/token",
+        data="grant_type=client_credentials",
+        method="POST",
+        headers={
+            "authorization": f"Basic {settings.authorization}",
+            "content-Type": "application/x-www-form-urlencoded",
+            **({"x-merchant-id": merchant_id} if merchant_id else {}),
+        },
+    )
+    response = lib.to_dict(result)
+    messages = error.parse_error_response(response, settings)
+
+    if any(messages):
+        raise errors.ShippingSDKError(messages)
+
+    expiry = datetime.datetime.fromtimestamp(
+        float(response.get("issued_at")) / 1000
+    ) + datetime.timedelta(seconds=float(response.get("expires_in", 0)))
+    return {**response, "expiry": lib.fdatetime(expiry)}
 
 
 SUPPORTED_COUNTRY_CURRENCY = ["US", "CA", "FR", "FR", "AU"]

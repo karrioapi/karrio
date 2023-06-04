@@ -6,6 +6,7 @@ from fedex_lib.rate_service_v28 import (
     WebAuthenticationDetail,
     ClientDetail,
 )
+import karrio.lib as lib
 
 
 class Settings(BaseSettings):
@@ -32,6 +33,15 @@ class Settings(BaseSettings):
     @property
     def tracking_url(self):
         return "https://www.fedex.com/fedextrack/?trknbr={}"
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.fedex.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
 
     @property
     def webAuthenticationDetail(self) -> WebAuthenticationDetail:

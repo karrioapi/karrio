@@ -1,0 +1,265 @@
+{
+  "RateResponse": {
+    "Response": {
+      "ResponseStatus": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "Alert": {
+        "Code": "string",
+        "Description": "string"
+      },
+      "AlertDetail": {
+        "Code": "string",
+        "Description": "string",
+        "ElementLevelInformation": {
+          "Level": "string",
+          "ElementIdentifier": [
+            {
+              "Code": "string",
+              "Value": "string"
+            }
+          ]
+        }
+      },
+      "TransactionReference": {
+        "CustomerContext": "string"
+      }
+    },
+    "RatedShipment": [
+      {
+        "Disclaimer": [
+          {
+            "Code": "string",
+            "Description": "string"
+          }
+        ],
+        "Service": {
+          "Code": "string",
+          "Description": "string"
+        },
+        "RateChart": "string",
+        "RatedShipmentAlert": [
+          {
+            "Code": "string",
+            "Description": "string"
+          }
+        ],
+        "BillableWeightCalculationMethod": "string",
+        "RatingMethod": "string",
+        "BillingWeight": {
+          "UnitOfMeasurement": {
+            "Code": "string",
+            "Description": "string"
+          },
+          "Weight": "string"
+        },
+        "TransportationCharges": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "BaseServiceCharge": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "ItemizedCharges": [
+          {
+            "Code": "string",
+            "Description": "string",
+            "CurrencyCode": "string",
+            "MonetaryValue": "string",
+            "SubType": "string"
+          }
+        ],
+        "FRSShipmentData": {
+          "TransportationCharges": {
+            "GrossCharge": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "DiscountAmount": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "DiscountPercentage": "string",
+            "NetCharge": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            }
+          },
+          "FreightDensityRate": {
+            "Density": "string",
+            "TotalCubicFeet": "string"
+          },
+          "HandlingUnits": {
+            "Quantity": "string",
+            "Type": {
+              "Code": "string",
+              "Description": "string"
+            },
+            "Dimensions": {
+              "UnitOfMeasurement": {
+                "Code": "string",
+                "Description": "string"
+              },
+              "Length": "string",
+              "Width": "string",
+              "Height": "string"
+            },
+            "AdjustedHeight": {
+              "Value": "string",
+              "UnitOfMeasurement": {
+                "Code": "string",
+                "Description": "string"
+              }
+            }
+          }
+        },
+        "ServiceOptionsCharges": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "TaxCharges": [
+          {
+            "Type": "string",
+            "MonetaryValue": "string"
+          }
+        ],
+        "TotalCharges": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "TotalChargesWithTaxes": {
+          "CurrencyCode": "string",
+          "MonetaryValue": "string"
+        },
+        "NegotiatedRateCharges": {
+          "ItemizedCharges": [
+            {
+              "Code": "string",
+              "Description": "string",
+              "CurrencyCode": "string",
+              "MonetaryValue": "string",
+              "SubType": "string"
+            }
+          ],
+          "TaxCharges": [
+            {
+              "Type": "string",
+              "MonetaryValue": "string"
+            }
+          ],
+          "TotalCharge": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          },
+          "TotalChargesWithTaxes": {
+            "CurrencyCode": "string",
+            "MonetaryValue": "string"
+          }
+        },
+        "RatedPackage": [
+          {
+            "BaseServiceCharge": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "TransportationCharges": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "ServiceOptionsCharges": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "TotalCharges": {
+              "CurrencyCode": "string",
+              "MonetaryValue": "string"
+            },
+            "Weight": "string",
+            "BillingWeight": {
+              "UnitOfMeasurement": {
+                "Code": "string",
+                "Description": "string"
+              },
+              "Weight": "string"
+            },
+            "Accessorial": [
+              {
+                "Code": "string",
+                "Description": "string"
+              }
+            ],
+            "ItemizedCharges": [
+              {
+                "Code": "string",
+                "Description": "string",
+                "CurrencyCode": "string",
+                "MonetaryValue": "string",
+                "SubType": "string"
+              }
+            ],
+            "NegotiatedCharges": {
+              "ItemizedCharges": [
+                {
+                  "Code": "string",
+                  "Description": "string",
+                  "CurrencyCode": "string",
+                  "MonetaryValue": "string",
+                  "SubType": "string"
+                }
+              ]
+            },
+            "RateModifier": {
+              "ModifierType": "string",
+              "ModifierDesc": "string",
+              "CurrencyCode": "string",
+              "Amount": "string"
+            }
+          }
+        ],
+        "GuaranteedDelivery": {
+          "BusinessDaysInTransit": "1",
+          "DeliveryByTime": "3: 00 P.M."
+        },
+        "TimeInTransit": {
+          "PickupDate": "string",
+          "DocumentsOnlyIndicator": "string",
+          "PackageBillType": "string",
+          "ServiceSummary": {
+            "Service": {
+              "Description": "string"
+            },
+            "GuaranteedIndicator": "string",
+            "Disclaimer": "string",
+            "EstimatedArrival": {
+              "Arrival": {
+                "Date": "string",
+                "Time": "string"
+              },
+              "BusinessDaysInTransit": "string",
+              "Pickup": {
+                "Date": "string",
+                "Time": "string"
+              },
+              "DayOfWeek": "string",
+              "CustomerCenterCutoff": "string",
+              "DelayCount": "string",
+              "HolidayCount": "string",
+              "RestDays": "string",
+              "TotalTransitDays": "string"
+            },
+            "SaturdayDelivery": "string",
+            "SaturdayDeliveryDisclaimer": "string",
+            "SundayDelivery": "string",
+            "SundayDeliveryDisclaimer": "string"
+          },
+          "AutoDutyCode": "string",
+          "Disclaimer": "string"
+        },
+        "ScheduledDeliveryDate": "string",
+        "RoarRatedIndicator": "string"
+      }
+    ]
+  }
+}

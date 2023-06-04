@@ -1,4 +1,4 @@
-import ups_lib.rest_tracking_response as ups
+import ups_lib.tracking_response as ups
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -18,7 +18,7 @@ def parse_tracking_response(
         if "trackResponse" in result
         and result["trackResponse"]["shipment"][0].get("package") is not None
     ]
-    messages: typing.List[models.Message] = error.parse_rest_error_response(
+    messages: typing.List[models.Message] = error.parse_error_response(
         [response for _, response in responses],
         settings=settings,
     )

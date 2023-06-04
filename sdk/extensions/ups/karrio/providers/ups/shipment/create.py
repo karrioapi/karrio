@@ -1,5 +1,5 @@
-import ups_lib.ship_web_service_schema as ups
-import ups_lib.common as common
+import ups_lib.shipping_response as ups_response
+import ups_lib.shipping_request as ups
 import time
 import typing
 import karrio.lib as lib
@@ -11,11 +11,11 @@ import karrio.providers.ups.utils as provider_utils
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[lib.Element],
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
-    details = lib.find_element("ShipmentResults", response, first=True)
+    details = response.get("ShipmentResponse", {}).get("ShipmentResults")
     shipment = (
         _extract_shipment(details, settings, _response.ctx)
         if details is not None
@@ -26,13 +26,14 @@ def parse_shipment_response(
 
 
 def _extract_shipment(
-    node: lib.Element,
+    details: dict,
     settings: provider_utils.Settings,
     ctx: dict,
 ) -> models.ShipmentDetails:
     label_type = "ZPL" if ctx["label"]["type"] == "ZPL" else "PDF"
     enforce_zpl = settings.connection_config.enforce_zpl.state
-    shipment = lib.to_object(ups.ShipmentResultsType, node)
+    shipment = lib.to_object(ups_response.ShipmentResultsType, details)
+    tracking_numbers = [pkg.TrackingNumber for pkg in shipment.PackageResults]
     label = _process_label(shipment)
     zpl_label = None
 
@@ -62,11 +63,12 @@ def _extract_shipment(
             carrier_tracking_link=settings.tracking_url.format(
                 shipment.ShipmentIdentificationNumber
             ),
+            tracking_numbers=tracking_numbers,
         ),
     )
 
 
-def _process_label(shipment: ups.ShipmentResultsType):
+def _process_label(shipment: ups_response.ShipmentResultsType):
     label_type = (
         "ZPL"
         if "ZPL" in shipment.PackageResults[0].ShippingLabel.ImageFormat.Code
@@ -111,7 +113,7 @@ def shipment_request(
         recipient=payload.recipient,
         weight_unit=weight_unit.value,
     )
-    service = provider_units.ServiceCode.map(payload.service).value_or_key
+    service = provider_units.ServiceCode.map(payload.service)
 
     payment = payload.payment or models.Payment()
     biling_address = lib.to_address(
@@ -123,18 +125,19 @@ def shipment_request(
         or (payload.shipper if customs.duty.paid_by == "sender" else payload.recipient)
     )
 
-    if any(key in service for key in ["freight", "ground"]):
+    if any(key in service.value_or_key for key in ["freight", "ground"]):
         packages.validate(required=["weight"])
 
     country_pair = f"{shipper.country_code}/{recipient.country_code}"
-    charges = (
-        [("01", payment, biling_address)]
-        if payload.customs is None
-        else [
-            ("01", payment, biling_address),
-            ("02", customs.duty, duty_billing_address),
-        ]
-    )
+    charges = [
+        ("01", payment, biling_address),
+        *([("02", customs.duty, duty_billing_address)] if customs is not None else []),
+    ]
+    indications = [
+        *(["01"] if options.pickup_options.state else []),
+        *(["02"] if options.delivery_options.state else []),
+    ]
+    currency = options.currency.state or settings.default_currency
     mps_packaging = (
         provider_units.PackagingType.your_packaging.value if len(packages) > 1 else None
     )
@@ -146,160 +149,212 @@ def shipment_request(
         or provider_units.LabelType.PDF_6x4.value
     )
 
-    request = lib.Envelope(
-        Header=lib.Header(
-            settings.Security,
-        ),
-        Body=lib.Body(
-            ups.ShipmentRequest(
-                Request=common.RequestType(
-                    RequestOption=["validate"],
-                    SubVersion=None,
-                    TransactionReference=common.TransactionReferenceType(
-                        CustomerContext=payload.reference,
-                        TransactionIdentifier=getattr(payload, "id", None),
+    request = ups.ShippingRequestType(
+        ShipmentRequest=ups.ShipmentRequestType(
+            Request=ups.RequestType(
+                SubVersion="v2205",
+                RequestOption="validate",
+                TransactionReference=ups.TransactionReferenceType(
+                    CustomerContext=payload.reference or "generate label",
+                ),
+            ),
+            Shipment=ups.ShipmentType(
+                Description=packages.description,
+                ReturnService=None,
+                DocumentsOnlyIndicator=("Y" if packages.is_document else None),
+                Shipper=ups.ShipperType(
+                    Name=(shipper.company_name or shipper.person_name),
+                    AttentionName=shipper.contact,
+                    CompanyDisplayableName=shipper.company_name,
+                    TaxIdentificationNumber=shipper.tax_id,
+                    Phone=ups.ShipToPhoneType(
+                        Number=shipper.phone_number or "000-000-0000",
+                    ),
+                    ShipperNumber=settings.account_number,
+                    FaxNumber=None,
+                    EMailAddress=shipper.email,
+                    Address=ups.AlternateDeliveryAddressAddressType(
+                        AddressLine=shipper.address_line,
+                        City=shipper.city,
+                        StateProvinceCode=shipper.state_code,
+                        PostalCode=shipper.postal_code,
+                        CountryCode=shipper.country_code,
+                        ResidentialAddressIndicator=(
+                            "Y" if shipper.is_residential else None
+                        ),
                     ),
                 ),
-                Shipment=ups.ShipmentType(
-                    Description=packages.description,
-                    DocumentsOnlyIndicator=("" if packages.is_document else None),
-                    Shipper=ups.ShipperType(
-                        Name=(shipper.company_name or shipper.person_name),
-                        AttentionName=shipper.person_name,
-                        CompanyDisplayableName=shipper.company_name,
-                        TaxIdentificationNumber=shipper.federal_tax_id,
-                        TaxIDType=None,
-                        Phone=ups.ShipPhoneType(
-                            Number=shipper.phone_number or "000-000-0000"
-                        ),
-                        ShipperNumber=settings.account_number,
-                        FaxNumber=None,
-                        EMailAddress=shipper.email,
-                        Address=ups.ShipAddressType(
-                            AddressLine=shipper.address_lines,
-                            City=shipper.city,
-                            StateProvinceCode=shipper.state_code,
-                            PostalCode=shipper.postal_code,
-                            CountryCode=shipper.country_code,
+                ShipTo=ups.ShipToType(
+                    Name=(recipient.company_name or recipient.person_name),
+                    AttentionName=recipient.contact,
+                    CompanyDisplayableName=recipient.company_name,
+                    TaxIdentificationNumber=recipient.tax_id,
+                    Phone=ups.ShipToPhoneType(
+                        Number=recipient.phone_number or "000-000-0000",
+                        Extension=None,
+                    ),
+                    FaxNumber=None,
+                    EMailAddress=recipient.email,
+                    Address=ups.AlternateDeliveryAddressAddressType(
+                        AddressLine=recipient.address_line,
+                        City=recipient.city,
+                        StateProvinceCode=recipient.state_code,
+                        PostalCode=recipient.postal_code,
+                        CountryCode=recipient.country_code,
+                        ResidentialAddressIndicator=(
+                            "Y" if recipient.is_residential else None
                         ),
                     ),
-                    ShipFrom=ups.ShipperType(
-                        Name=(shipper.company_name or shipper.person_name),
-                        AttentionName=shipper.person_name,
-                        CompanyDisplayableName=shipper.company_name,
-                        TaxIdentificationNumber=shipper.federal_tax_id,
-                        TaxIDType=None,
-                        Phone=ups.ShipPhoneType(
-                            Number=shipper.phone_number or "000-000-0000"
-                        ),
-                        ShipperNumber=settings.account_number,
-                        FaxNumber=None,
-                        EMailAddress=shipper.email,
-                        Address=ups.ShipAddressType(
-                            AddressLine=shipper.address_lines,
-                            City=shipper.city,
-                            StateProvinceCode=shipper.state_code,
-                            PostalCode=shipper.postal_code,
-                            CountryCode=shipper.country_code,
-                        ),
+                    LocationID=None,
+                ),
+                AlternateDeliveryAddress=None,
+                ShipFrom=ups.ShipFromType(
+                    Name=(shipper.company_name or shipper.person_name),
+                    AttentionName=shipper.contact,
+                    CompanyDisplayableName=shipper.company_name,
+                    TaxIdentificationNumber=shipper.tax_id,
+                    Phone=ups.ShipFromPhoneType(
+                        Number=shipper.phone_number or "000-000-0000",
                     ),
-                    ShipTo=ups.ShipToType(
-                        Name=(recipient.company_name or recipient.person_name),
-                        AttentionName=recipient.person_name,
-                        CompanyDisplayableName=recipient.company_name,
-                        TaxIdentificationNumber=recipient.federal_tax_id,
-                        TaxIDType=None,
-                        Phone=ups.ShipPhoneType(
-                            Number=recipient.phone_number or "000-000-0000"
-                        ),
-                        FaxNumber=None,
-                        EMailAddress=recipient.email,
-                        Address=ups.ShipAddressType(
-                            AddressLine=recipient.address_lines,
-                            City=recipient.city,
-                            StateProvinceCode=recipient.state_code,
-                            PostalCode=recipient.postal_code,
-                            CountryCode=recipient.country_code,
+                    FaxNumber=None,
+                    Address=ups.AlternateDeliveryAddressAddressType(
+                        AddressLine=shipper.address_line,
+                        City=shipper.city,
+                        StateProvinceCode=shipper.state_code,
+                        PostalCode=shipper.postal_code,
+                        CountryCode=shipper.country_code,
+                        ResidentialAddressIndicator=(
+                            "Y" if shipper.is_residential else None
                         ),
                     ),
-                    PaymentInformation=ups.PaymentInfoType(
-                        ShipmentCharge=[
-                            ups.ShipmentChargeType(
-                                Type=charge_type,
-                                BillShipper=(
-                                    ups.BillShipperType(
-                                        AccountNumber=settings.account_number,
-                                        CreditCard=None,
-                                        AlternatePaymentMethod=None,
-                                    )
-                                    if payment.paid_by == "sender"
-                                    else None
-                                ),
-                                BillReceiver=(
-                                    ups.BillReceiverType(
-                                        AccountNumber=payment.account_number,
-                                        Address=ups.BillReceiverAddressType(
-                                            PostalCode=address.postal_code,
-                                        ),
-                                    )
-                                    if payment.paid_by == "recipient"
-                                    else None
-                                ),
-                                BillThirdParty=(
-                                    ups.BillThirdPartyChargeType(
-                                        AccountNumber=payment.account_number,
-                                        Address=ups.AccountAddressType(
-                                            PostalCode=address.postal_code,
-                                            CountryCode=address.country_code,
-                                        ),
-                                    )
-                                    if payment.paid_by == "third_party"
-                                    else None
-                                ),
-                                ConsigneeBilledIndicator=None,
-                            )
-                            for charge_type, payment, address in charges
-                        ],
-                        SplitDutyVATIndicator=None,
+                    VendorInfo=None,
+                ),
+                PaymentInformation=ups.PaymentInformationType(
+                    ShipmentCharge=[
+                        ups.ShipmentChargeType(
+                            Type=charge_type,
+                            BillShipper=(
+                                ups.BillShipperType(
+                                    AccountNumber=(
+                                        payment.account_number
+                                        or settings.account_number
+                                    ),
+                                    CreditCard=None,
+                                    AlternatePaymentMethod=None,
+                                )
+                                if payment.paid_by == "sender"
+                                else None
+                            ),
+                            BillReceiver=(
+                                ups.BillReceiverType(
+                                    AccountNumber=payment.account_number,
+                                    Address=ups.BillReceiverAddressType(
+                                        PostalCode=billing_address.postal_code,
+                                    ),
+                                )
+                                if payment.paid_by == "recipient"
+                                else None
+                            ),
+                            BillThirdParty=(
+                                ups.BillThirdPartyType(
+                                    AccountNumber=payment.account_number,
+                                    CertifiedElectronicMail=None,
+                                    InterchangeSystemCode=None,
+                                    FRSPaymentInformation=None,
+                                )
+                                if payment.paid_by == "third_party"
+                                else None
+                            ),
+                            ConsigneeBilledIndicator=(
+                                "Y" if payment.paid_by == "recipient" else None
+                            ),
+                        )
+                        for charge_type, payment, billing_address in charges
+                    ],
+                    SplitDutyVATIndicator=None,
+                ),
+                FRSPaymentInformation=None,
+                FreightShipmentInformation=None,
+                GoodsNotInFreeCirculationIndicator=None,
+                PromotionalDiscountInformation=None,
+                DGSignatoryInfo=None,
+                ShipmentRatingOptions=ups.ShipmentRatingOptionsType(
+                    NegotiatedRatesIndicator="Y",
+                    FRSShipmentIndicator=None,
+                    RateChartIndicator=None,
+                    UserLevelDiscountIndicator=None,
+                    TPFCNegotiatedRatesIndicator=None,
+                ),
+                MovementReferenceNumber=None,
+                ReferenceNumber=(
+                    ups.ReferenceNumberType(
+                        BarCodeIndicator=None,
+                        Code=shipper.country_code,
+                        Value=payload.reference,
+                    )
+                    if (country_pair not in ["US/US", "PR/PR"])
+                    and any(payload.reference or "")
+                    else None
+                ),
+                Service=ups.LabelImageFormatType(
+                    Code=service.value_or_key,
+                    Description=service.name_or_key,
+                ),
+                InvoiceLineTotal=ups.InvoiceLineTotalType(
+                    CurrencyCode=currency,
+                    MonetaryValue=str(
+                        options.declared_value.state
+                        or packages.items.value_amount
+                        or 1.0
                     ),
-                    MovementReferenceNumber=None,
-                    ReferenceNumber=(
-                        [
-                            ups.ReferenceNumberType(
-                                BarCodeIndicator=None,
-                                Code=shipper.country_code,
-                                Value=payload.reference,
-                            )
-                        ]
-                        if (country_pair not in ["US/US", "PR/PR"])
-                        and any(payload.reference or "")
-                        else None
-                    ),
-                    Service=(
-                        ups.ServiceType(Code=service) if service is not None else None
-                    ),
-                    ShipmentServiceOptions=ups.ShipmentServiceOptionsType(
+                ),
+                NumOfPiecesInShipment=str(packages.items.quantity),
+                USPSEndorsement=None,
+                MILabelCN22Indicator=None,
+                SubClassification=None,
+                CostCenter=(
+                    options.cost_center.state
+                    or settings.connection_config.cost_center.state
+                ),
+                CostCenterBarcodeIndicator=(
+                    "Y"
+                    if (
+                        options.cost_center.state
+                        or settings.connection_config.cost_center.state
+                    )
+                    else None
+                ),
+                PackageID=None,
+                PackageIDBarcodeIndicator=None,
+                IrregularIndicator=None,
+                ShipmentIndicationType=[
+                    ups.LabelImageFormatType(Code=code, Description="Indicator")
+                    for code in indications
+                ],
+                MIDualReturnShipmentKey=None,
+                RatingMethodRequestedIndicator="Y",
+                TaxInformationIndicator="Y",
+                ShipmentServiceOptions=(
+                    ups.ShipmentServiceOptionsType(
                         SaturdayPickupIndicator=(
-                            "" if options.ups_saturday_pickup_indicator.state else None
+                            "Y" if options.ups_saturday_pickup.state else None
                         ),
                         SaturdayDeliveryIndicator=(
-                            ""
-                            if options.ups_saturday_delivery_indicator.state
-                            else None
+                            "Y" if options.ups_saturday_delivery.state else None
                         ),
                         COD=(
-                            ups.CODType(
-                                CODFundsCode=None,
-                                CODAmount=ups.CurrencyMonetaryType(
-                                    CurrencyCode=options.currency.state or "USD",
-                                    MonetaryValue=options.cash_on_delivery.state,
+                            ups.CodType(
+                                CODFundsCode="0",  # TODO: find reference
+                                CODAmount=ups.InvoiceLineTotalType(
+                                    CurrencyCode=options.currency.state,
+                                    MonetaryValue=str(options.cash_on_delivery.state),
                                 ),
                             )
                             if options.cash_on_delivery.state
                             else None
                         ),
                         AccessPointCOD=(
-                            ups.ShipmentServiceOptionsAccessPointCODType(
+                            ups.InvoiceLineTotalType(
                                 CurrencyCode=options.currency.state,
                                 MonetaryValue=lib.to_money(
                                     options.ups_access_point_cod.state
@@ -308,31 +363,29 @@ def shipment_request(
                             if options.ups_access_point_cod.state
                             else None
                         ),
-                        DeliverToAddresseOnlyIndicator=(
-                            ""
-                            if options.ups_deliver_to_addressee_only_indicator.state
-                            else None
-                        ),
-                        DirectDeliveryOnlyIndicator=(
-                            ""
-                            if options.ups_direct_delivery_only_indicator.state
-                            else None
-                        ),
+                        DeliverToAddresseeOnlyIndicator=None,
+                        DirectDeliveryOnlyIndicator=None,
                         Notification=(
                             [
-                                ups.NotificationType(
+                                ups.NotificationElementType(
                                     NotificationCode=event,
-                                    EMail=ups.EmailDetailsType(
-                                        EMailAddress=[
+                                    EMail=ups.MailType(
+                                        EMailAddress=(
                                             options.email_notification_to.state
                                             or recipient.email
-                                        ]
+                                        ),
+                                        UndeliverableEMailAddress=None,
+                                        FromEMailAddress=None,
+                                        FromName=None,
+                                        Memo=None,
+                                        Subject=None,
+                                        SubjectCode=None,
                                     ),
                                     VoiceMessage=None,
                                     TextMessage=None,
                                     Locale=None,
                                 )
-                                for event in [8]
+                                for event in ["8"]
                             ]
                             if options.email_notification.state
                             and any(
@@ -341,53 +394,41 @@ def shipment_request(
                                     recipient.email,
                                 ]
                             )
-                            else None
+                            else []
                         ),
                         LabelDelivery=None,
                         InternationalForms=(
-                            ups.InternationalFormType(
+                            ups.InternationalFormsType(
                                 FormType=(
-                                    ["07"] if options.paperless_trade.state else ["01"]
+                                    "07" if options.paperless_trade.state else "01"
                                 ),
-                                UserCreatedForm=(
-                                    ups.UserCreatedFormType(
-                                        DocumentID=[
-                                            doc["doc_id"]
-                                            for doc in options.doc_references.state
-                                        ]
-                                    )
-                                    if any(options.doc_references.state or [])
-                                    else None
-                                ),
-                                CN22Form=None,
+                                UserCreatedForm=[
+                                    ups.UserCreatedFormType(DocumentID=doc["doc_id"])
+                                    for doc in (options.doc_references.state or [])
+                                ],
                                 UPSPremiumCareForm=None,
+                                CN22Form=None,
                                 AdditionalDocumentIndicator=None,
                                 FormGroupIdName=None,
-                                SEDFilingOption=None,
                                 EEIFilingOption=None,
                                 Contacts=(
-                                    ups.ContactType(
+                                    ups.ContactsType(
                                         ForwardAgent=None,
                                         UltimateConsignee=None,
                                         IntermediateConsignee=None,
                                         Producer=None,
-                                        SoldTo=ups.SoldToType(
-                                            Name=(
-                                                recipient.company_name
-                                                or recipient.person_name
-                                            ),
-                                            AttentionName=(
-                                                recipient.person_name
-                                                or recipient.company_name
-                                            ),
+                                        SoldTo=ups.ProducerType(
+                                            Option=None,
+                                            CompanyName=recipient.company_name,
+                                            Name=recipient.contact,
+                                            AttentionName=recipient.contact,
                                             TaxIdentificationNumber=recipient.tax_id,
-                                            Phone=ups.ShipPhoneType(
+                                            Phone=ups.ShipToPhoneType(
                                                 Number=recipient.phone_number
                                                 or "000-000-0000"
                                             ),
-                                            Option=None,
-                                            Address=ups.AddressType(
-                                                AddressLine=recipient.address_lines,
+                                            Address=ups.AlternateDeliveryAddressAddressType(
+                                                AddressLine=recipient.address_line,
                                                 City=recipient.city,
                                                 StateProvinceCode=recipient.state_code,
                                                 PostalCode=lib.text(
@@ -396,6 +437,12 @@ def shipment_request(
                                                     ).replace("-", "")
                                                 ),
                                                 CountryCode=recipient.country_code,
+                                                ResidentialAddressIndicator=(
+                                                    "Y"
+                                                    if recipient.is_residential
+                                                    else None
+                                                ),
+                                                Town=None,
                                             ),
                                             EMailAddress=recipient.email,
                                         ),
@@ -405,18 +452,17 @@ def shipment_request(
                                 ),
                                 Product=[
                                     ups.ProductType(
-                                        Description=[
-                                            lib.text(
-                                                item.title or item.description,
-                                                max=35,
-                                            )
-                                        ],
+                                        Description=lib.text(
+                                            item.title or item.description,
+                                            max=35,
+                                        ),
                                         Unit=ups.UnitType(
                                             Number=str(item.quantity),
-                                            UnitOfMeasurement=ups.UnitOfMeasurementType(
-                                                Code="PCS"
+                                            UnitOfMeasurement=ups.LabelImageFormatType(
+                                                Code="PCS",
+                                                Description="PCS",
                                             ),
-                                            Value=item.value_amount,
+                                            Value=str(item.value_amount),
                                         ),
                                         CommodityCode=item.hs_code,
                                         PartNumber=item.sku,
@@ -427,23 +473,25 @@ def shipment_request(
                                         PreferenceCriteria=None,
                                         ProducerInfo=None,
                                         MarksAndNumbers=None,
-                                        NumberOfPackagesPerCommodity=1,
-                                        ProductWeight=ups.ProductWeightType(
-                                            UnitOfMeasurement=ups.UnitOfMeasurementType(
+                                        NumberOfPackagesPerCommodity="1",
+                                        ProductWeight=ups.WeightType(
+                                            UnitOfMeasurement=ups.LabelImageFormatType(
                                                 Code=provider_units.WeightUnit.map(
                                                     weight_unit.name
                                                 ).value,
+                                                Description="weight unit",
                                             ),
-                                            Weight=units.Weight(
-                                                item.weight, weight_unit.name
-                                            )[weight_unit.name],
+                                            Weight=str(
+                                                units.Weight(
+                                                    item.weight, weight_unit.name
+                                                )[weight_unit.name]
+                                            ),
                                         ),
                                         VehicleID=None,
                                         ScheduleB=None,
                                         ExportType="F",
                                         SEDTotalValue=None,
                                         ExcludeFromForm=None,
-                                        ProductCurrencyCode=None,
                                         PackingListInfo=None,
                                         EEIInformation=None,
                                     )
@@ -468,8 +516,8 @@ def shipment_request(
                                 Discount=None,
                                 FreightCharges=None,
                                 InsuranceCharges=(
-                                    ups.IFChargesType(
-                                        MonetaryValue=options.insurance.state
+                                    ups.DiscountType(
+                                        MonetaryValue=options.insurance.state,
                                     )
                                     if options.insurance.state is not None
                                     else None
@@ -492,142 +540,96 @@ def shipment_request(
                                 PartiesToTransaction=None,
                                 RoutedExportTransactionIndicator=None,
                                 ContainerizedIndicator=None,
-                                License=None,
-                                ECCNNumber=None,
                                 OverridePaperlessIndicator=None,
                                 ShipperMemo=None,
-                                MultiCurrencyInvoiceLineTotal=None,
                                 HazardousMaterialsIndicator=None,
                             )
                             if payload.customs
                             else None
                         ),
-                        DeliveryConfirmation=(
-                            ups.DeliveryConfirmationType(
-                                DCISType=options.ups_delivery_confirmation.state or "01"
-                            )
-                            if options.ups_delivery_confirmation.state
-                            else None
-                        ),
-                        ReturnOfDocumentIndicator=(
-                            ""
-                            if options.ups_return_of_document_indicator.state
-                            else None
-                        ),
-                        ImportControlIndicator=(
-                            "" if options.ups_import_control_indicator.state else None
-                        ),
+                        DeliveryConfirmation=None,
+                        ReturnOfDocumentIndicator=None,
+                        ImportControlIndicator=None,
                         LabelMethod=None,
-                        CommercialInvoiceRemovalIndicator=(
-                            ""
-                            if options.ups_commercial_invoice_removal_indicator.state
-                            else None
-                        ),
-                        UPScarbonneutralIndicator=(
-                            "" if options.ups_carbonneutral_indicator.state else None
-                        ),
-                        PreAlertNotification=None,
+                        CommercialInvoiceRemovalIndicator=None,
+                        UPScarbonneutralIndicator=None,
                         ExchangeForwardIndicator=None,
-                        HoldForPickupIndicator=(
-                            "" if options.ups_hold_for_pickup_indicator.state else None
-                        ),
-                        DropoffAtUPSFacilityIndicator=(
-                            ""
-                            if options.ups_drop_off_at_ups_facility_indicator.state
-                            else None
-                        ),
-                        LiftGateForPickUpIndicator=(
-                            ""
-                            if options.ups_lift_gate_at_pickup_indicator.state
-                            else None
-                        ),
-                        LiftGateForDeliveryIndicator=(
-                            ""
-                            if options.ups_lift_gate_at_delivery_indicator.state
-                            else None
-                        ),
-                        SDLShipmentIndicator=(
-                            "" if options.ups_sdl_shipment_indicator.state else None
-                        ),
-                        EPRAReleaseCode=(
-                            "" if options.ups_epra_indicator.state else None
-                        ),
+                        HoldForPickupIndicator=None,
+                        DropoffAtUPSFacilityIndicator=None,
+                        LiftGateForPickupIndicator=None,
+                        LiftGateForDeliveryIndicator=None,
+                        SDLShipmentIndicator=None,
+                        EPRAReleaseCode=None,
                         RestrictedArticles=None,
                         InsideDelivery=None,
                         ItemDisposal=None,
-                    ),
-                    Package=[
-                        ups.PackageType(
-                            Description=package.parcel.description,
-                            Packaging=ups.PackagingType(
-                                Code=(
-                                    mps_packaging
-                                    or provider_units.PackagingType.map(
-                                        package.packaging_type
-                                    ).value
-                                    or provider_units.PackagingType.ups_customer_supplied_package.value
-                                ),
-                            ),
-                            Dimensions=ups.DimensionsType(
-                                UnitOfMeasurement=ups.ShipUnitOfMeasurementType(
-                                    Code=dim_unit.value,
-                                ),
-                                Length=package.length.value,
-                                Width=package.width.value,
-                                Height=package.height.value,
-                            ),
-                            PackageWeight=ups.PackageWeightType(
-                                UnitOfMeasurement=ups.ShipUnitOfMeasurementType(
-                                    Code=provider_units.WeightUnit[
-                                        weight_unit.name
-                                    ].value,
-                                ),
-                                Weight=package.weight.value,
-                            ),
-                        )
-                        for package in packages
-                    ],
+                    )
                 ),
-                LabelSpecification=ups.LabelSpecificationType(
-                    LabelImageFormat=ups.LabelImageFormatType(
-                        Code="ZPL" if enforce_zpl else label_format
-                    ),
-                    HTTPUserAgent=None,
-                    LabelStockSize=ups.LabelStockSizeType(
-                        Height=label_height,
-                        Width=label_width,
-                    ),
-                    Instruction=None,
-                    CharacterSet=None,
-                ),
-                ReceiptSpecification=None,
+                ShipmentValueThresholdCode=None,
+                MasterCartonID=None,
+                MasterCartonIndicator=None,
+                BarCodeImageIndicator=None,
+                ShipmentDate=None,
+                Package=[
+                    ups.PackageType(
+                        Packaging=ups.LabelImageFormatType(
+                            Code=(
+                                mps_packaging
+                                or provider_units.PackagingType.map(
+                                    package.packaging_type
+                                ).value
+                                or provider_units.PackagingType.ups_customer_supplied_package.value
+                            ),
+                            Description="Packaging Type",
+                        ),
+                        Dimensions=(
+                            ups.DimensionsType(
+                                UnitOfMeasurement=ups.LabelImageFormatType(
+                                    Code=package.dimension_unit.value,
+                                    Description="Dimension",
+                                ),
+                                Length=str(package.length.value),
+                                Width=str(package.width.value),
+                                Height=str(package.height.value),
+                            )
+                            if any([package.length, package.width, package.height])
+                            else None
+                        ),
+                        DimWeight=None,
+                        PackageWeight=ups.WeightType(
+                            UnitOfMeasurement=ups.LabelImageFormatType(
+                                Code=provider_units.WeightUnit[
+                                    packages.weight_unit
+                                ].value,
+                                Description="Weight",
+                            ),
+                            Weight=str(packages.weight.value),
+                        ),
+                        Commodity=None,
+                        PackageServiceOptions=None,
+                        UPSPremier=None,
+                    )
+                    for package in packages
+                ],
             ),
-        ),
+            LabelSpecification=ups.LabelSpecificationType(
+                LabelImageFormat=ups.LabelImageFormatType(
+                    Code="ZPL" if enforce_zpl else label_format,
+                    Description="lable format",
+                ),
+                HTTPUserAgent=None,
+                LabelStockSize=ups.LabelStockSizeType(
+                    Height=str(label_height),
+                    Width=str(label_width),
+                ),
+            ),
+            ReceiptSpecification=None,
+        )
     )
 
     return lib.Serializable(
         request,
-        lambda envelope: lib.envelope_serializer(
-            envelope,
-            namespace=(
-                'xmlns:auth="http://www.ups.com/schema/xpci/1.0/auth"'
-                ' xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/"'
-                ' xmlns:xsd="http://www.w3.org/2001/XMLSchema"'
-                ' xmlns:upss="http://www.ups.com/XMLSchema/XOLTWS/UPSS/v1.0"'
-                ' xmlns:common="http://www.ups.com/XMLSchema/XOLTWS/Common/v1.0"'
-                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
-                ' xsi:schemaLocation="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"'
-                ' xmlns:ship="http://www.ups.com/XMLSchema/XOLTWS/Ship/v1.0"'
-                ' xmlns:ifs="http://www.ups.com/XMLSchema/XOLTWS/IF/v1.0"'
-            ),
-            prefixes=dict(
-                Request="common",
-                Envelope="soapenv",
-                UPSSecurity="upss",
-                ShipmentRequest="ship",
-                InternationalForms_children="ifs",
-            ),
-        ),
+        lib.to_dict,
         dict(
             label=dict(
                 height=label_height,

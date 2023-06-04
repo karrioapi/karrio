@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.4.6`.
+    The current version is `2023.5`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.4.6
+  version: '2023.5'
 paths:
   /:
     get:
@@ -680,8 +680,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
       - in: query
         name: system_only
         schema:
@@ -720,8 +720,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
         required: true
       tags:
       - Carriers
@@ -1783,7 +1783,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -1866,7 +1865,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -1949,7 +1947,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -2123,7 +2120,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -2247,7 +2243,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -2370,8 +2365,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
       - in: query
         name: created_after
         schema:
@@ -2777,8 +2772,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
       - in: query
         name: created_after
         schema:
@@ -2925,7 +2920,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -4697,7 +4691,6 @@ components:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -4734,7 +4727,6 @@ components:
             * `sf_express` - sf_express
             * `tnt` - tnt
             * `ups` - ups
-            * `ups_freight` - ups_freight
             * `usps` - usps
             * `usps_international` - usps_international
             * `yanwen` - yanwen
@@ -10950,7 +10942,6 @@ components:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -10984,7 +10975,6 @@ components:
             * `sf_express` - sf_express
             * `tnt` - tnt
             * `ups` - ups
-            * `ups_freight` - ups_freight
             * `usps` - usps
             * `usps_international` - usps_international
             * `yanwen` - yanwen
@@ -11002,6 +10992,11 @@ components:
           - $ref: '#/components/schemas/TrackingInfo'
           nullable: true
           description: The package and shipment tracking details
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier user metadata.
       required:
       - carrier_name
       - tracking_number
@@ -11523,7 +11518,6 @@ tags:
     | boxknight | BoxKnight |
     | canpar | Canpar |
     | chronopost | Chronopost |
-    | dhl_express | DHL Express |
     | dhl_poland | DHL Parcel Poland |
     | dhl_universal | DHL Universal |
     | dicom | Dicom |
@@ -11541,13 +11535,13 @@ tags:
     | sendle | Sendle |
     | sf_express | SF-Express |
     | tnt | TNT |
-    | ups | UPS |
-    | ups_freight | UPS Freight |
     | usps | USPS |
     | usps_international | USPS International |
     | yanwen | Yanwen |
     | yunexpress | Yunexpress |
+    | ups | UPS |
     | canadapost | Canada Post |
+    | dhl_express | DHL Express |
     | fedex | FedEx |
 
     ---
@@ -11581,47 +11575,6 @@ tags:
     | chronopost_express_international | 17 |
     | chronopost_premium_international | 37 |
     | chronopost_classic_international | 44 |
-
-    ### DHL Express
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dhl_logistics_services | 0 |
-    | dhl_domestic_express_12_00 | 1 |
-    | dhl_express_choice | 2 |
-    | dhl_express_choice_nondoc | 3 |
-    | dhl_jetline | 4 |
-    | dhl_sprintline | 5 |
-    | dhl_air_capacity_sales | 6 |
-    | dhl_express_easy | 7 |
-    | dhl_express_easy_nondoc | 8 |
-    | dhl_parcel_product | 9 |
-    | dhl_accounting | A |
-    | dhl_breakbulk_express | B |
-    | dhl_medical_express | C |
-    | dhl_express_worldwide_doc | D |
-    | dhl_express_9_00_nondoc | E |
-    | dhl_freight_worldwide_nondoc | F |
-    | dhl_economy_select_domestic | G |
-    | dhl_economy_select_nondoc | H |
-    | dhl_express_domestic_9_00 | I |
-    | dhl_jumbo_box_nondoc | J |
-    | dhl_express_9_00 | K |
-    | dhl_express_10_30 | L |
-    | dhl_express_10_30_nondoc | M |
-    | dhl_express_domestic | N |
-    | dhl_express_domestic_10_30 | O |
-    | dhl_express_worldwide_nondoc | P |
-    | dhl_medical_express_nondoc | Q |
-    | dhl_globalmail | R |
-    | dhl_same_day | S |
-    | dhl_express_12_00 | T |
-    | dhl_express_worldwide | U |
-    | dhl_parcel_product_nondoc | V |
-    | dhl_economy_select | W |
-    | dhl_express_envelope | X |
-    | dhl_express_12_00_nondoc | Y |
-    | dhl_destination_charges | Z |
-    | dhl_express_all | None |
 
     ### DHL Parcel Poland
     | Code         | Service Name |
@@ -12499,6 +12452,62 @@ tags:
     | tnt_economy_express | 48N |
     | tnt_global_express | 15N |
 
+    ### USPS
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | usps_first_class | First Class |
+    | usps_first_class_commercial | First Class Commercial |
+    | usps_first_class_hfp_commercial | First Class HFPCommercial |
+    | usps_priority | Priority |
+    | usps_priority_commercial | Priority Commercial |
+    | usps_priority_cpp | Priority Cpp |
+    | usps_priority_hfp_commercial | Priority HFP Commercial |
+    | usps_priority_hfp_cpp | Priority HFP CPP |
+    | usps_priority_mail_express | Priority Mail Express |
+    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
+    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
+    | usps_priority_mail_express_sh | Priority Mail Express Sh |
+    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
+    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
+    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
+    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
+    | usps_priority_mail_cubic | Priority Mail Cubic |
+    | usps_retail_ground | Retail Ground |
+    | usps_media | Media |
+    | usps_library | Library |
+    | usps_all | All |
+    | usps_online | Online |
+    | usps_plus | Plus |
+    | usps_bpm | BPM |
+
+    ### USPS International
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | usps_first_class | First Class |
+    | usps_first_class_commercial | First Class Commercial |
+    | usps_first_class_hfp_commercial | First Class HFPCommercial |
+    | usps_priority | Priority |
+    | usps_priority_commercial | Priority Commercial |
+    | usps_priority_cpp | Priority Cpp |
+    | usps_priority_hfp_commercial | Priority HFP Commercial |
+    | usps_priority_hfp_cpp | Priority HFP CPP |
+    | usps_priority_mail_express | Priority Mail Express |
+    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
+    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
+    | usps_priority_mail_express_sh | Priority Mail Express Sh |
+    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
+    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
+    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
+    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
+    | usps_priority_mail_cubic | Priority Mail Cubic |
+    | usps_retail_ground | Retail Ground |
+    | usps_media | Media |
+    | usps_library | Library |
+    | usps_all | All |
+    | usps_online | Online |
+    | usps_plus | Plus |
+    | usps_bpm | BPM |
+
     ### UPS
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12562,62 +12571,6 @@ tags:
     | ups_worldwide_economy_ddu | UPS Worldwide Economy DDU |
     | ups_worldwide_economy_ddp | UPS Worldwide Economy DDP |
 
-    ### USPS
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | usps_first_class | First Class |
-    | usps_first_class_commercial | First Class Commercial |
-    | usps_first_class_hfp_commercial | First Class HFPCommercial |
-    | usps_priority | Priority |
-    | usps_priority_commercial | Priority Commercial |
-    | usps_priority_cpp | Priority Cpp |
-    | usps_priority_hfp_commercial | Priority HFP Commercial |
-    | usps_priority_hfp_cpp | Priority HFP CPP |
-    | usps_priority_mail_express | Priority Mail Express |
-    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
-    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
-    | usps_priority_mail_express_sh | Priority Mail Express Sh |
-    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
-    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
-    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
-    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
-    | usps_priority_mail_cubic | Priority Mail Cubic |
-    | usps_retail_ground | Retail Ground |
-    | usps_media | Media |
-    | usps_library | Library |
-    | usps_all | All |
-    | usps_online | Online |
-    | usps_plus | Plus |
-    | usps_bpm | BPM |
-
-    ### USPS International
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | usps_first_class | First Class |
-    | usps_first_class_commercial | First Class Commercial |
-    | usps_first_class_hfp_commercial | First Class HFPCommercial |
-    | usps_priority | Priority |
-    | usps_priority_commercial | Priority Commercial |
-    | usps_priority_cpp | Priority Cpp |
-    | usps_priority_hfp_commercial | Priority HFP Commercial |
-    | usps_priority_hfp_cpp | Priority HFP CPP |
-    | usps_priority_mail_express | Priority Mail Express |
-    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
-    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
-    | usps_priority_mail_express_sh | Priority Mail Express Sh |
-    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
-    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
-    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
-    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
-    | usps_priority_mail_cubic | Priority Mail Cubic |
-    | usps_retail_ground | Retail Ground |
-    | usps_media | Media |
-    | usps_library | Library |
-    | usps_all | All |
-    | usps_online | Online |
-    | usps_plus | Plus |
-    | usps_bpm | BPM |
-
     ### Canada Post
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12644,6 +12597,47 @@ tags:
     | canadapost_small_packet_international_air | INT.SP.AIR |
     | canadapost_small_packet_international_surface | INT.SP.SURF |
     | canadapost_tracked_packet_international | INT.TP |
+
+    ### DHL Express
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dhl_logistics_services | 0 |
+    | dhl_domestic_express_12_00 | 1 |
+    | dhl_express_choice | 2 |
+    | dhl_express_choice_nondoc | 3 |
+    | dhl_jetline | 4 |
+    | dhl_sprintline | 5 |
+    | dhl_air_capacity_sales | 6 |
+    | dhl_express_easy | 7 |
+    | dhl_express_easy_nondoc | 8 |
+    | dhl_parcel_product | 9 |
+    | dhl_accounting | A |
+    | dhl_breakbulk_express | B |
+    | dhl_medical_express | C |
+    | dhl_express_worldwide_doc | D |
+    | dhl_express_9_00_nondoc | E |
+    | dhl_freight_worldwide_nondoc | F |
+    | dhl_economy_select_domestic | G |
+    | dhl_economy_select_nondoc | H |
+    | dhl_express_domestic_9_00 | I |
+    | dhl_jumbo_box_nondoc | J |
+    | dhl_express_9_00 | K |
+    | dhl_express_10_30 | L |
+    | dhl_express_10_30_nondoc | M |
+    | dhl_express_domestic | N |
+    | dhl_express_domestic_10_30 | O |
+    | dhl_express_worldwide_nondoc | P |
+    | dhl_medical_express_nondoc | Q |
+    | dhl_globalmail | R |
+    | dhl_same_day | S |
+    | dhl_express_12_00 | T |
+    | dhl_express_worldwide | U |
+    | dhl_parcel_product_nondoc | V |
+    | dhl_economy_select | W |
+    | dhl_express_envelope | X |
+    | dhl_express_12_00_nondoc | Y |
+    | dhl_destination_charges | Z |
+    | dhl_express_all | None |
 
     ### FedEx
     | Code         | Service Name |
@@ -12709,24 +12703,6 @@ tags:
     ---
     ## Parcel Templates
     Use any of the following templates when you ship with special carrier packaging.
-    ### DHL Express
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
-    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
-    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
-    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
-    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
-    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
-    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
-    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
-    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
-    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
-    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
-    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
-    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
-    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
-
     ### Purolator
     | Code         | Dimensions   |
     | ------------ | ------------ |
@@ -12771,6 +12747,24 @@ tags:
     | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
     | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
     | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
+
+    ### DHL Express
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
+    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
+    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
+    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
+    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
+    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
+    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
+    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
+    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
+    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
+    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
+    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
+    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
+    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
 
     ### FedEx
     | Code         | Dimensions   |

@@ -111,6 +111,8 @@ class PackagingType(utils.Flag):
 
 class ConnectionConfig(utils.Enum):
     label_type = utils.OptionEnum("label_type")
+    cost_center = utils.OptionEnum("cost_center")
+    merchant_id = utils.OptionEnum("merchant_id")
     enforce_zpl = utils.OptionEnum("enforce_zpl", bool)
     shipping_options = utils.OptionEnum("shipping_options", list)
     shipping_services = utils.OptionEnum("shipping_services", list)

@@ -3,7 +3,7 @@ from unittest.mock import patch
 from karrio.core.utils import DP
 from karrio.core.models import TrackingRequest
 from .fixture import gateway
-from karrio import Tracking
+import karrio
 
 
 class TestUPSTracking(unittest.TestCase):
@@ -18,19 +18,19 @@ class TestUPSTracking(unittest.TestCase):
 
     @patch("karrio.mappers.ups.proxy.lib.request", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
-        Tracking.fetch(self.TrackingRequest).from_(gateway)
+        karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
         self.assertEqual(
             url,
-            f"{gateway.settings.server_url}/track/v1/details/{self.TrackingRequest.tracking_numbers[0]}",
+            f"{gateway.settings.server_url}/api/track/v1/details/{self.TrackingRequest.tracking_numbers[0]}?locale=en_US&returnSignature=true",
         )
 
     def test_tracking_auth_error_parsing(self):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = AuthError
             parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertEqual(DP.to_dict(parsed_response), ParsedAuthError)
 
@@ -38,7 +38,7 @@ class TestUPSTracking(unittest.TestCase):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseJSON
             parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
@@ -46,7 +46,7 @@ class TestUPSTracking(unittest.TestCase):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = InvalidTrackingNumberResponseJSON
             parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertListEqual(
                 DP.to_dict(parsed_response),
@@ -57,7 +57,7 @@ class TestUPSTracking(unittest.TestCase):
         with patch("karrio.mappers.ups.proxy.lib.request") as mock:
             mock.return_value = TrackingNumberNotFoundResponseJSON
             parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
             self.assertListEqual(
                 DP.to_dict(parsed_response),
@@ -69,7 +69,7 @@ if __name__ == "__main__":
     unittest.main()
 
 
-TrackingRequestPayload = ["1Z12345E6205277936"]
+TrackingRequestPayload = ["1ZA82D672031716786"]
 
 ParsedAuthError = [
     [],

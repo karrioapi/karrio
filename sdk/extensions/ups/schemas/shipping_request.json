@@ -1,0 +1,758 @@
+{
+  "ShipmentRequest": {
+    "Request": {
+      "SubVersion": "1801",
+      "RequestOption": "nonvalidate",
+      "TransactionReference": {
+        "CustomerContext": ""
+      }
+    },
+    "Shipment": {
+      "Description": "Ship WS test",
+      "ReturnService": {
+        "Code": "9",
+        "Description": "UPS Print and Mail (PNM)"
+      },
+      "DocumentsOnlyIndicator": "",
+      "Shipper": {
+        "Name": "ShipperName",
+        "AttentionName": "ShipperZs Attn Name",
+        "CompanyDisplayableName": "ShipperZs Company Displayable Name",
+        "TaxIdentificationNumber": "123456",
+        "Phone": {
+          "Number": "1115554758",
+          "Extension": " "
+        },
+        "ShipperNumber": " ",
+        "FaxNumber": "8002222222",
+        "EMailAddress": "",
+        "Address": {
+          "AddressLine": "2311 York Rd",
+          "City": "Timonium",
+          "StateProvinceCode": "MD",
+          "PostalCode": "21093",
+          "CountryCode": "US"
+        }
+      },
+      "ShipTo": {
+        "Name": "Happy Dog Pet Supply",
+        "AttentionName": "1160b_74",
+        "CompanyDisplayableName": " ",
+        "TaxIdentificationNumber": "123456",
+        "Phone": {
+          "Number": "9225377171",
+          "Extension": " "
+        },
+        "FaxNumber": "1234567890",
+        "EMailAddress": "",
+        "Address": {
+          "AddressLine": "123 Main St",
+          "City": "timonium",
+          "StateProvinceCode": "MD",
+          "PostalCode": "21030",
+          "CountryCode": "US",
+          "ResidentialAddressIndicator": ""
+        },
+        "LocationID": ""
+      },
+      "AlternateDeliveryAddress": {
+        "Name": " ",
+        "AttentionName": " ",
+        "UPSAccessPointID": " ",
+        "Address": {
+          "AddressLine": " ",
+          "City": " ",
+          "StateProvinceCode": " ",
+          "PostalCode": " ",
+          "CountryCode": " "
+        }
+      },
+      "ShipFrom": {
+        "Name": "T and T Designs",
+        "AttentionName": "1160b_74",
+        "CompanyDisplayableName": " ",
+        "TaxIdentificationNumber": "123456",
+        "TaxId": {
+          "Code": "123456",
+          "Description": "123456"
+        },
+        "Phone": {
+          "Number": "1234567890"
+        },
+        "FaxNumber": "1234567890",
+        "Address": {
+          "AddressLine": "2311 York Rd",
+          "City": "Alpharetta",
+          "StateProvinceCode": "GA",
+          "PostalCode": "30005",
+          "CountryCode": "US"
+        },
+        "VendorInfo": {
+          "VendorCollectIDTypeCode": "01",
+          "VendorCollectIDNumber": "123456",
+          "ConsigneeType": "01"
+        }
+      },
+      "PaymentInformation": {
+        "ShipmentCharge": [
+          {
+            "Type": "01",
+            "BillShipper": {
+              "AccountNumber": "ShipperNumber",
+              "CreditCard": {
+                "Type": "06",
+                "Number": "4716995287640625",
+                "ExpirationDate": "201809",
+                "SecurityCode": "123",
+                "Address": {
+                  "AddressLine": "123 Main St",
+                  "City": "timonium",
+                  "StateProvinceCode": "MD",
+                  "PostalCode": "21030",
+                  "CountryCode": "US"
+                }
+              },
+              "AlternatePaymentMethod": ""
+            },
+            "BillReceiver": {
+              "AccountNumber": "ShipperNumber",
+              "Address": {
+                "PostalCode": "21093"
+              }
+            },
+            "BillThirdParty": {
+              "AccountNumber": "ShipperNumber",
+              "CertifiedElectronicMail": "",
+              "InterchangeSystemCode": "",
+              "Address": {
+                "PostalCode": "21093",
+                "CountryCode": "US"
+              }
+            },
+            "ConsigneeBilledIndicator": ""
+          }
+        ],
+        "SplitDutyVATIndicator": ""
+      },
+      "FRSPaymentInformation": {
+        "Type": "01",
+        "AccountNumber": "ShipperNumber",
+        "Address": {
+          "PostalCode": "21093",
+          "CountryCode": "US"
+        }
+      },
+      "FreightShipmentInformation": {
+        "FreightDensityInfo": {
+          "AdjustedHeightIndicator": "",
+          "AdjustedHeight": {
+            "Value": "1",
+            "UnitOfMeasurement": {
+              "Code": "IN",
+              "Description": "Inches"
+            }
+          },
+          "HandlingUnits": {
+            "Quantity": "1",
+            "Type": {
+              "Code": "PLT",
+              "Description": "Pallet"
+            },
+            "Dimensions": {
+              "UnitOfMeasurement": {
+                "Code": "IN",
+                "Description": "Inches"
+              },
+              "Length": "5",
+              "Width": "5",
+              "Height": "5"
+            }
+          }
+        },
+        "DensityEligibleIndicator": ""
+      },
+      "GoodsNotInFreeCirculationIndicator": "",
+      "PromotionalDiscountInformation": {
+        "PromoCode": "",
+        "PromoAliasCode": ""
+      },
+      "DGSignatoryInfo": {
+        "Name": "",
+        "Title": "",
+        "Place": "",
+        "Date": "",
+        "ShipperDeclaration": "",
+        "UploadOnlyIndicator": ""
+      },
+      "ShipmentRatingOptions": {
+        "NegotiatedRatesIndicator": "",
+        "FRSShipmentIndicator": "",
+        "RateChartIndicator": "",
+        "UserLevelDiscountIndicator": "",
+        "TPFCNegotiatedRatesIndicator": ""
+      },
+      "MovementReferenceNumber": "",
+      "ReferenceNumber": {
+        "BarCodeIndicator": "",
+        "Code": "01",
+        "Value": "1160b_74"
+      },
+      "Service": {
+        "Code": "03",
+        "Description": "Express"
+      },
+      "InvoiceLineTotal": {
+        "CurrencyCode": "USD",
+        "MonetaryValue": "1"
+      },
+      "NumOfPiecesInShipment": "1",
+      "USPSEndorsement": "",
+      "MILabelCN22Indicator": "",
+      "SubClassification": "",
+      "CostCenter": "",
+      "CostCenterBarcodeIndicator": "",
+      "PackageID": "",
+      "PackageIDBarcodeIndicator": "",
+      "IrregularIndicator": "",
+      "ShipmentIndicationType": [
+        {
+          "Code": "01",
+          "Description": "01"
+        }
+      ],
+      "MIDualReturnShipmentKey": "",
+      "RatingMethodRequestedIndicator": "",
+      "TaxInformationIndicator": "",
+      "ShipmentServiceOptions": {
+        "SaturdayPickupIndicator": "",
+        "SaturdayDeliveryIndicator": "",
+        "COD": {
+          "CODFundsCode": "0",
+          "CODAmount": {
+            "CurrencyCode": "USD",
+            "MonetaryValue": "1"
+          }
+        },
+        "AccessPointCOD": {
+          "CurrencyCode": "USD",
+          "MonetaryValue": "1"
+        },
+        "DeliverToAddresseeOnlyIndicator": "",
+        "DirectDeliveryOnlyIndicator": "",
+        "Notification": [
+          {
+            "NotificationCode": "6",
+            "EMail": {
+              "EMailAddress": "",
+              "UndeliverableEMailAddress": "",
+              "FromEMailAddress": "",
+              "FromName": "",
+              "Memo": "",
+              "Subject": "",
+              "SubjectCode": ""
+            },
+            "VoiceMessage": {
+              "PhoneNumber": ""
+            },
+            "TextMessage": {
+              "PhoneNumber": ""
+            },
+            "Locale": {
+              "Language": "",
+              "Dialect": ""
+            }
+          }
+        ],
+        "LabelDelivery": {
+          "EMail": {
+            "EMailAddress": "",
+            "UndeliverableEMailAddress": "",
+            "FromEMailAddress": "",
+            "FromName": "",
+            "Memo": "",
+            "Subject": "",
+            "SubjectCode": ""
+          },
+          "LabelLinksIndicator": ""
+        },
+        "InternationalForms": {
+          "FormType": "",
+          "UserCreatedForm": [
+            {
+              "DocumentID": ""
+            }
+          ],
+          "UPSPremiumCareForm": {
+            "ShipmentDate": "",
+            "PageSize": "",
+            "PrintType": "",
+            "NumOfCopies": "",
+            "LanguageForUPSPremiumCare": {
+              "Language": ""
+            }
+          },
+          "CN22Form": {
+            "LabelSize": "",
+            "PrintsPerPage": "",
+            "LabelPrintType": "",
+            "CN22Type": "",
+            "CN22OtherDescription": "",
+            "FoldHereText": "",
+            "CN22Content": {
+              "CN22ContentQuantity": "",
+              "CN22ContentDescription": "",
+              "CN22ContentWeight": {
+                "UnitOfMeasurement": {
+                  "Code": "",
+                  "Description": ""
+                },
+                "Weight": ""
+              },
+              "CN22ContentTotalValue": "",
+              "CN22ContentCurrencyCode": "",
+              "CN22ContentCountryOfOrigin": "",
+              "CN22ContentTariffNumber": ""
+            }
+          },
+          "AdditionalDocumentIndicator": "",
+          "FormGroupIdName": "",
+          "EEIFilingOption": {
+            "Code": "",
+            "EMailAddress": "",
+            "Description": "",
+            "UPSFiled": {
+              "POA": {
+                "Code": "",
+                "Description": ""
+              }
+            },
+            "ShipperFiled": {
+              "Code": "",
+              "Description": "",
+              "PreDepartureITNNumber": "",
+              "ExemptionLegend": "",
+              "EEIShipmentReferenceNumber": ""
+            }
+          },
+          "Contacts": {
+            "ForwardAgent": {
+              "CompanyName": "",
+              "TaxIdentificationNumber": "",
+              "Address": {
+                "AddressLine": "",
+                "City": "",
+                "StateProvinceCode": "",
+                "Town": "",
+                "PostalCode": "",
+                "CountryCode": ""
+              }
+            },
+            "UltimateConsignee": {
+              "CompanyName": "",
+              "Address": {
+                "AddressLine": "",
+                "City": "",
+                "StateProvinceCode": "",
+                "Town": "",
+                "PostalCode": "",
+                "CountryCode": ""
+              },
+              "UltimateConsigneeType": {
+                "Code": "",
+                "Description": ""
+              }
+            },
+            "IntermediateConsignee": {
+              "CompanyName": "",
+              "Address": {
+                "AddressLine": "",
+                "City": "",
+                "StateProvinceCode": "",
+                "Town": "",
+                "PostalCode": "",
+                "CountryCode": ""
+              }
+            },
+            "Producer": {
+              "Option": "",
+              "CompanyName": "",
+              "TaxIdentificationNumber": "",
+              "Address": {
+                "AddressLine": "",
+                "City": "",
+                "StateProvinceCode": "",
+                "Town": "",
+                "PostalCode": "",
+                "CountryCode": ""
+              },
+              "AttentionName": "",
+              "Phone": {
+                "Number": "",
+                "Extension": ""
+              },
+              "EMailAddress": ""
+            },
+            "SoldTo": {
+              "Name": "",
+              "AttentionName": "",
+              "TaxIdentificationNumber": "",
+              "Phone": {
+                "Number": "",
+                "Extension": ""
+              },
+              "Option": "",
+              "Address": {
+                "AddressLine": "",
+                "City": "",
+                "StateProvinceCode": "",
+                "Town": "",
+                "PostalCode": "",
+                "CountryCode": ""
+              },
+              "EMailAddress": ""
+            }
+          },
+          "Product": [
+            {
+              "Description": "",
+              "Unit": {
+                "Number": "",
+                "Value": "",
+                "UnitOfMeasurement": {
+                  "Code": "",
+                  "Description": ""
+                }
+              },
+              "CommodityCode": "",
+              "PartNumber": "",
+              "OriginCountryCode": "",
+              "JointProductionIndicator": "",
+              "NetCostCode": "",
+              "NetCostDateRange": {
+                "BeginDate": "",
+                "EndDate": ""
+              },
+              "PreferenceCriteria": "",
+              "ProducerInfo": "",
+              "MarksAndNumbers": "",
+              "NumberOfPackagesPerCommodity": "",
+              "ProductWeight": {
+                "UnitOfMeasurement": {
+                  "Code": "",
+                  "Description": ""
+                },
+                "Weight": ""
+              },
+              "VehicleID": "",
+              "ScheduleB": {
+                "Number": "",
+                "Quantity": "",
+                "UnitOfMeasurement": {
+                  "Code": "",
+                  "Description": ""
+                }
+              },
+              "ExportType": "",
+              "SEDTotalValue": "",
+              "ExcludeFromForm": {
+                "FormType": ""
+              },
+              "PackingListInfo": {
+                "PackageAssociated": {
+                  "PackageNumber": "",
+                  "ProductAmount": "",
+                  "ProductNotes": ""
+                }
+              },
+              "EEIInformation": {
+                "ExportInformation": "",
+                "License": {
+                  "Number": "",
+                  "Code": "",
+                  "LicenseLineValue": "",
+                  "ECCNNumber": ""
+                },
+                "DDTCInformation": {
+                  "ITARExemptionNumber": "",
+                  "USMLCategoryCode": "",
+                  "EligiblePartyIndicator": "",
+                  "RegistrationNumber": "",
+                  "Quantity": "",
+                  "UnitOfMeasurement": {
+                    "Code": "",
+                    "Description": ""
+                  },
+                  "SignificantMilitaryEquipmentIndicator": "",
+                  "ACMNumber": ""
+                }
+              }
+            }
+          ],
+          "InvoiceNumber": "",
+          "InvoiceDate": "",
+          "PurchaseOrderNumber": "",
+          "TermsOfShipment": "",
+          "ReasonForExport": "",
+          "Comments": "",
+          "DeclarationStatement": "",
+          "Discount": {
+            "MonetaryValue": ""
+          },
+          "FreightCharges": {
+            "MonetaryValue": ""
+          },
+          "InsuranceCharges": {
+            "MonetaryValue": ""
+          },
+          "OtherCharges": {
+            "MonetaryValue": "",
+            "Description": ""
+          },
+          "CurrencyCode": "",
+          "BlanketPeriod": {
+            "BeginDate": "",
+            "EndDate": ""
+          },
+          "ExportDate": "",
+          "ExportingCarrier": "",
+          "CarrierID": "",
+          "InBondCode": "",
+          "EntryNumber": "",
+          "PointOfOrigin": "",
+          "PointOfOriginType": "",
+          "ModeOfTransport": "",
+          "PortOfExport": "",
+          "PortOfUnloading": "",
+          "LoadingPier": "",
+          "PartiesToTransaction": "",
+          "RoutedExportTransactionIndicator": "",
+          "ContainerizedIndicator": "",
+          "OverridePaperlessIndicator": "",
+          "ShipperMemo": "",
+          "HazardousMaterialsIndicator": ""
+        },
+        "DeliveryConfirmation": {
+          "DCISType": "2",
+          "DCISNumber": "1"
+        },
+        "ReturnOfDocumentIndicator": "",
+        "ImportControlIndicator": "",
+        "LabelMethod": {
+          "Code": "",
+          "Description": ""
+        },
+        "CommercialInvoiceRemovalIndicator": "",
+        "UPScarbonneutralIndicator": "",
+        "PreAlertNotification": [
+          {
+            "EMailMessage": {
+              "EMailAddress": "",
+              "UndeliverableEMailAddress": ""
+            },
+            "VoiceMessage": {
+              "PhoneNumber": ""
+            },
+            "TextMessage": {
+              "PhoneNumber": ""
+            },
+            "Locale": {
+              "Language": "",
+              "Dialect": ""
+            }
+          }
+        ],
+        "ExchangeForwardIndicator": "",
+        "HoldForPickupIndicator": "",
+        "DropoffAtUPSFacilityIndicator": "",
+        "LiftGateForPickupIndicator": "",
+        "LiftGateForDeliveryIndicator": "",
+        "SDLShipmentIndicator": "",
+        "EPRAReleaseCode": "",
+        "RestrictedArticles": {
+          "AlcoholicBeveragesIndicator": "",
+          "DiagnosticSpecimensIndicator": "",
+          "PerishablesIndicator": "",
+          "PlantsIndicator": "",
+          "SeedsIndicator": "",
+          "SpecialExceptionsIndicator": "",
+          "TobaccoIndicator": ""
+        },
+        "InsideDelivery": "",
+        "ItemDisposal": ""
+      },
+      "Locale": "",
+      "ShipmentValueThresholdCode": "",
+      "MasterCartonID": "",
+      "MasterCartonIndicator": "",
+      "BarCodeImageIndicator": "",
+      "BarCodeAndLabelIndicator": "",
+      "ShipmentDate": "20210101",
+      "Package": [
+        {
+          "Description": " ",
+          "PalletDescription": " ",
+          "NumOfPieces": "1",
+          "UnitPrice": "",
+          "Packaging": {
+            "Code": "02",
+            "Description": "Nails"
+          },
+          "Dimensions": {
+            "UnitOfMeasurement": {
+              "Code": "IN",
+              "Description": "Inches"
+            },
+            "Length": "10",
+            "Width": "30",
+            "Height": "45"
+          },
+          "DimWeight": {
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
+            "Weight": "1"
+          },
+          "PackageWeight": {
+            "UnitOfMeasurement": {
+              "Code": "LBS",
+              "Description": "Pounds"
+            },
+            "Weight": "5"
+          },
+          "LargePackageIndicator": "",
+          "ReferenceNumber": {
+            "BarCodeIndicator": "",
+            "Code": "01",
+            "Value": "1160b_74"
+          },
+          "AdditionalHandlingIndicator": "",
+          "UPSPremier": {
+            "Category": "",
+            "SensorID": "",
+            "HandlingInstructions": {
+              "Instruction": ""
+            }
+          },
+          "PackageServiceOptions": {
+            "DeliveryConfirmation": {
+              "DCISType": "2"
+            },
+            "DeclaredValue": {
+              "CurrencyCode": "USD",
+              "MonetaryValue": "1"
+            },
+            "COD": {
+              "CODFundsCode": "0",
+              "CODAmount": {
+                "CurrencyCode": "USD",
+                "MonetaryValue": "1"
+              }
+            },
+            "AccessPointCOD": {
+              "CurrencyCode": "USD",
+              "MonetaryValue": "1"
+            },
+            "ShipperReleaseIndicator": "",
+            "Notification": {
+              "NotificationCode": "6",
+              "Email": {
+                "EMailAddress": "",
+                "UndeliverableEMailAddress": "",
+                "FromEMailAddress": "",
+                "FromName": "",
+                "Memo": "",
+                "Subject": "",
+                "SubjectCode": ""
+              }
+            },
+            "HazMat": {
+              "PackageIdentifier": "",
+              "QValue": "",
+              "OverPackedIndicator": "",
+              "AllPackedInOneIndicator": "",
+              "HazMatChemicalRecord": {
+                "ChemicalRecordIdentifier": "",
+                "ClassDivisionNumber": "",
+                "IDNumber": "",
+                "TransportationMode": "",
+                "RegulationSet": "",
+                "EmergencyPhone": "",
+                "EmergencyContact": "",
+                "ReportableQuantity": "",
+                "SubRiskClass": "",
+                "PackagingGroupType": "",
+                "PackagingInstructionCode": "",
+                "Quantity": "",
+                "UOM": "",
+                "ProperShippingName": "",
+                "TechnicalName": "",
+                "AdditionalDescription": "",
+                "PackagingType": "",
+                "HazardLabelRequired": "",
+                "PackagingTypeQuantity": "",
+                "CommodityRegulatedLevelCode": "",
+                "TransportCategory": "",
+                "TunnelRestrictionCode": ""
+              }
+            },
+            "DryIce": {
+              "RegulationSet": "",
+              "DryIceWeight": {
+                "UnitOfMeasurement": {
+                  "Code": "LBS",
+                  "Description": "Pounds"
+                },
+                "Weight": "1"
+              },
+              "MedicalUseIndicator": "",
+              "AuditRequired": ""
+            },
+            "UPSPremiumCareIndicator": "",
+            "ProactiveIndicator": "",
+            "PackageIdentifier": "",
+            "ClinicalTrialsID": "",
+            "RefrigerationIndicator": ""
+          },
+          "Commodity": {
+            "FreightClass": "",
+            "NMFC": {
+              "PrimeCode": "",
+              "SubCode": ""
+            }
+          },
+          "HazMatPackageInformation": {
+            "AllPackedInOneIndicator": "",
+            "OverPackedIndicator": "",
+            "QValue": "",
+            "OuterPackagingType": ""
+          }
+        }
+      ]
+    },
+    "LabelSpecification": {
+      "LabelImageFormat": {
+        "Code": "GIF",
+        "Description": "GIF"
+      },
+      "HTTPUserAgent": "Mozilla/4.5",
+      "LabelStockSize": {
+        "Height": "",
+        "Width": ""
+      },
+      "Instruction": [
+        {
+          "Code": "01",
+          "Description": "Description"
+        }
+      ],
+      "CharacterSet": ""
+    },
+    "ReceiptSpecification": {
+      "ImageFormat": {
+        "Code": "GIF",
+        "Description": "GIF"
+      }
+    }
+  }
+}

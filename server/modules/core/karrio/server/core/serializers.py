@@ -754,6 +754,9 @@ class TrackingData(serializers.Serializer):
         allow_null=True,
         help_text="The package and shipment tracking details",
     )
+    metadata = serializers.PlainDictField(
+        required=False, default={}, help_text="The carrier user metadata."
+    )
 
 
 class TrackingRequest(serializers.Serializer):

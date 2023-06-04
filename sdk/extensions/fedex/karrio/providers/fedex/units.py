@@ -238,6 +238,12 @@ class PaymentType(utils.Flag):
     third_party = "THIRD_PARTY"
 
 
+class ConnectionConfig(utils.Enum):
+    label_type = utils.OptionEnum("label_type")
+    shipping_options = utils.OptionEnum("shipping_options", list)
+    shipping_services = utils.OptionEnum("shipping_services", list)
+
+
 class ServiceType(utils.Enum):
     fedex_europe_first_international_priority = "EUROPE_FIRST_INTERNATIONAL_PRIORITY"
     fedex_1_day_freight = "FEDEX_1_DAY_FREIGHT"
@@ -464,7 +470,7 @@ def shipping_options_initializer(
         )
 
     def items_filter(key: str) -> bool:
-        return key in option_type and key not in ["doc_files", "doc_references"] # type: ignore
+        return key in option_type and key not in ["doc_files", "doc_references"]  # type: ignore
 
     return units.ShippingOptions(_options, option_type, items_filter=items_filter)
 

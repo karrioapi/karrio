@@ -28,7 +28,7 @@ class TestUPSDocument(unittest.TestCase):
             url = mock.call_args[1]["url"]
             self.assertEqual(
                 url,
-                "https://filexfer.ups.com/rest/PaperlessDocumentAPI",
+                "https://onlinetools.ups.com/api/paperlessdocuments/v1/upload",
             )
 
     def test_document_response_parsing(self):
@@ -80,7 +80,7 @@ ParsedDocumentUploadResponse = [
         "documents": [
             {
                 "doc_id": "2016-01-18-11.01.07.589501",
-                "file_name": "TestFile.txt",
+                "file_name": "2016-01-18-11.01.07.589501",
             }
         ],
         "meta": {},
@@ -94,30 +94,28 @@ ParsedDocumentUploadErrorResponse = [
         {
             "carrier_id": "ups",
             "carrier_name": "ups",
-            "code": "9590004",
-            "message": "Valid File Format is Required.",
+            "code": "9590018",
+            "message": "Your UPS Account number is not authorized for user generated forms functionality.",
         }
     ],
 ]
 
 
-DocumentUploadRequest = [
-    {
-        "UPSSecurity": {
-            "ServiceAccessToken": {"AccessLicenseNumber": "FG09H9G8H09GH8G0"},
-            "UsernameToken": {"Password": "password", "Username": "username"},
-        },
-        "UploadRequest": {
-            "ShipperNumber": "Your Account Number",
-            "UserCreatedForm": {
+DocumentUploadRequest = {
+    "UploadRequest": {
+        "Request": {"TransactionReference": "document upload"},
+        "ShipperNumber": "Your Account Number",
+        "UserCreatedForm": [
+            {
                 "UserCreatedFormDocumentType": "013",
                 "UserCreatedFormFile": "R0lGODdhIAOwBPAAAA==",
                 "UserCreatedFormFileFormat": "txt",
                 "UserCreatedFormFileName": "TestFile.txt",
-            },
-        },
+            }
+        ],
     }
-]
+}
+
 
 DocumentUploadResponse = """{
   "UploadResponse": {
@@ -136,20 +134,13 @@ DocumentUploadResponse = """{
 """
 
 DocumentUploadErrorResponse = """{
-    "Fault": {
-        "faultcode": "Client",
-        "faultstring": "An exception has been raised as a result of client data.",
-        "detail": {
-            "Errors": {
-                "ErrorDetail": {
-                    "Severity": "Hard",
-                    "PrimaryErrorCode": {
-                        "Code": "9590004",
-                        "Description": "Valid File Format is Required."
-                    }
-                }
-            }
-        }
-    }
+  "response": {
+    "errors": [
+      {
+        "code": "9590018",
+        "message": "Your UPS Account number is not authorized for user generated forms functionality."
+      }
+    ]
+  }
 }
 """
