@@ -109,7 +109,6 @@ karrio.server.proxy==2023.4
 karrio.sf-express==2023.4
 karrio.tnt==2023.4.4
 karrio.ups==2023.4.6
-karrio.ups-freight==2023.4
 karrio.usps==2023.4.4
 karrio.usps-international==2023.4.4
 karrio.yanwen==2023.4

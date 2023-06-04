@@ -680,8 +680,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
       - in: query
         name: system_only
         schema:
@@ -720,8 +720,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
         required: true
       tags:
       - Carriers
@@ -1783,7 +1783,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -1866,7 +1865,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -1949,7 +1947,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -2123,7 +2120,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -2247,7 +2243,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -2370,8 +2365,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
       - in: query
         name: created_after
         schema:
@@ -2777,8 +2772,8 @@ paths:
           `australiapost`, `boxknight`, `canadapost`, `canpar`, `chronopost`, `dhl_express`,
           `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`,
           `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `nationex`, `purolator`,
-          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `ups_freight`,
-          `usps`, `usps_international`, `yanwen`, `yunexpress`'
+          `roadie`, `royalmail`, `sendle`, `sf_express`, `tnt`, `ups`, `usps`, `usps_international`,
+          `yanwen`, `yunexpress`'
       - in: query
         name: created_after
         schema:
@@ -2925,7 +2920,6 @@ paths:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -4697,7 +4691,6 @@ components:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -4734,7 +4727,6 @@ components:
             * `sf_express` - sf_express
             * `tnt` - tnt
             * `ups` - ups
-            * `ups_freight` - ups_freight
             * `usps` - usps
             * `usps_international` - usps_international
             * `yanwen` - yanwen
@@ -10950,7 +10942,6 @@ components:
           - sf_express
           - tnt
           - ups
-          - ups_freight
           - usps
           - usps_international
           - yanwen
@@ -10984,7 +10975,6 @@ components:
             * `sf_express` - sf_express
             * `tnt` - tnt
             * `ups` - ups
-            * `ups_freight` - ups_freight
             * `usps` - usps
             * `usps_international` - usps_international
             * `yanwen` - yanwen
@@ -11542,13 +11532,12 @@ tags:
     | sendle | Sendle |
     | sf_express | SF-Express |
     | tnt | TNT |
-    | ups_freight | UPS Freight |
     | usps | USPS |
     | usps_international | USPS International |
     | yanwen | Yanwen |
     | yunexpress | Yunexpress |
-    | canadapost | Canada Post |
     | ups | UPS |
+    | canadapost | Canada Post |
 
     ---
     ## Services
@@ -12615,33 +12604,6 @@ tags:
     | usps_plus | Plus |
     | usps_bpm | BPM |
 
-    ### Canada Post
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | canadapost_regular_parcel | DOM.RP |
-    | canadapost_expedited_parcel | DOM.EP |
-    | canadapost_xpresspost | DOM.XP |
-    | canadapost_xpresspost_certified | DOM.XP.CERT |
-    | canadapost_priority | DOM.PC |
-    | canadapost_library_books | DOM.LIB |
-    | canadapost_expedited_parcel_usa | USA.EP |
-    | canadapost_priority_worldwide_envelope_usa | USA.PW.ENV |
-    | canadapost_priority_worldwide_pak_usa | USA.PW.PAK |
-    | canadapost_priority_worldwide_parcel_usa | USA.PW.PARCEL |
-    | canadapost_small_packet_usa_air | USA.SP.AIR |
-    | canadapost_tracked_packet_usa | USA.TP |
-    | canadapost_tracked_packet_usa_lvm | USA.TP.LVM |
-    | canadapost_xpresspost_usa | USA.XP |
-    | canadapost_xpresspost_international | INT.XP |
-    | canadapost_international_parcel_air | INT.IP.AIR |
-    | canadapost_international_parcel_surface | INT.IP.SURF |
-    | canadapost_priority_worldwide_envelope_intl | INT.PW.ENV |
-    | canadapost_priority_worldwide_pak_intl | INT.PW.PAK |
-    | canadapost_priority_worldwide_parcel_intl | INT.PW.PARCEL |
-    | canadapost_small_packet_international_air | INT.SP.AIR |
-    | canadapost_small_packet_international_surface | INT.SP.SURF |
-    | canadapost_tracked_packet_international | INT.TP |
-
     ### UPS
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12705,6 +12667,33 @@ tags:
     | ups_worldwide_economy_ddu | UPS Worldwide Economy DDU |
     | ups_worldwide_economy_ddp | UPS Worldwide Economy DDP |
 
+    ### Canada Post
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | canadapost_regular_parcel | DOM.RP |
+    | canadapost_expedited_parcel | DOM.EP |
+    | canadapost_xpresspost | DOM.XP |
+    | canadapost_xpresspost_certified | DOM.XP.CERT |
+    | canadapost_priority | DOM.PC |
+    | canadapost_library_books | DOM.LIB |
+    | canadapost_expedited_parcel_usa | USA.EP |
+    | canadapost_priority_worldwide_envelope_usa | USA.PW.ENV |
+    | canadapost_priority_worldwide_pak_usa | USA.PW.PAK |
+    | canadapost_priority_worldwide_parcel_usa | USA.PW.PARCEL |
+    | canadapost_small_packet_usa_air | USA.SP.AIR |
+    | canadapost_tracked_packet_usa | USA.TP |
+    | canadapost_tracked_packet_usa_lvm | USA.TP.LVM |
+    | canadapost_xpresspost_usa | USA.XP |
+    | canadapost_xpresspost_international | INT.XP |
+    | canadapost_international_parcel_air | INT.IP.AIR |
+    | canadapost_international_parcel_surface | INT.IP.SURF |
+    | canadapost_priority_worldwide_envelope_intl | INT.PW.ENV |
+    | canadapost_priority_worldwide_pak_intl | INT.PW.PAK |
+    | canadapost_priority_worldwide_parcel_intl | INT.PW.PARCEL |
+    | canadapost_small_packet_international_air | INT.SP.AIR |
+    | canadapost_small_packet_international_surface | INT.SP.SURF |
+    | canadapost_tracked_packet_international | INT.TP |
+
 
     ---
     ## Parcel Templates
@@ -12762,6 +12751,16 @@ tags:
     | tnt_medpack_ambient | 18.0 x 12.0 x 23.0 cm |
     | tnt_medpack_fronzen_10 | 37.0 x 35.5 x 40.0 cm |
 
+    ### UPS
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | ups_small_express_box | 13.0 x 11.0 x 2.0 in |
+    | ups_medium_express_box | 16.0 x 11.0 x 3.0 in |
+    | ups_large_express_box | 18.0 x 13.0 x 3.0 in |
+    | ups_express_tube | 38.0 x 6.0 x 6.0 in |
+    | ups_express_pak | 16.0 x 11.75 x 1.5 in |
+    | ups_world_document_box | 17.5 x 12.5 x 3.0 in |
+
     ### Canada Post
     | Code         | Dimensions   |
     | ------------ | ------------ |
@@ -12776,15 +12775,5 @@ tags:
     | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
     | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
     | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
-
-    ### UPS
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | ups_small_express_box | 13.0 x 11.0 x 2.0 in |
-    | ups_medium_express_box | 16.0 x 11.0 x 3.0 in |
-    | ups_large_express_box | 18.0 x 13.0 x 3.0 in |
-    | ups_express_tube | 38.0 x 6.0 x 6.0 in |
-    | ups_express_pak | 16.0 x 11.75 x 1.5 in |
-    | ups_world_document_box | 17.5 x 12.5 x 3.0 in |
 
 ...
