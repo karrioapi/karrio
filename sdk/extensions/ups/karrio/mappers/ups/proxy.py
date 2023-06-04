@@ -55,7 +55,7 @@ class Proxy(proxy.Proxy):
         request: lib.Serializable,
     ) -> lib.Deserializable:
         response = self._send_request(
-            f"/api/shipments/v2205/void/cancel/{request.serialize()}",
+            f"/api/shipments/v2205/void/cancel/{request.serialize().get('shipmentidentificationnumber')}",
             method="DELETE",
         )
 

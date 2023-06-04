@@ -49,6 +49,7 @@ class AlternateDeliveryAddressAddressType:
     PostalCode: Optional[str] = None
     CountryCode: Optional[str] = None
     ResidentialAddressIndicator: Optional[str] = None
+    Town: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -137,7 +138,7 @@ class CommodityType:
 @s(auto_attribs=True)
 class WeightType:
     UnitOfMeasurement: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
-    Weight: Optional[int] = None
+    Weight: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -155,7 +156,7 @@ class CodType:
 
 
 @s(auto_attribs=True)
-class DeliveryConfirmationType:
+class PackageServiceOptionsDeliveryConfirmationType:
     DCISType: Optional[int] = None
 
 
@@ -203,18 +204,37 @@ class HazMatType:
 
 
 @s(auto_attribs=True)
+class MailType:
+    EMailAddress: Optional[str] = None
+    UndeliverableEMailAddress: Optional[str] = None
+    FromEMailAddress: Optional[str] = None
+    FromName: Optional[str] = None
+    Memo: Optional[str] = None
+    Subject: Optional[str] = None
+    SubjectCode: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PackageServiceOptionsNotificationType:
+    NotificationCode: Optional[int] = None
+    Email: Optional[MailType] = JStruct[MailType]
+
+
+@s(auto_attribs=True)
 class PackageServiceOptionsType:
-    DeliveryConfirmation: Optional[DeliveryConfirmationType] = JStruct[DeliveryConfirmationType]
-    AccessPointCOD: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
-    COD: Optional[CodType] = JStruct[CodType]
+    DeliveryConfirmation: Optional[PackageServiceOptionsDeliveryConfirmationType] = JStruct[PackageServiceOptionsDeliveryConfirmationType]
     DeclaredValue: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
-    ShipperDeclaredValue: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
+    COD: Optional[CodType] = JStruct[CodType]
+    AccessPointCOD: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
     ShipperReleaseIndicator: Optional[str] = None
-    ProactiveIndicator: Optional[str] = None
-    RefrigerationIndicator: Optional[str] = None
-    UPSPremiumCareIndicator: Optional[str] = None
+    Notification: Optional[PackageServiceOptionsNotificationType] = JStruct[PackageServiceOptionsNotificationType]
     HazMat: Optional[HazMatType] = JStruct[HazMatType]
     DryIce: Optional[DryIceType] = JStruct[DryIceType]
+    UPSPremiumCareIndicator: Optional[str] = None
+    ProactiveIndicator: Optional[str] = None
+    PackageIdentifier: Optional[str] = None
+    ClinicalTrialsID: Optional[str] = None
+    RefrigerationIndicator: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -301,7 +321,7 @@ class ShipmentChargeType:
 
 @s(auto_attribs=True)
 class PaymentInformationType:
-    ShipmentCharge: Optional[ShipmentChargeType] = JStruct[ShipmentChargeType]
+    ShipmentCharge: List[ShipmentChargeType] = JList[ShipmentChargeType]
     SplitDutyVATIndicator: Optional[str] = None
 
 
@@ -365,15 +385,296 @@ class ShipmentRatingOptionsType:
 
 
 @s(auto_attribs=True)
-class DeliveryOptionsType:
-    LiftGateAtDeliveryIndicator: Optional[str] = None
-    DropOffAtUPSFacilityIndicator: Optional[str] = None
+class ShipmentServiceOptionsDeliveryConfirmationType:
+    DCISType: Optional[int] = None
+    DCISNumber: Optional[int] = None
 
 
 @s(auto_attribs=True)
-class PickupOptionsType:
-    LiftGateAtPickupIndicator: Optional[str] = None
-    HoldForPickupIndicator: Optional[str] = None
+class BlanketPeriodType:
+    BeginDate: Optional[str] = None
+    EndDate: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class CN22ContentType:
+    CN22ContentQuantity: Optional[str] = None
+    CN22ContentDescription: Optional[str] = None
+    CN22ContentWeight: Optional[WeightType] = JStruct[WeightType]
+    CN22ContentTotalValue: Optional[str] = None
+    CN22ContentCurrencyCode: Optional[str] = None
+    CN22ContentCountryOfOrigin: Optional[str] = None
+    CN22ContentTariffNumber: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class CN22FormType:
+    LabelSize: Optional[str] = None
+    PrintsPerPage: Optional[str] = None
+    LabelPrintType: Optional[str] = None
+    CN22Type: Optional[str] = None
+    CN22OtherDescription: Optional[str] = None
+    FoldHereText: Optional[str] = None
+    CN22Content: Optional[CN22ContentType] = JStruct[CN22ContentType]
+
+
+@s(auto_attribs=True)
+class ForwardAgentType:
+    CompanyName: Optional[str] = None
+    TaxIdentificationNumber: Optional[str] = None
+    Address: Optional[AlternateDeliveryAddressAddressType] = JStruct[AlternateDeliveryAddressAddressType]
+
+
+@s(auto_attribs=True)
+class IntermediateConsigneeType:
+    CompanyName: Optional[str] = None
+    Address: Optional[AlternateDeliveryAddressAddressType] = JStruct[AlternateDeliveryAddressAddressType]
+
+
+@s(auto_attribs=True)
+class ProducerType:
+    Option: Optional[str] = None
+    CompanyName: Optional[str] = None
+    TaxIdentificationNumber: Optional[str] = None
+    Address: Optional[AlternateDeliveryAddressAddressType] = JStruct[AlternateDeliveryAddressAddressType]
+    AttentionName: Optional[str] = None
+    Phone: Optional[ShipToPhoneType] = JStruct[ShipToPhoneType]
+    EMailAddress: Optional[str] = None
+    Name: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class UltimateConsigneeType:
+    CompanyName: Optional[str] = None
+    Address: Optional[AlternateDeliveryAddressAddressType] = JStruct[AlternateDeliveryAddressAddressType]
+    UltimateConsigneeType: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
+
+
+@s(auto_attribs=True)
+class ContactsType:
+    ForwardAgent: Optional[ForwardAgentType] = JStruct[ForwardAgentType]
+    UltimateConsignee: Optional[UltimateConsigneeType] = JStruct[UltimateConsigneeType]
+    IntermediateConsignee: Optional[IntermediateConsigneeType] = JStruct[IntermediateConsigneeType]
+    Producer: Optional[ProducerType] = JStruct[ProducerType]
+    SoldTo: Optional[ProducerType] = JStruct[ProducerType]
+
+
+@s(auto_attribs=True)
+class DiscountType:
+    MonetaryValue: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class ShipperFiledType:
+    Code: Optional[str] = None
+    Description: Optional[str] = None
+    PreDepartureITNNumber: Optional[str] = None
+    ExemptionLegend: Optional[str] = None
+    EEIShipmentReferenceNumber: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class UPSFiledType:
+    POA: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
+
+
+@s(auto_attribs=True)
+class EEIFilingOptionType:
+    Code: Optional[str] = None
+    EMailAddress: Optional[str] = None
+    Description: Optional[str] = None
+    UPSFiled: Optional[UPSFiledType] = JStruct[UPSFiledType]
+    ShipperFiled: Optional[ShipperFiledType] = JStruct[ShipperFiledType]
+
+
+@s(auto_attribs=True)
+class OtherChargesType:
+    MonetaryValue: Optional[str] = None
+    Description: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class DDTCInformationType:
+    ITARExemptionNumber: Optional[str] = None
+    USMLCategoryCode: Optional[str] = None
+    EligiblePartyIndicator: Optional[str] = None
+    RegistrationNumber: Optional[str] = None
+    Quantity: Optional[str] = None
+    UnitOfMeasurement: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
+    SignificantMilitaryEquipmentIndicator: Optional[str] = None
+    ACMNumber: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class LicenseType:
+    Number: Optional[str] = None
+    Code: Optional[str] = None
+    LicenseLineValue: Optional[str] = None
+    ECCNNumber: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class EEIInformationType:
+    ExportInformation: Optional[str] = None
+    License: Optional[LicenseType] = JStruct[LicenseType]
+    DDTCInformation: Optional[DDTCInformationType] = JStruct[DDTCInformationType]
+
+
+@s(auto_attribs=True)
+class ExcludeFromFormType:
+    FormType: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PackageAssociatedType:
+    PackageNumber: Optional[str] = None
+    ProductAmount: Optional[str] = None
+    ProductNotes: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PackingListInfoType:
+    PackageAssociated: Optional[PackageAssociatedType] = JStruct[PackageAssociatedType]
+
+
+@s(auto_attribs=True)
+class ScheduleBType:
+    Number: Optional[str] = None
+    Quantity: Optional[str] = None
+    UnitOfMeasurement: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
+
+
+@s(auto_attribs=True)
+class UnitType:
+    Number: Optional[str] = None
+    Value: Optional[str] = None
+    UnitOfMeasurement: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
+
+
+@s(auto_attribs=True)
+class ProductType:
+    Description: Optional[str] = None
+    Unit: Optional[UnitType] = JStruct[UnitType]
+    CommodityCode: Optional[str] = None
+    PartNumber: Optional[str] = None
+    OriginCountryCode: Optional[str] = None
+    JointProductionIndicator: Optional[str] = None
+    NetCostCode: Optional[str] = None
+    NetCostDateRange: Optional[BlanketPeriodType] = JStruct[BlanketPeriodType]
+    PreferenceCriteria: Optional[str] = None
+    ProducerInfo: Optional[str] = None
+    MarksAndNumbers: Optional[str] = None
+    NumberOfPackagesPerCommodity: Optional[str] = None
+    ProductWeight: Optional[WeightType] = JStruct[WeightType]
+    VehicleID: Optional[str] = None
+    ScheduleB: Optional[ScheduleBType] = JStruct[ScheduleBType]
+    ExportType: Optional[str] = None
+    SEDTotalValue: Optional[str] = None
+    ExcludeFromForm: Optional[ExcludeFromFormType] = JStruct[ExcludeFromFormType]
+    PackingListInfo: Optional[PackingListInfoType] = JStruct[PackingListInfoType]
+    EEIInformation: Optional[EEIInformationType] = JStruct[EEIInformationType]
+
+
+@s(auto_attribs=True)
+class LanguageForUPSPremiumCareType:
+    Language: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class UPSPremiumCareFormType:
+    ShipmentDate: Optional[str] = None
+    PageSize: Optional[str] = None
+    PrintType: Optional[str] = None
+    NumOfCopies: Optional[str] = None
+    LanguageForUPSPremiumCare: Optional[LanguageForUPSPremiumCareType] = JStruct[LanguageForUPSPremiumCareType]
+
+
+@s(auto_attribs=True)
+class UserCreatedFormType:
+    DocumentID: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class InternationalFormsType:
+    FormType: Optional[str] = None
+    UserCreatedForm: List[UserCreatedFormType] = JList[UserCreatedFormType]
+    UPSPremiumCareForm: Optional[UPSPremiumCareFormType] = JStruct[UPSPremiumCareFormType]
+    CN22Form: Optional[CN22FormType] = JStruct[CN22FormType]
+    AdditionalDocumentIndicator: Optional[str] = None
+    FormGroupIdName: Optional[str] = None
+    EEIFilingOption: Optional[EEIFilingOptionType] = JStruct[EEIFilingOptionType]
+    Contacts: Optional[ContactsType] = JStruct[ContactsType]
+    Product: List[ProductType] = JList[ProductType]
+    InvoiceNumber: Optional[str] = None
+    InvoiceDate: Optional[str] = None
+    PurchaseOrderNumber: Optional[str] = None
+    TermsOfShipment: Optional[str] = None
+    ReasonForExport: Optional[str] = None
+    Comments: Optional[str] = None
+    DeclarationStatement: Optional[str] = None
+    Discount: Optional[DiscountType] = JStruct[DiscountType]
+    FreightCharges: Optional[DiscountType] = JStruct[DiscountType]
+    InsuranceCharges: Optional[DiscountType] = JStruct[DiscountType]
+    OtherCharges: Optional[OtherChargesType] = JStruct[OtherChargesType]
+    CurrencyCode: Optional[str] = None
+    BlanketPeriod: Optional[BlanketPeriodType] = JStruct[BlanketPeriodType]
+    ExportDate: Optional[str] = None
+    ExportingCarrier: Optional[str] = None
+    CarrierID: Optional[str] = None
+    InBondCode: Optional[str] = None
+    EntryNumber: Optional[str] = None
+    PointOfOrigin: Optional[str] = None
+    PointOfOriginType: Optional[str] = None
+    ModeOfTransport: Optional[str] = None
+    PortOfExport: Optional[str] = None
+    PortOfUnloading: Optional[str] = None
+    LoadingPier: Optional[str] = None
+    PartiesToTransaction: Optional[str] = None
+    RoutedExportTransactionIndicator: Optional[str] = None
+    ContainerizedIndicator: Optional[str] = None
+    OverridePaperlessIndicator: Optional[str] = None
+    ShipperMemo: Optional[str] = None
+    HazardousMaterialsIndicator: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class LabelDeliveryType:
+    EMail: Optional[MailType] = JStruct[MailType]
+    LabelLinksIndicator: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class LocaleType:
+    Language: Optional[str] = None
+    Dialect: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class MessageType:
+    PhoneNumber: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class NotificationElementType:
+    NotificationCode: Optional[int] = None
+    EMail: Optional[MailType] = JStruct[MailType]
+    VoiceMessage: Optional[MessageType] = JStruct[MessageType]
+    TextMessage: Optional[MessageType] = JStruct[MessageType]
+    Locale: Optional[LocaleType] = JStruct[LocaleType]
+
+
+@s(auto_attribs=True)
+class EMailMessageType:
+    EMailAddress: Optional[str] = None
+    UndeliverableEMailAddress: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PreAlertNotificationType:
+    EMailMessage: Optional[EMailMessageType] = JStruct[EMailMessageType]
+    VoiceMessage: Optional[MessageType] = JStruct[MessageType]
+    TextMessage: Optional[MessageType] = JStruct[MessageType]
+    Locale: Optional[LocaleType] = JStruct[LocaleType]
 
 
 @s(auto_attribs=True)
@@ -385,35 +686,36 @@ class RestrictedArticlesType:
     SeedsIndicator: Optional[str] = None
     SpecialExceptionsIndicator: Optional[str] = None
     TobaccoIndicator: Optional[str] = None
-    ECigarettesIndicator: Optional[str] = None
-    HempCBDIndicator: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class ShipmentServiceOptionsType:
     SaturdayPickupIndicator: Optional[str] = None
     SaturdayDeliveryIndicator: Optional[str] = None
-    SundayDeliveryIndicator: Optional[str] = None
-    AvailableServicesOption: Optional[str] = None
+    COD: Optional[CodType] = JStruct[CodType]
     AccessPointCOD: Optional[InvoiceLineTotalType] = JStruct[InvoiceLineTotalType]
     DeliverToAddresseeOnlyIndicator: Optional[str] = None
     DirectDeliveryOnlyIndicator: Optional[str] = None
-    COD: Optional[CodType] = JStruct[CodType]
-    DeliveryConfirmation: Optional[DeliveryConfirmationType] = JStruct[DeliveryConfirmationType]
+    Notification: List[NotificationElementType] = JList[NotificationElementType]
+    LabelDelivery: Optional[LabelDeliveryType] = JStruct[LabelDeliveryType]
+    InternationalForms: Optional[InternationalFormsType] = JStruct[InternationalFormsType]
+    DeliveryConfirmation: Optional[ShipmentServiceOptionsDeliveryConfirmationType] = JStruct[ShipmentServiceOptionsDeliveryConfirmationType]
     ReturnOfDocumentIndicator: Optional[str] = None
-    UPScarbonneutralIndicator: Optional[str] = None
-    CertificateOfOriginIndicator: Optional[str] = None
-    PickupOptions: Optional[PickupOptionsType] = JStruct[PickupOptionsType]
-    DeliveryOptions: Optional[DeliveryOptionsType] = JStruct[DeliveryOptionsType]
-    RestrictedArticles: Optional[RestrictedArticlesType] = JStruct[RestrictedArticlesType]
-    ShipperExportDeclarationIndicator: Optional[str] = None
+    ImportControlIndicator: Optional[str] = None
+    LabelMethod: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
     CommercialInvoiceRemovalIndicator: Optional[str] = None
-    ImportControl: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
-    ReturnService: Optional[LabelImageFormatType] = JStruct[LabelImageFormatType]
+    UPScarbonneutralIndicator: Optional[str] = None
+    PreAlertNotification: List[PreAlertNotificationType] = JList[PreAlertNotificationType]
+    ExchangeForwardIndicator: Optional[str] = None
+    HoldForPickupIndicator: Optional[str] = None
+    DropoffAtUPSFacilityIndicator: Optional[str] = None
+    LiftGateForPickupIndicator: Optional[str] = None
+    LiftGateForDeliveryIndicator: Optional[str] = None
     SDLShipmentIndicator: Optional[str] = None
-    EPRAIndicator: Optional[str] = None
+    EPRAReleaseCode: Optional[str] = None
+    RestrictedArticles: Optional[RestrictedArticlesType] = JStruct[RestrictedArticlesType]
     InsideDelivery: Optional[str] = None
-    ItemDisposalIndicator: Optional[str] = None
+    ItemDisposal: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -470,7 +772,7 @@ class ShipmentType:
     BarCodeImageIndicator: Optional[str] = None
     BarCodeAndLabelIndicator: Optional[str] = None
     ShipmentDate: Optional[int] = None
-    Package: Optional[PackageType] = JStruct[PackageType]
+    Package: List[PackageType] = JList[PackageType]
 
 
 @s(auto_attribs=True)
