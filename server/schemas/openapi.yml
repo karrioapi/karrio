@@ -10992,6 +10992,11 @@ components:
           - $ref: '#/components/schemas/TrackingInfo'
           nullable: true
           description: The package and shipment tracking details
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier user metadata.
       required:
       - carrier_name
       - tracking_number
