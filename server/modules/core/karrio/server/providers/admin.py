@@ -16,6 +16,7 @@ SUPPORTED_CONNECTION_CONFIGS = [
     "cost_center",
     "merchant_id",
     "enforce_zpl",
+    "skip_service_filter",
     "default_currency",
     "language_code",
     "label_type",
@@ -74,6 +75,11 @@ def model_admin(ext: str, carrier):
                 )
             if key == "enforce_zpl":
                 enforce_zpl = forms.NullBooleanField(
+                    required=False,
+                    initial=None,
+                )
+            if key == "skip_service_filter":
+                skip_service_filter = forms.NullBooleanField(
                     required=False,
                     initial=None,
                 )

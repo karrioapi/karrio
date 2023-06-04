@@ -1,6 +1,7 @@
 import dhl_express_lib.datatypes_global_v62 as dhl
 import time
 import typing
+import karrio.lib as lib
 import karrio.core as core
 import karrio.core.units as units
 
@@ -31,6 +32,15 @@ class Settings(core.Settings):
     @property
     def tracking_url(self):
         return "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.dhl_express.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
 
     @property
     def default_currency(self) -> typing.Optional[str]:

@@ -283,6 +283,13 @@ class PackageType(lib.Flag):
     your_packaging = dhl_your_packaging
 
 
+class ConnectionConfig(lib.Enum):
+    label_type = lib.OptionEnum("label_type")
+    skip_service_filter = lib.OptionEnum("skip_service_filter")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+
+
 class ShippingService(lib.Enum):
     dhl_logistics_services = "0"
     dhl_domestic_express_12_00 = "1"
