@@ -1,6 +1,4 @@
 django-debug-toolbar
-drf-api-tracking==1.8.0
-django-two-factor-auth==1.15.0
 
 # Schemas update (change schemas to setup.py before next update)
 # -e ./schemas/dpdhl

@@ -47,10 +47,10 @@ django-otp==1.2.1
 django-phonenumber-field==6.4.0
 django-picklefield==3.1
 django-redis==5.2.0
-django-two-factor-auth==1.15.0
+django-two-factor-auth==1.15.2
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
-drf-api-tracking==1.8.0
+drf-api-tracking==1.8.4
 drf-spectacular==0.26.2
 et-xmlfile==1.1.0
 fonttools==4.39.4

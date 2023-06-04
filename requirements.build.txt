@@ -1,6 +1,4 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/
-drf-api-tracking==1.8.0
-django-two-factor-auth==1.15.0
 
 karrio
 karrio.amazon-mws
