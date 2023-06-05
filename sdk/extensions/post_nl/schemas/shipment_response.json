@@ -1,0 +1,35 @@
+{
+  "MergedLabels": [
+    {
+      "Barcodes": [
+        "string"
+      ],
+      "Labels": [
+        {
+          "Content": "JVBERi0xLjMKJeLjz9MKNSAwIG9iago8PAovQ29udGVudHMg[TRUNCATED]",
+          "Labeltype": "Label",
+          "OutputType": "PDF"
+        }
+      ]
+    }
+  ],
+  "ResponseShipments": [
+    {
+      "ProductCodeDelivery": "3085",
+      "Labels": [
+        {
+          "Content": "JVBERi0xLjMKJeLjz9MKNSAwIG9iago8PAovQ29udGVudHMg[TRUNCATED]",
+          "Labeltype": "Label",
+          "OutputType": "PDF"
+        }
+      ],
+      "Barcode": "3SDEVC272730803",
+      "Warnings": [
+        {
+          "Code": "WARNING_0001",
+          "Description": "The shipment is not ready for pickup. Please contact the sender."
+        }
+      ]
+    }
+  ]
+}

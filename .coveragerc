@@ -2,11 +2,7 @@
 [run]
 branch = True
 omit =
-    */sdk/extensions/asendia_us/*
-    */sdk/extensions/boxknight/*
     */sdk/extensions/dicom/*
-    */sdk/extensions/ics_courier/*
-    */sdk/extensions/ups_ground/*
 
 [report]
 include =

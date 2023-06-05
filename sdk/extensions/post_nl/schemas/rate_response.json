@@ -1,0 +1,88 @@
+{
+  "DeliveryOptions": [
+    {
+      "DeliveryDate": "09-07-2019",
+      "Timeframe": [
+        {
+          "From": "18:00:00",
+          "To": "22:30:00",
+          "Options": [
+            "Daytime"
+          ],
+          "ShippingDate": "08-07-2019",
+          "Sustainability": {
+            "Code": "02",
+            "Description": "Sustainable option"
+          }
+        }
+      ]
+    }
+  ],
+  "PickupOptions": [
+    {
+      "PickupDate": "09-07-2019",
+      "ShippingDate": "08-07-2019",
+      "Option": "Pickup",
+      "Locations": [
+        {
+          "Address": {
+            "Street": "Siriusdreef",
+            "Zipcode": "2132WT",
+            "HouseNr": 42,
+            "HouseNrExt": "-60",
+            "Countrycode": "NL",
+            "CompanyName": "Pickup company BV"
+          },
+          "PickupTime": "15:00",
+          "OpeningHours": {
+            "Monday": {
+              "From": "08:30:00",
+              "To": "22:30:00"
+            },
+            "Tuesday": {
+              "From": "08:30:00",
+              "To": "22:30:00"
+            },
+            "Wednesday": {
+              "From": "08:30:00",
+              "To": "22:30:00"
+            },
+            "Thursday": {
+              "From": "08:30:00",
+              "To": "22:30:00"
+            },
+            "Friday": {
+              "From": "08:30:00",
+              "To": "22:30:00"
+            },
+            "Saturday": {
+              "From": "08:30:00",
+              "To": "17:30:00"
+            },
+            "Sunday": {
+              "From": "08:30:00",
+              "To": "12:30:00"
+            }
+          },
+          "Distance": 234,
+          "LocationCode": "8101163043",
+          "PartnerID": "PNPNL-01",
+          "Sustainability": {
+            "Code": "02",
+            "Description": "Sustainable option"
+          }
+        }
+      ]
+    }
+  ],
+  "Warnings": [
+    {
+      "DeliveryDate": "07-07-2019",
+      "Code": "5034",
+      "Description": "No delivery option found on date",
+      "Options": [
+        "Daytime"
+      ]
+    }
+  ]
+}
