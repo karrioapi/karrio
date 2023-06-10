@@ -41,6 +41,7 @@ django-debug-toolbar
 -e ./sdk/extensions/geodis
 -e ./sdk/extensions/laposte
 -e ./sdk/extensions/nationex
+# -e ./sdk/extensions/postnl
 -e ./sdk/extensions/purolator
 -e ./sdk/extensions/roadie
 -e ./sdk/extensions/royalmail
