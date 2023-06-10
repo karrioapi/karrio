@@ -1,0 +1,203 @@
+{
+  "CompleteStatus": {
+    "Shipment": {
+      "MainBarcode": "3SDEVC288882229",
+      "Barcode": "3SDEVC288882229",
+      "ShipmentAmount": "1",
+      "ShipmentCounter": "1",
+      "Customer": {
+        "CustomerCode": "DEVC",
+        "CustomerNumber": "11223344",
+        "Name": "Testaccount API PNP"
+      },
+      "ProductCode": "002285",
+      "ProductDescription": "Parcels, domestic <= 10 kg",
+      "Reference": "202213331635095807",
+      "DeliveryDate": "2022-11-08",
+      "Dimension": {
+        "Height": "125",
+        "Length": "250",
+        "Volume": "6250",
+        "Weight": "180",
+        "Width": "200"
+      },
+      "Address": [
+        {
+          "AddressType": "01",
+          "Building": "string",
+          "City": "Utrecht",
+          "CompanyName": "string",
+          "CountryCode": "NL",
+          "DepartmentName": "string",
+          "District": "string",
+          "FirstName": "Peter",
+          "Floor": "string",
+          "HouseNumber": "74",
+          "HouseNumberSuffix": "string",
+          "LastName": "de Ruiter",
+          "Region": "string",
+          "Remark": "string",
+          "Street": "Molengraaffplantsoen",
+          "Zipcode": "3571ZZ"
+        },
+        {
+          "AddressType": "02",
+          "Building": "string",
+          "City": "Hoofddorp",
+          "CompanyName": "PostNL Pakketten",
+          "CountryCode": "NL",
+          "DepartmentName": "string",
+          "District": "string",
+          "FirstName": "string",
+          "Floor": "string",
+          "HouseNumber": "42",
+          "HouseNumberSuffix": "-60",
+          "LastName": "string",
+          "Region": "string",
+          "Remark": "string",
+          "Street": "Siriusdreef",
+          "Zipcode": "2132WT"
+        }
+      ],
+      "Event": [
+        {
+          "Code": "J05",
+          "Description": "Driver is en route",
+          "DestinationLocationCode": "string",
+          "LocationCode": "171966",
+          "RouteCode": "20221108_HD_171966_0444",
+          "RouteName": "0444 Spijkenisse 12",
+          "TimeStamp": "08-11-2022 10:13:20"
+        },
+        {
+          "Code": "J01",
+          "Description": "Shipment has been sorted",
+          "DestinationLocationCode": "171967",
+          "LocationCode": "171967",
+          "RouteCode": "444",
+          "RouteName": "0444 Spijkenisse 12",
+          "TimeStamp": "08-11-2022 09:58:11"
+        },
+        {
+          "Code": "B01",
+          "Description": "Shipment received by PostNL",
+          "DestinationLocationCode": "171967",
+          "LocationCode": "212124",
+          "RouteCode": "444",
+          "RouteName": "0444 Spijkenisse 12",
+          "TimeStamp": "08-11-2022 00:08:39"
+        },
+        {
+          "Code": "A01",
+          "Description": "Shipment expected, but not yet arrived at PostNL",
+          "DestinationLocationCode": "string",
+          "LocationCode": "888888",
+          "RouteCode": "string",
+          "RouteName": "string",
+          "TimeStamp": "07-11-2022 19:19:31"
+        }
+      ],
+      "ProductOptions": [
+        {
+          "OptionCode": "17",
+          "CharacteristicCode": "122"
+        },
+        {
+          "OptionCode": "21",
+          "CharacteristicCode": "122"
+        },
+        {
+          "OptionCode": "27",
+          "CharacteristicCode": "122"
+        },
+        {
+          "OptionCode": "1",
+          "CharacteristicCode": "112"
+        }
+      ],
+      "Expectation": {
+        "ETAFrom": "2022-11-08T14:50:00",
+        "ETATo": "2022-11-08T16:50:00"
+      },
+      "Status": {
+        "TimeStamp": "08-11-2022 10:13:20",
+        "StatusCode": "7",
+        "StatusDescription": "Shipment out for delivery",
+        "PhaseCode": "3",
+        "PhaseDescription": "Distribution"
+      },
+      "OldStatus": [
+        {
+          "TimeStamp": "08-11-2022 10:13:20",
+          "StatusCode": "7",
+          "StatusDescription": "Shipment out for delivery",
+          "PhaseCode": "3",
+          "PhaseDescription": "Distribution"
+        },
+        {
+          "TimeStamp": "08-11-2022 10:13:20",
+          "StatusCode": "99",
+          "StatusDescription": "Not applicable",
+          "PhaseCode": "99",
+          "PhaseDescription": "Not applicable"
+        },
+        {
+          "TimeStamp": "08-11-2022 10:12:59",
+          "StatusCode": "99",
+          "StatusDescription": "Not applicable",
+          "PhaseCode": "99",
+          "PhaseDescription": "Not applicable"
+        },
+        {
+          "TimeStamp": "08-11-2022 09:58:50",
+          "StatusCode": "99",
+          "StatusDescription": "Not applicable",
+          "PhaseCode": "99",
+          "PhaseDescription": "Not applicable"
+        },
+        {
+          "TimeStamp": "08-11-2022 09:58:11",
+          "StatusCode": "5",
+          "StatusDescription": "Shipment sorted",
+          "PhaseCode": "2",
+          "PhaseDescription": "Sorting"
+        },
+        {
+          "TimeStamp": "08-11-2022 00:10:11.081",
+          "StatusCode": "99",
+          "StatusDescription": "Not applicable",
+          "PhaseCode": "99",
+          "PhaseDescription": "Not applicable"
+        },
+        {
+          "TimeStamp": "08-11-2022 00:08:39",
+          "StatusCode": "2",
+          "StatusDescription": "Shipment accepted",
+          "PhaseCode": "1",
+          "PhaseDescription": "Collection"
+        },
+        {
+          "TimeStamp": "07-11-2022 19:20:53.471",
+          "StatusCode": "99",
+          "StatusDescription": "Not applicable",
+          "PhaseCode": "99",
+          "PhaseDescription": "Not applicable"
+        },
+        {
+          "TimeStamp": "07-11-2022 19:20:52",
+          "StatusCode": "99",
+          "StatusDescription": "Not applicable",
+          "PhaseCode": "99",
+          "PhaseDescription": "Not applicable"
+        },
+        {
+          "TimeStamp": "07-11-2022 19:19:31",
+          "StatusCode": "1",
+          "StatusDescription": "Shipment pre-alerted",
+          "PhaseCode": "1",
+          "PhaseDescription": "Collection"
+        }
+      ]
+    }
+  }
+}
