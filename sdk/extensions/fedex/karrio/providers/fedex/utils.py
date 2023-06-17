@@ -1,33 +1,24 @@
-from typing import Callable
-from karrio.core import Settings as BaseSettings
-from karrio.core.utils import Envelope, apply_namespaceprefix, XP
-from fedex_lib.rate_service_v28 import (
-    WebAuthenticationCredential,
-    WebAuthenticationDetail,
-    ClientDetail,
-)
 import karrio.lib as lib
+import karrio.core as core
 
 
-class Settings(BaseSettings):
+class Settings(core.Settings):
     """FedEx connection settings."""
 
-    password: str
-    meter_number: str
+    api_key: str
+    secret_key: str
     account_number: str
-    user_key: str = None
-    language_code: str = "en"
-    account_country_code: str = None
 
     id: str = None
     metadata: dict = {}
+    account_country_code: str = None
 
     @property
     def server_url(self):
         return (
-            "https://wsbeta.fedex.com:443/web-services"
+            "https://apis-sandbox.fedex.com"
             if self.test_mode
-            else "https://ws.fedex.com:443/web-services"
+            else "https://apis.fedex.com"
         )
 
     @property
@@ -42,33 +33,3 @@ class Settings(BaseSettings):
             self.config or {},
             option_type=ConnectionConfig,
         )
-
-    @property
-    def webAuthenticationDetail(self) -> WebAuthenticationDetail:
-        return WebAuthenticationDetail(
-            UserCredential=WebAuthenticationCredential(
-                Key=self.user_key, Password=self.password
-            )
-        )
-
-    @property
-    def clientDetail(self) -> ClientDetail:
-        return ClientDetail(
-            AccountNumber=self.account_number, MeterNumber=self.meter_number
-        )
-
-
-def default_request_serializer(
-    prefix: str, namespace: str
-) -> Callable[[Envelope], str]:
-    def serializer(envelope: Envelope):
-        namespacedef_ = (
-            f'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" {namespace}'
-        )
-
-        envelope.Body.ns_prefix_ = envelope.ns_prefix_
-        apply_namespaceprefix(envelope.Body.anytypeobjs_[0], prefix)
-
-        return XP.export(envelope, namespacedef_=namespacedef_)
-
-    return serializer
