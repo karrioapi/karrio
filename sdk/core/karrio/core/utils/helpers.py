@@ -62,7 +62,9 @@ def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str
 
     if resize is not None:
         img = image.copy()
-        image = img.resize((resize["width"], resize["height"]), Image.ANTIALIAS)
+        image = img.resize(
+            (resize["width"], resize["height"]), Image.Resampling.LANCZOS
+        )
 
     new_buffer = io.BytesIO()
     image.save(new_buffer, format="PDF", dpi=(300, 300))
