@@ -184,7 +184,7 @@ class PaymentType(utils.Flag):
 
 
 class ConnectionConfig(utils.Enum):
-    language = utils.OptionEnum("language")
+    locale = utils.OptionEnum("locale")
     label_type = utils.OptionEnum("label_type")
     shipping_options = utils.OptionEnum("shipping_options", list)
     shipping_services = utils.OptionEnum("shipping_services", list)
@@ -360,13 +360,16 @@ class RateType(utils.Enum):
 
 
 class UploadDocumentType(utils.Flag):
+    fedex_usmca_commercial_invoice_certification_of_origin = (
+        "USMCA_COMMERCIAL_INVOICE_CERTIFICATION_OF_ORIGIN"
+    )
+    fedex_usmca_certification_of_origin = "USMCA_CERTIFICATION_OF_ORIGIN"
     fedex_certificate_of_origin = "CERTIFICATE_OF_ORIGIN"
     fedex_commercial_invoice = "COMMERCIAL_INVOICE"
-    fedex_etd_label = "ETD_LABEL"
-    fedex_nafta_certificate_of_origin = "NAFTA_CERTIFICATE_OF_ORIGIN"
-    fedex_net_rate_sheet = "NET_RATE_SHEET"
-    fedex_other = "OTHER"
     fedex_pro_forma_invoice = "PRO_FORMA_INVOICE"
+    fedex_net_rate_sheet = "NET_RATE_SHEET"
+    fedex_etd_label = "ETD_LABEL"
+    fedex_other = "OTHER"
 
     """ Unified upload document type mapping """
     certificate_of_origin = fedex_certificate_of_origin
@@ -377,8 +380,8 @@ class UploadDocumentType(utils.Flag):
 
 
 class DocumentUploadOption(utils.Enum):
-    fedex_document_producer = utils.OptionEnum("fedex_document_producer")
-    fedex_expiration_date = utils.OptionEnum("fedex_expiration_date")
+    fedex_carrier_code = utils.OptionEnum("carrierCode", str)
+    pre_shipment = utils.OptionEnum("pre_shipment", bool)
 
 
 class TrackingStatus(utils.Enum):

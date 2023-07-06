@@ -436,6 +436,22 @@
             }
           }
         ]
+      },
+      {
+        "trackingNumber": "39936862321",
+        "trackResults": [
+          {
+            "trackingNumberInfo": {
+              "trackingNumber": "39936862321",
+              "trackingNumberUniqueId": "",
+              "carrierCode": ""
+            },
+            "error": {
+              "code": "TRACKING.TRACKINGNUMBER.NOTFOUND",
+              "message": "Tracking number cannot be found. Please correct the tracking number and try again."
+            }
+          }
+        ]
       }
     ],
     "alerts": "TRACKING.DATA.NOTFOUND -  Tracking data unavailable"
