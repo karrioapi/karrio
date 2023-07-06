@@ -9,7 +9,9 @@
       "formCode": "USMCA",
       "trackingNumber": "794791292805",
       "shipmentDate": "2021-02-17T00:00:00",
+      "originLocationCode": "GVTKK",
       "originCountryCode": "US",
+      "destinationLocationCode": "JNUA",
       "destinationCountryCode": "IN"
     }
   },
