@@ -1,9 +1,11 @@
 import dpd_lib.Authentication20 as auth
 import dpd_lib.LoginServiceV21 as dpd
+
 import jstruct
 import datetime
 import karrio.lib as lib
 import karrio.core as core
+import karrio.core.errors as errors
 
 
 class Settings(core.Settings):
@@ -108,10 +110,10 @@ def login(settings: Settings):
         },
     )
     response = lib.to_element(result)
-    errors = error.parse_error_response(response, settings)
+    messages = error.parse_error_response(response, settings)
 
-    if any(errors):
-        raise Exception(errors)
+    if any(messages):
+        raise errors.ParsedMessagesError(messages=messages)
 
     return _extract_login_details(response)
 

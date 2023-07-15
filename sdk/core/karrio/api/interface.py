@@ -27,6 +27,10 @@ def abort(
     Returns:
         Tuple[None, List[models.Message]]: a tuple of empty response and a list or error messages
     """
+
+    if isinstance(error, errors.ParsedMessagesError):
+        return None, error.messages
+
     return (
         None,
         [

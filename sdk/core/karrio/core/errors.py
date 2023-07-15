@@ -1,15 +1,6 @@
 """Karrio Custom Errors(Exception) definition modules"""
-import warnings
 from enum import Enum
 from typing import Dict
-
-
-class DeprecatedClass:
-    deprecation_message = "This class is deprecated and will be removed soon"
-
-    def __init__(self, *args, **kwargs):
-        warnings.warn(self.deprecation_message, DeprecationWarning)
-        super().__init__(*args, **kwargs)
 
 
 class FieldErrorCode(Enum):
@@ -27,8 +18,8 @@ class ShippingSDKError(Exception):
 class ShippingSDKDetailedError(ShippingSDKError):
     """Base class for other exceptions."""
 
-    def __init__(self, *args):
-        self.details = None
+    def __init__(self, *args, details=None):
+        self.details = details
         super().__init__(*args)
 
 
@@ -40,6 +31,16 @@ class FieldError(ShippingSDKDetailedError):
     def __init__(self, fields: Dict[str, FieldErrorCode]):
         super().__init__("Invalid request payload")
         self.details = {name: code.value for name, code in fields.items()}
+
+
+class ParsedMessagesError(ShippingSDKDetailedError):
+    """Raised when one or many required fields are missing."""
+
+    code = "SHIPPING_SDK_FIELD_ERROR"
+
+    def __init__(self, messages = []):
+        super().__init__("Invalid request payload")
+        self.messages = messages
 
 
 class ValidationError(ShippingSDKError):
@@ -82,21 +83,3 @@ class MultiParcelNotSupportedError(ShippingSDKError):
 
     def __init__(self):
         super().__init__(f"Multi-parcel shipment not supported")
-
-
-"""Deprecated Custom Errors"""
-
-
-class PurplShipError(Exception, DeprecatedClass):
-    """Base class for other exceptions."""
-
-    code = "SHIPPING_SDK_INTERNAL_ERROR"
-    deprecation_message = "PurplShipError is deprecated and will be removed soon. use ShippingSDKError instead"
-
-
-class PurplShipDetailedError(PurplShipError):
-    """Base class for other exceptions."""
-
-    def __init__(self, *args):
-        self.details = None
-        super().__init__(*args)

@@ -97,7 +97,7 @@ def login(settings: Settings):
     messages = error.parse_error_response(response, settings)
 
     if any(messages):
-        raise errors.ShippingSDKError(messages)
+        raise errors.ParsedMessagesError(messages=messages)
 
     expiry = datetime.datetime.fromtimestamp(
         float(response.get("issued_at")) / 1000

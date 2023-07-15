@@ -19,7 +19,7 @@ django-debug-toolbar
 # -e ./sdk/extensions/dicom
 -e ./sdk/extensions/dpd
 # -e ./sdk/extensions/dpdhl
-# -e ./sdk/extensions/fedex
+-e ./sdk/extensions/fedex
 # -e ./sdk/extensions/geodis
 # -e ./sdk/extensions/laposte
 # -e ./sdk/extensions/nationex
@@ -56,7 +56,7 @@ karrio.dhl-universal
 karrio.dicom
 # karrio.dpd
 karrio.dpdhl
-karrio.fedex
+# karrio.fedex
 karrio.geodis
 karrio.laposte
 karrio.nationex
