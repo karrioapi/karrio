@@ -391,22 +391,13 @@ EURateRequestXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p1="http:
                 </Piece>
             </Pieces>
             <PaymentAccountNumber>123456789</PaymentAccountNumber>
-            <IsDutiable>Y</IsDutiable>
+            <IsDutiable>N</IsDutiable>
             <NetworkTypeCode>AL</NetworkTypeCode>
-            <QtdShp>
-                <QtdShpExChrg>
-                    <SpecialServiceType>WY</SpecialServiceType>
-                </QtdShpExChrg>
-            </QtdShp>
         </BkgDetails>
         <To>
             <CountryCode>NL</CountryCode>
             <Postalcode>76131</Postalcode>
         </To>
-        <Dutiable>
-            <DeclaredCurrency>EUR</DeclaredCurrency>
-            <DeclaredValue>1.</DeclaredValue>
-        </Dutiable>
     </GetQuote>
 </p:DCTRequest>
 """

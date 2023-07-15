@@ -1,6 +1,7 @@
 import jstruct
 import karrio.lib as lib
 import karrio.core as core
+import karrio.core.errors as errors
 
 
 class Settings(core.Settings):
@@ -52,9 +53,9 @@ def authenticate(settings: Settings):
         method="POST",
     )
     response = lib.to_dict(result)
-    errors = error.parse_error_response(response, settings)
+    messages = error.parse_error_response(response, settings)
 
-    if any(errors):
-        raise Exception(errors)
+    if any(messages):
+        raise errors.ParsedMessagesError(messages=messages)
 
     return dict(token=response["token"])

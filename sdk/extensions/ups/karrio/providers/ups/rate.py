@@ -273,7 +273,7 @@ def rate_request(
                                     else None
                                 ),
                             )
-                            if any(options.pickup_options.state)
+                            if options.pickup_options.state
                             else None
                         ),
                         DeliveryOptions=(
@@ -285,7 +285,7 @@ def rate_request(
                                     else None
                                 ),
                             )
-                            if any(options.delivery_options.state)
+                            if options.delivery_options.state
                             else None
                         ),
                         RestrictedArticles=(

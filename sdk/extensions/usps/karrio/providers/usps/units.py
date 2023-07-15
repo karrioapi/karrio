@@ -216,6 +216,11 @@ class ShipmentService(Enum):
     usps_online = "Online"
     usps_plus = "Plus"
     usps_bpm = "BPM"
+    usps_ground_advantage = "Ground Advantage"
+    usps_ground_advantage_commercial = "Ground Advantage Commercial"
+    usps_ground_advantage_hfp = "Ground Advantage HFP"
+    usps_ground_advantage_hfp_commercial = "Ground Advantage HFP Commercial"
+    usps_ground_advantage_cubic = "Ground Advantage Cubic"
 
 
 class ServiceClassID(Enum):
@@ -279,6 +284,14 @@ class ServiceClassID(Enum):
     usps_bpm_flats_hold_for_pickup = "2020"
     usps_parcel_select_ground_hold_for_pickup = "2071"
     usps_bpm_parcels_hold_for_pickup = "2077"
+    usps_ground_advantage_cubic = "1096"
+    usps_ground_advantage_cubic_hold_for_pickup = "2096"
+    usps_ground_advantage_cubic_hazmat = "4096"
+    usps_ground_advantage_cubic_parcel_locker = "6096"
+    usps_ground_advantage = "1058"
+    usps_ground_advantage_hold_for_pickup = "2058"
+    usps_ground_advantage_hazmat = "4058"
+    usps_ground_advantage_parcel_locker = "6058"
 
 
 class ServiceType(Enum):
@@ -290,6 +303,8 @@ class ServiceType(Enum):
     usps_priority_mail_express = "PRIORITY EXPRESS"
     usps_priority_mail_cubic = "PRIORITY MAIL CUBIC"
     usps_parcel_select_ground = "PARCEL SELECT GROUND"
+    usps_ground_advantage = "GROUND ADVANTAGE"
+    usps_ground_advantage_cubic = "GROUND ADVANTAGE CUBIC"
 
     """ ShipmentService type correspondence """
     usps_first_class_mail_large_envelope = usps_first_class

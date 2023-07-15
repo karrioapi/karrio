@@ -20,4 +20,4 @@ class Settings(BaseSettings):
     id: str = None
     test_mode: bool = False
     carrier_id: str = "ups"
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
+    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]

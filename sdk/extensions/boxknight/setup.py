@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.boxknight",
-    version="2023.4",
+    version="2023.5.1",
     description="Karrio - BoxKnight Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
