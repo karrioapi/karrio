@@ -3,7 +3,7 @@ version: "3"
 services:
   api:
     container_name: karrio.api
-    image: karrio.docker.scarf.sh/karrio/server:2023.5
+    image: karrio.docker.scarf.sh/karrio/server:2023.5.1
     restart: unless-stopped
     ports:
       - ${KARRIO_HTTP_PORT}:${KARRIO_HTTP_PORT}
@@ -25,7 +25,7 @@ services:
 
   worker:
     container_name: karrio.worker
-    image: karrio.docker.scarf.sh/karrio/server:2023.5
+    image: karrio.docker.scarf.sh/karrio/server:2023.5.1
     restart: unless-stopped
     depends_on:
       - db
@@ -46,7 +46,7 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio.docker.scarf.sh/karrio/dashboard:2023.5
+    image: karrio.docker.scarf.sh/karrio/dashboard:2023.5.1
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
     depends_on:
