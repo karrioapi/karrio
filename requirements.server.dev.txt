@@ -13,7 +13,7 @@ django-debug-toolbar
 # -e ./sdk/extensions/canadapost
 # -e ./sdk/extensions/canpar
 # -e ./sdk/extensions/chronopost
-# -e ./sdk/extensions/dhl_express
+-e ./sdk/extensions/dhl_express
 # -e ./sdk/extensions/dhl_poland
 # -e ./sdk/extensions/dhl_universal
 # -e ./sdk/extensions/dicom
@@ -50,7 +50,7 @@ karrio.australiapost
 karrio.canadapost
 karrio.canpar
 karrio.chronopost
-karrio.dhl-express
+# karrio.dhl-express
 karrio.dhl-poland
 karrio.dhl-universal
 karrio.dicom

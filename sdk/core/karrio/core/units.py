@@ -2327,3 +2327,33 @@ class CountryISO(utils.Enum):
     YE = 887
     ZM = 894
     ZW = 716
+
+
+class EUCountry(utils.Enum):
+    AT = "Austria"
+    BE = "Belgium"
+    BG = "Bulgaria"
+    HR = "Croatia"
+    CY = "Cyprus"
+    CZ = "Czech Republic"
+    DK = "Denmark"
+    EE = "Estonia"
+    FI = "Finland"
+    FR = "France"
+    DE = "Germany"
+    EL = "Greece"
+    HU = "Hungary"
+    IE = "Ireland"
+    IT = "Italy"
+    LV = "Latvia"
+    LT = "Lithuania"
+    LU = "Luxembourg"
+    MT = "Malta"
+    NL = "Netherlands"
+    PL = "Poland"
+    PT = "Portugal"
+    RO = "Romania"
+    SI = "Slovenia"
+    SK = "Slovakia"
+    ES = "Spain"
+    SE = "Sweden"
