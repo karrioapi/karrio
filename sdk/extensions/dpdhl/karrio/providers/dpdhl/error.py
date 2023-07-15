@@ -1,4 +1,3 @@
-from urllib.error import HTTPError
 import dpdhl_lib.business_interface as dpdhl
 import typing
 import karrio.lib as lib
@@ -55,36 +54,39 @@ def _parse_xml_error_response(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             code=error.statusCode,
-            message=error.statusText,
-            details={
-                **(
-                    lib.failsafe(
-                        lambda: lib.to_dict(
-                            {
-                                "message": lib.join(
-                                    *[
-                                        _
-                                        for _ in error.statusMessage
-                                        if isinstance(_, str)
-                                    ],
-                                    join=" ",
-                                )
-                            }
-                        )
+            message=(
+                lib.failsafe(
+                    lambda: lib.join(
+                        *set([_ for _ in error.statusMessage if isinstance(_, str)]),
+                        join=" ",
                     )
-                    or {}
-                    if any(error.statusMessage or [])
-                    else {}
-                ),
+                )
+                or lib.failsafe(
+                    lambda: lib.join(
+                        *set(
+                            [
+                                f"{_.statusElement}: {_.statusMessage}"
+                                for _ in error.errorMessage
+                            ]
+                        ),
+                        join=" ",
+                    )
+                )
+                or error.statusText
+            ),
+            details={
+                "statusText": error.statusText,
                 **(
                     lib.failsafe(
                         lambda: lib.to_dict(
                             {
                                 "error": lib.join(
-                                    *[
-                                        f"{_.statusElement}: {_.statusMessage}"
-                                        for _ in error.errorMessage
-                                    ],
+                                    *set(
+                                        [
+                                            f"{_.statusElement}: {_.statusMessage}"
+                                            for _ in error.errorMessage
+                                        ]
+                                    ),
                                     join=" ",
                                 )
                             }
@@ -100,11 +102,13 @@ def _parse_xml_error_response(
                             {
                                 "warning": lib.join(
                                     *(
-                                        [
-                                            _
-                                            for _ in error.warningMessage
-                                            if isinstance(_, str)
-                                        ]
+                                        set(
+                                            [
+                                                _
+                                                for _ in error.warningMessage
+                                                if isinstance(_, str)
+                                            ]
+                                        )
                                         if isinstance(error.warningMessage, list)
                                         else (
                                             [error.warningMessage]

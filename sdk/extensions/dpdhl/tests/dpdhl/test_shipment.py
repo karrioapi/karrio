@@ -69,6 +69,20 @@ class TestDPDHLShipping(unittest.TestCase):
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
 
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.dpdhl.proxy.lib.request") as mock:
+            mock.return_value = ShipmentErrorResponse
+            parsed_response = (
+                karrio.Shipment.cancel(self.ShipmentCancelRequest)
+                .from_(gateway)
+                .parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response),
+                ParsedErrorResponse,
+            )
+
     def test_parse_html_error_response(self):
         with patch("karrio.mappers.dpdhl.proxy.lib.request") as mock:
             mock.return_value = HTMLErrorResponse
@@ -152,17 +166,15 @@ ParsedShipmentResponse = [
             "carrier_id": "dpdhl",
             "carrier_name": "dpdhl",
             "code": 0,
-            "details": {},
+            "details": {"statusText": "Weak validation error occured."},
             "message": "Weak validation error occured.",
         },
         {
             "carrier_id": "dpdhl",
             "carrier_name": "dpdhl",
             "code": 0,
-            "details": {
-                "message": "Der eingegebene Wert ist zu lang und wurde gekürzt. Die angegebene Straße kann nicht gefunden werden. Die angegebene Straße kann nicht gefunden werden. Der eingegebene Wert ist zu lang und wurde gekürzt."
-            },
-            "message": "Weak validation error occured.",
+            "details": {"statusText": "Weak validation error occured."},
+            "message": ANY,
         },
     ],
 ]
@@ -175,6 +187,26 @@ ParsedCancelShipmentResponse = [
         "success": True,
     },
     [],
+]
+
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "dpdhl",
+            "carrier_name": "dpdhl",
+            "code": 1101,
+            "details": {"statusText": "Hard validation error occured."},
+            "message": "Hard validation error occured.",
+        },
+        {
+            "carrier_id": "dpdhl",
+            "carrier_name": "dpdhl",
+            "code": 1101,
+            "details": {"statusText": "Hard validation error occured."},
+            "message": "Bitte geben Sie ein gültiges Sendungsdatum an.",
+        },
+    ],
 ]
 
 ParsedHTMLErrorResponse = [
