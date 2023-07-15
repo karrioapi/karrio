@@ -1240,6 +1240,10 @@ class TrackingStatus(utils.Enum):
     ready_for_pickup = ["ready_for_pickup"]
 
 
+def create_enum(name, values):
+    return utils.Enum(name, values)  # type: ignore
+
+
 class Currency(utils.Enum):
     EUR = "Euro"
     AED = "UAE Dirham"
@@ -1862,10 +1866,6 @@ class CountryCurrency(utils.Enum):
     ZW = "USD"
 
 
-def create_enum(name, values):
-    return utils.Enum(name, values)  # type: ignore
-
-
 class CountryState(utils.Enum):
     AE = create_enum(
         "State",
@@ -1877,6 +1877,17 @@ class CountryState(utils.Enum):
             "RA": "Ras al-Khaimah",
             "SH": "Sharjah",
             "UM": "Umm al-Qaiwain",
+        },
+    )
+    AU = create_enum(
+        "State",
+        {
+            "NSW": "New South Wales",
+            "VIC": "Victoria",
+            "QLD": "Queensland",
+            "WA": "Western Australia",
+            "SA": "South Australia",
+            "TAS": "Tasmania",
         },
     )
     CA = create_enum(
