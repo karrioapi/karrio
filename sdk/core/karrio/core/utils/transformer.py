@@ -46,8 +46,10 @@ def to_multi_piece_rates(
                     **acc,
                     charge.name: models.ChargeDetails(
                         name=charge.name,
-                        amount=charge.amount
-                        + getattr(acc.get(charge.name), "amount", 0.0),
+                        amount=(
+                            charge.amount + getattr(acc.get(charge.name), "amount", 0.0)
+                        ),
+                        currency=charge.currency,
                     ),
                 },
                 all_charges,

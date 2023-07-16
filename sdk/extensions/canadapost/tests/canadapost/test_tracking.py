@@ -16,7 +16,7 @@ class TestCanadaPostTracking(unittest.TestCase):
 
         self.assertEqual(request.serialize(), TRACKING_PAYLOAD)
 
-    @patch("karrio.mappers.canadapost.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.canadapost.proxy.lib.request", return_value="<a></a>")
     def test_get_tracking(self, http_mock):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -24,7 +24,7 @@ class TestCanadaPostTracking(unittest.TestCase):
         self.assertEqual(reqUrl, TrackingRequestURL)
 
     def test_tracking_auth_error_parsing(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mock:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = AuthError
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -35,7 +35,7 @@ class TestCanadaPostTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mock:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseXml
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -47,7 +47,7 @@ class TestCanadaPostTracking(unittest.TestCase):
             )
 
     def test_tracking_unknown_response_parsing(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mock:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = UnknownTrackingNumberResponse
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

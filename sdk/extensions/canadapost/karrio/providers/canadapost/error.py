@@ -1,40 +1,40 @@
-from typing import List, Callable, cast, Any
-from functools import reduce
-from urllib.error import HTTPError
-from karrio.core.utils.xml import Element
+import canadapost_lib.messages as canadapost
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
 from karrio.providers.canadapost import Settings
-from karrio.core.models import Message
-from canadapost_lib.messages import messageType
+from urllib.error import HTTPError
 
 
-def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    messages = response.xpath(".//*[local-name() = $name]", name="message")
-    return reduce(_extract_error(settings), messages, [])
-
-
-def _extract_error(
+def parse_error_response(
+    responses: typing.Union[lib.Element, typing.List[lib.Element]],
     settings: Settings,
-) -> Callable[[List[Message], Element], List[Message]]:
-    def extract(errors: List[Message], message_node: Element) -> List[Message]:
-        message = messageType()
-        message.build(message_node)
-        return errors + [
-            Message(
-                code=message.code,
-                message=message.description,
-                carrier_name=settings.carrier_name,
-                carrier_id=settings.carrier_id,
-            )
-        ]
+) -> typing.List[models.Message]:
+    messages: typing.List[canadapost.messageType] = sum(
+        [
+            lib.find_element("message", response, canadapost.messageType)
+            for response in lib.to_list(responses)
+        ],
+        start=[],
+    )
 
-    return extract
+    return [
+        models.Message(
+            code=message.code,
+            message=message.description,
+            carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
+        )
+        for message in messages
+    ]
 
 
 def process_error(error: HTTPError) -> str:
     return f"""<messages xmlns="http://www.canadapost.ca/ws/messages">
         <message>
             <code>{error.code}</code>
-            <description>{cast(Any, error).msg}</description>
+            <description>{typing.cast(typing.Any, error).msg}</description>
         </message>
     </messages>
     """

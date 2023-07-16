@@ -30,6 +30,7 @@ Flag = utils.Flag
 # -----------------------------------------------------------
 # raw types utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def join(
@@ -159,9 +160,34 @@ def to_money(
         return None
 
 
+def to_list(
+    value: typing.Union[T, typing.List[T]] = None,
+) -> typing.List[T]:
+    """Ensures the input value is a list.
+
+    Example:
+        result1 = to_list("test")
+        print(result1)  # ["test"]
+
+        result2 = to_int(["test"])
+        print(result2)  # ["test"]
+
+    :param value: a value that can be parsed into integer.
+    :return: a list of values.
+    """
+
+    if value is None:
+        return []
+
+    return value if isinstance(value, list) else [value]
+
+
+# endregion
+
 # -----------------------------------------------------------
 # Date and Time utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def ftime(
@@ -222,9 +248,12 @@ def to_date(
     )
 
 
+# endregion
+
 # -----------------------------------------------------------
 # JSON, XML and object utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def to_object(
@@ -361,9 +390,12 @@ def envelope_serializer(
     return to_xml(envelope, namespacedef_=namespace)
 
 
+# endregion
+
 # -----------------------------------------------------------
 # Shipping request options utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def to_shipping_options(
@@ -442,9 +474,12 @@ def to_connection_config(
     )
 
 
+# endregion
+
 # -----------------------------------------------------------
 # Address utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def to_zip4(
@@ -484,9 +519,12 @@ def to_address(
     return units.ComputedAddress(address)
 
 
+# endregion
+
 # -----------------------------------------------------------
 # Multi-piece shipment utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def to_multi_piece_rates(
@@ -555,9 +593,12 @@ def to_packages(
     )
 
 
+# endregion
+
 # -----------------------------------------------------------
 # async and backgroung code execution utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def run_concurently(
@@ -575,9 +616,12 @@ def run_asynchronously(
     return utils.exec_async(predicate, sequence)
 
 
+# endregion
+
 # -----------------------------------------------------------
 # HTTP requests utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def request(
@@ -589,9 +633,12 @@ def request(
     return utils.request(decoder=decoder, on_error=on_error, trace=trace, **kwargs)
 
 
+# endregion
+
 # -----------------------------------------------------------
 # image and document processing utility functions.
 # -----------------------------------------------------------
+# region
 
 
 def image_to_pdf(
@@ -652,9 +699,12 @@ def decode(byte: bytes):
     )
 
 
+# endregion
+
 # -----------------------------------------------------------
 # other utilities functions
 # -----------------------------------------------------------
+# region
 
 
 def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
@@ -664,3 +714,6 @@ def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
     don't mind if it fails.
     """
     return utils.failsafe(callable, warning=warning)
+
+
+# endregion

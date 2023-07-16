@@ -1,63 +1,75 @@
 import unittest
 from unittest.mock import patch
-from karrio.core.utils import DP
-from karrio import Rating
-from karrio.core.models import RateRequest
 from .fixture import gateway
+import karrio.lib as lib
+import karrio
+import karrio.core.models as models
 
 
 class TestCanadaPostRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.RateRequest = RateRequest(**RatePayload)
+        self.RateRequest = models.RateRequest(**RatePayload)
 
     def test_create_rate_request(self):
-        request = gateway.mapper.create_rate_request(self.RateRequest)
+        requests = gateway.mapper.create_rate_request(self.RateRequest)
 
-        self.assertEqual(request.serialize(), RateRequestXML)
+        self.assertEqual(requests.serialize()[0], RateRequestXML)
 
     def test_create_rate_request_with_package_preset(self):
-        request = gateway.mapper.create_rate_request(
-            RateRequest(**RateWithPresetPayload)
+        requests = gateway.mapper.create_rate_request(
+            models.RateRequest(**RateWithPresetPayload)
         )
 
-        self.assertEqual(request.serialize(), RateRequestUsingPackagePresetXML)
+        self.assertEqual(requests.serialize()[0], RateRequestUsingPackagePresetXML)
+        self.assertEqual(requests.serialize()[1], SecondParcelRateRequestXML)
 
-    @patch("karrio.mappers.canadapost.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.canadapost.proxy.lib.request", return_value="<a></a>")
     def test_create_rate_request_with_package_preset_missing_weight(self, _):
         processing_error = (
-            Rating.fetch(RateRequest(**RateWithPresetMissingWeightPayload))
+            karrio.Rating.fetch(
+                models.RateRequest(**RateWithPresetMissingWeightPayload)
+            )
             .from_(gateway)
             .parse()
         )
 
-        self.assertEqual(DP.to_dict(processing_error), DP.to_dict(ProcessingError))
+        self.assertListEqual(lib.to_dict(processing_error), ParsedProcessingError)
 
-    @patch("karrio.mappers.canadapost.proxy.http", return_value="<a></a>")
+    @patch("karrio.mappers.canadapost.proxy.lib.request", return_value="<a></a>")
     def test_get_rates(self, http_mock):
-        Rating.fetch(self.RateRequest).from_(gateway)
+        karrio.Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
+
         self.assertEqual(url, f"{gateway.proxy.settings.server_url}/rs/ship/price")
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mock:
-            mock.return_value = RateResponseXml
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
+            mock.return_value = RateResponseXML
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
 
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedQuoteResponse)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRatingResponse)
 
     def test_parse_rate_parsing_error(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mock:
-            mock.return_value = QuoteParsingError
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(DP.to_dict(parsed_response), ParsedQuoteParsingError)
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
+            mock.return_value = RatingParsingErrorXML
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(lib.to_dict(parsed_response), ParsedRatingParsingError)
 
     def test_parse_rate_missing_args_error(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mock:
-            mock.return_value = QuoteMissingArgsError
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-            self.assertEqual(DP.to_dict(parsed_response), ParsedQuoteMissingArgsError)
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
+            mock.return_value = RatingMissingArgsErrorXML
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+
+            self.assertEqual(lib.to_dict(parsed_response), ParsedRatingMissingArgsError)
 
 
 if __name__ == "__main__":
@@ -91,7 +103,18 @@ RateWithPresetPayload = {
     "parcels": [
         {
             "package_preset": "canadapost_xexpresspost_certified_envelope",
-        }
+        },
+        {
+            "height": 3,
+            "length": 10,
+            "width": 3,
+            "weight": 4.0,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+            "options": {
+                "signature_confirmation": True,
+            },
+        },
     ],
     "services": ["canadapost_xpresspost"],
 }
@@ -107,7 +130,8 @@ RateWithPresetMissingWeightPayload = {
     "services": ["canadapost_regular_parcel"],
 }
 
-ProcessingError = [
+
+ParsedProcessingError = [
     [],
     [
         {
@@ -125,7 +149,7 @@ ProcessingError = [
     ],
 ]
 
-ParsedQuoteParsingError = [
+ParsedRatingParsingError = [
     [],
     [
         {
@@ -137,7 +161,7 @@ ParsedQuoteParsingError = [
     ],
 ]
 
-ParsedQuoteMissingArgsError = [
+ParsedRatingMissingArgsError = [
     [],
     [
         {
@@ -149,7 +173,7 @@ ParsedQuoteMissingArgsError = [
     ],
 ]
 
-ParsedQuoteResponse = [
+ParsedRatingResponse = [
     [
         {
             "carrier_id": "canadapost",
@@ -207,7 +231,7 @@ ParsedQuoteResponse = [
 ]
 
 
-QuoteParsingError = """<messages xmlns="http://www.canadapost.ca/ws/messages">
+RatingParsingErrorXML = """<messages xmlns="http://www.canadapost.ca/ws/messages">
     <message>
         <code>AA004</code>
         <description>You cannot mail on behalf of the requested customer.</description>
@@ -215,7 +239,7 @@ QuoteParsingError = """<messages xmlns="http://www.canadapost.ca/ws/messages">
 </messages>
 """
 
-QuoteMissingArgsError = """<messages xmlns="http://www.canadapost.ca/ws/messages">
+RatingMissingArgsErrorXML = """<messages xmlns="http://www.canadapost.ca/ws/messages">
     <message>
         <code>Server</code>
         <description>/rs/ship/price: cvc-particle 3.1: in element {http://www.canadapost.ca/ws/ship/rate-v4}parcel-characteristics with anonymous type, found &lt;/parcel-characteristics> (in namespace http://www.canadapost.ca/ws/ship/rate-v4), but next item should be any of [{http://www.canadapost.ca/ws/ship/rate-v4}weight, {http://www.canadapost.ca/ws/ship/rate-v4}dimensions, {http://www.canadapost.ca/ws/ship/rate-v4}unpackaged, {http://www.canadapost.ca/ws/ship/rate-v4}mailing-tube, {http://www.canadapost.ca/ws/ship/rate-v4}oversized]</description>
@@ -279,7 +303,35 @@ RateRequestUsingPackagePresetXML = f"""<mailing-scenario xmlns="http://www.canad
 </mailing-scenario>
 """
 
-RateResponseXml = """<price-quotes>
+SecondParcelRateRequestXML = f"""<mailing-scenario xmlns="http://www.canadapost.ca/ws/ship/rate-v4">
+    <customer-number>2004381</customer-number>
+    <contract-id>42708517</contract-id>
+    <options>
+        <option>
+            <option-code>SO</option-code>
+        </option>
+    </options>
+    <parcel-characteristics>
+        <weight>4</weight>
+        <dimensions>
+            <length>10.0</length>
+            <width>3.0</width>
+            <height>3.0</height>
+        </dimensions>
+    </parcel-characteristics>
+    <services>
+        <service-code>DOM.XP</service-code>
+    </services>
+    <origin-postal-code>H8Z2Z3</origin-postal-code>
+    <destination>
+        <domestic>
+            <postal-code>H8Z2V4</postal-code>
+        </domestic>
+    </destination>
+</mailing-scenario>
+"""
+
+RateResponseXML = """<price-quotes>
    <price-quote>
       <service-code>DOM.EP</service-code>
       <service-link rel="service" href="https://ct.soa-gw.canadapost.ca/rs/ship/service/DOM.EP?country=CA" media-type="application/vnd.cpc.ship.rate-v4+xml" />
