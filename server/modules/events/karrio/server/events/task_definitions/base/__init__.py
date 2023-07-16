@@ -22,7 +22,7 @@ def background_trackers_update():
         try:
             tracking.update_trackers()
         except Exception as e:
-            logger.error(f"failed to crawl tracking statuses: {e}")
+            logger.error(f"An error occured during tracking statuses update: {e}")
 
     _run()
 
@@ -50,7 +50,7 @@ def periodic_data_archiving(*args, **kwargs):
                 "An error occured during data archiving: $error",
             )
         except Exception as e:
-            logger.error(f"failed to crawl tracking statuses: {e}")
+            logger.error(f"An error occured during data archiving: {e}")
 
     _run()
 
