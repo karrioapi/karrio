@@ -73,7 +73,7 @@ class TestCanadaPostShipment(unittest.TestCase):
         )
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = ["<a></a>", ""]
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -84,7 +84,7 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_cancel_shipment(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [
                 NonSubmittedShipmentResponseXML,
                 NonSubmittedShipmentResponseXML,
@@ -104,7 +104,7 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_cancel_transmitted_shipment(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML, ""]
 
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
@@ -120,7 +120,7 @@ class TestCanadaPostShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [ShipmentResponseXML, LabelResponse]
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -129,7 +129,7 @@ class TestCanadaPostShipment(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_shipment_cancel_response(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [ShipmentResponseXML, ShipmentRefundResponseXML]
             parsed_response = (
                 karrio.Shipment.cancel(self.ShipmentCancelRequest)

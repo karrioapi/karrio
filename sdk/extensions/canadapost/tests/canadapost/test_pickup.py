@@ -46,7 +46,7 @@ class TestCanadaPostPickup(unittest.TestCase):
         )
 
     def test_create_pickup(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [PickupAvailabilityResponseXML, PickupResponseXML]
             karrio.Pickup.schedule(self.PickupRequest).from_(gateway)
 
@@ -62,7 +62,7 @@ class TestCanadaPostPickup(unittest.TestCase):
             )
 
     def test_update_pickup(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = ["", PickupDetailseResponseXML]
             karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
@@ -78,7 +78,7 @@ class TestCanadaPostPickup(unittest.TestCase):
             )
 
     def test_cancel_pickup(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mock:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
             mock.return_value = "<a></a>"
             karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
 
@@ -89,7 +89,7 @@ class TestCanadaPostPickup(unittest.TestCase):
             )
 
     def test_parse_pickup_response(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [PickupAvailabilityResponseXML, PickupResponseXML]
             parsed_response = (
                 karrio.Pickup.schedule(self.PickupRequest).from_(gateway).parse()
@@ -98,7 +98,7 @@ class TestCanadaPostPickup(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedPickupResponse)
 
     def test_parse_pickup_update_response(self):
-        with patch("karrio.mappers.canadapost.proxy.http") as mocks:
+        with patch("karrio.mappers.canadapost.proxy.lib.request") as mocks:
             mocks.side_effect = [None, PickupDetailseResponseXML]
             parsed_response = (
                 karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway).parse()

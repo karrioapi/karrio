@@ -1,16 +1,5 @@
-from canadapost_lib.rating import (
-    mailing_scenario,
-    optionsType,
-    optionType,
-    dimensionsType,
-    parcel_characteristicsType,
-    servicesType,
-    destinationType,
-    domesticType,
-    united_statesType,
-    internationalType,
-    price_quoteType,
-)
+import canadapost_lib.rating as canadapost
+
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -25,18 +14,29 @@ def parse_rate_response(
     _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response = _response.deserialize()
-    price_quotes = lib.find_element("price-quote", response)
-    quotes: typing.List[models.RateDetails] = [
-        _extract_quote(price_quote_node, settings) for price_quote_node in price_quotes
+    responses = _response.deserialize()
+
+    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]] = [
+        (
+            f"{_}",
+            [
+                _extract_details(node, settings)
+                for node in lib.find_element("price-quote", response)
+            ],
+        )
+        for _, response in enumerate(responses, start=1)
     ]
-    return quotes, provider_error.parse_error_response(response, settings)
+
+    messages = provider_error.parse_error_response(responses, settings)
+    rates = lib.to_multi_piece_rates(package_rates)
+
+    return rates, messages
 
 
-def _extract_quote(
+def _extract_details(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.RateDetails:
-    quote = lib.to_object(price_quoteType, node)
+    quote = lib.to_object(canadapost.price_quoteType, node)
     service = provider_units.ServiceType.map(quote.service_code)
 
     adjustments = getattr(quote.price_details.adjustments, "adjustment", [])
@@ -85,96 +85,105 @@ def rate_request(
     ):
         raise errors.OriginNotServicedError(payload.shipper.country_code)
 
-    package = lib.to_packages(
-        payload.parcels, provider_units.PackagePresets, required=["weight"]
-    ).single
     services = lib.to_services(payload.services, provider_units.ServiceType)
-    options = lib.to_shipping_options(
-        payload.options,
-        package_options=package.options,
-        initializer=provider_units.shipping_options_initializer,
+    packages = lib.to_packages(
+        payload.parcels, provider_units.PackagePresets, required=["weight"]
     )
-    options_items = [
-        option for _, option in options.items()
-        if option.state is not False
-    ]
+    requests = []
 
-    request = mailing_scenario(
-        customer_number=settings.customer_number,
-        contract_id=settings.contract_id,
-        promo_code=None,
-        quote_type=None,
-        expected_mailing_date=options.shipment_date.state,
-        options=(
-            optionsType(
-                option=[
-                    optionType(
-                        option_code=option.code,
-                        option_amount=lib.to_money(option.state),
+    for package in packages:
+        options = lib.to_shipping_options(
+            payload.options,
+            package_options=package.options,
+            initializer=provider_units.shipping_options_initializer,
+        )
+        options_items = [
+            option for _, option in options.items() if option.state is not False
+        ]
+
+        requests.append(
+            canadapost.mailing_scenario(
+                customer_number=settings.customer_number,
+                contract_id=settings.contract_id,
+                promo_code=None,
+                quote_type=None,
+                expected_mailing_date=options.shipment_date.state,
+                options=(
+                    canadapost.optionsType(
+                        option=[
+                            canadapost.optionType(
+                                option_code=option.code,
+                                option_amount=lib.to_money(option.state),
+                            )
+                            for option in options_items
+                        ]
                     )
-                    for option in options_items
-                ]
+                    if any(options_items)
+                    else None
+                ),
+                parcel_characteristics=canadapost.parcel_characteristicsType(
+                    weight=package.weight.map(provider_units.MeasurementOptions).KG,
+                    dimensions=canadapost.dimensionsType(
+                        length=package.length.map(provider_units.MeasurementOptions).CM,
+                        width=package.width.map(provider_units.MeasurementOptions).CM,
+                        height=package.height.map(provider_units.MeasurementOptions).CM,
+                    ),
+                    unpackaged=None,
+                    mailing_tube=None,
+                    oversized=None,
+                ),
+                services=(
+                    canadapost.servicesType(
+                        service_code=[svc.value for svc in services]
+                    )
+                    if any(services)
+                    else None
+                ),
+                origin_postal_code=provider_utils.format_ca_postal_code(
+                    payload.shipper.postal_code
+                ),
+                destination=canadapost.destinationType(
+                    domestic=(
+                        canadapost.domesticType(
+                            postal_code=provider_utils.format_ca_postal_code(
+                                payload.recipient.postal_code
+                            )
+                        )
+                        if (payload.recipient.country_code == units.Country.CA.name)
+                        else None
+                    ),
+                    united_states=(
+                        canadapost.united_statesType(
+                            zip_code=provider_utils.format_ca_postal_code(
+                                payload.recipient.postal_code
+                            )
+                        )
+                        if (payload.recipient.country_code == units.Country.US.name)
+                        else None
+                    ),
+                    international=(
+                        canadapost.internationalType(
+                            country_code=provider_utils.format_ca_postal_code(
+                                payload.recipient.postal_code
+                            )
+                        )
+                        if (
+                            payload.recipient.country_code
+                            not in [units.Country.US.name, units.Country.CA.name]
+                        )
+                        else None
+                    ),
+                ),
             )
-            if any(options_items)
-            else None
-        ),
-        parcel_characteristics=parcel_characteristicsType(
-            weight=package.weight.map(provider_units.MeasurementOptions).KG,
-            dimensions=dimensionsType(
-                length=package.length.map(provider_units.MeasurementOptions).CM,
-                width=package.width.map(provider_units.MeasurementOptions).CM,
-                height=package.height.map(provider_units.MeasurementOptions).CM,
-            ),
-            unpackaged=None,
-            mailing_tube=None,
-            oversized=None,
-        ),
-        services=(
-            servicesType(service_code=[svc.value for svc in services])
-            if any(services)
-            else None
-        ),
-        origin_postal_code=provider_utils.format_ca_postal_code(
-            payload.shipper.postal_code
-        ),
-        destination=destinationType(
-            domestic=(
-                domesticType(
-                    postal_code=provider_utils.format_ca_postal_code(
-                        payload.recipient.postal_code
-                    )
-                )
-                if (payload.recipient.country_code == units.Country.CA.name)
-                else None
-            ),
-            united_states=(
-                united_statesType(
-                    zip_code=provider_utils.format_ca_postal_code(
-                        payload.recipient.postal_code
-                    )
-                )
-                if (payload.recipient.country_code == units.Country.US.name)
-                else None
-            ),
-            international=(
-                internationalType(
-                    country_code=provider_utils.format_ca_postal_code(
-                        payload.recipient.postal_code
-                    )
-                )
-                if (
-                    payload.recipient.country_code
-                    not in [units.Country.US.name, units.Country.CA.name]
-                )
-                else None
-            ),
-        ),
-    )
+        )
 
-    return lib.Serializable(request, _request_serializer)
-
-
-def _request_serializer(request: mailing_scenario) -> str:
-    return lib.to_xml(
-        request, namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"'
+    return lib.Serializable(
+        requests,
+        lambda __: [
+            lib.to_xml(
+                request,
+                namespacedef_='xmlns="http://www.canadapost.ca/ws/ship/rate-v4"',
+            )
+            for request in __
+        ],
     )
