@@ -1,52 +1,47 @@
-import base64
 import time
-from typing import List
-from canadapost_lib.rating import mailing_scenario
-from karrio.api.proxy import Proxy as BaseProxy
-from karrio.core.errors import ShippingSDKError
-from karrio.core.utils import (
-    request as http,
-    exec_async,
-    Serializable,
-    Deserializable,
-    Pipeline,
-    Job,
-    XP,
-)
-from karrio.mappers.canadapost.settings import Settings
+import typing
+import base64
+import karrio.lib as lib
+import karrio.core.errors as errors
+import karrio.api.proxy as proxy
+import karrio.mappers.boxknight.settings as provider_settings
 
 
-class Proxy(BaseProxy):
-    settings: Settings
+class Proxy(proxy.Proxy):
+    settings: provider_settings.Settings
 
-    def get_rates(self, request: Serializable) -> Deserializable:
-        response = http(
-            url=f"{self.settings.server_url}/rs/ship/price",
-            data=request.serialize(),
-            trace=self.trace_as("xml"),
-            method="POST",
-            headers={
-                "Content-Type": "application/vnd.cpc.ship.rate-v4+xml",
-                "Accept": "application/vnd.cpc.ship.rate-v4+xml",
-                "Authorization": f"Basic {self.settings.authorization}",
-                "Accept-language": f"{self.settings.language}-CA",
-            },
+    def get_rates(self, requests: lib.Serializable) -> lib.Deserializable:
+        responses = lib.run_asynchronously(
+            lambda data: lib.request(
+                url=f"{self.settings.server_url}/rs/ship/price",
+                trace=self.trace_as("xml"),
+                method="POST",
+                data=data,
+                headers={
+                    "Content-Type": "application/vnd.cpc.ship.rate-v4+xml",
+                    "Accept": "application/vnd.cpc.ship.rate-v4+xml",
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept-language": f"{self.settings.language}-CA",
+                },
+            ),
+            requests.serialize(),
         )
 
-        return Deserializable(response, XP.to_xml)
+        return lib.Deserializable(
+            responses,
+            lambda __: [lib.to_element(_) for _ in __],
+        )
 
-    def get_tracking(self, request: Serializable) -> Deserializable:
-        """
-        get_tracking make parallel request for each pin
-        """
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
+        """get_tracking make parallel request for each pin"""
         _throttle = 0.0
 
-        def track(tracking_pin: str) -> str:
+        def _track(tracking_pin: str) -> str:
             nonlocal _throttle
             time.sleep(_throttle)
             _throttle += 0.025
 
-            return http(
+            return lib.request(
                 url=f"{self.settings.server_url}/vis/track/pin/{tracking_pin}/detail",
                 trace=self.trace_as("xml"),
                 method="GET",
@@ -57,13 +52,16 @@ class Proxy(BaseProxy):
                 },
             )
 
-        response: List[str] = exec_async(track, request.serialize())
+        responses: typing.List[str] = lib.run_asynchronously(
+            _track,
+            request.serialize(),
+        )
 
-        return Deserializable(XP.bundle_xml(xml_strings=response), XP.to_xml)
+        return lib.Deserializable(responses, lib.to_element)
 
-    def create_shipment(self, request: Serializable) -> Deserializable:
-        def _contract_shipment(job: Job):
-            return http(
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        def _contract_shipment(job: lib.Job):
+            return lib.request(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment",
                 data=job.data.serialize(),
                 trace=self.trace_as("xml"),
@@ -76,8 +74,8 @@ class Proxy(BaseProxy):
                 },
             )
 
-        def _non_contract_shipment(job: Job):
-            return http(
+        def _non_contract_shipment(job: lib.Job):
+            return lib.request(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/ncshipment",
                 data=job.data.serialize(),
                 trace=self.trace_as("xml"),
@@ -90,8 +88,8 @@ class Proxy(BaseProxy):
                 },
             )
 
-        def _get_label(job: Job):
-            label_string = http(
+        def _get_label(job: lib.Job):
+            label_string = lib.request(
                 decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
                 url=job.data["href"],
                 method="GET",
@@ -102,7 +100,7 @@ class Proxy(BaseProxy):
             )
             return f"<label>{label_string}</label>"
 
-        def process(job: Job):
+        def _process(job: lib.Job):
             if job.data is None:
                 return job.fallback
 
@@ -112,18 +110,20 @@ class Proxy(BaseProxy):
                 "shipment_label": _get_label,
             }
             if job.id not in subprocess:
-                raise ShippingSDKError(f"Unknown shipment request job id: {job.id}")
+                raise errors.ShippingSDKError(
+                    f"Unknown shipment request job id: {job.id}"
+                )
 
             return subprocess[job.id](job)
 
-        pipeline: Pipeline = request.serialize()
-        response = pipeline.apply(process)
+        pipeline: lib.Pipeline = request.serialize()
+        responses = pipeline.apply(_process)
 
-        return Deserializable(XP.bundle_xml(response), XP.to_xml)
+        return lib.Deserializable(responses, lib.to_element)
 
-    def cancel_shipment(self, request: Serializable) -> Deserializable:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         def _request(method: str, shipment_id: str, path: str = "", **kwargs):
-            return http(
+            return lib.request(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}{path}",
                 trace=self.trace_as("xml"),
                 method=method,
@@ -136,7 +136,7 @@ class Proxy(BaseProxy):
                 **kwargs,
             )
 
-        def process(job: Job):
+        def _process(job: lib.Job):
             if job.data is None:
                 return job.fallback
 
@@ -151,19 +151,20 @@ class Proxy(BaseProxy):
                 "cancel": lambda _: _request("DELETE", job.data.serialize()),
             }
             if job.id not in subprocess:
-                raise ShippingSDKError(
+                raise lib.ShippingSDKError(
                     f"Unknown shipment cancel request job id: {job.id}"
                 )
 
             return subprocess[job.id](job)
 
-        pipeline: Pipeline = request.serialize()
-        response = pipeline.apply(process)
-        return Deserializable(XP.bundle_xml(response), XP.to_xml)
+        pipeline: lib.Pipeline = request.serialize()
+        responses = pipeline.apply(_process)
 
-    def schedule_pickup(self, request: Serializable) -> Deserializable:
-        def _availability(job: Job) -> str:
-            return http(
+        return lib.Deserializable(responses, lib.to_element)
+
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        def _availability(job: lib.Job) -> str:
+            return lib.request(
                 url=f"{self.settings.server_url}/ad/pickup/pickupavailability/{job.data}",
                 trace=self.trace_as("xml"),
                 method="GET",
@@ -174,8 +175,8 @@ class Proxy(BaseProxy):
                 },
             )
 
-        def _create_pickup(job: Job) -> str:
-            return http(
+        def _create_pickup(job: lib.Job) -> str:
+            return lib.request(
                 url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest",
                 data=job.data.serialize(),
                 trace=self.trace_as("xml"),
@@ -188,7 +189,7 @@ class Proxy(BaseProxy):
                 },
             )
 
-        def process(job: Job):
+        def _process(job: lib.Job):
             if job.data is None:
                 return job.fallback
 
@@ -197,18 +198,18 @@ class Proxy(BaseProxy):
                 "availability": _availability,
             }
             if job.id not in subprocess:
-                raise ShippingSDKError(f"Unknown pickup request job id: {job.id}")
+                raise lib.ShippingSDKError(f"Unknown pickup request job id: {job.id}")
 
             return subprocess[job.id](job)
 
-        pipeline: Pipeline = request.serialize()
-        response = pipeline.apply(process)
+        pipeline: lib.Pipeline = request.serialize()
+        responses = pipeline.apply(_process)
 
-        return Deserializable(XP.bundle_xml(response), XP.to_xml)
+        return lib.Deserializable(responses, lib.to_element)
 
-    def modify_pickup(self, request: Serializable) -> Deserializable:
-        def _get_pickup(job: Job) -> str:
-            return http(
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        def _get_pickup(job: lib.Job) -> str:
+            return lib.request(
                 url=f"{self.settings.server_url}{job.data.serialize()}",
                 trace=self.trace_as("xml"),
                 method="GET",
@@ -219,9 +220,9 @@ class Proxy(BaseProxy):
                 },
             )
 
-        def _update_pickup(job: Job) -> str:
+        def _update_pickup(job: lib.Job) -> str:
             payload = job.data.serialize()
-            return http(
+            return lib.request(
                 url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{payload['pickuprequest']}",
                 data=payload["data"],
                 trace=self.trace_as("xml"),
@@ -233,7 +234,7 @@ class Proxy(BaseProxy):
                 },
             )
 
-        def process(job: Job):
+        def _process(job: lib.Job):
             if job.data is None:
                 return job.fallback
 
@@ -242,18 +243,18 @@ class Proxy(BaseProxy):
                 "get_pickup": _get_pickup,
             }
             if job.id not in subprocess:
-                raise ShippingSDKError(f"Unknown pickup request job id: {job.id}")
+                raise lib.ShippingSDKError(f"Unknown pickup request job id: {job.id}")
 
             return subprocess[job.id](job)
 
-        pipeline: Pipeline = request.serialize()
-        response = pipeline.apply(process)
+        pipeline: lib.Pipeline = request.serialize()
+        responses = pipeline.apply(_process)
 
-        return Deserializable(XP.bundle_xml(response), XP.to_xml)
+        return lib.Deserializable(responses, lib.to_element)
 
-    def cancel_pickup(self, request: Serializable) -> Deserializable:
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         pickuprequest = request.serialize()
-        response = http(
+        response = lib.request(
             url=f"{self.settings.server_url}/enab/{self.settings.customer_number}/pickuprequest/{pickuprequest}",
             trace=self.trace_as("xml"),
             method="DELETE",
@@ -264,4 +265,4 @@ class Proxy(BaseProxy):
             },
         )
 
-        return Deserializable(response or "<wrapper></wrapper>", XP.to_xml)
+        return lib.Deserializable(response or "<wrapper></wrapper>", lib.to_element)
