@@ -55,7 +55,7 @@ def _extract_details(
     ]
 
     transit_days = lib.failsafe(
-        lambda: rate.TimeInTransit.ServiceSummary.EstimatedArrival.TotalTransitDays,
+        lambda: rate.TimeInTransit.ServiceSummary.EstimatedArrival.BusinessDaysInTransit,
     )
     currency = rate.TransportationCharges.CurrencyCode
     service = provider_units.ServiceZone.find(rate.Service.Code, ctx["origin"])
