@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="carrier.dhl_poland",
-    version="2021.8",
+    version="2021.12",
     description="DHL Parcel Poland Web API Schemas Python Data Types library",
     long_description=long_description,
     long_description_content_type="text/markdown",
