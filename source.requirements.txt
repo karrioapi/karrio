@@ -6,7 +6,7 @@
 -e ./schemas/canadapost
 -e ./schemas/canpar
 -e ./schemas/chronopost
--e ./schemas/dhl_express
+# -e ./schemas/dhl_express
 -e ./schemas/dhl_poland
 -e ./schemas/dicom
 -e ./schemas/dpd
