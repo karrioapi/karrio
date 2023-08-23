@@ -1,13 +1,13 @@
 from typing import Tuple, List
-from dhl_express_lib.book_pickup_global_req_3_0 import BookPURequest, MetaData
+import dhl_express_lib.book_pickup_global_req_3_0 as dhl
 from dhl_express_lib.book_pickup_global_res_3_0 import BookPUResponse
 from dhl_express_lib.pickupdatatypes_global_3_0 import (
     Requestor,
-    Place,
     Pickup,
     WeightSeg,
     RequestorContact,
 )
+import dhl_express_lib.datatypes_global_v62 as dhl_global
 import karrio.lib as lib
 from karrio.core.utils import (
     Serializable,
@@ -68,9 +68,9 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     packages = Packages(payload.parcels)
     address = lib.to_address(payload.address)
 
-    request = BookPURequest(
+    request = dhl.BookPURequest(
         Request=settings.Request(
-            MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
+            MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
         ),
         schemaVersion=3.0,
         RegionCode=(
@@ -86,7 +86,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
             ),
             CompanyName=address.company_name,
         ),
-        Place=Place(
+        Place=dhl.Place1(
             City=address.city,
             StateCode=address.state_code,
             PostalCode=address.postal_code,
@@ -120,7 +120,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
     return Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: BookPURequest) -> str:
+def _request_serializer(request: dhl.BookPURequest) -> str:
     xml_str = (
         XP.export(
             request,
