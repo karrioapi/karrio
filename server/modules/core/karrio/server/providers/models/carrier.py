@@ -213,6 +213,7 @@ class Carrier(core.OwnedEntity):
         from karrio.server.providers.models.config import CarrierConfig
         from karrio.server import serializers
         import karrio.server.core.middleware as middleware
+        from django.contrib.auth.models import AnonymousUser
 
         if carrier.id is None:
             return None
@@ -223,7 +224,7 @@ class Carrier(core.OwnedEntity):
             if (_ctx.user or _ctx.org)
             else lib.failsafe(lambda: middleware.SessionContext.get_current_request())
         )
-        has_ctx_user = ctx and (ctx.user or ctx.org)
+        has_ctx_user = ctx and ((ctx.user and not isinstance(ctx.user, AnonymousUser)) or ctx.org)
 
         queryset = (
             CarrierConfig.objects.filter(carrier=carrier)
