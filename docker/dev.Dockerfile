@@ -12,4 +12,6 @@ COPY . .
 RUN pip install --upgrade pip && \
     pip install -r /temp/requirements.txt
 
-CMD ["karrio", "shell"]
+EXPOSE 5002
+
+CMD ["karrio", "runserver", "0.0.0.0:5002"]
