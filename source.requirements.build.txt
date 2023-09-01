@@ -1,0 +1,73 @@
+--extra-index-url https://karrio.gateway.scarf.sh/simple/?sourceBuild
+
+# Schemas update
+./schemas/aramex
+./schemas/australiapost
+./schemas/canadapost
+./schemas/canpar
+./schemas/chronopost
+# ./schemas/dhl_express
+./schemas/dhl_poland
+./schemas/dicom
+./schemas/dpd
+./schemas/dpdhl
+# ./schemas/fedex
+./schemas/purolator
+./schemas/royalmail
+./schemas/sendle
+./schemas/sf_express
+./schemas/tnt
+./schemas/usps
+./schemas/yanwen
+./schemas/yunexpress
+
+# Carrier Extentions in Development
+./sdk/core
+./sdk/extensions/generic
+./sdk/extensions/amazon_mws
+./sdk/extensions/aramex
+./sdk/extensions/australiapost
+./sdk/extensions/boxknight
+./sdk/extensions/canadapost
+./sdk/extensions/canpar
+./sdk/extensions/chronopost
+./sdk/extensions/dhl_express
+./sdk/extensions/dhl_poland
+./sdk/extensions/dhl_universal
+./sdk/extensions/dicom
+./sdk/extensions/dpd
+./sdk/extensions/dpdhl
+./sdk/extensions/fedex
+./sdk/extensions/geodis
+./sdk/extensions/laposte
+./sdk/extensions/nationex
+./sdk/extensions/purolator
+./sdk/extensions/roadie
+./sdk/extensions/royalmail
+./sdk/extensions/sendle
+./sdk/extensions/sf_express
+./sdk/extensions/tnt
+./sdk/extensions/ups
+./sdk/extensions/usps
+./sdk/extensions/usps_international
+./sdk/extensions/yanwen
+./sdk/extensions/yunexpress
+
+# Carrier Hub Extentions in Development
+./sdk/vendors/easypost
+./sdk/vendors/eshipper
+./sdk/vendors/freightcom
+
+# karrio server core modules
+./server/modules/iam
+./server/modules/core
+./server/modules/graph
+./server/main
+./server/modules/apps
+./server/modules/data
+./server/modules/events
+./server/modules/manager
+./server/modules/orders
+./server/modules/proxy
+./server/modules/pricing
+./server/modules/documents
