@@ -268,6 +268,8 @@ ModifyPURequestXML = """<req:ModifyPURequest xmlns:req="http://www.dhl.com" xmln
         </RequestorContact>
     </Requestor>
     <Place>
+        <LocationType>B</LocationType>
+        <Address1></Address1>
         <City>Montreal</City>
         <CountryCode>CA</CountryCode>
         <PostalCode>H8Z2Z3</PostalCode>
@@ -360,7 +362,10 @@ PickupRequestXML = """<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xs
         </RequestorContact>
     </Requestor>
     <Place>
+        <LocationType>B</LocationType>
+        <Address1>234 rue Hubert</Address1>
         <City>Montreal</City>
+        <StateCode>QC</StateCode>
         <CountryCode>CA</CountryCode>
         <PostalCode>H8Z2Z3</PostalCode>
     </Place>

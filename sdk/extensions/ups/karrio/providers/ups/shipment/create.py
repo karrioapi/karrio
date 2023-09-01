@@ -599,11 +599,11 @@ def shipment_request(
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.LabelImageFormatType(
                                 Code=provider_units.WeightUnit[
-                                    packages.weight_unit
+                                    str(package.weight.unit)
                                 ].value,
                                 Description="Weight",
                             ),
-                            Weight=str(packages.weight.value),
+                            Weight=str(package.weight.value),
                         ),
                         Commodity=None,
                         PackageServiceOptions=None,

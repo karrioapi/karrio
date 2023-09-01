@@ -1,0 +1,19 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/dev.Dockerfile
+    container_name: karrio.api
+    command: karrio runserver 0.0.0.0:5002
+    ports:
+      - 5002:5002
+    volumes:
+      - .:/code
+
+  maildev:
+    container_name: karrio.mail
+    image: maildev/maildev
+    restart: on-failure
+    ports:
+      - "1080:1080"
+      - "1025:1025"

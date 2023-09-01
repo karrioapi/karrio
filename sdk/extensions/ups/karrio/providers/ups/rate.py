@@ -55,7 +55,7 @@ def _extract_details(
     ]
 
     transit_days = lib.failsafe(
-        lambda: rate.TimeInTransit.ServiceSummary.EstimatedArrival.TotalTransitDays,
+        lambda: rate.TimeInTransit.ServiceSummary.EstimatedArrival.BusinessDaysInTransit,
     )
     currency = rate.TransportationCharges.CurrencyCode
     service = provider_units.ServiceZone.find(rate.Service.Code, ctx["origin"])
@@ -220,11 +220,11 @@ def rate_request(
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.CustomerClassificationType(
                                 Code=provider_units.WeightUnit[
-                                    packages.weight_unit
+                                    str(package.weight.unit)
                                 ].value,
                                 Description="Weight",
                             ),
-                            Weight=str(packages.weight.value),
+                            Weight=str(package.weight.value),
                         ),
                         Commodity=None,
                         PackageServiceOptions=None,

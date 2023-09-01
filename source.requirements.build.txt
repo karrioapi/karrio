@@ -1,4 +1,4 @@
-django-debug-toolbar
+--extra-index-url https://karrio.gateway.scarf.sh/simple/?sourceBuild
 
 # Schemas update
 ./schemas/aramex
@@ -58,17 +58,16 @@ django-debug-toolbar
 ./sdk/vendors/eshipper
 ./sdk/vendors/freightcom
 
-
 # karrio server core modules
--e ./server/modules/iam
--e ./server/modules/core
--e ./server/modules/graph
--e ./server/main
--e ./server/modules/apps
--e ./server/modules/data
--e ./server/modules/events
--e ./server/modules/manager
--e ./server/modules/orders
--e ./server/modules/proxy
--e ./server/modules/pricing
-# -e ./server/modules/documents
+./server/modules/iam
+./server/modules/core
+./server/modules/graph
+./server/main
+./server/modules/apps
+./server/modules/data
+./server/modules/events
+./server/modules/manager
+./server/modules/orders
+./server/modules/proxy
+./server/modules/pricing
+./server/modules/documents

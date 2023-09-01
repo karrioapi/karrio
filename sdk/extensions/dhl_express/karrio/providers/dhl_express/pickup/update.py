@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from dhl_express_lib.modify_pickup_global_req_3_0 import ModifyPURequest, MetaData
+import dhl_express_lib.modify_pickup_global_req_3_0 as dhl
 from dhl_express_lib.modify_pickup_global_res_3_0 import ModifyPUResponse
 from dhl_express_lib.pickupdatatypes_global_3_0 import (
     Requestor,
@@ -74,9 +74,9 @@ def pickup_update_request(
 ) -> Serializable:
     packages = Packages(payload.parcels)
 
-    request = ModifyPURequest(
+    request = dhl.ModifyPURequest(
         Request=settings.Request(
-            MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
+            MetaData=dhl.MetaData(SoftwareName="XMLPI", SoftwareVersion=1.0)
         ),
         schemaVersion=3.0,
         RegionCode=CountryRegion[payload.address.country_code].value
@@ -93,7 +93,7 @@ def pickup_update_request(
             ),
             CompanyName=payload.address.company_name,
         ),
-        Place=Place(
+        Place=dhl.Place1(
             City=payload.address.city,
             StateCode=payload.address.state_code,
             PostalCode=payload.address.postal_code,
@@ -125,7 +125,7 @@ def pickup_update_request(
     return Serializable(request, _request_serializer)
 
 
-def _request_serializer(request: ModifyPURequest) -> str:
+def _request_serializer(request: dhl.ModifyPURequest) -> str:
     xml_str = (
         XP.export(
             request,
