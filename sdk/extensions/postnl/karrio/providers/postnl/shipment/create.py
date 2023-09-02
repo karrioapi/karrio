@@ -11,8 +11,8 @@ def parse_shipment_response(
     response: dict,
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_shipment = None  # extract carrier response shipment
+    response_messages: list = []  # extract carrier response errors
+    response_shipment: typing.Any = None  # extract carrier response shipment
 
     messages = error.parse_error_response(response_messages, settings)
     shipment = _extract_details(response_shipment, settings)
