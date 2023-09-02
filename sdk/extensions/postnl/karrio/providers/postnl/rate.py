@@ -15,8 +15,8 @@ def parse_rate_response(
     response: dict,
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_rates = []  # extract carrier response rates
+    response_messages: list = []  # extract carrier response errors
+    response_rates: list = []  # extract carrier response rates
 
     messages = error.parse_error_response(response_messages, settings)
     rates = [_extract_details(rate, settings) for rate in response_rates]

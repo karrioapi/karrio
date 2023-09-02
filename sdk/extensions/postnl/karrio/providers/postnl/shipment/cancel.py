@@ -10,7 +10,7 @@ def parse_shipment_cancel_response(
     response: dict,
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors and messages
+    response_messages: list = []  # extract carrier response errors and messages
     messages = error.parse_error_response(response_messages, settings)
     success = True  # compute shipment cancel success state
 
