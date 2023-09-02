@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from karrio.api.mapper import Mapper as BaseMapper
-from karrio.mappers.amazon_mws.settings import Settings
+from karrio.mappers.amazon_shipping.settings import Settings
 from karrio.core.utils.serializable import Deserializable, Serializable
 from karrio.core.models import (
     RateRequest,
@@ -13,7 +13,7 @@ from karrio.core.models import (
     TrackingDetails,
     TrackingRequest,
 )
-from karrio.providers.amazon_mws import (
+from karrio.providers.amazon_shipping import (
     parse_shipment_cancel_response,
     parse_tracking_response,
     parse_shipment_response,

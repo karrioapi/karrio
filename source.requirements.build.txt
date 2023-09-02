@@ -24,7 +24,7 @@
 # Carrier Extentions in Development
 ./sdk/core
 ./sdk/extensions/generic
-./sdk/extensions/amazon_mws
+./sdk/extensions/amazon_shipping
 ./sdk/extensions/aramex
 ./sdk/extensions/australiapost
 ./sdk/extensions/boxknight

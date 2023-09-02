@@ -22,7 +22,7 @@
 # Carrier Extentions packages
 -e ./sdk/core
 -e ./sdk/extensions/generic
--e ./sdk/extensions/amazon_mws
+-e ./sdk/extensions/amazon_shipping
 -e ./sdk/extensions/aramex
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/boxknight

@@ -3,8 +3,8 @@ from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Messa
 from karrio.core.utils import (
     Serializable,
 )
-from karrio.providers.amazon_mws.error import parse_error_response
-from karrio.providers.amazon_mws.utils import Settings
+from karrio.providers.amazon_shipping.error import parse_error_response
+from karrio.providers.amazon_shipping.utils import Settings
 import karrio.lib as lib
 
 

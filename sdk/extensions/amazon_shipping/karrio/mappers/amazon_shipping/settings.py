@@ -1,12 +1,12 @@
-"""Karrio AmazonMws connection settings."""
+"""Karrio Amazon Shipping connection settings."""
 
 import attr
-from karrio.providers.amazon_mws.utils import Settings as BaseSettings
+from karrio.providers.amazon_shipping.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)
 class Settings(BaseSettings):
-    """AmazonMws connection settings."""
+    """Amazon Shipping connection settings."""
 
     seller_id: str  # type:ignore
     developer_id: str  # type:ignore
@@ -16,7 +16,7 @@ class Settings(BaseSettings):
 
     id: str = None
     test_mode: bool = False
-    carrier_id: str = "amazon_mws"
+    carrier_id: str = "amazon_shipping"
     account_country_code: str = None
     metadata: dict = {}
     config: dict = {}

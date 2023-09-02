@@ -68,7 +68,7 @@ jsonschema-specifications==2023.11.1
 jstruct==2021.11
 jwcrypto==1.5.0
 karrio @ file://${PWD}/sdk/core
-karrio.amazon-mws @ file://${PWD}/sdk/extensions/amazon_mws
+karrio.amazon-shipping @ file://${PWD}/sdk/extensions/amazon_shipping
 karrio.aramex @ file://${PWD}/sdk/extensions/aramex
 karrio.australiapost @ file://${PWD}/sdk/extensions/australiapost
 karrio.boxknight @ file://${PWD}/sdk/extensions/boxknight

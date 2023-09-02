@@ -2,7 +2,7 @@ from typing import List, Tuple
 from karrio.core.utils import DP, request as http
 from karrio.api.proxy import Proxy as BaseProxy
 from karrio.core.utils.helpers import exec_async
-from karrio.mappers.amazon_mws.settings import Settings
+from karrio.mappers.amazon_shipping.settings import Settings
 from karrio.core.utils.serializable import Serializable, Deserializable
 
 

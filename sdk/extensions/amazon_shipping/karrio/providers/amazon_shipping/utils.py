@@ -2,7 +2,7 @@ from karrio.core import Settings as BaseSettings
 
 
 class Settings(BaseSettings):
-    """AmazonMws connection settings."""
+    """Amazon Shipping connection settings."""
 
     seller_id: str
     developer_id: str
@@ -35,4 +35,4 @@ class Settings(BaseSettings):
 
     @property
     def carrier_name(self):
-        return "amazon_mws"
+        return "amazon_shipping"

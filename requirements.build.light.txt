@@ -30,7 +30,6 @@ karrio.server
 karrio.server.apps
 karrio.server.core
 karrio.server.data
-karrio.server.documents
 karrio.server.events
 karrio.server.graph
 karrio.server.iam
