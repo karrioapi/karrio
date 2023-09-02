@@ -1,49 +1,27 @@
-import typing
-import karrio.lib as lib
-import karrio.core.models as models
+from typing import List, Optional
+from fedex_lib.rate_service_v28 import Notification
+from karrio.core.models import Message
+from karrio.core.utils import Element, extract_fault, XP
 from karrio.providers.fedex.utils import Settings
 
 
-def parse_error_response(
-    responses: typing.Union[typing.List[dict], dict],
-    settings: Settings,
-    details: dict = None,
-) -> typing.List[models.Message]:
-    results = responses if isinstance(responses, list) else [responses]
-    errors: typing.List[dict] = sum(
-        [
-            [
-                *(result["errors"] if "errors" in result else []),
-                *(
-                    [
-                        {
-                            **result["error"],
-                            "tracking_number": result.get("trackingNumberInfo", {}).get(
-                                "trackingNumber"
-                            ),
-                        }
-                    ]
-                    if "error" in result
-                    else []
-                ),
-            ]
-            for result in results
-        ],
-        [],
+def parse_error_response(response: Element, settings: Settings) -> List[Message]:
+    notifications = response.xpath(
+        ".//*[local-name() = $name]", name="Notifications"
+    ) + response.xpath(".//*[local-name() = $name]", name="Notification")
+    errors = [_extract_error(node, settings) for node in notifications] + extract_fault(
+        response, settings
     )
+    return [error for error in errors if error is not None]
 
-    return [
-        models.Message(
+
+def _extract_error(node: Element, settings: Settings) -> Optional[Message]:
+    notification = XP.to_object(Notification, node)
+    if notification.Severity not in ("SUCCESS", "NOTE"):
+        return Message(
+            code=notification.Code,
+            message=notification.Message,
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
-            code=error.get("code"),
-            message=error.get("message"),
-            details=lib.to_dict(
-                {
-                    **details,
-                    "tracking_number": error.get("tracking_number"),
-                }
-            ),
         )
-        for error in errors
-    ]
+    return None
