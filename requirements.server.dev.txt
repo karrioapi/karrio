@@ -1,6 +1,6 @@
 django-debug-toolbar
 
-# Schemas update
+# Carrier Schemas packages
 -e ./schemas/aramex
 -e ./schemas/australiapost
 -e ./schemas/canadapost
@@ -21,7 +21,7 @@ django-debug-toolbar
 -e ./schemas/yanwen
 -e ./schemas/yunexpress
 
-# Carrier Extentions in Development
+# Carrier Extentions packages
 -e ./sdk/core
 -e ./sdk/extensions/generic
 -e ./sdk/extensions/amazon_mws
@@ -53,7 +53,7 @@ django-debug-toolbar
 -e ./sdk/extensions/yanwen
 -e ./sdk/extensions/yunexpress
 
-# Carrier Hub Extentions in Development
+# Carrier Hub Extentions packages
 -e ./sdk/vendors/easypost
 -e ./sdk/vendors/eshipper
 -e ./sdk/vendors/freightcom
