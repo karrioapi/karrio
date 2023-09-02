@@ -1,33 +1,30 @@
-from typing import Callable
-from karrio.core import Settings as BaseSettings
-from karrio.core.utils import Envelope, apply_namespaceprefix, XP
-from fedex_lib.rate_service_v28 import (
-    WebAuthenticationCredential,
-    WebAuthenticationDetail,
-    ClientDetail,
-)
+import jstruct
+import datetime
+import urllib.parse
 import karrio.lib as lib
+import karrio.core as core
+import karrio.core.errors as errors
 
 
-class Settings(BaseSettings):
+class Settings(core.Settings):
     """FedEx connection settings."""
 
-    password: str
-    meter_number: str
-    account_number: str
-    user_key: str = None
-    language_code: str = "en"
-    account_country_code: str = None
+    api_key: str
+    secret_key: str
+    account_number: str = None
 
-    id: str = None
+    cache: lib.Cache = jstruct.JStruct[lib.Cache]
+    account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}
+    id: str = None
 
     @property
     def server_url(self):
         return (
-            "https://wsbeta.fedex.com:443/web-services"
+            "https://apis-sandbox.fedex.com"
             if self.test_mode
-            else "https://ws.fedex.com:443/web-services"
+            else "https://apis.fedex.com"
         )
 
     @property
@@ -44,31 +41,52 @@ class Settings(BaseSettings):
         )
 
     @property
-    def webAuthenticationDetail(self) -> WebAuthenticationDetail:
-        return WebAuthenticationDetail(
-            UserCredential=WebAuthenticationCredential(
-                Key=self.user_key, Password=self.password
+    def access_token(self):
+        """Retrieve the access_token using the client_id|client_secret pair
+        or collect it from the cache if an unexpired access_token exist.
+        """
+        cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
+        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
+
+        auth = self.cache.get(cache_key) or {}
+        token = auth.get("access_token")
+        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
+
+        if token is not None and expiry is not None and expiry > now:
+            return token
+
+        self.cache.set(cache_key, lambda: login(self))
+        new_auth = self.cache.get(cache_key)
+
+        return new_auth["access_token"]
+
+
+def login(settings: Settings):
+    import karrio.providers.fedex.error as error
+
+    result = lib.request(
+        url=f"{settings.server_url}/oauth/token",
+        method="POST",
+        headers={
+            "content-Type": "application/x-www-form-urlencoded",
+        },
+        data=urllib.parse.urlencode(
+            dict(
+                grant_type="client_credentials",
+                client_id=settings.api_key,
+                client_secret=settings.secret_key,
             )
-        )
+        ),
+    )
 
-    @property
-    def clientDetail(self) -> ClientDetail:
-        return ClientDetail(
-            AccountNumber=self.account_number, MeterNumber=self.meter_number
-        )
+    response = lib.to_dict(result)
+    messages = error.parse_error_response(response, settings)
 
+    if any(messages):
+        raise errors.ShippingSDKError(messages)
 
-def default_request_serializer(
-    prefix: str, namespace: str
-) -> Callable[[Envelope], str]:
-    def serializer(envelope: Envelope):
-        namespacedef_ = (
-            f'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" {namespace}'
-        )
+    expiry = datetime.datetime.now() + datetime.timedelta(
+        seconds=float(response.get("expires_in", 0))
+    )
 
-        envelope.Body.ns_prefix_ = envelope.ns_prefix_
-        apply_namespaceprefix(envelope.Body.anytypeobjs_[0], prefix)
-
-        return XP.export(envelope, namespacedef_=namespacedef_)
-
-    return serializer
+    return {**response, "expiry": lib.fdatetime(expiry)}

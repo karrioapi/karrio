@@ -466,6 +466,7 @@ class DocumentUploadRequest:
 
     document_files: List[DocumentFile] = JList[DocumentFile, REQUIRED]
     tracking_number: str = None
+    shipment_date: str = None
     reference: str = None
     options: Dict = {}
 
