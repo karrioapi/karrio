@@ -1,13 +1,13 @@
-import amazon_mws_lib.purchase_shipment_request as amazon
-from amazon_mws_lib.purchase_shipment_response import LabelResult
+import karrio.schemas.amazon_shipping.purchase_shipment_request as amazon
+from karrio.schemas.amazon_shipping.purchase_shipment_response import LabelResult
 
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
-import karrio.providers.amazon_mws.error as provider_error
-import karrio.providers.amazon_mws.units as provider_units
-import karrio.providers.amazon_mws.utils as provider_utils
+import karrio.providers.amazon_shipping.error as provider_error
+import karrio.providers.amazon_shipping.units as provider_units
+import karrio.providers.amazon_shipping.utils as provider_utils
 
 
 def parse_shipment_response(

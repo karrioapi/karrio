@@ -1,12 +1,13 @@
+"""Warning: This setup.py is only there for git install until poetry support git subdirectory"""
 from setuptools import setup, find_namespace_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="karrio.amazon_mws",
-    version="2023.4.4",
-    description="Karrio - AmazonMws Shipping extension",
+    name="karrio.amazon_shipping",
+    version="2023.9",
+    description="Karrio - Amazon Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/karrioapi/karrio",

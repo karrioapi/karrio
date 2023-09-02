@@ -1,9 +1,9 @@
-import amazon_mws_lib.tracking_response as amazon
+import karrio.schemas.amazon_shipping.tracking_response as amazon
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.amazon_mws.error as error
-import karrio.providers.amazon_mws.utils as provider_utils
+import karrio.providers.amazon_shipping.error as error
+import karrio.providers.amazon_shipping.utils as provider_utils
 
 
 def parse_tracking_response(

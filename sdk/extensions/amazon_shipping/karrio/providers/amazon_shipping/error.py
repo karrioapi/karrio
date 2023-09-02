@@ -1,8 +1,8 @@
 from typing import List
-from amazon_mws_lib.error_response import ErrorResponse
+from karrio.schemas.amazon_shipping.error_response import ErrorResponse
 from karrio.core.models import Message
 from karrio.core.utils import DP
-from karrio.providers.amazon_mws.utils import Settings
+from karrio.providers.amazon_shipping.utils import Settings
 
 
 def parse_error_response(

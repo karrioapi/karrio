@@ -872,7 +872,7 @@ class Service(Enum):
 
 
 class CarrierId(Flag):
-    amazon_mws = "AmazonMws"
+    amazon_shipping = "AmazonMws"
     apc = "APC"
     asendia = "Asendia"
     asendia_us = "Asendia USA"

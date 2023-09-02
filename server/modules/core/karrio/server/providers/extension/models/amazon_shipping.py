@@ -2,13 +2,13 @@ from django.db import models
 from karrio.server.providers.models.carrier import Carrier
 
 
-class AmazonMwsSettings(Carrier):
-    CARRIER_NAME = "amazon_mws"
+class AmazonShippingSettings(Carrier):
+    CARRIER_NAME = "amazon_shipping"
 
     class Meta:
-        db_table = "amazon_mws-settings"
-        verbose_name = "AmazonMws Settings"
-        verbose_name_plural = "AmazonMws Settings"
+        db_table = "amazon_shipping-settings"
+        verbose_name = "Amazon Shipping Settings"
+        verbose_name_plural = "Amazon Shipping Settings"
 
     seller_id = models.CharField(max_length=50)
     developer_id = models.CharField(max_length=50)
@@ -24,4 +24,4 @@ class AmazonMwsSettings(Carrier):
         return ""  # Setup the access token here.
 
 
-SETTINGS = AmazonMwsSettings
+SETTINGS = AmazonShippingSettings
