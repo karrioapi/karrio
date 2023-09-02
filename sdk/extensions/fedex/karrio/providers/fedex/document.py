@@ -1,7 +1,6 @@
-import fedex_lib.paperless_request as fedex
-import time
+import fedex_lib.upload_document_service_v17 as fedex
+import base64
 import typing
-import urllib.parse
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.fedex.error as provider_error
@@ -10,20 +9,26 @@ import karrio.providers.fedex.utils as provider_utils
 
 
 def parse_document_upload_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
-    responses = _response.deserialize()
+    response = _response.deserialize()
+    errors = provider_error.parse_error_response(response, settings)
+    document_statuses = lib.find_element(
+        "DocumentStatuses", response, fedex.UploadDocumentStatusDetail
+    )
 
-    metas = [_["output"]["meta"] for _ in responses if _.get("output", {}).get("meta")]
-    details = _extract_details(metas, settings) if len(metas) > 0 else None
-    errors = provider_error.parse_error_response([_ for _ in responses], settings)
+    details = (
+        _extract_details(document_statuses, settings)
+        if len(document_statuses) > 0
+        else None
+    )
 
     return details, errors
 
 
 def _extract_details(
-    metas: typing.List[dict],
+    document_statuses: typing.List[fedex.UploadDocumentStatusDetail],
     settings: provider_utils.Settings,
 ) -> models.DocumentUploadDetails:
     return models.DocumentUploadDetails(
@@ -31,10 +36,11 @@ def _extract_details(
         carrier_name=settings.carrier_id,
         documents=[
             models.DocumentDetails(
-                doc_id=meta["docId"],
-                file_name=meta["docId"],
+                doc_id=status.DocumentId,
+                file_name=status.FileName,
             )
-            for meta in metas
+            for status in document_statuses
+            if status.Status == "SUCCESS"
         ],
         meta=dict(),
     )
@@ -49,41 +55,66 @@ def document_upload_request(
         payload.options,
         provider_units.DocumentUploadOption,
     )
-    shipment_date = lib.fdatetime(
-        payload.shipment_date or time.strftime("%Y-%m-%d"),
-        current_format="%Y-%m-%d",
-        output_format="%Y%m%dT%H%M%S",
-    )
 
-    request = [
-        fedex.PaperlessRequestType(
-            document=fedex.DocumentType(
-                workflowName=(
-                    "ETDPreshipment"
-                    if options.pre_shipment.state
-                    else "ETDPostshipment"
-                ),
-                carrierCode=options.fedex_carrier_code.state,
-                name=document.doc_name,
-                contentType=document.doc_format,
-                meta=fedex.MetaType(
-                    shipDocumentType=(
-                        provider_units.UploadDocumentType.map(document.doc_type).value
-                        or provider_units.UploadDocumentType.other.value
-                    ),
-                    formCode=None,
-                    trackingNumber=payload.tracking_number,
-                    shipmentDate=shipment_date,
-                    originCountryCode=options.origin_country_code.state,
-                    destinationCountryCode=options.destination_country_code.state,
+    request = lib.create_envelope(
+        body_content=fedex.UploadDocumentsRequest(
+            WebAuthenticationDetail=settings.webAuthenticationDetail,
+            ClientDetail=settings.clientDetail,
+            UserDetail=None,
+            TransactionDetail=fedex.TransactionDetail(
+                CustomerTransactionId="Upload Documents",
+            ),
+            Version=fedex.VersionId(
+                ServiceId="cdus", Major=19, Intermediate=0, Minor=0
+            ),
+            ApplicationId=None,
+            ServiceLevel=None,
+            ProcessingOptions=fedex.UploadDocumentsProcessingOptionsRequested(
+                Options=None,
+                PostShipmentUploadDetail=fedex.PostShipmentUploadDetail(
+                    TrackingNumber=payload.tracking_number,
                 ),
             ),
-            attachment=document.doc_file,
+            OriginCountryCode=options.origin_country_code.state,
+            OriginStateOrProvinceCode=None,
+            OriginPostalCode=options.origin_postal_code.state,
+            OriginLocationId=None,
+            DestinationCountryCode=options.destination_country_code.state,
+            DestinationStateOrProvinceCode=None,
+            DestinationPostalCode=options.destination_postal_code.state,
+            DestinationLocationId=None,
+            FolderId=None,
+            ShipTimestamp=None,
+            CarrierCode=None,
+            Usage=None,
+            Documents=[
+                fedex.UploadDocumentDetail(
+                    LineNumber=index,
+                    CustomerReference=payload.reference,
+                    DocumentProducer=(
+                        options.fedex_document_producer.state
+                        or fedex.UploadDocumentProducerType.CUSTOMER
+                    ),
+                    DocumentType=(
+                        provider_units.UploadDocumentType.map(document.doc_type).value
+                        or fedex.UploadDocumentType.OTHER
+                    ),
+                    FileName=document.doc_name,
+                    DocumentContent=base64.b64decode(document.doc_file),
+                    ExpirationDate=options.fedex_expiration_date.state,
+                )
+                for index, document in enumerate(document_files, start=1)
+            ],
         )
-        for document in document_files
-    ]
+    )
 
     return lib.Serializable(
         request,
-        lambda __: [urllib.parse.urlencode(lib.to_dict(_)) for _ in __],
+        lambda _: (
+            provider_utils.default_request_serializer(
+                "v19", 'xmlns:v19="http://fedex.com/ws/uploaddocument/v19"'
+            )(_)
+            .replace("<v19:DocumentContent>b'", "<v19:DocumentContent>")
+            .replace("'</v19:DocumentContent>", "</v19:DocumentContent>")
+        ),
     )
