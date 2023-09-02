@@ -1,0 +1,171 @@
+{
+  "Customer": {
+    "Address": {
+      "AddressType": "02",
+      "Area": "02",
+      "Buildingname": "PostNL",
+      "City": "Hoofddorp",
+      "CompanyName": "PostNL",
+      "Countrycode": "NL",
+      "Department": "Marketing",
+      "Doorcode": "1234",
+      "FirstName": "Peter",
+      "Floor": "1",
+      "HouseNr": "42",
+      "HouseNrExt": "A",
+      "Name": "de Ruiter",
+      "Region": "Noord-Holland",
+      "Street": "Siriusdreef",
+      "StreetHouseNrExt": "84-86",
+      "Zipcode": "2132WT"
+    },
+    "CollectionLocation": "1234506",
+    "ContactPerson": "Janssen",
+    "CustomerCode": "DEVC",
+    "CustomerNumber": "11223344",
+    "Email": "email@company.com",
+    "Name": "Janssen"
+  },
+  "LabelSignature": "Signature",
+  "Message": {
+    "MessageID": "e78ef73c-8369-4a91-a13f-a3d61987912f",
+    "MessageTimeStamp": "23-03-2022 14:31:21",
+    "Printertype": "GraphicFile|PDF"
+  },
+  "Shipments": [
+    {
+      "Addresses": [
+        {
+          "AddressType": "02",
+          "Area": "02",
+          "Buildingname": "PostNL",
+          "City": "Hoofddorp",
+          "CompanyName": "PostNL",
+          "Countrycode": "NL",
+          "Department": "Marketing",
+          "Doorcode": "1234",
+          "FirstName": "Peter",
+          "Floor": "1",
+          "HouseNr": "42",
+          "HouseNrExt": "A",
+          "Name": "de Ruiter",
+          "Region": "Noord-Holland",
+          "Street": "Siriusdreef",
+          "StreetHouseNrExt": "84-86",
+          "Zipcode": "2132WT"
+        }
+      ],
+      "Amounts": [
+        {
+          "AmountType": "01",
+          "AccountName": "AccountName",
+          "BIC": "BIC",
+          "Currency": "EUR",
+          "IBAN": "IBAN",
+          "Reference": "Reference",
+          "TransactionNumber": "TransactionNumber",
+          "Value": 200
+        }
+      ],
+      "Barcode": "CA12346536XNL",
+      "CodingText": "CodingText",
+      "CollectionTimeStampStart": "23-03-2022 14:31:21",
+      "CollectionTimeStampEnd": "23-03-2022 14:31:21",
+      "Contacts": [
+        {
+          "ContactType": "01",
+          "Email": "receiver@email.com",
+          "SMSNr": "+31612345678",
+          "TelNr": "+31612345678"
+        }
+      ],
+      "Content": "",
+      "CostCenter": "CostCenter",
+      "CustomerOrderNumber": "CustomerOrderNumber",
+      "Customs": [
+        {
+          "Certificate": "Certificate",
+          "CertificateNr": "CertificateNr",
+          "License": "License",
+          "LicenseNr": "LicenseNr",
+          "Invoice": "Invoice",
+          "InvoiceNr": "InvoiceNr",
+          "HandleAsNonDeliverable": false,
+          "Currency": "EUR",
+          "ShipmentType": "Commercial Goods",
+          "TrustedShipperID": "TrustedShipperID",
+          "ImporterReferenceCode": "ImporterReferenceCode",
+          "TransactionCode": "TransactionCode",
+          "TransactionDescription": "TransactionDescription",
+          "Content": [
+            {
+              "Description": "Powdered milk",
+              "Quantity": 2,
+              "Weight": 4300,
+              "Value": 20,
+              "HSTariffNr": "19019091",
+              "CountryOfOrigin": "NL"
+            }
+          ]
+        }
+      ],
+      "DeliveryAddress": "02",
+      "DeliveryDate": "",
+      "Dimension": {
+        "Height": 10,
+        "Length": 10,
+        "Volume": 10,
+        "Weight": 4300,
+        "Width": 10
+      },
+      "DownPartnerBarcode": "DownPartnerBarcode",
+      "DownPartnerID": "DownPartnerID",
+      "DownPartnerLocation": "DownPartnerLocation",
+      "Groups": [
+        {
+          "GroupType": "01",
+          "GroupSequence": "GroupSequence",
+          "GroupCount": 1,
+          "MainBarcode": "CA12346536XNL"
+        }
+      ],
+      "HazardousMaterial": [
+        {
+          "ToxicSubstanceCode": "ToxicSubstanceCode",
+          "AdditionalToxicSubstanceCode": [
+            "string"
+          ],
+          "ADRPoints": "ADRPoints",
+          "TunnelCode": "TunnelCode",
+          "PackagingGroupCode": "PackagingGroupCode",
+          "PackagingGroupDescription": "PackagingGroupDescription",
+          "GrossWeight": "GrossWeight",
+          "UNDGNumber": "UNDGNumber",
+          "TransportCategoryCode": "TransportCategoryCode",
+          "ChemicalTechnicalDescription": "ChemicalTechnicalDescription"
+        }
+      ],
+      "ProductCodeCollect": "4945",
+      "ProductCodeDelivery": "4945",
+      "ProductOptions": [
+        {
+          "Characteristic": "Characteristic",
+          "Option": "Option"
+        }
+      ],
+      "ReceiverDateOfBirth": "23-03-2022 14:31:21",
+      "Reference": "Reference",
+      "ReferenceCollect": "ReferenceCollect",
+      "Remark": "Remark",
+      "ReturnBarcode": "ReturnBarcode",
+      "ReturnReference": "ReturnReference",
+      "TimeslotID": "TimeslotID",
+      "ExtraFields": [
+        {
+          "Key": "Key",
+          "Value": "Value"
+        }
+      ]
+    }
+  ]
+}
