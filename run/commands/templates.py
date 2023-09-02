@@ -1,6 +1,9 @@
 from jinja2 import Template
 
 
+EMPTY_FILE_TEMPLATE = Template("")
+
+
 MODELS_TEMPLATE = Template(
     """
 {% for name, cls in classes.items() %}
@@ -214,6 +217,36 @@ setup(
 )
 
 '''
+)
+
+XML_GENERATE_TEMPLATE = Template(
+    """SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/{{id}}
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/error.py" $SCHEMAS/error.xsd
+
+"""
+)
+
+JSON_GENERATE_TEMPLATE = Template(
+    """SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/{{id}}
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+quicktype () {
+    echo "Generating $1..."
+    docker run -it -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/{{id}} \
+    karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
+    --no-nice-property-names --all-properties-optional --type-as-suffix $@
+}
+
+quicktype --src="${SCHEMAS}/error.json" --out="${LIB_MODULES}/error.py"
+
+"""
 )
 
 MAPPER_METADATA_TEMPLATE = Template(
@@ -1121,6 +1154,14 @@ gateway = karrio.gateway["{{id}}"].create(
         # add required carrier API setting key/value here
     )
 )
+
+"""
+)
+
+SCHEMA_TEMPLATE = Template(
+    """<?xml version="1.0"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://targetNamespace" xmlns="http://xmlns" elementFormDefault="qualified">
+</xsd:schema>
 
 """
 )
