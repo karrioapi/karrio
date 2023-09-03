@@ -1,5 +1,5 @@
 import urllib.parse
-from usps_lib.track_field_request import TrackFieldRequest
+from karrio.schemas.usps.track_field_request import TrackFieldRequest
 
 from karrio.api.proxy import Proxy as BaseProxy
 from karrio.core.utils import Serializable, Deserializable, XP, request as http

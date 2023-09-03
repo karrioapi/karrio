@@ -1,5 +1,5 @@
 from typing import List
-from aramex_lib.tracking import Notification
+from karrio.schemas.aramex.tracking import Notification
 from karrio.core.utils import Element, XP
 from karrio.core.models import Message
 from karrio.providers.aramex import Settings
@@ -17,8 +17,7 @@ def _extract_error(node: Element, settings: Settings) -> Message:
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-
         # carrier error info
         code=notification.Code,
-        message=notification.Message
+        message=notification.Message,
     )

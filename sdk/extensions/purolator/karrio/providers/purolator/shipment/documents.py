@@ -1,4 +1,4 @@
-from purolator_lib.shipping_documents_service_1_3_0 import (
+from karrio.schemas.purolator.shipping_documents_service_1_3_0 import (
     GetDocumentsRequest,
     RequestContext,
     DocumentCriteria,

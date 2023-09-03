@@ -1,4 +1,4 @@
-import nationex_lib.error as nationex
+import karrio.schemas.nationex.error as nationex
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

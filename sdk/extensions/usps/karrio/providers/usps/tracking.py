@@ -1,5 +1,5 @@
-import usps_lib.track_field_request as usps
-import usps_lib.track_response as tracking
+import karrio.schemas.usps.track_field_request as usps
+import karrio.schemas.usps.track_response as tracking
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

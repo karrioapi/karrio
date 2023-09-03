@@ -1,4 +1,4 @@
-from freightcom_lib.quote_request import (
+from karrio.schemas.freightcom.quote_request import (
     Freightcom,
     QuoteRequestType,
     FromType,
@@ -6,7 +6,7 @@ from freightcom_lib.quote_request import (
     PackagesType,
     PackageType,
 )
-from freightcom_lib.quote_reply import QuoteType
+from karrio.schemas.freightcom.quote_reply import QuoteType
 
 import typing
 import karrio.lib as lib

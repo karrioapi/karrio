@@ -1,4 +1,4 @@
-import postnl_lib.error_response as pnl
+import karrio.schemas.postnl.error_response as pnl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

@@ -1,5 +1,5 @@
 from typing import List
-from eshipper_lib.error import ErrorType
+from karrio.schemas.eshipper.error import ErrorType
 from karrio.core.models import Message
 from karrio.core.utils import Element, XP
 from karrio.providers.eshipper.utils import Settings

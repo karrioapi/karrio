@@ -1,5 +1,5 @@
-import dpd_lib.Authentication20 as auth
-import dpd_lib.LoginServiceV21 as dpd
+import karrio.schemas.dpd.Authentication20 as auth
+import karrio.schemas.dpd.LoginServiceV21 as dpd
 
 import jstruct
 import datetime
@@ -41,7 +41,13 @@ class Settings(core.Settings):
     def tracking_url(self):
         lang = (self.message_language or "en_EN").split("_")[0]
         country = (self.account_country_code or "BE").lower()
-        return "https://www.dpdgroup.com/" + country + "/mydpd/my-parcels/track?lang=" + lang + "&parcelNumber={}"
+        return (
+            "https://www.dpdgroup.com/"
+            + country
+            + "/mydpd/my-parcels/track?lang="
+            + lang
+            + "&parcelNumber={}"
+        )
 
     @property
     def authentication(self):

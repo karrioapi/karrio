@@ -1,5 +1,5 @@
-from eshipper_lib.quote_reply import QuoteType
-from eshipper_lib.quote_request import (
+from karrio.schemas.eshipper.quote_reply import QuoteType
+from karrio.schemas.eshipper.quote_request import (
     EShipper,
     QuoteRequestType,
     FromType,

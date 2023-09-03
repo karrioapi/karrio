@@ -1,4 +1,4 @@
-import dpd_lib.ParcelLifecycleServiceV20 as dpd
+import karrio.schemas.dpd.ParcelLifecycleServiceV20 as dpd
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

@@ -1,4 +1,4 @@
-from easypost_lib.error_response import Error
+from karrio.schemas.easypost.error_response import Error
 from karrio.core.utils import DP
 from karrio.core.models import Message
 from karrio.providers.easypost.utils import Settings

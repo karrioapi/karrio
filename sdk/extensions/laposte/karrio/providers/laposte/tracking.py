@@ -1,4 +1,4 @@
-import laposte_lib.tracking_response as laposte
+import karrio.schemas.laposte.tracking_response as laposte
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

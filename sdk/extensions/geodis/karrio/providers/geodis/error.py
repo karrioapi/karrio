@@ -1,4 +1,4 @@
-import geodis_lib.error as geodis
+import karrio.schemas.geodis.error as geodis
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

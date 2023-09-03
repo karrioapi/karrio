@@ -1,4 +1,4 @@
-import canadapost_lib.track as capost
+import karrio.schemas.canadapost.track as capost
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

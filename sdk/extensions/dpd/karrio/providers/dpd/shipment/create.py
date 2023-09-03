@@ -1,4 +1,4 @@
-import dpd_lib.ShipmentServiceV33 as dpd
+import karrio.schemas.dpd.ShipmentServiceV33 as dpd
 import typing
 import base64
 import karrio.lib as lib

@@ -1,5 +1,5 @@
-import nationex_lib.rate_request as nationex
-import nationex_lib.rate_response as rating
+import karrio.schemas.nationex.rate_request as nationex
+import karrio.schemas.nationex.rate_response as rating
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

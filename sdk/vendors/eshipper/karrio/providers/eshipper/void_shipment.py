@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from eshipper_lib.shipment_cancel_request import (
+from karrio.schemas.eshipper.shipment_cancel_request import (
     ShipmentCancelRequestType,
     EShipper,
     OrderType,

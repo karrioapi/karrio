@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from usps_lib.carrier_pickup_cancel_request import CarrierPickupCancelRequest
+from karrio.schemas.usps.carrier_pickup_cancel_request import CarrierPickupCancelRequest
 from karrio.core.utils import Serializable, SF
 from karrio.core.models import PickupCancelRequest, ConfirmationDetails, Message
 

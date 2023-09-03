@@ -1,4 +1,4 @@
-import roadie_lib.error as roadie
+import karrio.schemas.roadie.error as roadie
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

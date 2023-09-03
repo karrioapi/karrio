@@ -1,5 +1,5 @@
-import ups_lib.rating_request as ups
-import ups_lib.rating_response as ups_response
+import karrio.schemas.ups.rating_request as ups
+import karrio.schemas.ups.rating_response as ups_response
 import time
 import typing
 import karrio.lib as lib

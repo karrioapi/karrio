@@ -1,6 +1,6 @@
 from functools import partial
 from typing import Union
-from purolator_lib.pickup_service_1_2_1 import (
+from karrio.schemas.purolator.pickup_service_1_2_1 import (
     ValidatePickUpRequest,
     RequestContext,
     Address,

@@ -1,6 +1,6 @@
 from typing import Tuple, List
-from usps_lib.evs_cancel_request import eVSCancelRequest
-from usps_lib.evs_cancel_response import eVSCancelResponse
+from karrio.schemas.usps.evs_cancel_request import eVSCancelRequest
+from karrio.schemas.usps.evs_cancel_response import eVSCancelResponse
 from karrio.core.utils import Serializable, Element, XP
 from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
 

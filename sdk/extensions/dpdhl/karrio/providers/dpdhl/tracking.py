@@ -1,5 +1,5 @@
-import dpdhl_lib.tracking_response as tracking
-import dpdhl_lib.tracking_request as dpdhl
+import karrio.schemas.dpdhl.tracking_response as tracking
+import karrio.schemas.dpdhl.tracking_request as dpdhl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

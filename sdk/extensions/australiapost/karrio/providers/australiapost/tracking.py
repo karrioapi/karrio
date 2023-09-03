@@ -1,6 +1,6 @@
 import karrio.lib as lib
 from typing import List, Tuple
-from australiapost_lib.tracking import (
+from karrio.schemas.australiapost.tracking import (
     TrackingRequest as CarrierTrackingRequest,
     TrackingResult,
 )

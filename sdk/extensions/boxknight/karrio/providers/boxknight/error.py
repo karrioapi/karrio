@@ -1,4 +1,4 @@
-import boxknight_lib.error as boxknight
+import karrio.schemas.boxknight.error as boxknight
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

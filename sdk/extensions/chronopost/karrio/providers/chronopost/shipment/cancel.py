@@ -1,5 +1,5 @@
 import typing
-from chronopost_lib.trackingservice import cancelSkybill
+from karrio.schemas.chronopost.trackingservice import cancelSkybill
 import karrio.core.models as models
 import karrio.lib as lib
 import karrio.providers.chronopost.error as provider_error

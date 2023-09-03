@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from dicom_lib.tracking import Tracking
+from karrio.schemas.dicom.tracking import Tracking
 from karrio.core.utils import Serializable, DF, DP
 from karrio.core.models import TrackingRequest, TrackingDetails, TrackingEvent, Message
 

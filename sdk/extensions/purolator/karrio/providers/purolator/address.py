@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from purolator_lib.service_availability_service_2_0_2 import (
+from karrio.schemas.purolator.service_availability_service_2_0_2 import (
     ValidateCityPostalCodeZipRequest,
     ValidateCityPostalCodeZipResponse,
     ArrayOfShortAddress,

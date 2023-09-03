@@ -1,6 +1,6 @@
 import time
 from functools import partial
-from canpar_lib.CanshipBusinessService import (
+from karrio.schemas.canpar.CanshipBusinessService import (
     Address,
     Package,
     Shipment,

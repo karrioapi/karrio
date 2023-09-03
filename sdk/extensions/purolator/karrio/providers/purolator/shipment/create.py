@@ -1,5 +1,5 @@
-from purolator_lib.shipping_documents_service_1_3_0 import DocumentDetail
-from purolator_lib.shipping_service_2_1_3 import (
+from karrio.schemas.purolator.shipping_documents_service_1_3_0 import DocumentDetail
+from karrio.schemas.purolator.shipping_service_2_1_3 import (
     CreateShipmentRequest,
     PIN,
     Shipment,

@@ -1,5 +1,5 @@
 from typing import List
-from sendle_lib.validation_error import ValidationError
+from karrio.schemas.sendle.validation_error import ValidationError
 from karrio.providers.sendle import Settings
 from karrio.core.models import Message
 
@@ -14,9 +14,8 @@ def _extract_error(carrier_error: ValidationError, settings: Settings) -> Messag
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-
         # carrier error info
         code=carrier_error.error,
         message=carrier_error.error_description,
-        details=carrier_error.messages
+        details=carrier_error.messages,
     )

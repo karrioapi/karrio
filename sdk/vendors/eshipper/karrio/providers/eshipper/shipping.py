@@ -1,4 +1,4 @@
-from eshipper_lib.shipping_request import (
+from karrio.schemas.eshipper.shipping_request import (
     EShipper,
     ShippingRequestType,
     FromType,
@@ -15,7 +15,7 @@ from eshipper_lib.shipping_request import (
     BillToType,
     DutiesTaxesType,
 )
-from eshipper_lib.shipping_reply import (
+from karrio.schemas.eshipper.shipping_reply import (
     ShippingReplyType,
     QuoteType,
 )

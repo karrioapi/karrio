@@ -1,6 +1,9 @@
 import karrio.lib as lib
 from typing import List, Tuple
-from canadapost_lib.shipment import ShipmentRefundRequestType, ShipmentInfoType
+from karrio.schemas.canadapost.shipment import (
+    ShipmentRefundRequestType,
+    ShipmentInfoType,
+)
 from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
 from karrio.core.utils import (
     Element,

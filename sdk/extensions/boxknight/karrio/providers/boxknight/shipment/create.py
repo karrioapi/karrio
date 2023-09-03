@@ -1,4 +1,4 @@
-import boxknight_lib.order_request as boxknight
+import karrio.schemas.boxknight.order_request as boxknight
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

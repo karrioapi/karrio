@@ -1,5 +1,5 @@
-import easypost_lib.shipment_request as easypost
-from easypost_lib.shipments_response import Shipment
+import karrio.schemas.easypost.shipment_request as easypost
+from karrio.schemas.easypost.shipments_response import Shipment
 
 import typing
 import karrio.lib as lib

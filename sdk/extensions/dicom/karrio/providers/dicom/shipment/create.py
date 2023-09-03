@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from dicom_lib.shipments import (
+from karrio.schemas.dicom.shipments import (
     ShipmentRequest as DicomShipmentRequest,
     Address as DicomAddress,
     Parcel,

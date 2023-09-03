@@ -1,5 +1,7 @@
-from usps_lib.evs_express_mail_intl_response import eVSExpressMailIntlResponse
-from usps_lib.evs_express_mail_intl_request import (
+from karrio.schemas.usps.evs_express_mail_intl_response import (
+    eVSExpressMailIntlResponse,
+)
+from karrio.schemas.usps.evs_express_mail_intl_request import (
     eVSExpressMailIntlRequest,
     ImageParametersType,
     ShippingContentsType,

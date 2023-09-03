@@ -1,5 +1,5 @@
-import postnl_lib.rate_request as pnl
-import postnl_lib.rate_response as pnl_response
+import karrio.schemas.postnl.rate_request as pnl
+import karrio.schemas.postnl.rate_response as pnl_response
 import typing
 import datetime
 import karrio.lib as lib

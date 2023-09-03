@@ -1,6 +1,6 @@
 from typing import cast
-from tnt_lib.shipment_response import document, CREATE, PRICE
-from tnt_lib.label_request import (
+from karrio.schemas.tnt.shipment_response import document, CREATE, PRICE
+from karrio.schemas.tnt.label_request import (
     labelRequest,
     labelConsignmentsType,
     consignmentIdentityType,

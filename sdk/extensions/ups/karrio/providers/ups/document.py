@@ -1,5 +1,5 @@
-from ups_lib.document_upload_response import FormsHistoryDocumentIDType
-import ups_lib.document_upload_request as ups
+from karrio.schemas.ups.document_upload_response import FormsHistoryDocumentIDType
+import karrio.schemas.ups.document_upload_request as ups
 
 import typing
 import karrio.lib as lib

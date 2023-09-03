@@ -1,4 +1,4 @@
-import geodis_lib.tracking_response as geodis
+import karrio.schemas.geodis.tracking_response as geodis
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

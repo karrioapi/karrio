@@ -1,6 +1,6 @@
 import time
 from functools import partial
-from canpar_lib.CanparRatingService import (
+from karrio.schemas.canpar.CanparRatingService import (
     rateShipment,
     RateShipmentRq,
     Shipment,
