@@ -1,6 +1,0 @@
-{
-  "Message": "找不到与请求 URI“http://api.yunexpress.com:8084/LMS.API/api/WayBill/GetTrackNumber?trackingNumber=YT2101221272058134”匹配的 HTTP 资源。",
-  "MessageDetail": "在控制器“WayBill”上找不到与该请求匹配的操作。",
-  "ResultCode":1003,
-  "ResultDesc":"签名错误"
-}
