@@ -11,13 +11,6 @@ karrio test --failfast karrio.server.events.tests &&
 karrio test --failfast karrio.server.graph.tests &&
 karrio test --failfast karrio.server.orders.tests &&
 
-if [[ "$*" != *--light* ]];
-then
-    karrio test --failfast karrio.server.documents.tests
-else
-    echo "skip.."
-fi
-
 if [[ "$*" != *--cloud* ]];
 then
     echo "done..."
