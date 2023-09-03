@@ -1,0 +1,41 @@
+{
+  "ok": true,
+  "codeErreur": "string",
+  "texteErreur": "string",
+  "contenu": {
+    "fluxEtiquettes": "JVBERi0xLjQKJeLjz9MKMyAwIG9iago8PC9Db2xvclNwYWNlL0RldmljZUdyYXkvU3VidHlwZS9JbWFnZS9IZWlnaHQgNjIvRmlsdGVyL0ZsYXRlRGVjb2RlL1R5cGUvWE9iamVjdC9EZWNvZGVQYXJtczw8L0NvbHVtbnMgMTIxL0NvbG9ycyAxL1ByZWRpY3RvciAxNS9CaXRzUGVyQ29tcG9uZW50IDE+Pi9XaWR0aCAxMjEvTGVuZ3RoIDM2L0JpdHNQZXJDb21wb25lbnQgMT4+c3RyZWFtCnjaY/h/urK3SGOuwGwRvfN+mv8bGEYFRgVGBUYFQAIA+nve3gplbmRzdHJlYW0KZW5kb2JqCjQgMCBvYmoKPDwvQ29sb3JTcGFjZS9EZXZpY2VHcmF5L1N1YnR5cGUvSW1hZ2UvSGVpZ2h0IDU3L0ZpbHRlci9GbGF0ZURlY29kZS9UeXBlL1hPYmplY3QvRGVjb2RlUGFybXM8PC9Db2x1bW5zIDIwOS9Db2xvcnMgMS9QcmVkaWN0b3IgMTUvQml0c1BlckNvbXBvbmVudCAxPj4vV2lkdGggMjA5L0xlbmd0aCA1Mi9CaXRzUGVyQ29tcG9uZW50IDE+PnN0cmVhbQp42mP4f7rKXeTpnb6JJU4+ZzuN1VLOzFxeZHXznOb/BoZRuVG5UblRuVG5UTkscgAkBUCxCmVuZHN0cmVhbQplbmRvYmoKNSAwIG9iago8PC9Db2xvclNwYWNlL0RldmljZUdyYXkvU3VidHlwZS9JbWFnZS9IZWlnaHQgMzMvRmlsdGVyL0ZsYXRlRGVjb2RlL1R5cGUvWE9iamVjdC9EZWNvZGVQYXJtczw8L0NvbHVtbnMgMjQyL0NvbG9ycyAxL1ByZWRpY3RvciAxNS9CaXRzUGVyQ29tcG9uZW50IDE+Pi9XaWR0aCAyNDIvTGVuZ3RoIDUxL0JpdHNQZXJDb21wb25lbnQgMT4+c3RyZWFtCnjaY/h/unqny8u7nb1GZicucvYWqulybDK8dOTGbMkSdZH/BxhG5UflR+VHrDwAM6AOkwplbmRzdHJlYW0KZW5kb2JqCjYgMCBvYmoKPDwvQ29sb3JTcGFjZS9EZXZpY2VHcmF5L1N1YnR5cGUvSW1hZ2UvSGVpZ2h0IDYyL0ZpbHRlci9GbGF0ZURlY29kZS9UeXBlL1hPYmplY3QvRGVjb2RlUGFybXM8PC9Db2x1bW5zIDEyMS9Db2xvcnMgMS9QcmVkaWN0b3IgMTUvQml0c1BlckNvbXBvbmVudCAxPj4vV2lkdGggMTIxL0xlbmd0aCAzNi9CaXRzUGVyQ29tcG9uZW50IDE+PnN0cmVhbQp42mP4f7qyt0hjrsBsEb3zfpr/GxhGBUYFRgVGBUACAPp73t4KZW5kc3RyZWFtCmVuZG9iago3IDAgb2JqCjw8L0NvbG9yU3BhY2UvRGV2aWNlR3JheS9TdWJ0eXBlL0ltYWdlL0hlaWdodCA1Ny9GaWx0ZXIvRmxhdGVEZWNvZGUvVHlwZS9YT2JqZWN0L0RlY29kZVBhcm1zPDwvQ29sdW1ucyAyMDkvQ29sb3JzIDEvUHJlZGljdG9yIDE1L0JpdHNQZXJDb21wb25lbnQgMT4+L1dpZHRoIDIwOS9MZW5ndGggNTIvQml0c1BlckNvbXBvbmVudCAxPj5zdHJlYW0KeNpj+H+6yl3k6Z2+iSVOPmc7jdVSzsxcXmR185zm/waGUblRuVG5UblRuVE5LHIAJAVAsQplbmRzdHJlYW0KZW5kb2JqCjggMCBvYmoKPDwvQ29sb3JTcGFjZS9EZXZpY2VHcmF5L1N1YnR5cGUvSW1hZ2UvSGVpZ2h0IDMzL0ZpbHRlci9GbGF0ZURlY29kZS9UeXBlL1hPYmplY3QvRGVjb2RlUGFybXM8PC9Db2x1bW5zIDI0Mi9Db2xvcnMgMS9QcmVkaWN0b3IgMTUvQml0c1BlckNvbXBvbmVudCAxPj4vV2lkdGggMjQyL0xlbmd0aCA1MS9CaXRzUGVyQ29tcG9uZW50IDE+PnN0cmVhbQp42mP4f7p6p8vLu529RmYnLnL2FqrpcmwyvHTkxmzJEnWR/",
+    "destinataire": {
+      "codePays": "FR",
+      "codePostal": "95130",
+      "ville": "FRANCONVILLE"
+    },
+    "reseau": "M",
+    "priorite": "2",
+    "codire": "095",
+    "cabRouting": "2LM2095",
+    "listeUmg": [
+      {
+        "codeUmg": "PE",
+        "numeroColis": 1,
+        "cabTransporteur": "JVGTS0020000000003652",
+        "cabEuropeTransporteur": "NEE000321511",
+        "referenceColisClient": "CMD095-184722-X001"
+      },
+      {
+        "codeUmg": "PC",
+        "numeroColis": 2,
+        "cabTransporteur": "JVGTS0020000000003653",
+        "cabEuropeTransporteur": "NEE000321512",
+        "referenceColisClient": "CMD095-184722-X002"
+      },
+      {
+        "codeUmg": "PC",
+        "numeroColis": 3,
+        "cabTransporteur": "JVGTS0020000000003654",
+        "cabEuropeTransporteur": "NEE000321513",
+        "referenceColisClient": "CMD095-184722-X003"
+      }
+    ],
+    "direction": "TEOM2095"
+  }
+}

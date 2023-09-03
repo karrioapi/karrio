@@ -1,54 +1,99 @@
+
+"""Karrio DHL Express client proxy."""
+
 import karrio.lib as lib
-from karrio.api.proxy import Proxy as BaseProxy
-from karrio.mappers.dhl_express.settings import Settings
+import karrio.api.proxy as proxy
+import karrio.mappers.dhl_express.settings as provider_settings
 
 
-class Proxy(BaseProxy):
-    settings: Settings
+class Proxy(proxy.Proxy):
+    settings: provider_settings.Settings
 
-    def _send_request(self, request: lib.Serializable) -> str:
-        return lib.request(
-            url=self.settings.server_url,
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
             data=request.serialize(),
-            headers={"Content-Type": "application/xml"},
-            trace=self.trace_as("xml"),
+            trace=self.trace_as("json"),
             method="POST",
+            headers={},
         )
 
-    def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request(request)
+        return lib.Deserializable(response, lib.to_dict)
+    
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={},
+        )
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_dict)
+    
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={},
+        )
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request(request)
+        return lib.Deserializable(response, lib.to_dict)
+    
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={},
+        )
 
-        return lib.Deserializable(response, lib.to_element, request.ctx)
+        return lib.Deserializable(response, lib.to_dict)
+    
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={},
+        )
 
-    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request(request)
+        return lib.Deserializable(response, lib.to_dict)
+    
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={},
+        )
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(response, lib.to_dict)
+    
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={},
+        )
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request(request)
+        return lib.Deserializable(response, lib.to_dict)
+    
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"",
+            data=request.serialize(),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={},
+        )
 
-        return lib.Deserializable(response, lib.to_element)
-
-    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request(request)
-
-        return lib.Deserializable(response, lib.to_element)
-
-    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request(request)
-
-        return lib.Deserializable(response, lib.to_element)
-
-    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request(request)
-
-        return lib.Deserializable(response, lib.to_element)
-
-    def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
-        return super().upload_document(request)
+        return lib.Deserializable(response, lib.to_dict)
+    

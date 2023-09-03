@@ -9,7 +9,9 @@ class MetaType:
     formCode: Optional[str] = None
     trackingNumber: Optional[str] = None
     shipmentDate: Optional[str] = None
+    originLocationCode: Optional[str] = None
     originCountryCode: Optional[str] = None
+    destinationLocationCode: Optional[str] = None
     destinationCountryCode: Optional[str] = None
 
 

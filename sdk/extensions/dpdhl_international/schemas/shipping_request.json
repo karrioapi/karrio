@@ -1,0 +1,49 @@
+{
+  "customerEkp": "9012345678",
+  "orderStatus": "FINALIZE",
+  "paperwork": {
+    "contactName": "John Doe",
+    "awbCopyCount": 3,
+    "jobReference": "Job ref",
+    "pickupType": "CUSTOMER_DROP_OFF",
+    "telephoneNumber": "+4935120681234"
+  },
+  "items": [
+    {
+      "product": "GPP",
+      "serviceLevel": "PRIORITY",
+      "recipient": "John Doe",
+      "addressLine1": "Any Street",
+      "addressLine2": "Flat 2",
+      "addressLine3": "1st floor",
+      "postalCode": "01432",
+      "city": "Any City",
+      "state": "Any State",
+      "destinationCountry": "DE",
+      "custRef": "REF-2361890-AB",
+      "recipientPhone": "+44123456789",
+      "recipientFax": "+44123456789",
+      "recipientEmail": "john.doe@example.eu",
+      "senderTaxId": "IOSS number",
+      "importerTaxId": "IOSS number",
+      "shipmentAmount": 100,
+      "shipmentCurrency": "EUR",
+      "shipmentGrossWeight": 1500,
+      "returnItemWanted": false,
+      "shipmentNaturetype": "SALE_GOODS",
+      "contents": [
+        {
+          "contentPieceHsCode": 1234567890,
+          "contentPieceDescription": "Trousers",
+          "contentPieceValue": "120.50",
+          "contentPieceNetweight": 1200,
+          "contentPieceOrigin": "DE",
+          "contentPieceAmount": 2,
+          "contentPieceIndexNumber": 1
+        }
+      ],
+      "custRef2": "string",
+      "custRef3": "string"
+    }
+  ]
+}

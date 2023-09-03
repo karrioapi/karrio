@@ -1,0 +1,12 @@
+{
+  "title": "Wrong Input Parameters",
+  "detail": "The parameters in the request are `shipmentDate` and `someOtherParameter` are not valid.",
+  "invalidParameters": [
+    {
+      "instance": "#/shipmentDate",
+      "title": "Incorrect Date",
+      "detail": "The shipment date cannot be in the past or more than 10 days in future. Please check the shipment date and retry.",
+      "code": 998
+    }
+  ]
+}

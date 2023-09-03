@@ -1,0 +1,24 @@
+{
+  "shippingRates": [
+    {
+      "productCode": "string",
+      "rate": 0,
+      "currencyType": "string"
+    }
+  ],
+  "packageLabel": {
+    "packageId": "string",
+    "trackingNumber": "string",
+    "labels": [
+      {
+        "name": "string",
+        "type": "string",
+        "content": "string"
+      }
+    ]
+  },
+  "responseStatus": {
+    "responseStatusCode": "Continue",
+    "responseStatusMessage": "string"
+  }
+}

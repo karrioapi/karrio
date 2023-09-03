@@ -1,0 +1,17 @@
+{
+  "TrackRequest": {
+    "locale": "en_US",
+    "version": "3.1",
+    "searchCriteria": {
+      "customerReference": ["test"],
+      "marketType": "international",
+      "originCountry": "GB"
+    },
+    "levelOfDetail": {
+      "complete": {},
+      "pod": {
+        "format": "URL"
+      }
+    }
+  }
+}

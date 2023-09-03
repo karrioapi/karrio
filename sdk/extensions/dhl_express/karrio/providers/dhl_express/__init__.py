@@ -1,11 +1,10 @@
+
 from karrio.providers.dhl_express.utils import Settings
 from karrio.providers.dhl_express.rate import parse_rate_response, rate_request
-from karrio.providers.dhl_express.address import (
-    parse_address_validation_response,
-    address_validation_request
-)
 from karrio.providers.dhl_express.shipment import (
+    parse_shipment_cancel_response,
     parse_shipment_response,
+    shipment_cancel_request,
     shipment_request,
 )
 from karrio.providers.dhl_express.pickup import (
@@ -19,4 +18,8 @@ from karrio.providers.dhl_express.pickup import (
 from karrio.providers.dhl_express.tracking import (
     parse_tracking_response,
     tracking_request,
+)
+from karrio.providers.dhl_express.document import (
+    parse_document_upload_response,
+    document_upload_request,
 )

@@ -1,20 +1,19 @@
-"""Karrio DHL client settings."""
+
+"""Karrio DHL Express client settings."""
 
 import attr
-from karrio.providers.dhl_express.utils import Settings as BaseSettings
+import karrio.providers.dhl_express.utils as provider_utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
-    """DHL connection settings."""
+class Settings(provider_utils.Settings):
+    """DHL Express connection settings."""
 
-    site_id: str
-    password: str
-    account_number: str = None
-    account_country_code: str = None
-    metadata: dict = {}
-    config: dict = {}
+    # required carrier specific properties
 
+    # generic properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "dhl_express"
+    account_country_code: str = None
+    metadata: dict = {}

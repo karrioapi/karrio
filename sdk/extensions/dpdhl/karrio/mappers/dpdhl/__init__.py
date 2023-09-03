@@ -1,3 +1,4 @@
+
 from karrio.core.metadata import Metadata
 
 from karrio.mappers.dpdhl.mapper import Mapper
@@ -8,14 +9,11 @@ import karrio.providers.dpdhl.units as units
 
 METADATA = Metadata(
     id="dpdhl",
-    label="Deutsche Post DHL",
+    label="DPDHL Germany",
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
     # Data Units
-    services=units.ShippingService,
-    options=units.ShippingOption,
-    service_levels=units.DEFAULT_SERVICES,
-    connection_configs=units.ConnectionConfig,
+    is_hub=False
 )

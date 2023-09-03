@@ -1,0 +1,93 @@
+{
+  "codeSaAgenceDepart": "001175",
+  "codeTeosAgenceDepart": "",
+  "codeClient": "020475",
+  "formatImpression": "P",
+  "positionPremiereEtiquette": 1,
+  "codeLangue": "fr",
+  "codeProduit": "ATK",
+  "noRecepisse": "90148526",
+  "dateDepart": "2021-12-23",
+  "dateLivraison": "2021-12-24",
+  "expediteur": {
+    "nom": "COMPTE TEST TMA IBM/GEODIS",
+    "codePays": "FR",
+    "codeRegion": "95",
+    "codePostal": "95300",
+    "ville": "PONTOISE",
+    "telephoneContact": "0102030405"
+  },
+  "destinataire": {
+    "code": "CAS02",
+    "nom": "CAS02 DSI",
+    "adresse1": "13 RUE PIERRE ET MARIE CURIE",
+    "adresse2": "",
+    "codePays": "FR",
+    "codePostal": "95135",
+    "ville": "FRANCONVILLE BP150",
+    "nomContact": "M. CASUAL",
+    "telephoneContact": "+33601050402"
+  },
+  "nombreTotalUM": 3,
+  "nombreTotalPalettes": 1,
+  "poidsTotal": 220,
+  "volumeTotal": 1.9,
+  "listeUmg": [
+    {
+      "codeUmg": "PE",
+      "poids": 150,
+      "volume": 1.5,
+      "numeroColis": 1,
+      "cabTransporteur": "JVGTS0020000000003652",
+      "cabEuropeTransporteur": "NEE000321511",
+      "referenceColisClient": "CMD095-184722-X001",
+      "listeArticle": [
+        {
+          "code": "BOU",
+          "reference": "Rhum BOLOGNE",
+          "quantite": 5
+        },
+        {
+          "code": "BOU",
+          "reference": "Rhum NEGRITA",
+          "quantite": 5
+        },
+        {
+          "code": "BOU",
+          "reference": "Rhum ISAUTIER",
+          "quantite": 10
+        },
+        {
+          "code": "BOU",
+          "reference": "Rhum SAVANNA",
+          "quantite": 5
+        },
+        {
+          "code": "BOU",
+          "reference": "Rhum CORMAN COLLINS RHUMS",
+          "quantite": 15
+        }
+      ]
+    },
+    {
+      "codeUmg": "PC",
+      "poids": 50,
+      "volume": 0.3,
+      "numeroColis": 2,
+      "cabTransporteur": "JVGTS0020000000003653",
+      "cabEuropeTransporteur": "NEE000321512",
+      "referenceColisClient": "CMD095-184722-X002"
+    },
+    {
+      "codeUmg": "PC",
+      "poids": 20,
+      "volume": 0.1,
+      "numeroColis": 3,
+      "cabTransporteur": "JVGTS0020000000003654",
+      "cabEuropeTransporteur": "NEE000321513",
+      "referenceColisClient": "CMD095-184722-X003"
+    }
+  ],
+  "codeOptionLivraison": "A00",
+  "reference1": "F1708-3433"
+}

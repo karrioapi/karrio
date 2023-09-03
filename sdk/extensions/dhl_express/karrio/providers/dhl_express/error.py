@@ -1,4 +1,4 @@
-import dhl_express_lib.dct_response_global_3_0 as dhl
+
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -6,17 +6,19 @@ import karrio.providers.dhl_express.utils as provider_utils
 
 
 def parse_error_response(
-    response: lib.Element,
+    response: dict,
     settings: provider_utils.Settings,
+    **kwargs,
 ) -> typing.List[models.Message]:
-    errors = lib.find_element("Condition", response, dhl.ConditionType)
+    errors = []  # compute the carrier error object list
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code=error.ConditionCode,
-            message=error.ConditionData,
+            code="",  # set the carrier error code
+            message="",  # set the carrier error message
+            details={**kwargs},
         )
         for error in errors
     ]
