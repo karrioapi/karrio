@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from freightcom_lib.shipment_cancel_request import (
+from karrio.schemas.freightcom.shipment_cancel_request import (
     ShipmentCancelRequestType,
     Freightcom,
     OrderType,

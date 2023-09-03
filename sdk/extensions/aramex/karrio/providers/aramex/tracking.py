@@ -1,7 +1,11 @@
 from typing import List, Tuple
 from functools import partial
-from aramex_lib.array_of_string import ArrayOfstring
-from aramex_lib.tracking import ShipmentTrackingRequest, ClientInfo, TrackingResult
+from karrio.schemas.aramex.array_of_string import ArrayOfstring
+from karrio.schemas.aramex.tracking import (
+    ShipmentTrackingRequest,
+    ClientInfo,
+    TrackingResult,
+)
 from karrio.core.utils import (
     create_envelope,
     Element,

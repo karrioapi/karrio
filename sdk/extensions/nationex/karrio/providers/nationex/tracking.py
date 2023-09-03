@@ -1,4 +1,4 @@
-import nationex_lib.tracking_response as nationex
+import karrio.schemas.nationex.tracking_response as nationex
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

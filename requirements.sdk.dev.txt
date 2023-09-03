@@ -1,23 +1,5 @@
 # Carrier Schemas packages
--e ./schemas/aramex
--e ./schemas/australiapost
--e ./schemas/canadapost
--e ./schemas/canpar
--e ./schemas/chronopost
-# -e ./schemas/dhl_express
--e ./schemas/dhl_poland
--e ./schemas/dicom
--e ./schemas/dpd
--e ./schemas/dpdhl
-# -e ./schemas/fedex
--e ./schemas/purolator
--e ./schemas/royalmail
--e ./schemas/sendle
--e ./schemas/sf_express
--e ./schemas/tnt
 -e ./schemas/usps
--e ./schemas/yanwen
--e ./schemas/yunexpress
 
 # Carrier Extentions packages
 -e ./sdk/core
@@ -44,13 +26,10 @@
 -e ./sdk/extensions/roadie
 -e ./sdk/extensions/royalmail
 -e ./sdk/extensions/sendle
--e ./sdk/extensions/sf_express
 -e ./sdk/extensions/tnt
 -e ./sdk/extensions/ups
 -e ./sdk/extensions/usps
 -e ./sdk/extensions/usps_international
--e ./sdk/extensions/yanwen
--e ./sdk/extensions/yunexpress
 
 
 -e ./sdk/vendors/easypost

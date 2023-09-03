@@ -1,5 +1,5 @@
-import boxknight_lib.rate_request as boxknight
-import boxknight_lib.rate_response as rating
+import karrio.schemas.boxknight.rate_request as boxknight
+import karrio.schemas.boxknight.rate_response as rating
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

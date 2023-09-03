@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from dhl_poland_lib.services import (
+from karrio.schemas.dhl_poland.services import (
     deleteShipment,
     DeleteShipmentRequest,
 )

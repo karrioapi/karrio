@@ -1,5 +1,8 @@
 from jstruct import struct
-from canpar_lib.CanshipBusinessService import GetLabelsAdvancedRq, getLabelsAdvanced
+from karrio.schemas.canpar.CanshipBusinessService import (
+    GetLabelsAdvancedRq,
+    getLabelsAdvanced,
+)
 from karrio.core.utils import create_envelope, Serializable, Envelope
 from karrio.providers.canpar.utils import Settings
 

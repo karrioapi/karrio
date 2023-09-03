@@ -1,4 +1,4 @@
-import canadapost_lib.ncshipment as canadapost
+import karrio.schemas.canadapost.ncshipment as canadapost
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -63,8 +63,7 @@ def shipment_request(payload: models.ShipmentRequest, _) -> lib.Serializable:
         initializer=provider_units.shipping_options_initializer,
     )
     options_items = [
-        option for _, option in options.items()
-        if option.state is not False
+        option for _, option in options.items() if option.state is not False
     ]
 
     request = canadapost.NonContractShipmentType(

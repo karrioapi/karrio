@@ -1,5 +1,5 @@
 import re
-from easypost_lib.shipment_request import ShipmentRequest
+from karrio.schemas.easypost.shipment_request import ShipmentRequest
 from karrio.core import units
 from karrio.core.models import Address
 from karrio.core.utils import Enum, Flag, OptionEnum

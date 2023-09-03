@@ -1,4 +1,4 @@
-import canadapost_lib.rating as canadapost
+import karrio.schemas.canadapost.rating as canadapost
 
 import typing
 import karrio.lib as lib

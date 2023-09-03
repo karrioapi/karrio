@@ -1,5 +1,5 @@
-from usps_lib.evs_response import eVSResponse
-from usps_lib.evs_request import (
+from karrio.schemas.usps.evs_response import eVSResponse
+from karrio.schemas.usps.evs_request import (
     eVSRequest,
     ImageParametersType,
     LabelSequenceType,

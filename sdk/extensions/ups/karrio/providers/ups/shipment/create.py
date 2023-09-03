@@ -1,5 +1,5 @@
-import ups_lib.shipping_response as ups_response
-import ups_lib.shipping_request as ups
+import karrio.schemas.ups.shipping_response as ups_response
+import karrio.schemas.ups.shipping_request as ups
 import time
 import typing
 import karrio.lib as lib

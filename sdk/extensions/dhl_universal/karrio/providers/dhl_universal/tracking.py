@@ -1,4 +1,4 @@
-import dhl_universal_lib.tracking as dhl
+import karrio.schemas.dhl_universal.tracking as dhl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

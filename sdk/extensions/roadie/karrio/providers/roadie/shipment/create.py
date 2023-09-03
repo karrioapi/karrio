@@ -1,6 +1,6 @@
 import datetime
-import roadie_lib.shipment_request as roadie
-import roadie_lib.shipment_response as shipping
+import karrio.schemas.roadie.shipment_request as roadie
+import karrio.schemas.roadie.shipment_response as shipping
 import typing
 import base64
 import karrio.lib as lib

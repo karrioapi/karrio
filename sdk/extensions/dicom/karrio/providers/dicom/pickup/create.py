@@ -1,7 +1,7 @@
 import urllib.parse
 from typing import Tuple, List
 from functools import partial
-from dicom_lib.pickups import (
+from karrio.schemas.dicom.pickups import (
     PickupRequest as DicomPickupRequest,
     Sender,
     Contact,

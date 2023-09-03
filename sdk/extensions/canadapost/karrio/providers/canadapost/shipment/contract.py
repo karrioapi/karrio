@@ -1,4 +1,4 @@
-from canadapost_lib.shipment import (
+from karrio.schemas.canadapost.shipment import (
     ShipmentType,
     ShipmentInfoType,
     DeliverySpecType,
@@ -87,8 +87,7 @@ def shipment_request(
         initializer=provider_units.shipping_options_initializer,
     )
     options_items = [
-        option for _, option in options.items()
-        if option.state is not False
+        option for _, option in options.items() if option.state is not False
     ]
 
     customs = lib.to_customs_info(payload.customs)

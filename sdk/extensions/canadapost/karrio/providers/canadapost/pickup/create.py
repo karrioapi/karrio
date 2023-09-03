@@ -1,7 +1,7 @@
 from typing import Tuple, List, Union
 from functools import partial
-from canadapost_lib.pickup import pickup_availability
-from canadapost_lib.pickuprequest import (
+from karrio.schemas.canadapost.pickup import pickup_availability
+from karrio.schemas.canadapost.pickuprequest import (
     PickupRequestDetailsType,
     PickupRequestUpdateDetailsType,
     PickupLocationType,

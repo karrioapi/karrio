@@ -1,4 +1,4 @@
-import canadapost_lib.messages as canadapost
+import karrio.schemas.canadapost.messages as canadapost
 
 import typing
 import karrio.lib as lib

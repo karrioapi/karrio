@@ -1,6 +1,6 @@
 import karrio.lib as lib
 from typing import List, Tuple
-from canpar_lib.CanparRatingService import (
+from karrio.schemas.canpar.CanparRatingService import (
     searchCanadaPost,
     SearchCanadaPostRq,
     Address as CanparAddress,

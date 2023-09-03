@@ -1,5 +1,5 @@
-import nationex_lib.shipment_request as nationex
-import nationex_lib.shipment_response as shipping
+import karrio.schemas.nationex.shipment_request as nationex
+import karrio.schemas.nationex.shipment_response as shipping
 import typing
 import base64
 import urllib.parse

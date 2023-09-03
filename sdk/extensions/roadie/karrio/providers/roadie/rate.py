@@ -1,5 +1,5 @@
-import roadie_lib.rate_request as roadie
-import roadie_lib.rate_response as rating
+import karrio.schemas.roadie.rate_request as roadie
+import karrio.schemas.roadie.rate_response as rating
 import typing
 import datetime
 import karrio.lib as lib

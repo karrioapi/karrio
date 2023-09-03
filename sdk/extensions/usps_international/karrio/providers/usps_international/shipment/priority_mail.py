@@ -1,5 +1,7 @@
-from usps_lib.evs_priority_mail_intl_response import eVSPriorityMailIntlResponse
-from usps_lib.evs_priority_mail_intl_request import (
+from karrio.schemas.usps.evs_priority_mail_intl_response import (
+    eVSPriorityMailIntlResponse,
+)
+from karrio.schemas.usps.evs_priority_mail_intl_request import (
     eVSPriorityMailIntlRequest,
     ImageParametersType,
     ShippingContentsType,

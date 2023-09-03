@@ -1,4 +1,4 @@
-import sendle_lib.tracking_response as sendle
+import karrio.schemas.sendle.tracking_response as sendle
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

@@ -1,5 +1,5 @@
-from usps_lib.evs_gxg_get_label_response import eVSGXGGetLabelResponse
-from usps_lib.evs_gxg_get_label_request import (
+from karrio.schemas.usps.evs_gxg_get_label_response import eVSGXGGetLabelResponse
+from karrio.schemas.usps.evs_gxg_get_label_request import (
     eVSGXGGetLabelRequest,
     ShippingContentsType,
     ItemDetailType,

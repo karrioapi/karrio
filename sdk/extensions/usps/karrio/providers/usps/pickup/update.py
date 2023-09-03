@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from usps_lib.carrier_pickup_change_request import (
+from karrio.schemas.usps.carrier_pickup_change_request import (
     CarrierPickupChangeRequest,
     PackageType,
 )

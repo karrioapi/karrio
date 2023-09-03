@@ -1,4 +1,4 @@
-import purolator_lib.tracking_service_1_2_2 as purolator
+import karrio.schemas.purolator.tracking_service_1_2_2 as purolator
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

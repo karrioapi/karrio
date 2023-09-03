@@ -1,6 +1,6 @@
 """Karrio DHL Parcel Poland client settings."""
 
-from dhl_poland_lib.services import AuthData
+from karrio.schemas.dhl_poland.services import AuthData
 from karrio.core.settings import Settings as BaseSettings
 from karrio.core.utils import Envelope, apply_namespaceprefix, XP
 

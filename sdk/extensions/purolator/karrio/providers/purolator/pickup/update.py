@@ -1,6 +1,6 @@
 from typing import Tuple, List
 from functools import partial
-from purolator_lib.pickup_service_1_2_1 import (
+from karrio.schemas.purolator.pickup_service_1_2_1 import (
     ModifyPickupInstruction,
     ModifyPickUpRequest,
     ModifyPickUpResponse,

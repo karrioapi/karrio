@@ -1,4 +1,4 @@
-import laposte_lib.error as laposte
+import karrio.schemas.laposte.error as laposte
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

@@ -1,4 +1,4 @@
-import canpar_lib.CanparAddonsService as canpar
+import karrio.schemas.canpar.CanparAddonsService as canpar
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

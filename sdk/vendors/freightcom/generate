@@ -1,5 +1,5 @@
 SCHEMAS=./vendor/schemas
-LIB_MODULES=./freightcom_lib
+LIB_MODULES=./karrio/schemas/freightcom
 find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
 touch "${LIB_MODULES}/__init__.py"
 

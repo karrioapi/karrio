@@ -1,5 +1,5 @@
 from uuid import uuid4
-from tnt_lib.shipment_request import (
+from karrio.schemas.tnt.shipment_request import (
     ESHIPPER,
     CONSIGNMENTBATCH,
     LOGIN,

@@ -1,4 +1,4 @@
-import chronopost_lib.quickcostservice as chronopost
+import karrio.schemas.chronopost.quickcostservice as chronopost
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

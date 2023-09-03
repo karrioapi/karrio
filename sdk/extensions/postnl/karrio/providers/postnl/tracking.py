@@ -1,4 +1,4 @@
-import postnl_lib.tracking_response as pnl
+import karrio.schemas.postnl.tracking_response as pnl
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

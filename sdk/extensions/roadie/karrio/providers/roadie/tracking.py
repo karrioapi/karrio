@@ -1,4 +1,4 @@
-import roadie_lib.tracking_response as roadie
+import karrio.schemas.roadie.tracking_response as roadie
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

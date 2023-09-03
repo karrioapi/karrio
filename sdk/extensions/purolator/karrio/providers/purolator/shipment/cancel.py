@@ -1,5 +1,5 @@
 from typing import Tuple, List
-from purolator_lib.shipping_service_2_1_3 import (
+from karrio.schemas.purolator.shipping_service_2_1_3 import (
     VoidShipmentRequest,
     VoidShipmentResponse,
     RequestContext,

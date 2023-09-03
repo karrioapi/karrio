@@ -1,4 +1,4 @@
-import dpdhl_lib.business_interface as dpdhl
+import karrio.schemas.dpdhl.business_interface as dpdhl
 import time
 import typing
 import karrio.lib as lib

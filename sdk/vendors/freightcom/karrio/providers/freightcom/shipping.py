@@ -1,4 +1,4 @@
-from freightcom_lib.shipping_request import (
+from karrio.schemas.freightcom.shipping_request import (
     Freightcom,
     ShippingRequestType,
     FromType,
@@ -14,7 +14,7 @@ from freightcom_lib.shipping_request import (
     ItemType,
     BillToType,
 )
-from freightcom_lib.shipping_reply import (
+from karrio.schemas.freightcom.shipping_reply import (
     ShippingReplyType,
     QuoteType,
 )

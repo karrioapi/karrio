@@ -1,5 +1,5 @@
 from typing import List, Tuple
-from royalmail_lib.tracking import MailPieces
+from karrio.schemas.royalmail.tracking import MailPieces
 from karrio.core.utils import (
     Serializable,
     DF,

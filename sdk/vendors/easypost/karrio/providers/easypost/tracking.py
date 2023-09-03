@@ -1,4 +1,4 @@
-import easypost_lib.trackers_response as easypost
+import karrio.schemas.easypost.trackers_response as easypost
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

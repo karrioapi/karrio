@@ -1,11 +1,11 @@
 from datetime import datetime, timezone
-from usps_lib.intl_rate_v2_request import (
+from karrio.schemas.usps.intl_rate_v2_request import (
     IntlRateV2Request,
     PackageType,
     ExtraServicesType,
     GXGType,
 )
-from usps_lib.intl_rate_v2_response import ServiceType
+from karrio.schemas.usps.intl_rate_v2_response import ServiceType
 
 import typing
 import karrio.lib as lib

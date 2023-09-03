@@ -1,9 +1,9 @@
-from tnt_lib.pricing_response import (
+from karrio.schemas.tnt.pricing_response import (
     priceResponse,
     ratedServices,
     ratedService,
 )
-from tnt_lib.pricing_request import (
+from karrio.schemas.tnt.pricing_request import (
     priceRequest,
     priceCheck,
     address,

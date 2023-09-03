@@ -1,4 +1,4 @@
-import ups_lib.tracking_response as ups
+import karrio.schemas.ups.tracking_response as ups
 import typing
 import karrio.lib as lib
 import karrio.core.models as models

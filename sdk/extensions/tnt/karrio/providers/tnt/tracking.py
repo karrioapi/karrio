@@ -1,6 +1,6 @@
 from typing import List, Tuple, cast
-from tnt_lib.track_response_v3_1 import ConsignmentType, StatusStructure
-from tnt_lib.track_request_v3_1 import (
+from karrio.schemas.tnt.track_response_v3_1 import ConsignmentType, StatusStructure
+from karrio.schemas.tnt.track_request_v3_1 import (
     TrackRequest,
     SearchCriteriaType,
     LevelOfDetailType,

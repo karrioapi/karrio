@@ -1,4 +1,4 @@
-from purolator_lib.estimate_service_2_1_2 import (
+from karrio.schemas.purolator.estimate_service_2_1_2 import (
     GetFullEstimateRequest,
     Shipment,
     SenderInformation,

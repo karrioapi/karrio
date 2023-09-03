@@ -1,7 +1,7 @@
 import typing
 from karrio.core.models import Message
 from karrio.providers.chronopost.utils import Settings
-import chronopost_lib.shippingservice as chronopost
+import karrio.schemas.chronopost.shippingservice as chronopost
 import karrio.lib as lib
 
 ReturnType = chronopost.resultMultiParcelExpeditionValue

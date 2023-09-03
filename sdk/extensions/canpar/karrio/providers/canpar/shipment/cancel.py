@@ -1,6 +1,6 @@
 import karrio.lib as lib
 from typing import List, Tuple
-from canpar_lib.CanshipBusinessService import (
+from karrio.schemas.canpar.CanshipBusinessService import (
     voidShipment,
     VoidShipmentRq,
 )

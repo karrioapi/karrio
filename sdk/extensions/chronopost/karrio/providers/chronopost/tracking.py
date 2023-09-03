@@ -3,7 +3,7 @@ import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.chronopost.utils as provider_utils
 import karrio.providers.chronopost.error as provider_error
-import chronopost_lib.trackingservice as chronopost
+import karrio.schemas.chronopost.trackingservice as chronopost
 
 
 def parse_tracking_response(

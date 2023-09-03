@@ -1,6 +1,6 @@
 from functools import partial
 from typing import Tuple, List
-from canpar_lib.CanparAddonsService import (
+from karrio.schemas.canpar.CanparAddonsService import (
     schedulePickupV2,
     SchedulePickupV2Rq,
     PickupV2,

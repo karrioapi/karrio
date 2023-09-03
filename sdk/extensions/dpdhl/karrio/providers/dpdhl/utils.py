@@ -2,7 +2,7 @@ import typing
 import base64
 import karrio.lib as lib
 import karrio.core as core
-import dpdhl_lib.business_interface as dpdhl
+import karrio.schemas.dpdhl.business_interface as dpdhl
 
 AuthentificationType = lib.mutate_xml_object_type(
     dpdhl.AuthentificationType,

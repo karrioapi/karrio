@@ -1,5 +1,5 @@
 from typing import Tuple, List, Optional
-from tnt_lib.shipment_response import document
+from karrio.schemas.tnt.shipment_response import document
 from karrio.core.models import (
     Documents,
     ShipmentRequest,

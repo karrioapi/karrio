@@ -256,6 +256,7 @@ class ServiceType(Enum):
         usps_priority_mail_express_international
     )
 
+
 class TrackingStatus(Enum):
     in_transit = [""]
     delivered = ["1"]

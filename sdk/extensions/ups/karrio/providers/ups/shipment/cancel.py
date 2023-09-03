@@ -1,4 +1,4 @@
-import ups_lib.shipping_cancel_response as ups
+import karrio.schemas.ups.shipping_cancel_response as ups
 import typing
 import karrio.lib as lib
 import karrio.core.units as units

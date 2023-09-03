@@ -1,4 +1,4 @@
-from dicom_lib.rates import (
+from karrio.schemas.dicom.rates import (
     RateRequest as DicomRateRequest,
     Address,
     Parcel,

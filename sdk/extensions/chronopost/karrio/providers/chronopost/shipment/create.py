@@ -1,4 +1,4 @@
-import chronopost_lib.shippingservice as chronopost
+import karrio.schemas.chronopost.shippingservice as chronopost
 import typing
 import base64
 import datetime

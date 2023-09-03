@@ -1,5 +1,5 @@
 from typing import List
-from purolator_lib.estimate_service_2_1_2 import Error
+from karrio.schemas.purolator.estimate_service_2_1_2 import Error
 from karrio.core.models import Message
 from karrio.core.utils.xml import Element
 from karrio.core.utils.soap import extract_fault

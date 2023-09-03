@@ -1,4 +1,4 @@
-import dhl_poland_lib.services as dhl
+import karrio.schemas.dhl_poland.services as dhl
 import time
 import typing
 import karrio.lib as lib
