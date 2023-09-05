@@ -4,7 +4,7 @@ from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
-class Address:
+class AddressType:
     Name1: Optional[str] = None
     Name2: Optional[str] = None
     Name3: Optional[str] = None
@@ -20,15 +20,15 @@ class Address:
 
 
 @s(auto_attribs=True)
-class Consignee:
+class ConsigneeType:
     ConsigneeID: Optional[str] = None
     CostCenter: Optional[str] = None
     Category: Optional[str] = None
-    Address: Optional[Address] = JStruct[Address]
+    Address: Optional[AddressType] = JStruct[AddressType]
 
 
 @s(auto_attribs=True)
-class CustomContent:
+class CustomContentType:
     CustomerLogo: Optional[str] = None
     Barcode: Optional[str] = None
     BarcodeType: Optional[str] = None
@@ -36,26 +36,26 @@ class CustomContent:
 
 
 @s(auto_attribs=True)
-class DefinePrinter:
+class DefinePrinterType:
     LabelPrinter: Optional[str] = None
     DocumentPrinter: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class ReturnLabels:
+class ReturnLabelsType:
     TemplateSet: Optional[str] = None
     LabelFormat: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class PrintingOptions:
+class PrintingOptionsType:
     UseDefault: Optional[str] = None
-    DefinePrinter: Optional[DefinePrinter] = JStruct[DefinePrinter]
-    ReturnLabels: Optional[ReturnLabels] = JStruct[ReturnLabels]
+    DefinePrinter: Optional[DefinePrinterType] = JStruct[DefinePrinterType]
+    ReturnLabels: Optional[ReturnLabelsType] = JStruct[ReturnLabelsType]
 
 
 @s(auto_attribs=True)
-class AddonLiability:
+class AddonLiabilityType:
     ServiceName: Optional[str] = None
     Amount: Optional[str] = None
     Currency: Optional[str] = None
@@ -64,31 +64,31 @@ class AddonLiability:
 
 
 @s(auto_attribs=True)
-class Service:
-    Cash: Optional[AddonLiability] = JStruct[AddonLiability]
-    AddonLiability: Optional[AddonLiability] = JStruct[AddonLiability]
+class ServiceType:
+    Cash: Optional[AddonLiabilityType] = JStruct[AddonLiabilityType]
+    AddonLiability: Optional[AddonLiabilityType] = JStruct[AddonLiabilityType]
 
 
 @s(auto_attribs=True)
-class ShipmentUnit:
+class ShipmentUnitType:
     Weight: Optional[int] = None
     Note1: Optional[str] = None
     Note2: Optional[str] = None
     FRAlphaParcelReference: Optional[str] = None
     TrackID: Optional[str] = None
     ParcelNumber: Optional[str] = None
-    Service: List[Service] = JList[Service]
+    Service: List[ServiceType] = JList[ServiceType]
 
 
 @s(auto_attribs=True)
-class Shipper:
+class ShipperType:
     ContactID: Optional[str] = None
     FRAlphaCustomerReference: Optional[str] = None
-    AlternativeShipperAddress: Optional[Address] = JStruct[Address]
+    AlternativeShipperAddress: Optional[AddressType] = JStruct[AddressType]
 
 
 @s(auto_attribs=True)
-class Shipment:
+class ShipmentType:
     ShipmentReference: List[str] = []
     ShippingDate: Optional[str] = None
     IncotermCode: Optional[int] = None
@@ -96,13 +96,13 @@ class Shipment:
     Middleware: Optional[str] = None
     Product: Optional[str] = None
     ExpressAltDeliveryAllowed: Optional[bool] = None
-    Consignee: Optional[Consignee] = JStruct[Consignee]
-    Shipper: Optional[Shipper] = JStruct[Shipper]
-    ShipmentUnit: List[ShipmentUnit] = JList[ShipmentUnit]
-    PrintingOptions: Optional[PrintingOptions] = JStruct[PrintingOptions]
-    CustomContent: Optional[CustomContent] = JStruct[CustomContent]
+    Consignee: Optional[ConsigneeType] = JStruct[ConsigneeType]
+    Shipper: Optional[ShipperType] = JStruct[ShipperType]
+    ShipmentUnit: List[ShipmentUnitType] = JList[ShipmentUnitType]
+    PrintingOptions: Optional[PrintingOptionsType] = JStruct[PrintingOptionsType]
+    CustomContent: Optional[CustomContentType] = JStruct[CustomContentType]
 
 
 @s(auto_attribs=True)
-class ShipmentRequest:
-    Shipment: Optional[Shipment] = JStruct[Shipment]
+class ShipmentRequestType:
+    Shipment: Optional[ShipmentType] = JStruct[ShipmentType]

@@ -1,55 +1,90 @@
-
-"""Karrio FedEx client proxy."""
-
 import karrio.lib as lib
 import karrio.api.proxy as proxy
-import karrio.mappers.fedex.settings as provider_settings
+from karrio.mappers.fedex.settings import Settings
 
 
 class Proxy(proxy.Proxy):
-    settings: provider_settings.Settings
+    settings: Settings
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"",
-            data=request.serialize(),
+    def _send_request(
+        self,
+        path: str = "/",
+        request: lib.Serializable = None,
+        method: str = "POST",
+        headers: dict = None,
+        url: str = None,
+    ) -> str:
+        return lib.request(
+            url=url or f"{self.settings.server_url}{path}",
             trace=self.trace_as("json"),
-            method="POST",
-            headers={},
+            method=method,
+            headers={
+                "content-Type": "application/json",
+                "authorization": f"Bearer {self.settings.access_token}",
+                "x-locale": self.settings.config.locale.state or "en_US",
+                **(headers or {}),
+            },
+            **({"data": lib.to_json(request.serialize())} if request else {}),
         )
 
-        return lib.Deserializable(response, lib.to_dict)
-    
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={},
-        )
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request("/rate", request)
+
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
+
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request("/track/v1/trackingnumbers", request)
 
         return lib.Deserializable(response, lib.to_dict)
-    
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={},
+
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        requests = request.serialize()
+        response = self._send_request("/ship", lib.Serializable(requests[0]))
+        master_id = (
+            lib.to_dict(response)
+            .get("output", {})
+            .get("transactionShipments", [{}])[0]
+            .get("masterTrackingNumber")
         )
 
-        return lib.Deserializable(response, lib.to_dict)
-    
-    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={},
-        )
+        if len(requests) > 1 and master_id is not None:
+            responses = [
+                self._send_request(
+                    "/ship",
+                    lib.Serializable(
+                        request.replace(
+                            "[MASTER_ID_TYPE]", master_id.TrackingIdType
+                        ).replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber),
+                    ),
+                )
+                for request in requests[1:]
+            ]
+            return lib.Deserializable([response, *responses], lib.to_dict)
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request("/ship", request)
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    def upload_document(
+        self,
+        requests: lib.Serializable,
+    ) -> lib.Deserializable:
+        response = lib.run_asynchronously(
+            lambda _: self._send_request(
+                url=(
+                    "https://documentapitest.prod.fedex.com/sandbox/documents/v1/etds/upload"
+                    if self.settings.test_mode
+                    else "https://documentapi.prod.fedex.com/documents/v1/etds/upload"
+                ),
+                request=lib.Serializable(_),
+            ),
+            requests.serialize(),
+        )
+
+        return lib.Deserializable(
+            response,
+            lambda __: [lib.to_dict(_) for _ in __],
+        )

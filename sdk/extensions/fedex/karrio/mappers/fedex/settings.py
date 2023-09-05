@@ -1,19 +1,23 @@
-
 """Karrio FedEx client settings."""
 
 import attr
-import karrio.providers.fedex.utils as provider_utils
+import jstruct
+import karrio.lib as lib
+from karrio.providers.fedex.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)
-class Settings(provider_utils.Settings):
+class Settings(BaseSettings):
     """FedEx connection settings."""
 
-    # required carrier specific properties
+    api_key: str  # type:ignore
+    secret_key: str  # type:ignore
+    account_number: str = None
 
-    # generic properties
-    id: str = None
-    test_mode: bool = False
-    carrier_id: str = "fedex"
+    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     account_country_code: str = None
+    carrier_id: str = "fedex"
+    test_mode: bool = False
     metadata: dict = {}
+    config: dict = {}
+    id: str = None

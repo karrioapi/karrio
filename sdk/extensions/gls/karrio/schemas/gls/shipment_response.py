@@ -4,7 +4,7 @@ from jstruct import JList, JStruct
 
 
 @s(auto_attribs=True)
-class Barcodes:
+class BarcodesType:
     Primary2D: Optional[str] = None
     Secondary2D: Optional[str] = None
     Primary1D: Optional[str] = None
@@ -12,7 +12,7 @@ class Barcodes:
 
 
 @s(auto_attribs=True)
-class ExpressData:
+class ExpressDataType:
     AlternateDelivery: Optional[bool] = None
     ImportStation: Optional[int] = None
     TourNumber: Optional[int] = None
@@ -23,7 +23,7 @@ class ExpressData:
 
 
 @s(auto_attribs=True)
-class NDIArea:
+class NDIAreaType:
     NDI1D: Optional[int] = None
     GBProductIdentifier: Optional[int] = None
     GBPostOffice1D: Optional[str] = None
@@ -33,7 +33,7 @@ class NDIArea:
 
 
 @s(auto_attribs=True)
-class RoutingInfo:
+class RoutingInfoType:
     Tour: Optional[str] = None
     InboundSortingFlag: Optional[int] = None
     FinalLocationCode: Optional[str] = None
@@ -42,47 +42,47 @@ class RoutingInfo:
 
 
 @s(auto_attribs=True)
-class Information:
+class InformationType:
     Name: Optional[str] = None
     Value: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class Service:
+class ServiceType:
     Header: Optional[str] = None
-    Information: List[Information] = JList[Information]
+    Information: List[InformationType] = JList[InformationType]
 
 
 @s(auto_attribs=True)
-class ServiceArea:
-    Service: List[Service] = JList[Service]
+class ServiceAreaType:
+    Service: List[ServiceType] = JList[ServiceType]
 
 
 @s(auto_attribs=True)
-class ParcelDatum:
+class ParcelDatumType:
     TrackID: Optional[str] = None
     ExchangeParcelID: Optional[str] = None
     ParcelNumber: Optional[str] = None
     ShipmentUnitReference: Optional[str] = None
-    Barcodes: Optional[Barcodes] = JStruct[Barcodes]
-    RoutingInfo: Optional[RoutingInfo] = JStruct[RoutingInfo]
-    ServiceArea: Optional[ServiceArea] = JStruct[ServiceArea]
-    ExpressData: Optional[ExpressData] = JStruct[ExpressData]
-    NDIArea: Optional[NDIArea] = JStruct[NDIArea]
+    Barcodes: Optional[BarcodesType] = JStruct[BarcodesType]
+    RoutingInfo: Optional[RoutingInfoType] = JStruct[RoutingInfoType]
+    ServiceArea: Optional[ServiceAreaType] = JStruct[ServiceAreaType]
+    ExpressData: Optional[ExpressDataType] = JStruct[ExpressDataType]
+    NDIArea: Optional[NDIAreaType] = JStruct[NDIAreaType]
     HandlingInformation: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class PrintDatum:
+class PrintDatumType:
     Data: Optional[str] = None
     LabelFormat: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class CreatedShipment:
+class CreatedShipmentType:
     ShipmentReference: List[str] = []
-    ParcelData: List[ParcelDatum] = JList[ParcelDatum]
-    PrintData: List[PrintDatum] = JList[PrintDatum]
+    ParcelData: List[ParcelDatumType] = JList[ParcelDatumType]
+    PrintData: List[PrintDatumType] = JList[PrintDatumType]
     CustomerID: Optional[int] = None
     PickupLocation: Optional[str] = None
     GDPR: List[str] = []
@@ -90,5 +90,5 @@ class CreatedShipment:
 
 
 @s(auto_attribs=True)
-class ShipmentResponse:
-    CreatedShipment: Optional[CreatedShipment] = JStruct[CreatedShipment]
+class ShipmentResponseType:
+    CreatedShipment: Optional[CreatedShipmentType] = JStruct[CreatedShipmentType]

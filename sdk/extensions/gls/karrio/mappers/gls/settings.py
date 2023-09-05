@@ -1,4 +1,3 @@
-
 """Karrio GLS client settings."""
 
 import attr
@@ -10,6 +9,9 @@ class Settings(provider_utils.Settings):
     """GLS connection settings."""
 
     # required carrier specific properties
+    username: str
+    password: str
+    contact_id: str
 
     # generic properties
     id: str = None

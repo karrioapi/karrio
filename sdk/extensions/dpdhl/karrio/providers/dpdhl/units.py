@@ -1,10 +1,10 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 
 
 class PackagingType(lib.Flag):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -17,13 +17,21 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
+class ConnectionConfig(lib.Enum):
+    language = lib.OptionEnum("language")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
+
+
 class ShippingService(lib.Enum):
-    """ Carrier specific services """
+    """Carrier specific services"""
+
     dpdhl_standard_service = "DPDHL Germany Standard Service"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
+    """Carrier specific options"""
+
     # dpdhl_option = lib.OptionEnum("code")
 
     """ Unified Option type mapping """

@@ -4,17 +4,17 @@ from jstruct import JList, JStruct
 
 
 @s(auto_attribs=True)
-class Issue:
+class IssueType:
     Rule: Optional[str] = None
     Location: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class ValidationResult:
-    Issues: List[Issue] = JList[Issue]
+class ValidationResultType:
+    Issues: List[IssueType] = JList[IssueType]
 
 
 @s(auto_attribs=True)
-class ValidateResponse:
+class ValidateResponseType:
     success: Optional[bool] = None
-    validationResult: Optional[ValidationResult] = JStruct[ValidationResult]
+    validationResult: Optional[ValidationResultType] = JStruct[ValidationResultType]

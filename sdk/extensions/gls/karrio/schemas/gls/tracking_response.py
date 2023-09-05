@@ -4,23 +4,23 @@ from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
-class Cod:
+class CodType:
     CODType: Optional[str] = None
     CODAmount: Optional[float] = None
 
 
 @s(auto_attribs=True)
-class Accessory:
+class AccessoryType:
     InsuranceAmount: Optional[int] = None
     FrozenProtection: Optional[bool] = None
     DangerousGoods: Optional[bool] = None
     Before10h30am: Optional[bool] = None
     SNR: Optional[bool] = None
-    COD: Optional[Cod] = JStruct[Cod]
+    COD: Optional[CodType] = JStruct[CodType]
 
 
 @s(auto_attribs=True)
-class Destination:
+class DestinationType:
     Contact: Optional[str] = None
     AccountNumber: Optional[str] = None
     AccountName: Optional[str] = None
@@ -39,7 +39,7 @@ class Destination:
 
 
 @s(auto_attribs=True)
-class Dimensions:
+class DimensionsType:
     Height: Optional[float] = None
     Length: Optional[int] = None
     Width: Optional[int] = None
@@ -47,13 +47,13 @@ class Dimensions:
 
 
 @s(auto_attribs=True)
-class Geocoding:
+class GeocodingType:
     Longitude: Optional[float] = None
     Latitude: Optional[float] = None
 
 
 @s(auto_attribs=True)
-class History:
+class HistoryType:
     ParcelHistoryId: Optional[int] = None
     ProcessedDate: Optional[str] = None
     ExceptionId: Optional[int] = None
@@ -62,11 +62,11 @@ class History:
     DescriptionEn: Optional[str] = None
     PhotoId: Optional[int] = None
     SignatureId: Optional[int] = None
-    Geocoding: Optional[Geocoding] = JStruct[Geocoding]
+    Geocoding: Optional[GeocodingType] = JStruct[GeocodingType]
 
 
 @s(auto_attribs=True)
-class Parcel:
+class ParcelType:
     ParcelId: Optional[int] = None
     ParcelNumber: Optional[int] = None
     ReferenceNumber: Optional[str] = None
@@ -80,18 +80,18 @@ class Parcel:
     EstimatedDeliveryTimeFr: Optional[str] = None
     EstimatedDeliveryTimeEn: Optional[str] = None
     EstimatedPercentageBeforeDelivery: Optional[int] = None
-    Dimensions: Optional[Dimensions] = JStruct[Dimensions]
-    History: List[History] = JList[History]
+    Dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
+    History: List[HistoryType] = JList[HistoryType]
 
 
 @s(auto_attribs=True)
-class Photo:
+class PhotoType:
     Id: Optional[int] = None
     Data: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class TrackingResponse:
+class TrackingResponseType:
     CustomerId: Optional[int] = None
     ShipmentId: Optional[int] = None
     ExpeditionDate: Optional[str] = None
@@ -104,9 +104,9 @@ class TrackingResponse:
     ReferenceNumber: Optional[str] = None
     Note: Optional[str] = None
     BillingAccount: Optional[int] = None
-    Sender: Optional[Destination] = JStruct[Destination]
-    Destination: Optional[Destination] = JStruct[Destination]
-    Accessory: Optional[Accessory] = JStruct[Accessory]
-    Parcels: List[Parcel] = JList[Parcel]
+    Sender: Optional[DestinationType] = JStruct[DestinationType]
+    Destination: Optional[DestinationType] = JStruct[DestinationType]
+    Accessory: Optional[AccessoryType] = JStruct[AccessoryType]
+    Parcels: List[ParcelType] = JList[ParcelType]
     ConsolId: Optional[int] = None
-    Photos: List[Photo] = JList[Photo]
+    Photos: List[PhotoType] = JList[PhotoType]
