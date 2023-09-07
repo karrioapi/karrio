@@ -9,6 +9,8 @@ class Settings(core.Settings):
     username: str
     password: str
     account_number: str = None
+    tracking_consumer_key: str = None
+    tracking_consumer_secret: str = None
 
     @property
     def carrier_name(self):
@@ -21,6 +23,10 @@ class Settings(core.Settings):
             if self.test_mode
             else "https://api-eu.dhl.com/parcel/de/shipping/v2"
         )
+
+    @property
+    def tracking_server_url(self):
+        return "https://api-eu.dhl.com"
 
     @property
     def tracking_url(self):

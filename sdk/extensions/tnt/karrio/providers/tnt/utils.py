@@ -7,12 +7,11 @@ class Settings(BaseSettings):
 
     username: str
     password: str
+
     account_number: str = None
     account_country_code: str = None
     metadata: dict = {}
     config: dict = {}
-
-    id: str = None
 
     @property
     def carrier_name(self):

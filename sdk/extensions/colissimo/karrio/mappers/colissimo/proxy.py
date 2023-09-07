@@ -1,55 +1,38 @@
-
 """Karrio Colissimo client proxy."""
 
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.mappers.colissimo.settings as provider_settings
+import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
-class Proxy(proxy.Proxy):
+class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     settings: provider_settings.Settings
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={},
-        )
+        return super().get_rates(request)
 
-        return lib.Deserializable(response, lib.to_dict)
-    
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"",
+            url=f"{self.settings.server_url}/generateLabel",
             data=request.serialize(),
             trace=self.trace_as("json"),
             method="POST",
-            headers={},
+            headers={"Content-Type": "application/json"},
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={},
-        )
 
-        return lib.Deserializable(response, lib.to_dict)
-    
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        idships = ",".join(request.serialize())
         response = lib.request(
-            url=f"",
-            data=request.serialize(),
+            url=f"{self.settings.lapost_server_url}/idships/{idships}?lang={self.settings.lang}",
             trace=self.trace_as("json"),
-            method="POST",
-            headers={},
+            method="GET",
+            headers={
+                "accept": "application/json",
+                "X-Okapi-Key": self.settings.api_key,
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    

@@ -14,7 +14,15 @@ class Settings(core.Settings):
         return "colissimo"
 
     @property
+    def tracking_url(self):
+        return "https://www.laposte.fr/outils/suivre-vos-envois?code={}"
+
+    @property
     def server_url(self):
         return (
             "https://carrier.api" if self.test_mode else "https://sandbox.carrier.api"
         )
+
+    @property
+    def laposte_server_url(self):
+        return "https://api.laposte.fr/suivi/v2"

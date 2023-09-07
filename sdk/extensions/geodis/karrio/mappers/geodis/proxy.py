@@ -5,10 +5,31 @@ import typing
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.mappers.geodis.settings as provider_settings
+import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
-class Proxy(proxy.Proxy):
+class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     settings: provider_settings.Settings
+
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        return super().get_rates(request)
+
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        service = f"{'geolabel/api' if self.settings.test_mode else 'api'}/etiquettes/generer-flux-colis"
+        data = request.serialize()
+        response = lib.request(
+            url=f"{self.settings.server_url}/{service}",
+            data=json.dumps(data, separators=(",", ":")),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Accept": "*/*",
+                "Content-Type": "application/json",
+                "X-GEODIS-Service": self.settings.get_token(service, data),
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         service = "api/zoomclient/recherche-envoi"

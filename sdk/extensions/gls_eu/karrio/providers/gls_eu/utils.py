@@ -19,17 +19,6 @@ class Settings(core.Settings):
         return "http://fpcs.gls_eu-group.eu"
 
     @property
-    def tracking_url(self):
-        country = self.account_country_code or "CA"
-        language = self.connection_config.language or "en"
-        locale = f"{country}-{language}".lower()
-        return (
-            "https://www.dhl.com/"
-            + locale
-            + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
-        )
-
-    @property
     def connection_config(self) -> lib.units.Options:
         from karrio.providers.gls_eu.units import ConnectionConfig
 
