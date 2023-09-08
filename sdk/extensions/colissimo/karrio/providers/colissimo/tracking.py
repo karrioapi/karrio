@@ -1,4 +1,4 @@
-import karrio.schemas.colissimo.tracking_response as laposte
+import karrio.schemas.colissimo.tracking_response as colissimo
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -28,7 +28,7 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    shipment = lib.to_object(laposte.Shipment, data)
+    shipment = lib.to_object(colissimo.Shipment, data)
     status = next(
         (
             status.name

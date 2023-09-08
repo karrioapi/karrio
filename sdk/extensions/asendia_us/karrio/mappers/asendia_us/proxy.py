@@ -16,6 +16,7 @@ class Proxy(proxy.Proxy):
             method="GET",
             headers={
                 "Accept": "application/json",
+                "X-AsendiaOne-ApiKey": f"{self.settings.api_key}",
                 "Authorization": f"Basic {self.settings.authorization}",
             },
         )
@@ -30,6 +31,7 @@ class Proxy(proxy.Proxy):
             method="POST",
             headers={
                 "Accept": "application/json",
+                "X-AsendiaOne-ApiKey": f"{self.settings.api_key}",
                 "Authorization": f"Basic {self.settings.authorization}",
             },
         )
@@ -43,6 +45,7 @@ class Proxy(proxy.Proxy):
             method="DELETE",
             headers={
                 "Accept": "application/json",
+                "X-AsendiaOne-ApiKey": f"{self.settings.api_key}",
                 "Authorization": f"Basic {self.settings.authorization}",
             },
         )
@@ -50,24 +53,16 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        def _get_tracking(tracking_number: str):
-            return tracking_number, lib.request(
-                url=f"{self.settings.server_url}/api/A1/v2.0/Tracking/Detail?trackingNumberVendor={tracking_number}",
-                trace=self.trace_as("json"),
-                method="GET",
-                headers={
-                    "Accept": "application/json",
-                    "Authorization": f"Basic {self.settings.authorization}",
-                },
-            )
-
-        responses: typing.List[typing.Tuple[str, str]] = lib.run_concurently(
-            _get_tracking, request.serialize()
+        trackingNumberVendor = ",".join(request.serialize())
+        response = lib.request(
+            url=f"{self.settings.server_url}/api/A1/v2.0/Tracking/Milestone?trackingNumberVendor={trackingNumberVendor}",
+            trace=self.trace_as("json"),
+            method="DELETE",
+            headers={
+                "Accept": "application/json",
+                "X-AsendiaOne-ApiKey": f"{self.settings.api_key}",
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
         )
 
-        return lib.Deserializable(
-            responses,
-            lambda res: [
-                (num, lib.to_dict(track)) for num, track in res if any(track.strip())
-            ],
-        )
+        return lib.Deserializable(response, lib.to_dict)

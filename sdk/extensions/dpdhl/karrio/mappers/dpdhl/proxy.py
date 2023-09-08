@@ -51,7 +51,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 method="GET",
                 headers={
                     "Accept": "application/json",
-                    "DHL-API-Key": self.settings.consumer_key,
+                    "DHL-API-Key": self.settings.tracking_consumer_key,
                 },
             )
 

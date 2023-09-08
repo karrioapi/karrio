@@ -37,8 +37,9 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        shipmentTrackingNumber = ",".join(request.serialize())
         response = lib.request(
-            url=f"{self.settings.server_url}/tracking?{request.serialize()}",
+            url=f"{self.settings.server_url}/tracking?levelOfDetail=all&shipmentTrackingNumber={shipmentTrackingNumber}",
             trace=self.trace_as("json"),
             method="GET",
             headers={

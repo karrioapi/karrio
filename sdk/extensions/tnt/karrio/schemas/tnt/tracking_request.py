@@ -5,7 +5,7 @@ from jstruct import JStruct
 
 @s(auto_attribs=True)
 class CompleteType:
-    pass
+    locale: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -21,17 +21,17 @@ class LevelOfDetailType:
 
 @s(auto_attribs=True)
 class SearchCriteriaType:
-    customerReference: List[str] = []
+    consignmentNumber: List[int] = []
     marketType: Optional[str] = None
     originCountry: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class TrackRequestType:
-    locale: Optional[str] = None
-    version: Optional[str] = None
     searchCriteria: Optional[SearchCriteriaType] = JStruct[SearchCriteriaType]
     levelOfDetail: Optional[LevelOfDetailType] = JStruct[LevelOfDetailType]
+    locale: Optional[str] = None
+    version: Optional[str] = None
 
 
 @s(auto_attribs=True)

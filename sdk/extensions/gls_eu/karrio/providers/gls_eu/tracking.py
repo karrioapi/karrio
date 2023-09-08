@@ -51,6 +51,6 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = None  # map data to convert karrio model to gls_eu specific type
+    request = payload.tracking_numbers
 
     return lib.Serializable(request)

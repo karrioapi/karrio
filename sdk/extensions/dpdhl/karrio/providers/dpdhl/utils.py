@@ -50,5 +50,5 @@ class Settings(core.Settings):
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.api_key, self.api_secret)
+        pair = "%s:%s" % (self.username, self.password)
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")

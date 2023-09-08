@@ -1,17 +1,19 @@
 {
   "TrackRequest": {
-    "locale": "en_US",
-    "version": "3.1",
     "searchCriteria": {
-      "customerReference": ["test"],
+      "consignmentNumber": ["128930437"],
       "marketType": "international",
       "originCountry": "GB"
     },
     "levelOfDetail": {
-      "complete": {},
+      "complete": {
+        "locale": "FR"
+      },
       "pod": {
         "format": "URL"
       }
-    }
+    },
+    "locale": "en_US",
+    "version": "3.1"
   }
 }

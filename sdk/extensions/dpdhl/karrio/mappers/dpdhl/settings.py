@@ -12,6 +12,8 @@ class Settings(provider_utils.Settings):
     username: str
     password: str
     account_number: str = None
+    tracking_consumer_key: str = None
+    tracking_consumer_secret: str = None
 
     # generic properties
     id: str = None

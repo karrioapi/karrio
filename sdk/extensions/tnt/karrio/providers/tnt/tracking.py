@@ -1,72 +1,67 @@
-from typing import List, Tuple, cast
-from karrio.schemas.tnt.track_response_v3_1 import ConsignmentType, StatusStructure
-from karrio.schemas.tnt.track_request_v3_1 import (
-    TrackRequest,
-    SearchCriteriaType,
-    LevelOfDetailType,
-    CompleteType,
-)
-from karrio.core.utils import Element, Serializable, XP, SF, DF
-from karrio.core.models import (
-    TrackingEvent,
-    TrackingDetails,
-    TrackingRequest,
-    Message,
-)
-from karrio.providers.tnt.utils import Settings
-from karrio.providers.tnt.error import parse_error_response
+import karrio.schemas.tnt.tracking_request as tnt
+import karrio.schemas.tnt.tracking_response as tracking
+import typing
 import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.tnt.error as provider_error
+import karrio.providers.tnt.utils as provider_utils
+import karrio.providers.tnt.units as provider_units
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[lib.Element],
-    settings: Settings,
-) -> Tuple[List[TrackingDetails], List[Message]]:
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
     details = lib.find_element("Consignment", response)
     tracking_details = [_extract_detail(node, settings) for node in details]
 
-    return tracking_details, parse_error_response(response, settings)
+    return tracking_details, provider_error.parse_error_response(response, settings)
 
 
-def _extract_detail(node: Element, settings: Settings) -> TrackingDetails:
-    detail = XP.to_object(ConsignmentType, node)
+def _extract_detail(
+    node: dict, settings: provider_utils.Settings
+) -> models.TrackingDetails:
+    detail: typing.Any = None
+    events: list = []
 
-    return TrackingDetails(
+    return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=detail.ConsignmentNumber,
         events=[
-            TrackingEvent(
-                date=DF.fdate(status.LocalEventDate.valueOf_, "%Y%m%d"),
-                description=status.StatusDescription,
-                location=SF.concat_str(
-                    status.Depot, status.DepotName, join=True, separator="-"
-                ),
-                code=status.StatusCode,
-                time=DF.ftime(status.LocalEventTime.valueOf_, "%H%M"),
+            models.TrackingEvent(
+                # date=DF.fdate(status.LocalEventDate.valueOf_, "%Y%m%d"),
+                # description=status.StatusDescription,
+                # location=SF.concat_str(
+                #     status.Depot, status.DepotName, join=True, separator="-"
+                # ),
+                # code=status.StatusCode,
+                # time=DF.ftime(status.LocalEventTime.valueOf_, "%H%M"),
             )
-            for status in cast(List[StatusStructure], detail.StatusData)
+            for status in events
         ],
         delivered=(detail.SummaryCode == "DEL"),
     )
 
 
-def tracking_request(payload: TrackingRequest, settings: Settings) -> Serializable:
-    request = TrackRequest(
+def tracking_request(
+    payload: models.TrackingRequest, settings: provider_utils.Settings
+) -> lib.Serializable:
+    request = tnt.TrackRequestType(
         locale="en_US",
         version="3.1",
-        SearchCriteria=SearchCriteriaType(
+        SearchCriteria=tnt.SearchCriteriaType(
             marketType="INTERNATIONAL",
             originCountry=(settings.account_country_code or "US"),
             ConsignmentNumber=payload.tracking_numbers,
         ),
-        LevelOfDetail=LevelOfDetailType(
-            Complete=CompleteType(
+        LevelOfDetail=tnt.LevelOfDetailType(
+            Complete=tnt.CompleteType(
                 originAddress=True,
                 destinationAddress=True,
             )
         ),
     )
 
-    return Serializable(request, XP.export)
+    return lib.Serializable(request, lib.to_dict)
