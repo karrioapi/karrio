@@ -1,5 +1,5 @@
 import datetime
-from django_email_verification.token import default_token_generator
+from django_email_verification.token_utils import default_token_generator
 from django_email_verification.confirm import (
     Thread,
     InvalidUserModel,
