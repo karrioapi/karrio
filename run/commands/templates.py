@@ -332,42 +332,42 @@ class Mapper(mapper.Mapper):
     def parse_cancel_pickup_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return provider.parse_pickup_cancel_response(response.deserialize(), self.settings)
+        return provider.parse_pickup_cancel_response(response, self.settings)
     {% endif %}{% if "shipping" in features %}
     def parse_cancel_shipment_response(
-        self, response: lib.Deserializable
+        self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return provider.parse_shipment_cancel_response(response.deserialize(), self.settings)
+        return provider.parse_shipment_cancel_response(response, self.settings)
     {% endif %}{% if "pickup" in features %}
     def parse_pickup_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
-        return provider.parse_pickup_response(response.deserialize(), self.settings)
+        return provider.parse_pickup_response(response, self.settings)
     {% endif %}{% if "pickup" in features %}
     def parse_pickup_update_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.PickupDetails, typing.List[models.Message]]:
-        return provider.parse_pickup_update_response(response.deserialize(), self.settings)
+        return provider.parse_pickup_update_response(response, self.settings)
     {% endif %}{% if "rating" in features %}
     def parse_rate_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-        return provider.parse_rate_response(response.deserialize(), self.settings)
+        return provider.parse_rate_response(response, self.settings)
     {% endif %}{% if "shipping" in features %}
     def parse_shipment_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
-        return provider.parse_shipment_response(response.deserialize(), self.settings)
+        return provider.parse_shipment_response(response, self.settings)
     {% endif %}{% if "tracking" in features %}
     def parse_tracking_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-        return provider.parse_tracking_response(response.deserialize(), self.settings)
+        return provider.parse_tracking_response(response, self.settings)
     {% endif %}{% if "document" in features %}
     def parse_document_upload_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
-        return provider.parse_document_upload_response(response.deserialize(), self.settings)
+        return provider.parse_document_upload_response(response, self.settings)
     {% endif %}
 
 '''
@@ -539,7 +539,7 @@ import karrio.providers.{{id}}.utils as provider_utils
 
 
 def parse_error_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
@@ -571,11 +571,11 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_rate_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_rates = []  # extract carrier response rates
+    response_messages: list = []  # extract carrier response errors
+    response_rates: list = []  # extract carrier response rates
 
     messages = error.parse_error_response(response_messages, settings)
     rates = [_extract_details(rate, settings) for rate in response_rates]
@@ -636,8 +636,8 @@ def parse_tracking_response(
     responses: typing.List[typing.Tuple[str, {% if is_xml_api %}lib.Element{% else %}dict{% endif %}]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_details = []  # extract carrier response tracking details
+    response_messages: list = []  # extract carrier response errors
+    response_details: list = []  # extract carrier response tracking details
 
     messages = error.parse_error_response(response_messages, settings)
     tracking_details = [_extract_details(details, settings) for details in response_details]
@@ -772,10 +772,10 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_address_validation_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.AddressValidationDetails, typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors and messages
+    response_messages: list = []  # extract carrier response errors and messages
     messages = error.parse_error_response(response_messages, settings)
     success = True  # compute address validation success state
 
@@ -828,10 +828,10 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors and messages
+    response_messages: list = []  # extract carrier response errors and messages
     messages = error.parse_error_response(response_messages, settings)
     success = True  # compute shipment cancel success state
 
@@ -871,11 +871,11 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_shipment_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_shipment = None  # extract carrier response shipment
+    response_messages: list = []  # extract carrier response errors
+    response_shipment: typing.Any = None  # extract carrier response shipment
 
     messages = error.parse_error_response(response_messages, settings)
     shipment = _extract_details(response_shipment, settings)
@@ -937,11 +937,11 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_document_upload_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.DocumentUploadDetails, typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors and messages
-    response_details = None  # extract carrier response details
+    response_messages: list = []  # extract carrier response errors and messages
+    response_details: typing.Any = None  # extract carrier response details
 
     messages = error.parse_error_response(response_messages, settings)
     details = _extract_details(response_details, settings)
@@ -1002,10 +1002,10 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_pickup_cancel_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors and messages
+    response_messages: list = []  # extract carrier response errors and messages
     messages = error.parse_error_response(response_messages, settings)
     success = True  # compute address validation success state
 
@@ -1045,11 +1045,11 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_pickup_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_pickup = None  # extract carrier response pickup
+    response_messages: list = []  # extract carrier response errors
+    response_pickup: typing.Any = None  # extract carrier response pickup
 
     messages = error.parse_error_response(response_messages, settings)
     pickup = _extract_details(response_pickup, settings)
@@ -1094,11 +1094,11 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_pickup_update_response(
-    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
+    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages = []  # extract carrier response errors
-    response_pickup = None  # extract carrier response pickup
+    response_messages: list = []  # extract carrier response errors
+    response_pickup: typing.Any = None  # extract carrier response pickup
 
     messages = error.parse_error_response(response_messages, settings)
     pickup = _extract_details(response_pickup, settings)
