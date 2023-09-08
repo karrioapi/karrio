@@ -1,0 +1,67 @@
+{
+  "assignedTo": {
+    "id": "ee59-b174-4698-ac55-81d9d",
+    "name": "John Doe"
+  },
+  "stopId": 164557,
+  "status": "Pending",
+  "brandId": null,
+  "contact": {
+    "name": "Matthew Robinson",
+    "phone": "0123456789",
+    "email": "matt.robinson@email.com"
+  },
+  "name": "Locate2u",
+  "address": "Level 4, Suite 4.11, 55 Miller St, Pyrmont NSW 2009, Australia",
+  "location": {
+    "latitude": -33.8706672,
+    "longitude": 151.192487
+  },
+  "tripDate": "2023-09-08",
+  "appointmentTime": "13:07",
+  "timeWindowStart": null,
+  "timeWindowEnd": null,
+  "durationMinutes": 10,
+  "notes": "Please call before you deliver",
+  "lastModifiedDate": "2023-09-08T13:07:24.904Z",
+  "customFields": {
+    "custom1": "value",
+    "custom2": "value",
+    "custom3": "value"
+  },
+  "type": null,
+  "shipmentId": 0,
+  "load": {
+    "quantity": 0,
+    "volume": 0,
+    "weight": 0,
+    "length": 0,
+    "width": 0,
+    "height": 0
+  },
+  "source": null,
+  "sourceReference": null,
+  "customerId": 0,
+  "runNumber": 0,
+  "teamRegionId": 0,
+  "teamMemberInvoiceId": 0,
+  "customerInvoiceId": 0,
+  "arrivalDate": "2023-09-08T13:07:24+00:00",
+  "lines": [
+    {
+      "lineId": 201,
+      "itemId": 101,
+      "serviceId": null,
+      "productVariantId": null,
+      "barcode": "1234567890",
+      "description": "Item A - Barcode scanning item",
+      "quantity": 1,
+      "status": "Created",
+      "itemStatus": "",
+      "unitPriceExTax": 0,
+      "priceCurrency": ""
+    }
+  ],
+  "driverInstructions": null,
+  "oneTimePin": "0011"
+}
