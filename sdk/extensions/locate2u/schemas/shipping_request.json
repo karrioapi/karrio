@@ -1,0 +1,51 @@
+{
+  "contact": {
+    "name": "Matthew Robinson",
+    "phone": "0123456789",
+    "email": "matt.robinson@email.com"
+  },
+  "name": "Locate2u",
+  "address": "Level 4, Suite 4.11, 55 Miller St, Pyrmont NSW 2009, Australia",
+  "location": {
+    "latitude": -33.8706672,
+    "longitude": 151.192487
+  },
+  "type": null,
+  "appointmentTime": "12:00",
+  "timeWindowStart": null,
+  "timeWindowEnd": null,
+  "brandId": null,
+  "durationMinutes": 10,
+  "notes": "Please call before you deliver",
+  "tripDate": "2023-09-08T13:07:24.905Z",
+  "customFields": {
+    "custom1": "value",
+    "custom2": "value",
+    "custom3": "value"
+  },
+  "assignedTeamMemberId": "",
+  "source": null,
+  "sourceReference": null,
+  "load": {
+    "quantity": 0,
+    "volume": 0,
+    "weight": 0,
+    "length": 0,
+    "width": 0,
+    "height": 0
+  },
+  "customerId": 0,
+  "runNumber": 0,
+  "teamRegionId": 0,
+  "driverInstructions": null,
+  "lines": [
+    {
+      "barcode": "1234567890",
+      "description": "Item A - Barcode scanning item",
+      "currentLocation": "Warehouse",
+      "serviceId": 0,
+      "productVariantId": 0,
+      "quantity": 1
+    }
+  ]
+}
