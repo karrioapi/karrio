@@ -72,7 +72,11 @@ def add_extension(
         ).stream(**context).dump(f"{ROOT_DIR.substitute(id=id)}/generate")
 
         # schema files
-        templates.SCHEMA_TEMPLATE.stream(**context).dump(
+        (
+            templates.XML_SCHEMA_TEMPLATE
+            if is_xml_api
+            else templates.JSON_SCHEMA_TEMPLATE
+        ).stream(**context).dump(
             f"{SCHEMAS_DIR.substitute(id=id)}/error.{'xsd' if is_xml_api else 'json'}"
         )
         templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(
@@ -192,5 +196,112 @@ def add_extension(
     typer.echo("Done!")
 
 
-def add_features(extension: str, feature: typing.List[str]):
-    pass
+def add_features(
+    id: str,
+    name: str,
+    feature: str,
+    is_xml_api: bool,
+):
+    typer.confirm(
+        f'Bootstrap features for: "{name}" extension with id "{id}"',
+        abort=True,
+    )
+
+    features = [f.strip() for f in feature.split(",")]
+    context = dict(
+        id=id,
+        name=name,
+        features=features,
+        is_xml_api=is_xml_api,
+        compact_name=name.strip()
+        .replace("-", "")
+        .replace("_", "")
+        .replace("&", "")
+        .replace(" ", ""),
+    )
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        transient=True,
+    ) as progress:
+        progress.add_task(description="Processing...", total=None)
+        os.makedirs(TESTS_DIR.substitute(id=id), exist_ok=True)
+        os.makedirs(SCHEMAS_DIR.substitute(id=id), exist_ok=True)
+        os.makedirs(MAPPERS_DIR.substitute(id=id), exist_ok=True)
+        os.makedirs(PROVIDERS_DIR.substitute(id=id), exist_ok=True)
+        os.makedirs(SCHEMA_DATATYPES_DIR.substitute(id=id), exist_ok=True)
+        time.sleep(1)
+
+        if "address" in features:
+            templates.TEST_ADDRESS_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_address.py"
+            )
+
+            templates.PROVIDER_ADDRESS_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/address.py"
+            )
+
+        if "rating" in features:
+            templates.TEST_RATE_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_rate.py"
+            )
+
+            templates.PROVIDER_RATE_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/rate.py"
+            )
+
+        if "tracking" in features:
+            templates.TEST_TRACKING_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_tracking.py"
+            )
+
+            templates.PROVIDER_TRACKING_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/tracking.py"
+            )
+
+        if "document" in features:
+            templates.TEST_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_document.py"
+            )
+
+            templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/document.py"
+            )
+
+        if "shipping" in features:
+            templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_shipment.py"
+            )
+
+            os.makedirs(f"{PROVIDERS_DIR.substitute(id=id)}/shipment", exist_ok=True)
+            templates.PROVIDER_SHIPMENT_CANCEL_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/shipment/cancel.py"
+            )
+            templates.PROVIDER_SHIPMENT_CREATE_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/shipment/create.py"
+            )
+            templates.PROVIDER_SHIPMENT_IMPORTS_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/shipment/__init__.py"
+            )
+
+        if "pickup" in features:
+            templates.TEST_PICKUP_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_pickup.py"
+            )
+
+            os.makedirs(f"{PROVIDERS_DIR.substitute(id=id)}/pickup", exist_ok=True)
+            templates.PROVIDER_PICKUP_CANCEL_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/pickup/cancel.py"
+            )
+            templates.PROVIDER_PICKUP_CREATE_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/pickup/create.py"
+            )
+            templates.PROVIDER_PICKUP_UPDATE_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/pickup/update.py"
+            )
+            templates.PROVIDER_PICKUP_IMPORTS_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/pickup/__init__.py"
+            )
+
+    typer.echo("Done!")

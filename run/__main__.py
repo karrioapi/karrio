@@ -21,7 +21,7 @@ def add_extension(
     version: typing.Optional[str] = typer.Option(
         f"{datetime.now().strftime('%Y.%-m')}", prompt=True
     ),
-    is_xml_api: typing.Optional[bool] = typer.Option(..., prompt="Is XML API?"),
+    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
 ):
     sdk.add_extension(
         id,
@@ -33,18 +33,23 @@ def add_extension(
 
 
 @app.command()
-def add_features(extension: str = typer.Option(None)):
+def add_features(
+    extension: str = typer.Option(None),
+    name: str = typer.Option(..., prompt=True),
+    features: typing.Optional[str] = typer.Option(
+        ", ".join(utils.DEFAULT_FEATURES), prompt=True
+    ),
+    is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
+):
     if not extension:
         print("No carrier slug provided")
         raise typer.Abort()
 
-    _features = typer.prompt(
-        "Carrier features (default: tracking, rating, shipping, pickup, address, upload)"
-    )
-
     sdk.add_features(
         extension,
-        _features,
+        name,
+        features,
+        is_xml_api,
     )
 
 
