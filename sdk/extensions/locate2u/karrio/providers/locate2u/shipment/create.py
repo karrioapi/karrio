@@ -10,9 +10,10 @@ import karrio.providers.locate2u.units as provider_units
 
 
 def parse_shipment_response(
-    response: dict,
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
     shipment = _extract_details(response, settings) if len(messages) == 0 else None
 
@@ -45,7 +46,6 @@ def shipment_request(
 ) -> lib.Serializable:
     recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(payload.parcels).single
-    service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
@@ -59,13 +59,18 @@ def shipment_request(
             email=recipient.email,
         ),
         name=recipient.company_name or recipient.person_name,
-        address=recipient.address_line,
+        address=lib.text(
+            recipient.address_line,
+            lib.text(recipient.city, recipient.postal_code, recipient.state_code),
+            recipient.country_name,
+            separator=", ",
+        ),
         location=(
             locate2u.Location(
                 latitude=options.latitude.state,
                 longitude=options.longitude.state,
             )
-            if any([options.latitude.state, recipient.longitude.state])
+            if any([options.latitude.state, options.longitude.state])
             else None
         ),
         appointmentTime=options.appointment_time.state,
@@ -76,19 +81,19 @@ def shipment_request(
         tripDate=lib.fdatetime(
             options.shipment_date.state,
             current_format="%Y-%m-%d",
-            output_format="%Y-%m-%dT%H:%M:%S.%zZ",
+            output_format="%Y-%m-%dT%H:%M:%S.%fZ",
         ),
         customFields=None,
-        assignedTeamMemberId=None,
-        source=settings.connection_config.source,
+        assignedTeamMemberId=options.assigned_team_member_id.state,
+        source=options.source.state,
         sourceReference=payload.reference,
         load=locate2u.Load(
             quantity=package.items.quantity,
             volume=package.volume.value,
-            weight=package.weight.value,
-            length=package.length.value,
-            width=package.width.value,
-            height=package.height.value,
+            weight=package.weight.KG,
+            length=package.length.CM,
+            width=package.width.CM,
+            height=package.height.CM,
         ),
         customerId=options.customer_id.state,
         runNumber=options.run_number.state,
@@ -99,8 +104,8 @@ def shipment_request(
             locate2u.Line(
                 barcode=item.hs_code or item.sku,
                 description=item.title or item.description,
-                currentLocation=item.origin_country,
-                serviceId=service,
+                currentLocation=item.metadata.get("currentLocation"),
+                serviceId=None,
                 productVariantId=None,
                 quantity=item.quantity,
             )
