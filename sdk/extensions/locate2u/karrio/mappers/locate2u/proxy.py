@@ -24,7 +24,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",
             },
-            on_error=provider_error.parse_http_error,
+            on_error=provider_error.parse_http_response,
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -40,7 +40,8 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",
             },
-            on_error=provider_error.parse_http_error,
+            on_success=provider_error.parse_http_response,
+            decoder=provider_error.parse_http_response,
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -56,7 +57,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                     "Content-Type": "application/json",
                     "Authorization": f"Bearer {self.settings.access_token}",
                 },
-                on_error=provider_error.parse_http_error,
+                on_error=provider_error.parse_http_response,
             )
 
         responses: typing.List[typing.Tuple[str, str]] = lib.run_concurently(

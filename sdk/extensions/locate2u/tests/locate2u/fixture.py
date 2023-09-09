@@ -6,7 +6,7 @@ expiry = datetime.datetime.now() + datetime.timedelta(days=1)
 client_id = "client_id"
 client_secret = "client_secret"
 cached_auth = {
-    f"ups|{client_id}|{client_secret}": dict(
+    f"locate2u|{client_id}|{client_secret}": dict(
         access_token="access_token",
         token_type="Bearer",
         scope="locate2u.api",
@@ -17,8 +17,8 @@ cached_auth = {
 
 gateway = karrio.gateway["locate2u"].create(
     dict(
-        client_id="client_id",
-        client_secret="client_secret",
+        client_id=client_id,
+        client_secret=client_secret,
         cache=lib.Cache(**cached_auth),
     )
 )

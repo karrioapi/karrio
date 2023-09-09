@@ -11,13 +11,12 @@ class Settings(provider_utils.Settings):
     """Locate2u connection settings."""
 
     # required carrier specific properties
-    client_id: str
-    client_secret: str
+    client_id: str = None
+    client_secret: str = None
 
-    # generic properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "locate2u"
-    account_country_code: str = None
-    metadata: dict = {}
+    account_country_code: str = "AU"
     cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
+    metadata: dict = {}

@@ -12,23 +12,25 @@ def parse_error_response(
 ) -> typing.List[models.Message]:
     results = responses if isinstance(responses, list) else [responses]
     errors: typing.List[dict] = [
-        error for error in results if error.get("error_code") is not None
+        error for error in results if error.get("error") is not None
     ]
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code=error.get("error_code"),
-            message=error.get("error_message"),
+            code=error.get("code"),
+            message=error.get("error"),
             details={**kwargs},
         )
         for error in errors
     ]
 
 
-def parse_http_error(error: urllib.error.HTTPError) -> dict:
-    return dict(
-        error_code=str(error.code),
-        error_message=error.reason,
-    )
+def parse_http_response(
+    response: typing.Union[urllib.error.HTTPError, typing.Any]
+) -> dict:
+    if str(response.code).startswith("20"):
+        return lib.to_json(dict(code=str(response.code)))
+
+    return lib.to_json(dict(code=str(response.code), error=response.reason))

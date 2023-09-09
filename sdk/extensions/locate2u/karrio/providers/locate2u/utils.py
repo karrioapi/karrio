@@ -10,11 +10,15 @@ import karrio.core.errors as errors
 class Settings(core.Settings):
     """Locate2u connection settings."""
 
-    client_id: str
-    client_secret: str
+    client_id: str = None
+    client_secret: str = None
 
+    id: str = None
+    test_mode: bool = False
+    carrier_id: str = "locate2u"
+    account_country_code: str = "AU"
+    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     metadata: dict = {}
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
 
     @property
     def carrier_name(self):

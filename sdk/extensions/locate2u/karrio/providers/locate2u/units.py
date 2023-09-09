@@ -1,10 +1,10 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 
 
 class PackagingType(lib.Flag):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -18,18 +18,28 @@ class PackagingType(lib.Flag):
 
 
 class ShippingService(lib.Enum):
-    """ Carrier specific services """
-    locate2u_standard_service = "Locate2u Standard Service"
+    """Carrier specific services"""
+
+    locate2u_local_delivery = "Locate2u Local Delivery"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
-    # locate2u_option = lib.OptionEnum("code")
+    """Carrier specific options"""
 
-    """ Unified Option type mapping """
-    # insurance = locate2u_coverage  #  maps unified karrio option to carrier specific
-
-    pass
+    appointment_time = lib.OptionEnum("appointment_time")
+    time_window_start = lib.OptionEnum("time_window_start")
+    time_window_end = lib.OptionEnum("time_window_end")
+    brand_id = lib.OptionEnum("brand_id")
+    duration_minutes = lib.OptionEnum("duration_minutes", lib.to_int)
+    assigned_team_member_id = lib.OptionEnum("assigned_team_member_id")
+    source = lib.OptionEnum("source")
+    customer_id = lib.OptionEnum("customer_id")
+    run_number = lib.OptionEnum("run_number")
+    team_region_id = lib.OptionEnum("team_region_id")
+    driver_instructions = lib.OptionEnum("driver_instructions")
+    notes = lib.OptionEnum("notes")
+    latitude = lib.OptionEnum("latitude", float)
+    longitude = lib.OptionEnum("longitude", float)
 
 
 def shipping_options_initializer(
@@ -47,3 +57,12 @@ def shipping_options_initializer(
         return key in ShippingOption  # type: ignore
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+
+class TrackingStatus(lib.Enum):
+    on_hold = ["On Hold"]
+    delivered = ["Complete"]
+    in_transit = ["Pending", "Enroute"]
+    delivery_failed = ["Failed", "Cancelled"]
+    delivery_delayed = ["Delayed"]
+    out_for_delivery = ["Arrived"]
