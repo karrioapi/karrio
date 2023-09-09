@@ -51,6 +51,7 @@
 -e ./sdk/extensions/usps_international
 -e ./sdk/extensions/yanwen
 -e ./sdk/extensions/yunexpress
+-e ./sdk/extensions/zoom2u
 
 
 -e ./sdk/vendors/easypost
