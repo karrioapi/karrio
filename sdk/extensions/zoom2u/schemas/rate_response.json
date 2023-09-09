@@ -1,0 +1,24 @@
+[
+  {
+    "deliverySpeed": "Same day",
+    "price": 68,
+    "deliveredBy": "2020-12-25T06:00:00Z",
+    "earliestPickupEta": "2020-12-24T11:20:00Z",
+    "earliestDropEta": "2020-12-24T11:20:00Z"
+  },
+  {
+    "deliverySpeed": "Same day",
+    "price": 68,
+    "deliveredBy": "2020-12-25T09:30:00Z"
+  },
+  {
+    "deliverySpeed": "3 hour",
+    "price": 86,
+    "deliveredBy": "2020-12-25T01:00:00Z"
+  },
+  {
+    "deliverySpeed": "VIP",
+    "price": 159,
+    "deliveredBy": "2020-12-24T11:20:00Z"
+  }
+]
