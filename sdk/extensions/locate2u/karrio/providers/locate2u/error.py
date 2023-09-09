@@ -27,10 +27,5 @@ def parse_error_response(
     ]
 
 
-def parse_http_response(
-    response: typing.Union[urllib.error.HTTPError, typing.Any]
-) -> dict:
-    if str(response.code).startswith("20"):
-        return lib.to_json(dict(code=str(response.code)))
-
+def parse_http_response(response: urllib.error.HTTPError) -> dict:
     return lib.to_json(dict(code=str(response.code), error=response.reason))

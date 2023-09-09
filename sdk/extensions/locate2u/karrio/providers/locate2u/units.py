@@ -1,5 +1,6 @@
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.core.models as models
 
 
 class PackagingType(lib.Flag):
@@ -66,3 +67,13 @@ class TrackingStatus(lib.Enum):
     delivery_failed = ["Failed", "Cancelled"]
     delivery_delayed = ["Delayed"]
     out_for_delivery = ["Arrived"]
+
+
+DEFAULT_SERVICES = [
+    models.ServiceLevel(
+        service_name="Locate2u Local Delivery",
+        service_code="locate2u_local_delivery",
+        currency="AUD",
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
+    ),
+]
