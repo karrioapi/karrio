@@ -24,7 +24,7 @@ class TestLocate2uTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/v1/stops/89108749065090?includeItems=false&includeLines=false",
             )
 
     def test_parse_tracking_response(self):
@@ -54,12 +54,44 @@ TrackingPayload = {
     "tracking_numbers": ["89108749065090"],
 }
 
-ParsedTrackingResponse = []
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "locate2u",
+            "carrier_name": "locate2u",
+            "delivered": False,
+            "estimated_delivery": "2023-09-08",
+            "events": [
+                {
+                    "code": "Pending",
+                    "date": "2023-09-08",
+                    "description": "Pending",
+                    "latitude": -33.8706672,
+                    "longitude": 151.192487,
+                    "time": "13:07",
+                }
+            ],
+            "tracking_number": "164557",
+        }
+    ],
+    [],
+]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "locate2u",
+            "carrier_name": "locate2u",
+            "code": "401",
+            "details": {"tracking_number": "89108749065090"},
+            "message": "Unauthorized",
+        }
+    ],
+]
 
 
-TrackingRequest = {}
+TrackingRequest = ["89108749065090"]
 
 TrackingResponse = """{
   "assignedTo": {
@@ -130,4 +162,8 @@ TrackingResponse = """{
 }
 """
 
-ErrorResponse = """"""
+ErrorResponse = """{
+    "error": "Unauthorized", 
+    "code": "401"
+}
+"""

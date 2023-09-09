@@ -38,6 +38,7 @@
 -e ./sdk/extensions/fedex
 -e ./sdk/extensions/geodis
 -e ./sdk/extensions/laposte
+-e ./sdk/extensions/locate2u
 -e ./sdk/extensions/nationex
 -e ./sdk/extensions/purolator
 -e ./sdk/extensions/roadie

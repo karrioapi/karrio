@@ -3,7 +3,7 @@ from unittest.mock import patch, ANY
 from .fixture import gateway
 
 import karrio.lib as lib
-import karrio.providers.ups.utils as utils
+import karrio.providers.locate2u.utils as utils
 
 
 class TestLocate2uLogin(unittest.TestCase):
@@ -40,7 +40,8 @@ ParsedLoginResponse = {
     "expiry": ANY,
     "token_type": "Bearer",
     "access_token": "access_token",
-    "expires_in": "3600",
+    "scope": "locate2u.api",
+    "expires_in": 3600,
 }
 
 LoginResponse = """{

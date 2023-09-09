@@ -17,14 +17,15 @@ def parse_tracking_response(
         [
             error.parse_error_response(response, settings, tracking_number=_)
             for _, response in responses
-            if response.get("errorCode") is not None
+            if response.get("error") is not None
         ],
         [],
     )
+
     tracking_details = [
         _extract_details(response, settings)
         for _, response in responses
-        if response.get("errorCode") is None
+        if response.get("error") is None
     ]
 
     return tracking_details, messages
@@ -50,12 +51,12 @@ def _extract_details(
         tracking_number=str(tracking.stopId),
         events=[
             models.TrackingEvent(
-                date=lib.fdate(tracking.lastModifiedDate, "%Y-%m-%dT%H:%M:%S.%z"),
+                date=lib.fdate(tracking.lastModifiedDate, "%Y-%m-%dT%H:%M:%S.%fZ"),
                 description=tracking.status,
                 code=tracking.status,
-                time=lib.ftime(tracking.lastModifiedDate, "%Y-%m-%dT%H:%M:%S.%z"),
-                latitude=tracking.latitude,
-                longitude=tracking.longitude,
+                time=lib.ftime(tracking.lastModifiedDate, "%Y-%m-%dT%H:%M:%S.%fZ"),
+                latitude=tracking.location.latitude,
+                longitude=tracking.location.longitude,
             )
         ],
         estimated_delivery=lib.fdate(tracking.arrivalDate, "%Y-%m-%dT%H:%M:%S%z"),
