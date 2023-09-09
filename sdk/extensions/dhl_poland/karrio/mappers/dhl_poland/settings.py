@@ -1,16 +1,16 @@
 """Karrio DHL Parcel Poland client settings."""
 
-from typing import List
 import attr
-from jstruct.types import JList
-from karrio.core.models import ServiceLevel
+import typing
+import jstruct
+import karrio.core.models as models
+import karrio.providers.dhl_poland.units as provider_units
+import karrio.providers.dhl_poland.utils as provider_utils
 from karrio.universal.mappers.rating_proxy import RatingMixinSettings
-from karrio.providers.dhl_poland.units import DEFAULT_SERVICES
-from karrio.providers.dhl_poland.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings, RatingMixinSettings):
+class Settings(provider_utils.Settings, RatingMixinSettings):
     """DHL Parcel Poland connection settings."""
 
     username: str  # type: ignore
@@ -24,4 +24,11 @@ class Settings(BaseSettings, RatingMixinSettings):
     metadata: dict = {}
     config: dict = {}
 
-    services: List[ServiceLevel] = JList[ServiceLevel, False, dict(default=DEFAULT_SERVICES)]  # type: ignore
+    services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel, False, dict(default=provider_units.DEFAULT_SERVICES)]  # type: ignore
+
+    @property
+    def shipping_services(self) -> typing.List[models.ServiceLevel]:
+        if any(self.services or []):
+            return self.services
+
+        return provider_units.DEFAULT_SERVICES

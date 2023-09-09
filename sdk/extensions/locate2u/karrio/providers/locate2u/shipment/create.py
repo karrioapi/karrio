@@ -32,7 +32,7 @@ def _extract_details(
         tracking_number=str(shipment.stopId),
         shipment_identifier=str(shipment.stopId),
         label_type="PDF",
-        docs=models.Documents(label=""),
+        docs=models.Documents(label="No label..."),
         meta=dict(
             shipmentId=shipment.shipmentId,
             durationMinutes=shipment.durationMinutes,

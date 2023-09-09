@@ -133,7 +133,7 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "locate2u",
         "carrier_name": "locate2u",
-        "docs": {},
+        "docs": {"label": "No label..."},
         "label_type": "PDF",
         "meta": {"durationMinutes": 10, "shipmentId": 0},
         "shipment_identifier": "164557",
