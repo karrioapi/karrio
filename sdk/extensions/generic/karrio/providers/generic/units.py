@@ -15,7 +15,8 @@ DEFAULT_SERVICES = [
         service_name="Standard Service",
         service_code="standard_service",
         currency="USD",
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
+        transit_days=1,
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
     ),
 ]
 

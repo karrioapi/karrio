@@ -2,7 +2,7 @@ from karrio.core.metadata import Metadata
 
 from karrio.mappers.dhl_poland.mapper import Mapper
 from karrio.mappers.dhl_poland.proxy import Proxy
-from karrio.mappers.dhl_poland.settings import Settings, DEFAULT_SERVICES
+from karrio.mappers.dhl_poland.settings import Settings
 from karrio.providers.dhl_poland import units
 
 

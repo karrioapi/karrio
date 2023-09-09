@@ -17,7 +17,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/api/v1/stops",
-            data=request.serialize(),
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
             headers={
@@ -33,15 +33,14 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         payload = request.serialize()
         response = lib.request(
             url=f"{self.settings.server_url}/api/v1/stops/{payload['stopId']}",
-            data=request.serialize(),
             trace=self.trace_as("json"),
             method="DELETE",
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",
             },
-            on_success=provider_error.parse_http_response,
-            decoder=provider_error.parse_http_response,
+            on_error=provider_error.parse_http_response,
+            decoder=lambda _: dict(ok=True),
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -50,7 +49,6 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         def _get_tracking(stop_id: str):
             return stop_id, lib.request(
                 url=f"{self.settings.server_url}/api/v1/stops/{stop_id}?includeItems=false&includeLines=false",
-                data=request.serialize(),
                 trace=self.trace_as("json"),
                 method="GET",
                 headers={
