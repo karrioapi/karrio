@@ -22,7 +22,6 @@ django-debug-toolbar
 -e ./sdk/extensions/fedex
 -e ./sdk/extensions/geodis
 -e ./sdk/extensions/laposte
--e ./sdk/extensions/locate2u
 -e ./sdk/extensions/nationex
 # -e ./sdk/extensions/postnl
 -e ./sdk/extensions/purolator
@@ -38,6 +37,8 @@ django-debug-toolbar
 -e ./sdk/vendors/easypost
 -e ./sdk/vendors/eshipper
 -e ./sdk/vendors/freightcom
+-e ./sdk/vendors/locate2u
+-e ./sdk/vendors/zoom2u
 
 
 # karrio server core modules
