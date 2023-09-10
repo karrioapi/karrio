@@ -83,6 +83,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "zoom2u",
             "carrier_name": "zoom2u",
+            "currency": "AUD",
             "estimated_delivery": "2020-12-25",
             "meta": {
                 "earliestDropEta": "2020-12-24T11:20:00Z",
@@ -96,6 +97,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "zoom2u",
             "carrier_name": "zoom2u",
+            "currency": "AUD",
             "estimated_delivery": "2020-12-25",
             "meta": {"service_name": "Same day"},
             "service": "zoom2u_same_day",
@@ -105,6 +107,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "zoom2u",
             "carrier_name": "zoom2u",
+            "currency": "AUD",
             "estimated_delivery": "2020-12-25",
             "meta": {"service_name": "3 hour"},
             "service": "zoom2u_3_hour",
@@ -114,6 +117,7 @@ ParsedRateResponse = [
         {
             "carrier_id": "zoom2u",
             "carrier_name": "zoom2u",
+            "currency": "AUD",
             "estimated_delivery": "2020-12-24",
             "meta": {"service_name": "VIP"},
             "service": "zoom2u_VIP",
