@@ -88,6 +88,7 @@ karrio.freightcom @ file://${PWD}/sdk/vendors/freightcom
 karrio.generic @ file://${PWD}/sdk/extensions/generic
 karrio.geodis @ file://${PWD}/sdk/extensions/geodis
 karrio.laposte @ file://${PWD}/sdk/extensions/laposte
+karrio.locate2u @ file://${PWD}/sdk/vendors/locate2u
 karrio.nationex @ file://${PWD}/sdk/extensions/nationex
 karrio.purolator @ file://${PWD}/sdk/extensions/purolator
 karrio.roadie @ file://${PWD}/sdk/extensions/roadie
@@ -112,6 +113,7 @@ karrio.usps @ file://${PWD}/sdk/extensions/usps
 karrio.usps-international @ file://${PWD}/sdk/extensions/usps_international
 karrio.yanwen @ file://${PWD}/sdk/extensions/yanwen
 karrio.yunexpress @ file://${PWD}/sdk/extensions/yunexpress
+karrio.zoom2u @ file://${PWD}/sdk/vendors/zoom2u
 lxml==4.9.3
 lxml-stubs==0.4.0
 MarkupPy==1.14
