@@ -24,7 +24,7 @@ class TestZoom2uRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/v1/delivery/quote",
             )
 
     def test_parse_rate_response(self):
@@ -41,43 +41,118 @@ if __name__ == "__main__":
     unittest.main()
 
 
-RatePayload = {}
+RatePayload = {
+    "shipper": {
+        "person_name": "John Smith",
+        "email": "test@test.com",
+        "phone_number": "0000 0000",
+        "street_number": "123",
+        "address_line1": "Main St",
+        "city": "North Sydney",
+        "state_code": "NSW",
+        "postal_code": "2000",
+        "country_code": "AU",
+    },
+    "recipient": {
+        "person_name": "Jane Smith",
+        "email": "test@test.com",
+        "phone_number": "0000 0000",
+        "street_number": "123",
+        "address_line1": "Main St",
+        "city": "North Sydney",
+        "state_code": "NSW",
+        "postal_code": "2000",
+        "country_code": "AU",
+    },
+    "parcels": [
+        {
+            "packaging_type": "small_box",
+            "description": "1 box with some cakes",
+        }
+    ],
+    "services": ["zoom2u_VIP"],
+    "options": {
+        "purchase_order_number": "ABCD1234",
+        "ready_datetime": "2020-12-24 10:20:00",
+        "vehicle_type": "zoom2u_car",
+    },
+}
 
-ParsedRateResponse = []
+ParsedRateResponse = [
+    [
+        {
+            "carrier_id": "zoom2u",
+            "carrier_name": "zoom2u",
+            "estimated_delivery": "2020-12-25",
+            "meta": {
+                "earliestDropEta": "2020-12-24T11:20:00Z",
+                "earliestPickupEta": "2020-12-24T11:20:00Z",
+                "service_name": "Same day",
+            },
+            "service": "zoom2u_same_day",
+            "total_charge": 68.0,
+            "transit_days": 1,
+        },
+        {
+            "carrier_id": "zoom2u",
+            "carrier_name": "zoom2u",
+            "estimated_delivery": "2020-12-25",
+            "meta": {"service_name": "Same day"},
+            "service": "zoom2u_same_day",
+            "total_charge": 68.0,
+            "transit_days": 1,
+        },
+        {
+            "carrier_id": "zoom2u",
+            "carrier_name": "zoom2u",
+            "estimated_delivery": "2020-12-25",
+            "meta": {"service_name": "3 hour"},
+            "service": "zoom2u_3_hour",
+            "total_charge": 86.0,
+            "transit_days": 1,
+        },
+        {
+            "carrier_id": "zoom2u",
+            "carrier_name": "zoom2u",
+            "estimated_delivery": "2020-12-24",
+            "meta": {"service_name": "VIP"},
+            "service": "zoom2u_VIP",
+            "total_charge": 159.0,
+            "transit_days": 1,
+        },
+    ],
+    [],
+]
 
 
 RateRequest = {
     "PurchaseOrderNumber": "ABCD1234",
     "PackageDescription": "1 box with some cakes",
     "DeliverySpeed": "VIP",
-    "ReadyDateTime": "2020-12-24T10:20:00.06Z",
+    "ReadyDateTime": "2020-12-24T10:20:00.000000Z",
     "VehicleType": "Car",
     "PackageType": "Box",
     "Pickup": {
         "ContactName": "John Smith",
         "Email": "test@test.com",
         "Phone": "0000 0000",
-        "UnitNumber": "",
         "StreetNumber": "123",
         "Street": "Main St",
         "Suburb": "North Sydney",
         "State": "NSW",
         "Postcode": "2000",
         "Country": "Australia",
-        "Notes": "",
     },
     "Dropoff": {
         "ContactName": "Jane Smith",
         "Email": "test@test.com",
         "Phone": "0000 0000",
-        "UnitNumber": "ACME Co.",
         "StreetNumber": "123",
         "Street": "Main St",
         "Suburb": "North Sydney",
         "State": "NSW",
         "Postcode": "2000",
         "Country": "Australia",
-        "Notes": "",
     },
 }
 

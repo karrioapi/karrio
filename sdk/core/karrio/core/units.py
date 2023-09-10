@@ -1116,7 +1116,7 @@ class ComputedAddress(models.Address):
 
     @property
     def country_name(self):
-        return Country[self.address.country_code].value
+        return Country.map(self.address.country_code).value
 
     @property
     def address_line(self) -> str:

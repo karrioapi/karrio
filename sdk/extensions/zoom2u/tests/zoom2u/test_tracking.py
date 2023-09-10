@@ -24,7 +24,7 @@ class TestZoom2uTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/v1/delivery/status/89108749065090",
             )
 
     def test_parse_tracking_response(self):
@@ -54,12 +54,45 @@ TrackingPayload = {
     "tracking_numbers": ["89108749065090"],
 }
 
-ParsedTrackingResponse = []
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "zoom2u",
+            "carrier_name": "zoom2u",
+            "delivered": False,
+            "events": [
+                {
+                    "code": "Dropped Off",
+                    "date": "2018-11-12",
+                    "description": "Dropped Off",
+                    "time": "10:29",
+                }
+            ],
+            "info": {
+                "carrier_tracking_link": "https://deliveries.zoom2u.com/EMPQ28I5J"
+            },
+            "meta": {},
+            "tracking_number": "Z20190101123456",
+        }
+    ],
+    [],
+]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "zoom2u",
+            "carrier_name": "zoom2u",
+            "code": "403",
+            "details": {"tracking_number": "89108749065090"},
+            "message": "Forbidden",
+        }
+    ],
+]
 
 
-TrackingRequest = {}
+TrackingRequest = ["89108749065090"]
 
 TrackingResponse = """{
   "reference": "Z20190101123456",
@@ -79,6 +112,6 @@ TrackingResponse = """{
 
 ErrorResponse = """{
     "error-code": "403",
-    "error": "Forbidden",
+    "message": "Forbidden"
 }
 """

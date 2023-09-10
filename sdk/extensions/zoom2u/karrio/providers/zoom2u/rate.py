@@ -31,14 +31,14 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.RateResponseElementType, data)
-    service = provider_units.ServiceType.map(rate.deliverySpeed)
+    service = provider_units.ShippingService.map(rate.deliverySpeed)
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service=service.name_or_key,
         total_charge=lib.to_money(rate.price),
-        currency=settings.connection_config.currency,
+        currency=settings.connection_config.currency.state,
         transit_days=1,
         estimated_delivery=lib.fdate(rate.deliveredBy, "%Y-%m-%dT%H:%M:%S%z"),
         meta=dict(
@@ -56,7 +56,7 @@ def rate_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(payload.parcels).single
-    service = lib.to_services(payload.services, provider_units.ServiceType).first
+    service = lib.to_services(payload.services, provider_units.ShippingService).first
     options = lib.to_shipping_options(
         payload.options,
         package_options=package.options,
@@ -66,18 +66,19 @@ def rate_request(
     request = zoom2u.RateRequestType(
         PurchaseOrderNumber=options.purchase_order_number.state or payload.reference,
         PackageDescription=package.description,
-        DeliverySpeed=getattr(service, "name", None),
+        DeliverySpeed=getattr(service, "value", None),
         ReadyDateTime=lib.fdatetime(
-            payload.ready_datetime.state, "%Y-%m-%dT%H:%M:%S.%fZ"
+            options.ready_datetime.state,
+            current_format="%Y-%m-%d %H:%M:%S",
+            output_format="%Y-%m-%dT%H:%M:%S.%fZ",
         ),
         VehicleType=provider_units.VehiculeType.map(
             options.vehicle_type.state or "Car"
         ).value,
-        PackageType=provider_units.PackageType.map(
+        PackageType=provider_units.PackagingType.map(
             package.packaging_type or "Box"
         ).value,
         Pickup=zoom2u.DropoffType(
-            CompanyName=shipper.company_name,
             ContactName=shipper.contact,
             Email=shipper.email,
             Phone=shipper.phone_number,
@@ -91,7 +92,6 @@ def rate_request(
             Notes=options.pickup_notes.state,
         ),
         Dropoff=zoom2u.DropoffType(
-            CompanyName=recipient.company_name,
             ContactName=recipient.contact,
             Email=recipient.email,
             Phone=recipient.phone_number,
