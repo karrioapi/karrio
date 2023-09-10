@@ -57,6 +57,8 @@
 ./sdk/vendors/easypost
 ./sdk/vendors/eshipper
 ./sdk/vendors/freightcom
+./sdk/vendors/locate2u
+./sdk/vendors/zoom2u
 
 # karrio server core modules
 ./server/modules/iam
