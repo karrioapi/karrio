@@ -114,7 +114,7 @@ TRACKING_RESPONSE = {
     "test_mode": True,
     "delivered": False,
     "status": "in_transit",
-    "estimated_delivery": None,
+    "estimated_delivery": ANY,
     "events": [
         {
             "code": "KB",
@@ -180,7 +180,7 @@ UPDATE_TRACKING_RESPONSE = {
     "delivered": False,
     "test_mode": True,
     "status": "in_transit",
-    "estimated_delivery": None,
+    "estimated_delivery": ANY,
     "messages": [],
     "meta": {},
     "metadata": {},

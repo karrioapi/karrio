@@ -158,6 +158,7 @@ class Rate:
     service: str = None
     total_charge: float = 0.0
     extra_charges: typing.List[ChargeDetails] = []
+    estimated_delivery: str = None
     id: str = None
     meta: dict = None
     test_mode: bool = None

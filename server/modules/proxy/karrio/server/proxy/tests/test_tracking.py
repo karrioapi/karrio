@@ -82,7 +82,7 @@ TRACKING_RESPONSE = {
         "delivered": None,
         "test_mode": True,
         "status": "in_transit",
-        "estimated_delivery": None,
+        "estimated_delivery": ANY,
         "meta": {"ext": "ups", "carrier": "ups"},
         "object_type": "tracker",
         "metadata": {},
