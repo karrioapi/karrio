@@ -1,8 +1,8 @@
 from django.db import models
-from karrio.server.providers.models.carrier import Carrier
+import karrio.server.providers.models.carrier as providers
 
 
-class Zoom2uSettings(Carrier):
+class Zoom2uSettings(providers.Carrier):
     CARRIER_NAME = "zoom2u"
 
     class Meta:
@@ -11,6 +11,9 @@ class Zoom2uSettings(Carrier):
         verbose_name_plural = "Zoom2u Settings"
 
     api_key = models.CharField(max_length=200)
+    account_country_code = models.CharField(
+        max_length=3, blank=True, null=True, choices=providers.COUNTRIES
+    )
 
     @property
     def carrier_name(self) -> str:
