@@ -1,5 +1,5 @@
-import karrio.schemas.zoom2u.shipment_request as zoom2u
-import karrio.schemas.zoom2u.shipment_response as shipping
+import karrio.schemas.zoom2u.shipping_request as zoom2u
+import karrio.schemas.zoom2u.shipping_response as shipping
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -30,14 +30,12 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.reference,
-        shipment_identifier=str(shipment.stopId),
+        shipment_identifier=shipment.reference,
         label_type="PDF",
         docs=models.Documents(label="No label..."),
         meta=dict(
             trackingCode=shipment.trackingCode,
-        ),
-        info=models.TrackingInfo(
-            carrier_tracking_link=data.get("tracking-link"),
+            carrier_tracking_link=shipment.trackinglink,
         ),
     )
 
@@ -61,16 +59,17 @@ def shipment_request(
         PackageDescription=package.description,
         DeliverySpeed=service,
         ReadyDateTime=lib.fdatetime(
-            options.ready_datetime.state, "%Y-%m-%dT%H:%M:%S.%fZ"
+            options.ready_datetime.state,
+            current_format="%Y-%m-%d %H:%M:%S",
+            output_format="%Y-%m-%dT%H:%M:%S.%fZ",
         ),
         VehicleType=provider_units.VehiculeType.map(
             options.vehicle_type.state or "Car"
         ).value,
-        PackageType=provider_units.PackageType.map(
+        PackageType=provider_units.PackagingType.map(
             package.packaging_type or "Box"
         ).value,
         Pickup=zoom2u.DropoffType(
-            CompanyName=shipper.company_name,
             ContactName=shipper.contact,
             Email=shipper.email,
             Phone=shipper.phone_number,
@@ -84,7 +83,6 @@ def shipment_request(
             Notes=options.pickup_notes.state,
         ),
         Dropoff=zoom2u.DropoffType(
-            CompanyName=recipient.company_name,
             ContactName=recipient.contact,
             Email=recipient.email,
             Phone=recipient.phone_number,

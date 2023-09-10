@@ -34,7 +34,7 @@ class TestZoom2uShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/v1/delivery/create",
             )
 
     def test_cancel_shipment(self):
@@ -44,7 +44,7 @@ class TestZoom2uShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/v1/delivery/cancel/Z20180101999999",
             )
 
     def test_parse_shipment_response(self):
@@ -75,53 +75,39 @@ if __name__ == "__main__":
 
 
 ShipmentPayload = {
-    "service": "locate2u_local_delivery",
+    "service": "zoom2u_VIP",
     "shipper": {
-        "company_name": "Shipper Name",
-        "person_name": "Shipper Attn Name",
-        "federal_tax_id": "123456",
-        "phone_number": "1234567890",
-        "address_line1": "Address Line",
-        "city": "City",
-        "state_code": "StateProvinceCode",
-        "postal_code": "PostalCode",
+        "person_name": "John Smith",
+        "email": "test@test.com",
+        "phone_number": "0000 0000",
+        "street_number": "123",
+        "address_line1": "Main St",
+        "city": "North Sydney",
+        "state_code": "NSW",
+        "postal_code": "2000",
+        "country_code": "AU",
     },
     "recipient": {
-        "company_name": "Locate2u",
-        "person_name": "Matthew Robinson",
-        "phone_number": "0123456789",
-        "address_line1": "Level 4, Suite 4.11, 55 Miller St",
-        "city": "Pyrmont",
-        "state_code": "2009",
-        "postal_code": "NSW",
+        "person_name": "Jane Smith",
+        "email": "test@test.com",
+        "phone_number": "0000 0000",
+        "street_number": "123",
+        "address_line1": "Main St",
+        "city": "North Sydney",
+        "state_code": "NSW",
+        "postal_code": "2000",
         "country_code": "AU",
-        "email": "matt.robinson@email.com",
     },
     "parcels": [
         {
-            "dimension_unit": "CM",
-            "weight_unit": "KG",
-            "length": 7,
-            "width": 5,
-            "height": 2,
-            "weight": 10,
-            "items": [
-                {
-                    "sku": "1234567890",
-                    "description": "Item A - Barcode scanning item",
-                    "quantity": 1,
-                    "metadata": {"currentLocation": "Warehouse"},
-                }
-            ],
+            "packaging_type": "small_box",
+            "description": "1 box with some cakes",
         }
     ],
     "options": {
-        "notes": "Please call before you deliver",
-        "shipment_date": "2023-09-08",
-        "appointment_time": "12:00",
-        "duration_minutes": 10,
-        "longitude": 151.192487,
-        "latitude": -33.8706672,
+        "purchase_order_number": "ABCD1234",
+        "ready_datetime": "2020-12-24 10:20:00",
+        "vehicle_type": "zoom2u_car",
     },
 }
 
@@ -129,43 +115,61 @@ ShipmentCancelPayload = {
     "shipment_identifier": "Z20180101999999",
 }
 
-ParsedShipmentResponse = []
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "zoom2u",
+        "carrier_name": "zoom2u",
+        "docs": {"label": "No label..."},
+        "label_type": "PDF",
+        "meta": {
+            "carrier_tracking_link": "https://track.zoom2u.com/A1B2C3D4E",
+            "trackingCode": "A1B2C3D4E",
+        },
+        "shipment_identifier": "Z20180101999999",
+        "tracking_number": "Z20180101999999",
+    },
+    [],
+]
 
-ParsedCancelShipmentResponse = []
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "zoom2u",
+        "carrier_name": "zoom2u",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
 
 
 ShipmentRequest = {
     "PurchaseOrderNumber": "ABCD1234",
     "PackageDescription": "1 box with some cakes",
     "DeliverySpeed": "VIP",
-    "ReadyDateTime": "2020-12-24T10:20:00.06Z",
+    "ReadyDateTime": "2020-12-24T10:20:00.000000Z",
     "VehicleType": "Car",
     "PackageType": "Box",
     "Pickup": {
         "ContactName": "John Smith",
         "Email": "test@test.com",
         "Phone": "0000 0000",
-        "UnitNumber": "",
         "StreetNumber": "123",
         "Street": "Main St",
         "Suburb": "North Sydney",
         "State": "NSW",
         "Postcode": "2000",
         "Country": "Australia",
-        "Notes": "",
     },
     "Dropoff": {
         "ContactName": "Jane Smith",
         "Email": "test@test.com",
         "Phone": "0000 0000",
-        "UnitNumber": "ACME Co.",
         "StreetNumber": "123",
         "Street": "Main St",
         "Suburb": "North Sydney",
         "State": "NSW",
         "Postcode": "2000",
         "Country": "Australia",
-        "Notes": "",
     },
 }
 

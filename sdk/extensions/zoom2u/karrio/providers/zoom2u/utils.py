@@ -27,3 +27,7 @@ class Settings(core.Settings):
             self.config or {},
             option_type=ConnectionConfig,
         )
+
+
+def clean_response(response: str):
+    return response.replace("tracking-link", "trackinglink")
