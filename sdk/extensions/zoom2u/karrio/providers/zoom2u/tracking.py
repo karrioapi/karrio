@@ -57,10 +57,9 @@ def _extract_details(
                 time=lib.ftime(tracking.statusChangeDateTime, "%Y-%m-%dT%H:%M:%S.%fZ"),
             )
         ],
-        estimated_delivery=lib.fdate(tracking.arrivalDate, "%Y-%m-%dT%H:%M:%S%z"),
         delivered=(status == "delivered"),
         info=models.TrackingInfo(
-            carrier_tracking_link=data.get("tracking-link"),
+            carrier_tracking_link=tracking.trackinglink,
         ),
         meta=dict(
             proofOfDeliveryPhotoUrl=data.get("proofOfDeliveryPhotoUrl"),

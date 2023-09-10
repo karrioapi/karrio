@@ -4,6 +4,7 @@ import typing
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.providers.zoom2u.error as provider_error
+import karrio.providers.zoom2u.utils as provider_utils
 import karrio.mappers.zoom2u.settings as provider_settings
 
 
@@ -38,7 +39,10 @@ class Proxy(proxy.Proxy):
             on_error=provider_error.parse_http_response,
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            response,
+            lambda _: lib.to_dict(provider_utils.clean_response(_)),
+        )
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         payload = request.serialize()
@@ -76,6 +80,8 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(
             responses,
             lambda res: [
-                (num, lib.to_dict(track)) for num, track in res if any(track.strip())
+                (num, lib.to_dict(provider_utils.clean_response(track)))
+                for num, track in res
+                if any(track.strip())
             ],
         )
