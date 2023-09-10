@@ -77,6 +77,7 @@ RATING_RESPONSE = {
             "carrier_name": "canadapost",
             "carrier_id": "canadapost",
             "currency": "CAD",
+            "estimated_delivery": ANY,
             "service": "canadapost_priority",
             "total_charge": 106.71,
             "transit_days": 2,

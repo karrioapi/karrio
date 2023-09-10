@@ -1098,6 +1098,11 @@ class Rate(serializers.EntitySerializer):
         default=[],
         help_text="list of the rate's additional charges",
     )
+    estimated_delivery = serializers.CharField(
+        required=False,
+        allow_null=True,
+        help_text="The delivery estimated date",
+    )
     meta = serializers.PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
     )
