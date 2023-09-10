@@ -38,7 +38,7 @@ def _extract_details(
         carrier_name=settings.carrier_name,
         service=service.name_or_key,
         total_charge=lib.to_money(rate.price),
-        currency=settings.connection_config.currency.state,
+        currency=settings.connection_config.currency.state or "AUD",
         transit_days=1,
         estimated_delivery=lib.fdate(rate.deliveredBy, "%Y-%m-%dT%H:%M:%S%z"),
         meta=dict(

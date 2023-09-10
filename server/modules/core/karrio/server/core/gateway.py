@@ -587,13 +587,14 @@ class Rates:
                 "carrier_connection_id": carrier.id,
             }
 
-            return datatypes.Rate(
-                **{
+            return lib.to_object(
+                datatypes.Rate,
+                {
                     **lib.to_dict(rate),
                     "id": f"rat_{uuid.uuid4().hex}",
                     "test_mode": carrier.test_mode,
                     "meta": meta,
-                }
+                },
             )
 
         formated_rates: typing.List[datatypes.Rate] = sorted(
