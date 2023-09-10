@@ -59,7 +59,7 @@ ParsedTrackingResponse = [
         {
             "carrier_id": "zoom2u",
             "carrier_name": "zoom2u",
-            "delivered": False,
+            "delivered": True,
             "events": [
                 {
                     "code": "Dropped Off",
