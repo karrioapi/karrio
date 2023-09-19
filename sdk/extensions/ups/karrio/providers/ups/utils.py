@@ -14,11 +14,11 @@ class Settings(BaseSettings):
     client_id: str
     client_secret: str
     account_number: str = None
+
+    cache: lib.Cache = jstruct.JStruct[lib.Cache]
     account_country_code: str = None
     metadata: dict = {}
     config: dict = {}
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
-
     id: str = None
 
     @property

@@ -1,73 +1,50 @@
-from typing import Tuple, List, Optional
-from karrio.schemas.tnt.shipment_response import document
-from karrio.core.models import (
-    Documents,
-    ShipmentRequest,
-    Message,
-    ShipmentDetails,
-)
-from karrio.core.utils import (
-    Serializable,
-    Pipeline,
-    Element,
-    Job,
-    XP,
-)
-from karrio.providers.tnt.shipment.label import (
-    create_label_request,
-    parse_label_response,
-)
-from karrio.providers.tnt.shipment.request import create_shipment_request
-from karrio.providers.tnt.error import parse_error_response
-from karrio.providers.tnt.utils import Settings
+import karrio.schemas.tnt.shipping_request as tnt
+import karrio.schemas.tnt.shipping_response as shipping
+import karrio.schemas.tnt.shipping_common_definitions as common
+import typing
 import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.chronopost.error as provider_error
+import karrio.providers.chronopost.utils as provider_utils
+import karrio.providers.chronopost.units as provider_units
 
 
 def parse_shipment_response(
-    _response: lib.Deserializable[Element], settings: Settings
-) -> Tuple[ShipmentDetails, List[Message]]:
+    _response: lib.Deserializable[lib.Element],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ShipmentDetails, typing.List[lib.Message]]:
     response = _response.deserialize()
     shipment = _extract_detail(response, settings)
 
-    return shipment, parse_error_response(response, settings)
+    return shipment, provider_error.parse_error_response(response, settings)
 
 
-def _extract_detail(response: Element, settings: Settings) -> Optional[ShipmentDetails]:
-    activity: document = XP.find(
-        "document", response, element_type=document, first=True
+def _extract_detail(
+    response: lib.Element,
+    settings: provider_utils.Settings,
+) -> typing.Optional[models.ShipmentDetails]:
+    activity: shipping.document = lib.findElements(
+        "document", response, element_type=shipping.document, first=True
     )
 
     if activity is None or activity.CREATE.SUCCESS != "Y":
         return None
 
-    label = parse_label_response(response)
+    # label = parse_label_response(response)
 
-    return ShipmentDetails(
+    return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=activity.CREATE.CONNUMBER,
         shipment_identifier=activity.CREATE.CONREF,
-        docs=Documents(label=label),
+        docs=models.Documents(label=""),
     )
 
 
-def shipment_request(payload: ShipmentRequest, settings: Settings) -> Serializable:
-    def _create_shipment_request(_) -> Job:
-        return Job(id="create", data=create_shipment_request(payload, settings))
+def shipment_request(
+    payload: models.ShipmentRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    request = None
 
-    def _create_label_request(shipment_response: str) -> Job:
-        activity = XP.to_object(document, XP.to_xml(shipment_response))
-        fallback = shipment_response if activity is None else None
-        data = (
-            create_label_request(activity, payload, settings)
-            if activity is None
-            else None
-        )
-
-        return Job(id="create", data=data, fallback=fallback)
-
-    request: Pipeline = Pipeline(
-        create=_create_shipment_request, get_label=_create_label_request
-    )
-
-    return Serializable(request)
+    return lib.Serializable(request)

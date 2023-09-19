@@ -1,18 +1,5 @@
-from karrio.schemas.tnt.pricing_response import (
-    priceResponse,
-    ratedServices,
-    ratedService,
-)
-from karrio.schemas.tnt.pricing_request import (
-    priceRequest,
-    priceCheck,
-    address,
-    account,
-    product,
-    insurance,
-    options as optionsType,
-    consignmentDetails,
-)
+import karrio.schemas.tnt.rating_request as tnt
+import karrio.schemas.tnt.rating_response as rating
 
 import typing
 import karrio.lib as lib
@@ -28,7 +15,7 @@ def parse_rate_response(
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response = _response.deserialize()
     price_response = lib.find_element(
-        "priceResponse", response, priceResponse, first=True
+        "priceResponse", response, rating.priceResponse, first=True
     )
 
     if price_response is not None and price_response.ratedServices is not None:
@@ -43,7 +30,7 @@ def parse_rate_response(
 
 
 def _extract_detail(
-    details: typing.Tuple[ratedServices, ratedService],
+    details: typing.Tuple[rating.ratedServices, rating.ratedService],
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate, service = details
@@ -87,17 +74,17 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
-    request = priceRequest(
+    request = tnt.priceRequest(
         appId=settings.username,
         appVersion="3.0",
-        priceCheck=priceCheck(
+        priceCheck=tnt.priceCheck(
             rateId=None,
-            sender=address(
+            sender=tnt.address(
                 country=payload.shipper.country_code,
                 town=payload.shipper.city,
                 postcode=payload.shipper.postal_code,
             ),
-            delivery=address(
+            delivery=tnt.address(
                 country=payload.recipient.country_code,
                 town=payload.recipient.city,
                 postcode=payload.recipient.postal_code,
@@ -105,7 +92,7 @@ def rate_request(
             collectionDateTime=lib.fdatetime(
                 options.shipment_date, output_format="%Y-%m-%dT%H:%M:%S"
             ),
-            product=product(
+            product=tnt.product(
                 id=getattr(service, "value", None),
                 division=next(
                     (code for label, code in options if "division" in label), None
@@ -113,7 +100,7 @@ def rate_request(
                 productDesc=None,
                 type_=("D" if package.parcel.is_document else "N"),
                 options=(
-                    optionsType(
+                    tnt.options(
                         option=[
                             option(optionCode=option.code)
                             for _, option in options.items()
@@ -124,7 +111,7 @@ def rate_request(
                 ),
             ),
             account=(
-                account(
+                tnt.account(
                     accountNumber=settings.account_number,
                     accountCountry=settings.account_country_code,
                 )
@@ -132,7 +119,7 @@ def rate_request(
                 else None
             ),
             insurance=(
-                insurance(
+                tnt.insurance(
                     insuranceValue=options.insurance, goodsValue=options.declared_value
                 )
                 if options.insurance is not None
@@ -141,7 +128,7 @@ def rate_request(
             termsOfPayment=provider_units.PaymentType.sender.value,
             currency=options.currency,
             priceBreakDown=True,
-            consignmentDetails=consignmentDetails(
+            consignmentDetails=tnt.consignmentDetails(
                 totalWeight=package.weight.KG,
                 totalVolume=package.volume.value,
                 totalNumberOfPieces=1,

@@ -25,7 +25,7 @@ class TestAmazonShippingShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), CancelShipmentRequestJSON)
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = "{}"
             Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -35,7 +35,7 @@ class TestAmazonShippingShipment(unittest.TestCase):
             )
 
     def test_create_cancel_shipment(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = "{}"
             Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
@@ -45,7 +45,7 @@ class TestAmazonShippingShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponseJSON
             response = Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -60,7 +60,7 @@ class TestAmazonShippingShipment(unittest.TestCase):
                 )
 
     def test_parse_cancel_shipment_response(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = ""
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()

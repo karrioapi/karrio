@@ -2,7 +2,7 @@
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.universal.mappers.rating_proxy as rating_proxy
-import karrio.mappers.dpdhl.settings as provider_settings
+import karrio.mappers.dhl_poland.settings as provider_settings
 
 
 class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):

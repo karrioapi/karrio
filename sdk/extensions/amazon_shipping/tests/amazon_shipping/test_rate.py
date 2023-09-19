@@ -17,7 +17,7 @@ class TestAmazonShippingRating(unittest.TestCase):
         self.assertEqual(request.serialize(), RateRequestJSON)
 
     def test_get_rate(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = "{}"
             Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -27,7 +27,7 @@ class TestAmazonShippingRating(unittest.TestCase):
             )
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = RateResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 

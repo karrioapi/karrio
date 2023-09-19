@@ -14,8 +14,8 @@ class Settings(provider_utils.Settings):
     contact_id: str
 
     # generic properties
-    id: str = None
-    test_mode: bool = False
     carrier_id: str = "gls_eu"
     account_country_code: str = None
+    test_mode: bool = False
     metadata: dict = {}
+    id: str = None

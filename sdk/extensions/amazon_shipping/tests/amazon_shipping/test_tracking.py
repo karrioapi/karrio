@@ -17,7 +17,7 @@ class TestAmazonShippingTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TrackingRequestJSON)
 
     def test_get_tracking(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = "{}"
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -27,7 +27,7 @@ class TestAmazonShippingTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -38,7 +38,7 @@ class TestAmazonShippingTracking(unittest.TestCase):
             )
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.amazon_shipping.proxy.http") as mock:
+        with patch("karrio.mappers.amazon_shipping.proxy.lib.request") as mock:
             mock.return_value = ErrorResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

@@ -1,10 +1,22 @@
 import karrio
+import datetime
+import karrio.lib as lib
+
+expiry = datetime.datetime.now() + datetime.timedelta(days=1)
+seller_id = "SELLER_ID"
+developer_id = "DEVELOPER_ID"
+cached_auth = {
+    f"amazon_shipping|{seller_id}|{developer_id}": dict(
+        authorizationCode="authorizationCode",
+        expiry=expiry.strftime("%Y-%m-%d %H:%M:%S"),
+    )
+}
 
 gateway = karrio.gateway["amazon_shipping"].create(
     dict(
-        seller_id="SELLER_ID",
-        developer_id="DEVELOPER_ID",
+        seller_id=seller_id,
+        developer_id=developer_id,
         mws_auth_token="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-        x_amz_access_token="amzn.mws.a8b4e7a6-f0b4-4b0a-b0b4-b0b4b0b4b0b4",
+        cache=lib.Cache(**cached_auth),
     )
 )

@@ -1,27 +1,24 @@
 """ TNT Native Types """
 
-from karrio.core import units
-from karrio.core.utils import Enum, Flag
-from karrio.core.units import PackagePreset
-from karrio.core.utils.enum import OptionEnum
+import karrio.lib as lib
 
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
 
-class PackagePresets(Flag):
-    tnt_envelope_doc = PackagePreset(
+class PackagePresets(lib.Flag):
+    tnt_envelope_doc = lib.units.PackagePreset(
         **dict(width=35.0, height=1.0, length=27.5, packaging_type="envelope"),
         **PRESET_DEFAULTS
     )
-    tnt_satchel_bag1 = PackagePreset(
+    tnt_satchel_bag1 = lib.units.PackagePreset(
         **dict(weight=2.0, width=40.0, height=1.0, length=30.0, packaging_type="pak"),
         **PRESET_DEFAULTS
     )
-    tnt_satchel_bag2 = PackagePreset(
+    tnt_satchel_bag2 = lib.units.PackagePreset(
         **dict(weight=4.0, width=47.5, height=1.0, length=38.0, packaging_type="pak"),
         **PRESET_DEFAULTS
     )
-    tnt_box_B = PackagePreset(
+    tnt_box_B = lib.units.PackagePreset(
         **dict(
             weight=4.0,
             width=29.5,
@@ -31,7 +28,7 @@ class PackagePresets(Flag):
         ),
         **PRESET_DEFAULTS
     )
-    tnt_box_C = PackagePreset(
+    tnt_box_C = lib.units.PackagePreset(
         **dict(
             weight=6.0,
             width=29.5,
@@ -41,7 +38,7 @@ class PackagePresets(Flag):
         ),
         **PRESET_DEFAULTS
     )
-    tnt_box_D = PackagePreset(
+    tnt_box_D = lib.units.PackagePreset(
         **dict(
             weight=10.0,
             width=39.5,
@@ -51,7 +48,7 @@ class PackagePresets(Flag):
         ),
         **PRESET_DEFAULTS
     )
-    tnt_box_E = PackagePreset(
+    tnt_box_E = lib.units.PackagePreset(
         **dict(
             weight=15.0,
             width=39.5,
@@ -61,17 +58,17 @@ class PackagePresets(Flag):
         ),
         **PRESET_DEFAULTS
     )
-    tnt_medpack_ambient = PackagePreset(
+    tnt_medpack_ambient = lib.units.PackagePreset(
         **dict(width=18.0, height=12.0, length=23.0, packaging_type="medium_box"),
         **PRESET_DEFAULTS
     )
-    tnt_medpack_fronzen_10 = PackagePreset(
+    tnt_medpack_fronzen_10 = lib.units.PackagePreset(
         **dict(width=37.0, height=35.5, length=40.0, packaging_type="large_box"),
         **PRESET_DEFAULTS
     )
 
 
-class PackageType(Flag):
+class PackageType(lib.Flag):
     tnt_envelope = "envelope"
     tnt_satchel = "satchel"
     tnt_box = "box"
@@ -89,13 +86,13 @@ class PackageType(Flag):
     your_packaging = "your_packaging"
 
 
-class PaymentType(Flag):
+class PaymentType(lib.Flag):
     sender = "S"
     recipient = "R"
     third_party = recipient
 
 
-class ShipmentService(Enum):
+class ShipmentService(lib.Enum):
     tnt_special_express = "1N"
     tnt_9_00_express = "09N"
     tnt_10_00_express = "10N"
@@ -105,31 +102,31 @@ class ShipmentService(Enum):
     tnt_global_express = "15N"
 
 
-class ShippingOption(Flag):
-    tnt_priority = OptionEnum("PR")
-    tnt_insurance = OptionEnum("IN", float)
-    tnt_enhanced_liability = OptionEnum("EL")
-    tnt_dangerous_goods_fully_regulated = OptionEnum("HZ")
-    tnt_dangerous_goods_in_limited_quantities = OptionEnum("LQ")
-    tnt_dry_ice_shipments = OptionEnum("DI")
-    tnt_biological_substances = OptionEnum("BB")
-    tnt_lithium_batteries = OptionEnum("LB")
-    tnt_dangerous_goods_in_excepted_quantities = OptionEnum("EQ")
-    tnt_radioactive_materials_in_excepted_packages = OptionEnum("XP")
-    tnt_pre_delivery_notification = OptionEnum("SMS")
+class ShippingOption(lib.Flag):
+    tnt_priority = lib.OptionEnum("PR")
+    tnt_insurance = lib.OptionEnum("IN", float)
+    tnt_enhanced_liability = lib.OptionEnum("EL")
+    tnt_dangerous_goods_fully_regulated = lib.OptionEnum("HZ")
+    tnt_dangerous_goods_in_limited_quantities = lib.OptionEnum("LQ")
+    tnt_dry_ice_shipments = lib.OptionEnum("DI")
+    tnt_biological_substances = lib.OptionEnum("BB")
+    tnt_lithium_batteries = lib.OptionEnum("LB")
+    tnt_dangerous_goods_in_excepted_quantities = lib.OptionEnum("EQ")
+    tnt_radioactive_materials_in_excepted_packages = lib.OptionEnum("XP")
+    tnt_pre_delivery_notification = lib.OptionEnum("SMS")
 
-    tnt_division_international_shipments = OptionEnum("G")
-    tnt_division_global_link_domestic = OptionEnum("D")
-    tnt_division_german_domestic = OptionEnum("H")
-    tnt_division_uk_domestic = OptionEnum("010")
+    tnt_division_international_shipments = lib.OptionEnum("G")
+    tnt_division_global_link_domestic = lib.OptionEnum("D")
+    tnt_division_german_domestic = lib.OptionEnum("H")
+    tnt_division_uk_domestic = lib.OptionEnum("010")
 
     insurance = tnt_insurance
 
 
 def shipping_options_initializer(
     options: dict,
-    package_options: units.Options = None,
-) -> units.Options:
+    package_options: lib.units.Options = None,
+) -> lib.units.Options:
     """
     Apply default values to the given options.
     """
@@ -141,4 +138,6 @@ def shipping_options_initializer(
     def items_filter(key: str) -> bool:
         return key in ShippingOption and "division" not in key  # type: ignore
 
-    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
+    return lib.units.ShippingOptions(
+        _options, ShippingOption, items_filter=items_filter
+    )

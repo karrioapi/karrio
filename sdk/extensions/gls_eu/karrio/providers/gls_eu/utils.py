@@ -1,9 +1,9 @@
 import base64
 import karrio.lib as lib
-import karrio.core as core
+import karrio.core.settings as settings
 
 
-class Settings(core.Settings):
+class Settings(settings.Settings):
     """GLS connection settings."""
 
     username: str
