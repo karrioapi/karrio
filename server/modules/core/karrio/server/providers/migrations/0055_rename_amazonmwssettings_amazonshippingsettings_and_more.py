@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("providers", "0052_alter_upssettings_account_number_and_more"),
+        ("providers", "0054_zoom2usettings"),
     ]
 
     operations = [
