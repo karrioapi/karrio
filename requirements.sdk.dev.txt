@@ -3,22 +3,26 @@
 
 # Carrier Extentions packages
 -e ./sdk/core
--e ./sdk/extensions/generic
 -e ./sdk/extensions/amazon_shipping
 -e ./sdk/extensions/aramex
+-e ./sdk/extensions/asendia_us
 -e ./sdk/extensions/australiapost
 -e ./sdk/extensions/boxknight
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 -e ./sdk/extensions/chronopost
+-e ./sdk/extensions/collissimo
 -e ./sdk/extensions/dhl_express
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
 -e ./sdk/extensions/dpd
 -e ./sdk/extensions/dpdhl
+-e ./sdk/extensions/dpdhl_international
 -e ./sdk/extensions/fedex
+-e ./sdk/extensions/generic
 -e ./sdk/extensions/geodis
+-e ./sdk/extensions/gls_eu
 -e ./sdk/extensions/laposte
 -e ./sdk/extensions/nationex
 # -e ./sdk/extensions/postnl
@@ -31,7 +35,7 @@
 -e ./sdk/extensions/usps
 -e ./sdk/extensions/usps_international
 
-
+# Carrier Hub Extentions packages
 -e ./sdk/vendors/easypost
 -e ./sdk/vendors/eshipper
 -e ./sdk/vendors/freightcom

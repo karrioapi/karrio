@@ -11,7 +11,7 @@ def parse_shipment_cancel_response(
     response: lib.Deserializable[dict],
     settings: Settings,
 ) -> Tuple[ConfirmationDetails, List[Message]]:
-    errors = parse_error_response(response.deserialize(), settings)
+    errors = parse_error_response(response, settings)
     details = (
         ConfirmationDetails(
             carrier_id=settings.carrier_id,

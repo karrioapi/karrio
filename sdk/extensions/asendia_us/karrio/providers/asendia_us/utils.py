@@ -21,7 +21,7 @@ class Settings(core.Settings):
     def server_url(self):
         return (
             "https://a1apiuat.asendiausa.com"
-            if self.test
+            if self.test_mode
             else "https://a1api.asendiausa.com"
         )
 
