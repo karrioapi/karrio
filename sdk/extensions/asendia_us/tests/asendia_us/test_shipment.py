@@ -1,4 +1,5 @@
 import unittest
+import urllib.parse
 from unittest.mock import patch, ANY
 from .fixture import gateway
 
@@ -34,7 +35,7 @@ class TestAsendiaUSShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/A1/v1.0/ShippingPlatform/Package",
             )
 
     def test_cancel_shipment(self):
@@ -44,7 +45,7 @@ class TestAsendiaUSShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/A1/v1.0/ShippingPlatform/Package?{urllib.parse.urlencode(lib.to_dict(ShipmentCancelRequest))}",
             )
 
     def test_parse_shipment_response(self):
@@ -114,88 +115,86 @@ ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
 }
 
-ParsedShipmentResponse = [{}, []]
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "asendia_us",
+        "carrier_name": "asendia_us",
+        "docs": {"label": "string"},
+        "label_type": "string",
+        "meta": {"package_id": "string"},
+        "shipment_identifier": "string",
+        "tracking_number": "string",
+    },
+    [
+        {
+            "carrier_id": "asendia_us",
+            "carrier_name": "asendia_us",
+            "code": "Continue",
+            "details": {},
+            "message": "string",
+        }
+    ],
+]
 
-ParsedCancelShipmentResponse = [{}, []]
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "asendia_us",
+        "carrier_name": "asendia_us",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [
+        {
+            "carrier_id": "asendia_us",
+            "carrier_name": "asendia_us",
+            "code": 200,
+            "details": {},
+            "message": "string",
+        }
+    ],
+]
 
 
 ShipmentRequest = {
     "accountNumber": "account_number",
-    "subAccountNumber": "sub_account_number",
-    "processingLocation": "SFO",
     "includeRate": True,
-    "labelType": "PDF",
-    "orderNumber": "string",
-    "dispatchNumber": "string",
-    "packageID": "string",
-    "recipientTaxID": "string",
-    "returnFirstName": "string",
-    "returnLastName": "string",
-    "returnCompanyName": "string",
-    "returnAddressLine1": "string",
-    "returnAddressLine2": "string",
-    "returnAddressLine3": "string",
-    "returnCity": "string",
-    "returnProvince": "string",
-    "returnPostalCode": "string",
-    "returnCountryCode": "string",
-    "returnPhone": "string",
-    "returnEmail": "user@example.com",
-    "recipientFirstName": "string",
-    "recipientLastName": "string",
-    "recipientBusinessName": "string",
-    "recipientAddressLine1": "string",
-    "recipientAddressLine2": "string",
-    "recipientAddressLine3": "string",
-    "recipientCity": "string",
-    "recipientProvince": "string",
-    "recipientPostalCode": "string",
-    "recipientCountryCode": "string",
-    "recipientPhone": "string",
-    "recipientEmail": "user@example.com",
-    "totalPackageWeight": 0,
+    "processingLocation": "SFO",
+    "productCode": "65",
+    "recipientAddressLine1": "1098 N Fraser Street",
+    "recipientBusinessName": "ABC Corp.",
+    "recipientCity": "Georgetown",
+    "recipientCountryCode": "US",
+    "recipientFirstName": "Tall Tom",
+    "recipientLastName": "Tall Tom",
+    "recipientPhone": "8005554526",
+    "recipientPostalCode": "29440",
+    "recipientProvince": "SC",
+    "returnAddressLine1": "1309 S Agnew Avenue",
+    "returnAddressLine2": "Apt 303",
+    "returnCity": "Oklahoma City",
+    "returnCompanyName": "Horizon",
+    "returnCountryCode": "US",
+    "returnFirstName": "Lina Smith",
+    "returnLastName": "Lina Smith",
+    "returnPhone": "1234567890",
+    "returnPostalCode": "73108",
+    "returnProvince": "OK",
+    "sellerAddressLine1": "1309 S Agnew Avenue",
+    "sellerAddressLine2": "Apt 303",
+    "sellerCity": "Oklahoma City",
+    "sellerCountryCode": "US",
+    "sellerName": "Horizon",
+    "sellerPhone": "1234567890",
+    "sellerPostalCode": "73108",
+    "sellerProvince": "OK",
+    "totalPackageWeight": 1.0,
     "weightUnit": "Lb",
-    "dimLength": 0,
-    "dimWidth": 0,
-    "dimHeight": 0,
-    "dimUnit": "IN",
-    "totalPackageValue": 0,
-    "currencyType": "USD",
-    "productCode": "string",
-    "customerReferenceNumber1": "string",
-    "customerReferenceNumber2": "string",
-    "customerReferenceNumber3": "string",
-    "contentType": "M",
-    "packageContentDescription": "string",
-    "vatNumber": "string",
-    "sellerName": "string",
-    "sellerAddressLine1": "string",
-    "sellerAddressLine2": "string",
-    "sellerAddressLine3": "string",
-    "sellerCity": "string",
-    "sellerProvince": "string",
-    "sellerPostalCode": "string",
-    "sellerCountryCode": "string",
-    "sellerPhone": "string",
-    "sellerEmail": "user@example.com",
-    "items": [
-        {
-            "sku": "string",
-            "itemDescription": "string",
-            "unitPrice": 0,
-            "quantity": 0,
-            "unitWeight": 0,
-            "countryOfOrigin": "string",
-            "htsNumber": "string",
-        }
-    ],
 }
 
 
 ShipmentCancelRequest = {
-    "accountNumber": "string",
-    "subAccountNumber": "string",
-    "packageID": "string",
+    "accountNumber": "account_number",
+    "packageID": "794947717776",
 }
 
 
@@ -226,7 +225,7 @@ ShipmentResponse = """{
 """
 
 ShipmentCancelResponse = """{
-  "responseStatusCode": 0,
+  "responseStatusCode": 200,
   "responseStatusMessage": "string"
 }
 """

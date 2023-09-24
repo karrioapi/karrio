@@ -24,7 +24,7 @@ class TestAsendiaUSTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/A1/v2.0/Tracking/Milestone?trackingNumberVendor=89108749065090",
             )
 
     def test_parse_tracking_response(self):
@@ -54,9 +54,107 @@ TrackingPayload = {
     "tracking_numbers": ["89108749065090"],
 }
 
-ParsedTrackingResponse = [[], []]
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "asendia_us",
+            "carrier_name": "asendia_us",
+            "delivered": False,
+            "events": [
+                {
+                    "code": "s10",
+                    "date": "2021-08-09",
+                    "description": "Delivered",
+                    "time": "11:13",
+                },
+                {
+                    "code": "s8",
+                    "date": "2021-08-09",
+                    "description": "Arrived at Destination Delivery Office",
+                    "time": "09:07",
+                },
+                {
+                    "code": "s7",
+                    "date": "2021-08-07",
+                    "description": "Out of Customs",
+                    "time": "13:17",
+                },
+                {
+                    "code": "s5",
+                    "date": "2021-08-07",
+                    "description": "Arrived in Destination Country",
+                    "location": "LAKSI MAIL CENTER",
+                    "time": "09:43",
+                },
+                {
+                    "code": "s4",
+                    "date": "2021-07-30",
+                    "description": "Departed from USA",
+                    "location": "Asendia US (Philadelphia)",
+                    "time": "08:08",
+                },
+                {
+                    "code": "s2d",
+                    "date": "2021-07-30",
+                    "description": "Shipment dispatched by Asendia",
+                    "location": "Folcroft, PA 19032",
+                    "time": "10:14",
+                },
+                {
+                    "code": "s2c",
+                    "date": "2021-07-30",
+                    "description": "Service dispatched by Asendia",
+                    "location": "Folcroft, PA 19032",
+                    "time": "10:10",
+                },
+                {
+                    "code": "s2b",
+                    "date": "2021-07-29",
+                    "description": "Sorted by Asendia",
+                    "location": "Folcroft, PA 19032",
+                    "time": "16:33",
+                },
+                {
+                    "code": "s2a",
+                    "date": "2021-07-28",
+                    "description": "Processed By Asendia",
+                    "location": "Asendia US (Philadelphia)",
+                    "time": "21:44",
+                },
+                {
+                    "code": "s1",
+                    "date": "2021-07-24",
+                    "description": "Shipment Information Received",
+                    "time": "13:00",
+                },
+            ],
+            "status": "in_transit",
+            "tracking_number": "RL924104146CH",
+        }
+    ],
+    [
+        {
+            "carrier_id": "asendia_us",
+            "carrier_name": "asendia_us",
+            "code": 200,
+            "details": {},
+        }
+    ],
+]
 
-ParsedErrorResponse = [[], []]
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "asendia_us",
+            "carrier_name": "asendia_us",
+            "code": 401,
+            "details": {},
+            "message": "Authentication to the resource has been denied: incorrect "
+            "username or password.",
+        }
+    ],
+]
 
 
 TrackingRequest = ["89108749065090"]
@@ -66,278 +164,65 @@ TrackingResponse = """{
     {
       "trackingNumberVendor": "RL924104146CH",
       "customerReferenceNumber": "9400109205568727179826",
-      "trackingDetailEvents": [
+      "trackingMilestoneEvents": [
         {
-          "eventCode": "DELIVERY",
+          "eventCode": "s10",
           "eventDescription": "Delivered",
-          "eventLocationDetails": {
-            "addressLine1": "",
-            "city": "",
-            "province": "",
-            "postalCode": "",
-            "countryIso2": "TH",
-            "countryName": "Thailand"
-          },
+          "eventLocation": "",
           "eventOn": "2021-08-09T11:13:00+00:00"
         },
         {
-          "eventCode": "OUTDELIVCENTER",
-          "eventDescription": "Out for delivery",
-          "eventLocationDetails": {
-            "addressLine1": "",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
+          "eventCode": "s8",
+          "eventDescription": "Arrived at Destination Delivery Office",
+          "eventLocation": "",
           "eventOn": "2021-08-09T09:07:00+00:00"
         },
         {
-          "eventCode": "INDELIVCENTER",
-          "eventDescription": "Arrived at delivery centre",
-          "eventLocationDetails": {
-            "addressLine1": "",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
-          "eventOn": "2021-08-09T08:37:00+00:00"
-        },
-        {
-          "eventCode": "LEAVHUB",
-          "eventDescription": "Handled by local carrier",
-          "eventLocationDetails": {
-            "addressLine1": "",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
-          "eventOn": "2021-08-07T13:47:00+00:00"
-        },
-        {
-          "eventCode": "IMPCUSTOUT",
-          "eventDescription": "Out customs authorities",
-          "eventLocationDetails": {
-            "addressLine1": "",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
+          "eventCode": "s7",
+          "eventDescription": "Out of Customs",
+          "eventLocation": "",
           "eventOn": "2021-08-07T13:17:00+00:00"
         },
         {
-          "eventCode": "ARRDEST",
-          "eventDescription": "Arrived at Destination Country",
-          "eventLocationDetails": {
-            "addressLine1": "LAKSI MAIL CENTER",
-            "city": "Lak Si",
-            "province": "Bangkok",
-            "postalCode": "10210",
-            "countryIso2": "TH",
-            "countryName": "Thailand"
-          },
+          "eventCode": "s5",
+          "eventDescription": "Arrived in Destination Country",
+          "eventLocation": "LAKSI MAIL CENTER",
           "eventOn": "2021-08-07T09:43:00+00:00"
         },
         {
-          "eventCode": "2.2",
-          "eventDescription": "Dispatched by Asendia USA",
-          "eventLocationDetails": {
-            "addressLine1": "string",
-            "city": "FOLCROFT",
-            "province": "PA",
-            "postalCode": "19032",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
+          "eventCode": "s4",
+          "eventDescription": "Departed from USA",
+          "eventLocation": "Asendia US (Philadelphia)",
+          "eventOn": "2021-07-30T08:08:16+00:00"
+        },
+        {
+          "eventCode": "s2d",
+          "eventDescription": "Shipment dispatched by Asendia",
+          "eventLocation": "Folcroft, PA 19032",
+          "eventOn": "2021-07-30T10:14:50.452565+00:00"
+        },
+        {
+          "eventCode": "s2c",
+          "eventDescription": "Service dispatched by Asendia",
+          "eventLocation": "Folcroft, PA 19032",
           "eventOn": "2021-07-30T10:10:51.867423+00:00"
         },
         {
-          "eventCode": "DEPSUB",
-          "eventDescription": "Departed Asendia facility",
-          "eventLocationDetails": {
-            "addressLine1": "string",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-30T10:10:49+00:00"
-        },
-        {
-          "eventCode": "2.1",
-          "eventDescription": "Sorted by Asendia USA",
-          "eventLocationDetails": {
-            "addressLine1": "string",
-            "city": "FOLCROFT",
-            "province": "PA",
-            "postalCode": "19032",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
+          "eventCode": "s2b",
+          "eventDescription": "Sorted by Asendia",
+          "eventLocation": "Folcroft, PA 19032",
           "eventOn": "2021-07-29T16:33:14.998765+00:00"
         },
         {
-          "eventCode": "2",
-          "eventDescription": "Processed by Asendia USA",
-          "eventLocationDetails": {
-            "addressLine1": "string",
-            "city": "FOLCROFT",
-            "province": "PA",
-            "postalCode": "19032",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-29T01:44:44.983094+00:00"
+          "eventCode": "s2a",
+          "eventDescription": "Processed By Asendia",
+          "eventLocation": "Asendia US (Philadelphia)",
+          "eventOn": "2021-07-28T21:44:44+00:00"
         },
         {
-          "eventCode": "10",
-          "eventDescription": "Departed USPS Regional Destination Facility",
-          "eventLocationDetails": {
-            "addressLine1": "PHILADELPHIA PA DISTRIBUTION CENTER",
-            "city": "PHILADELPHIA",
-            "province": "PA ",
-            "postalCode": "19176",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-27T18:14:00+00:00"
-        },
-        {
-          "eventCode": "U1",
-          "eventDescription": "Arrived at USPS Regional Facility",
-          "eventLocationDetails": {
-            "addressLine1": "PHILADELPHIA PA DISTRIBUTION CENTER",
-            "city": "PHILADELPHIA",
-            "province": "PA ",
-            "postalCode": "19176",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-27T14:17:00+00:00"
-        },
-        {
-          "eventCode": "T1",
-          "eventDescription": "Departed USPS Regional Facility",
-          "eventLocationDetails": {
-            "addressLine1": "PHILADELPHIA PA NETWORK DISTRIBUTION CENTER",
-            "city": "PHILADELPHIA",
-            "province": "PA ",
-            "postalCode": "19176",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-27T12:07:00+00:00"
-        },
-        {
-          "eventCode": "U1",
-          "eventDescription": "Arrived at USPS Regional Facility",
-          "eventLocationDetails": {
-            "addressLine1": "PHILADELPHIA PA NETWORK DISTRIBUTION CENTER",
-            "city": "PHILADELPHIA",
-            "province": "PA ",
-            "postalCode": "19176",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-27T10:33:00+00:00"
-        },
-        {
-          "eventCode": "NT",
-          "eventDescription": "In Transit to Next Facility",
-          "eventLocationDetails": {
-            "addressLine1": "",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
-          "eventOn": "2021-07-26T00:00:00+00:00"
-        },
-        {
-          "eventCode": "L1",
-          "eventDescription": "Departed USPS Regional Facility",
-          "eventLocationDetails": {
-            "addressLine1": "CLEVELAND OH DISTRIBUTION CENTER ANNEX",
-            "city": "CLEVELAND",
-            "province": "OH",
-            "postalCode": "44101",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-25T01:43:00+00:00"
-        },
-        {
-          "eventCode": "10",
-          "eventDescription": "Departed USPS Regional Origin Facility",
-          "eventLocationDetails": {
-            "addressLine1": "CLEVELAND OH DISTRIBUTION CENTER ANNEX",
-            "city": "CLEVELAND",
-            "province": "OH",
-            "postalCode": "44101",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-24T22:36:00+00:00"
-        },
-        {
-          "eventCode": "10",
-          "eventDescription": "Arrived at USPS Regional Origin Facility",
-          "eventLocationDetails": {
-            "addressLine1": "CLEVELAND OH DISTRIBUTION CENTER ANNEX",
-            "city": "CLEVELAND",
-            "province": "OH",
-            "postalCode": "44101",
-            "countryIso2": "US",
-            "countryName": "United States"
-          },
-          "eventOn": "2021-07-24T22:35:00+00:00"
-        },
-        {
-          "eventCode": "OA",
-          "eventDescription": "Accepted at USPS Origin Facility",
-          "eventLocationDetails": {
-            "addressLine1": "WICKLIFFE, OH 44092",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
-          "eventOn": "2021-07-24T21:20:00+00:00"
-        },
-        {
-          "eventCode": "TM",
-          "eventDescription": "Shipment Received, Package Acceptance Pending",
-          "eventLocationDetails": {
-            "addressLine1": "WICKLIFFE, OH 44092",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
-          "eventOn": "2021-07-24T15:51:00+00:00"
-        },
-        {
-          "eventCode": "1",
+          "eventCode": "s1",
           "eventDescription": "Shipment Information Received",
-          "eventLocationDetails": {
-            "addressLine1": "",
-            "city": "string",
-            "province": "string",
-            "postalCode": "string",
-            "countryIso2": "string",
-            "countryName": "string"
-          },
+          "eventLocation": "",
           "eventOn": "2021-07-24T13:00:15.85088+00:00"
         }
       ]

@@ -1,4 +1,5 @@
 import unittest
+import urllib.parse
 from unittest.mock import patch, ANY
 from .fixture import gateway
 
@@ -24,7 +25,7 @@ class TestAsendiaUSRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/api/A1/v1.0/ShippingPlatform/ShippingRate?{urllib.parse.urlencode(lib.to_dict(RateRequest))}",
             )
 
     def test_parse_rate_response(self):
@@ -59,7 +60,27 @@ RatePayload = {
     },
 }
 
-ParsedRateResponse = [[], []]
+ParsedRateResponse = [
+    [
+        {
+            "carrier_id": "asendia_us",
+            "carrier_name": "asendia_us",
+            "currency": "string",
+            "meta": {"service_name": "string"},
+            "service": "string",
+            "total_charge": 0.0,
+        }
+    ],
+    [
+        {
+            "carrier_id": "asendia_us",
+            "carrier_name": "asendia_us",
+            "code": "Continue",
+            "details": {},
+            "message": "string",
+        }
+    ],
+]
 
 
 RateRequest = {

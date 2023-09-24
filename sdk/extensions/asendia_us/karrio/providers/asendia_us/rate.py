@@ -27,7 +27,7 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    rate = lib.to_object(rating.ShippingRate, data)
+    rate = lib.to_object(rating.ShippingRateType, data)
     service = provider_units.ShippingService.map(rate.productCode)
 
     return models.RateDetails(
@@ -56,12 +56,12 @@ def rate_request(
         recipientPostalCode=payload.recipient.postal_code,
         recipientCountryCode=payload.recipient.country_code,
         totalPackageWeight=package.weight.value,
-        weightUnit=package.weight_unit.value,
+        weightUnit=provider_units.WeightUnit.map(package.weight_unit.value).value,
         dimLength=package.length.value,
         dimWidth=package.width.value,
         dimHeight=package.height.value,
         dimUnit=package.dimension_unit.value,
-        productCode=getattr(service, "value", None),
+        productCode=getattr(service, "value", None) or "*",
     )
 
     return lib.Serializable(request, lib.to_dict)

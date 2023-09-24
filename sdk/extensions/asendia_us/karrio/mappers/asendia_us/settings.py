@@ -11,7 +11,7 @@ class Settings(provider_utils.Settings):
     # required carrier specific properties
     username: str  # type: ignore
     password: str  # type: ignore
-    x_asendia_one_api_key: str  # type: ignore
+    api_key: str  # type: ignore
     account_number: str = None
 
     # generic properties

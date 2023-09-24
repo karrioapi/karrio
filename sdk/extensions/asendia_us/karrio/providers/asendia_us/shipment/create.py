@@ -1,5 +1,5 @@
-import karrio.schemas.asendia_us.shipment_request as asendia
-import karrio.schemas.asendia_us.shipment_response as shipping
+import karrio.schemas.asendia_us.shipping_request as asendia
+import karrio.schemas.asendia_us.shipping_response as shipping
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -37,11 +37,11 @@ def _extract_details(
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=shipment.trackingNumber,
-        shipment_identifier=shipment.packageID,
+        tracking_number=shipment.packageLabel.trackingNumber,
+        shipment_identifier=shipment.packageLabel.packageId,
         label_type=label.get("type"),
         docs=models.Documents(label=label.get("content")),
-        meta=dict(package_id=shipment.packageID),
+        meta=dict(package_id=shipment.packageLabel.packageId),
     )
 
 
@@ -49,6 +49,8 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
     package = lib.to_packages(payload.parcels).single
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
@@ -57,42 +59,42 @@ def shipment_request(
         option_type=provider_units.ShippingOption,
     )
 
-    request = asendia.ShipmentRequestType(
+    request = asendia.ShippingRequestType(
         accountNumber=settings.account_number,
         subAccountNumber=settings.connection_config.sub_account_number.state,
         processingLocation=settings.connection_config.processing_location.state,
-        includeRates=True,
+        includeRate=True,
         labelType=payload.label_type,
         orderNumber=options.order_number.state,
         dispatchNumber=options.dispatch_number.state,
         packageID=(payload.reference or options.package_id.state),
-        recipientTaxID=payload.recipient.tax_id,
-        returnFirstName=payload.shipper.person_name,
-        returnLastName=payload.shipper.person_name,
-        returnCompanyName=payload.shipper.company_name,
-        returnAddressLine1=payload.shipper.address_line1,
-        returnAddressLine2=payload.shipper.address_line2,
+        recipientTaxID=recipient.tax_id,
+        returnFirstName=shipper.person_name,
+        returnLastName=shipper.person_name,
+        returnCompanyName=shipper.company_name,
+        returnAddressLine1=shipper.address_line1,
+        returnAddressLine2=shipper.address_line2,
         returnAddressLine3=None,
-        returnCity=payload.shipper.city,
-        returnProvince=payload.shipper.state_code,
-        returnPostalCode=payload.shipper.postal_code,
-        returnCountryCode=payload.shipper.country_code,
-        returnPhone=payload.shipper.phone_number,
-        returnEmail=payload.shipper.email,
-        recipientFirstName=payload.recipient.person_name,
-        recipientLastName=payload.recipient.person_name,
-        recipientBusinessName=payload.recipient.company_name,
-        recipientAddressLine1=payload.recipient.address_line1,
-        recipientAddressLine2=payload.recipient.address_line2,
+        returnCity=shipper.city,
+        returnProvince=shipper.state_code,
+        returnPostalCode=shipper.postal_code,
+        returnCountryCode=shipper.country_code,
+        returnPhone=shipper.phone_number,
+        returnEmail=shipper.email,
+        recipientFirstName=recipient.person_name,
+        recipientLastName=recipient.person_name,
+        recipientBusinessName=recipient.company_name,
+        recipientAddressLine1=recipient.address_line1,
+        recipientAddressLine2=recipient.address_line2,
         recipientAddressLine3=None,
-        recipientCity=payload.recipient.city,
-        recipientProvince=payload.recipient.state_code,
-        recipientPostalCode=payload.recipient.postal_code,
-        recipientCountryCode=payload.recipient.country_code,
-        recipientPhone=payload.recipient.phone_number,
-        recipientEmail=payload.recipient.email,
+        recipientCity=recipient.city,
+        recipientProvince=recipient.state_code,
+        recipientPostalCode=recipient.postal_code,
+        recipientCountryCode=recipient.country_code,
+        recipientPhone=recipient.phone_number,
+        recipientEmail=recipient.email,
         totalPackageWeight=package.weight.value,
-        weightUnit=package.weight_unit.value,
+        weightUnit=provider_units.WeightUnit.map(package.weight_unit.value).value,
         currencyType=(
             options.currency.state or settings.connection_config.currency.state
         ),
@@ -103,16 +105,16 @@ def shipment_request(
         contentType=package.packaging_type,
         packageContentDescription=package.description,
         vatNumber=options.vat_number.state,
-        sellerName=payload.shipper.company_name or payload.shipper.person_name,
-        sellerAddressLine1=payload.shipper.address_line1,
-        sellerAddressLine2=payload.shipper.address_line2,
+        sellerName=shipper.company_name or shipper.person_name,
+        sellerAddressLine1=shipper.address_line1,
+        sellerAddressLine2=shipper.address_line2,
         sellerAddressLine3=None,
-        sellerCity=payload.shipper.city,
-        sellerProvince=payload.shipper.state_code,
-        sellerPostalCode=payload.shipper.postal_code,
-        sellerCountryCode=payload.shipper.country_code,
-        sellerPhone=payload.shipper.phone_number,
-        sellerEmail=payload.shipper.email,
+        sellerCity=shipper.city,
+        sellerProvince=shipper.state_code,
+        sellerPostalCode=shipper.postal_code,
+        sellerCountryCode=shipper.country_code,
+        sellerPhone=shipper.phone_number,
+        sellerEmail=shipper.email,
         items=[
             asendia.ItemType(
                 sku=item.sku,
@@ -127,4 +129,4 @@ def shipment_request(
         ],
     )
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, lib.to_dict)

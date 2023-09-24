@@ -1,3 +1,4 @@
+import karrio.schemas.asendia_us.cancel_request as asendia
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -32,10 +33,10 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = dict(
+    request = asendia.CancelRequestType(
         accountNumber=settings.account_number,
         subAccountNumber=settings.connection_config.sub_account_number.state,
         packageID=payload.shipment_identifier,
     )
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, lib.to_dict)

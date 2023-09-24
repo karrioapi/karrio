@@ -2,6 +2,11 @@ import karrio.lib as lib
 import karrio.core.units as units
 
 
+class WeightUnit(lib.Enum):
+    KG = "Kg"
+    LB = "Lb"
+
+
 class PackagingType(lib.Flag):
     """Carrier specific packaging type"""
 
@@ -18,8 +23,8 @@ class PackagingType(lib.Flag):
 
 
 class ConnectionConfig(lib.Enum):
-    sub_account = lib.units.OptionEnum("sub_account")
-    processing_location = lib.units.OptionEnum("processing_location")
+    sub_account = lib.OptionEnum("sub_account")
+    processing_location = lib.OptionEnum("processing_location")
 
 
 class ShippingService(lib.Enum):
@@ -51,3 +56,11 @@ def shipping_options_initializer(
         return key in ShippingOption  # type: ignore
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+
+class TrackingStatus(lib.Enum):
+    on_hold = ["Hold"]
+    delivered = ["Delivered"]
+    in_transit = ["Transit"]
+    delivery_failed = ["Failed"]
+    out_for_delivery = ["Out"]

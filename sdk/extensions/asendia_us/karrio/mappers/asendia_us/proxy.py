@@ -11,8 +11,9 @@ class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        query = urllib.parse.urlencode(request.serialize())
         response = lib.request(
-            url=f"{self.settings.server_url}/api/A1/v1.0/ShippingPlatform/ShippingRate?{request.serialize()}",
+            url=f"{self.settings.server_url}/api/A1/v1.0/ShippingPlatform/ShippingRate?{query}",
             trace=self.trace_as("json"),
             method="GET",
             headers={

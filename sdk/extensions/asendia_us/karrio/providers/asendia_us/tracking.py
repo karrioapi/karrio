@@ -1,4 +1,4 @@
-import karrio.schemas.asendia_us as asendia
+import karrio.schemas.asendia_us.tracking_response as asendia
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -26,8 +26,7 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    tracking = lib.to_object(asendia.Tracking, data)
-
+    tracking = lib.to_object(asendia.DatumType, data)
     status = next(
         (
             status.name
@@ -63,7 +62,7 @@ def _extract_details(
                 ),
                 location=lib.text(event.eventLocation),
             )
-            for event in tracking.trackingDetailEvents
+            for event in tracking.trackingMilestoneEvents
         ],
         delivered=status == "delivered",
         status=status,

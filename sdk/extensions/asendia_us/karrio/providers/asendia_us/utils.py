@@ -8,7 +8,7 @@ class Settings(core.Settings):
 
     username: str
     password: str
-    x_asendia_one_api_key: str
+    api_key: str
     account_number: str = None
 
     config: dict = {}
