@@ -1,23 +1,13 @@
 from attr import s
 from typing import Optional, List
-from jstruct import JStruct, JList
+from jstruct import JList, JStruct
 
 
 @s(auto_attribs=True)
-class EventLocationDetailsType:
-    addressLine1: Optional[str] = None
-    city: Optional[str] = None
-    province: Optional[str] = None
-    postalCode: Optional[str] = None
-    countryIso2: Optional[str] = None
-    countryName: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class TrackingDetailEventType:
+class TrackingMilestoneEventType:
     eventCode: Optional[str] = None
     eventDescription: Optional[str] = None
-    eventLocationDetails: Optional[EventLocationDetailsType] = JStruct[EventLocationDetailsType]
+    eventLocation: Optional[str] = None
     eventOn: Optional[str] = None
 
 
@@ -25,7 +15,7 @@ class TrackingDetailEventType:
 class DatumType:
     trackingNumberVendor: Optional[str] = None
     customerReferenceNumber: Optional[str] = None
-    trackingDetailEvents: List[TrackingDetailEventType] = JList[TrackingDetailEventType]
+    trackingMilestoneEvents: List[TrackingMilestoneEventType] = JList[TrackingMilestoneEventType]
 
 
 @s(auto_attribs=True)

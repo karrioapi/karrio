@@ -1,4 +1,5 @@
 import base64
+import karrio.lib as lib
 import karrio.core as core
 
 
@@ -10,8 +11,7 @@ class Settings(core.Settings):
     x_asendia_one_api_key: str
     account_number: str = None
 
-    id: str = None
-    account_country_code: str = "US"
+    config: dict = {}
 
     @property
     def carrier_name(self):
@@ -23,6 +23,15 @@ class Settings(core.Settings):
             "https://a1apiuat.asendiausa.com"
             if self.test_mode
             else "https://a1api.asendiausa.com"
+        )
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.asendia_us.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
         )
 
     @property

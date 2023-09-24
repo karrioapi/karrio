@@ -1,10 +1,10 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 
 
 class PackagingType(lib.Flag):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -17,19 +17,23 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
+class ConnectionConfig(lib.Enum):
+    sub_account = lib.units.OptionEnum("sub_account")
+    processing_location = lib.units.OptionEnum("processing_location")
+
+
 class ShippingService(lib.Enum):
-    """ Carrier specific services """
-    asendia_us_standard_service = "Asendia US Standard Service"
+    """Carrier specific services"""
+
+    asendia_us_e_com_tracked_ddp = "19"
+    asendia_us_fully_tracked = "65"
+    asendia_us_country_tracked = "66"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
-    # asendia_us_option = lib.OptionEnum("code")
+    """Carrier specific options"""
 
-    """ Unified Option type mapping """
-    # insurance = asendia_us_coverage  #  maps unified karrio option to carrier specific
-
-    pass
+    asendia_us_processing_location = lib.OptionEnum("asendia_us_processing_location")
 
 
 def shipping_options_initializer(

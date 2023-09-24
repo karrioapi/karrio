@@ -1,3 +1,4 @@
+import karrio.schemas.asendia_us as asendia
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -8,15 +9,14 @@ import karrio.providers.asendia_us.units as provider_units
 
 
 def parse_tracking_response(
-    responses: typing.List[typing.Tuple[str, dict]],
+    _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response_messages: list = []  # extract carrier response errors
-    response_details: list = []  # extract carrier response tracking details
+    response = _response.deserialize()
 
-    messages = error.parse_error_response(response_messages, settings)
+    messages = error.parse_error_response(response, settings)
     tracking_details = [
-        _extract_details(details, settings) for details in response_details
+        _extract_details(detail, settings) for detail in response.get("data") or []
     ]
 
     return tracking_details, messages
@@ -26,25 +26,47 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    tracking = None  # parse carrier tracking object type
-    events: list = []
+    tracking = lib.to_object(asendia.Tracking, data)
+
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if tracking.trackingMilestoneEvents[0].eventCode in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from tracking
+        tracking_number=tracking.trackingNumberVendor,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(""),  # extract tracking event date
-                description="",  # extract tracking event description or code
-                code="",  # extract tracking event code
-                time=lib.ftime(""),  # extract tracking event time
-                location="",  # extract tracking event address
+                date=lib.fdate(
+                    event.eventOn,
+                    (
+                        "%Y-%m-%dT%H:%M:%S.%f%z"
+                        if "." in event.eventOn
+                        else "%Y-%m-%dT%H:%M:%S%z"
+                    ),
+                ),
+                description=event.eventDescription,
+                code=event.eventCode,
+                time=lib.ftime(
+                    event.eventOn,
+                    (
+                        "%Y-%m-%dT%H:%M:%S.%f%z"
+                        if "." in event.eventOn
+                        else "%Y-%m-%dT%H:%M:%S%z"
+                    ),
+                ),
+                location=lib.text(event.eventLocation),
             )
-            for event in events
+            for event in tracking.trackingDetailEvents
         ],
-        estimated_delivery=lib.fdate(""),  # extract tracking estimated date if provided
-        delivered=False,  # compute tracking delivered status
+        delivered=status == "delivered",
+        status=status,
     )
 
 
