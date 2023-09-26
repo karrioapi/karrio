@@ -26,12 +26,12 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         idships = ",".join(request.serialize())
         response = lib.request(
-            url=f"{self.settings.lapost_server_url}/idships/{idships}?lang={self.settings.lang}",
+            url=f"{self.settings.laposte_server_url}/idships/{idships}?lang={self.settings.connection_config.lang.state or 'fr_FR'}",
             trace=self.trace_as("json"),
             method="GET",
             headers={
                 "accept": "application/json",
-                "X-Okapi-Key": self.settings.api_key,
+                "X-Okapi-Key": self.settings.laposte_api_key,
             },
         )
 

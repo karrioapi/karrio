@@ -13,6 +13,7 @@ def parse_tracking_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
+
     responses = response if isinstance(response, list) else [response]
     messages = error.parse_error_response(responses, settings)
     tracking_details = [

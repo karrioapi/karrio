@@ -1,7 +1,11 @@
 """Karrio Colissimo client settings."""
 
 import attr
+import typing
+import jstruct
+import karrio.core.models as models
 import karrio.providers.colissimo.utils as provider_utils
+import karrio.providers.colissimo.units as provider_units
 
 
 @attr.s(auto_attribs=True)
@@ -12,7 +16,6 @@ class Settings(provider_utils.Settings):
     password: str
     contract_number: str
     laposte_api_key: str = None
-    lang: str = "fr_FR"
 
     # generic properties
     id: str = None
@@ -20,3 +23,6 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "colissimo"
     account_country_code: str = "FR"
     metadata: dict = {}
+    config: dict = {}
+
+    services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel, False, dict(default=provider_units.DEFAULT_SERVICES)]  # type: ignore
