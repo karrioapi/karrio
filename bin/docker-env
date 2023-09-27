@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+# Run Docker dev env commands
+if [[ "$*" == *create* ]]; then
+
+  # Build development docker image
+  docker compose build
+
+  # Start development docker container
+  docker compose run -d --rm --name karriodev --service-ports karriodev bash
+
+  # Install development requirements
+  docker compose exec -it karriodev bash -c '. ./bin/setup-server-env && karrio migrate'
+
+elif [[ "$*" == *destroy* ]]; then
+
+  # Build development docker image
+  docker compose down
+  docker rm -f karriodev
+
+elif [[ "$*" == *shell* ]]; then
+
+  # Run docker dev environment shell
+  docker compose exec -it karriodev bash
+
+elif [[ "$*" == *exec* ]]; then
+ 
+  # Execute command in docker dev environment
+  docker compose exec -it karriodev bash -c "${@:2}"
+
+else
+
+  echo "Help: You can pass any the following commands to the sdk scripts"
+  echo "-----"
+  echo "create - Create and setup docker dev environment"
+  echo "destroy - Destroy docker dev environment"
+  echo "shell - Start docker dev environment shell"
+  echo "exec - Execute command in docker dev environment. ./bin/docker-env exec '<command>'"
+
+fi
