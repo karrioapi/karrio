@@ -1,10 +1,11 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
+import karrio.core.models as models
 
 
 class PackagingType(lib.Flag):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -18,12 +19,14 @@ class PackagingType(lib.Flag):
 
 
 class ShippingService(lib.Enum):
-    """ Carrier specific services """
+    """Carrier specific services"""
+
     geodis_standard_service = "GEODIS Standard Service"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
+    """Carrier specific options"""
+
     # geodis_option = lib.OptionEnum("code")
 
     """ Unified Option type mapping """
@@ -47,3 +50,14 @@ def shipping_options_initializer(
         return key in ShippingOption  # type: ignore
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+
+DEFAULT_SERVICES = [
+    models.ServiceLevel(
+        service_name="GEODIS Standard Service",
+        service_code="geodis_standard_service",
+        currency="EUR",
+        domicile=True,
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
+    ),
+]
