@@ -1,14 +1,13 @@
 services:
-  api:
+  karriodev:
     build:
       context: .
       dockerfile: docker/dev.Dockerfile
-    container_name: karrio.api
-    command: karrio runserver 0.0.0.0:5002
+    container_name: karrio.dev
     ports:
       - 5002:5002
     volumes:
-      - .:/code
+      - .:/karrio
 
   maildev:
     container_name: karrio.mail

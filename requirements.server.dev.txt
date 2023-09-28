@@ -71,4 +71,4 @@ django-debug-toolbar
 -e ./server/modules/orders
 -e ./server/modules/proxy
 -e ./server/modules/pricing
-# -e ./server/modules/documents
+-e ./server/modules/documents

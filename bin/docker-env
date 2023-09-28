@@ -1,0 +1,70 @@
+#!/usr/bin/env bash
+
+run_container() {
+  echo "Starting dev docker container"
+  docker container inspect karriodev > /dev/null || docker compose run -d --rm --name karriodev --service-ports karriodev bash
+}
+
+# Run Docker dev env commands
+if [[ "$1" == *create* ]]; then
+
+  # Build development docker image
+  docker compose build
+
+  # Start development docker container
+  run_container
+
+  # Install development requirements
+  docker compose exec -it karriodev bash -c '. ./bin/setup-server-env && karrio migrate'
+
+elif [[ "$1" == *destroy* ]]; then
+
+  # Build development docker image
+  docker rm -f karriodev
+  docker compose down
+
+elif [[ "$1" == *on* ]]; then
+
+  # Start development docker container
+  run_container
+
+elif [[ "$1" == *off* ]]; then
+
+  # Stop development docker container
+  docker stop karriodev
+  docker compose down
+
+elif [[ "$1" == *shell* ]]; then
+
+  # Run docker dev environment shell
+  docker exec -it karriodev bash
+
+elif [[ "$1" == *exec* ]]; then
+
+  # Execute command in docker dev environment
+  docker compose exec -it karriodev bash -c "${@:2}"
+
+else
+
+  echo "Help: You can pass any the following commands to the './bin/docker-env' scripts"
+  echo "-----"
+  echo "create     Create and setup docker dev environment."
+  echo "           ./bin/docker-env create"
+  echo ""
+  echo "destroy    Destroy docker dev environment."
+  echo "           ./bin/docker-env destroy"
+  echo ""
+  echo "on:        Start docker dev environment."
+  echo "           ./bin/docker-env on"
+  echo ""
+  echo "off:       Stop docker dev environment."
+  echo "           ./bin/docker-env off"
+  echo ""
+  echo "shell:     Start docker dev environment shell."
+  echo "           ./bin/docker-env shell"
+  echo ""
+  echo "exec:      Execute command in docker dev environment."
+  echo "           ./bin/docker-env exec '<command>'"
+  echo ""
+
+fi

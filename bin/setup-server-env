@@ -8,11 +8,6 @@ cd "${ROOT}"
     pip install -r "${ROOT:?}/requirements.server.dev.txt"
 cd -
 
-if [[ "$*" != *--light* ]];
-then
-    pip install -e "${ROOT:?}/server/modules/documents/"
-fi
-
 if [[ "$*" == *--cloud* ]];
 then
     source "${ROOT:?}/../karrio-cloud/bin/setup-cloud"
