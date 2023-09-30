@@ -13,18 +13,18 @@ django-debug-toolbar
 -e ./sdk/extensions/canadapost
 -e ./sdk/extensions/canpar
 -e ./sdk/extensions/chronopost
--e ./sdk/extensions/collissimo
--e ./sdk/extensions/dhl_express
+# -e ./sdk/extensions/colissimo
+# -e ./sdk/extensions/dhl_express
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
 -e ./sdk/extensions/dpd
--e ./sdk/extensions/dpdhl
--e ./sdk/extensions/dpdhl_international
--e ./sdk/extensions/fedex
+# -e ./sdk/extensions/dpdhl
+# -e ./sdk/extensions/dpdhl_international
+# -e ./sdk/extensions/fedex
 -e ./sdk/extensions/generic
--e ./sdk/extensions/geodis
--e ./sdk/extensions/gls_eu
+# -e ./sdk/extensions/geodis
+# -e ./sdk/extensions/gls_eu
 -e ./sdk/extensions/laposte
 -e ./sdk/extensions/nationex
 # -e ./sdk/extensions/postnl
@@ -32,7 +32,7 @@ django-debug-toolbar
 -e ./sdk/extensions/roadie
 -e ./sdk/extensions/royalmail
 -e ./sdk/extensions/sendle
--e ./sdk/extensions/tnt
+# -e ./sdk/extensions/tnt
 -e ./sdk/extensions/ups
 -e ./sdk/extensions/usps
 -e ./sdk/extensions/usps_international
