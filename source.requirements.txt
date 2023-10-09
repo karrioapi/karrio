@@ -123,7 +123,7 @@ odfpy==1.4.1
 openpyxl==3.1.2
 packaging==23.1
 phonenumbers==8.13.19
-Pillow==10.0.0
+Pillow==10.0.1
 psutil==5.9.5
 psycopg2-binary==2.9.7
 py-soap==2020.3.2
