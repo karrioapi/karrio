@@ -1,4 +1,5 @@
-
+import karrio.schemas.dpdhl.shipping_request as dpdhl
+import karrio.schemas.dpdhl.shipping_response as shipping
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -49,14 +50,28 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
-    service = provider_units.ShippingService.map(payload.service).value_or_key  # preprocess the request services
+    packages = lib.to_packages(payload.parcels)
+    service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
         option_type=provider_units.ShippingOption,
-    )   # preprocess the request options
+    )
 
-    request = None  # map data to convert karrio model to dpdhl specific type
+    request = dpdhl.ShippingRequestType(
+        profile=None,
+        shipments=[
+            dpdhl.ShipmentType(
+                product=None,
+                billingNumber=None,
+                refNo=None,
+                shipper=dpdhl.ConsigneeType(),
+                consignee=None,
+                details=None,
+                customs=None,
+                services=None,
+            )
+        ],
+    )
 
     return lib.Serializable(request)

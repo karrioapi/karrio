@@ -16,7 +16,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/orders",
+            url=f"{self.settings.server_url}/v2/orders",
             data=request.serialize(),
             trace=self.trace_as("json"),
             method="POST",
@@ -30,7 +30,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/orders?profile=STANDARD_GRUPPENPROFIL&shipment={request.serialize()}",
+            url=f"{self.settings.server_url}/v2/orders?profile=STANDARD_GRUPPENPROFIL&shipment={request.serialize()}",
             data=request.serialize(),
             trace=self.trace_as("json"),
             method="POST",

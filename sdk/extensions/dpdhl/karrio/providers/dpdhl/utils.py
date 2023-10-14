@@ -19,9 +19,9 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://api-sandbox.dhl.com/parcel/de/shipping/v2"
+            "https://api-sandbox.dhl.com/parcel/de/shipping"
             if self.test_mode
-            else "https://api-eu.dhl.com/parcel/de/shipping/v2"
+            else "https://api-eu.dhl.com/parcel/de/shipping"
         )
 
     @property
