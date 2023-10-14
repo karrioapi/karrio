@@ -1,11 +1,11 @@
 # Karrio
 
-- Website: <https://karrio.io>
-- Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
-- Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
-- Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
-- Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
-- Blog: [Blog](https://karrio.io/blog)
+-   Website: <https://karrio.io>
+-   Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
+-   Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
+-   Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
+-   Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
+-   Blog: [Blog](https://karrio.io/blog)
 
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=e72dd847-dc7f-4f81-bce4-88eeb20d807f" />
 <a href="https://karrio.io" target="_blank">
@@ -31,21 +31,21 @@ cd karrio/docker
 docker compose up
 ```
 
-- Karrio server accessible at <http://localhost:5002>
-- Karrio dashboard accessible at <http://localhost:3000>
+-   Karrio server accessible at <http://localhost:5002>
+-   Karrio dashboard accessible at <http://localhost:3000>
 
 Default Login: <admin@example.com> | demo
 
 ## Features
 
-- **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
-- **Extensible**: Build anything with webhooks, API and metadata.
-- **Multi-carrier SDK**: Use the karrio SDK Framework to integrate with custom carrier APIs.
-- **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
-- **Tracking**: Create package trackers, get real time tracking status and deliver a great shopping experience.
-- **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
-- **Cloud**: Optimized for deployments using Docker.
-- **Dashboard**: Use the [karrio dashboard](https://github.com/karrioapi/karrio-dashboard) to orchestrate your logistics operations.
+-   **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
+-   **Extensible**: Build anything with webhooks, API and metadata.
+-   **Multi-carrier SDK**: Use the karrio SDK Framework to integrate with custom carrier APIs.
+-   **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
+-   **Tracking**: Create package trackers, get real time tracking status and deliver a great shopping experience.
+-   **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
+-   **Cloud**: Optimized for deployments using Docker.
+-   **Dashboard**: Use the [karrio dashboard](https://github.com/karrioapi/karrio-dashboard) to orchestrate your logistics operations.
 
 <img alt="Karrio Dashboard" src="screenshots/dashboard.png" />
 
@@ -67,10 +67,10 @@ Request access to [Karrio Cloud](https://www.karrio.io/get-started).
 
 ## The problem: Shipping integration is still painful
 
-- Lack of documentation.
-- Multiple and inconsistent APIs.
-- Difficult access to account and API credentials for development.
-- Poor developer experience.
+-   Lack of documentation.
+-   Multiple and inconsistent APIs.
+-   Difficult access to account and API credentials for development.
+-   Poor developer experience.
 
 ## Our philosophy
 
@@ -100,10 +100,10 @@ If you run into any problems or issues, please create a Github issue and we'll t
 
 We strive to provide good support through our issue trackers on Github. However, if you'd like to receive private & prioritized support with:
 
-- Phone / video calls to discuss your specific use case and get recommendations on best practices
-- Guidance around deployment, ops and scaling best practices
-- Prioritized carriers integrations
-- Prioritized feature requests
+-   Phone / video calls to discuss your specific use case and get recommendations on best practices
+-   Guidance around deployment, ops and scaling best practices
+-   Prioritized carriers integrations
+-   Prioritized feature requests
 
 We do offer paid support options. Please reach out to us at <hello@karrio.io> to sign up.
 
@@ -119,6 +119,4 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
 
 This project uses the [Apache v2 license](LICENSE). The core Karrio platform will always remain open and free.
 
-We are developing some commercial enterprise add-ons (contained in the `/ee` directory) only offered on our Cloud and Enterprise editions.
-
-Any other questions, mail us at <hello@karrio.io> We’d love to meet you!
+Any other questions, mail us at hello@karrio.io We’d love to meet you!
