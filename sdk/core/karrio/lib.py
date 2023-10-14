@@ -275,7 +275,7 @@ def to_object(
 def to_dict(
     value: typing.Any,
     clear_empty: bool = None,
-) -> dict:
+) -> typing.Union[dict, list, typing.Any]:
     """Parse value into a Python dictionay.
 
     :param value: a value that can converted in dictionary.

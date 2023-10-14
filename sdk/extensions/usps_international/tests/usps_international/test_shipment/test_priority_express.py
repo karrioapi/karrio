@@ -2,15 +2,15 @@ import unittest
 import urllib.parse
 from unittest.mock import patch, ANY
 import karrio
-from karrio.core.utils import DP
-from karrio.core.models import ShipmentRequest
+import karrio.lib as lib
+import karrio.core.models as models
 from ..fixture import gateway
 
 
 class TestUSPSPriorityExpressShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.ShipmentRequest = ShipmentRequest(**shipment_data)
+        self.ShipmentRequest = models.ShipmentRequest(**shipment_data)
 
     def test_create_shipment_request(self):
         requests = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -21,9 +21,10 @@ class TestUSPSPriorityExpressShipment(unittest.TestCase):
         karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
+        expected_url = f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}"
         self.assertEqual(
-            url,
-            f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}",
+            urllib.parse.unquote(url),
+            urllib.parse.unquote(expected_url),
         )
 
     def test_parse_shipment_response(self):
@@ -32,7 +33,7 @@ class TestUSPSPriorityExpressShipment(unittest.TestCase):
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedShipmentResponse)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
 
 if __name__ == "__main__":
@@ -148,7 +149,7 @@ ShipmentRequestXML = """<eVSExpressMailIntlRequest USERID="username" PASSWORD="p
         <ItemDetail>
             <Description>N/A</Description>
             <Quantity>1</Quantity>
-            <Value>30.</Value>
+            <Value>30.0</Value>
             <NetPounds>4.41</NetPounds>
             <NetOunces>70.549999999999997</NetOunces>
             <HSTariffNumber>XXXXX0000123</HSTariffNumber>

@@ -14,7 +14,7 @@ setup(
     author_email="hello@karrio.io",
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
-    install_requires=["karrio", "carrier.usps"],
+    install_requires=["karrio"],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",

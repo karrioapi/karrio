@@ -28,9 +28,10 @@ class TestUSPSPriorityMailShipment(unittest.TestCase):
         karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
+        expected_url = f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}"
         self.assertEqual(
-            url,
-            f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}",
+            urllib.parse.unquote(url),
+            urllib.parse.unquote(expected_url),
         )
 
     @patch("karrio.mappers.usps_international.proxy.http", return_value="<a></a>")
@@ -192,7 +193,7 @@ ShipmentRequestXML = """<eVSPriorityMailIntlRequest USERID="username">
         <ItemDetail>
             <Description>N/A</Description>
             <Quantity>1</Quantity>
-            <Value>30.</Value>
+            <Value>30.0</Value>
             <NetPounds>4.41</NetPounds>
             <NetOunces>70.549999999999997</NetOunces>
             <HSTariffNumber>XXXXX0000123</HSTariffNumber>

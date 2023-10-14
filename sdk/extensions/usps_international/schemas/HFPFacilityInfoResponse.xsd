@@ -1,0 +1,27 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="HFPFacilityInfoResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="PickupCity"/>
+                <xs:element type="xs:string" name="PickupState"/>
+                <xs:element type="xs:int" name="PickupZIP"/>
+                <xs:element type="xs:string" name="PickupZIP4"/>
+                <xs:element name="Facility" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:int" name="FacilityID"/>
+                            <xs:element type="xs:string" name="FacilityName"/>
+                            <xs:element type="xs:string" name="FacilityAddress"/>
+                            <xs:element type="xs:string" name="FacilityCity"/>
+                            <xs:element type="xs:string" name="FacilityState"/>
+                            <xs:element type="xs:int" name="FacilityZIP"/>
+                            <xs:element type="xs:short" name="FacilityZIP4"/>
+                            <xs:element type="xs:string" name="Has10amCommitment"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

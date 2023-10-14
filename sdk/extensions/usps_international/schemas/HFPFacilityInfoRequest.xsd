@@ -1,0 +1,15 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="HFPFacilityInfoRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="PickupCity"/>
+                <xs:element type="xs:string" name="PickupState"/>
+                <xs:element type="xs:int" name="PickupZIP"/>
+                <xs:element type="xs:string" name="PickupZIP4"/>
+                <xs:element type="xs:string" name="Service"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

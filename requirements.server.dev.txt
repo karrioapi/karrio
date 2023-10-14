@@ -1,8 +1,5 @@
 django-debug-toolbar
 
-# Carrier Schemas packages
--e ./schemas/usps
-
 # Carrier Extentions packages
 -e ./sdk/core
 -e ./sdk/extensions/amazon_shipping
