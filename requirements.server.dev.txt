@@ -12,6 +12,7 @@ django-debug-toolbar
 -e ./sdk/extensions/chronopost
 # -e ./sdk/extensions/colissimo
 # -e ./sdk/extensions/dhl_express
+karrio.dhl_express
 -e ./sdk/extensions/dhl_poland
 -e ./sdk/extensions/dhl_universal
 -e ./sdk/extensions/dicom
@@ -19,6 +20,7 @@ django-debug-toolbar
 # -e ./sdk/extensions/dpdhl
 # -e ./sdk/extensions/dpdhl_international
 # -e ./sdk/extensions/fedex
+karrio.fedex
 -e ./sdk/extensions/generic
 # -e ./sdk/extensions/geodis
 # -e ./sdk/extensions/gls_eu
