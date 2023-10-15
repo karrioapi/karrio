@@ -1,4 +1,4 @@
-import karrio.schemas.geodis.error as geodis
+import karrio.schemas.geodis.error_response as geodis
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -11,7 +11,11 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
-    errors = [lib.to_object(geodis.Error, res) for res in responses]
+    errors = [
+        lib.to_object(geodis.ErrorResponseType, res)
+        for res in responses
+        if res.get("ok") is False
+    ]
 
     return [
         models.Message(

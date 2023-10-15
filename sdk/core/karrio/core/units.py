@@ -257,7 +257,7 @@ class Volume:
 
     @property
     def value(self):
-        if not any([self._side1.value, self._side2.value, self._side3.value]):
+        if not all([self._side1.value, self._side2.value, self._side3.value]):
             return None
 
         return utils.NF.decimal(self._side1.M * self._side2.M * self._side3.M)
@@ -650,6 +650,13 @@ class Packages(typing.Iterable[Package]):
         return Weight(unit=unit, value=value)
 
     @property
+    def volume(self) -> typing.Optional[float]:
+        if not any([pkg.volume.value for pkg in self._items]):
+            return None
+
+        return sum([pkg.volume.value or 0.0 for pkg in self._items], 0.0)
+
+    @property
     def package_type(self) -> str:
         return (
             (self._items[0].packaging_type or "your_packaging")
@@ -845,7 +852,7 @@ class ShippingOption(utils.Enum):
     declared_value = utils.OptionEnum("declared_value", float)
     paperless_trade = utils.OptionEnum("paperless_trade", bool)
     hold_at_location = utils.OptionEnum("hold_at_location", bool)
-    sms_notification = utils.OptionEnum("email_notification", bool)
+    sms_notification = utils.OptionEnum("sms_notification", bool)
     email_notification = utils.OptionEnum("email_notification", bool)
     email_notification_to = utils.OptionEnum("email_notification_to")
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)

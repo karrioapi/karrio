@@ -15,6 +15,7 @@ class Settings(provider_utils.Settings):
     # required carrier specific properties
     api_key: str
     identifier: str
+    code_client: str = None
     language: str = "fr"
 
     # generic properties

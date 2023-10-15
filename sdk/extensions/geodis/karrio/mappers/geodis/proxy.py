@@ -15,8 +15,27 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return super().get_rates(request)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        service = f"{'geolabel/api' if self.settings.test_mode else 'api'}/etiquettes/generer-flux-colis"
+        service = "api/wsclient/enregistrement-envois"
         data = request.serialize()
+
+        response = lib.request(
+            url=f"{self.settings.server_url}/{service}",
+            data=json.dumps(data, separators=(",", ":")),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Accept": "*/*",
+                "Content-Type": "application/json",
+                "X-GEODIS-Service": self.settings.get_token(service, data),
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
+
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        service = "api/wsclient/suppression-envois"
+        data = request.serialize()
+
         response = lib.request(
             url=f"{self.settings.server_url}/{service}",
             data=json.dumps(data, separators=(",", ":")),

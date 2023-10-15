@@ -1,0 +1,61 @@
+{
+  "ok": true,
+  "codeErreur": null,
+  "texteErreur": null,
+  "contenu": {
+    "msgErreur": null,
+    "nbEnvoisATraiter": 1,
+    "nbEnvoisEnregistres": 0,
+    "nbEnvoisValides": 0,
+    "nbEnvoisSupprimes": 1,
+    "nbAnomaliesSuppression": 0,
+    "nbAnomaliesEtiquette": 0,
+    "nbAnomaliesBordereau": 0,
+    "nbAnomaliesRecapitulatif": 0,
+    "docBordereau": null,
+    "docRecapitulatif": null,
+    "msgErreurBordereau": null,
+    "msgErreurRecapitulatif": null,
+    "listRetoursEnvois": [
+      {
+        "index": 0,
+        "horsSite": false,
+        "codeSa": "020017",
+        "codeClient": "601911",
+        "codeProduit": "MES",
+        "reference1": "ref-1",
+        "reference2": "ref-2",
+        "dateDepartEnlevement": "2020-06-09",
+        "destinataire": {
+          "nom": "M. DESTI",
+          "adresse1": "12 avenue du webservice",
+          "adresse2": "ZA wsclient",
+          "codePostal": "75001",
+          "ville": "PARIS 01",
+          "codePays": "FR",
+          "email": "w@z.fr",
+          "telFixe": "0100000000",
+          "indTelMobile": "33",
+          "telMobile": "0611111111",
+          "nomContact": "M. Toto",
+          "codePorte": "1515",
+          "codeTiers": "",
+          "noEntrepositaireAgree": null,
+          "particulier": false
+        },
+        "noRecepisse": "90000022",
+        "noSuivi": "1G08Q6PK6PHP",
+        "urlSuiviDestinataire": "https://edesti.com/1G08Q6PK6PHP",
+        "docEtiquette": null,
+        "docBordereau": null,
+        "docRecapitulatif": null,
+        "msgErreurEnregistrement": null,
+        "msgErreurValidation": null,
+        "msgErreurSuppression": null,
+        "msgErreurEtiquette": null,
+        "msgErreurBordereau": null,
+        "msgErreurRecapitulatif": null
+      }
+    ]
+  }
+}

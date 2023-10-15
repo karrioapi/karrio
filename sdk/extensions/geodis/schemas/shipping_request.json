@@ -1,0 +1,169 @@
+{
+  "modificationParReference1": false,
+  "impressionEtiquette": true,
+  "typeImpressionEtiquette": "Z",
+  "formatEtiquette": "string",
+  "validationEnvoi": false,
+  "suppressionSiEchecValidation": false,
+  "impressionBordereau": false,
+  "impressionRecapitulatif": false,
+  "listEnvois": [
+    {
+      "noRecepisse": "",
+      "noSuivi": "",
+      "horsSite": false,
+      "codeSa": "020017",
+      "codeClient": "601911",
+      "codeProduit": "MES",
+      "reference1": "ref-1",
+      "reference2": "ref-2",
+      "expediteur": {
+        "nom": "ESPACE 2 ROCHEFORT",
+        "adresse1": "PLACE DU MARCHE",
+        "adresse2": "",
+        "codePostal": "17300",
+        "ville": "ROCHEFORT",
+        "codePays": "FR",
+        "email": "a@b.fr",
+        "telFixe": "0200000000",
+        "indTelMobile": "33",
+        "telMobile": "0700000000",
+        "nomContact": "Mme Titi",
+        "codePorte": "1789",
+        "codeTiers": "020017",
+        "noEntrepositaireAgree": "020017",
+        "particulier": false
+      },
+      "dateDepartEnlevement": "2023-10-17",
+      "instructionEnlevement": "Entree fournisseurs",
+      "destinataire": {
+        "nom": "M. DESTI",
+        "adresse1": "12 avenue du webservice",
+        "adresse2": "ZA wsclient",
+        "codePostal": "75001",
+        "ville": "PARIS 01",
+        "codePays": "FR",
+        "nomContact": "M. Toto",
+        "email": "x@y.fr",
+        "telFixe": "0100000000",
+        "indTelMobile": "33",
+        "telMobile": "0600000000",
+        "codePorte": "1515"
+      },
+      "listUmgs": [
+        {
+          "palette": false,
+          "paletteConsignee": false,
+          "quantite": 1,
+          "poids": 1.24,
+          "volume": 0.45,
+          "longueurUnitaire": 0.45,
+          "largeurUnitaire": 0.45,
+          "hauteurUnitaire": 0.45,
+          "referenceColis": "Package reference"
+        }
+      ],
+      "natureEnvoi": "COL",
+      "poidsTotal": 1.24,
+      "volumeTotal": 0.45,
+      "largerTotal": 0.45,
+      "hauteurTotal": 0.45,
+      "longueurTotal": 0.45,
+      "uniteTaxation": {
+        "quantite": 1.24,
+        "codeUnite": "EUR"
+      },
+      "animauxPlumes": false,
+      "optionLivraison": "RDW",
+      "codeSaBureauRestant": "GEODIS agency code for a pick-up in agency",
+      "idPointRelais": "Point Relais identifier",
+      "dateLivraison": "2023-10-17",
+      "heureLivraison": "12:00:00",
+      "instructionLivraison": "5ème sans ascenseur",
+      "natureMarchandise": "MARCH",
+      "valeurDeclaree": {
+        "quantite": 12.34,
+        "codeUnite": "EUR"
+      },
+      "contreRemboursement": {
+        "quantite": 12.34,
+        "codeUnite": "EUR"
+      },
+      "codeIncotermConditionLivraison": "P",
+      "typeTva": "TVA",
+      "sadLivToph": false,
+      "sadSwap": false,
+      "sadLivEtage": false,
+      "sadMiseLieuUtil": false,
+      "sadDepotage": false,
+      "etage": 10,
+      "emailNotificationDestinataire": "w@z.fr",
+      "smsNotificationDestinataire": "0611111111",
+      "emailNotificationExpediteur": "w@mail.fr",
+      "emailConfirmationEnlevement": "w@mail.fr",
+      "emailPriseEnChargeEnlevement": "w@mail.fr",
+      "poidsQteLimiteeMD": 1.24,
+      "dangerEnvQteLimiteeMD": false,
+      "nbColisQteExcepteeMD": 1,
+      "dangerEnvQteExcepteeMD": false,
+      "listMatieresDangereuses": [
+        {
+          "noONU": "UN1263",
+          "groupeEmballage": "Peinture",
+          "classeADR": "ADR class",
+          "codeTypeEmballage": "EUR",
+          "nbEmballages": 1,
+          "nomTechnique": "Paint",
+          "codeQuantite": "PBT",
+          "poidsVolume": 1.24,
+          "dangerEnv": false
+        }
+      ],
+      "listVinsSpiritueux": [
+        {
+          "regimeFiscal": "D",
+          "nbCols": 1,
+          "contenance": 1.24,
+          "volumeEnDroits": 1.24,
+          "noTitreMvtRefAdmin": "Movement certificat number / Administrative reference",
+          "dureeTransport": 1.5
+        }
+      ],
+      "nosUmsAEtiqueter": "Package / pallet numbers to be labeled",
+      "listDocumentsEnvoi": [
+        {
+          "visibiliteDestinataire": false,
+          "pieceJointe": {
+            "nom": "Document name",
+            "type": "PDF",
+            "contenu": "Binary content of the document encoded in Base64"
+          }
+        }
+      ],
+      "informationDouane": {
+        "poidsNetTotal": 1.24,
+        "eoriExpediteur": "EORI number of the sender",
+        "eoriDestinataire": "EORI number of the recipient",
+        "emailExpediteurDouane": "Shipper’s e-mail for the customs",
+        "indTelExpediteurDouane": "Shipper’s phone dial code for the customs",
+        "telExpediteurDouane": "Shipper’s phone number for the customs",
+        "mandatRepresentation": false,
+        "listFactures": [
+          {
+            "noFacture": "Invoice number",
+            "montantFacture": {
+              "quantite": 12.34,
+              "codeUnite": "EUR"
+            },
+            "dateFacture": "2023-10-17",
+            "pieceJointe": {
+              "nom": "Document name",
+              "type": "PDF",
+              "contenu": "Binary content of the document encoded in Base64"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

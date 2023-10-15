@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List, Any
+from typing import Optional, List
 from jstruct import JStruct, JList
 
 
@@ -52,29 +52,15 @@ class DestinataireType:
     restrictionAni: Optional[str] = None
     codeRegion: Optional[int] = None
     urlPlan: Optional[str] = None
+    agenceTeos: Optional[str] = None
     listDisponibilites: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class ListEnvoisRegroupeType:
-    noRecepisse: Optional[str] = None
-    reference1: Optional[str] = None
-    poids: Optional[float] = None
-    nbColis: Optional[int] = None
-    nbPalettes: Optional[int] = None
-
-
-@s(auto_attribs=True)
-class ListPointageType:
-    datePointage: Optional[str] = None
-    datePointageFrs: Optional[str] = None
-    heurePointage: Optional[str] = None
-    heurePointageFrs: Optional[str] = None
-    lieu: Optional[str] = None
-    referenceColis: Optional[str] = None
-    noPointage: Optional[str] = None
-    cabTransporteur: Optional[str] = None
-    cabClient: Optional[str] = None
+class IncotermConditionLivraisonType:
+    code: Optional[str] = None
+    libelle: Optional[str] = None
+    defaut: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -109,6 +95,8 @@ class PrestationCommercialeType:
     codeOption: Optional[str] = None
     type: Optional[str] = None
     libelle: Optional[str] = None
+    typeService: Optional[str] = None
+    sansB2C: Optional[bool] = None
     europe: Optional[bool] = None
     vinsSpiritueux: Optional[str] = None
     pointRelais: Optional[str] = None
@@ -119,6 +107,14 @@ class PrestationCommercialeType:
     miseLieuUtil: Optional[str] = None
     depotage: Optional[str] = None
     defaut: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class SuiviBilanCarboneType:
+    emissionDisponible: Optional[bool] = None
+    emissionEqc: Optional[str] = None
+    emissionEqa: Optional[str] = None
+    emissionPar: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -143,7 +139,7 @@ class ContenuType:
     refUniEnl: Optional[int] = None
     noSuivi: Optional[str] = None
     codeSa: Optional[str] = None
-    codeClient: Optional[str] = None
+    codeClient: Optional[int] = None
     noRecepisse: Optional[int] = None
     dateDepart: Optional[str] = None
     dateDepartFrs: Optional[str] = None
@@ -152,7 +148,7 @@ class ContenuType:
     destinataire: Optional[DestinataireType] = JStruct[DestinataireType]
     reference1: Optional[str] = None
     reference2: Optional[str] = None
-    refEdides: Optional[str] = None
+    refEdides: Optional[int] = None
     dateLivraisonSouhaitee: Optional[str] = None
     dateLivraisonSouhaiteeFrs: Optional[str] = None
     dateLivraisonPrevue: Optional[str] = None
@@ -163,8 +159,8 @@ class ContenuType:
     nbColis: Optional[int] = None
     nbPalettes: Optional[int] = None
     nbPalettesConsignees: Optional[int] = None
-    poids: Optional[int] = None
-    volume: Optional[int] = None
+    poids: Optional[float] = None
+    volume: Optional[float] = None
     qteUniteTaxation: Optional[str] = None
     uniteTaxation: Optional[str] = None
     valeurDeclaree: Optional[str] = None
@@ -173,31 +169,43 @@ class ContenuType:
     deviseContreRemboursement: Optional[str] = None
     portDu: Optional[str] = None
     devisePortDu: Optional[str] = None
-    incotermConditionLivraison: Optional[str] = None
+    incotermConditionLivraison: Optional[IncotermConditionLivraisonType] = JStruct[IncotermConditionLivraisonType]
     natureMarchandises: Optional[str] = None
     sadLivEtage: Optional[bool] = None
     sadMiseLieuUtil: Optional[bool] = None
     sadDepotage: Optional[bool] = None
-    listEnvoisRegroupes: List[ListEnvoisRegroupeType] = JList[ListEnvoisRegroupeType]
+    sadSwso: Optional[bool] = None
+    listEnvoisRegroupes: List[str] = []
     listSuivis: List[ListSuiviType] = JList[ListSuiviType]
     timeline: Optional[TimelineType] = JStruct[TimelineType]
-    listReferencesColis: List[Any] = []
-    listPointages: List[ListPointageType] = JList[ListPointageType]
-    suiviBilanCarbone: Optional[str] = None
+    listReferencesColis: List[str] = []
+    listPointages: List[str] = []
+    suiviBilanCarbone: Optional[SuiviBilanCarboneType] = JStruct[SuiviBilanCarboneType]
     suiviTemperature: Optional[str] = None
-    listImagesPoc: List[Any] = []
-    listImagesRecepEmarge: List[Any] = []
-    listImagesBordereauxLivr: List[Any] = []
-    listImagesCopilote: List[Any] = []
-    listImagesMiseLieuSur: List[Any] = []
-    listImagesPreuveService: List[Any] = []
-    listServicesLivraison: List[Any] = []
-    listServicesAdditionnels: List[Any] = []
+    listImagesPoc: List[str] = []
+    listImagesRecepEmarge: List[str] = []
+    listImagesBordereauxLivr: List[str] = []
+    listImagesCopilote: List[str] = []
+    listImagesMiseLieuSur: List[str] = []
+    listImagesPreuveService: List[str] = []
+    listPjsEnvoi: List[str] = []
+    listServicesLivraison: List[str] = []
+    listServicesAdditionnels: List[str] = []
     loginDestinataire: Optional[str] = None
     urlSuiviDestinataire: Optional[str] = None
     libelleDepart: Optional[str] = None
     libelleLivraison: Optional[str] = None
     infoETA: Optional[str] = None
+    swapAller: Optional[bool] = None
+    refUniExpSwapAller: Optional[int] = None
+    noRecepisseSwapAller: Optional[str] = None
+    noSuiviSwapAller: Optional[str] = None
+    swapRetour: Optional[bool] = None
+    refUniExpSwapRetour: Optional[int] = None
+    noRecepisseSwapRetour: Optional[str] = None
+    noSuiviSwapRetour: Optional[str] = None
+    controleDouane: Optional[bool] = None
+    listFacturesDouane: Optional[str] = None
 
 
 @s(auto_attribs=True)

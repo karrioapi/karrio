@@ -22,7 +22,7 @@ karrio.dhl_express
 # -e ./sdk/extensions/fedex
 karrio.fedex
 -e ./sdk/extensions/generic
-# -e ./sdk/extensions/geodis
+-e ./sdk/extensions/geodis
 # -e ./sdk/extensions/gls_eu
 -e ./sdk/extensions/laposte
 -e ./sdk/extensions/nationex
