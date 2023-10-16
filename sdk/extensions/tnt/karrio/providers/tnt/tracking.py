@@ -46,7 +46,8 @@ def _extract_detail(
 
 
 def tracking_request(
-    payload: models.TrackingRequest, settings: provider_utils.Settings
+    payload: models.TrackingRequest,
+    settings: provider_utils.Settings,
 ) -> lib.Serializable:
     request = tnt.TrackRequestType(
         locale="en_US",

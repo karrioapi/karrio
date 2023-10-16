@@ -31,7 +31,7 @@ karrio.fedex
 -e ./sdk/extensions/roadie
 -e ./sdk/extensions/royalmail
 -e ./sdk/extensions/sendle
-# -e ./sdk/extensions/tnt
+-e ./sdk/extensions/tnt
 -e ./sdk/extensions/ups
 -e ./sdk/extensions/usps
 -e ./sdk/extensions/usps_international

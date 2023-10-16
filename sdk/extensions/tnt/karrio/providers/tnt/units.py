@@ -92,6 +92,10 @@ class PaymentType(lib.Flag):
     third_party = recipient
 
 
+class ConnectionConfig(lib.Enum):
+    label_type = lib.OptionEnum("label_type")
+
+
 class ShipmentService(lib.Enum):
     tnt_special_express = "1N"
     tnt_9_00_express = "09N"

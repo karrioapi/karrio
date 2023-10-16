@@ -90,7 +90,7 @@ class Proxy(proxy.Proxy):
 
         def _get_label(job: lib.Job):
             label_string = lib.request(
-                decoder=lambda b: base64.encodebytes(b).decode("utf-8"),
+                decoder=lib.encode_base64,
                 url=job.data["href"],
                 method="GET",
                 headers={

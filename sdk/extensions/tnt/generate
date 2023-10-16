@@ -10,6 +10,9 @@ quicktype () {
     --no-nice-property-names --all-properties-optional --type-as-suffix $@
 }
 
+generateDS --no-namespace-defs -o "${LIB_MODULES}/label_common_definitions.py" $SCHEMAS/label_common_definitions.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/label_request.py" $SCHEMAS/label_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/label_response.py" $SCHEMAS/label_response.xsd
 generateDS --no-namespace-defs -o "${LIB_MODULES}/rating_common_definitions.py" $SCHEMAS/rating_common_definitions.xsd
 generateDS --no-namespace-defs -o "${LIB_MODULES}/rating_request.py" $SCHEMAS/rating_request.xsd
 generateDS --no-namespace-defs -o "${LIB_MODULES}/rating_response.py" $SCHEMAS/rating_response.xsd

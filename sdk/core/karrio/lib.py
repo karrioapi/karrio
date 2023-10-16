@@ -1,3 +1,4 @@
+import base64
 import typing
 import logging
 import datetime
@@ -696,6 +697,14 @@ def decode(byte: bytes):
         failsafe(lambda: byte.decode("utf-8"))
         or failsafe(lambda: byte.decode("ISO-8859-1"))
         or byte.decode("utf-8")
+    )
+
+
+def encode_base64(byte: bytes):
+    return (
+        failsafe(lambda: base64.encodebytes(byte).decode("utf-8"))
+        or failsafe(lambda: base64.encodebytes(byte).decode("ISO-8859-1"))
+        or base64.encodebytes(byte).decode("utf-8")
     )
 
 

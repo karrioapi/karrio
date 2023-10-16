@@ -35,7 +35,11 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, lib.to_element)
+        return lib.Deserializable(
+            response,
+            lib.to_element,
+            {**request.ctx, "tracer": self.trace_as("xml")},
+        )
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(

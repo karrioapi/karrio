@@ -1,12 +1,11 @@
 import karrio.schemas.tnt.rating_request as tnt
 import karrio.schemas.tnt.rating_response as rating
-
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.purolator.error as provider_error
-import karrio.providers.purolator.units as provider_units
-import karrio.providers.purolator.utils as provider_utils
+import karrio.providers.tnt.error as provider_error
+import karrio.providers.tnt.units as provider_units
+import karrio.providers.tnt.utils as provider_utils
 
 
 def parse_rate_response(
