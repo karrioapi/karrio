@@ -152,7 +152,7 @@ tinycss2==1.2.1
 treepoem==3.20.0
 typing_extensions==4.7.1
 uritemplate==4.1.1
-urllib3==2.0.6
+urllib3==2.0.7
 uvicorn==0.23.0
 weasyprint==59.0
 webencodings==0.5.1
