@@ -1,10 +1,10 @@
 import karrio.schemas.tnt.label_request as tnt
 import karrio.schemas.tnt.shipping_response as shipping
+import typing
 import base64
-import urllib.parse
 import karrio.lib as lib
 import karrio.core as core
-import karrio.core.units as units
+import karrio.core.models as models
 
 
 class Settings(core.Settings):
@@ -41,28 +41,35 @@ class Settings(core.Settings):
         )
 
 
-def generate_label(
-    activity: shipping.document,
+def create_label_request(
+    shipment_response: str,
     settings: Settings,
     ctx: dict,
-) -> lib.Serializable:
+) -> typing.Optional[lib.Serializable]:
     import karrio.providers.tnt.units as provider_units
 
-    tracer = ctx.get("tracer")
-    payload = ctx.get("payload")
+    payload: models.ShipmentRequest = ctx.get("payload")
+    response = lib.to_element(shipment_response)
+    consignment = lib.find_element("CONNUMBER", response, first=True)
+    groupcode = lib.find_element("GROUPCODE", response, first=True)
+    price: shipping.document = lib.find_element(
+        "PRICE", response, shipping.PRICE, first=True
+    )
+
+    if consignment is None or groupcode is None or price is None:
+        return None
+
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    package = lib.to_packages(payload.parcels).single
+    packages = lib.to_packages(payload.parcels)
     customs = lib.to_customs_info(payload.customs)
-    payment = payload.payment or units.Payment(paid_by="sender")
-    price: shipping.PRICE = next(activity.RATE.PRICE, shipping.PRICE())
 
     request = tnt.labelRequest(
         consignment=[
             tnt.labelConsignmentsType(
                 key="1",
                 consignmentIdentity=tnt.consignmentIdentityType(
-                    consignmentNumber=activity.CREATE.CONNUMBER,
+                    consignmentNumber=getattr(consignment, "text", None),
                     customerReference=payload.reference,
                 ),
                 collectionDateTime=None,
@@ -95,7 +102,7 @@ def generate_label(
                 ),
                 product=tnt.productType(
                     lineOfBusiness=None,
-                    groupId=activity.GROUPCODE,
+                    groupId=getattr(groupcode, "text", None),
                     subGroupId=None,
                     id=price.SERVICE,
                     type_=price.SERVICEDESC,
@@ -113,9 +120,9 @@ def generate_label(
                 bulkShipment="N",
                 customControlled=("N" if payload.customs is None else "Y"),
                 termsOfPayment=provider_units.PaymentType.map(
-                    payment.paid_by or "sender"
+                    getattr(payload.payment, "paidby", "sender")
                 ).value,
-                totalNumberOfPieces=1,
+                totalNumberOfPieces=len(packages),
                 pieceLine=[
                     tnt.pieceLineType(
                         identifier=1,
@@ -125,7 +132,7 @@ def generate_label(
                             length=package.length.M,
                             width=package.width.M,
                             height=package.height.M,
-                            weight=package.weight.M,
+                            weight=package.weight.KG,
                         ),
                         pieces=(
                             [
@@ -134,26 +141,22 @@ def generate_label(
                                     pieceReference=piece.sku or piece.hs_code,
                                 )
                                 for index, piece in enumerate(
-                                    customs.commodities, start=1
+                                    (
+                                        package.items
+                                        if len(package.items) > 0
+                                        else customs.commodities
+                                    ),
+                                    start=1,
                                 )
                             ]
-                            if payload.customs is not None and any(customs.commodities)
+                            if len(package.items) > 0 or len(customs.commodities) > 0
                             else None
                         ),
                     )
+                    for package in packages
                 ],
             )
         ]
     )
 
-    return lib.request(
-        url=f"{settings.server_url}/expressconnect/shipping/ship",
-        data=urllib.parse.urlencode(dict(xml_in=request.serialize())),
-        trace=tracer,
-        method="POST",
-        headers={
-            "Content-Type": "application/x-www-form-urlencoded",
-            "Authorization": f"Basic {settings.authorization}",
-        },
-        decoder=lib.encode_base64,
-    )
+    return lib.Serializable(request, lib.to_xml)

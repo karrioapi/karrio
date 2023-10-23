@@ -1,82 +1,69 @@
-<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified"
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified"
     xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
     jaxb:version="2.0">
 
-    <xsd:annotation>
-        <xsd:documentation>Schema for defining the various entities that will be used for all
-            ExpressConnect functions. </xsd:documentation>
-    </xsd:annotation>
+    <xs:annotation>
+        <xs:documentation>Schema for defining the various entities that will be used for all
+            ExpressConnect functions. </xs:documentation>
+    </xs:annotation>
 
-    <xsd:element name="DATASETS">
-        <xsd:annotation>
-            <xsd:documentation>Dataset Versions</xsd:documentation>
-        </xsd:annotation>
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element ref="COUNTRY" minOccurs="0" />
-                <xsd:element ref="CURRENCY" minOccurs="0" />
-                <xsd:element ref="POSTCODEMASK" minOccurs="0" />
-                <xsd:element ref="TOWNGROUP" minOccurs="0" />
-                <xsd:element name="SERVICE" type="xsd:string" minOccurs="0" />
-                <xsd:element ref="OPTION" minOccurs="0" />
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
+    <xs:complexType name="product">
+        <xs:all>
+            <xs:element name="id" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The identifier for the requested product/service e.g. 15N. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="division" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The identifier for the requested product/service division.
+                        This is an optional element and if not specified will default to an
+                        appropriate division based on the origin and destination country selected </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="productDesc" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A short description of the product e.g. Express</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="type" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Type of service for product chosen. Values are "D" for a
+                        document or "N" for non-documents. This is a mandatory element.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="options" type="options" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A container element for TNT product option codes.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
 
-    <xsd:element name="POSTCODEMASK" type="xsd:string" />
-    <xsd:element name="TOWNGROUP" type="xsd:string" />
-    <xsd:element name="COUNTRY" type="xsd:string" />
-    <xsd:element name="CURRENCY" type="xsd:string" />
-    <xsd:element name="OPTION" type="xsd:string" />
-    <xsd:element name="RATEID" type="xsd:string" />
+    <xs:complexType name="options">
+        <xs:sequence minOccurs="0" maxOccurs="4">
+            <xs:element name="option" type="option">
+                <xs:annotation>
+                    <xs:documentation>A container element for a TNT product option</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
-    <xsd:element name="runtime_error">
-        <xsd:complexType>
-            <xsd:annotation>
-                <xsd:documentation>The runtime error messages returned by ExpressConnect e.g. login
-                    details not recognised </xsd:documentation>
-            </xsd:annotation>
-            <xsd:sequence>
-                <xsd:element name="error_reason" type="xsd:string" />
-                <xsd:element name="error_srcText" type="xsd:string" />
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
+    <xs:complexType name="option">
+        <xs:all>
+            <xs:element name="optionCode" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The option must be a valid code from the TNT dataset e.g. PR</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="optionDesc" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A short description of the option .e.g priority</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
 
-    <xsd:element name="parse_error">
-        <xsd:complexType>
-            <xsd:annotation>
-                <xsd:documentation>The XML parse error messages returned by ExpressConnect e.g.
-                    Element content is invalid according to the DTD/Schema.</xsd:documentation>
-            </xsd:annotation>
-            <xsd:sequence>
-                <xsd:element name="error_reason" type="xsd:string" />
-                <xsd:element name="error_line" type="xsd:string" />
-                <xsd:element name="error_linepos" type="xsd:string" />
-                <xsd:element name="error_srcText" type="xsd:string" />
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
 
-    <xsd:element name="ERROR">
-        <xsd:complexType>
-            <xsd:sequence>
-                <xsd:element name="CODE" type="xsd:string" />
-                <xsd:element name="DESCRIPTION" type="xsd:string" />
-            </xsd:sequence>
-        </xsd:complexType>
-    </xsd:element>
-
-    <xsd:simpleType name="doubleTwoDecimalPlaces">
-        <xsd:restriction base="xsd:decimal">
-            <xsd:fractionDigits value="2" />
-        </xsd:restriction>
-    </xsd:simpleType>
-
-    <xsd:simpleType name="doubleThreeDecimalPlaces">
-        <xsd:restriction base="xsd:decimal">
-            <xsd:fractionDigits value="3" />
-        </xsd:restriction>
-    </xsd:simpleType>
-
-</xsd:schema>
+</xs:schema>

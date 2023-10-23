@@ -1,3 +1,4 @@
+import karrio.schemas.tnt.rating_response as tnt
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -45,22 +46,20 @@ def _extract_structure_error(
 def _extract_broken_rules(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.Message:
-    error = None  # lib.to_object(brokenRules, node)
-
     return models.Message(
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         # carrier error info
-        code=getattr(error, "errorCode", None),
-        message=getattr(error, "errorMessage", None),
+        code=lib.find_element("errorCode", node, first=True).text,
+        message=lib.find_element("errorMessage", node, first=True).text,
     )
 
 
 def _extract_broken_rule(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.Message:
-    error = None  # XP.to_object(brokenRule, node)
+    error = lib.to_object(tnt.brokenRule, node)
 
     return models.Message(
         # context info
@@ -76,7 +75,7 @@ def _extract_broken_rule(
 def _extract_runtime_error(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.Message:
-    error = None  # XP.to_object(runtimeError, node)
+    error = lib.to_object(tnt.runtimeError, node)
 
     return models.Message(
         # context info
@@ -92,7 +91,7 @@ def _extract_runtime_error(
 def _extract_parse_error(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.Message:
-    error = None  # XP.to_object(parseError, node)
+    error = lib.to_object(tnt.parseError, node)
 
     return models.Message(
         # context info
@@ -108,27 +107,23 @@ def _extract_parse_error(
 def _extract_error(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.Message:
-    error = None  # XP.to_object(ERROR, node)
-
     return models.Message(
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         # carrier error info
-        code=getattr(error, "CODE", None),
-        message=getattr(error, "DESCRIPTION", None),
+        code=lib.find_element("CODE", node, first=True).text,
+        message=lib.find_element("DESCRIPTION", node, first=True).text,
     )
 
 
 def _extract_faut(
     node: lib.Element, settings: provider_utils.Settings
 ) -> models.Message:
-    error = None  # XP.to_object(fault, node)
-
     return models.Message(
         # context info
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         # carrier error info
-        code=getattr(error, "key", None),
+        code=lib.find_element("key", node, first=True).text,
     )

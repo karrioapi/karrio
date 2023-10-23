@@ -1,3 +1,4 @@
+import functools
 import karrio.schemas.tnt.rating_request as tnt
 import karrio.schemas.tnt.rating_response as rating
 import typing
@@ -13,51 +14,56 @@ def parse_rate_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-    price_response = lib.find_element(
-        "priceResponse", response, rating.priceResponse, first=True
+
+    messages = provider_error.parse_error_response(response, settings)
+    services: typing.List[rating.ratedServices] = lib.find_element(
+        "ratedServices", response, rating.ratedServices
+    )
+    rates: typing.List[models.RateDetails] = sum(
+        [
+            [
+                _extract_details((rate, svc.currency), settings)
+                for rate in svc.ratedService
+            ]
+            for svc in services
+        ],
+        start=[],
     )
 
-    if price_response is not None and price_response.ratedServices is not None:
-        rate_details = [
-            _extract_detail((price_response.ratedServices, service), settings)
-            for service in price_response.ratedServices.ratedService
-        ]
-    else:
-        rate_details = []
-
-    return rate_details, provider_error.parse_error_response(response, settings)
+    return rates, messages
 
 
-def _extract_detail(
-    details: typing.Tuple[rating.ratedServices, rating.ratedService],
+def _extract_details(
+    details: typing.Tuple[rating.ratedService, str],
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    rate, service = details
+    rate, currency = details
+    service = provider_units.ShippingService.map(rate.product.id)
     charges = [
-        ("Base charge", service.totalPriceExclVat),
-        ("VAT", service.vatAmount),
+        ("Base charge", rate.totalPriceExclVat),
+        ("VAT", rate.vatAmount),
         *(
             (charge.description, charge.chargeValue)
-            for charge in service.chargeElements.chargeElement
+            for charge in rate.chargeElements.chargeElement
         ),
     ]
 
     return models.RateDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        currency=rate.currency,
-        service=str(service.product.id),
-        total_charge=lib.to_decimal(service.totalPrice),
+        currency=currency,
+        service=service.name_or_key,
+        total_charge=lib.to_decimal(rate.totalPrice),
         extra_charges=[
             models.ChargeDetails(
                 name=name,
                 amount=lib.to_decimal(amount),
-                currency=rate.currency,
+                currency=currency,
             )
             for name, amount in charges
-            if amount
+            if amount is not None
         ],
-        meta=dict(service_name=service.product.productDesc),
+        meta=dict(service_name=rate.product.productDesc),
     )
 
 
@@ -65,75 +71,114 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    package = lib.to_packages(payload.parcels).single
-    service = lib.to_services(payload.services, provider_units.ShipmentService).first
+    service = lib.to_services(payload.services, provider_units.ShippingService).first
+    packages = lib.to_packages(
+        payload.parcels,
+        presets=provider_units.PackagePresets,
+        package_option_type=provider_units.PackageType,
+    )
     options = lib.to_shipping_options(
         payload.options,
-        package_options=package.options,
+        package_options=packages.options,
+        shipper_country_code=payload.shipper.country_code,
+        recipient_country_code=payload.recipient.country_code,
+        is_international=(
+            payload.shipper.country_code != payload.recipient.country_code
+        ),
         initializer=provider_units.shipping_options_initializer,
     )
+    is_document = all([parcel.is_document for parcel in payload.parcels])
 
     request = tnt.priceRequest(
-        appId=settings.username,
-        appVersion="3.0",
-        priceCheck=tnt.priceCheck(
-            rateId=None,
-            sender=tnt.address(
-                country=payload.shipper.country_code,
-                town=payload.shipper.city,
-                postcode=payload.shipper.postal_code,
-            ),
-            delivery=tnt.address(
-                country=payload.recipient.country_code,
-                town=payload.recipient.city,
-                postcode=payload.recipient.postal_code,
-            ),
-            collectionDateTime=lib.fdatetime(
-                options.shipment_date, output_format="%Y-%m-%dT%H:%M:%S"
-            ),
-            product=tnt.product(
-                id=getattr(service, "value", None),
-                division=next(
-                    (code for label, code in options if "division" in label), None
+        appId=settings.connection_config.app_id.state or "PC",
+        appVersion="3.2",
+        priceCheck=[
+            tnt.priceCheck(
+                rateId=None,
+                sender=tnt.address(
+                    country=payload.shipper.country_code,
+                    town=payload.shipper.city,
+                    postcode=payload.shipper.postal_code,
                 ),
-                productDesc=None,
-                type_=("D" if package.parcel.is_document else "N"),
-                options=(
-                    tnt.options(
-                        option=[
-                            option(optionCode=option.code)
-                            for _, option in options.items()
-                        ]
+                delivery=tnt.address(
+                    country=payload.recipient.country_code,
+                    town=payload.recipient.city,
+                    postcode=payload.recipient.postal_code,
+                ),
+                collectionDateTime=lib.fdatetime(
+                    options.shipment_date.state,
+                    current_format="%Y-%m-%d",
+                    output_format="%Y-%m-%dT%H:%M:%S",
+                ),
+                product=tnt.product(
+                    id=getattr(service, "value", None),
+                    division=next(
+                        (
+                            option.code
+                            for key, option in options.items()
+                            if "division" in key and option.state is True
+                        ),
+                        None,
+                    ),
+                    productDesc=None,
+                    type_=("D" if is_document else "N"),
+                    options=(
+                        tnt.options(
+                            option=[
+                                tnt.option(optionCode=option.code)
+                                for key, option in options.items()
+                                if "division" not in key
+                            ]
+                        )
+                        if any(options.items())
+                        else None
+                    ),
+                ),
+                account=(
+                    tnt.account(
+                        accountNumber=settings.account_number,
+                        accountCountry=settings.account_country_code,
                     )
-                    if any(options.items())
+                    if any([settings.account_number, settings.account_country_code])
                     else None
                 ),
-            ),
-            account=(
-                tnt.account(
-                    accountNumber=settings.account_number,
-                    accountCountry=settings.account_country_code,
-                )
-                if any([settings.account_number, settings.account_country_code])
-                else None
-            ),
-            insurance=(
-                tnt.insurance(
-                    insuranceValue=options.insurance, goodsValue=options.declared_value
-                )
-                if options.insurance is not None
-                else None
-            ),
-            termsOfPayment=provider_units.PaymentType.sender.value,
-            currency=options.currency,
-            priceBreakDown=True,
-            consignmentDetails=tnt.consignmentDetails(
-                totalWeight=package.weight.KG,
-                totalVolume=package.volume.value,
-                totalNumberOfPieces=1,
-            ),
-            pieceLine=None,
-        ),
+                insurance=(
+                    tnt.insurance(
+                        insuranceValue=options.insurance.state,
+                        goodsValue=options.declared_value.state,
+                    )
+                    if options.insurance.state is not None
+                    else None
+                ),
+                termsOfPayment=provider_units.PaymentType.sender.value,
+                currency=options.currency.state,
+                priceBreakDown=True,
+                consignmentDetails=tnt.consignmentDetails(
+                    totalWeight=packages.weight.KG,
+                    totalVolume=packages.volume,
+                    totalNumberOfPieces=len(packages),
+                ),
+                pieceLine=[
+                    tnt.pieceLine(
+                        numberOfPieces=1,
+                        pieceMeasurements=tnt.pieceMeasurements(
+                            length=package.length.M,
+                            width=package.width.M,
+                            height=package.height.M,
+                            weight=package.weight.KG,
+                        ),
+                        pallet=(package.packaging_type == "pallet"),
+                    )
+                    for package in packages
+                ],
+            )
+        ],
     )
 
-    return lib.Serializable(request, lib.to_xml)
+    return lib.Serializable(
+        request,
+        functools.partial(
+            lib.to_xml,
+            namespacedef_='xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+        ),
+    )

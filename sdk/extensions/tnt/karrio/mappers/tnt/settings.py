@@ -1,11 +1,11 @@
 """Karrio TNT settings."""
 
 import attr
-from karrio.providers.tnt.utils import Settings as BaseSettings
+import karrio.providers.tnt.utils as provider_utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
+class Settings(provider_utils.Settings):
     """TNT connection settings."""
 
     # Carrier specific properties

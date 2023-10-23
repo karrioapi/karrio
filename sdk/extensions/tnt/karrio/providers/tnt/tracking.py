@@ -9,21 +9,24 @@ import karrio.providers.tnt.units as provider_units
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[dict],
+    _response: lib.Deserializable[lib.Element],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-    details = lib.find_element("Consignment", response)
-    tracking_details = [_extract_detail(node, settings) for node in details]
+    messages = provider_error.parse_error_response(response, settings)
+    tracking_details = [
+        _extract_detail(node, settings)
+        for node in lib.find_element("Consignment", response)
+    ]
 
-    return tracking_details, provider_error.parse_error_response(response, settings)
+    return tracking_details, messages
 
 
 def _extract_detail(
     node: dict, settings: provider_utils.Settings
 ) -> models.TrackingDetails:
-    detail: typing.Any = None
-    events: list = []
+    detail = lib.to_object(tracking.ConsignmentType, node)
+    events: typing.List[tracking.StatusStructure] = detail.StatusData
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -31,13 +34,13 @@ def _extract_detail(
         tracking_number=detail.ConsignmentNumber,
         events=[
             models.TrackingEvent(
-                # date=DF.fdate(status.LocalEventDate.valueOf_, "%Y%m%d"),
-                # description=status.StatusDescription,
-                # location=SF.concat_str(
-                #     status.Depot, status.DepotName, join=True, separator="-"
-                # ),
-                # code=status.StatusCode,
-                # time=DF.ftime(status.LocalEventTime.valueOf_, "%H%M"),
+                date=lib.fdate(status.LocalEventDate.valueOf_, "%Y%m%d"),
+                description=status.StatusDescription,
+                location=lib.join(
+                    status.Depot, status.DepotName, join=True, separator="-"
+                ),
+                code=status.StatusCode,
+                time=lib.ftime(status.LocalEventTime.valueOf_, "%H%M"),
             )
             for status in events
         ],
@@ -49,8 +52,8 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = tnt.TrackRequestType(
-        locale="en_US",
+    request = tnt.TrackRequest(
+        locale=settings.connection_config.locale.state or "en_US",
         version="3.1",
         SearchCriteria=tnt.SearchCriteriaType(
             marketType="INTERNATIONAL",
@@ -65,4 +68,4 @@ def tracking_request(
         ),
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(request, lib.to_xml)

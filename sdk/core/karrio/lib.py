@@ -199,9 +199,9 @@ def ftime(
 ) -> typing.Optional[str]:
     return utils.DF.ftime(
         time_str,
-        current_format,
-        output_format,
-        try_formats,
+        current_format=current_format,
+        output_format=output_format,
+        try_formats=try_formats,
     )
 
 
@@ -212,8 +212,8 @@ def fdate(
 ) -> typing.Optional[str]:
     return utils.DF.fdate(
         date_str,
-        current_format,
-        try_formats,
+        current_format=current_format,
+        try_formats=try_formats,
     )
 
 
@@ -225,9 +225,9 @@ def fdatetime(
 ) -> typing.Optional[str]:
     return utils.DF.fdatetime(
         date_str,
-        current_format,
-        output_format,
-        try_formats,
+        current_format=current_format,
+        output_format=output_format,
+        try_formats=try_formats,
     )
 
 
@@ -244,8 +244,8 @@ def to_date(
 ) -> datetime.datetime:
     return utils.DF.date(
         date_value,
-        current_format,
-        try_formats,
+        current_format=current_format,
+        try_formats=try_formats,
     )
 
 

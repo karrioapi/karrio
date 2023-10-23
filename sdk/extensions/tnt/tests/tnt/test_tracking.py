@@ -6,7 +6,7 @@ from karrio.core.models import TrackingRequest
 from karrio import Tracking
 
 
-class TestUSPSTracking(unittest.TestCase):
+class TestTNTTracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_PAYLOAD)
@@ -16,7 +16,7 @@ class TestUSPSTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TRACKING_REQUEST)
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.tnt.proxy.http") as mock:
+        with patch("karrio.mappers.tnt.proxy.lib.request") as mock:
             mock.return_value = TRACKING_RESPONSE
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -24,6 +24,17 @@ class TestUSPSTracking(unittest.TestCase):
 
             self.assertEqual(
                 DP.to_dict(parsed_response), DP.to_dict(PARSED_TRACKING_RESPONSE)
+            )
+
+    def test_tracking_auth_error_parsing(self):
+        with patch("karrio.mappers.tnt.proxy.lib.request") as mock:
+            mock.return_value = TRACKING_ERROR_RESPONSE
+            parsed_response = (
+                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+            self.assertListEqual(
+                DP.to_dict(parsed_response),
+                PARSED_TRACKING_ERROR,
             )
 
 
@@ -171,6 +182,18 @@ PARSED_TRACKING_RESPONSE = [
         },
     ],
     [],
+]
+
+PARSED_TRACKING_ERROR = [
+    [],
+    [
+        {
+            "carrier_id": "tnt",
+            "carrier_name": "tnt",
+            "code": "9000",
+            "message": "Unauthorized Access",
+        }
+    ],
 ]
 
 
@@ -449,5 +472,14 @@ TRACKING_RESPONSE = """<?xml version="1.0" encoding="utf-8"?>
     <ConsignmentNumber>22222222</ConsignmentNumber>
     <SummaryCode>CNF</SummaryCode>
   </Consignment>
+</TrackResponse>
+"""
+
+TRACKING_ERROR_RESPONSE = """<?xml version="1.0" encoding="UTF-8"?>
+<TrackResponse>
+    <Error>
+        <Code>9000</Code>
+        <Message><![CDATA[Unauthorized Access]]></Message>
+    </Error>
 </TrackResponse>
 """

@@ -1,14 +1,14 @@
-from typing import Union, List
+import typing
 from datetime import datetime
 
 
 class DATEFORMAT:
     @staticmethod
     def date(
-        date_value: Union[str, int, datetime] = None,
+        date_value: typing.Union[str, int, datetime] = None,
         current_format: str = "%Y-%m-%d",
-        try_formats: List[str] = None,
-    ) -> datetime:
+        try_formats: typing.List[str] = None,
+    ) -> typing.Optional[datetime]:
         if date_value is None:
             return None
 
@@ -32,9 +32,9 @@ class DATEFORMAT:
 
     @staticmethod
     def fdate(
-        date_str: Union[str, int, datetime] = None,
+        date_str: typing.Union[str, int, datetime] = None,
         current_format: str = "%Y-%m-%d",
-        try_formats: List[str] = None,
+        try_formats: typing.List[str] = None,
     ):
         date = DATEFORMAT.date(
             date_str, current_format=current_format, try_formats=try_formats
@@ -45,13 +45,15 @@ class DATEFORMAT:
 
     @staticmethod
     def fdatetime(
-        date_str: Union[str, int, datetime] = None,
+        date_str: typing.Union[str, int, datetime] = None,
         current_format: str = "%Y-%m-%d %H:%M:%S",
         output_format: str = "%Y-%m-%d %H:%M:%S",
-        try_formats: List[str] = None,
+        try_formats: typing.List[str] = None,
     ):
         date = DATEFORMAT.date(
-            date_str, current_format=current_format, try_formats=try_formats
+            date_str,
+            current_format=current_format,
+            try_formats=try_formats,
         )
         if date is None:
             return None
@@ -62,7 +64,7 @@ class DATEFORMAT:
         time_str: str,
         current_format: str = "%H:%M:%S",
         output_format: str = "%H:%M",
-        try_formats: List[str] = None,
+        try_formats: typing.List[str] = None,
     ):
         time = DATEFORMAT.date(
             time_str, current_format=current_format, try_formats=try_formats
@@ -72,7 +74,7 @@ class DATEFORMAT:
         return time.strftime(output_format)
 
     @staticmethod
-    def ftimestamp(timestamp: Union[str, int] = None):
+    def ftimestamp(timestamp: typing.Union[str, int] = None):
         if timestamp is None:
             return None
         return datetime.utcfromtimestamp(float(timestamp)).strftime("%H:%M")

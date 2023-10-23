@@ -93,10 +93,11 @@ class PaymentType(lib.Flag):
 
 
 class ConnectionConfig(lib.Enum):
-    label_type = lib.OptionEnum("label_type")
+    app_id = lib.OptionEnum("app_id")
+    email_from = lib.OptionEnum("email_from")
 
 
-class ShipmentService(lib.Enum):
+class ShippingService(lib.Enum):
     tnt_special_express = "1N"
     tnt_9_00_express = "09N"
     tnt_10_00_express = "10N"
@@ -108,7 +109,7 @@ class ShipmentService(lib.Enum):
 
 class ShippingOption(lib.Flag):
     tnt_priority = lib.OptionEnum("PR")
-    tnt_insurance = lib.OptionEnum("IN", float)
+    tnt_insurance = lib.OptionEnum("IN", lib.to_money)
     tnt_enhanced_liability = lib.OptionEnum("EL")
     tnt_dangerous_goods_fully_regulated = lib.OptionEnum("HZ")
     tnt_dangerous_goods_in_limited_quantities = lib.OptionEnum("LQ")
@@ -119,10 +120,10 @@ class ShippingOption(lib.Flag):
     tnt_radioactive_materials_in_excepted_packages = lib.OptionEnum("XP")
     tnt_pre_delivery_notification = lib.OptionEnum("SMS")
 
-    tnt_division_international_shipments = lib.OptionEnum("G")
-    tnt_division_global_link_domestic = lib.OptionEnum("D")
-    tnt_division_german_domestic = lib.OptionEnum("H")
-    tnt_division_uk_domestic = lib.OptionEnum("010")
+    tnt_division_international_shipments = lib.OptionEnum("G", bool)
+    tnt_division_global_link_domestic = lib.OptionEnum("D", bool)
+    tnt_division_german_domestic = lib.OptionEnum("H", bool)
+    tnt_division_uk_domestic = lib.OptionEnum("010", bool)
 
     insurance = tnt_insurance
 
@@ -130,6 +131,9 @@ class ShippingOption(lib.Flag):
 def shipping_options_initializer(
     options: dict,
     package_options: lib.units.Options = None,
+    is_international: bool = None,
+    shipper_country_code: str = None,
+    recipient_country_code: str = None,
 ) -> lib.units.Options:
     """
     Apply default values to the given options.
@@ -139,8 +143,23 @@ def shipping_options_initializer(
     if package_options is not None:
         _options.update(package_options.content)
 
+    if is_international:
+        _options.update(tnt_division_international_shipments=True)
+
+    if shipper_country_code == "DE" and recipient_country_code == "DE":
+        _options.update(tnt_division_german_domestic=True)
+
+    if shipper_country_code == "GB" and recipient_country_code == "GB":
+        _options.update(tnt_division_uk_domestic=True)
+
+    if shipper_country_code == recipient_country_code and shipper_country_code not in [
+        "DE",
+        "GB",
+    ]:
+        _options.update(tnt_division_global_link_domestic=True)
+
     def items_filter(key: str) -> bool:
-        return key in ShippingOption and "division" not in key  # type: ignore
+        return key in ShippingOption  # type: ignore
 
     return lib.units.ShippingOptions(
         _options, ShippingOption, items_filter=items_filter
