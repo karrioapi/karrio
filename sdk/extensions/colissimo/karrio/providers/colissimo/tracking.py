@@ -50,7 +50,6 @@ def _extract_details(
                 description=event.label,
                 code=event.code,
                 time=lib.ftime(event.date, "%Y-%m-%dT%H:%M:%S%z"),
-                location=None,
             )
             for event in shipment.event
         ],
