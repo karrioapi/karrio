@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Strawberry GraphiQL</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,
+        <svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22>
+            <!-- Strawberry Emoji as a HTML Entity (hex)  -->
+            <text y=%22.9em%22 font-size=%2280%22>&#x1f353;</text>
+        </svg>"
+    />
+    <style>
+      body {
+        height: 100%;
+        margin: 0;
+        width: 100%;
+        overflow: hidden;
+      }
+
+      #graphiql {
+        height: 100vh;
+        display: flex;
+      }
+
+      .docExplorerHide {
+        display: none;
+      }
+
+      .doc-explorer-contents {
+        overflow-y: hidden !important;
+      }
+
+      .docExplorerWrap {
+        width: unset !important;
+        min-width: unset !important;
+      }
+
+      .graphiql-explorer-actions select {
+        margin-left: 4px;
+      }
+    </style>
+
+    <script
+      crossorigin
+      src="https://unpkg.com/react@17.0.2/umd/react.development.js"
+      integrity="sha384-xQwCoNcK/7P3Lpv50IZSEbJdpqbToWEODAUyI/RECaRXmOE2apWt7htari8kvKa/"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/react-dom@17.0.2/umd/react-dom.development.js"
+      integrity="sha384-E9IgxDsnjKgh0777N3lXen7NwXeTsOpLLJhI01SW7idG046SRqJpsW2rJwsOYk0L"
+    ></script>
+
+    <script
+      crossorigin
+      src="https://unpkg.com/js-cookie@3.0.1/dist/js.cookie.min.js"
+      integrity="sha384-ETDm/j6COkRSUfVFsGNM5WYE4WjyRgfDhy4Pf4Fsc8eNw/eYEMqYZWuxTzMX6FBa"
+    ></script>
+
+    <link
+      crossorigin
+      rel="stylesheet"
+      href="https://unpkg.com/graphiql@2.2.0/graphiql.min.css"
+      integrity="sha384-4a2fCKkum7OnFcO9Qae5NAO7bYHTeolCix2FOnzhz8L42NP6+2Q1cTH7p/xr4Pfg"
+    />
+  </head>
+
+  <body>
+    <div id="graphiql" class="graphiql-container">Loading...</div>
+    <script
+      crossorigin
+      src="https://unpkg.com/graphiql@2.2.0/graphiql.min.js"
+      integrity="sha384-JHFGCFTH/jUGV6uL38eHuw/3kb0aUiF0EzWPP68NQxvz7ldZXEoCv9RBGtsFHM86"
+    ></script>
+    <script
+      crossorigin
+      src="https://unpkg.com/@graphiql/plugin-explorer@0.1.0/dist/graphiql-plugin-explorer.umd.js"
+      integrity="sha384-XyAmNqmxnLsRHkMhQYTqC0ub7uXpNbwdkhjn70ZF3J3XSb7bouSdRVfzDojimcMd"
+    ></script>
+    <script>
+      const EXAMPLE_QUERY = `# Welcome to GraphiQL 🍓
+#
+# GraphiQL is an in-browser tool for writing, validating, and
+# testing GraphQL queries.
+#
+# Type queries into this side of the screen, and you will see intelligent
+# typeaheads aware of the current GraphQL type schema and live syntax and
+# validation errors highlighted within the text.
+#
+# GraphQL queries typically start with a "{" character. Lines that starts
+# with a # are ignored.
+#
+# An example GraphQL query might look like:
+#
+#     {
+#       field(arg: "value") {
+#         subField
+#       }
+#     }
+#
+# Keyboard shortcuts:
+#
+#       Run Query:  Ctrl-Enter (or press the play button above)
+#
+#   Auto Complete:  Ctrl-Space (or just start typing)
+#
+`;
+
+      const fetchURL = window.location.href;
+
+      function httpUrlToWebSockeUrl(url) {
+        const parsedURL = new URL(url);
+        const protocol = parsedURL.protocol === "http:" ? "ws:" : "wss:";
+        parsedURL.protocol = protocol;
+        parsedURL.hash = "";
+        return parsedURL.toString();
+      }
+
+      const headers = {};
+      const csrfToken = Cookies.get("csrftoken");
+
+      if (csrfToken) {
+        headers["x-csrftoken"] = csrfToken;
+      }
+
+      const subscriptionsEnabled = JSON.parse("{{ SUBSCRIPTION_ENABLED }}");
+      const subscriptionUrl = subscriptionsEnabled
+        ? httpUrlToWebSockeUrl(fetchURL)
+        : null;
+
+      const fetcher = GraphiQL.createFetcher({
+        url: fetchURL,
+        headers: headers,
+        subscriptionUrl,
+      });
+
+      function GraphiQLWithExplorer() {
+        const [query, setQuery] = React.useState(EXAMPLE_QUERY);
+        const explorerPlugin = GraphiQLPluginExplorer.useExplorerPlugin({
+          query: query,
+          onEdit: setQuery,
+        });
+        return React.createElement(GraphiQL, {
+          fetcher: fetcher,
+          defaultEditorToolsVisibility: true,
+          plugins: [explorerPlugin],
+          query: query,
+          onEditQuery: setQuery,
+        });
+      }
+
+      ReactDOM.render(
+        React.createElement(GraphiQLWithExplorer),
+        document.getElementById("graphiql")
+      );
+    </script>
+  </body>
+</html>

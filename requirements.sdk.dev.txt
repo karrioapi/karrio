@@ -1,40 +1,40 @@
 # Carrier Extentions packages
--e ./sdk/core
--e ./sdk/extensions/amazon_shipping
--e ./sdk/extensions/aramex
--e ./sdk/extensions/asendia_us
--e ./sdk/extensions/australiapost
--e ./sdk/extensions/boxknight
--e ./sdk/extensions/canadapost
--e ./sdk/extensions/canpar
--e ./sdk/extensions/chronopost
-# -e ./sdk/extensions/colissimo
-# -e ./sdk/extensions/dhl_express
--e ./sdk/extensions/dhl_poland
--e ./sdk/extensions/dhl_universal
--e ./sdk/extensions/dicom
--e ./sdk/extensions/dpd
-# -e ./sdk/extensions/dpdhl
-# -e ./sdk/extensions/dpdhl_international
-# -e ./sdk/extensions/fedex
--e ./sdk/extensions/generic
--e ./sdk/extensions/geodis
-# -e ./sdk/extensions/gls_eu
--e ./sdk/extensions/laposte
--e ./sdk/extensions/nationex
-# -e ./sdk/extensions/postnl
--e ./sdk/extensions/purolator
--e ./sdk/extensions/roadie
--e ./sdk/extensions/royalmail
--e ./sdk/extensions/sendle
--e ./sdk/extensions/tnt
--e ./sdk/extensions/ups
--e ./sdk/extensions/usps
--e ./sdk/extensions/usps_international
+-e ./modules/core
+-e ./modules/connections/amazon_shipping
+-e ./modules/connections/aramex
+-e ./modules/connections/asendia_us
+-e ./modules/connections/australiapost
+-e ./modules/connections/boxknight
+-e ./modules/connections/canadapost
+-e ./modules/connections/canpar
+-e ./modules/connections/chronopost
+# -e ./modules/connections/colissimo
+# -e ./modules/connections/dhl_express
+-e ./modules/connections/dhl_poland
+-e ./modules/connections/dhl_universal
+-e ./modules/connections/dicom
+-e ./modules/connections/dpd
+# -e ./modules/connections/dpdhl
+# -e ./modules/connections/dpdhl_international
+# -e ./modules/connections/fedex
+-e ./modules/connections/generic
+-e ./modules/connections/geodis
+# -e ./modules/connections/gls_eu
+-e ./modules/connections/laposte
+-e ./modules/connections/nationex
+# -e ./modules/connections/postnl
+-e ./modules/connections/purolator
+-e ./modules/connections/roadie
+-e ./modules/connections/royalmail
+-e ./modules/connections/sendle
+-e ./modules/connections/tnt
+-e ./modules/connections/ups
+-e ./modules/connections/usps
+-e ./modules/connections/usps_international
 
 # Carrier Hub Extentions packages
--e ./sdk/vendors/easypost
--e ./sdk/vendors/eshipper
--e ./sdk/vendors/freightcom
--e ./sdk/vendors/locate2u
--e ./sdk/vendors/zoom2u
+-e ./modules/connections/easypost
+-e ./modules/connections/eshipper
+-e ./modules/connections/freightcom
+-e ./modules/connections/locate2u
+-e ./modules/connections/zoom2u

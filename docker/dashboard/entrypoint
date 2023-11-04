@@ -1,0 +1,12 @@
+#!/bin/bash
+
+# Setup environment variables
+export NEXTAUTH_URL=${NEXTAUTH_URL:=$DASHBOARD_URL}
+
+
+# Start services
+set -e
+
+./node_modules/.bin/next start &
+
+wait -n

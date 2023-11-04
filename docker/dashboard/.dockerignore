@@ -1,0 +1,15 @@
+# Ignore everything
+*
+
+!/public/
+!/karrio/
+!/src/
+!/docker/entrypoint
+!/package.json
+!/package-lock.json
+!/sentry.client.config.js
+!/sentry.server.config.js
+!/tsconfig.json
+!/.eslintrc
+!/next.config.js
+!/LICENSE

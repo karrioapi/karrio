@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+branch="${1:=main}"
+
+docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+  -i "/local/schemas/openapi.yml" \
+  -g typescript-axios \
+  -o /local/apps/dashboard/karrio/rest/generated \
+  --additional-properties=typescriptThreePlus=true \
+  --additional-properties=modelPropertyNaming=snake_case \
+  --additional-properties=useSingleRequestParameter=true
+
+rm -rf apps/dashboard/karrio/rest/generated/.openapi-generator/ \
+  apps/dashboard/karrio/rest/generated/.openapi-generator-ignore \
+  apps/dashboard/karrio/rest/generated/.gitignore \
+  apps/dashboard/karrio/rest/generated/.npmignore \
+  apps/dashboard/karrio/rest/generated/git_push.sh
