@@ -15,7 +15,7 @@ def parse_tracking_response(
     response = _response.deserialize()
 
     responses = response if isinstance(response, list) else [response]
-    messages = error.parse_error_response(responses, settings)
+    messages = error.parse_laposte_error_response(responses, settings)
     tracking_details = [
         _extract_details(res["shipment"], settings)
         for res in responses

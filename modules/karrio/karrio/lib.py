@@ -1,5 +1,6 @@
-import base64
 import typing
+import base64
+import PyPDF2
 import logging
 import datetime
 import functools
@@ -652,7 +653,7 @@ def image_to_pdf(
 
 def bundle_pdfs(
     base64_strings: typing.List[str],
-) -> utils.PdfMerger:
+) -> PyPDF2.PdfMerger:
     return utils.bundle_pdfs(base64_strings)
 
 
@@ -706,6 +707,10 @@ def encode_base64(byte: bytes):
         or failsafe(lambda: base64.encodebytes(byte).decode("ISO-8859-1"))
         or base64.encodebytes(byte).decode("utf-8")
     )
+
+
+def binary_to_base64(binary_string: str):
+    return utils.binary_to_base64(binary_string)
 
 
 # endregion

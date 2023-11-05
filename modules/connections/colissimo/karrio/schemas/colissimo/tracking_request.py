@@ -3,5 +3,5 @@ from typing import Optional
 
 
 @s(auto_attribs=True)
-class TrackingRequestType:
+class TrackingRequest:
     noSuivi: Optional[str] = None

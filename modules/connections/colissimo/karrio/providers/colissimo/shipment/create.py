@@ -16,7 +16,11 @@ def parse_shipment_response(
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    shipment = _extract_details(response, settings)
+    shipment = (
+        _extract_details(response, settings, _response.ctx)
+        if response.get("json_info", {}).get("labelV2Response") is not None
+        else None
+    )
 
     return shipment, messages
 
@@ -24,23 +28,27 @@ def parse_shipment_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
+    ctx: dict = {},
 ) -> models.ShipmentDetails:
-    shipment = None  # parse carrier shipment type from "data"
-    label = ""  # extract and process the shipment label to a valid base64 text
-    # invoice = ""  # extract and process the shipment invoice to a valid base64 text if applies
+    shipment = lib.to_object(shipping.LabelResponse, data.get("json_info"))
+    label_type = ctx.get("label_type") or "PDF"
+    label = lib.binary_to_base64(data.get("label"))
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from shipment
-        shipment_identifier="",  # extract shipment identifier from shipment
-        label_type="PDF",  # extract shipment label file format
-        docs=models.Documents(
-            label=label,  # pass label base64 text
-            # invoice=invoice,  # pass invoice base64 text if applies
-        ),
+        tracking_number=shipment.labelV2Response.parcelNumber,
+        shipment_identifier=shipment.labelV2Response.parcelNumber,
+        label_type="ZPL" if "ZPL" in label_type else "PDF",
+        docs=models.Documents(label=label),
         meta=dict(
-            # any relevent meta
+            carrier_tracking_link=settings.tracking_url.format(
+                shipment.labelV2Response.parcelNumber
+            ),
+            request_uuid=data.get("uuid"),
+            pdfUrl=shipment.labelV2Response.pdfUrl,
+            parcelNumber=shipment.labelV2Response.parcelNumber,
+            parcelNumberPartner=shipment.labelV2Response.parcelNumberPartner,
         ),
     )
 
@@ -65,10 +73,10 @@ def shipment_request(
         recipient=recipient,
     )
 
-    request = colissimo.LabelRequestType(
+    request = colissimo.LabelRequest(
         contractNumber=settings.contract_number,
         password=settings.password,
-        outputFormat=colissimo.OutputFormatType(
+        outputFormat=colissimo.OutputFormat(
             x=0,
             y=0,
             outputPrintingType=(
@@ -79,8 +87,8 @@ def shipment_request(
             returnType=None,
             printCODDocument=None,
         ),
-        letter=colissimo.LetterType(
-            service=colissimo.ServiceType(
+        letter=colissimo.Letter(
+            service=colissimo.Service(
                 productCode=service,
                 depositDate=lib.fdate(options.shipment_date.state, "%Y-%m-%d"),
                 mailBoxPicking=None,
@@ -88,21 +96,21 @@ def shipment_request(
                 vatCode=None,
                 vatPercentage=None,
                 vatAmount=None,
-                transportationAmount=None,
+                transportationAmount=options.declared_value.state,
                 totalAmount=options.declared_value.state,
                 orderNumber=None,
                 commercialName=shipper.company_name,
                 returnTypeChoice=None,
                 reseauPostal=0,
             ),
-            parcel=colissimo.ParcelType(
+            parcel=colissimo.Parcel(
                 parcelNumber=package.parcel.reference_number,
                 insuranceAmount=None,
                 insuranceValue=options.insurance.state,
                 recommendationLevel=None,
                 weight=package.weight.KG,
                 nonMachinable=options.colissimo_non_machinable.state,
-                returnReceipt=options.retun_receipt.state,
+                returnReceipt=options.colissimo_retun_receipt.state,
                 instructions=None,
                 pickupLocationId=None,
                 ftd=options.colissimo_ftd.state,
@@ -112,12 +120,12 @@ def shipment_request(
                 cod=options.cash_on_delivery.state is not None,
             ),
             customsDeclarations=(
-                colissimo.CustomsDeclarationsType(
+                colissimo.CustomsDeclarations(
                     includeCustomsDeclarations=True,
                     numberOfCopies=None,
-                    contents=colissimo.ContentsType(
+                    contents=colissimo.Contents(
                         article=[
-                            colissimo.ArticleType(
+                            colissimo.Article(
                                 description=item.description,
                                 quantity=item.quantity,
                                 weight=item.weight,
@@ -145,7 +153,7 @@ def shipment_request(
                     invoiceNumber=customs.invoice,
                     licenceNumber=customs.options.license_number.state,
                     certificatNumber=customs.options.certificate_number.state,
-                    importerAddress=colissimo.AddressType(
+                    importerAddress=colissimo.Address(
                         companyName=customs.duty_billing_address.company_name,
                         lastName=customs.duty_billing_address.person_name,
                         firstName=None,
@@ -170,9 +178,9 @@ def shipment_request(
                 if payload.customs is not None
                 else None
             ),
-            sender=colissimo.SenderType(
+            sender=colissimo.Sender(
                 senderParcelRef=payload.reference or package.parcel.reference_number,
-                address=colissimo.AddressType(
+                address=colissimo.Address(
                     companyName=shipper.company_name,
                     lastName=shipper.person_name,
                     firstName=None,
@@ -184,22 +192,22 @@ def shipment_request(
                     countryLabel=shipper.country_name,
                     city=shipper.city,
                     zipCode=shipper.postal_code,
-                    phoneNumber=None,
-                    mobileNumber=shipper.phone_number,
+                    phoneNumber=shipper.phone_number,
+                    mobileNumber=None,
                     doorCode1=None,
                     doorCode2=None,
                     intercom=None,
                     email=shipper.email,
-                    language=None,
+                    language="FR",
                     stateOrProvinceCode=shipper.state_code,
                 ),
             ),
-            addressee=colissimo.AddresseeType(
+            addressee=colissimo.Addressee(
                 addresseeParcelRef=payload.reference or package.parcel.reference_number,
                 codeBarForReference=None,
                 serviceInfo=None,
                 promotionCode=None,
-                address=colissimo.AddressType(
+                address=colissimo.Address(
                     companyName=recipient.company_name,
                     lastName=recipient.person_name,
                     firstName=None,
@@ -211,18 +219,18 @@ def shipment_request(
                     countryLabel=recipient.country_name,
                     city=recipient.city,
                     zipCode=recipient.postal_code,
-                    phoneNumber=None,
-                    mobileNumber=recipient.phone_number,
+                    phoneNumber=recipient.phone_number,
+                    mobileNumber=None,
                     doorCode1=None,
                     doorCode2=None,
                     intercom=None,
                     email=recipient.email,
-                    language=None,
+                    language="FR",
                     stateOrProvinceCode=recipient.state_code,
                 ),
             ),
             codSenderAddress=(
-                colissimo.AddressType(
+                colissimo.Address(
                     companyName=recipient.company_name,
                     lastName=recipient.person_name,
                     firstName=None,
@@ -234,22 +242,48 @@ def shipment_request(
                     countryLabel=recipient.country_name,
                     city=recipient.city,
                     zipCode=recipient.postal_code,
-                    phoneNumber=None,
-                    mobileNumber=recipient.phone_number,
+                    phoneNumber=recipient.phone_number,
+                    mobileNumber=None,
                     doorCode1=None,
                     doorCode2=None,
                     intercom=None,
                     email=recipient.email,
-                    language=None,
+                    language="FR",
                     stateOrProvinceCode=recipient.state_code,
                 )
                 if options.cash_on_delivery.state is not None
                 else None
             ),
             uploadDocument=None,
-            features=colissimo.FeaturesType(printTrackingBarcode=True),
+            features=colissimo.Features(printTrackingBarcode=True),
         ),
-        fields=None,
+        fields=(
+            colissimo.Fields(
+                customField=[
+                    colissimo.Field(
+                        key=key,
+                        value=value,
+                    )
+                    for key, value in [
+                        ("LENGTH", package.length.value),
+                        ("WIDTH", package.width.value),
+                        ("HEIGHT", package.height.value),
+                    ]
+                ]
+            )
+            if any(
+                [
+                    package.length.value,
+                    package.width.value,
+                    package.height.value,
+                ]
+            )
+            else None
+        ),
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(
+        request,
+        lib.to_dict,
+        dict(label_type=payload.label_type or "PDF"),
+    )

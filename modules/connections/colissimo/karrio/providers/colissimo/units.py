@@ -128,6 +128,7 @@ class ShippingOption(lib.Enum):
     colissimo_ftd = lib.OptionEnum("ftd", bool)
     colissimo_non_machinable = lib.OptionEnum("nonMachinable", bool)
     colissimo_ddp = lib.OptionEnum("ddp", bool)
+    colissimo_instructions = lib.OptionEnum("instructions")
 
     """ Unified Option type mapping """
     insurance = colissimo_insurance_value
@@ -149,6 +150,12 @@ def shipping_options_initializer(
         return key in ShippingOption  # type: ignore
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+
+class TrackingStatus(lib.Enum):
+    delivered = ["DI1"]
+    in_transit = [""]
+    out_for_delivery = ["MD2", "ET1"]
 
 
 DEFAULT_SERVICES = [

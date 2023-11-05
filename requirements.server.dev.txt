@@ -10,7 +10,7 @@ django-debug-toolbar
 -e ./modules/connections/canadapost
 -e ./modules/connections/canpar
 -e ./modules/connections/chronopost
-# -e ./modules/connections/colissimo
+-e ./modules/connections/colissimo
 karrio.dhl_express
 # -e ./modules/connections/dhl_express
 -e ./modules/connections/dhl_poland

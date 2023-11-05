@@ -4,26 +4,26 @@ from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
-class DeliveryChoiceType:
+class DeliveryChoice:
     deliveryChoice: Optional[int] = None
 
 
 @s(auto_attribs=True)
-class ContextDataType:
-    deliveryChoice: Optional[DeliveryChoiceType] = JStruct[DeliveryChoiceType]
+class ContextData:
+    deliveryChoice: Optional[DeliveryChoice] = JStruct[DeliveryChoice]
     originCountry: Optional[str] = None
     arrivalCountry: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class EventType:
+class Event:
     code: Optional[str] = None
     label: Optional[str] = None
     date: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class TimelineType:
+class Timeline:
     shortLabel: Optional[str] = None
     longLabel: Optional[str] = None
     id: Optional[int] = None
@@ -34,28 +34,28 @@ class TimelineType:
 
 
 @s(auto_attribs=True)
-class ShipmentType:
+class Shipment:
     idShip: Optional[str] = None
     holder: Optional[int] = None
     product: Optional[str] = None
     isFinal: Optional[bool] = None
     deliveryDate: Optional[str] = None
     entryDate: Optional[str] = None
-    timeline: List[TimelineType] = JList[TimelineType]
-    event: List[EventType] = JList[EventType]
-    contextData: Optional[ContextDataType] = JStruct[ContextDataType]
+    timeline: List[Timeline] = JList[Timeline]
+    event: List[Event] = JList[Event]
+    contextData: Optional[ContextData] = JStruct[ContextData]
     estimDate: Optional[str] = None
     url: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class ResponseType:
+class Response:
     lang: Optional[str] = None
     scope: Optional[str] = None
     returnCode: Optional[int] = None
-    shipment: Optional[ShipmentType] = JStruct[ShipmentType]
+    shipment: Optional[Shipment] = JStruct[Shipment]
 
 
 @s(auto_attribs=True)
-class TrackingResponseType:
-    responses: List[ResponseType] = JList[ResponseType]
+class TrackingResponse:
+    responses: List[Response] = JList[Response]

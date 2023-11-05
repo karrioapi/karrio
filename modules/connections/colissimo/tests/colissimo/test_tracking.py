@@ -24,7 +24,7 @@ class TestColissimoTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/idships/EW112720413FR?lang=fr_FR",
+                f"{gateway.settings.laposte_server_url}/idships/EW112720413FR?lang=fr_FR",
             )
 
     def test_parse_tracking_response(self):
@@ -258,7 +258,7 @@ TrackingResponse = """[
           "arrivalCountry": "BR"
         },
         "estimDate": "2023-03-09T09:38:00+01:00",
-        "url": "https://www.colissimo.fr/outils/suivre-vos-envois?code=EW112720413FR"
+        "url": "https://www.laposte.fr/outils/suivre-vos-envois?code=EW112720413FR"
       }
     }
 ]

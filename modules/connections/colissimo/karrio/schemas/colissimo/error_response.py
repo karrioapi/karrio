@@ -3,7 +3,7 @@ from typing import Optional
 
 
 @s(auto_attribs=True)
-class ErrorResponseType:
+class ErrorResponse:
     returnCode: Optional[int] = None
     returnMessage: Optional[str] = None
     lang: Optional[str] = None

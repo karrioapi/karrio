@@ -2,6 +2,7 @@
 
 import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.providers.colissimo.utils as provider_utils
 import karrio.mappers.colissimo.settings as provider_settings
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
@@ -18,10 +19,10 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Content-Type": "application/json"},
+            headers={"Content-Type": "application/json;charset=UTF-8"},
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, provider_utils.parse_response, request.ctx)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         idships = ",".join(request.serialize())

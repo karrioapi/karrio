@@ -4,19 +4,19 @@ from jstruct import JList, JStruct
 
 
 @s(auto_attribs=True)
-class FieldType:
+class Field:
     key: Optional[str] = None
     value: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class FieldsType:
-    field: List[FieldType] = JList[FieldType]
-    customField: List[FieldType] = JList[FieldType]
+class Fields:
+    field: List[Field] = JList[Field]
+    customField: List[Field] = JList[Field]
 
 
 @s(auto_attribs=True)
-class AddressType:
+class Address:
     companyName: Optional[str] = None
     lastName: Optional[str] = None
     firstName: Optional[str] = None
@@ -39,16 +39,16 @@ class AddressType:
 
 
 @s(auto_attribs=True)
-class AddresseeType:
+class Addressee:
     addresseeParcelRef: Optional[str] = None
     codeBarForReference: Optional[bool] = None
     serviceInfo: Optional[str] = None
     promotionCode: Optional[str] = None
-    address: Optional[AddressType] = JStruct[AddressType]
+    address: Optional[Address] = JStruct[Address]
 
 
 @s(auto_attribs=True)
-class ArticleType:
+class Article:
     description: Optional[str] = None
     quantity: Optional[int] = None
     weight: Optional[int] = None
@@ -64,12 +64,12 @@ class ArticleType:
 
 
 @s(auto_attribs=True)
-class CategoryType:
+class Category:
     value: Optional[int] = None
 
 
 @s(auto_attribs=True)
-class OriginalType:
+class Original:
     originalIdent: Optional[str] = None
     originalInvoiceNumber: Optional[str] = None
     originalInvoiceDate: Optional[str] = None
@@ -77,18 +77,18 @@ class OriginalType:
 
 
 @s(auto_attribs=True)
-class ContentsType:
-    article: List[ArticleType] = JList[ArticleType]
-    category: Optional[CategoryType] = JStruct[CategoryType]
-    original: List[OriginalType] = JList[OriginalType]
+class Contents:
+    article: List[Article] = JList[Article]
+    category: Optional[Category] = JStruct[Category]
+    original: List[Original] = JList[Original]
     explanations: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class CustomsDeclarationsType:
+class CustomsDeclarations:
     includeCustomsDeclarations: Optional[bool] = None
     numberOfCopies: Optional[int] = None
-    contents: Optional[ContentsType] = JStruct[ContentsType]
+    contents: Optional[Contents] = JStruct[Contents]
     importersReference: Optional[str] = None
     importersContact: Optional[str] = None
     officeOrigin: Optional[str] = None
@@ -97,16 +97,16 @@ class CustomsDeclarationsType:
     invoiceNumber: Optional[str] = None
     licenceNumber: Optional[str] = None
     certificatNumber: Optional[str] = None
-    importerAddress: Optional[AddressType] = JStruct[AddressType]
+    importerAddress: Optional[Address] = JStruct[Address]
 
 
 @s(auto_attribs=True)
-class FeaturesType:
+class Features:
     printTrackingBarcode: Optional[bool] = None
 
 
 @s(auto_attribs=True)
-class ParcelType:
+class Parcel:
     parcelNumber: Optional[str] = None
     insuranceAmount: Optional[int] = None
     insuranceValue: Optional[int] = None
@@ -124,13 +124,13 @@ class ParcelType:
 
 
 @s(auto_attribs=True)
-class SenderType:
+class Sender:
     senderParcelRef: Optional[str] = None
-    address: Optional[AddressType] = JStruct[AddressType]
+    address: Optional[Address] = JStruct[Address]
 
 
 @s(auto_attribs=True)
-class ServiceType:
+class Service:
     productCode: Optional[str] = None
     depositDate: Optional[str] = None
     mailBoxPicking: Optional[bool] = None
@@ -147,24 +147,24 @@ class ServiceType:
 
 
 @s(auto_attribs=True)
-class UploadDocumentType:
+class UploadDocument:
     documentContent: List[str] = []
 
 
 @s(auto_attribs=True)
-class LetterType:
-    service: Optional[ServiceType] = JStruct[ServiceType]
-    parcel: Optional[ParcelType] = JStruct[ParcelType]
-    customsDeclarations: Optional[CustomsDeclarationsType] = JStruct[CustomsDeclarationsType]
-    sender: Optional[SenderType] = JStruct[SenderType]
-    addressee: Optional[AddresseeType] = JStruct[AddresseeType]
-    codSenderAddress: Optional[AddressType] = JStruct[AddressType]
-    uploadDocument: Optional[UploadDocumentType] = JStruct[UploadDocumentType]
-    features: Optional[FeaturesType] = JStruct[FeaturesType]
+class Letter:
+    service: Optional[Service] = JStruct[Service]
+    parcel: Optional[Parcel] = JStruct[Parcel]
+    customsDeclarations: Optional[CustomsDeclarations] = JStruct[CustomsDeclarations]
+    sender: Optional[Sender] = JStruct[Sender]
+    addressee: Optional[Addressee] = JStruct[Addressee]
+    codSenderAddress: Optional[Address] = JStruct[Address]
+    uploadDocument: Optional[UploadDocument] = JStruct[UploadDocument]
+    features: Optional[Features] = JStruct[Features]
 
 
 @s(auto_attribs=True)
-class OutputFormatType:
+class OutputFormat:
     x: Optional[int] = None
     y: Optional[int] = None
     outputPrintingType: Optional[str] = None
@@ -174,9 +174,9 @@ class OutputFormatType:
 
 
 @s(auto_attribs=True)
-class LabelRequestType:
+class LabelRequest:
     contractNumber: Optional[str] = None
     password: Optional[str] = None
-    outputFormat: Optional[OutputFormatType] = JStruct[OutputFormatType]
-    letter: Optional[LetterType] = JStruct[LetterType]
-    fields: Optional[FieldsType] = JStruct[FieldsType]
+    outputFormat: Optional[OutputFormat] = JStruct[OutputFormat]
+    letter: Optional[Letter] = JStruct[Letter]
+    fields: Optional[Fields] = JStruct[Fields]

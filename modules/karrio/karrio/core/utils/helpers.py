@@ -4,10 +4,10 @@ import ssl
 import uuid
 import string
 import base64
+import PyPDF2
 import asyncio
 import logging
 import urllib.parse
-from PyPDF2 import PdfMerger
 from PIL import Image, ImageFile
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request
@@ -72,8 +72,8 @@ def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str
     return base64.b64encode(new_buffer.getvalue()).decode("utf-8")
 
 
-def bundle_pdfs(base64_strings: List[str]) -> PdfMerger:
-    merger = PdfMerger(strict=False)
+def bundle_pdfs(base64_strings: List[str]) -> PyPDF2.PdfMerger:
+    merger = PyPDF2.PdfMerger(strict=False)
 
     for b64_str in base64_strings:
         buffer = to_buffer(b64_str)
@@ -142,6 +142,12 @@ def zpl_to_pdf(zpl_str: str, width: int, height: int, dpmm: int = 12) -> str:
     )
 
     return doc
+
+
+def binary_to_base64(binary_str: str) -> str:
+    buffer = to_buffer(binary_str)
+
+    return base64.b64encode(buffer.getvalue()).decode("utf-8")
 
 
 def decode_bytes(byte):

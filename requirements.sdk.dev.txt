@@ -1,5 +1,5 @@
 # Carrier Extentions packages
--e ./modules/core
+-e ./modules/karrio
 -e ./modules/connections/amazon_shipping
 -e ./modules/connections/aramex
 -e ./modules/connections/asendia_us
@@ -8,7 +8,7 @@
 -e ./modules/connections/canadapost
 -e ./modules/connections/canpar
 -e ./modules/connections/chronopost
-# -e ./modules/connections/colissimo
+-e ./modules/connections/colissimo
 # -e ./modules/connections/dhl_express
 -e ./modules/connections/dhl_poland
 -e ./modules/connections/dhl_universal
