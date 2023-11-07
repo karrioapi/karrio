@@ -1,5 +1,4 @@
 import django.db.models as models
-import django.core.cache as caching
 
 import karrio.server.providers.models.carrier as providers
 
@@ -12,6 +11,7 @@ class GEODISSettings(providers.Carrier):
 
     api_key = models.CharField(max_length=100)
     identifier = models.CharField(max_length=50)
+    code_client = models.CharField(max_length=50)
     language = models.CharField(max_length=10, null=True, default="fr")
 
     @property
