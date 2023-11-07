@@ -8,13 +8,15 @@ import commands.templates as templates
 
 BASE_DIR = pathlib.Path(__file__).resolve().parent.parent.parent
 
-ROOT_DIR = string.Template(f"{BASE_DIR}/modules/connections/$id")
-SCHEMAS_DIR = string.Template(f"{BASE_DIR}/modules/connections/$id/schemas")
-TESTS_DIR = string.Template(f"{BASE_DIR}/modules/connections/$id/tests/$id")
-MAPPERS_DIR = string.Template(f"{BASE_DIR}/modules/connections/$id/karrio/mappers/$id")
-PROVIDERS_DIR = string.Template(f"{BASE_DIR}/modules/connections/$id/karrio/providers/$id")
+ROOT_DIR = string.Template(f"{BASE_DIR}/modules/connectors/$id")
+SCHEMAS_DIR = string.Template(f"{BASE_DIR}/modules/connectors/$id/schemas")
+TESTS_DIR = string.Template(f"{BASE_DIR}/modules/connectors/$id/tests/$id")
+MAPPERS_DIR = string.Template(f"{BASE_DIR}/modules/connectors/$id/karrio/mappers/$id")
+PROVIDERS_DIR = string.Template(
+    f"{BASE_DIR}/modules/connectors/$id/karrio/providers/$id"
+)
 SCHEMA_DATATYPES_DIR = string.Template(
-    f"{BASE_DIR}/modules/connections/$id/karrio/schemas/$id"
+    f"{BASE_DIR}/modules/connectors/$id/karrio/schemas/$id"
 )
 
 

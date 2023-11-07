@@ -1,40 +1,40 @@
 # Carrier Extentions packages
--e ./modules/karrio
--e ./modules/connections/amazon_shipping
--e ./modules/connections/aramex
--e ./modules/connections/asendia_us
--e ./modules/connections/australiapost
--e ./modules/connections/boxknight
--e ./modules/connections/canadapost
--e ./modules/connections/canpar
--e ./modules/connections/chronopost
--e ./modules/connections/colissimo
-# -e ./modules/connections/dhl_express
--e ./modules/connections/dhl_poland
--e ./modules/connections/dhl_universal
--e ./modules/connections/dicom
--e ./modules/connections/dpd
-# -e ./modules/connections/dpdhl
-# -e ./modules/connections/dpdhl_international
-# -e ./modules/connections/fedex
--e ./modules/connections/generic
--e ./modules/connections/geodis
-# -e ./modules/connections/gls_eu
--e ./modules/connections/laposte
--e ./modules/connections/nationex
-# -e ./modules/connections/postnl
--e ./modules/connections/purolator
--e ./modules/connections/roadie
--e ./modules/connections/royalmail
--e ./modules/connections/sendle
--e ./modules/connections/tnt
--e ./modules/connections/ups
--e ./modules/connections/usps
--e ./modules/connections/usps_international
+-e ./modules/sdk
+-e ./modules/connectors/amazon_shipping
+-e ./modules/connectors/aramex
+-e ./modules/connectors/asendia_us
+-e ./modules/connectors/australiapost
+-e ./modules/connectors/boxknight
+-e ./modules/connectors/canadapost
+-e ./modules/connectors/canpar
+-e ./modules/connectors/chronopost
+-e ./modules/connectors/colissimo
+# -e ./modules/connectors/dhl_express
+-e ./modules/connectors/dhl_poland
+-e ./modules/connectors/dhl_universal
+-e ./modules/connectors/dicom
+-e ./modules/connectors/dpd
+# -e ./modules/connectors/dpdhl
+# -e ./modules/connectors/dpdhl_international
+# -e ./modules/connectors/fedex
+-e ./modules/connectors/generic
+-e ./modules/connectors/geodis
+# -e ./modules/connectors/gls_eu
+-e ./modules/connectors/laposte
+-e ./modules/connectors/nationex
+# -e ./modules/connectors/postnl
+-e ./modules/connectors/purolator
+-e ./modules/connectors/roadie
+-e ./modules/connectors/royalmail
+-e ./modules/connectors/sendle
+-e ./modules/connectors/tnt
+-e ./modules/connectors/ups
+-e ./modules/connectors/usps
+-e ./modules/connectors/usps_international
 
 # Carrier Hub Extentions packages
--e ./modules/connections/easypost
--e ./modules/connections/eshipper
--e ./modules/connections/freightcom
--e ./modules/connections/locate2u
--e ./modules/connections/zoom2u
+-e ./modules/connectors/easypost
+-e ./modules/connectors/eshipper
+-e ./modules/connectors/freightcom
+-e ./modules/connectors/locate2u
+-e ./modules/connectors/zoom2u
