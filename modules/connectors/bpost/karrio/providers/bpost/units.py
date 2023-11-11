@@ -1,4 +1,3 @@
-from operator import is_
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
