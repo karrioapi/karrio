@@ -34,12 +34,14 @@ def _extract_detail(
     settings: provider_utils.Settings,
     ctx: dict,
 ) -> typing.Optional[models.ShipmentDetails]:
+    label = ctx.get("label")
+
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=detail.CONNUMBER,
         shipment_identifier=detail.CONREF,
-        docs=models.Documents(label=ctx.get("label")),
+        docs=models.Documents(label=label),
     )
 
 

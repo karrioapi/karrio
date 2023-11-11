@@ -1,6 +1,7 @@
 import karrio.schemas.colissimo.label_request as colissimo
 import karrio.schemas.colissimo.label_response as shipping
 import typing
+import base64
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -32,7 +33,12 @@ def _extract_details(
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(shipping.LabelResponse, data.get("json_info"))
     label_type = ctx.get("label_type") or "PDF"
-    label = lib.binary_to_base64(data.get("label"))
+    label = data.get("label")
+
+    if label_type != "ZPL":
+        label = base64.b64encode(bytes(label, encoding="raw_unicode_escape")).decode(
+            "utf-8"
+        )
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,

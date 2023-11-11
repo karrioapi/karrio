@@ -10,7 +10,7 @@ LABEL_START = """<label>
 
 """
 LABEL_END = r"""
---uuid:*--"""
+--uuid:"""
 
 
 class Settings(core.Settings):
