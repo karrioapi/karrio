@@ -14,7 +14,7 @@ def parse_tracking_response(
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     responses = _response.deserialize()
 
-    messages = sum(
+    messages: typing.List[models.Message] = sum(
         [
             error.parse_error_response(response, settings, tracking_number=_)
             for _, response in responses

@@ -1,6 +1,5 @@
 """Karrio Belgian Post client proxy."""
 
-from weakref import ref
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.mappers.bpost.settings as provider_settings
@@ -14,12 +13,11 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return super().get_rates(request)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        ctx = {}
-        data = request.serialize()
+        ctx: dict = {**request.ctx}
 
         response = lib.request(
             url=f"{self.settings.server_url}/{self.settings.account_id}/orders/",
-            data=data["order"],
+            data=request.serialize(),
             trace=self.trace_as("xml"),
             method="POST",
             headers={
@@ -29,9 +27,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         )
 
         if not any(response):
-            reference = data["reference"]
-            label_format = data["label_format"]
-            label_header = data["label_header"]
+            reference = ctx["reference"]
+            label_format = ctx["label_format"]
+            label_header = ctx["label_header"]
             label = lib.request(
                 url=f"{self.settings.server_url}/{self.settings.account_id}/orders/{reference}/labels/{label_format}",
                 trace=self.trace_as("xml"),
@@ -42,20 +40,17 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                     "Accept": f"{label_header}",
                 },
             )
-            ctx.update(
-                label=lib.to_element(label),
-                reference=reference,
-                label_header=label_header,
-            )
+
+            ctx.update(label=lib.to_element(label))
             response = "<success>true</success>"
 
         return lib.Deserializable(response, lib.to_element, ctx)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        data = request.serialize()
+        reference = request.ctx["reference"]
         response = lib.request(
-            url=f"{self.settings.server_url}/{self.settings.account_id}/orders/{data['reference']}",
-            data=data["update"],
+            url=f"{self.settings.server_url}/{self.settings.account_id}/orders/{reference}",
+            data=request.serialize(),
             trace=self.trace_as("xml"),
             method="POST",
             headers={

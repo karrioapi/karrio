@@ -85,25 +85,33 @@ class ShippingService(lib.Enum):
     def method(cls, svc: str, is_international: bool) -> str:
         _methods = dict(
             atHome=[
-                cls.bpack_24h_pro.value,
-                cls.bpack_24h_business.value,
-                cls.bpack_bus.value,
-                cls.bpack_pallet.value,
-                cls.bpack_easy_retour.value,
-                cls.bpack_xl.value,
+                cls.bpack_24h_pro.value,  # type: ignore
+                cls.bpack_24h_business.value,  # type: ignore
+                cls.bpack_bus.value,  # type: ignore
+                cls.bpack_pallet.value,  # type: ignore
+                cls.bpack_easy_retour.value,  # type: ignore
+                cls.bpack_xl.value,  # type: ignore
             ],
-            atBpost=[cls.bpack_bpost.value],
-            at24_7=[cls.bpack_24_7.value],
+            atBpost=[
+                cls.bpack_bpost.value,  # type: ignore
+            ],
+            at24_7=[
+                cls.bpack_24_7.value,  # type: ignore
+            ],
             bpostOnAppointment=[],
             international=[
-                cls.bpack_world_business.value,
-                cls.bpack_world_express_pro.value,
-                cls.bpack_europe_business.value,
-                cls.bpack_world_easy_return.value,
+                cls.bpack_world_business.value,  # type: ignore
+                cls.bpack_world_express_pro.value,  # type: ignore
+                cls.bpack_europe_business.value,  # type: ignore
+                cls.bpack_world_easy_return.value,  # type: ignore
             ],
             atIntlHome=[],
-            atIntlPugo=[cls.bpack_bpost_international.value],
-            atIntlParcelDepot=[cls.bpack_24_7_international.value],
+            atIntlPugo=[
+                cls.bpack_bpost_international.value,  # type: ignore
+            ],
+            atIntlParcelDepot=[
+                cls.bpack_24_7_international.value,  # type: ignore
+            ],
         )
         _method = next(
             (method for method, services in _methods.items() if svc in services),
@@ -257,7 +265,6 @@ class TrackingStatus(lib.Enum):
         "N96",
         "P00",
     ]
-    out_for_delivery = []
     ready_for_pickup = ["N74", "R13"]
 
 

@@ -19,19 +19,19 @@ class TestBelgianPostShipping(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
-        self.assertEqual(request.serialize()["order"], ShipmentRequest)
+        self.assertEqual(request.serialize(), ShipmentRequest)
 
     def test_create_intl_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.IntlShipmentRequest)
 
-        self.assertEqual(request.serialize()["order"], IntlShipmentRequest)
+        self.assertEqual(request.serialize(), IntlShipmentRequest)
 
     def test_create_cancel_shipment_request(self):
         request = gateway.mapper.create_cancel_shipment_request(
             self.ShipmentCancelRequest
         )
 
-        self.assertEqual(request.serialize()["update"], ShipmentCancelRequest)
+        self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.bpost.proxy.lib.request") as mock:

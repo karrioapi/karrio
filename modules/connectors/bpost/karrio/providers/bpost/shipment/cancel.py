@@ -33,22 +33,17 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = dict(
-        reference=payload.shipment_identifier,
-        update=bpost.OrderUpdateType(status="CANCELLED"),
-    )
+    request = bpost.OrderUpdateType(status="CANCELLED")
 
     return lib.Serializable(
         request,
-        lambda req: {
-            **req,
-            "update": lib.to_xml(
-                req["update"],
-                namespacedef_=(
-                    'xmlns="http://schema.post.be/shm/deepintegration/v3/"'
-                    ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
-                    ' xsi:schemaLocation="http://schema.post.be/shm/deepintegration/v3/"'
-                ),
-            ).replace("OrderUpdateType", "orderUpdate"),
-        },
+        lambda req: lib.to_xml(
+            req,
+            namespacedef_=(
+                'xmlns="http://schema.post.be/shm/deepintegration/v3/"'
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+                ' xsi:schemaLocation="http://schema.post.be/shm/deepintegration/v3/"'
+            ),
+        ).replace("OrderUpdateType", "orderUpdate"),
+        dict(reference=payload.shipment_identifier),
     )
