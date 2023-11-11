@@ -27,6 +27,7 @@ Job = utils.Job
 OptionEnum = utils.OptionEnum
 Enum = utils.Enum
 Flag = utils.Flag
+identity = utils.identity
 
 
 # -----------------------------------------------------------
@@ -300,6 +301,7 @@ def to_json(
 def to_xml(
     value: typing.Union[utils.Element, typing.Any],
     encoding: str = "utf-8",
+    prefixes: dict = None,
     **kwargs,
 ) -> str:
     """Turn a XML typed object into a XML text.
@@ -308,7 +310,12 @@ def to_xml(
     :param encoding: an optional encoding type.
     :return: a XML string.
     """
+
     if utils.XP.istypedxmlobject(value):
+        if prefixes is not None:
+            _prefix = prefixes.get(value.__class__.__name__) or ""
+            apply_namespaceprefix(value, _prefix, prefixes)
+
         return utils.XP.export(value, **kwargs)
 
     return utils.XP.xml_tostring(value, encoding)

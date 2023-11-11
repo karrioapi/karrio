@@ -91,6 +91,8 @@ class WeightUnit(utils.Enum):
 
     KG = "KG"
     LB = "LB"
+    OZ = "OZ"
+    G = "G"
 
 
 class DimensionUnit(utils.Enum):
@@ -139,11 +141,13 @@ class MeasurementOptionsType(typing.NamedTuple):
     min_lb: typing.Optional[float] = None
     min_kg: typing.Optional[float] = None
     min_oz: typing.Optional[float] = None
+    min_g: typing.Optional[float] = None
     max_in: typing.Optional[float] = None
     max_cm: typing.Optional[float] = None
     max_lb: typing.Optional[float] = None
     max_kg: typing.Optional[float] = None
     max_oz: typing.Optional[float] = None
+    max_g: typing.Optional[float] = None
     quant: typing.Optional[float] = None
 
 
@@ -241,6 +245,13 @@ class Dimension:
         else:
             return self._compute(self.CM / 100)
 
+    @property
+    def MM(self):
+        if self._unit is None or self._value is None:
+            return None
+        else:
+            return self._compute(self.CM * 10)
+
     def map(self, options: MeasurementOptionsType):
         return Dimension(value=self._value, unit=self._unit, options=options)
 
@@ -306,6 +317,7 @@ class Weight:
         self._min_lb = options.min_lb
         self._min_kg = options.min_kg
         self._min_oz = options.min_oz
+        self._min_g = options.min_g
         self._quant = options.quant
 
     def __getitem__(self, item):
@@ -339,6 +351,10 @@ class Weight:
             return self._compute(self._value, self._min_kg)
         elif self._unit == WeightUnit.LB:
             return self._compute(self._value / 2.205, self._min_kg)
+        elif self._unit == WeightUnit.OZ:
+            return self._compute(self._value / 35.274, self._min_kg)
+        elif self._unit == WeightUnit.G:
+            return self._compute(self._value / 1000, self._min_kg)
 
         return None
 
@@ -350,6 +366,10 @@ class Weight:
             return self._compute(self._value, self._min_lb)
         elif self._unit == WeightUnit.KG:
             return self._compute(self._value * 2.205, self._min_lb)
+        elif self._unit == WeightUnit.OZ:
+            return self._compute(self._value / 16, self._min_lb)
+        elif self._unit == WeightUnit.G:
+            return self._compute(self._value / 453.6, self._min_lb)
 
         return None
 
@@ -357,10 +377,29 @@ class Weight:
     def OZ(self) -> typing.Optional[float]:
         if self._unit is None or self._value is None:
             return None
+        elif self._unit == WeightUnit.OZ:
+            return self._compute(self._value, self._min_oz)
         if self._unit == WeightUnit.LB:
             return self._compute(self._value * 16, self._min_oz)
         elif self._unit == WeightUnit.KG:
             return self._compute(self._value * 35.274, self._min_oz)
+        elif self._unit == WeightUnit.G:
+            return self._compute(self._value / 28.35, self._min_oz)
+
+        return None
+
+    @property
+    def G(self) -> typing.Optional[float]:
+        if self._unit is None or self._value is None:
+            return None
+        elif self._unit == WeightUnit.G:
+            return self._compute(self._value, self._min_g)
+        if self._unit == WeightUnit.LB:
+            return self._compute(self._value * 453.6, self._min_g)
+        elif self._unit == WeightUnit.KG:
+            return self._compute(self._value * 1000, self._min_g)
+        elif self._unit == WeightUnit.OZ:
+            return self._compute(self._value * 28.35, self._min_g)
 
         return None
 
@@ -851,13 +890,18 @@ class ShippingOption(utils.Enum):
     dangerous_good = utils.OptionEnum("dangerous_good", bool)
     declared_value = utils.OptionEnum("declared_value", float)
     paperless_trade = utils.OptionEnum("paperless_trade", bool)
-    hold_at_location = utils.OptionEnum("hold_at_location", bool)
     sms_notification = utils.OptionEnum("sms_notification", bool)
     email_notification = utils.OptionEnum("email_notification", bool)
     email_notification_to = utils.OptionEnum("email_notification_to")
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
+    saturday_delivery = utils.OptionEnum("saturday_delivery", bool)
     doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
     doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict)
+    hold_at_location = utils.OptionEnum("hold_at_location", bool)
+    hold_at_location_address = utils.OptionEnum(
+        "hold_at_location_address",
+        functools.partial(utils.DP.to_object, models.Address),
+    )
 
 
 class ShippingOptions(Options):

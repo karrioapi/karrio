@@ -5,6 +5,7 @@
 -e ./modules/connectors/asendia_us
 -e ./modules/connectors/australiapost
 -e ./modules/connectors/boxknight
+-e ./modules/connectors/bpost
 -e ./modules/connectors/canadapost
 -e ./modules/connectors/canpar
 -e ./modules/connectors/chronopost

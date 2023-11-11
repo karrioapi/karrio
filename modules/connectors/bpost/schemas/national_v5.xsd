@@ -1,0 +1,357 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns="http://schema.post.be/shm/deepintegration/v5/national"
+    targetNamespace="http://schema.post.be/shm/deepintegration/v5/national"
+    xmlns:tns="http://schema.post.be/shm/deepintegration/v5/national"
+    xmlns:common="http://schema.post.be/shm/deepintegration/v5/common">
+
+    <xs:import namespace="http://schema.post.be/shm/deepintegration/v5/common"
+        schemaLocation="common_v5.xsd" />
+
+    <xs:complexType name="NationalBoxType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type for a national box. This is a box send from a
+                Belgian address to another Belgian address. </xs:documentation>
+        </xs:annotation>
+        <xs:choice>
+            <xs:element ref="atHome">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> 'Home or Office' delivery. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="atBpost">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> 'Pick-up point' delivery. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="at24-7">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> 'Parcel Machine' delivery. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element ref="bpostOnAppointment">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> 'bpost on appointment' delivery. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:choice>
+    </xs:complexType>
+
+    <xs:element name="atHome">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> 'Home or Office' delivery. </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:NationalDeliveryMethodType">
+                    <xs:sequence>
+                        <xs:element name="receiver" type="common:Party">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding information about
+                                    the receiver of the parcel. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="requestedDeliveryDate" type="RequestedDeliveryDateType"
+                            minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">See type definition.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="atBpost">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> 'Pick-up point' delivery. </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:NationalDeliveryMethodType">
+                    <xs:sequence>
+                        <xs:sequence>
+                            <xs:element name="pugoId" type="common:RcCode">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the unique
+                                        identifier of the pick-up point. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="pugoName" type="common:ReceiverNameType">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the name of the
+                                        pick-up point. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="pugoAddress" type="common:AddressType">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the address of
+                                        the pick-up point. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="receiverName" type="common:ReceiverNameType">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the name of the
+                                        receiver of the parcel. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="receiverCompany" type="common:ReceiverCompany"
+                                minOccurs="0">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the company
+                                        name of the receiver of the parcel. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="requestedDeliveryDate"
+                                type="RequestedDeliveryDateType" minOccurs="0">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">See type definition.</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="shopHandlingInstruction" minOccurs="0"
+                                type="ShopHandlingInstructionType">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">See type definition.</xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="at24-7">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> 'Parcel Machine' delivery. </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:NationalDeliveryMethodType">
+                    <xs:sequence>
+                        <xs:element name="parcelsDepotId" type="common:RcCode">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the unique
+                                    identifier of the parcel machine. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="parcelsDepotName" type="common:ReceiverNameType">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the name of the
+                                    parcel machine. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="parcelsDepotAddress" type="common:AddressType">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the address of the
+                                    parcel machine. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:choice>
+                            <xs:element name="memberId" type="common:BpackMemberId">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the member id
+                                        of the receiver of the parcel. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                            <xs:element name="unregistered"
+                                type="UnregisteredParcelLockerMemberType">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en"> Element holding the member id
+                                        of the receiver of the parcel. </xs:documentation>
+                                </xs:annotation>
+                            </xs:element>
+                        </xs:choice>
+                        <xs:element name="receiverName" type="common:ReceiverNameType">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the name of the
+                                    receiver of the parcel. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="receiverCompany" type="common:ReceiverCompany"
+                            minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding the name of the
+                                    company of the receiver of the parcel. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="requestedDeliveryDate" type="RequestedDeliveryDateType"
+                            minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">See type definition.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="bpostOnAppointment">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> 'bpost on appointment' delivery. </xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:complexContent>
+                <xs:extension base="tns:NationalDeliveryMethodType">
+                    <xs:sequence>
+                        <xs:element name="receiver" type="common:Party">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Element holding information about
+                                    the receiver of the parcel. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="inNetworkCutOff" type="xs:dateTime">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en"> Latest time at which the parcel
+                                    should be ready to enter the bpost network. </xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:extension>
+            </xs:complexContent>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:complexType name="NationalDeliveryMethodType" abstract="true">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Type for a national delivery method. </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="product" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding product information. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="options" type="common:OptionsType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the options information. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="weight" type="common:WeightInGrams" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the the weight of the parcel. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="height" type="common:HeightInMm" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the the height of the parcel. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="length" type="common:LegthInMm" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the the length of the parcel. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="width" type="common:WidthInMm" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the the width of the parcel. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="openingHours" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The opening hours of the receiver. Only applicable for B2B
+                        items. </xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="Monday" type="OpeningHoursType" minOccurs="0" />
+                        <xs:element name="Tuesday" type="OpeningHoursType" minOccurs="0" />
+                        <xs:element name="Wednesday" type="OpeningHoursType" minOccurs="0" />
+                        <xs:element name="Thursday" type="OpeningHoursType" minOccurs="0" />
+                        <xs:element name="Friday" type="OpeningHoursType" minOccurs="0" />
+                        <xs:element name="Saturday" type="OpeningHoursType" minOccurs="0" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="desiredDeliveryPlace" type="DesiredDeliveryPlaceType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The desired delivery place of the receiver. Only applicable
+                        for B2B items. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="RequestedDeliveryDateType">
+        <xs:restriction base="xs:date">
+            <xs:annotation>
+                <xs:documentation xml:lang="en"> Element holding the date when the parcel is
+                    expected to be delivered. The format is the standard XML date format of
+                    yyyy-mm-dd. The date chosen must be a normal delivery day of bpost and the
+                    parcel must be deposited with bpost before the cutoff the day before this date.
+                    If the date provided is a Saturday then the Saturday Delivery service is
+                    automatically added. </xs:documentation>
+            </xs:annotation>
+        </xs:restriction>
+    </xs:simpleType>
+    <!-- Shop Handling Instruction  -->
+    <xs:simpleType name="ShopHandlingInstructionType">
+        <xs:annotation>
+            <xs:documentation xml:lang="en"> Element holding additional information for the shop
+                clerk (B2T). </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50" />
+        </xs:restriction>
+    </xs:simpleType>
+    <!--  OpeningHour -->
+    <xs:simpleType name="OpeningHoursType">
+        <xs:annotation>
+            <xs:documentation>One range (e.g. 09:00-17:00): HH:MM-HH:MM, Two ranges (e.g.
+                09:00-12:00/13:00-17:30): HH:MM-HH:MM/HH:MM-HH:MM, Closed: -/- or -, Unknown: empty
+                field </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="23" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <!-- Delivery place -->
+    <xs:simpleType name="DesiredDeliveryPlaceType">
+        <xs:restriction base="xs:string">
+            <xs:maxLength value="50" />
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="UnregisteredParcelLockerMemberType">
+        <xs:sequence>
+            <xs:element name="language">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the language used for messaging
+                        (NL | FR | EN). </xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="EN" />
+                        <xs:enumeration value="NL" />
+                        <xs:enumeration value="FR" />
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="mobilePhone" type="common:PhoneNumberType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the mobile phone number for
+                        sending messages. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="emailAddress" type="common:EmailAddressCharacteristicType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding the email address for sending
+                        messages. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="reducedMobilityZone" type="ParcelLockerReducedMobilityZoneType"
+                minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en"> Element holding info about the use of the
+                        reduced mobility zone. If the element is passed, reduced mobility zone will
+                        be set. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="ParcelLockerReducedMobilityZoneType" />
+</xs:schema>

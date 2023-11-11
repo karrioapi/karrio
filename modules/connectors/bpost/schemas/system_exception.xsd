@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:ns2="http://schema.post.be/common/exception/v1/" attributeFormDefault="unqualified"
+    elementFormDefault="qualified" targetNamespace="http://schema.post.be/api/shm/common/v2/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="systemException">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="message" type="xs:string" />
+                <xs:element name="timestamp" type="xs:date" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

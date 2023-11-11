@@ -539,7 +539,7 @@ import karrio.providers.{{id}}.utils as provider_utils
 
 
 def parse_error_response(
-    response: lib.Deserializable[{% if is_xml_api %}lib.Element{% else %}dict{% endif %}],
+    response: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
@@ -549,8 +549,8 @@ def parse_error_response(
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="",  # set the carrier error code
-            message="",  # set the carrier error message
+            code="",
+            message="",
             details={**kwargs},
         )
         for error in errors
@@ -633,14 +633,19 @@ import karrio.providers.{{id}}.units as provider_units
 
 
 def parse_tracking_response(
-    responses: typing.List[typing.Tuple[str, {% if is_xml_api %}lib.Element{% else %}dict{% endif %}]],
+    _response: lib.Deserializable[typing.List[typing.Tuple[str, {% if is_xml_api %}lib.Element{% else %}dict{% endif %}]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response_messages: list = []  # extract carrier response errors
-    response_details: list = []  # extract carrier response tracking details
+    responses = _response.deserialize()
 
-    messages = error.parse_error_response(response_messages, settings)
-    tracking_details = [_extract_details(details, settings) for details in response_details]
+    messages = sum(
+        [
+            error.parse_error_response(response, settings, tracking_number=_)
+            for _, response in responses
+        ],
+        start=[],
+    )
+    tracking_details = [_extract_details(details, settings) for _, details in responses]
 
     return tracking_details, messages
 
