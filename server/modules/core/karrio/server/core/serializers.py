@@ -1545,7 +1545,9 @@ class DocumentFileData(serializers.Serializer):
         help_text="The file name",
     )
     doc_format = serializers.CharField(
-        required=True,
+        required=False,
+        allow_blank=False,
+        allow_null=True,
         help_text="The file format",
     )
     doc_type = serializers.CharField(
