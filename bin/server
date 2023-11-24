@@ -7,7 +7,7 @@ source "bin/activate-env" > /dev/null 2>&1
 # Run server commands
 if [[ "$*" == *gen:graph* ]]; then
 	cd "${ROOT:?}"
-    apollo service:download --endpoint=http://localhost:5002/graphql/ "${ROOT:?}/server/schemas/graphql.json"
+    apollo service:download --endpoint=http://0.0.0.0:5002/graphql/ "${ROOT:?}/server/schemas/graphql.json"
 	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"

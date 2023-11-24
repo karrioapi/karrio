@@ -11,7 +11,6 @@ date_formats = [
     "%Y-%m-%dT%H:%M:%S",
     "%Y-%m-%dT%H:%M:%SZ",
     "%Y-%m-%dT%H:%M:%S%z",
-    "%Y-%m-%dT%H:%M:%S.%f%z",
 ]
 
 
@@ -49,6 +48,7 @@ def _extract_detail(
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
+    shorten_date = lambda _date: _date.split(".")[0] if _date else None
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
@@ -57,7 +57,7 @@ def _extract_detail(
         status=status,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event.timestamp, try_formats=date_formats),
+                date=lib.fdate(shorten_date(event.timestamp), try_formats=date_formats),
                 description=event.description or event.status or " ",
                 location=(
                     event.location.address.addressLocality
@@ -65,12 +65,12 @@ def _extract_detail(
                     else None
                 ),
                 code=event.statusCode or "",
-                time=lib.ftime(event.timestamp, try_formats=date_formats),
+                time=lib.ftime(shorten_date(event.timestamp), try_formats=date_formats),
             )
             for event in shipment.events or []
         ],
         estimated_delivery=lib.fdate(
-            shipment.estimatedTimeOfDelivery, try_formats=date_formats
+            shorten_date(shipment.estimatedTimeOfDelivery), try_formats=date_formats
         ),
         delivered=status == "delivered",
         info=models.TrackingInfo(

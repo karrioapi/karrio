@@ -34,7 +34,7 @@ docker compose up
 - Karrio server accessible at <http://localhost:5002>
 - Karrio dashboard accessible at <http://localhost:3000>
 
-Default Login: admin@example.com | demo
+Default Login: <admin@example.com> | demo
 
 ## Features
 
@@ -64,10 +64,6 @@ Default Login: admin@example.com | demo
 ### Karrio Cloud
 
 Request access to [Karrio Cloud](https://www.karrio.io/get-started).
-
-### Enterprise self-hosted
-
-See our [enterprise self-hosted docs](https://docs.karrio.io/self-hosting/enterprise) to deploy a scalable, production-ready instance with support from our team.
 
 ## The problem: Shipping integration is still painful
 
@@ -109,7 +105,7 @@ We strive to provide good support through our issue trackers on Github. However,
 - Prioritized carriers integrations
 - Prioritized feature requests
 
-We do offer paid support options. Please reach out to us at hello@karrio.io to sign up.
+We do offer paid support options. Please reach out to us at <hello@karrio.io> to sign up.
 
 ## Contributing
 
@@ -119,10 +115,10 @@ We <3 contributions big or small, check out our [guide on how to get started](ht
 
 Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairing%20session&body=I'd%20like%20to%20do%20a%20pairing%20session!) to chat with a member of our team.
 
-## Open-source vs. paid
+## License
 
 This project uses the [Apache v2 license](LICENSE). The core Karrio platform will always remain open and free.
 
 We are developing some commercial enterprise add-ons (contained in the `/ee` directory) only offered on our Cloud and Enterprise editions.
 
-Any other questions, mail us at hello@karrio.io We’d love to meet you!
+Any other questions, mail us at <hello@karrio.io> We’d love to meet you!
