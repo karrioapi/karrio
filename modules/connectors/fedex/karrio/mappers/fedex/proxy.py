@@ -1,3 +1,5 @@
+from karrio.schemas.fedex.ship_service_v26 import TrackingId
+
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 from karrio.mappers.fedex.settings import Settings
@@ -6,45 +8,35 @@ from karrio.mappers.fedex.settings import Settings
 class Proxy(proxy.Proxy):
     settings: Settings
 
-    def _send_request(
-        self,
-        path: str = "/",
-        request: lib.Serializable = None,
-        method: str = "POST",
-        headers: dict = None,
-        url: str = None,
-    ) -> str:
+    def _send_request(self, path: str, request: lib.Serializable) -> str:
         return lib.request(
-            url=url or f"{self.settings.server_url}{path}",
-            trace=self.trace_as("json"),
-            method=method,
-            headers={
-                "content-Type": "application/json",
-                "authorization": f"Bearer {self.settings.access_token}",
-                "x-locale": self.settings.config.locale.state or "en_US",
-                **(headers or {}),
-            },
-            **({"data": lib.to_json(request.serialize())} if request else {}),
+            url=f"{self.settings.server_url}{path}",
+            data=request.serialize(),
+            trace=self.trace_as("xml"),
+            method="POST",
+            headers={"Content-Type": "application/xml"},
         )
+
+    def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request("/addressvalidation", request)
+
+        return lib.Deserializable(response, lib.to_element)
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/rate", request)
 
-        return lib.Deserializable(response, lib.to_dict, request.ctx)
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/track/v1/trackingnumbers", request)
+        response = self._send_request("/track", request)
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, lib.to_element)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         requests = request.serialize()
         response = self._send_request("/ship", lib.Serializable(requests[0]))
-        master_id = (
-            lib.to_dict(response)
-            .get("output", {})
-            .get("transactionShipments", [{}])[0]
-            .get("masterTrackingNumber")
+        master_id = lib.find_element(
+            "MasterTrackingId", lib.to_element(response), TrackingId, first=True
         )
 
         if len(requests) > 1 and master_id is not None:
@@ -59,32 +51,51 @@ class Proxy(proxy.Proxy):
                 )
                 for request in requests[1:]
             ]
-            return lib.Deserializable([response, *responses], lib.to_dict)
+            return lib.Deserializable([response, *responses], lib.to_element)
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, lib.to_element)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/ship", request)
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, lib.to_element)
+
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        def process(job: lib.Job):
+            if job.data is None:
+                return job.fallback
+
+            return self._send_request("/pickup", job.data)
+
+        pipeline: lib.Pipeline = request.serialize()
+        response = pipeline.apply(process)
+
+        return lib.Deserializable(response, lib.to_element)
+
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        def process(job: lib.Job):
+            if job.data is None:
+                return job.fallback
+
+            return self._send_request("/pickup", job.data)
+
+        pipeline: lib.Pipeline = request.serialize()
+        response = pipeline.apply(process)
+
+        return lib.Deserializable(response, lib.to_element)
+
+    def cancel_pickup(
+        self,
+        request: lib.Serializable,
+    ) -> lib.Deserializable:
+        response = self._send_request("/pickup", request)
+
+        return lib.Deserializable(response, lib.to_element)
 
     def upload_document(
         self,
-        requests: lib.Serializable,
+        request: lib.Serializable,
     ) -> lib.Deserializable:
-        response = lib.run_asynchronously(
-            lambda _: self._send_request(
-                url=(
-                    "https://documentapitest.prod.fedex.com/sandbox/documents/v1/etds/upload"
-                    if self.settings.test_mode
-                    else "https://documentapi.prod.fedex.com/documents/v1/etds/upload"
-                ),
-                request=lib.Serializable(_),
-            ),
-            requests.serialize(),
-        )
+        response = self._send_request("/uploaddocument", request)
 
-        return lib.Deserializable(
-            response,
-            lambda __: [lib.to_dict(_) for _ in __],
-        )
+        return lib.Deserializable(response, lib.to_element)

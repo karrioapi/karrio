@@ -1,4 +1,3 @@
-
 from karrio.core.metadata import Metadata
 
 from karrio.mappers.fedex.mapper import Mapper
@@ -15,5 +14,9 @@ METADATA = Metadata(
     Proxy=Proxy,
     Settings=Settings,
     # Data Units
-    is_hub=False
+    options=units.ShippingOption,
+    package_presets=units.PackagePresets,
+    packaging_types=units.PackagingType,
+    services=units.ServiceType,
+    connection_configs=units.ConnectionConfig,
 )

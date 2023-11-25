@@ -1,8 +1,6 @@
 """Karrio FedEx client settings."""
 
 import attr
-import jstruct
-import karrio.lib as lib
 from karrio.providers.fedex.utils import Settings as BaseSettings
 
 
@@ -10,14 +8,19 @@ from karrio.providers.fedex.utils import Settings as BaseSettings
 class Settings(BaseSettings):
     """FedEx connection settings."""
 
-    api_key: str  # type:ignore
-    secret_key: str  # type:ignore
-    account_number: str = None
-
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
+    password: str  # type:ignore
+    meter_number: str  # type:ignore
+    account_number: str  # type:ignore
+    user_key: str = None
+    language_code: str = "en"
     account_country_code: str = None
-    carrier_id: str = "fedex"
+
+    id: str = None
     test_mode: bool = False
+    carrier_id: str = "fedex"
     metadata: dict = {}
     config: dict = {}
-    id: str = None
+
+    @property
+    def carrier_name(self):
+        return "fedex"
