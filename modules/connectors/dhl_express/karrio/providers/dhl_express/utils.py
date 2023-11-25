@@ -1,13 +1,21 @@
-import base64
+import karrio.schemas.dhl_express.datatypes_global_v62 as dhl
+import time
+import typing
 import karrio.lib as lib
 import karrio.core as core
+import karrio.core.units as units
 
 
 class Settings(core.Settings):
-    """DHL Express connection settings."""
+    """DHL connection settings."""
 
-    api_key: str
-    api_secret: str
+    site_id: str
+    password: str
+    account_number: str = None
+    account_country_code: str = None
+    metadata: dict = {}
+
+    id: str = None
 
     @property
     def carrier_name(self):
@@ -16,21 +24,14 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://express.api.dhl.com/mydhlapi/test"
+            "https://xmlpitest-ea.dhl.com/XMLShippingServlet"
             if self.test_mode
-            else "https://express.api.dhl.com/mydhlapi"
+            else "https://xmlpi-ea.dhl.com/XMLShippingServlet"
         )
 
     @property
     def tracking_url(self):
-        country = self.account_country_code or "US"
-        language = self.connection_config.language or "en"
-        locale = f"{country}-{language}".lower()
-        return (
-            "https://www.dhl.com/"
-            + locale
-            + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
-        )
+        return "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
 
     @property
     def connection_config(self) -> lib.units.Options:
@@ -42,6 +43,23 @@ class Settings(core.Settings):
         )
 
     @property
-    def authorization(self):
-        pair = "%s:%s" % (self.api_key, self.api_secret)
-        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+    def default_currency(self) -> typing.Optional[str]:
+        return units.CountryCurrency.map(self.account_country_code).value or "USD"
+
+    def Request(self, **kwargs) -> dhl.Request:
+        return dhl.Request(
+            ServiceHeader=dhl.ServiceHeader(
+                MessageReference="1234567890123456789012345678901",
+                MessageTime=time.strftime("%Y-%m-%dT%H:%M:%S"),
+                SiteID=self.site_id,
+                Password=self.password,
+            ),
+            **kwargs,
+        )
+
+
+def reformat_time(tag: str, xml_str: str) -> str:
+    """Change time format from 00:00:00 to 00:00"""
+    parts = xml_str.split(tag)
+    subs = parts[1].split(":")
+    return f"{parts[0]}{tag}{subs[0]}:{subs[1]}</{tag}{parts[2]}"

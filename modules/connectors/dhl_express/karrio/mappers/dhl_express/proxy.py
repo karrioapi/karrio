@@ -1,108 +1,54 @@
-"""Karrio DHL Express client proxy."""
-
 import karrio.lib as lib
-import karrio.api.proxy as proxy
-import karrio.mappers.dhl_express.settings as provider_settings
+from karrio.api.proxy import Proxy as BaseProxy
+from karrio.mappers.dhl_express.settings import Settings
 
 
-class Proxy(proxy.Proxy):
-    settings: provider_settings.Settings
+class Proxy(BaseProxy):
+    settings: Settings
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"{self.settings.server_url}/rates",
+    def _send_request(self, request: lib.Serializable) -> str:
+        return lib.request(
+            url=self.settings.server_url,
             data=request.serialize(),
-            trace=self.trace_as("json"),
+            headers={"Content-Type": "application/xml"},
+            trace=self.trace_as("xml"),
             method="POST",
-            headers={
-                "content-type": "application/json",
-                "Authorization": f"Basic {self.settings.authorization}",
-            },
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+    def validate_address(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request(request)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"{self.settings.server_url}/shipments",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={
-                "content-type": "application/json",
-                "Authorization": f"Basic {self.settings.authorization}",
-            },
-        )
+        return lib.Deserializable(response, lib.to_element)
 
-        return lib.Deserializable(response, lib.to_dict)
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request(request)
 
-    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        shipmentTrackingNumber = ",".join(request.serialize())
-        response = lib.request(
-            url=f"{self.settings.server_url}/tracking?levelOfDetail=all&shipmentTrackingNumber={shipmentTrackingNumber}",
-            trace=self.trace_as("json"),
-            method="GET",
-            headers={
-                "content-type": "application/json",
-                "Authorization": f"Basic {self.settings.authorization}",
-            },
-        )
+        return lib.Deserializable(response, lib.to_element, request.ctx)
 
-        return lib.Deserializable(response, lib.to_dict)
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request(request)
 
-    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"{self.settings.server_url}/pickups",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={
-                "content-type": "application/json",
-                "Authorization": f"Basic {self.settings.authorization}",
-            },
-        )
+        return lib.Deserializable(response, lib.to_element)
 
-        return lib.Deserializable(response, lib.to_dict)
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request(request)
 
-    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        payload = request.serialize()
-        response = lib.request(
-            url=f"{self.settings.server_url}/pickups/{payload['confirmation_number']}",
-            data=payload["data"],
-            trace=self.trace_as("json"),
-            method="PATCH",
-            headers={
-                "content-type": "application/json",
-                "Authorization": f"Basic {self.settings.authorization}",
-            },
-        )
+        return lib.Deserializable(response, lib.to_element)
 
-        return lib.Deserializable(response, lib.to_dict)
+    def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request(request)
 
-    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"{self.settings.server_url}/pickups/{request.serialize()}",
-            trace=self.trace_as("json"),
-            method="DELETE",
-            headers={
-                "content-type": "application/json",
-                "Authorization": f"Basic {self.settings.authorization}",
-            },
-        )
+        return lib.Deserializable(response, lib.to_element)
 
-        return lib.Deserializable(response, lib.to_dict)
+    def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request(request)
 
-    def upload_document(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        payload = request.serialize()
-        response = lib.request(
-            url=f"{self.settings.server_url}/shipments/{payload['tracking_number']}/upload-invoice-data",
-            data=payload["data"],
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={
-                "content-type": "application/json",
-                "Authorization": f"Basic {self.settings.authorization}",
-            },
-        )
+        return lib.Deserializable(response, lib.to_element)
 
-        return lib.Deserializable(response, lib.to_dict)
+    def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable:
+        response = self._send_request(request)
+
+        return lib.Deserializable(response, lib.to_element)
+
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable:
+        return super().upload_document(request)

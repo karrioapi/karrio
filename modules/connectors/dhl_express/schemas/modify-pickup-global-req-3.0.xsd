@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+<xsd:schema targetNamespace="http://www.dhl.com" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.dhl.com" xmlns:dhl="http://www.dhl.com/datatypes_global" xmlns:dhlPickup="http://www.dhl.com/pickupdatatypes_global" elementFormDefault="unqualified">
+	<xsd:import namespace="http://www.dhl.com/datatypes_global" schemaLocation="datatypes_global_v62b.xsd"/> 
+	<xsd:import namespace="http://www.dhl.com/pickupdatatypes_global" schemaLocation="pickupdatatypes_global-3.0.xsd"/>
+	<xsd:element name="ModifyPURequest">
+		<xsd:annotation>
+			<xsd:documentation><![CDATA[Root element of modify Pickup Request]]></xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element name="Request" type="dhl:Request">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The element contains the header information for the message. It is present in both the request and response XML message. The request element contains a complex datatype ServiceHeader and MetaData]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="RegionCode" type="dhl:RegionCode" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The RegionCode element indicates the modify pickup to be route to the specific region eCom backend. It is an optional field. The valid values are AP and AM. It is not applicable for EU region]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ConfirmationNumber">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[Confirmation number of the pickup that needs to be modified]]></xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">							
+							<xsd:maxLength value="15"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="Requestor" type="dhlPickup:Requestor">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[Requestor element contains the details of the pick up requestor. This element should be declared once in the Modify Pick Request message]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="Place" type="dhlPickup:Place">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Place element contains the address of the modify pickup request. This element should be declared once in the request message]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="Pickup" type="dhlPickup:Pickup">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The Pickup element contains the pickup requested for a Shipment. It must be declared once in the request message]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="PickupContact" type="dhlPickup:contact">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[Contact information for pickup location]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="OriginSvcArea" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[Origin Service Area]]></xsd:documentation>
+					</xsd:annotation>
+					<xsd:simpleType>
+						<xsd:restriction base="xsd:string">
+							<xsd:maxLength value="3"/>
+						</xsd:restriction>
+					</xsd:simpleType>
+				</xsd:element>
+				<xsd:element name="ShipmentDetails" type="dhlPickup:ShipmentDetails" minOccurs="0" maxOccurs="unbounded">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The ShipmentDetails element contains the information about the shipment to be picked. This element can occur more than once in the request message although it is not mandatory to have this element]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+				<xsd:element name="ConsigneeDetails" type="dhlPickup:ConsigneeDetails" minOccurs="0">
+					<xsd:annotation>
+						<xsd:documentation><![CDATA[The ConsigneeDetails element contains the information about the consignee details to be picked. This element is optional field]]></xsd:documentation>
+					</xsd:annotation>
+				</xsd:element>
+			</xsd:sequence>
+			<xsd:attribute name="schemaVersion" type="xsd:decimal" use="required" fixed="3.0"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>
