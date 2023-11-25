@@ -12,23 +12,17 @@ django-debug-toolbar
 -e ./modules/connectors/canpar
 -e ./modules/connectors/chronopost
 -e ./modules/connectors/colissimo
-karrio.dhl_express
-# -e ./modules/connectors/dhl_express
+-e ./modules/connectors/dhl_express
 -e ./modules/connectors/dhl_poland
 -e ./modules/connectors/dhl_universal
 -e ./modules/connectors/dicom
 -e ./modules/connectors/dpd
-karrio.dpdhl
-# -e ./modules/connectors/dpdhl
-# -e ./modules/connectors/dpdhl_international
-karrio.fedex
-# -e ./modules/connectors/fedex
+-e ./modules/connectors/dpdhl
+-e ./modules/connectors/fedex
 -e ./modules/connectors/generic
 -e ./modules/connectors/geodis
-# -e ./modules/connectors/gls_eu
 -e ./modules/connectors/laposte
 -e ./modules/connectors/nationex
-# -e ./modules/connectors/postnl
 -e ./modules/connectors/purolator
 -e ./modules/connectors/roadie
 -e ./modules/connectors/royalmail
