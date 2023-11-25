@@ -1,7 +1,7 @@
 
 # karrio.dpdhl
 
-This package is a DPDHL Germany extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
+This package is a Deutsche Post DHL extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
 ## Requirements
 

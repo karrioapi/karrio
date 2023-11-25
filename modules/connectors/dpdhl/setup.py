@@ -1,5 +1,3 @@
-
-"""Warning: This setup.py is only there for git install until poetry support git subdirectory"""
 from setuptools import setup, find_namespace_packages
 
 with open("README.md", "r") as fh:
@@ -8,7 +6,7 @@ with open("README.md", "r") as fh:
 setup(
     name="karrio.dpdhl",
     version="2023.9",
-    description="Karrio - DPDHL Germany Shipping Extension",
+    description="Karrio - Deutsche Post DHL Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/karrioapi/karrio",
@@ -16,7 +14,7 @@ setup(
     author_email="hello@karrio.io",
     license="Apache-2.0",
     packages=find_namespace_packages(exclude=["tests.*", "tests"]),
-    install_requires=["karrio"],
+    install_requires=["karrio", "carrier.dpdhl"],
     classifiers=[
         "Intended Audience :: Developers",
         "Operating System :: OS Independent",

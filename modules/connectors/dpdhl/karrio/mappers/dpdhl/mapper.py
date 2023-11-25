@@ -1,12 +1,12 @@
-"""Karrio DPDHL Germany client mapper."""
+"""Karrio Deutsche Post DHL client mapper."""
 
 import typing
 import karrio.lib as lib
 import karrio.api.mapper as mapper
 import karrio.core.models as models
+import karrio.universal.providers.rating as universal_provider
 import karrio.providers.dpdhl as provider
 import karrio.mappers.dpdhl.settings as provider_settings
-import karrio.universal.providers.rating as universal_provider
 
 
 class Mapper(mapper.Mapper):
@@ -27,27 +27,25 @@ class Mapper(mapper.Mapper):
 
     def create_cancel_shipment_request(
         self, payload: models.ShipmentCancelRequest
-    ) -> lib.Serializable[str]:
+    ) -> lib.Serializable:
         return provider.shipment_cancel_request(payload, self.settings)
 
     def parse_cancel_shipment_response(
         self, response: lib.Deserializable
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return provider.parse_shipment_cancel_response(
-            response.deserialize(), self.settings
-        )
+        return provider.parse_shipment_cancel_response(response, self.settings)
 
     def parse_rate_response(
-        self, response: lib.Deserializable[str]
+        self, response: lib.Deserializable
     ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
         return universal_provider.parse_rate_response(response, self.settings)
 
     def parse_shipment_response(
-        self, response: lib.Deserializable[str]
+        self, response: lib.Deserializable
     ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
         return provider.parse_shipment_response(response, self.settings)
 
     def parse_tracking_response(
-        self, response: lib.Deserializable[str]
+        self, response: lib.Deserializable
     ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
         return provider.parse_tracking_response(response, self.settings)

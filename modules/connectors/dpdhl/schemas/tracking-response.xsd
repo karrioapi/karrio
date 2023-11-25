@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Created with Liquid Technologies Online Tools 1.0 (https://www.liquid-technologies.com) -->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="data">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="data">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="data">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element maxOccurs="unbounded" name="data">
+                                            <xs:complexType>
+                                                <xs:attribute name="name" type="xs:string"
+                                                    use="required" />
+                                                <xs:attribute name="event-timestamp"
+                                                    type="xs:string" use="required" />
+                                                <xs:attribute name="event-status" type="xs:string"
+                                                    use="required" />
+                                                <xs:attribute name="event-text" type="xs:string"
+                                                    use="required" />
+                                                <xs:attribute name="event-short-status"
+                                                    type="xs:string" use="required" />
+                                                <xs:attribute name="ice" type="xs:string"
+                                                    use="required" />
+                                                <xs:attribute name="ric" type="xs:string"
+                                                    use="required" />
+                                                <xs:attribute name="event-location" type="xs:string"
+                                                    use="required" />
+                                                <xs:attribute name="event-country" type="xs:string"
+                                                    use="required" />
+                                                <xs:attribute name="standard-event-code"
+                                                    type="xs:string" use="required" />
+                                                <xs:attribute name="ruecksendung" type="xs:boolean"
+                                                    use="required" />
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                    <xs:attribute name="name" type="xs:string" use="required" />
+                                    <xs:attribute name="piece-identifier" type="xs:string"
+                                        use="required" />
+                                    <xs:attribute name="_build-time" type="xs:string" use="required" />
+                                    <xs:attribute name="piece-id" type="xs:string" use="required" />
+                                    <xs:attribute name="leitcode" type="xs:string" use="required" />
+                                    <xs:attribute name="routing-code-ean" type="xs:string"
+                                        use="required" />
+                                    <xs:attribute name="ruecksendung" type="xs:boolean"
+                                        use="required" />
+                                    <xs:attribute name="pslz-nr" type="xs:string" use="required" />
+                                    <xs:attribute name="order-preferred-delivery-day"
+                                        type="xs:boolean" use="required" />
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute name="name" type="xs:string" use="required" />
+                        <xs:attribute name="error-status" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="piece-id" type="xs:string" use="required" />
+                        <xs:attribute name="shipment-code" type="xs:string" use="required" />
+                        <xs:attribute name="piece-identifier" type="xs:string" use="required" />
+                        <xs:attribute name="identifier-type" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="piece-code" type="xs:string" use="required" />
+                        <xs:attribute name="event-location" type="xs:string" use="required" />
+                        <xs:attribute name="event-country" type="xs:string" use="required" />
+                        <xs:attribute name="status-liste" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="status-timestamp" type="xs:string" use="required" />
+                        <xs:attribute name="status" type="xs:string" use="required" />
+                        <xs:attribute name="short-status" type="xs:string" use="required" />
+                        <xs:attribute name="recipient-name" type="xs:string" use="required" />
+                        <xs:attribute name="recipient-street" type="xs:string" use="required" />
+                        <xs:attribute name="recipient-city" type="xs:string" use="required" />
+                        <xs:attribute name="pan-recipient-name" type="xs:string" use="required" />
+                        <xs:attribute name="pan-recipient-street" type="xs:string" use="required" />
+                        <xs:attribute name="pan-recipient-city" type="xs:string" use="required" />
+                        <xs:attribute name="pan-recipient-address" type="xs:string" use="required" />
+                        <xs:attribute name="pan-recipient-postalcode" type="xs:unsignedShort"
+                            use="required" />
+                        <xs:attribute name="shipper-name" type="xs:string" use="required" />
+                        <xs:attribute name="shipper-street" type="xs:string" use="required" />
+                        <xs:attribute name="shipper-city" type="xs:string" use="required" />
+                        <xs:attribute name="shipper-address" type="xs:string" use="required" />
+                        <xs:attribute name="product-code" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="product-key" type="xs:string" use="required" />
+                        <xs:attribute name="product-name" type="xs:string" use="required" />
+                        <xs:attribute name="delivery-event-flag" type="xs:unsignedByte"
+                            use="required" />
+                        <xs:attribute name="recipient-id" type="xs:unsignedByte" use="required" />
+                        <xs:attribute name="recipient-id-text" type="xs:string" use="required" />
+                        <xs:attribute name="upu" type="xs:string" use="required" />
+                        <xs:attribute name="shipment-length" type="xs:decimal" use="required" />
+                        <xs:attribute name="shipment-width" type="xs:decimal" use="required" />
+                        <xs:attribute name="shipment-height" type="xs:decimal" use="required" />
+                        <xs:attribute name="shipment-weight" type="xs:decimal" use="required" />
+                        <xs:attribute name="international-flag" type="xs:unsignedByte"
+                            use="required" />
+                        <xs:attribute name="division" type="xs:string" use="required" />
+                        <xs:attribute name="ice" type="xs:string" use="required" />
+                        <xs:attribute name="ric" type="xs:string" use="required" />
+                        <xs:attribute name="standard-event-code" type="xs:string" use="required" />
+                        <xs:attribute name="dest-country" type="xs:string" use="required" />
+                        <xs:attribute name="origin-country" type="xs:string" use="required" />
+                        <xs:attribute name="delivery-date" type="xs:string" use="required" />
+                        <xs:attribute name="delivery-timeframe-from" type="xs:string" use="required" />
+                        <xs:attribute name="delivery-timeframe-to" type="xs:string" use="required" />
+                        <xs:attribute name="searched-piece-code" type="xs:string" use="required" />
+                        <xs:attribute name="searched-ref-no" type="xs:string" use="required" />
+                        <xs:attribute name="piece-customer-reference" type="xs:string"
+                            use="required" />
+                        <xs:attribute name="shipment-customer-reference" type="xs:string"
+                            use="required" />
+                        <xs:attribute name="leitcode" type="xs:string" use="required" />
+                        <xs:attribute name="routing-code-ean" type="xs:string" use="required" />
+                        <xs:attribute name="matchcode" type="xs:string" use="required" />
+                        <xs:attribute name="domestic-id" type="xs:string" use="required" />
+                        <xs:attribute name="airway-bill-number" type="xs:string" use="required" />
+                        <xs:attribute name="ruecksendung" type="xs:boolean" use="required" />
+                        <xs:attribute name="pslz-nr" type="xs:string" use="required" />
+                        <xs:attribute name="order-preferred-delivery-day" type="xs:boolean"
+                            use="required" />
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:string" use="required" />
+            <xs:attribute name="code" type="xs:unsignedByte" use="required" />
+            <xs:attribute name="request-id" type="xs:string" use="required" />
+            <xs:attribute name="error" type="xs:string" use="required" />
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

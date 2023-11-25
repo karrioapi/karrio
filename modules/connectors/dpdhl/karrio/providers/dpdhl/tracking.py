@@ -1,118 +1,86 @@
-import karrio.schemas.dpdhl.tracking_response as dhl
+import karrio.schemas.dpdhl.tracking_response as tracking
+import karrio.schemas.dpdhl.tracking_request as dpdhl
 import typing
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.dpdhl.error as error
 import karrio.providers.dpdhl.utils as provider_utils
 import karrio.providers.dpdhl.units as provider_units
 
-date_formats = [
-    "%Y-%m-%d",
-    "%Y-%m-%dT%H:%M:%S",
-    "%Y-%m-%dT%H:%M:%SZ",
-    "%Y-%m-%dT%H:%M:%S%z",
-    "%Y-%m-%dT%H:%M:%S.%f%z",
-]
-
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _responses: lib.Deserializable[typing.List[lib.Element]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response = _response.deserialize()
-    errors = [e for e in response if "shipments" not in e]
-    details = [
-        _extract_details(lib.to_object(dhl.Shipment, d["shipments"][0]), settings)
-        for d in response
-        if "shipments" in d
+    responses = _responses.deserialize()
+    response_messages = [
+        result
+        for result in responses
+        if result.get("code") != "0" or result.get("body") is not None
+    ]
+    response_details = [
+        result[0]
+        for result in responses
+        if result.get("code") == "0" and next(iter(result), None) is not None
     ]
 
-    return details, error.parse_error_response(errors, settings)
+    trackers = [_extract_details(rate, settings) for rate in response_details]
+    messages: typing.List[models.Message] = sum(
+        [error.parse_error_response(_, settings) for _ in response_messages], start=[]
+    )
+
+    return trackers, messages
 
 
 def _extract_details(
-    shipment: dhl.Shipment,
+    data: lib.Element,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    latest_status = lib.failsafe(
-        lambda: (
-            shipment.status.statusCode
-            or shipment.status.status
-            or shipment.events[0].statusCode
-        )
-    ).lower()
+    details = lib.to_object(tracking.dataType, data)
+    events: typing.List[tracking.dataType2] = (
+        [d for d in details.data.data] if details.data is not None else []
+    )
+    delivered = details.ice == "DLVRD"
     status = next(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if latest_status in status.value
+            if details.ice in status.value
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
 
     return models.TrackingDetails(
-        carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=str(shipment.id),
-        status=status,
+        carrier_name=settings.carrier_name,
+        tracking_number=details.piece_identifier,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(event.timestamp, try_formats=date_formats),
-                description=event.description or event.status or " ",
-                location=(
-                    event.location.address.addressLocality
-                    if event.location is not None and event.location.address is not None
-                    else None
+                code=event.ice,
+                description=event.event_status,
+                date=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
+                time=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
+                location=lib.join(
+                    event.event_location,
+                    event.event_country,
+                    separator=", ",
+                    join=True,
                 ),
-                code=event.statusCode or "",
-                time=lib.ftime(event.timestamp, try_formats=date_formats),
             )
-            for event in shipment.events or []
+            for event in events
         ],
-        estimated_delivery=lib.fdate(
-            shipment.estimatedTimeOfDelivery, try_formats=date_formats
-        ),
-        delivered=status == "delivered",
+        status=status,
+        delivered=delivered,
+        estimated_delivery=lib.fdate(details.delivery_date),
         info=models.TrackingInfo(
-            carrier_tracking_link=settings.tracking_url.format(shipment.id),
-            shipment_service=lib.failsafe(lambda: shipment.details.product.productName),
-            customer_name=lib.failsafe(
-                lambda: (
-                    lib.text(
-                        shipment.details.receiver.givenName,
-                        shipment.details.receiver.familyName,
-                    )
-                    or lib.text(shipment.details.receiver.name)
-                    or lib.text(shipment.details.receiver.organizationName)
-                )
+            carrier_tracking_link=settings.tracking_url.format(
+                details.piece_identifier
             ),
-            shipment_destination_country=lib.failsafe(
-                lambda: shipment.destination.address.countryCode
-            ),
-            shipment_destination_postal_code=lib.failsafe(
-                lambda: shipment.destination.address.postalCode
-            ),
-            shipment_origin_country=lib.failsafe(
-                lambda: shipment.origin.address.countryCode
-            ),
-            shipment_origin_postal_code=lib.failsafe(
-                lambda: shipment.origin.address.postalCode
-            ),
-            package_weight=lib.failsafe(lambda: shipment.details.weight.value),
-            package_weight_unit=lib.failsafe(lambda: shipment.details.weight.unitText),
-            signed_by=lib.failsafe(
-                lambda: (
-                    lib.text(
-                        shipment.details.proofOfDelivery.signed.givenName,
-                        shipment.details.proofOfDelivery.signed.familyName,
-                    )
-                    or lib.text(shipment.details.proofOfDelivery.signed.name)
-                )
-            ),
-        ),
-        meta=dict(
-            reference=lib.failsafe(lambda: shipment.details.references.number),
+            customer_name=details.pan_recipient_name,
+            shipment_destination_country=details.dest_country,
+            shipment_destination_postal_code=details.pan_recipient_postalcode,
+            shipment_origin_country=details.origin_country,
+            shipment_service=details.product_name,
         ),
     )
 
@@ -122,11 +90,20 @@ def tracking_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     request = [
-        dict(
-            trackingNumber=number,
-            language="en",
+        dpdhl.data(
+            appname=settings.zt_id,
+            password=settings.zt_password,
+            request="d-get-piece-detail",
+            language_code=settings.language_code,
+            piece_code=tracking_number,
         )
-        for number in payload.tracking_numbers
+        for tracking_number in payload.tracking_numbers
     ]
 
-    return lib.Serializable(request)
+    return lib.Serializable(
+        request,
+        lambda requests: [
+            f'<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n{lib.to_xml(req)}'
+            for req in requests
+        ],
+    )

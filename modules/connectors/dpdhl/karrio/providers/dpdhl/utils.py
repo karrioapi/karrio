@@ -1,16 +1,26 @@
+import typing
 import base64
 import karrio.lib as lib
 import karrio.core as core
+import karrio.schemas.dpdhl.business_interface as dpdhl
+
+AuthentificationType = lib.mutate_xml_object_type(
+    dpdhl.AuthentificationType,
+    tag_name="Authentification",
+)
 
 
 class Settings(core.Settings):
-    """DPDHL Germany connection settings."""
+    """Deutsche Post DHL connection settings."""
 
-    username: str
-    password: str
+    # required carrier specific properties
+    username: str  # type:ignore
+    password: str  # type:ignore
+    app_id: str = None
+    app_token: str = None
+    zt_id: str = None
+    zt_password: str = None
     account_number: str = None
-    tracking_consumer_key: str = None
-    tracking_consumer_secret: str = None
 
     @property
     def carrier_name(self):
@@ -19,24 +29,17 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://api-sandbox.dhl.com/parcel/de/shipping"
+            "https://cig.dhl.de/services/sandbox"
             if self.test_mode
-            else "https://api-eu.dhl.com/parcel/de/shipping"
+            else "https://cig.dhl.de/services/production"
         )
 
     @property
-    def tracking_server_url(self):
-        return "https://api-eu.dhl.com"
-
-    @property
     def tracking_url(self):
-        country = self.account_country_code or "DE"
-        language = self.connection_config.language or "en"
-        locale = f"{country}-{language}".lower()
         return (
-            "https://www.dhl.com/"
-            + locale
-            + "/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
+            "https://www.dhl.de/"
+            + self.language_code
+            + "/privatkunden/pakete-empfangen/verfolgen.html?piececode={}"
         )
 
     @property
@@ -49,6 +52,21 @@ class Settings(core.Settings):
         )
 
     @property
-    def authorization(self):
-        pair = "%s:%s" % (self.username, self.password)
+    def language_code(self) -> str:
+        return self.connection_config.language_code.state or "en"
+
+    @property
+    def service_suffix(self) -> typing.Optional[str]:
+        return typing.cast(
+            typing.Optional[str],
+            self.connection_config.service_suffix.state,
+        )
+
+    @property
+    def basic_authentication(self):
+        pair = "%s:%s" % (
+            (self.username, self.password)
+            if self.test_mode
+            else (self.app_id, self.app_token)
+        )
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
