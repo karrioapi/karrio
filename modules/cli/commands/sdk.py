@@ -6,7 +6,7 @@ import pathlib
 from rich.progress import Progress, SpinnerColumn, TextColumn
 import commands.templates as templates
 
-BASE_DIR = pathlib.Path(__file__).resolve().parent.parent.parent
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent.parent.parent
 
 ROOT_DIR = string.Template(f"{BASE_DIR}/modules/connectors/$id")
 SCHEMAS_DIR = string.Template(f"{BASE_DIR}/modules/connectors/$id/schemas")
