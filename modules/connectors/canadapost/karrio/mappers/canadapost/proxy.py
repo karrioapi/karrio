@@ -1,10 +1,9 @@
 import time
 import typing
-import base64
 import karrio.lib as lib
-import karrio.core.errors as errors
 import karrio.api.proxy as proxy
-import karrio.mappers.boxknight.settings as provider_settings
+import karrio.providers.canadapost.utils as provider_utils
+import karrio.mappers.canadapost.settings as provider_settings
 
 
 class Proxy(proxy.Proxy):
@@ -59,11 +58,11 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(responses, lib.to_element)
 
-    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        def _contract_shipment(job: lib.Job):
-            return lib.request(
+    def create_shipment(self, requests: lib.Serializable) -> lib.Deserializable:
+        shipment_responses = lib.run_asynchronously(
+            lambda data: lib.request(
                 url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment",
-                data=job.data.serialize(),
+                data=data,
                 trace=self.trace_as("xml"),
                 method="POST",
                 headers={
@@ -72,95 +71,120 @@ class Proxy(proxy.Proxy):
                     "Authorization": f"Basic {self.settings.authorization}",
                     "Accept-language": f"{self.settings.language}-CA",
                 },
-            )
-
-        def _non_contract_shipment(job: lib.Job):
-            return lib.request(
-                url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/ncshipment",
-                data=job.data.serialize(),
-                trace=self.trace_as("xml"),
-                method="POST",
-                headers={
-                    "Accept": "application/vnd.cpc.ncshipment-v4+xml",
-                    "Content-Type": "application/vnd.cpc.ncshipment-v4+xml",
-                    "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": f"{self.settings.language}-CA",
-                },
-            )
-
-        def _get_label(job: lib.Job):
-            label_string = lib.request(
-                decoder=lib.encode_base64,
-                url=job.data["href"],
-                method="GET",
-                headers={
-                    "Accept": job.data["media"],
-                    "Authorization": f"Basic {self.settings.authorization}",
-                },
-            )
-            return f"<label>{label_string}</label>"
-
-        def _process(job: lib.Job):
-            if job.data is None:
-                return job.fallback
-
-            subprocess = {
-                "contract_shipment": _contract_shipment,
-                "non_contract_shipment": _non_contract_shipment,
-                "shipment_label": _get_label,
-            }
-            if job.id not in subprocess:
-                raise errors.ShippingSDKError(
-                    f"Unknown shipment request job id: {job.id}"
-                )
-
-            return subprocess[job.id](job)
-
-        pipeline: lib.Pipeline = request.serialize()
-        responses = pipeline.apply(_process)
-
-        return lib.Deserializable(responses, lib.to_element)
-
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        def _request(method: str, shipment_id: str, path: str = "", **kwargs):
-            return lib.request(
-                url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}{path}",
-                trace=self.trace_as("xml"),
-                method=method,
-                headers={
-                    "Content-Type": "application/vnd.cpc.shipment-v8+xml",
-                    "Accept": "application/vnd.cpc.shipment-v8+xml",
-                    "Authorization": f"Basic {self.settings.authorization}",
-                    "Accept-language": f"{self.settings.language}-CA",
-                },
-                **kwargs,
-            )
-
-        def _process(job: lib.Job):
-            if job.data is None:
-                return job.fallback
-
-            subprocess = {
-                "info": lambda _: _request("GET", job.data.serialize()),
-                "refund": lambda _: _request(
-                    "POST",
-                    job.data["id"],
-                    "/refund",
-                    data=job.data["payload"].serialize(),
+            ),
+            requests.serialize(),
+        )
+        responses: typing.List[dict] = lib.run_asynchronously(
+            lambda data: dict(
+                shipment=data["shipment"],
+                label=(
+                    lib.request(
+                        decoder=lib.encode_base64,
+                        url=data["href"],
+                        method="GET",
+                        headers={
+                            "Authorization": f"Basic {self.settings.authorization}",
+                            "Accept": data["media"],
+                        },
+                    )
+                    if data["href"] is not None
+                    else None
                 ),
-                "cancel": lambda _: _request("DELETE", job.data.serialize()),
-            }
-            if job.id not in subprocess:
-                raise lib.ShippingSDKError(
-                    f"Unknown shipment cancel request job id: {job.id}"
+            ),
+            [
+                {**provider_utils.parse_label_references(_), "shipment": _}
+                for _ in shipment_responses
+            ],
+        )
+
+        return lib.Deserializable(
+            responses,
+            lambda __: [(lib.to_element(_["shipment"]), _["label"]) for _ in __],
+        )
+
+    def cancel_shipment(self, requests: lib.Serializable) -> lib.Deserializable:
+        # retrieve shipment infos to check if refund is necessary
+        infos: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
+            lambda shipment_id: (
+                shipment_id,
+                lib.request(
+                    url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{shipment_id}",
+                    trace=self.trace_as("xml"),
+                    method="GET",
+                    headers={
+                        "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                        "Accept": "application/vnd.cpc.shipment-v8+xml",
+                        "Authorization": f"Basic {self.settings.authorization}",
+                        "Accept-language": f"{self.settings.language}-CA",
+                    },
+                ),
+            ),
+            requests.serialize(),
+        )
+
+        # make refund requests for submitted shipments
+        refunds: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
+            lambda payload: (
+                payload["id"],
+                lib.request(
+                    url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{payload['id']}/refund",
+                    trace=self.trace_as("xml"),
+                    data=payload["data"],
+                    method="POST",
+                    headers={
+                        "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                        "Accept": "application/vnd.cpc.shipment-v8+xml",
+                        "Authorization": f"Basic {self.settings.authorization}",
+                        "Accept-language": f"{self.settings.language}-CA",
+                    },
                 )
+                if payload["data"] is not None
+                else payload["info"],
+            ),
+            [
+                dict(
+                    id=_,
+                    info=info,
+                    data=provider_utils.parse_submitted_shipment(info, requests.ctx),
+                )
+                for _, info in infos
+            ],
+        )
 
-            return subprocess[job.id](job)
+        # make cancel requests for non-submitted shipments
+        responses: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
+            lambda payload: (
+                payload["id"],
+                lib.request(
+                    url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{payload['id']}",
+                    trace=self.trace_as("xml"),
+                    method="DELETE",
+                    headers={
+                        "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                        "Accept": "application/vnd.cpc.shipment-v8+xml",
+                        "Authorization": f"Basic {self.settings.authorization}",
+                        "Accept-language": f"{self.settings.language}-CA",
+                    },
+                )
+                if payload["refunded"]
+                else payload["response"],
+            ),
+            [
+                dict(
+                    id=_,
+                    response=response,
+                    refunded=(
+                        getattr(lib.to_element(response), "tag", None)
+                        != "shipment-refund-request-info"
+                    ),
+                )
+                for _, response in refunds
+            ],
+        )
 
-        pipeline: lib.Pipeline = request.serialize()
-        responses = pipeline.apply(_process)
-
-        return lib.Deserializable(responses, lib.to_element)
+        return lib.Deserializable(
+            responses, lambda ___: [(_, lib.to_element(__)) for _, __ in ___]
+        )
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable:
         def _availability(job: lib.Job) -> str:

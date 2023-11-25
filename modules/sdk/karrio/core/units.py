@@ -488,13 +488,16 @@ class Package:
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
         weight_unit: str = None,
         dimension_unit: str = None,
+        shipping_options_initializer: typing.Callable = None,
     ):
         self.parcel: models.Parcel = parcel
         self.preset: PackagePreset = template or PackagePreset()
 
-        self._options: "ShippingOptions" = ShippingOptions(
-            {**parcel.options, **getattr(options, "content", {})},
-            package_option_type,
+        _options = {**parcel.options, **getattr(options, "content", {})}
+        self._options: "ShippingOptions" = (
+            shipping_options_initializer(_options)
+            if shipping_options_initializer is not None
+            else ShippingOptions(_options, package_option_type)
         )
         self._dimension_unit = (
             dimension_unit or self.parcel.dimension_unit or self.preset.dimension_unit
@@ -612,6 +615,7 @@ class Packages(typing.Iterable[Package]):
         max_weight: Weight = None,
         options: "ShippingOptions" = None,
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
+        shipping_options_initializer: typing.Callable = None,
     ):
         self._compatible_units = self._compute_compatible_units(parcels, presets)
         self._options = options or ShippingOptions({}, package_option_type)
@@ -623,12 +627,14 @@ class Packages(typing.Iterable[Package]):
                 package_option_type=package_option_type,
                 weight_unit=self._compatible_units[0].value,
                 dimension_unit=self._compatible_units[1].value,
+                shipping_options_initializer=shipping_options_initializer,
             )
             for parcel in parcels
         ]
         self._required = required
         self._max_weight = max_weight
         self._package_option_type = package_option_type
+        self._shipping_options_initializer = shipping_options_initializer
 
         self.validate()
 
@@ -745,6 +751,9 @@ class Packages(typing.Iterable[Package]):
             self._options.content,
         )
 
+        if self._shipping_options_initializer is not None:
+            return self._shipping_options_initializer(options)
+
         return ShippingOptions(options, self._package_option_type)
 
     @property
@@ -806,6 +815,7 @@ class Packages(typing.Iterable[Package]):
         max_weight: Weight = None,
         options: "ShippingOptions" = None,
         package_option_type: typing.Type[utils.Enum] = utils.Enum,
+        shipping_options_initializer: typing.Callable = None,
     ) -> typing.Union[typing.List[Package], "Packages"]:
         return typing.cast(
             typing.Union[typing.List[Package], Packages],
@@ -816,6 +826,7 @@ class Packages(typing.Iterable[Package]):
                 max_weight,
                 options,
                 package_option_type,
+                shipping_options_initializer,
             ),
         )
 

@@ -591,14 +591,20 @@ def to_packages(
     max_weight: units.Weight = None,
     options: dict = None,
     package_option_type: typing.Type[utils.Enum] = utils.Enum,
+    shipping_options_initializer: typing.Callable = None,
 ) -> units.Packages:
     return units.Packages(
         parcels=parcels,
         presets=presets,
         required=required,
         max_weight=max_weight,
-        options=units.ShippingOptions(options or {}, package_option_type),
+        options=(
+            units.ShippingOptions(options or {}, package_option_type)
+            if (isinstance(options, dict) or options is None)
+            else options
+        ),
         package_option_type=package_option_type,
+        shipping_options_initializer=shipping_options_initializer,
     )
 
 

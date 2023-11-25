@@ -13,63 +13,33 @@ class TestCanadaPostShipment(unittest.TestCase):
         self.ShipmentCancelRequest = ShipmentCancelRequest(**shipment_cancel_data)
 
     def test_create_shipment_request(self):
-        requests = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        pipeline = requests.serialize()
-        request = pipeline["create_shipment"]()
-        self.assertEqual(request.data.serialize(), ShipmentRequestXML)
+        request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
+        self.assertEqual(request.serialize()[0], ShipmentRequestXML)
 
     def test_create_shipment_with_package_preset_request(self):
-        requests = gateway.mapper.create_shipment_request(
+        request = gateway.mapper.create_shipment_request(
             ShipmentRequest(**shipment_with_package_preset_data)
         )
-        pipeline = requests.serialize()
-        request = pipeline["create_shipment"]()
-        self.assertEqual(request.data.serialize(), ShipmentRequestWithPackagePresetXML)
-
-    def test_create_non_contract_shipment_request(self):
-        non_contract_gateway = karrio.gateway["canadapost"].create(
-            dict(username="username", password="password", customer_number="2004381")
-        )
-        requests = non_contract_gateway.mapper.create_shipment_request(
-            self.ShipmentRequest
-        )
-        pipeline = requests.serialize()
-        request = pipeline["create_shipment"]()
-        self.assertEqual(request.data.serialize(), NonContractShipmentRequestXML)
+        self.assertEqual(request.serialize()[0], ShipmentRequestWithPackagePresetXML)
 
     def test_create_cancel_shipment_request(self):
         requests = gateway.mapper.create_cancel_shipment_request(
             self.ShipmentCancelRequest
         )
-        pipeline = requests.serialize()
-        info_request = pipeline["info"]()
-        refund_request = pipeline["refund"](NonSubmittedShipmentResponseXML)
-        # Assuming that the refund job will be skipped
-        cancel_request = pipeline["cancel"](refund_request.fallback)
 
-        self.assertEqual(
-            info_request.data.serialize(),
-            self.ShipmentCancelRequest.shipment_identifier,
-        )
-        self.assertEqual(
-            cancel_request.data.serialize(),
-            self.ShipmentCancelRequest.shipment_identifier,
+        self.assertListEqual(
+            requests.serialize(),
+            [self.ShipmentCancelRequest.shipment_identifier],
         )
 
     def test_create_cancel_transmitted_shipment_request(self):
         requests = gateway.mapper.create_cancel_shipment_request(
             self.ShipmentCancelRequest
         )
-        pipeline = requests.serialize()
-        info_request = pipeline["info"]()
-        refund_request = pipeline["refund"](ShipmentResponseXML)
 
-        self.assertEqual(
-            info_request.data.serialize(),
-            self.ShipmentCancelRequest.shipment_identifier,
-        )
-        self.assertEqual(
-            refund_request.data["payload"].serialize(), ShipmentRefundRequestXML
+        self.assertListEqual(
+            requests.serialize(),
+            [self.ShipmentCancelRequest.shipment_identifier],
         )
 
     def test_create_shipment(self):
@@ -77,9 +47,9 @@ class TestCanadaPostShipment(unittest.TestCase):
             mocks.side_effect = ["<a></a>", ""]
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
-            create_call, _ = mocks.call_args_list
+            url = mocks.call_args[1]["url"]
             self.assertEqual(
-                create_call[1]["url"],
+                url,
                 f"{gateway.settings.server_url}/rs/{gateway.settings.customer_number}/{gateway.settings.customer_number}/shipment",
             )
 
@@ -286,15 +256,15 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
         </destination>
         <options>
             <option>
+                <option-code>COV</option-code>
+                <option-amount>70.0</option-amount>
+            </option>
+            <option>
                 <option-code>SO</option-code>
             </option>
             <option>
                 <option-code>COD</option-code>
                 <option-amount>10.5</option-amount>
-            </option>
-            <option>
-                <option-code>COV</option-code>
-                <option-amount>70.0</option-amount>
             </option>
         </options>
         <parcel-characteristics>

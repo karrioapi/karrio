@@ -10,6 +10,7 @@ from urllib.error import HTTPError
 def parse_error_response(
     responses: typing.Union[lib.Element, typing.List[lib.Element]],
     settings: Settings,
+    **kwargs,
 ) -> typing.List[models.Message]:
     messages: typing.List[canadapost.messageType] = sum(
         [
@@ -25,6 +26,7 @@ def parse_error_response(
             message=message.description,
             carrier_name=settings.carrier_name,
             carrier_id=settings.carrier_id,
+            details={**kwargs},
         )
         for message in messages
     ]

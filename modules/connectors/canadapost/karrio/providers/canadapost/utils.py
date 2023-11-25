@@ -1,5 +1,6 @@
 """Karrio Canada post client settings."""
 
+import karrio.schemas.canadapost.shipment as canadapost
 import base64
 import karrio.lib as lib
 import karrio.core.settings as settings
@@ -56,3 +57,36 @@ class Settings(settings.Settings):
 def format_ca_postal_code(code: str = None) -> str:
     """Format canadian postal code."""
     return (code or "").replace(" ", "").upper()
+
+
+def parse_label_references(shipement_response: str) -> dict:
+    response = lib.to_element(f"<wrapper>{shipement_response}</wrapper>")
+    messages = lib.find_element("message", response)
+    links = lib.find_element("link", response)
+
+    href, media = next(
+        (
+            (link.get("href"), link.get("media-type"))
+            for link in links
+            if link.get("rel") == "label" and len(messages) == 0
+        ),
+        (None, None),
+    )
+
+    return dict(href=href, media=media)
+
+
+def parse_submitted_shipment(shipment_response: str, ctx) -> str:
+    shipment = lib.to_object(
+        canadapost.ShipmentInfoType, lib.to_element(shipment_response)
+    )
+
+    return (
+        lib.to_xml(
+            canadapost.ShipmentRefundRequestType(email=ctx.get("email")),
+            namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"',
+            name_="shipment-refund-request",
+        )
+        if shipment.shipment_status == "transmitted"
+        else None
+    )

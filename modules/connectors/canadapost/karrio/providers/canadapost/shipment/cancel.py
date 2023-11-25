@@ -1,29 +1,27 @@
+import karrio.schemas.canadapost.shipment as canadapost
+import typing
 import karrio.lib as lib
-from typing import List, Tuple
-from karrio.schemas.canadapost.shipment import (
-    ShipmentRefundRequestType,
-    ShipmentInfoType,
-)
-from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
-from karrio.core.utils import (
-    Element,
-    Serializable,
-    Pipeline,
-    Job,
-    XP,
-)
-from karrio.providers.canadapost.error import parse_error_response
-from karrio.providers.canadapost.utils import Settings
+import karrio.core.units as units
+import karrio.core.errors as errors
+import karrio.core.models as models
+import karrio.providers.canadapost.error as provider_error
+import karrio.providers.canadapost.units as provider_units
+import karrio.providers.canadapost.utils as provider_utils
 
 
 def parse_shipment_cancel_response(
-    _response: lib.Deserializable[Element], settings: Settings
-) -> Tuple[ConfirmationDetails, List[Message]]:
-    response = _response.deserialize()
-    errors = parse_error_response(response, settings)
-    success = len(errors) == 0
-    confirmation: ConfirmationDetails = (
-        ConfirmationDetails(
+    _responses: lib.Deserializable[typing.List[typing.Tuple[str, lib.Element]]],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    responses = [
+        (_, provider_error.parse_error_response(response, settings, shipment_id=_))
+        for _, response in _responses.deserialize()
+    ]
+    messages: typing.List[models.Message] = sum([__ for _, __ in responses], start=[])
+    success = any([len(errors) == 0 for _, errors in responses])
+
+    confirmation: models.ConfirmationDetails = (
+        models.ConfirmationDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
             success=success,
@@ -33,44 +31,23 @@ def parse_shipment_cancel_response(
         else None
     )
 
-    return confirmation, errors
+    return confirmation, messages
 
 
-def shipment_cancel_request(payload: ShipmentCancelRequest, _) -> Serializable:
-    identifier = Serializable(payload.shipment_identifier)
-
-    def _refund_if_submitted(shipment_details: str):
-        shipment = XP.to_object(ShipmentInfoType, XP.to_xml(shipment_details))
-        transmitted = shipment.shipment_status == "transmitted"
-        data = (
-            dict(
-                id=payload.shipment_identifier,
-                payload=Serializable(
-                    ShipmentRefundRequestType(email=payload.options.get("email")),
-                    lambda request: XP.export(
-                        request,
-                        name_="shipment-refund-request",
-                        namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"',
-                    ),
-                ),
-            )
-            if transmitted
-            else None
+def shipment_cancel_request(
+    payload: models.ShipmentCancelRequest, _
+) -> lib.Serializable:
+    request = list(
+        set(
+            [
+                payload.shipment_identifier,
+                *((payload.options or {}).get("shipment_identifiers") or []),
+            ]
         )
-
-        return Job(id="refund", data=data, fallback=shipment_details)
-
-    def _cancel_other_wise(previous_job_response: str):
-        response: Element = XP.to_xml(previous_job_response)
-        refunded = response.tag == "shipment-refund-request-info"
-        data = identifier if not refunded else None
-
-        return Job(id="cancel", data=data)
-
-    request: Pipeline = Pipeline(
-        info=lambda *_: Job(id="info", data=identifier),
-        refund=_refund_if_submitted,
-        cancel=_cancel_other_wise,
     )
 
-    return Serializable(request)
+    return lib.Serializable(
+        request,
+        lib.identity,
+        dict(email=payload.options.get("email")),
+    )
