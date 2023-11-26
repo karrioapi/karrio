@@ -9,15 +9,16 @@
   },
   "dependencies": {
     "@karrio/lib": "*",
-    "@karrio/types": "*"
+    "@karrio/types": "*",
+    "@tanstack/react-query": "^4.13.0"
   },
   "devDependencies": {
     "@types/node": "^20.5.2",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "eslint-config-custom": "*",
-    "react": "^18.2.0",
+    "@karrio/eslint-config-custom": "*",
     "@karrio/tsconfig": "*",
+    "react": "^18.2.0",
     "typescript": "^4.5.2"
   }
 }
