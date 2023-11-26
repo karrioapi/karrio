@@ -1,21 +1,21 @@
-import { useAddressTemplateMutation, useAddressTemplates } from "@/context/address";
-import AddressEditModal, { AddressEditContext } from "@/components/address-edit-modal";
-import ConfirmModal, { ConfirmModalContext } from "@/components/confirm-modal";
-import AddressDescription from "@/components/descriptions/address-description";
-import GoogleGeocodingScript from "@/components/google-geocoding-script";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
+import { AddressEditModal, AddressEditContext } from "@karrio/ui/modals/address-edit-modal";
+import { useAddressTemplateMutation, useAddressTemplates } from "@karrio/hooks/address";
+import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
+import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
+import { AddressDescription } from "@karrio/ui/components/address-description";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { Loading } from "@karrio/ui/components/loader";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
-import { Loading } from "@/components/loader";
-import { isNoneOrEmpty } from "@/lib/helper";
+import { isNoneOrEmpty } from "@karrio/lib";
 import Head from "next/head";
 
-export { getServerSideProps } from '@/lib/data-fetching';
+export { getServerSideProps } from '@/context/main';
 
 
 export default function AddressPage(pageProps: any) {
-  const Component: React.FC<any> = () => {
+  const Component: React.FC = () => {
     const router = useRouter();
     const { query } = useAddressTemplates();
     const { setLoading } = useContext(Loading);

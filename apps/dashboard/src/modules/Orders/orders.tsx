@@ -1,23 +1,23 @@
-import { formatAddressLocationShort, formatAddressShort, formatDateTime, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, url$ } from "@/lib/helper";
-import OrderPreview, { OrderPreviewContext } from "@/components/descriptions/order-preview";
-import { useDocumentTemplates } from "@/context/document-template";
+import { formatAddressLocationShort, formatAddressShort, formatDateTime, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
+import { OrderPreview, OrderPreviewContext } from "@/components/order-preview";
+import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import React, { ChangeEvent, useContext, useEffect } from "react";
-import OrdersFilter from "@/components/filters/orders-filter";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import { useAPIMetadata } from "@/context/api-metadata";
-import ConfirmModal from "@/components/confirm-modal";
-import StatusBadge from "@/components/status-badge";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { OrdersFilter } from "@karrio/ui/filters/orders-filter";
+import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { OrderMenu } from "@karrio/ui/components/order-menu";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/components/app-link";
+import { Spinner } from "@karrio/ui/components/spinner";
 import { useRouter } from "next/dist/client/router";
-import { useLoader } from "@/components/loader";
-import OrderMenu from "@/components/order-menu";
-import { useOrders } from "@/context/order";
-import AppLink from "@/components/app-link";
-import Spinner from "@/components/spinner";
-import { AddressType } from "@/lib/types";
+import { useOrders } from "@karrio/hooks/order";
+import { AddressType } from "@karrio/types";
 import Head from "next/head";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function OrdersPage(pageProps: any) {

@@ -1,23 +1,23 @@
-import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty } from "@/lib/helper";
-import ShipmentPreview, { ShipmentPreviewContext } from "@/components/descriptions/shipment-preview";
-import ShipmentsFilter from "@/components/filters/shipments-filter";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import ShipmentMenu from "@/components/shipment-menu";
-import CarrierBadge from "@/components/carrier-badge";
-import ConfirmModal from "@/components/confirm-modal";
+import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
+import { ShipmentPreview, ShipmentPreviewContext } from "@/components/shipment-preview";
+import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
+import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
+import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
+import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { AppBadge } from "@karrio/ui/components/app-badge";
+import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/components/app-link";
+import { Spinner } from "@karrio/ui/components/spinner";
+import { useShipments } from "@karrio/hooks/shipment";
 import React, { useContext, useEffect } from "react";
-import StatusBadge from "@/components/status-badge";
 import { useRouter } from "next/dist/client/router";
-import { useShipments } from "@/context/shipment";
-import { useLoader } from "@/components/loader";
-import AppBadge from "@/components/app-badge";
-import AppLink from "@/components/app-link";
-import Spinner from "@/components/spinner";
-import { AddressType } from "@/lib/types";
+import { AddressType } from "@karrio/types";
 import Head from "next/head";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function ShipmentsPage(pageProps: any) {

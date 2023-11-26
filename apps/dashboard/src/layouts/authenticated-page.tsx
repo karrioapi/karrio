@@ -1,18 +1,18 @@
-import CreateOrganizationModalProvider from '@/components/create-organization-modal';
-import AcceptInvitationProvider from '@/components/accept-invitation-modal';
-import { forceSignOut, ServerError, ServerErrorCode } from '@/lib/helper';
-import NextSessionProvider, { NextSession } from '@/context/session';
-import { OrganizationProvider } from '@/context/organization';
-import SubscriptionProvider from '@/context/subscription';
-import ErrorBoundary from '@/components/error-boudaries';
+import { CreateOrganizationModalProvider } from '@karrio/ui/modals/create-organization-modal';
+import { AcceptInvitationProvider } from '@karrio/ui/modals/accept-invitation-modal';
+import { forceSignOut, ServerError, ServerErrorCode } from '@karrio/lib';
+import NextSessionProvider, { NextSession } from '@karrio/hooks/session';
+import { ErrorBoundary } from '@karrio/ui/components/error-boudaries';
+import { OrganizationProvider } from '@karrio/hooks/organization';
+import { SubscriptionProvider } from '@karrio/hooks/subscription';
+import { LoadingProvider } from '@karrio/ui/components/loader';
+import { Notifier } from '@karrio/ui/components/notifier';
+import AppModeProvider from '@karrio/hooks/app-mode';
 import React, { useContext, useEffect } from 'react';
 import { useRouter } from 'next/dist/client/router';
-import LoadingProvider from '@/components/loader';
-import AppModeProvider from '@/context/app-mode';
-import Notifier from '@/components/notifier';
 
 
-const CONTEXT_PROVIDERS: React.FC<any>[] = [
+const CONTEXT_PROVIDERS: React.FC<{ children?: React.ReactNode }>[] = [
   OrganizationProvider,
   SubscriptionProvider,
   AppModeProvider,
@@ -20,7 +20,7 @@ const CONTEXT_PROVIDERS: React.FC<any>[] = [
 ];
 
 
-const ContextProviders: React.FC = ({ children, ...props }) => {
+const ContextProviders: React.FC<{ children?: React.ReactNode }> = ({ children, ...props }) => {
   const NestedContexts = CONTEXT_PROVIDERS.reduce((_, Ctx) => <Ctx {...props}>{_}</Ctx>, children);
 
   return (
@@ -30,8 +30,8 @@ const ContextProviders: React.FC = ({ children, ...props }) => {
   );
 };
 
-const AuthenticatedPage = (content: any, pageProps?: any | {}) => {
-  const SessionWrapper: React.FC<{ error?: ServerError }> = ({ children, error }) => {
+export const AuthenticatedPage = (content: any, pageProps?: any | {}) => {
+  const SessionWrapper: React.FC<{ error?: ServerError, children?: React.ReactNode }> = ({ children, error }) => {
     const router = useRouter();
     const session = useContext(NextSession);
 
@@ -69,5 +69,3 @@ const AuthenticatedPage = (content: any, pageProps?: any | {}) => {
     </NextSessionProvider>
   )
 };
-
-export default AuthenticatedPage;

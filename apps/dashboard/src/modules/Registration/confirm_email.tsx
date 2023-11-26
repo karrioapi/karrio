@@ -1,13 +1,13 @@
-import SectionLayout from "@/layouts/section-layout";
+import { SectionLayout } from "@/layouts/section-layout";
+import { Spinner } from "@karrio/ui/components/spinner";
+import { useUserMutation } from "@karrio/hooks/user";
 import { useRouter } from "next/dist/client/router";
-import { useUserMutation } from "@/context/user";
-import Spinner from "@/components/spinner";
 import React, { useEffect } from "react";
-import { isNone } from "@/lib/helper";
+import { isNone } from "@karrio/lib";
 import Head from "next/head";
 import Link from "next/link";
 
-export { getServerSideProps } from '@/lib/data-fetching/metadata';
+export { getServerSideProps } from '@/context/metadata';
 
 
 export default function Page(pageProps: any) {

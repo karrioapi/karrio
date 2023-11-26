@@ -117,10 +117,8 @@ node_modules
 .vercel
 
 # karrio stuff:
-sdk/**/poetry.lock
-schemas/**/poetry.lock
-ee/sdk/**/poetry.lock
 !apps/dashboard/src/lib
+!packages/lib
 
 .bash_history
 

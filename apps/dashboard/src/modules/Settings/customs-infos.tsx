@@ -1,21 +1,21 @@
-import CustomsInfoEditModal, { CustomsInfoEditContext } from "@/components/customs-info-edit-modal";
-import { useCustomsTemplateMutation, useCustomsTemplates } from "@/context/customs";
-import CustomsInfoDescription from "@/components/descriptions/customs-info-description";
-import ConfirmModal, { ConfirmModalContext } from "@/components/confirm-modal";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
+import { CustomsInfoEditModal, CustomsInfoEditContext } from "@karrio/ui/modals/customs-info-edit-modal";
+import { useCustomsTemplateMutation, useCustomsTemplates } from "@karrio/hooks/customs";
+import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
+import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
-import { isNoneOrEmpty } from "@/lib/helper";
-import { CustomsType } from "@/lib/types";
+import { isNoneOrEmpty } from "@karrio/lib";
+import { CustomsType } from "@karrio/types";
 import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function CustomsInfoPage(pageProps: any) {
-  const Component: React.FC<any> = () => {
+  const Component: React.FC = () => {
     const router = useRouter();
     const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
     const { editCustomsInfo } = useContext(CustomsInfoEditContext);

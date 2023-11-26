@@ -1,10 +1,9 @@
-import SectionLayout from "@/layouts/section-layout";
-import { Metadata } from "@/lib/types";
+import { SectionLayout } from "@/layouts/section-layout";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 
-export { getServerSideProps } from '@/lib/data-fetching/metadata';
+export { getServerSideProps } from '@/context/metadata';
 
 
 export default function Page(pageProps: any) {

@@ -1,17 +1,17 @@
-import OrganizationManagement from "@/components/organization-management";
-import SubscriptionManagement from "@/components/subscription-management";
-import InviteMemberProvider from "@/components/invite-member-modal";
-import CloseAccountAction from "@/components/close-account-action";
-import Tabs, { TabStateProvider } from "@/components/generic/tabs";
-import ProfileUpdateInput from "@/components/profile-update-input";
-import PasswordManagement from "@/components/password-management";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import EmailManagement from "@/components/email-management";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import ConfirmModal from "@/components/confirm-modal";
+import { OrganizationManagement } from "@karrio/ui/forms/organization-management";
+import { SubscriptionManagement } from "@karrio/ui/forms/subscription-management";
+import { InviteMemberProvider } from "@karrio/ui/modals/invite-member-modal";
+import { CloseAccountAction } from "@karrio/ui/forms/close-account-action";
+import { ProfileUpdateInput } from "@karrio/ui/forms/profile-update-input";
+import { PasswordManagement } from "@karrio/ui/forms/password-management";
+import { Tabs, TabStateProvider } from "@karrio/ui/components/tabs";
+import { EmailManagement } from "@karrio/ui/forms/email-management";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
 import Head from "next/head";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function AccountPage(pageProps: any) {

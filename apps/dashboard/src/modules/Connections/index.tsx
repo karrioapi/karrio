@@ -1,20 +1,20 @@
-import ConnectProviderModal, { ConnectProviderModalContext } from "@/components/connect-provider-modal";
-import Tabs, { TabStateContext, TabStateProvider } from "@/components/generic/tabs";
-import LabelTemplateEditModalProvider from "@/components/label-template-edit-modal";
-import { useSystemConnections } from "@/context/system-connection";
-import { useCarrierConnections } from "@/context/user-connection";
-import SystemConnectionList from "@/components/system-carrier-list";
-import UserConnectionList from "@/components/user-carrier-list";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import ConfirmModal from "@/components/confirm-modal";
+import { ConnectProviderModal, ConnectProviderModalContext } from "@karrio/ui/modals/connect-provider-modal";
+import { LabelTemplateEditModalProvider } from "@karrio/ui/modals/label-template-edit-modal";
+import { Tabs, TabStateContext, TabStateProvider } from "@karrio/ui/components/tabs";
+import { RateSheetEditModalProvider } from "@karrio/ui/modals/rate-sheet-edit-modal";
+import { SystemConnectionList } from "@karrio/ui/forms/system-carrier-list";
+import { useSystemConnections } from "@karrio/hooks/system-connection";
+import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { UserConnectionList } from "@karrio/ui/forms/user-carrier-list";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
+import { Loading } from "@karrio/ui/components/loader";
 import { useRouter } from "next/dist/client/router";
-import { Loading } from "@/components/loader";
 import { useContext, useEffect } from "react";
 import Head from "next/head";
-import RateSheetEditModalProvider from "@/components/rate-sheet-edit-modal";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function ConnectionsPage(pageProps: any) {

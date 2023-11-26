@@ -23,6 +23,7 @@ const MULTI_TENANT = (
 const moduleExports = {
   swcMinify: true,
   reactStrictMode: true,
+  transpilePackages: ['@karrio/hooks', '@karrio/ui', '@karrio/lib', '@karrio/types'],
   basePath: BASE_PATH,
   sassOptions: {
     includePaths: [path.join(__dirname, 'src', 'styles')],

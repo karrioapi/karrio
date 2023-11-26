@@ -1,9 +1,8 @@
-import { loadAPIMetadata, checkSubscription, createPortalSession } from "@/lib/data-fetching";
-import { Metadata, SubscriptionType } from "@/lib/types";
+import { loadAPIMetadata, checkSubscription, createPortalSession } from "@/context/main";
+import { Metadata, SubscriptionType } from "@karrio/types";
 import { GetServerSideProps, NextPage } from "next";
 import { getSession } from "next-auth/react";
-import { isNone } from "@/lib/helper";
-import { p } from "@/lib/client";
+import { isNone, p } from "@karrio/lib";
 import Head from "next/head";
 import React from "react";
 

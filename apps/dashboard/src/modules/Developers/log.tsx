@@ -1,20 +1,20 @@
-import { failsafe, formatDateTimeLong, groupBy, isNone, jsonify, notEmptyJSON } from "@/lib/helper";
-import Tabs, { TabStateProvider } from "@/components/generic/tabs";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import StatusCode from "@/components/status-code-badge";
+import { failsafe, formatDateTimeLong, groupBy, isNone, jsonify, notEmptyJSON } from "@karrio/lib";
+import { Tabs, TabStateProvider } from "@karrio/ui/components/tabs";
+import { StatusCode } from "@karrio/ui/components/status-code-badge";
+import { CopiableLink } from "@karrio/ui/components/copiable-link";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/components/app-link";
 import { useRouter } from "next/dist/client/router";
 import json from 'highlight.js/lib/languages/json';
-import { useLoader } from "@/components/loader";
-import AppLink from "@/components/app-link";
-import { useLog } from "@/context/log";
+import { useLog } from "@karrio/hooks/log";
 import hljs from "highlight.js";
 import Head from "next/head";
 import React from "react";
 import moment from "moment";
-import CopiableLink from "@/components/copiable-link";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 hljs.registerLanguage('json', json);
 

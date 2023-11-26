@@ -1,5 +1,5 @@
+import { formatCarrierSlug, getInitials } from "@karrio/lib";
 import { NextApiRequest, NextApiResponse } from "next";
-import { formatCarrierSlug, getInitials } from "@/lib/helper";
 
 async function ImageFallback(req: NextApiRequest, res: NextApiResponse) {
   const { name } = req.query as { name: string };

@@ -1,9 +1,9 @@
-import SectionLayout from "@/layouts/section-layout";
+import { SectionLayout } from "@/layouts/section-layout";
 import Head from "next/head";
 import Link from "next/link";
 import React from "react";
 
-export { getServerSideProps } from '@/lib/data-fetching/metadata';
+export { getServerSideProps } from '@/context/metadata';
 
 
 function SignUpSuccess(pageProps: any) {

@@ -1,15 +1,15 @@
 import React, { FormEvent, useContext, useEffect, useReducer } from "react";
-import { ConfirmPasswordResetMutationInput } from "karrio/graphql";
-import LoadingProvider, { Loading } from "@/components/loader";
-import ButtonField from "@/components/generic/button-field";
-import InputField from "@/components/generic/input-field";
-import SectionLayout from "@/layouts/section-layout";
+import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import { ConfirmPasswordResetMutationInput } from "@karrio/types";
+import { ButtonField } from "@karrio/ui/components/button-field";
+import { InputField } from "@karrio/ui/components/input-field";
+import { SectionLayout } from "@/layouts/section-layout";
+import { useUserMutation } from "@karrio/hooks/user";
 import { useRouter } from "next/dist/client/router";
-import { useUserMutation } from "@/context/user";
 import Head from "next/head";
 import Link from "next/link";
 
-export { getServerSideProps } from '@/lib/data-fetching/metadata';
+export { getServerSideProps } from '@/context/metadata';
 
 const DEFAULT_VALUE: Partial<ConfirmPasswordResetMutationInput> = {
   new_password1: "",

@@ -1,7 +1,7 @@
 // pages/_document.js
 
 import Document, { Html, Head, Main, NextScript } from 'next/document'
-import { p } from '@/lib/client';
+import { p } from '@karrio/lib';
 
 class AppDocument extends Document {
   render() {

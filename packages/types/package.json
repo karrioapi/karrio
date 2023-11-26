@@ -1,0 +1,8 @@
+{
+  "name": "@karrio/types",
+  "version": "2023.9.0",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "graphql-tag": "^2.12.6"
+  }
+}

@@ -1,20 +1,20 @@
-import GenerateAPIModal from "@/components/generate-api-dialog";
+import { GenerateAPIModal } from "@karrio/ui/modals/generate-api-dialog";
+import { CopiableLink } from "@karrio/ui/components/copiable-link";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { useContext, useEffect, useRef, useState } from "react";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import { useAPIMetadata } from "@/context/api-metadata";
-import CopiableLink from "@/components/copiable-link";
-import { useAPIToken } from "@/context/api-token";
-import { Loading } from "@/components/loader";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { Loading } from "@karrio/ui/components/loader";
+import { useAPIToken } from "@karrio/hooks/api-token";
 import Head from "next/head";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function ApiPage(pageProps: any) {
   const { references } = useAPIMetadata();
 
-  const Component: React.FC<any> = () => {
+  const Component: React.FC = () => {
     const { setLoading } = useContext(Loading);
     const tokenInput = useRef<HTMLInputElement>(null);
     const [isRevealed, setIsRevealed] = useState<boolean>(false);

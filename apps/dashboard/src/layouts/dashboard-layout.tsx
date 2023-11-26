@@ -1,11 +1,11 @@
-import ExpandedSidebar from '@/components/sidebars/expanded-sidebar';
-import Navbar from '@/components/navbar/navbar';
-import Notifier from '@/components/notifier';
-import Footer from '@/components/footer';
+import { ExpandedSidebar } from '@karrio/ui/components/expanded-sidebar';
+import { Notifier } from '@karrio/ui/components/notifier';
+import { Navbar } from '@karrio/ui/components/navbar';
+import { Footer } from '@karrio/ui/components/footer';
 import React from 'react';
 
 
-const DashboardLayout: React.FC<{ showModeIndicator?: boolean }> = ({ children, ...props }) => {
+export const DashboardLayout: React.FC<{ showModeIndicator?: boolean, children?: React.ReactNode }> = ({ children, ...props }) => {
   return (
     <>
       <ExpandedSidebar />
@@ -27,5 +27,3 @@ const DashboardLayout: React.FC<{ showModeIndicator?: boolean }> = ({ children, 
     </>
   )
 };
-
-export default DashboardLayout;

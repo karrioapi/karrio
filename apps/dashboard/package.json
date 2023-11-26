@@ -1,5 +1,5 @@
 {
-  "name": "dashboard",
+  "name": "@karrio/dashboard",
   "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
@@ -25,6 +25,10 @@
     "graphql-tag": "^2.12.6",
     "highlight.js": "^11.2.0",
     "js-beautify": "^1.14.7",
+    "@karrio/hooks": "*",
+    "@karrio/lib": "*",
+    "@karrio/types": "*",
+    "@karrio/ui": "*",
     "libphonenumber-js": "^1.9.23",
     "lodash.groupby": "^4.6.0",
     "lodash.isequal": "^4.5.0",
@@ -41,10 +45,11 @@
     "sass": "^1.37.5"
   },
   "devDependencies": {
-    "@types/react": "17.0.16",
     "@types/request-ip": "^0.0.37",
     "eslint": "7.32.0",
+    "eslint-config-custom": "*",
     "eslint-config-next": "^13.1.2",
-    "typescript": "4.3.5"
+    "tsconfig": "*",
+    "typescript": "^5.2.2"
   }
 }

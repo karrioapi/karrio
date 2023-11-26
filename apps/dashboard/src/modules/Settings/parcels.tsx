@@ -1,21 +1,21 @@
-import ParcelEditModal, { ParcelEditContext } from "@/components/parcel-edit-modal";
-import { useParcelTemplateMutation, useParcelTemplates } from "@/context/parcel";
-import ConfirmModal, { ConfirmModalContext } from "@/components/confirm-modal";
-import ParcelDescription from "@/components/descriptions/parcel-description";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import { isNoneOrEmpty } from "@/lib/helper";
+import { ParcelEditModal, ParcelEditContext } from "@karrio/ui/modals/parcel-edit-modal";
+import { useParcelTemplateMutation, useParcelTemplates } from "@karrio/hooks/parcel";
+import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
+import { ParcelDescription } from "@karrio/ui/components/parcel-description";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { Loading } from "@karrio/ui/components/loader";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
-import { Loading } from "@/components/loader";
+import { isNoneOrEmpty } from "@karrio/lib";
 import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function ParcelsPage(pageProps: any) {
-  const Component: React.FC<any> = () => {
+  const Component: React.FC = () => {
     const router = useRouter();
     const { setLoading } = useContext(Loading);
     const mutation = useParcelTemplateMutation();

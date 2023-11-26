@@ -1,15 +1,15 @@
-import { useOrganizationInvitation } from "@/context/organization";
-import { useAPIMetadata } from "@/context/api-metadata";
-import SectionLayout from "@/layouts/section-layout";
+import { useOrganizationInvitation } from "@karrio/hooks/organization";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { Spinner } from "@karrio/ui/components/spinner";
+import { SectionLayout } from "@/layouts/section-layout";
 import { useRouter } from "next/dist/client/router";
 import { useSession } from "next-auth/react";
-import Spinner from "@/components/spinner";
 import React, { useEffect } from "react";
-import { isNone } from "@/lib/helper";
+import { isNone } from "@karrio/lib";
 import Link from "next/link";
 import Head from "next/head";
 
-export { getServerSideProps } from '@/lib/data-fetching/metadata';
+export { getServerSideProps } from '@/context/metadata';
 
 
 export default function Page(pageProps: any) {

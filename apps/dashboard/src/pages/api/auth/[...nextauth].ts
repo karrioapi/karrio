@@ -1,11 +1,9 @@
+import { isNoneOrEmpty, parseJwt, computeTestMode, Auth, logger } from '@karrio/lib';
 import CredentialProvider from "next-auth/providers/credentials";
-import { loadAPIMetadata } from '@/lib/data-fetching';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { isNoneOrEmpty, parseJwt } from '@/lib/helper';
-import { computeTestMode, Auth } from '@/lib/auth';
+import { loadAPIMetadata } from '@/context/main';
 import { JWT } from 'next-auth/jwt';
 import getConfig from 'next/config';
-import logger from '@/lib/logger';
 import NextAuth from 'next-auth';
 import moment from 'moment';
 

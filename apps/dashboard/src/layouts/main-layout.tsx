@@ -1,8 +1,8 @@
-import { ServerError, ServerErrorCode } from '@/lib/helper';
-import ErrorBoundary from '@/components/error-boudaries';
+import { ErrorBoundary } from '@karrio/ui/components/error-boudaries';
+import { ServerError, ServerErrorCode } from '@karrio/lib';
 import React from 'react';
 
-const MainLayout: React.FC<{ error?: ServerError }> = ({ children, error }) => {
+const MainLayout: React.FC<{ error?: ServerError, children?: React.ReactNode }> = ({ children, error }) => {
   return (
     <>
       <noscript>You need to enable JavaScript to run this app.</noscript>

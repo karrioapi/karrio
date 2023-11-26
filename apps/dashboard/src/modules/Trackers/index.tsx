@@ -1,21 +1,21 @@
-import TrackingPreview, { TrackingPreviewContext } from "@/components/descriptions/tracking-preview";
-import TrackerModalProvider, { TrackerModalContext } from "@/components/track-shipment-modal";
-import ConfirmModal, { ConfirmModalContext } from "@/components/confirm-modal";
-import { getURLSearchParams, isNone, isNoneOrEmpty } from "@/lib/helper";
-import { useTrackerMutation, useTrackers } from "@/context/tracker";
-import TrackersFilter from "@/components/filters/trackers-filter";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import CarrierBadge from "@/components/carrier-badge";
+import { TrackerModalProvider, TrackerModalContext } from "@karrio/ui/modals/track-shipment-modal";
+import { TrackingPreview, TrackingPreviewContext } from "@/components/tracking-preview";
+import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
+import { getURLSearchParams, isNone, isNoneOrEmpty } from "@karrio/lib";
+import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
+import { TrackersFilter } from "@karrio/ui/filters/trackers-filter";
+import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { useLoader } from "@karrio/ui/components/loader";
+import { Spinner } from "@karrio/ui/components/spinner";
+import { TrackingEvent } from "@karrio/types/rest/api";
 import React, { useContext, useEffect } from "react";
-import StatusBadge from "@/components/status-badge";
 import { useRouter } from "next/dist/client/router";
-import { useLoader } from "@/components/loader";
-import { TrackingEvent } from "karrio/rest";
-import Spinner from "@/components/spinner";
 import Head from "next/head";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function TrackersPage(pageProps: any) {

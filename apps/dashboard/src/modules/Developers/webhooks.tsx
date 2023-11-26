@@ -1,18 +1,18 @@
-import WebhookTestModal, { useTestWebhookModal } from "@/components/webhook-test-modal";
-import WebhookEditModal, { useWebhookModal } from "@/components/webhook-edit-modal";
-import ConfirmModal, { ConfirmModalContext } from "@/components/confirm-modal";
-import { useWebhookMutation, useWebhooks } from "@/context/webhook";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import { formatDateTime, isNoneOrEmpty } from "@/lib/helper";
-import { NotificationType, WebhookType } from "@/lib/types";
-import DashboardLayout from "@/layouts/dashboard-layout";
+import { WebhookTestModal, useTestWebhookModal } from "@karrio/ui/modals/webhook-test-modal";
+import { WebhookEditModal, useWebhookModal } from "@karrio/ui/modals/webhook-edit-modal";
+import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
+import { useWebhookMutation, useWebhooks } from "@karrio/hooks/webhook";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { NotificationType, WebhookType } from "@karrio/types";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
+import { Notify } from "@karrio/ui/components/notifier";
 import { useRouter } from "next/dist/client/router";
-import { Notify } from "@/components/notifier";
 import { useContext, useEffect } from "react";
 import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function WebhooksPage(pageProps: any) {

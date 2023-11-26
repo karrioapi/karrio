@@ -1,6 +1,6 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { IMAGES } from '@/lib/types';
+import { IMAGES } from '@karrio/types';
 
 const MULTI_TENANT = (
   Boolean(JSON.parse(process.env.MULTI_TENANT || 'false'))

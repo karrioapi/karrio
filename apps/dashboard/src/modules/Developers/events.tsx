@@ -1,16 +1,16 @@
-import EventPreview, { EventPreviewContext } from "@/components/descriptions/event-preview";
-import { formatDateTimeLong, getURLSearchParams, isNoneOrEmpty } from "@/lib/helper";
-import EventsFilter from "@/components/filters/events-filter";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
+import { formatDateTimeLong, getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
+import { EventPreview, EventPreviewContext } from "@/components/event-preview";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { EventsFilter } from "@karrio/ui/filters/events-filter";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { useLoader } from "@karrio/ui/components/loader";
+import { Spinner } from "@karrio/ui/components/spinner";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
-import { useLoader } from "@/components/loader";
-import { useEvents } from "@/context/event";
-import Spinner from "@/components/spinner";
+import { useEvents } from "@karrio/hooks/event";
 import Head from "next/head";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 export default function EventsPage(pageProps: any) {
   const Component: React.FC = () => {

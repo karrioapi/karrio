@@ -1,17 +1,17 @@
-import { formatDateTimeLong, isNone, notEmptyJSON } from "@/lib/helper";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import CopiableLink from "@/components/copiable-link";
+import { formatDateTimeLong, isNone, notEmptyJSON } from "@karrio/lib";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { CopiableLink } from "@karrio/ui/components/copiable-link";
+import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/components/app-link";
 import { useRouter } from "next/dist/client/router";
 import json from 'highlight.js/lib/languages/json';
 import React, { useEffect, useState } from "react";
-import { useLoader } from "@/components/loader";
-import AppLink from "@/components/app-link";
-import { useEvent } from "@/context/event";
+import { useEvent } from "@karrio/hooks/event";
 import hljs from "highlight.js";
 import Head from "next/head";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 hljs.registerLanguage('json', json);
 

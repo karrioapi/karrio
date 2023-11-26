@@ -1,20 +1,20 @@
-import { useDocumentTemplateMutation, useDocumentTemplates } from "@/context/document-template";
-import TemplateDescription from "@/components/descriptions/template-description";
-import ConfirmModal, { ConfirmModalContext } from "@/components/confirm-modal";
-import AuthenticatedPage from "@/layouts/authenticated-page";
-import DashboardLayout from "@/layouts/dashboard-layout";
-import AppLink from "@/components/app-link";
+import { useDocumentTemplateMutation, useDocumentTemplates } from "@karrio/hooks/document-template";
+import { TemplateDescription } from "@karrio/ui/components/template-description";
+import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
+import { DocumentTemplateType, NotificationType } from "@karrio/types";
+import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { AppLink } from "@karrio/ui/components/app-link";
+import { Notify } from "@karrio/ui/components/notifier";
 import { useContext } from "react";
 import Head from "next/head";
 import React from "react";
-import { DocumentTemplateType, NotificationType } from "@/lib/types";
-import { Notify } from "@/components/notifier";
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 
 export default function TemplatesPage(pageProps: any) {
-  const Component: React.FC<any> = () => {
+  const Component: React.FC = () => {
     const { notify } = useContext(Notify);
     const mutation = useDocumentTemplateMutation();
     const { confirm: confirmDeletion } = useContext(ConfirmModalContext);

@@ -1,17 +1,17 @@
-import { RegisterUserMutationInput, register_user_register_user_errors } from "karrio/graphql";
+import { RegisterUserMutationInput, register_user_register_user_errors } from "@karrio/types";
 import React, { FormEvent, useContext, useEffect, useReducer, useState } from "react";
-import LoadingProvider, { Loading } from "@/components/loader";
-import ButtonField from "@/components/generic/button-field";
-import InputField from "@/components/generic/input-field";
-import { isNone, isNoneOrEmpty } from "@/lib/helper";
-import SectionLayout from "@/layouts/section-layout";
+import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import { ButtonField } from "@karrio/ui/components/button-field";
+import { InputField } from "@karrio/ui/components/input-field";
+import { SectionLayout } from "@/layouts/section-layout";
+import { isNone, isNoneOrEmpty } from "@karrio/lib";
 import { useRouter } from "next/dist/client/router";
-import { useUserMutation } from "@/context/user";
-import { p } from "@/lib/client";
+import { useUserMutation } from "@karrio/hooks/user";
+import { p } from "@karrio/lib";
 import Head from "next/head";
 import Link from "next/link";
 
-export { getServerSideProps } from '@/lib/data-fetching/metadata';
+export { getServerSideProps } from '@/context/metadata';
 
 const DEFAULT_VALUE: Partial<RegisterUserMutationInput> = {
   email: "",

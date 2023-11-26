@@ -1,7 +1,6 @@
-import { Metadata, SessionType } from '@/lib/types';
+import { Metadata, SessionType } from '@karrio/types';
 import MainLayout from '@/layouts/main-layout';
-import { ServerError } from '@/lib/helper';
-import { p } from '@/lib/client';
+import { ServerError, p } from '@karrio/lib';
 import Link from 'next/link';
 import React from 'react';
 
@@ -9,9 +8,10 @@ type SectionLayoutProps = {
   metadata?: Metadata,
   error?: ServerError,
   session?: SessionType,
+  children?: React.ReactNode,
 };
 
-const SectionLayout: React.FC<SectionLayoutProps> = ({ metadata, error, children }) => {
+export const SectionLayout: React.FC<SectionLayoutProps> = ({ metadata, error, children }) => {
   return (
     <MainLayout error={error}>
       <section className="hero is-fullheight">
@@ -42,5 +42,3 @@ const SectionLayout: React.FC<SectionLayoutProps> = ({ metadata, error, children
     </MainLayout>
   );
 };
-
-export default SectionLayout;

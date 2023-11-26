@@ -1,0 +1,23 @@
+{
+  "name": "@karrio/hooks",
+  "version": "0.0.0",
+  "main": "./index.tsx",
+  "types": "./index.tsx",
+  "license": "Apache-2.0",
+  "scripts": {
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@karrio/lib": "*",
+    "@karrio/types": "*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.2",
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "eslint-config-custom": "*",
+    "react": "^18.2.0",
+    "@karrio/tsconfig": "*",
+    "typescript": "^4.5.2"
+  }
+}

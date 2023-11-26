@@ -1,20 +1,20 @@
-import { DocumentTemplateType, DOCUMENT_RELATED_OBJECTS, NotificationType, TemplateType } from '@/lib/types';
-import { isEqual, isNoneOrEmpty, url$, useLocation, validationMessage, validityCheck } from '@/lib/helper';
-import { useDocumentTemplate, useDocumentTemplateMutation } from '@/context/document-template';
-import TextAreaField from '@/components/generic/textarea-field';
+import { DocumentTemplateType, DOCUMENT_RELATED_OBJECTS, NotificationType, TemplateType } from '@karrio/types';
+import { isEqual, isNoneOrEmpty, url$, useLocation, validationMessage, validityCheck } from '@karrio/lib';
+import { useDocumentTemplate, useDocumentTemplateMutation } from '@karrio/hooks/document-template';
+import { TextAreaField } from '@karrio/ui/components/textarea-field';
+import { AuthenticatedPage } from '@/layouts/authenticated-page';
 import React, { useEffect, useReducer, useState } from 'react';
-import AuthenticatedPage from '@/layouts/authenticated-page';
-import InputField from '@/components/generic/input-field';
-import { DEFAULT_DOCUMENT_TEMPLATE } from '@/lib/sample';
-import { useAPIMetadata } from '@/context/api-metadata';
-import { useNotifier } from '@/components/notifier';
-import { useLoader } from '@/components/loader';
+import { InputField } from '@karrio/ui/components/input-field';
+import { DEFAULT_DOCUMENT_TEMPLATE } from '@karrio/lib/sample';
+import { useAPIMetadata } from '@karrio/hooks/api-metadata';
+import { useNotifier } from '@karrio/ui/components/notifier';
+import { useLoader } from '@karrio/ui/components/loader';
+import { AppLink } from '@karrio/ui/components/app-link';
 import CodeMirror from '@uiw/react-codemirror';
 import { html } from '@codemirror/lang-html';
-import AppLink from '@/components/app-link';
 import Head from 'next/head';
 
-export { getServerSideProps } from "@/lib/data-fetching";
+export { getServerSideProps } from "@/context/main";
 
 type stateValue = string | boolean | string[] | Partial<TemplateType>;
 const DEFAULT_STATE = {
