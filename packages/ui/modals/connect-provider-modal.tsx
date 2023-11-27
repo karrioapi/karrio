@@ -256,6 +256,13 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("api_key").required}
                 />}
 
+                {field("laposte_api_key").exists && <InputField label="La Poste API Key" value={payload.laposte_api_key}
+                  name="laposte_api_key"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("laposte_api_key").required}
+                />}
+
                 {field("client_id").exists && <InputField label="Client ID" value={payload.client_id}
                   name="client_id"
                   onChange={handleChange}
@@ -701,26 +708,26 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.AmazonShipping]: [["carrier_id", true], ["seller_id", true], ["developer_id", true], ["mws_auth_token", true], ["aws_region"]],
       [CarrierSettingsCarrierNameEnum.Aramex]: [["carrier_id", true], ["username", true], ["password", true], ["account_pin", true], ["account_entity", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Australiapost]: [["carrier_id", true], ["api_key", true], ["password", true], ["account_number", true]],
-      [CarrierSettingsCarrierNameEnum.AsendiaUs]: [["carrier_id", true], ["username", true], ["password", true]],
+      [CarrierSettingsCarrierNameEnum.AsendiaUs]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true]],
       [CarrierSettingsCarrierNameEnum.Boxknight]: [["carrier_id", true], ["username", true], ["password", true]],
-      [CarrierSettingsCarrierNameEnum.Bpost]: [["carrier_id", true], ["username", true], ["password", true]],
+      [CarrierSettingsCarrierNameEnum.Bpost]: [["carrier_id", true], ["account_id", true], ["passphrase", true]],
       [CarrierSettingsCarrierNameEnum.Canadapost]: [["carrier_id", true], ["username", true], ["password", true], ["customer_number", true], ["contract_id"]],
       [CarrierSettingsCarrierNameEnum.Canpar]: [["carrier_id", true], ["username", true], ["password", true]],
       [CarrierSettingsCarrierNameEnum.Chronopost]: [["carrier_id", true], ["account_number", true], ["password", true], ["account_country_code"]],
-      [CarrierSettingsCarrierNameEnum.Colissimo]: [["carrier_id", true], ["account_number", true], ["password", true], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.Colissimo]: [["carrier_id", true], ["contract_number", true], ["password", true], ["laposte_api_key"]],
       [CarrierSettingsCarrierNameEnum.Dicom]: [["carrier_id", true], ["username", true], ["password", true], ["billing_account"]],
       [CarrierSettingsCarrierNameEnum.Dpd]: [["carrier_id", true], ["delis_id", true], ["password", true], ["depot"], ["account_country_code"]],
-      [CarrierSettingsCarrierNameEnum.Dpdhl]: [["carrier_id", true], ["username", true], ["password", true], ["app_id"], ["app_token"], ["zt_id"], ["zt_password"], ["account_number"], ["services"]],
+      [CarrierSettingsCarrierNameEnum.Dpdhl]: [["carrier_id", true], ["username", true], ["password", true], ["app_id"], ["app_token"], ["zt_id"], ["zt_password"], ["account_number"]],
       [CarrierSettingsCarrierNameEnum.DhlExpress]: [["carrier_id", true], ["site_id", true], ["password", true], ["account_number", true], ["account_country_code"]],
-      [CarrierSettingsCarrierNameEnum.DhlPoland]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true], ["services"]],
+      [CarrierSettingsCarrierNameEnum.DhlPoland]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true]],
       [CarrierSettingsCarrierNameEnum.DhlUniversal]: [["carrier_id", true], ["consumer_key", true], ["consumer_secret", true]],
       [CarrierSettingsCarrierNameEnum.Eshipper]: [["carrier_id", true], ["username", true], ["password", true]],
       [CarrierSettingsCarrierNameEnum.Easypost]: [["carrier_id", true], ["api_key", true]],
       [CarrierSettingsCarrierNameEnum.Freightcom]: [["carrier_id", true], ["username", true], ["password", true]],
-      [CarrierSettingsCarrierNameEnum.Generic]: [["display_name", true], ["custom_carrier_name", true], ["carrier_id", true], ["account_number"], ["account_country_code"], ["services"]],
+      [CarrierSettingsCarrierNameEnum.Generic]: [["display_name", true], ["custom_carrier_name", true], ["carrier_id", true], ["account_number"], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Geodis]: [["carrier_id", true], ["identifier", true], ["api_key", true], ["language", false, "fr"]],
       [CarrierSettingsCarrierNameEnum.Laposte]: [["carrier_id", true], ["api_key", true], ["lang", false, "fr_FR"]],
-      [CarrierSettingsCarrierNameEnum.Locate2u]: [["carrier_id", true], ["api_key", true], ["lang", false, "fr_FR"]],
+      [CarrierSettingsCarrierNameEnum.Locate2u]: [["carrier_id", true], ["client_id", true], ["client_secret", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Nationex]: [["carrier_id", true], ["api_key", true], ["customer_id", true], ["billing_account"], ["language", false, "en"]],
       [CarrierSettingsCarrierNameEnum.Roadie]: [["carrier_id", true], ["api_key", true]],
       [CarrierSettingsCarrierNameEnum.Fedex]: [["carrier_id", true], ["user_key"], ["password", true], ["meter_number", true], ["account_number", true], ["account_country_code"]],
@@ -731,7 +738,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Ups]: [["carrier_id", true], ["client_id", true], ["client_secret", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Usps]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],
       [CarrierSettingsCarrierNameEnum.UspsInternational]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],
-      [CarrierSettingsCarrierNameEnum.Zoom2u]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],
+      [CarrierSettingsCarrierNameEnum.Zoom2u]: [["carrier_id", true], ["api_key", true], ["account_country_code"]],
       [NoneEnum.none]: [],
     }[carrier_name] || [])
       .find(([_, ...__]) => _ === property) || []
