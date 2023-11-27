@@ -4,4 +4,4 @@
 source "bin/_env"
 
 echo 'building server image from source...'
-docker build -f "${ROOT}/docker/Dockerfile" -t karrio/server:$1 "${ROOT}" --build-arg REQUIREMENTS=source.requirements.txt "${@:2}"
+docker build -f "${ROOT}/docker/api/Dockerfile" -t karrio/server:$1 "${ROOT}" --build-arg REQUIREMENTS=source.requirements.txt "${@:2}"

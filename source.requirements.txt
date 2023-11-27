@@ -2,25 +2,6 @@ asgiref==3.7.2
 async-timeout==4.0.3
 attrs==23.1.0
 Brotli==1.1.0
-carrier.aramex @ file://${PWD}/schemas/aramex
-carrier.australiapost @ file://${PWD}/schemas/australiapost
-carrier.canadapost @ file://${PWD}/schemas/canadapost
-carrier.canpar @ file://${PWD}/schemas/canpar
-carrier.chronopost @ file://${PWD}/schemas/chronopost
-carrier.dhl-express==2023.4
-carrier.dhl-poland @ file://${PWD}/schemas/dhl_poland
-carrier.dicom @ file://${PWD}/schemas/dicom
-carrier.dpd @ file://${PWD}/schemas/dpd
-carrier.dpdhl @ file://${PWD}/schemas/dpdhl
-carrier.fedex==2021.4
-carrier.purolator @ file://${PWD}/schemas/purolator
-carrier.royalmail @ file://${PWD}/schemas/royalmail
-carrier.sendle @ file://${PWD}/schemas/sendle
-carrier.sf-express @ file://${PWD}/schemas/sf_express
-carrier.tnt @ file://${PWD}/schemas/tnt
-carrier.usps @ file://${PWD}/schemas/usps
-carrier.yanwen @ file://${PWD}/schemas/yanwen
-carrier.yunexpress @ file://${PWD}/schemas/yunexpress
 certifi==2023.11.17
 cffi==1.16.0
 charset-normalizer==3.3.2
@@ -59,7 +40,7 @@ h11==0.14.0
 hiredis==2.2.3
 html5lib==1.1
 huey==2.5.0
-idna==3.5
+idna==3.6
 inflection==0.5.1
 Jinja2==3.1.2
 jsonfield==3.1.0
@@ -67,53 +48,54 @@ jsonschema==4.20.0
 jsonschema-specifications==2023.11.1
 jstruct==2021.11
 jwcrypto==1.5.0
-karrio @ file://${PWD}/sdk/core
-karrio.amazon-shipping @ file://${PWD}/sdk/extensions/amazon_shipping
-karrio.aramex @ file://${PWD}/sdk/extensions/aramex
-karrio.australiapost @ file://${PWD}/sdk/extensions/australiapost
-karrio.boxknight @ file://${PWD}/sdk/extensions/boxknight
-karrio.canadapost @ file://${PWD}/sdk/extensions/canadapost
-karrio.canpar @ file://${PWD}/sdk/extensions/canpar
-karrio.chronopost @ file://${PWD}/sdk/extensions/chronopost
-karrio.dhl-express @ file://${PWD}/sdk/extensions/dhl_express
-karrio.dhl-poland @ file://${PWD}/sdk/extensions/dhl_poland
-karrio.dhl-universal @ file://${PWD}/sdk/extensions/dhl_universal
-karrio.dicom @ file://${PWD}/sdk/extensions/dicom
-karrio.dpd @ file://${PWD}/sdk/extensions/dpd
-karrio.dpdhl @ file://${PWD}/sdk/extensions/dpdhl
-karrio.easypost @ file://${PWD}/sdk/vendors/easypost
-karrio.eshipper @ file://${PWD}/sdk/vendors/eshipper
-karrio.fedex @ file://${PWD}/sdk/extensions/fedex
-karrio.freightcom @ file://${PWD}/sdk/vendors/freightcom
-karrio.generic @ file://${PWD}/sdk/extensions/generic
-karrio.geodis @ file://${PWD}/sdk/extensions/geodis
-karrio.laposte @ file://${PWD}/sdk/extensions/laposte
-karrio.locate2u @ file://${PWD}/sdk/vendors/locate2u
-karrio.nationex @ file://${PWD}/sdk/extensions/nationex
-karrio.purolator @ file://${PWD}/sdk/extensions/purolator
-karrio.roadie @ file://${PWD}/sdk/extensions/roadie
-karrio.royalmail @ file://${PWD}/sdk/extensions/royalmail
-karrio.sendle @ file://${PWD}/sdk/extensions/sendle
-karrio.server @ file://${PWD}/server/main
-karrio.server.apps @ file://${PWD}/server/modules/apps
-karrio.server.core @ file://${PWD}/server/modules/core
-karrio.server.data @ file://${PWD}/server/modules/data
-karrio.server.documents @ file://${PWD}/server/modules/documents
-karrio.server.events @ file://${PWD}/server/modules/events
-karrio.server.graph @ file://${PWD}/server/modules/graph
-karrio.server.iam @ file://${PWD}/server/modules/iam
-karrio.server.manager @ file://${PWD}/server/modules/manager
-karrio.server.orders @ file://${PWD}/server/modules/orders
-karrio.server.pricing @ file://${PWD}/server/modules/pricing
-karrio.server.proxy @ file://${PWD}/server/modules/proxy
-karrio.sf-express @ file://${PWD}/sdk/extensions/sf_express
-karrio.tnt @ file://${PWD}/sdk/extensions/tnt
-karrio.ups @ file://${PWD}/sdk/extensions/ups
-karrio.usps @ file://${PWD}/sdk/extensions/usps
-karrio.usps-international @ file://${PWD}/sdk/extensions/usps_international
-karrio.yanwen @ file://${PWD}/sdk/extensions/yanwen
-karrio.yunexpress @ file://${PWD}/sdk/extensions/yunexpress
-karrio.zoom2u @ file://${PWD}/sdk/vendors/zoom2u
+karrio @ file://${PWD}/modules/sdk
+karrio.amazon-shipping @ file://${PWD}/modules/connectors/amazon_shipping
+karrio.aramex @ file://${PWD}/modules/connectors/aramex
+karrio.asendia-us @ file://${PWD}/modules/connectors/asendia_us
+karrio.australiapost @ file://${PWD}/modules/connectors/australiapost
+karrio.boxknight @ file://${PWD}/modules/connectors/boxknight
+karrio.bpost @ file://${PWD}/modules/connectors/bpost
+karrio.canadapost @ file://${PWD}/modules/connectors/canadapost
+karrio.canpar @ file://${PWD}/modules/connectors/canpar
+karrio.chronopost @ file://${PWD}/modules/connectors/chronopost
+karrio.colissimo @ file://${PWD}/modules/connectors/colissimo
+karrio.dhl-express @ file://${PWD}/modules/connectors/dhl_express
+karrio.dhl-poland @ file://${PWD}/modules/connectors/dhl_poland
+karrio.dhl-universal @ file://${PWD}/modules/connectors/dhl_universal
+karrio.dicom @ file://${PWD}/modules/connectors/dicom
+karrio.dpd @ file://${PWD}/modules/connectors/dpd
+karrio.dpdhl @ file://${PWD}/modules/connectors/dpdhl
+karrio.easypost @ file://${PWD}/modules/connectors/easypost
+karrio.eshipper @ file://${PWD}/modules/connectors/eshipper
+karrio.fedex @ file://${PWD}/modules/connectors/fedex
+karrio.freightcom @ file://${PWD}/modules/connectors/freightcom
+karrio.generic @ file://${PWD}/modules/connectors/generic
+karrio.geodis @ file://${PWD}/modules/connectors/geodis
+karrio.laposte @ file://${PWD}/modules/connectors/laposte
+karrio.locate2u @ file://${PWD}/modules/connectors/locate2u
+karrio.locate2u @ file://${PWD}/modules/connectors/locate2u
+karrio.nationex @ file://${PWD}/modules/connectors/nationex
+karrio.purolator @ file://${PWD}/modules/connectors/purolator
+karrio.roadie @ file://${PWD}/modules/connectors/roadie
+karrio.royalmail @ file://${PWD}/modules/connectors/royalmail
+karrio.sendle @ file://${PWD}/modules/connectors/sendle
+karrio.server @ file://${PWD}/apps/api
+karrio.server.apps @ file://${PWD}/modules/apps
+karrio.server.core @ file://${PWD}/modules/core
+karrio.server.data @ file://${PWD}/modules/data
+karrio.server.documents @ file://${PWD}/modules/documents
+karrio.server.events @ file://${PWD}/modules/events
+karrio.server.graph @ file://${PWD}/modules/graph
+karrio.server.iam @ file://${PWD}/modules/iam
+karrio.server.manager @ file://${PWD}/modules/manager
+karrio.server.orders @ file://${PWD}/modules/orders
+karrio.server.pricing @ file://${PWD}/modules/pricing
+karrio.server.proxy @ file://${PWD}/modules/proxy
+karrio.tnt @ file://${PWD}/modules/connectors/tnt
+karrio.ups @ file://${PWD}/modules/connectors/ups
+karrio.usps @ file://${PWD}/modules/connectors/usps
+karrio.usps-international @ file://${PWD}/modules/connectors/usps_international
+karrio.zoom2u @ file://${PWD}/modules/connectors/zoom2u
 lxml==4.9.3
 lxml-stubs==0.4.0
 MarkupPy==1.14

@@ -5,4 +5,4 @@ docker build \
   --no-cache \
   -t karrio/dashboard:$1 \
   --build-arg VERSION=$1 \
-  -f ./docker/dashboard/Dockerfile ./apps/dashboard
+  -f ./docker/dashboard/Dockerfile .

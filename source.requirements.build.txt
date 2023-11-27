@@ -1,0 +1,54 @@
+--extra-index-url https://karrio.gateway.scarf.sh/simple/?sourceBuild
+
+# Carrier Extentions modules
+-e ./modules/sdk
+-e ./modules/connectors/amazon_shipping
+-e ./modules/connectors/aramex
+-e ./modules/connectors/asendia_us
+-e ./modules/connectors/australiapost
+-e ./modules/connectors/boxknight
+-e ./modules/connectors/bpost
+-e ./modules/connectors/canadapost
+-e ./modules/connectors/canpar
+-e ./modules/connectors/chronopost
+-e ./modules/connectors/colissimo
+-e ./modules/connectors/dhl_express
+-e ./modules/connectors/dhl_poland
+-e ./modules/connectors/dhl_universal
+-e ./modules/connectors/dicom
+-e ./modules/connectors/dpd
+-e ./modules/connectors/dpdhl
+-e ./modules/connectors/fedex
+-e ./modules/connectors/generic
+-e ./modules/connectors/geodis
+-e ./modules/connectors/laposte
+-e ./modules/connectors/nationex
+-e ./modules/connectors/purolator
+-e ./modules/connectors/roadie
+-e ./modules/connectors/royalmail
+-e ./modules/connectors/sendle
+-e ./modules/connectors/tnt
+-e ./modules/connectors/ups
+-e ./modules/connectors/usps
+-e ./modules/connectors/usps_international
+
+-e ./modules/connectors/easypost
+-e ./modules/connectors/eshipper
+-e ./modules/connectors/freightcom
+-e ./modules/connectors/locate2u
+-e ./modules/connectors/zoom2u
+
+
+# karrio server modules
+-e ./modules/iam
+-e ./modules/core
+-e ./apps/api
+-e ./modules/graph
+-e ./modules/apps
+-e ./modules/data
+-e ./modules/events
+-e ./modules/manager
+-e ./modules/orders
+-e ./modules/proxy
+-e ./modules/pricing
+-e ./modules/documents
