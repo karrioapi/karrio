@@ -1,0 +1,845 @@
+---
+id: users
+title: Users
+description: Manage user acounts programmatically.
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Manage user accounts
+
+## Introduction
+
+This guide describes how to use the Karrio GraphQL API to register a new
+user account and do common account management operations.
+
+## Creating a new user account
+
+Depending on the configuration of your Karrio server instance, registering
+a user account may be a single-step operation or it may require email confirmation
+to activate the account.
+
+:::info
+
+Karrio automatically require an email confirmation if the an email server is configured.
+
+<details>
+<summary>Karrio Email Config</summary>
+
+You can configure your Karrio email server at http://localhost:5002/admin/constance/config/
+
+- EMAIL_USE_TLS
+- EMAIL_HOST_USER
+- EMAIL_HOST_PASSWORD
+- EMAIL_HOST
+- EMAIL_PORT
+- EMAIL_PAGE_DOMAIN
+- EMAIL_FROM_ADDRESS
+
+The `EMAIL_PAGE_DOMAIN` should be set to the domain name of your Karrio dashboard.
+
+</details>
+:::
+
+<div style={{ textAlign: "center", maxWidth: "100%", marginTop: "40px" }}>
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    version="1.1"
+    width="298px"
+    height="516px"
+    viewBox="-0.5 -0.5 298 516"
+  >
+    <defs />
+    <g>
+      <path
+        d="M 108.25 36.67 L 108.3 73.4 L 108.3 99.92"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="stroke"
+      />
+      <path
+        d="M 108.3 108.92 L 103.8 99.92 L 112.8 99.92 Z"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="all"
+      />
+      <rect
+        x="40.75"
+        y="0"
+        width="135"
+        height="36.67"
+        rx="5.5"
+        ry="5.5"
+        fill="rgba(255, 255, 255, 1)"
+        stroke="var(--ifm-font-color-base)"
+        pointerEvents="all"
+      />
+      <g transform="translate(-0.5 -0.5)">
+        <switch>
+          <foreignObject
+            pointerEvents="none"
+            width="100%"
+            height="100%"
+            requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+            style={{ overflow: "visible", justifyContent: "left" }}
+          >
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                display: "flex",
+                alignItems: "unsafe center",
+                justifyContent: "unsafe center",
+                width: "133px",
+                height: "1px",
+                paddingTop: "18px",
+                marginLeft: "42px",
+              }}
+            >
+              <div
+                style={{
+                  boxSizing: "border-box",
+                  fontSize: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    fontSize: "12px",
+                    fontFamily: "Helvetica",
+                    color: "rgb(0, 0, 0)",
+                    lineHeight: "1.2",
+                    pointerEvents: "all",
+                    whiteSpace: "normal",
+                    overflowWrap: "normal",
+                  }}
+                >
+                  Register an account
+                </div>
+              </div>
+            </div>
+          </foreignObject>
+          <text
+            x="108"
+            y="22"
+            fill="rgba(0, 0, 0, 1)"
+            fontFamily="Helvetica"
+            fontSize="12px"
+            textAnchor="middle"
+          >
+            Register an account
+          </text>
+        </switch>
+      </g>
+      <path
+        d="M 148.88 207.5 L 212 207.5 L 212 269.88"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="stroke"
+      />
+      <path
+        d="M 212 278.88 L 207.5 269.88 L 216.5 269.88 Z"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="all"
+      />
+      <g transform="translate(-0.5 -0.5)">
+        <switch>
+          <foreignObject
+            pointerEvents="none"
+            width="100%"
+            height="100%"
+            requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+            style={{ overflow: "visible", justifyContent: "left" }}
+          >
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                display: "flex",
+                alignItems: "unsafe center",
+                justifyContent: "unsafe center",
+                width: "1px",
+                height: "1px",
+                paddingTop: "212px",
+                marginLeft: "232px",
+              }}
+            >
+              <div
+                style={{
+                  boxSizing: "border-box",
+                  fontSize: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    fontSize: "1px",
+                    fontFamily: "Helvetica",
+                    color: "rgb(0, 0, 0)",
+                    lineHeight: "1.2",
+                    pointerEvents: "all",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  Yes
+                </div>
+              </div>
+            </div>
+          </foreignObject>
+          <text
+            x="232"
+            y="216"
+            fill="rgba(0, 0, 0, 1)"
+            fontFamily="Helvetica"
+            fontSize="1px"
+            textAnchor="middle"
+          >
+            Yes
+          </text>
+        </switch>
+      </g>
+      <path
+        d="M 108.25 110 L 189.5 175 L 108.25 240 L 27 175 Z"
+        fill="rgba(255, 255, 255, 1)"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="all"
+      />
+      <g transform="translate(-0.5 -0.5)">
+        <switch>
+          <foreignObject
+            pointerEvents="none"
+            width="100%"
+            height="100%"
+            requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+            style={{ overflow: "visible", justifyContent: "left" }}
+          >
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                display: "flex",
+                alignItems: "unsafe center",
+                justifyContent: "unsafe center",
+                width: "153px",
+                height: "1px",
+                paddingTop: "173px",
+                marginLeft: "32px",
+              }}
+            >
+              <div
+                style={{
+                  boxSizing: "border-box",
+                  fontSize: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    fontSize: "12px",
+                    fontFamily: "Helvetica",
+                    color: "rgb(0, 0, 0)",
+                    lineHeight: "1.2",
+                    pointerEvents: "all",
+                    whiteSpace: "normal",
+                    overflowWrap: "normal",
+                  }}
+                >
+                  <b>Activation required?</b>
+                </div>
+              </div>
+            </div>
+          </foreignObject>
+          <text
+            x="108"
+            y="177"
+            fill="rgba(0, 0, 0, 1)"
+            fontFamily="Helvetica"
+            fontSize="12px"
+            textAnchor="middle"
+          >
+            Activation required?
+          </text>
+        </switch>
+      </g>
+      <rect
+        x="127"
+        y="280"
+        width="170"
+        height="30"
+        fill="rgba(255, 255, 255, 1)"
+        stroke="var(--ifm-font-color-base)"
+        pointerEvents="all"
+      />
+      <g transform="translate(-0.5 -0.5)">
+        <switch>
+          <foreignObject
+            pointerEvents="none"
+            width="100%"
+            height="100%"
+            requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+            style={{ overflow: "visible", justifyContent: "left" }}
+          >
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                display: "flex",
+                alignItems: "unsafe center",
+                justifyContent: "unsafe center",
+                width: "168px",
+                height: "1px",
+                paddingTop: "295px",
+                marginLeft: "128px",
+              }}
+            >
+              <div
+                style={{
+                  boxSizing: "border-box",
+                  fontSize: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    fontSize: "12px",
+                    fontFamily: "Helvetica",
+                    color: "rgb(0, 0, 0)",
+                    lineHeight: "1.2",
+                    pointerEvents: "all",
+                    whiteSpace: "normal",
+                    overflowWrap: "normal",
+                  }}
+                >
+                  Ask user to check their email
+                </div>
+              </div>
+            </div>
+          </foreignObject>
+          <text
+            x="212"
+            y="299"
+            fill="rgba(0, 0, 0, 1)"
+            fontFamily="Helvetica"
+            fontSize="12px"
+            textAnchor="middle"
+          >
+            Ask user to check their email
+          </text>
+        </switch>
+      </g>
+      <rect
+        x="127"
+        y="390"
+        width="170"
+        height="30"
+        fill="rgba(255, 255, 255, 1)"
+        stroke="var(--ifm-font-color-base)"
+        pointerEvents="all"
+      />
+      <g transform="translate(-0.5 -0.5)">
+        <switch>
+          <foreignObject
+            pointerEvents="none"
+            width="100%"
+            height="100%"
+            requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+            style={{ overflow: "visible", justifyContent: "left" }}
+          >
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                display: "flex",
+                alignItems: "unsafe center",
+                justifyContent: "unsafe center",
+                width: "168px",
+                height: "1px",
+                paddingTop: "405px",
+                marginLeft: "128px",
+              }}
+            >
+              <div
+                style={{
+                  boxSizing: "border-box",
+                  fontSize: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    fontSize: "12px",
+                    fontFamily: "Helvetica",
+                    color: "rgb(0, 0, 0)",
+                    lineHeight: "1.2",
+                    pointerEvents: "all",
+                    whiteSpace: "normal",
+                    overflowWrap: "normal",
+                  }}
+                >
+                  Confirm account using token
+                </div>
+              </div>
+            </div>
+          </foreignObject>
+          <text
+            x="212"
+            y="409"
+            fill="rgba(0, 0, 0, 1)"
+            fontFamily="Helvetica"
+            fontSize="12px"
+            textAnchor="middle"
+          >
+            Confirm account using token
+          </text>
+        </switch>
+      </g>
+      <path
+        d="M 212 330 L 212 310"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeWidth="2"
+        strokeMiterlimit="10"
+        strokeDasharray="2 6"
+        pointerEvents="stroke"
+      />
+      <path
+        d="M 212 360 L 212 390"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeWidth="2"
+        strokeMiterlimit="10"
+        strokeDasharray="2 6"
+        pointerEvents="stroke"
+      />
+      <rect
+        x="40.75"
+        y="478"
+        width="135"
+        height="36.67"
+        rx="5.5"
+        ry="5.5"
+        fill="rgba(255, 255, 255, 1)"
+        stroke="var(--ifm-font-color-base)"
+        pointerEvents="all"
+      />
+      <g transform="translate(-0.5 -0.5)">
+        <switch>
+          <foreignObject
+            pointerEvents="none"
+            width="100%"
+            height="100%"
+            requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+            style={{ overflow: "visible", justifyContent: "left" }}
+          >
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                display: "flex",
+                alignItems: "unsafe center",
+                justifyContent: "unsafe center",
+                width: "133px",
+                height: "1px",
+                paddingTop: "496px",
+                marginLeft: "42px",
+              }}
+            >
+              <div
+                style={{
+                  boxSizing: "border-box",
+                  fontSize: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    fontSize: "12px",
+                    fontFamily: "Helvetica",
+                    color: "rgb(0, 0, 0)",
+                    lineHeight: "1.2",
+                    pointerEvents: "all",
+                    whiteSpace: "normal",
+                    overflowWrap: "normal",
+                  }}
+                >
+                  New account is active
+                </div>
+              </div>
+            </div>
+          </foreignObject>
+          <text
+            x="108"
+            y="500"
+            fill="rgba(0, 0, 0, 1)"
+            fontFamily="Helvetica"
+            fontSize="12px"
+            textAnchor="middle"
+          >
+            New account is active
+          </text>
+        </switch>
+      </g>
+      <path
+        d="M 212 420 L 212 450 L 179.67 491.32"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="stroke"
+      />
+      <path
+        d="M 176.44 495.45 L 178 487.78 L 179.67 491.32 L 183.51 492.1 Z"
+        fill="rgba(0, 0, 0, 1)"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="all"
+      />
+      <path
+        d="M 67.63 207.5 L 7 250 L 7 350 L 7 450 L 37 491.19"
+        fill="none"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="stroke"
+      />
+      <path
+        d="M 40.09 495.43 L 33.14 491.83 L 37 491.19 L 38.8 487.71 Z"
+        fill="rgba(0, 0, 0, 1)"
+        stroke="var(--ifm-font-color-base)"
+        strokeMiterlimit="10"
+        pointerEvents="all"
+      />
+      <rect
+        x="127"
+        y="330"
+        width="170"
+        height="30"
+        fill="none"
+        stroke="none"
+        pointerEvents="all"
+      />
+      <g transform="translate(-0.5 -0.5)">
+        <switch>
+          <foreignObject
+            pointerEvents="none"
+            width="100%"
+            height="100%"
+            requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"
+            style={{ overflow: "visible", justifyContent: "left" }}
+          >
+            <div
+              xmlns="http://www.w3.org/1999/xhtml"
+              style={{
+                display: "flex",
+                alignItems: "unsafe center",
+                justifyContent: "unsafe center",
+                width: "168px",
+                height: "1px",
+                paddingTop: "345px",
+                marginLeft: "128px",
+              }}
+            >
+              <div
+                style={{
+                  boxSizing: "border-box",
+                  fontSize: "0px",
+                  justifyContent: "center",
+                }}
+              >
+                <div
+                  style={{
+                    display: "inline-block",
+                    fontSize: "12px",
+                    fontFamily: "Helvetica",
+                    color: "rgb(0, 0, 0)",
+                    lineHeight: "1.2",
+                    pointerEvents: "all",
+                    backgroundColor: "rgb(230, 230, 230)",
+                    whiteSpace: "normal",
+                    overflowWrap: "normal",
+                  }}
+                >
+                  <span style={{ backgroundColor: "rgb(248 , 249 , 250)" }}>
+                    User clicks link with token
+                  </span>
+                </div>
+              </div>
+            </div>
+          </foreignObject>
+          <text
+            x="212"
+            y="349"
+            fill="rgba(0, 0, 0, 1)"
+            fontFamily="Helvetica"
+            fontSize="12px"
+            textAnchor="middle"
+          >
+            User clicks link with token
+          </text>
+        </switch>
+      </g>
+    </g>
+    <switch>
+      <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility" />
+      <a transform="translate(0,-5)" target="_blank">
+        <text textAnchor="middle" fontSize="10px" x="50%" y="100%">
+          Viewer does not support full SVG 1.1
+        </text>
+      </a>
+    </switch>
+  </svg>
+</div>
+
+### Registration
+
+To create a new user account, use the accountRegister mutation. The mutation takes the following input fields:
+
+- `email`: user's email address.
+- `password1`: user's password.
+- `password2`: user's password confirmation.
+- `full_name`: optionally, user's full name.
+
+```graphql
+mutation {
+  register_user(
+    input: {
+      email: "user@example.com"
+      password1: "password"
+      password2: "password"
+      full_name: "John Doe"
+    }
+  ) {
+    user {
+      email
+      is_staff
+      date_joined
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+As mentioned above, if the you have configured the karrio server email settings,
+the user will receive an email with a link to activate their account.
+
+```
+http://localhost:3000/email/YWxleC5taWxsZXIyNEBvdXRsb29rLmNvbQ-axd6yl-ce379fa50ced5079908ab669cabb456a89f441c2
+```
+
+The link contains a `token` which is required to proceed with the second mutation, `confirm_email`:
+
+```graphql
+mutation confirm_email($data: { token: string;! }!) {
+  confirm_email(input: $data) {
+    success
+  }
+}
+```
+
+If the token is valid, the user will be successfully activated.
+
+## Accessing information about the authenticated user
+
+The `user` query allows you to get information about currently logged in user.
+
+```graphql
+{
+  user {
+    email
+    full_name
+    is_staff
+    last_login
+    date_joined
+  }
+}
+```
+
+response
+
+```json
+{
+  "data": {
+    "user": {
+      "email": "admin@karrio.io",
+      "full_name": "Admin",
+      "is_staff": true,
+      "last_login": "2021-12-15T22:32:34.229203+00:00",
+      "date_joined": "2021-01-07T23:32:10+00:00"
+    }
+  }
+}
+```
+
+## Accessing the private server API Key
+
+The `token` query allows you to get the private key of the currently logged in user.
+
+```graphql
+{
+  token {
+    key
+  }
+}
+```
+
+response
+
+```json
+{
+  "data": {
+    "token": {
+      "key": "key_0csfjeroij4i5jo9c2adb1e444lk867"
+    }
+  }
+}
+```
+
+You can revoke and regenerate the API key using the `mutate_token` mutation.
+
+```graphql
+mutation {
+  mutate_token(input: { refresh: true }) {
+    token {
+      key
+    }
+  }
+}
+```
+
+response
+
+```json
+{
+  "data": {
+    "mutate_token": {
+      "token": {
+        "key": "key_6d956c1f9d093a5d2fd3dc0555452253"
+      }
+    }
+  }
+}
+```
+
+## Resetting the password
+
+Resetting the password is a two-step operation. First, you need to call a mutation to
+send an email with a unique link to reset the password.
+
+The mutation takes the following input fields:
+
+- `email`: user's email address.
+- `redirect_url`: path to a view where the user should be redirected to reset the password.
+
+```graphql
+mutation {
+  request_password_reset(
+    input: {
+      email: "test@example.com"
+      redirect_url: "localhost:3000/password/reset"
+    }
+  ) {
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+As a result, if there are no errors in the response, the system sends an email to
+user@example.com with a link to provide a new password, for example:
+
+```
+http://localhost:3000/password/reset?uidb64=Mw&token=ax10pr-af2cc4352f19713547b12ab0dd6c0661
+```
+
+The link contains two query parameters— `uidb64` and `token` — which are required to proceed
+with the second mutation, `confirm_password_reset`.
+
+The mutation takes the following input fields:
+
+- `uid`: user's db id hashed in base64.
+- `token`: a unique token that was included in the link in the email.
+- `new_password1`: the new password.
+- `new_password1`: the new password's confirmation.
+
+```graphql
+mutation {
+  confirm_password_reset(
+    input: {
+      uid: "Mw"
+      token: "ax10pr-af2cc4352f19713547b12ab0dd6c0661"
+      new_password1: "new-password"
+      new_password2: "new-password"
+    }
+  ) {
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+If there are no errors in the response, the password is successfully changed.
+
+## Changing the password
+
+If you wish to change your password as an authenticated user, use the `change_password` mutation.
+The mutation takes the following input fields:
+
+- `old_password`: the current user's password.
+- `new_password1`: the new password.
+- `new_password2`: the new password confirmation.
+
+```graphql
+mutation {
+  change_password(
+    input: {
+      old_password: "current-password"
+      new_password1: "new-password"
+      new_password2: "new-password"
+    }
+  ) {
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+If no errors were returned, the password was changed successfully.
+
+## Changing the user info
+
+Changing an email address or the full name of existing user accounts can be done with a single request.
+You need to call the `update_user` mutation.
+
+The mutation takes the following input fields:
+
+- `email`: the new email address to set for the account.
+- `full_name`: the new full name to set for the account.
+
+```graphql
+mutation {
+  update_user(input: { email: "new-user@example.com", full_name: "Jane Doe" }) {
+    email
+    full_name
+    errors {
+      field
+      messages
+    }
+  }
+}
+```
+
+If no errors were returned, the email and full name were changed successfully.

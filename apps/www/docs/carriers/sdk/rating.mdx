@@ -1,0 +1,206 @@
+---
+id: rating
+title: Rating
+---
+
+## `Fetch`
+
+Using the fluent API with a gateway previously initialized, you can fetch live shipping rates
+
+
+```python
+import karrio
+from karrio.core.models import RateRequest
+
+request = RateRequest(...)
+
+rates, messages = karrio.Rating.fetch(request).from_(carrier_gateway).parse()
+```
+
+:::tip
+  In a multi-carrier integration, we would often want to get shipping quotes from multiple carriers.
+  That can be achieve by fetching from multiple gateways
+
+  e.g:
+  `karrio.Rating.fetch(request).from_(candapost_gateway, purolator_gateway, ...).parse()`
+:::
+
+### Parameters
+
+
+#### RateRequest
+
+| Name | Type | Description
+| --- | --- | --- |
+| `shipper` | [Address](#address) | **required**
+| `recipient` | [Address](#address) | **required**
+| `parcels` | List[[Parcel](#parcel)] | **required**
+| `services` | List[str] |
+| `options` | `dict` |
+| `reference` | `str` |
+
+#### Address
+
+| Name | Type | Description
+| --- | --- | --- |
+| `id` | `str` |
+| `postal_code` | `str` |
+| `city` | `str` |
+| `person_name` | `str` |
+| `company_name` | `str` |
+| `country_code` | `str` |
+| `email` | `str` |
+| `phone_number` | `str` |
+| `state_code` | `str` |
+| `residential` | `bool` |
+| `address_line1` | `str` |
+| `address_line2` | `str` |
+| `federal_tax_id` | `str` |
+| `state_tax_id` | `str` |
+| `extra` | [AddressExtra](#addressextra) |
+
+
+#### AddressExtra
+
+| Name | Type | Description
+| --- | --- | --- |
+| `street_name` | `str` |
+| `street_number` | `str` |
+| `street_type` | `str` |
+| `suburb` | `str` |
+| `suite` | `str` |
+
+
+#### Parcel
+
+| Name | Type | Description
+| --- | --- | --- |
+| `id` | `str` |
+| `weight` | `float` |
+| `width` | `float` |
+| `height` | `float` |
+| `length` | `float` |
+| `packaging_type` | `str` |
+| `package_preset` | `str` |
+| `description` | `str` |
+| `content` | `str` |
+| `is_document` | `bool` |
+| `weight_unit` | `str` |
+| `dimension_unit` | `str` |
+
+
+
+### Response
+
+
+#### RateDetails
+
+| Name | Type | Description
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `currency` | `str` | **required**
+| `transit_days` | `int` |
+| `service` | `str` |
+| `discount` | `float` |
+| `base_charge` | `float` |
+| `total_charge` | `float` |
+| `duties_and_taxes` | `float` |
+| `extra_charges` | List[[ChargeDetails](#chargedetails)] |
+| `meta` | `dict` |
+| `id` | `str` |
+
+
+#### ChargeDetails
+
+| Name | Type | Description
+| --- | --- | --- |
+| `name` | `str` |
+| `amount` | `float` |
+| `currency` | `str` |
+
+
+#### Message
+
+| Name | Type | Description
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `message` | Union[str, Any] |
+| `code` | `str` |
+| `details` | `dict` |
+
+
+---
+
+
+### Code sample
+
+```python
+import karrio
+from karrio.core.models import Address, Parcel, RateRequest
+
+shipper = Address(
+    postal_code="V6M2V9",
+    city="Vancouver",
+    country_code="CA",
+    state_code="BC",
+    address_line1="5840 Oak St"
+)
+
+recipient = Address(
+    postal_code="E1C4Z8",
+    city="Moncton",
+    country_code="CA",
+    state_code="NB",
+    residential=False,
+    address_line1="125 Church St"
+)
+
+parcel = Parcel(
+    height=3.0,
+    length=6.0,
+    width=3.0,
+    weight=0.5,
+    weight_unit='KG',
+    dimension_unit='CM'
+)
+
+request = karrio.Rating.fetch(
+    RateRequest(
+        shipper=shipper,
+        recipient=recipient,
+        parcels=[parcel],
+        services=["canadapost_xpresspost"]
+    )
+)
+
+rates, messages = request.from_(carrier_gateway).parse()
+```
+
+:::tip On success
+
+  ```python
+  print(rates)
+  # [
+  #     RateDetails(
+  #         carrier_name="canadapost",
+  #         carrier_id="canadapost",
+  #         currency="CAD",
+  #         transit_days=2,
+  #         service="canadapost_xpresspost",
+  #         discount=1.38,
+  #         base_charge=12.26,
+  #         total_charge=13.64,
+  #         duties_and_taxes=0.0,
+  #         extra_charges=[
+  #             ChargeDetails(name="Automation discount", amount=-0.37, currency="CAD"),
+  #             ChargeDetails(name="Fuel surcharge", amount=1.75, currency="CAD"),
+  #         ],
+  #         meta=None,
+  #         id=None,
+  #     )
+  # ]
+  ```
+:::
+

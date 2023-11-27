@@ -1,0 +1,108 @@
+---
+id: tracking
+title: Tracking
+---
+
+## `Fetch`
+
+You can retrieve one or many package tracking statuses passing the tracking numbers
+to the `Tracking` API.
+
+
+```python
+import karrio
+from karrio.core.models import TrackingRequest
+
+request = TrackingRequest(...)
+
+tracking_details_list, messages = karrio.Tracking.fetch(request).from_(carrier_gateway).parse()
+```
+
+### Parameters
+
+
+#### TrackingRequest
+
+| Name | Type | Description
+| --- | --- | --- |
+| `tracking_numbers` | List[str] | **required**
+| `language_code` | `str` |
+| `level_of_details` | `str` |
+
+
+### Response
+
+
+#### TrackingDetails
+
+| Name | Type | Description
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `tracking_number` | `str` | **required**
+| `events` | List[[TrackingEvent](#trackingevent)] | **required**
+| `delivered` | `bool` |
+
+
+#### TrackingEvent
+
+| Name | Type | Description
+| --- | --- | --- |
+| `date` | `str` | **required**
+| `description` | `str` | **required**
+| `location` | `str` |
+| `code` | `str` |
+| `time` | `str` |
+| `signatory` | `str` |
+
+
+#### Message
+
+| Name | Type | Description
+| --- | --- | --- |
+| `carrier_name` | `str` | **required**
+| `carrier_id` | `str` | **required**
+| `message` | Union[str, Any] |
+| `code` | `str` |
+| `details` | `dict` |
+
+
+---
+
+### Code sample
+
+```python
+import karrio
+from karrio.core.models import TrackingRequest
+
+request = karrio.Tracking.fetch(
+    TrackingRequest(tracking_numbers=["1Z12345E6205277936"])
+)
+
+tracking_details_list, messages = request.from_(carrier_gateway).parse()
+```
+
+:::tip On success
+
+  ```python
+  print(tracking_details_list)
+  # [
+  #     TrackingDetails(
+  #         carrier_name="canadapost",
+  #         carrier_id="canadapost",
+  #         tracking_number="7023210039414604",
+  #         events=[
+  #             TrackingEvent(
+  #                 date="2011-04-04",
+  #                 description="Order information received by Canada Post",
+  #                 location="",
+  #                 code="INDUCTION",
+  #                 time="13:34",
+  #                 signatory="",
+  #             )
+  #         ],
+  #         delivered=None,
+  #     )
+  # ]
+  ```
+:::

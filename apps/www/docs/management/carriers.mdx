@@ -1,0 +1,175 @@
+---
+id: carriers
+title: Carriers
+description: Retrieve the list of carrier connections configured for your account.
+tags:
+  - REST API
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+The `Carrier` object allow you to perform get live rates, generate labels,
+track shipments and any other carrier supported operations. The API allow you to
+retrieve the list of carriers configured and accessible from your account.
+
+<div id="tailwind">
+  <table className="table-auto">
+    <thead>
+      <tr>
+        <th>ENDPOINTS</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GET</td>
+        <td>/v1/carriers</td>
+      </tr>
+      <tr>
+        <td>GET</td>
+        <td>
+          /v1/carriers/<strong>[carrier_name]</strong>/services
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+## Get carrier connections
+
+<div id="tabs">
+
+```javascript
+(async () => {
+  const carriers = await karrio.carriers.list();
+})();
+```
+
+</div>
+
+Karrio returns a list for carrier settings object in response to your API request.
+
+<div id="tabs">
+
+```json
+{
+  "count": 9,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": "car_11f0bb384ac44583bdf41acf407b8edd",
+      "carrier_name": "sendle",
+      "carrier_id": "sendel-account",
+      "test": false,
+      "active": true
+    },
+    {
+      "id": "car_551f04e30c51459498b40a318648c5f3",
+      "carrier_name": "fedex",
+      "carrier_id": "fedex-account",
+      "test": false,
+      "active": false
+    },
+    {
+      "id": "car_416ec30cca6b4a2a8c387324f161b632",
+      "carrier_name": "fedex",
+      "carrier_id": "fedex-test-account",
+      "test": true,
+      "active": true
+    },
+    {
+      "id": "car_bd136e4263f7419fbb8376424f538618",
+      "carrier_name": "dhl_universal",
+      "carrier_id": "dhl-universal-account",
+      "test": true,
+      "active": true
+    },
+    {
+      "id": "car_a99529be9b3f4aef8d151a766fe91473",
+      "carrier_name": "royalmail",
+      "carrier_id": "royal-mail-account",
+      "test": true,
+      "active": false
+    },
+    {
+      "id": "car_26372a48e4bb4fbf90a40566ac359efe",
+      "carrier_name": "usps",
+      "carrier_id": "usps-account",
+      "test": true,
+      "active": true
+    },
+    {
+      "id": "car_afa4948364e541bea2a93ecf47e79f08",
+      "carrier_name": "dhl_express",
+      "carrier_id": "dhl-express-account",
+      "test": true,
+      "active": true
+    },
+    {
+      "id": "car_cb16c5bb6b02490988e80c911a614d96",
+      "carrier_name": "purolator",
+      "carrier_id": "purolator-account",
+      "test": true,
+      "active": false
+    },
+    {
+      "id": "car_773f4a5577e4471e8918a9a1d47b208b",
+      "carrier_name": "canadapost",
+      "carrier_id": "canadapost",
+      "test": true,
+      "active": true
+    }
+  ]
+}
+```
+
+</div>
+
+## Get carrier services
+
+<div id="tabs">
+
+```javascript
+(async () => {
+  const services = await karrio.carriers.get_services("ups");
+})();
+```
+
+</div>
+
+Karrio returns a dictionary of carrier service_code as key and
+service_name as values.
+
+<div id="tabs">
+
+```json
+{
+  "ups_standard": "11",
+  "ups_worldwide_expedited": "08",
+  "ups_worldwide_express": "07",
+  "ups_worldwide_express_plus": "54",
+  "ups_worldwide_saver": "65",
+  "ups_2nd_day_air": "02",
+  "ups_2nd_day_air_am": "59",
+  "ups_3_day_select": "12",
+  "ups_expedited_mail_innovations": "M4",
+  "ups_first_class_mail": "M2",
+  "ups_ground": "03",
+  "ups_next_day_air": "01",
+  "ups_next_day_air_early": "14",
+  "ups_next_day_air_saver": "13",
+  "ups_priority_mail": "M3",
+  "ups_access_point_economy": "70",
+  "ups_today_dedicated_courier": "83",
+  "ups_today_express": "85",
+  "ups_today_express_saver": "86",
+  "ups_today_standard": "82",
+  "ups_worldwide_express_freight": "96",
+  "ups_priority_mail_innovations": "M5",
+  "ups_economy_mail_innovations": "M6"
+}
+```
+
+</div>

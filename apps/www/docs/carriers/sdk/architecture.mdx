@@ -1,0 +1,177 @@
+---
+id: architecture
+title: Architecture
+---
+
+## Overview
+
+karrio proposes a set of unified APIs accepting all required data to send requests to the supported carrier services.
+
+The typical data flows for all requests processed by karrio is illustrated bellow.
+
+<figure>
+  <img style={{ borderRadius: 5 }} src="/img/assets/karrio-sequence-diagram.svg" width="100%" />
+  <figcaption>karrio - Sequence</figcaption>
+</figure>
+
+To accomplish this, the overall abstraction proposed by karrio come down to the implementation these abstract classes.
+
+<figure>
+  <img style={{ borderRadius: 5 }} src="/img/assets/karrio-class-diagram.svg" width="100%" />
+  <figcaption>karrio - Class Diagram</figcaption>
+</figure>
+
+
+### The `Settings`
+
+:::info
+  The `Settings` class defines all the carrier specific credential required to authenticate connections
+  and additionally
+
+  - a unique `carrier_name` (a readonly name. e.g: canadapost)
+  - a unique `carrier_id` (a nickname provided for each instance. e.g: canadapost_test_account)
+  - optionally an `account_country_code` (a country specific account number)
+  - optionally a unique `id` reference in your system or a database
+:::
+
+
+### The `Mapper`
+
+:::info
+  The `Mapper` class translates the unified karrio API data into carrier specific data to send requests
+  and also takes care or parsing the response returned back into a unified data model
+
+  Learn more about the Mapper pattern from [Martin Fowler Enterprise Pattern](https://martinfowler.com/eaaCatalog/dataMapper.html)
+:::
+
+
+### The `Proxy`
+
+:::info
+  The `Proxy` class defines one or many HTTP requests required to communicate with a carrier service
+
+  [Learn more about the Proxy pattern](https://en.wikipedia.org/wiki/Proxy_pattern)
+:::
+
+
+## In practice
+
+This is how these classes come together to make a request to a carrier service
+
+```python
+from karrio.mappers.canadapost import Settings, Mapper, Proxy
+
+# Instantiate a connection settings
+canadapost_settings = Settings(
+    username="username",
+    password="password",
+    customer_number="2004381",
+    contract_id="42708517",
+)
+
+# Instantiate the carrier corresponding translator
+canadapost_mapper = Mapper(canadapost_settings)
+
+# And finally the carrier corresponding communication proxy
+canadapost_proxy = Proxy(canadapost_settings)
+
+
+# e.g: a Pickup scheduling request
+from karrio.core.models import PickupRequest, Address
+
+
+# A karrio unified Pickup request type
+pickup_request: PickupRequest = PickupRequest(
+    pickup_date="2021-12-15",
+    ready_time="10:00",
+    closing_time="17:00",
+    address=Address(
+        postal_code="V6M2V9",
+        city="Vancouver",
+        country_code="CA",
+        state_code="BC",
+        address_line1="5840 Oak St"
+    )
+)
+
+# Convert into a carrier specific pickup request
+canadapost_pickup_request = canadapost_mapper.create_pickup_request(pickup_request)
+
+# Send the request the carrier
+canadapost_pickup_response = canadapost_proxy.schedule_pickup(canadapost_pickup_request)
+
+# Parse the response into a karrio unified Pickup response type
+pickup_response = canadapost_mapper.parse_pickup_response(canadapost_pickup_response)
+
+print(pickup_response)
+```shell
+(
+    PickupDetails(
+        carrier_name='canadapost',
+        carrier_id='canadapost',
+        confirmation_number='0074698052',
+        pickup_charge=ChargeDetails(
+            name='Pickup fees',
+            amount=4.42,
+            currency='CAD'
+        )
+    ),
+    [] # message and error list here
+)
+```
+
+:::info
+  The example above illustrates a Pickup scheduling but the idea is that all requests made by karrio follow the same lifecycle:
+
+  - convert unified karrio API data into a carrier specific request using the `Mapper`
+  - send the request to the carrier using the `Proxy`
+  - and parse back the response into a unified karrio data using the `Mapper`
+:::
+
+:::caution
+  Note that karrio does not raise exceptions when there is a failure during requests but rather always return
+  a tuple of a `response` if `successful` with a list of `messages` if any **notes**, **messages** or **errors**
+  in case of `failures` are returned.
+:::
+
+
+## Fluent API
+
+Once you understand the lifecycle above, you can send any requests supported by karrio with the same mental model.
+However, this looks a little verbose. That's why we introduced a Fluent interface to handle this process with fewer lines.
+
+```python
+import karrio
+
+# Create a carrier connection gateway
+# This will instantiate the corresponding Settings, Mapper and Proxy
+canadapost_gateway = karrio.gateway['canadapost'].create({
+    'contract_id': '42708517',
+    'customer_number': '2004381',
+    'password': 'password',
+    'username': 'username'
+})
+
+pickup_request = karrio.Pickup.schedule({
+    'pickup_date': '2021-12-15',
+    'closing_time': '17:00',
+    'ready_time': '10:00',
+    'address': {
+        'address_line1': '5840 Oak St',
+        'city': 'Vancouver',
+        'country_code': 'CA',
+        'postal_code': 'V6M2V9',
+        'residential': False,
+        'state_code': 'BC'
+    }
+})
+
+pickup_response = pickup_request.with_(canadapost_gateway).parse()
+```
+
+:::info
+  Note the concept of Gateway introduced here to encapsulate the access to the external system that are carrier servers
+  in our case.
+
+  Learn more about the Gateway pattern from [Martin Fowler Enterprise Pattern](https://martinfowler.com/eaaCatalog/gateway.html)
+:::
