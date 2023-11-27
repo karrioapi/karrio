@@ -16,6 +16,6 @@
     "baseUrl": ".",
   },
   "files": [
-    "karrio.ts"
+    "api/karrio.ts",
   ]
 }

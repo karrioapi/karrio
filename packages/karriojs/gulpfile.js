@@ -7,7 +7,7 @@ const output = argv.output === undefined ? './dist/karrio.js' : argv.output;
 
 gulp.task('build', async function () {
   const bundle = await rollup.rollup({
-    input: './src/karrio.ts',
+    input: './api/karrio.ts',
     plugins: [
       rollupTypescript()
     ]
@@ -20,4 +20,3 @@ gulp.task('build', async function () {
     sourcemap: true,
   });
 });
-

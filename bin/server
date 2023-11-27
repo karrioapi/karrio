@@ -13,24 +13,28 @@ elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
     curl http://localhost:5002/shipping-openapi -o "${ROOT:?}/schemas/openapi.yml"
 	cd -
-elif [[ "$*" == *build:js* ]]; then
-	cd "${ROOT:?}/.codegen/typescript"
-	rm -rf node_modules;
-    npm install;
-	npx gulp build --output "${ROOT:?}/apps/api/karrio/server/static/karrio/js/karrio.js" || exit 1
+elif [[ "$*" == *gen:ts:cli* ]]; then
+    cd "${ROOT:?}"
+	docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+		-i /local/schemas/openapi.yml \
+        -g typescript-fetch \
+		-o /local/packages/karriojs/api/generated \
+        --additional-properties=typescriptThreePlus=true \
+        --additional-properties=modelPropertyNaming=snake_case \
+        --additional-properties=useSingleRequestParameter=true
 	cd -
-	karrio collectstatic --noinput
-elif [[ "$*" == *build:pkgs* ]]; then
-	cd "${ROOT:?}"
-    rm -rf ${DIST}/*
+elif [[ "$*" == *build:js* ]]; then
+	cd "${ROOT:?}/packages/karriojs"
 
     # Generate ts client
     . ${ROOT}/bin/server gen:ts:cli || exit 1
 
     # Build js client
-    . ${ROOT}/bin/server build:js || exit 1
-
+	rm -rf node_modules;
+    npm install;
+	npx gulp build --output "${ROOT:?}/apps/api/karrio/server/static/karrio/js/karrio.js" || exit 1
 	cd -
+	karrio collectstatic --noinput > /dev/null 2>&1
 else
     echo "Help: You can pass any the following commands to the server"
     echo "-----"

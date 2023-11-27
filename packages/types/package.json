@@ -3,6 +3,7 @@
   "version": "2023.9.0",
   "license": "Apache-2.0",
   "dependencies": {
+    "axios": "^0.25.0",
     "graphql-tag": "^2.12.6"
   }
 }

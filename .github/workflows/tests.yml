@@ -42,6 +42,6 @@ jobs:
       - name: Install
         run: |
           npm install
-      - name: Lint
+      - name: Test Build
         run: |
-          npm run build
+          npm run build -w apps/dashboard 

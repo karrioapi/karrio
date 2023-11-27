@@ -15,7 +15,7 @@ var Karrio = (function () {
     OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
     PERFORMANCE OF THIS SOFTWARE.
     ***************************************************************************** */
-    /* global Reflect, Promise */
+    /* global Reflect, Promise, SuppressedError, Symbol */
 
     var extendStatics = function(d, b) {
         extendStatics = Object.setPrototypeOf ||
@@ -80,6 +80,11 @@ var Karrio = (function () {
             if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
         }
     }
+
+    typeof SuppressedError === "function" ? SuppressedError : function (error, suppressed, message) {
+        var e = new Error(message);
+        return e.name = "SuppressedError", e.error = error, e.suppressed = suppressed, e;
+    };
 
     /* tslint:disable */
     var BASE_PATH = "http://localhost".replace(/\/+$/, "");
@@ -334,7 +339,7 @@ var Karrio = (function () {
         };
         BaseAPI.prototype.createFetchParams = function (context, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var url, headers, initOverrideFn, initParams, overriddenInit, _a, init;
+                var url, headers, initOverrideFn, initParams, overriddenInit, _a, body, init;
                 var _this = this;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
@@ -366,11 +371,18 @@ var Karrio = (function () {
                                 })];
                         case 1:
                             overriddenInit = __assign.apply(void 0, _a.concat([(_b.sent())]));
-                            init = __assign(__assign({}, overriddenInit), { body: isFormData(overriddenInit.body) ||
-                                    overriddenInit.body instanceof URLSearchParams ||
-                                    isBlob(overriddenInit.body)
-                                    ? overriddenInit.body
-                                    : JSON.stringify(overriddenInit.body) });
+                            if (isFormData(overriddenInit.body)
+                                || (overriddenInit.body instanceof URLSearchParams)
+                                || isBlob(overriddenInit.body)) {
+                                body = overriddenInit.body;
+                            }
+                            else if (this.isJsonMime(headers['Content-Type'])) {
+                                body = JSON.stringify(overriddenInit.body);
+                            }
+                            else {
+                                body = overriddenInit.body;
+                            }
+                            init = __assign(__assign({}, overriddenInit), { body: body });
                             return [2 /*return*/, { url: url, init: init }];
                     }
                 });
@@ -541,6 +553,35 @@ var Karrio = (function () {
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+        };
+    }
+    function AddressToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'id': value.id,
+            'postal_code': value.postal_code,
+            'city': value.city,
+            'federal_tax_id': value.federal_tax_id,
+            'state_tax_id': value.state_tax_id,
+            'person_name': value.person_name,
+            'company_name': value.company_name,
+            'country_code': value.country_code,
+            'email': value.email,
+            'phone_number': value.phone_number,
+            'state_code': value.state_code,
+            'suburb': value.suburb,
+            'residential': value.residential,
+            'street_number': value.street_number,
+            'address_line1': value.address_line1,
+            'address_line2': value.address_line2,
+            'validate_location': value.validate_location,
+            'object_type': value.object_type,
+            'validation': AddressValidationToJSON(value.validation),
         };
     }
 
@@ -745,34 +786,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function OrderDataShippingToToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'suburb': value.suburb,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
-        };
-    }
-
-    /* tslint:disable */
     function OrderDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -784,7 +797,7 @@ var Karrio = (function () {
             'order_id': value.order_id,
             'order_date': value.order_date,
             'source': value.source,
-            'shipping_to': OrderDataShippingToToJSON(value.shipping_to),
+            'shipping_to': AddressDataToJSON(value.shipping_to),
             'shipping_from': OrderDataShippingFromToJSON(value.shipping_from),
             'billing_address': OrderBillingAddressToJSON(value.billing_address),
             'line_items': (value.line_items.map(CommodityDataToJSON)),
@@ -830,6 +843,34 @@ var Karrio = (function () {
             'reference_number': value.reference_number,
             'freight_class': value.freight_class,
             'options': value.options,
+        };
+    }
+
+    /* tslint:disable */
+    function PaymentFromJSON(json) {
+        return PaymentFromJSONTyped(json);
+    }
+    function PaymentFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
+            'currency': !exists(json, 'currency') ? undefined : json['currency'],
+            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
+        };
+    }
+    function PaymentToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'paid_by': value.paid_by,
+            'currency': value.currency,
+            'account_number': value.account_number,
         };
     }
 
@@ -944,62 +985,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentDataShipperToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'suburb': value.suburb,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
-        };
-    }
-
-    /* tslint:disable */
-    function ShipmentPaymentFromJSON(json) {
-        return ShipmentPaymentFromJSONTyped(json);
-    }
-    function ShipmentPaymentFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
-            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
-        };
-    }
-    function ShipmentPaymentToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'paid_by': value.paid_by,
-            'currency': value.currency,
-            'account_number': value.account_number,
-        };
-    }
-
-    /* tslint:disable */
     function ShipmentDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -1008,11 +993,11 @@ var Karrio = (function () {
             return null;
         }
         return {
-            'shipper': ShipmentDataShipperToJSON(value.shipper),
-            'recipient': ShipmentDataShipperToJSON(value.recipient),
+            'shipper': AddressDataToJSON(value.shipper),
+            'recipient': AddressDataToJSON(value.recipient),
             'parcels': (value.parcels.map(ParcelDataToJSON)),
             'options': value.options,
-            'payment': ShipmentPaymentToJSON(value.payment),
+            'payment': PaymentToJSON(value.payment),
             'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
             'customs': ShipmentDataCustomsToJSON(value.customs),
             'reference': value.reference,
@@ -1451,10 +1436,10 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function OperationResponseConfirmationFromJSON(json) {
-        return OperationResponseConfirmationFromJSONTyped(json);
+    function OperationConfirmationFromJSON(json) {
+        return OperationConfirmationFromJSONTyped(json);
     }
-    function OperationResponseConfirmationFromJSONTyped(json, ignoreDiscriminator) {
+    function OperationConfirmationFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
@@ -1476,7 +1461,7 @@ var Karrio = (function () {
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'confirmation': !exists(json, 'confirmation') ? undefined : OperationResponseConfirmationFromJSON(json['confirmation']),
+            'confirmation': !exists(json, 'confirmation') ? undefined : OperationConfirmationFromJSON(json['confirmation']),
         };
     }
 
@@ -1485,37 +1470,6 @@ var Karrio = (function () {
         return OrderShippingFromFromJSONTyped(json);
     }
     function OrderShippingFromFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
-        };
-    }
-
-    /* tslint:disable */
-    function OrderShippingToFromJSON(json) {
-        return OrderShippingToFromJSONTyped(json);
-    }
-    function OrderShippingToFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
@@ -1616,6 +1570,7 @@ var Karrio = (function () {
             'total_charge': !exists(json, 'total_charge') ? undefined : json['total_charge'],
             'transit_days': !exists(json, 'transit_days') ? undefined : json['transit_days'],
             'extra_charges': !exists(json, 'extra_charges') ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
+            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
             'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'test_mode': json['test_mode'],
         };
@@ -1637,6 +1592,7 @@ var Karrio = (function () {
             'total_charge': value.total_charge,
             'transit_days': value.transit_days,
             'extra_charges': value.extra_charges === undefined ? undefined : (value.extra_charges.map(ChargeToJSON)),
+            'estimated_delivery': value.estimated_delivery,
             'meta': value.meta,
             'test_mode': value.test_mode,
         };
@@ -1717,39 +1673,9 @@ var Karrio = (function () {
             'total_charge': !exists(json, 'total_charge') ? undefined : json['total_charge'],
             'transit_days': !exists(json, 'transit_days') ? undefined : json['transit_days'],
             'extra_charges': !exists(json, 'extra_charges') ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
+            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
             'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'test_mode': json['test_mode'],
-        };
-    }
-
-    /* tslint:disable */
-    function ShipmentShipperFromJSON(json) {
-        return ShipmentShipperFromJSONTyped(json);
-    }
-    function ShipmentShipperFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
 
@@ -1765,12 +1691,12 @@ var Karrio = (function () {
             'id': !exists(json, 'id') ? undefined : json['id'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
-            'shipper': ShipmentShipperFromJSON(json['shipper']),
-            'recipient': ShipmentShipperFromJSON(json['recipient']),
+            'shipper': AddressFromJSON(json['shipper']),
+            'recipient': AddressFromJSON(json['recipient']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': !exists(json, 'services') ? undefined : json['services'],
             'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': !exists(json, 'payment') ? undefined : ShipmentPaymentFromJSON(json['payment']),
+            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
             'billing_address': !exists(json, 'billing_address') ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
             'customs': !exists(json, 'customs') ? undefined : ShipmentCustomsFromJSON(json['customs']),
             'rates': !exists(json, 'rates') ? undefined : (json['rates'].map(RateFromJSON)),
@@ -1811,7 +1737,7 @@ var Karrio = (function () {
             'order_date': !exists(json, 'order_date') ? undefined : json['order_date'],
             'source': !exists(json, 'source') ? undefined : json['source'],
             'status': !exists(json, 'status') ? undefined : json['status'],
-            'shipping_to': OrderShippingToFromJSON(json['shipping_to']),
+            'shipping_to': AddressFromJSON(json['shipping_to']),
             'shipping_from': !exists(json, 'shipping_from') ? undefined : OrderShippingFromFromJSON(json['shipping_from']),
             'billing_address': !exists(json, 'billing_address') ? undefined : OrderBillingAddressFromJSON(json['billing_address']),
             'line_items': (json['line_items'].map(LineItemFromJSON)),
@@ -1966,66 +1892,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function PickupAddressFromJSON(json) {
-        return PickupAddressFromJSONTyped(json);
-    }
-    function PickupAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
-        };
-    }
-    function PickupAddressToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'id': value.id,
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'suburb': value.suburb,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
-            'object_type': value.object_type,
-            'validation': AddressValidationToJSON(value.validation),
-        };
-    }
-
-    /* tslint:disable */
     function PickupPickupChargeFromJSON(json) {
         return PickupPickupChargeFromJSONTyped(json);
     }
@@ -2058,7 +1924,7 @@ var Karrio = (function () {
             'pickup_charge': !exists(json, 'pickup_charge') ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
             'ready_time': !exists(json, 'ready_time') ? undefined : json['ready_time'],
             'closing_time': !exists(json, 'closing_time') ? undefined : json['closing_time'],
-            'address': PickupAddressFromJSON(json['address']),
+            'address': AddressFromJSON(json['address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
             'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
@@ -2082,34 +1948,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function PickupCancelRequestAddressToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'suburb': value.suburb,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
-        };
-    }
-
-    /* tslint:disable */
     function PickupCancelRequestToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2119,7 +1957,7 @@ var Karrio = (function () {
         }
         return {
             'confirmation_number': value.confirmation_number,
-            'address': PickupCancelRequestAddressToJSON(value.address),
+            'address': AddressDataToJSON(value.address),
             'pickup_date': value.pickup_date,
             'reason': value.reason,
         };
@@ -2135,7 +1973,7 @@ var Karrio = (function () {
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': PickupCancelRequestAddressToJSON(value.address),
+            'address': AddressDataToJSON(value.address),
             'ready_time': value.ready_time,
             'closing_time': value.closing_time,
             'instruction': value.instruction,
@@ -2172,41 +2010,13 @@ var Karrio = (function () {
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': PickupCancelRequestAddressToJSON(value.address),
+            'address': AddressDataToJSON(value.address),
             'parcels': (value.parcels.map(ParcelDataToJSON)),
             'ready_time': value.ready_time,
             'closing_time': value.closing_time,
             'instruction': value.instruction,
             'package_location': value.package_location,
             'options': value.options,
-        };
-    }
-
-    /* tslint:disable */
-    function PickupResponsePickupFromJSON(json) {
-        return PickupResponsePickupFromJSONTyped(json);
-    }
-    function PickupResponsePickupFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'carrier_name': json['carrier_name'],
-            'carrier_id': json['carrier_id'],
-            'confirmation_number': json['confirmation_number'],
-            'pickup_date': !exists(json, 'pickup_date') ? undefined : json['pickup_date'],
-            'pickup_charge': !exists(json, 'pickup_charge') ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
-            'ready_time': !exists(json, 'ready_time') ? undefined : json['ready_time'],
-            'closing_time': !exists(json, 'closing_time') ? undefined : json['closing_time'],
-            'address': PickupAddressFromJSON(json['address']),
-            'parcels': (json['parcels'].map(ParcelFromJSON)),
-            'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
-            'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'test_mode': json['test_mode'],
         };
     }
 
@@ -2220,7 +2030,7 @@ var Karrio = (function () {
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'pickup': !exists(json, 'pickup') ? undefined : PickupResponsePickupFromJSON(json['pickup']),
+            'pickup': !exists(json, 'pickup') ? undefined : PickupFromJSON(json['pickup']),
         };
     }
 
@@ -2234,7 +2044,7 @@ var Karrio = (function () {
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': PickupCancelRequestAddressToJSON(value.address),
+            'address': AddressDataToJSON(value.address),
             'ready_time': value.ready_time,
             'closing_time': value.closing_time,
             'instruction': value.instruction,
@@ -2256,7 +2066,7 @@ var Karrio = (function () {
         }
         return {
             'pickup_date': value.pickup_date,
-            'address': PickupAddressToJSON(value.address),
+            'address': AddressToJSON(value.address),
             'parcels': (value.parcels.map(ParcelToJSON)),
             'confirmation_number': value.confirmation_number,
             'ready_time': value.ready_time,
@@ -2264,34 +2074,6 @@ var Karrio = (function () {
             'instruction': value.instruction,
             'package_location': value.package_location,
             'options': value.options,
-        };
-    }
-
-    /* tslint:disable */
-    function RateRequestShipperToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'suburb': value.suburb,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
         };
     }
 
@@ -2304,8 +2086,8 @@ var Karrio = (function () {
             return null;
         }
         return {
-            'shipper': RateRequestShipperToJSON(value.shipper),
-            'recipient': RateRequestShipperToJSON(value.recipient),
+            'shipper': AddressDataToJSON(value.shipper),
+            'recipient': AddressDataToJSON(value.recipient),
             'parcels': (value.parcels.map(ParcelDataToJSON)),
             'services': value.services,
             'options': value.options,
@@ -2360,21 +2142,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentPurchaseDataPaymentToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'paid_by': value.paid_by,
-            'currency': value.currency,
-            'account_number': value.account_number,
-        };
-    }
-
-    /* tslint:disable */
     function ShipmentPurchaseDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -2385,7 +2152,7 @@ var Karrio = (function () {
         return {
             'selected_rate_id': value.selected_rate_id,
             'label_type': value.label_type,
-            'payment': ShipmentPurchaseDataPaymentToJSON(value.payment),
+            'payment': PaymentToJSON(value.payment),
             'reference': value.reference,
             'metadata': value.metadata,
         };
@@ -2417,7 +2184,7 @@ var Karrio = (function () {
         }
         return {
             'label_type': value.label_type,
-            'payment': ShipmentPurchaseDataPaymentToJSON(value.payment),
+            'payment': PaymentToJSON(value.payment),
             'options': value.options,
             'reference': value.reference,
             'metadata': value.metadata,
@@ -2433,11 +2200,11 @@ var Karrio = (function () {
             return null;
         }
         return {
-            'shipper': ShipmentDataShipperToJSON(value.shipper),
-            'recipient': ShipmentDataShipperToJSON(value.recipient),
+            'shipper': AddressDataToJSON(value.shipper),
+            'recipient': AddressDataToJSON(value.recipient),
             'parcels': (value.parcels.map(ParcelDataToJSON)),
             'options': value.options,
-            'payment': ShipmentPaymentToJSON(value.payment),
+            'payment': PaymentToJSON(value.payment),
             'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
             'customs': ShipmentDataCustomsToJSON(value.customs),
             'reference': value.reference,
@@ -2473,12 +2240,12 @@ var Karrio = (function () {
             'id': !exists(json, 'id') ? undefined : json['id'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
-            'shipper': ShipmentShipperFromJSON(json['shipper']),
-            'recipient': ShipmentShipperFromJSON(json['recipient']),
+            'shipper': AddressFromJSON(json['shipper']),
+            'recipient': AddressFromJSON(json['recipient']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': !exists(json, 'services') ? undefined : json['services'],
             'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': !exists(json, 'payment') ? undefined : ShipmentPaymentFromJSON(json['payment']),
+            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
             'billing_address': !exists(json, 'billing_address') ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
             'customs': !exists(json, 'customs') ? undefined : ShipmentCustomsFromJSON(json['customs']),
             'rates': !exists(json, 'rates') ? undefined : (json['rates'].map(RateFromJSON)),
@@ -2664,32 +2431,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function TrackingResponseTrackingFromJSON(json) {
-        return TrackingResponseTrackingFromJSONTyped(json);
-    }
-    function TrackingResponseTrackingFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'carrier_name': json['carrier_name'],
-            'carrier_id': json['carrier_id'],
-            'tracking_number': json['tracking_number'],
-            'info': !exists(json, 'info') ? undefined : TrackingStatusInfoFromJSON(json['info']),
-            'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
-            'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
-            'test_mode': json['test_mode'],
-            'status': !exists(json, 'status') ? undefined : json['status'],
-            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-        };
-    }
-
-    /* tslint:disable */
     function TrackingResponseFromJSON(json) {
         return TrackingResponseFromJSONTyped(json);
     }
@@ -2699,7 +2440,7 @@ var Karrio = (function () {
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'tracking': !exists(json, 'tracking') ? undefined : TrackingResponseTrackingFromJSON(json['tracking']),
+            'tracking': !exists(json, 'tracking') ? undefined : TrackingStatusFromJSON(json['tracking']),
         };
     }
 
@@ -4934,6 +4675,7 @@ var Karrio = (function () {
         /**
          * You can track a shipment by specifying the carrier and the shipment tracking number.
          * Track a shipment
+         * @deprecated
          */
         ProxyApi.prototype.trackShipmentRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -4987,6 +4729,7 @@ var Karrio = (function () {
         /**
          * You can track a shipment by specifying the carrier and the shipment tracking number.
          * Track a shipment
+         * @deprecated
          */
         ProxyApi.prototype.trackShipment = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -5745,6 +5488,7 @@ var Karrio = (function () {
         /**
          * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
          * Create a package tracker
+         * @deprecated
          */
         TrackersApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -5804,6 +5548,7 @@ var Karrio = (function () {
         /**
          * This API creates or retrieves (if existent) a tracking status object containing the details and events of a shipping in progress.
          * Create a package tracker
+         * @deprecated
          */
         TrackersApi.prototype.create = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6649,6 +6394,7 @@ var Karrio = (function () {
         /**
          * Dismiss an order from fulfillment.
          * Dismiss an order
+         * @deprecated
          */
         OrdersApi.prototype.dismissRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6696,6 +6442,7 @@ var Karrio = (function () {
         /**
          * Dismiss an order from fulfillment.
          * Dismiss an order
+         * @deprecated
          */
         OrdersApi.prototype.dismiss = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {

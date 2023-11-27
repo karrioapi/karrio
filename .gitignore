@@ -124,11 +124,8 @@ node_modules
 
 .idea/
 staticfiles/*
-server/main/karrio/server/staticfiles/*
-!server/main/karrio/server/staticfiles/.gitkeep
+apps/api/karrio/server/staticfiles/*
 
 .karrio/
-.codegen/*
-!.codegen/typescript/
-.codegen/typescript/api/generated
+packages/karriojs/api/generated
 !docker/.env
