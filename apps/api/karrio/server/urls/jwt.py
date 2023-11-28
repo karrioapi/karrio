@@ -40,7 +40,7 @@ class TokenObtainPairSerializer(jwt.TokenObtainPairSerializer):
         if jwt.api_settings.UPDATE_LAST_LOGIN:
             jwt.update_last_login(None, self.user)
 
-        # Factor is enabled if False, so we need to send the token to the user
+        # Multi Factor is enabled if False, so we need to send the token to the user
         if not refresh["is_verified"]:
             default_device(self.user).generate_challenge()
 
