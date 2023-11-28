@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+# Activate python env
+source "bin/activate-env" > /dev/null 2>&1
+
+# Run karrio cli
+python "${ROOT}/modules/cli" "${@}"

@@ -1,0 +1,17 @@
+{
+  "messages": [
+    {
+      "id": "0",
+      "type": "INFOS",
+      "messageContent": "La requte a t traite avec succs",
+      "replacementValues": []
+    }
+  ],
+  "labelXmlV2Reponse": null,
+  "labelV2Response": {
+    "parcelNumber": "6A15984040331",
+    "parcelNumberPartner": "0075001116A1598404033801250L",
+    "pdfUrl": null,
+    "fields": null
+  }
+}

@@ -1,7 +1,0 @@
-{
-    "accountNumber": "string",
-    "subAccountNumber": "string",
-    "dispatchNumber": [
-        "string"
-    ]
-}

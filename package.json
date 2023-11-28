@@ -1,0 +1,22 @@
+{
+  "private": true,
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+  },
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.0.1",
+    "eslint": "^8.48.0",
+    "prettier": "^3.0.3",
+    "tsconfig": "*",
+    "turbo": "latest"
+  },
+  "name": "karrio",
+  "packageManager": "npm@9.8.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ]
+}

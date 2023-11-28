@@ -1,0 +1,10 @@
+{
+  "name": "@karrio/lib",
+  "version": "2023.9.0",
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "graphql-tag": "^2.12.6"
+  }
+}

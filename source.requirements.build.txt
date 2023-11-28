@@ -1,73 +1,54 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/?sourceBuild
 
-# Schemas update
-./schemas/aramex
-./schemas/australiapost
-./schemas/canadapost
-./schemas/canpar
-./schemas/chronopost
-# ./schemas/dhl_express
-./schemas/dhl_poland
-./schemas/dicom
-./schemas/dpd
-./schemas/dpdhl
-# ./schemas/fedex
-./schemas/purolator
-./schemas/royalmail
-./schemas/sendle
-./schemas/sf_express
-./schemas/tnt
-./schemas/usps
-./schemas/yanwen
-./schemas/yunexpress
+# Carrier Extentions modules
+-e ./modules/sdk
+-e ./modules/connectors/amazon_shipping
+-e ./modules/connectors/aramex
+-e ./modules/connectors/asendia_us
+-e ./modules/connectors/australiapost
+-e ./modules/connectors/boxknight
+-e ./modules/connectors/bpost
+-e ./modules/connectors/canadapost
+-e ./modules/connectors/canpar
+-e ./modules/connectors/chronopost
+-e ./modules/connectors/colissimo
+-e ./modules/connectors/dhl_express
+-e ./modules/connectors/dhl_poland
+-e ./modules/connectors/dhl_universal
+-e ./modules/connectors/dicom
+-e ./modules/connectors/dpd
+-e ./modules/connectors/dpdhl
+-e ./modules/connectors/fedex
+-e ./modules/connectors/generic
+-e ./modules/connectors/geodis
+-e ./modules/connectors/laposte
+-e ./modules/connectors/nationex
+-e ./modules/connectors/purolator
+-e ./modules/connectors/roadie
+-e ./modules/connectors/royalmail
+-e ./modules/connectors/sendle
+-e ./modules/connectors/tnt
+-e ./modules/connectors/ups
+-e ./modules/connectors/usps
+-e ./modules/connectors/usps_international
 
-# Carrier Extentions in Development
-./sdk/core
-./sdk/extensions/generic
-./sdk/extensions/amazon_mws
-./sdk/extensions/aramex
-./sdk/extensions/australiapost
-./sdk/extensions/boxknight
-./sdk/extensions/canadapost
-./sdk/extensions/canpar
-./sdk/extensions/chronopost
-./sdk/extensions/dhl_express
-./sdk/extensions/dhl_poland
-./sdk/extensions/dhl_universal
-./sdk/extensions/dicom
-./sdk/extensions/dpd
-./sdk/extensions/dpdhl
-./sdk/extensions/fedex
-./sdk/extensions/geodis
-./sdk/extensions/laposte
-./sdk/extensions/nationex
-./sdk/extensions/purolator
-./sdk/extensions/roadie
-./sdk/extensions/royalmail
-./sdk/extensions/sendle
-./sdk/extensions/sf_express
-./sdk/extensions/tnt
-./sdk/extensions/ups
-./sdk/extensions/usps
-./sdk/extensions/usps_international
-./sdk/extensions/yanwen
-./sdk/extensions/yunexpress
+-e ./modules/connectors/easypost
+-e ./modules/connectors/eshipper
+-e ./modules/connectors/freightcom
+-e ./modules/connectors/locate2u
+-e ./modules/connectors/zoom2u
 
-# Carrier Hub Extentions in Development
-./sdk/vendors/easypost
-./sdk/vendors/eshipper
-./sdk/vendors/freightcom
 
-# karrio server core modules
-./server/modules/iam
-./server/modules/core
-./server/modules/graph
-./server/main
-./server/modules/apps
-./server/modules/data
-./server/modules/events
-./server/modules/manager
-./server/modules/orders
-./server/modules/proxy
-./server/modules/pricing
-./server/modules/documents
+# karrio server modules
+-e ./modules/iam
+-e ./modules/core
+-e ./apps/api
+-e ./modules/graph
+-e ./modules/apps
+-e ./modules/data
+-e ./modules/events
+-e ./modules/manager
+-e ./modules/orders
+-e ./modules/proxy
+-e ./modules/pricing
+-e ./modules/documents

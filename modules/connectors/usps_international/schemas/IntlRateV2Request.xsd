@@ -1,0 +1,72 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="IntlRateV2Request">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="Revision"/>
+                <xs:element name="Package" maxOccurs="25" minOccurs="1">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="Pounds" maxOccurs="1" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="0"/>
+                                        <xs:maxInclusive value="70"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="Ounces" maxOccurs="1" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:decimal">
+                                        <xs:minInclusive value="0.0"/>
+                                        <xs:fractionDigits value="8" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:boolean" name="Machinable" default="true" minOccurs="0"/>
+                            <xs:element type="xs:string" name="MailType" minOccurs="1" use="required"/>
+                            <xs:element name="GXG" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="POBoxFlag" use="required"/>
+                                        <xs:element type="xs:string" name="GiftFlag" use="required"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element type="xs:string" name="ValueOfContents" use="required"/>
+                            <xs:element type="xs:string" name="Country" use="required"/>
+                            <xs:element type="xs:string" name="Container" use="required"/>
+                            <xs:element type="xs:string" name="Size" use="required"/>
+                            <xs:element type="xs:decimal" name="Width" use="required"/>
+                            <xs:element type="xs:decimal" name="Length" use="required"/>
+                            <xs:element type="xs:decimal" name="Height" use="required"/>
+                            <xs:element type="xs:decimal" name="Girth" use="required"/>
+                            <xs:element type="xs:string" name="OriginZip"/>
+                            <xs:element type="xs:string" name="CommercialFlag"/>
+                            <xs:element type="xs:string" name="CommercialPlusFlag"/>
+                            <xs:element name="ExtraServices" use="required">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:integer" name="ExtraService" minOccurs="1" maxOccurs="6"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element type="xs:string" name="AcceptanceDateTime" minOccurs="0"/>
+                            <xs:element type="xs:string" name="DestinationPostalCode" minOccurs="0"/>
+                            <xs:element name="Content">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="ContentType"/>
+                                        <xs:element type="xs:string" name="ContentDescription"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="ID" use="requirede"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

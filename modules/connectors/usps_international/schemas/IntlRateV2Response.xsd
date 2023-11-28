@@ -1,0 +1,104 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="IntlRateV2Response">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Package" maxOccurs="unbounded" minOccurs="0">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element type="xs:string" name="Prohibitions"/>
+              <xs:element type="xs:string" name="Restrictions"/>
+              <xs:element type="xs:string" name="Observations"/>
+              <xs:element type="xs:string" name="CustomsForms"/>
+              <xs:element type="xs:string" name="ExpressMail"/>
+              <xs:element type="xs:string" name="AreasServed"/>
+              <xs:element type="xs:string" name="AdditionalRestrictions"/>
+              <xs:element name="Content" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:string" name="ContentType"/>
+                    <xs:element type="xs:string" name="ContentDescription"/>
+                  </xs:sequence>
+                </xs:complexType>
+              </xs:element>
+              <xs:element name="Service" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element type="xs:float" name="Pounds"/>
+                    <xs:element type="xs:float" name="Ounces"/>
+                    <xs:element type="xs:string" name="Machinable" minOccurs="0"/>
+                    <xs:element type="xs:string" name="MailType"/>
+                    <xs:element name="GXG" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element type="xs:string" name="POBoxFlag"/>
+                          <xs:element type="xs:string" name="GiftFlag"/>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element type="xs:string" name="Container"/>
+                    <xs:element type="xs:float" name="Width" minOccurs="0"/>
+                    <xs:element type="xs:float" name="Length" minOccurs="0"/>
+                    <xs:element type="xs:float" name="Height" minOccurs="0"/>
+                    <xs:element type="xs:float" name="Girth" minOccurs="0"/>
+                    <xs:element type="xs:string" name="Country"/>
+                    <xs:element type="xs:float" name="Postage"/>
+                    <xs:element type="xs:float" name="CommercialPostage"/>
+                    <xs:element type="xs:float" name="CommercialPlusPostage"/>
+                    <xs:element name="ExtraServices">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="ExtraService" maxOccurs="unbounded" minOccurs="0">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element type="xs:string" name="ServiceID"/>
+                                <xs:element type="xs:string" name="ServiceName"/>
+                                <xs:element type="xs:string" name="Available"/>
+                                <xs:element type="xs:string" name="OnlineAvailable"/>
+                                <xs:element type="xs:float" name="Price"/>
+                                <xs:element type="xs:float" name="OnlinePrice"/>
+                                <xs:element type="xs:string" name="DeclaredValueRequired" minOccurs="0"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                    <xs:element type="xs:float" name="ValueOfContents"/>
+                    <xs:element type="xs:string" name="InsComment" minOccurs="0"/>
+                    <xs:element type="xs:float" name="ParcelIndemnityCoverage"/>
+                    <xs:element type="xs:string" name="SvcCommitments"/>
+                    <xs:element type="xs:string" name="SvcDescription"/>
+                    <xs:element type="xs:string" name="MaxDimensions"/>
+                    <xs:element type="xs:float" name="MaxWeight"/>
+                    <xs:element type="xs:string" name="GuaranteeAvailability" minOccurs="0"/>
+                    <xs:element name="GXGLocations" minOccurs="0">
+                      <xs:complexType>
+                        <xs:sequence>
+                          <xs:element name="PostOffice">
+                            <xs:complexType>
+                              <xs:sequence>
+                                <xs:element type="xs:string" name="Name"/>
+                                <xs:element type="xs:string" name="Address"/>
+                                <xs:element type="xs:string" name="City"/>
+                                <xs:element type="xs:string" name="State"/>
+                                <xs:element type="xs:string" name="ZipCode"/>
+                                <xs:element type="xs:string" name="RetailGXGCutOffTime"/>
+                                <xs:element type="xs:string" name="SaturDayCutOffTime"/>
+                              </xs:sequence>
+                            </xs:complexType>
+                          </xs:element>
+                        </xs:sequence>
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                  <xs:attribute type="xs:short" name="ID" use="optional"/>
+                </xs:complexType>
+              </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="ID" use="optional"/>
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+</xs:schema>

@@ -103,26 +103,29 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-.idea
+# misc
+*.DS_Store
+*.pem
 
-.DS_Store
+# node
+node_modules
+
+# turbo
+.turbo
+
+# vercel
+.vercel
 
 # karrio stuff:
-sdk/**/poetry.lock
-schemas/**/poetry.lock
-ee/sdk/**/poetry.lock
-!sdk/core/karrio/lib
+!apps/dashboard/src/lib
+!packages/lib
 
 .bash_history
-*.DS_Store
 
 .idea/
 staticfiles/*
-server/main/karrio/server/staticfiles/*
-!server/main/karrio/server/staticfiles/.gitkeep
+apps/api/karrio/server/staticfiles/*
 
 .karrio/
-.codegen/*
-!.codegen/typescript/
-.codegen/typescript/api/generated
+packages/karriojs/api/generated
 !docker/.env

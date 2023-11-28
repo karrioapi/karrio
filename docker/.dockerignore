@@ -1,9 +1,0 @@
-# Ignore everything
-*
-
-!/requirements.txt
-!/docker/worker
-!/docker/Dockerfile
-!/docker/entrypoint
-!/server/gunicorn-cfg.py
-!/licenses/APACHE-LICENSE-2.0

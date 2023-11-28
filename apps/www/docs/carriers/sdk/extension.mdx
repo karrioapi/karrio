@@ -1,0 +1,349 @@
+---
+id: extension
+title: Extension
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## Custom Carrier
+
+The question we are most asked is: **How to add a custom carrier?**
+
+We have experimented and studied approximately ~100 shipping carriers API/web services to design the karrio structure as it is.
+
+The good news is that making it easy to add a custom carrier fits perfectly with karrio' vision.
+
+:::caution
+To integrate a custom carrier at this stage, you will need:
+
+- A minimal knowledge of Python
+- Write code to extend the abstract classes
+- Use the plugin/extension structure available
+- Read and Understand the carrier' API documentation
+
+:::
+
+---
+
+### Steps to integrate a custom carrier
+
+1. Create a karrio extension package
+
+2. Generate Python data types from the carrier API schemas
+
+:::info
+The package naming convention for extensions is `karrio.[carrier_name]`
+:::
+
+#### 1. Create a karrio extension package
+
+Once you have [karrio installed for development](/local-development) on your machine,
+You can run the following command to scafold a karrio extension for you carrier.
+
+```terminal
+python run add-extension
+```
+
+```
+Id: usps                                # Karrio unique carrier_name
+Name: USPS                              # Carrier label that will be used throughout the app
+Features [tracking, rating, shipping]:  # The carrier features you wish to integrate
+Version [2023.1]:                       # The extension initial version
+Is XML API? [y/n]:                      # Specify whether the carrier' API data format is XML. (n - for JSON APIs)
+```
+
+This command will create a karrio compatible extension folder under `sdk/extensions/[carrier_name]`
+with all the boilerplate code required for your integration.
+From there, all you have to do is implement the API data mapping from and to karrio unified interface and add API contract tests
+to ensure that karrio generates the right requests for your API.
+Additionally, you need to instruct karrio on how to parse responses returned from your carrier' API.
+
+#### 2. Generate Python data types from the carrier API schemas
+
+Karrio uses some cool open source projects to generate API schema datatypes.
+
+:::info
+We strongly believe in **types** because with a good IDE setup, they help you understand
+the datatypes available and makes maintenance easy.
+:::
+
+- Generate Python datatypes for an XML/SOAP API
+
+Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
+Please check the [canadapost schema package](https://github.com/karrioapi/karrio/blob/main/schemas/canadapost/generate.sh) as an example.
+
+> generateDS is installed along with karrio' dev dependencies. So it should already be available.
+
+- Generate Python datatypes for a JSON API
+
+Karrio uses a fork of `quicktype` to generate Python dataclasses from the `jstruct` library to turn JSON request and response
+samples.
+Please check the [amazon_mws schema scripting](https://github.com/karrioapi/karrio/blob/main/sdk/extensions/amazon_mws/generate.sh) as an example.
+
+
+:::info
+To use quicktype, you need to build a the custom docker image we have prepared for our fork.
+
+```terminal
+./bin/build-tool-image
+```
+:::
+---
+
+### Extension anatomy
+
+Considering the vision we aimed to achieve with karrio, the codebase has been modularized with a clear separation of
+concerns to decouple the carrier integration from the interface abstraction. Additionally, each carrier
+integration is done in an isolated self-contained Python package.
+
+As a result, we have a very modular ecosystem where one can only select the carrier integrations of interest without
+carrying the whole codebase.
+
+**Most importantly, this flexibility allows the integration of additional carrier services under the karrio umbrella.**
+
+:::info
+karrio makes shipping API integration easy for a single carrier and in a multi-carrier scenario, the value
+is exponential.
+:::
+
+#### Module convention
+
+Two modules are required to create a karrio extension.
+
+:::info `karrio.mappers.[carrier_name]`
+This is where the karrio abstract classes are implemented. Also, the Metadata require to identified
+the extension is also provided there.
+
+> on runtime, karrio retrieves all mappers by going trought the `karrio.mappers` modules
+
+:::
+
+:::info `karrio.providers.[carrier_name]`
+This is where the mapping between karrio Unified API data is mapped on the carrier data type corresponding requests
+:::
+
+#### extension signature
+
+The Mapper is the cornerstone ofkarrio 's abstraction. A `Metadata` declared at `karrio.mappers.[carrier_name].__init__`
+specifies the integration classes required to define a karrio compatible extension.
+
+```text
+from karrio.core.metadata import Metadata
+
+from karrio.mappers.[carrier_name].mapper import Mapper
+from karrio.mappers.[carrier_name].proxy import Proxy
+from karrio.mappers.[carrier_name].settings import Settings
+import karrio.providers.[carrier_name].units as units
+
+
+METADATA = Metadata(
+    id="[carrier_name]",  # e.g: "ddp_uk"
+    label="[Carrier Name]",  # e.g: "DDP UK"
+
+    # Integrations
+    Mapper=Mapper,
+    Proxy=Proxy,
+    Settings=Settings,
+
+    # Data Units (Optional...)
+    options=units.OptionCode,  # Enum of Shipping options supported by the carrier
+    package_presets=units.PackagePresets, # Enum of parcel presets/templates
+    services=units.ServiceType,  # Enum of Shipping services supported by the carrier
+
+    is_hub=False # True if the carrier is a hub like (EasyPost, Shippo, Postmen...)
+)
+```
+
+#### file structure
+
+The carrier extension package folder structure looks like this
+
+```text
+extensions/[carrier_name]/
+├── karrio
+│   ├── mappers
+│   │   └── [carrier_name]
+│   │       ├── __init__.py
+│   │       ├── mapper.py
+│   │       ├── proxy.py
+│   │       └── settings.py
+│   └── providers
+│       └── [carrier_name]
+│           ├── __init__.py
+│           ├── address.py
+│           ├── error.py
+│           ├── pickup
+│           │   ├── __init__.py
+│           │   ├── cancel.py
+│           │   ├── create.py
+│           │   └── update.py
+│           ├── rate.py
+│           ├── shipment
+│           │   ├── __init__.py
+│           │   ├── cancel.py
+│           │   └── create.py
+│           ├── tracking.py
+│           ├── units.py
+│           └── utils.py
+└── setup.py
+```
+
+:::info
+Note that `pickup` and `shipment` modules are directories since there are often many sub to integrate such as
+**create**, **cancel**...
+:::
+
+---
+
+#### Mappers implementation
+
+The mapper function implementations consists of instantiating carrier specific request data types assigning
+
+<div id="tabs">
+<Tabs>
+<TabItem value="mapper" label="Mapper">
+
+```python
+# Import karrio unified API models
+from karrio.core.models import PickupRequest
+
+# Import requirements from the DHL generated data types library (py-dhl)
+from pydhl.book_pickup_global_req_3_0 import BookPURequest, MetaData
+from pydhl.pickupdatatypes_global_3_0 import (
+    Requestor,
+    Place,
+    Pickup,
+    WeightSeg,
+    RequestorContact,
+)
+
+def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[BookPURequest]:
+    weight = 0.00  # Total weight calculated from the sum of `payload.parcels[].weights`
+    # ...
+    request = BookPURequest(
+        Request=settings.Request(
+            MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
+        ),
+        schemaVersion=3.0,
+        RegionCode="AM",
+        Requestor=Requestor(
+            AccountNumber=settings.account_number,
+            AccountType="D",
+            RequestorContact=RequestorContact(
+                PersonName=payload.address.person_name,
+                Phone=payload.address.phone_number,
+                PhoneExtension=None,
+            ),
+            CompanyName=payload.address.company_name,
+        ),
+        Place=Place(
+            City=payload.address.city,
+            StateCode=payload.address.state_code,
+            PostalCode=payload.address.postal_code,
+            CompanyName=payload.address.company_name,
+            CountryCode=payload.address.country_code,
+            PackageLocation=payload.package_location,
+            LocationType="R" if payload.address.residential else "B",
+            Address1=payload.address.address_line1,
+            Address2=payload.address.address_line2,
+        ),
+        PickupContact=RequestorContact(
+            PersonName=payload.address.person_name, Phone=payload.address.phone_number
+        ),
+        Pickup=Pickup(
+            Pieces=len(payload.parcels),
+            PickupDate=payload.pickup_date,
+            ReadyByTime=f"{payload.ready_time}:00",
+            CloseTime=f"{payload.closing_time}:00",
+            SpecialInstructions=[payload.instruction],
+            RemotePickupFlag="Y",
+            weight=WeightSeg(
+                Weight=sum(p.weight for p in payload.parcel),
+                WeightUnit="LB"
+            ),
+        ),
+        ShipmentDetails=None,
+        ConsigneeDetails=None,
+    )
+
+    return Serializable(request)
+```
+
+</TabItem>
+<TabItem value="request" label="Request">
+
+```xml
+<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd" schemaVersion="3.">
+    <Request>
+        <ServiceHeader>
+
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID>site_id</SiteID>
+            <Password>password</Password>
+        </ServiceHeader>
+        <MetaData>
+            <SoftwareName>XMLPI</SoftwareName>
+            <SoftwareVersion>3.0</SoftwareVersion>
+        </MetaData>
+    </Request>
+    <RegionCode>AM</RegionCode>
+    <Requestor>
+        <AccountType>D</AccountType>
+        <AccountNumber>123456789</AccountNumber>
+        <RequestorContact>
+            <PersonName>Subhayu</PersonName>
+            <Phone>4801313131</Phone>
+        </RequestorContact>
+    </Requestor>
+    <Place>
+        <City>Montreal</City>
+        <CountryCode>CA</CountryCode>
+        <PostalCode>H8Z2Z3</PostalCode>
+    </Place>
+    <Pickup>
+        <PickupDate>2013-10-19</PickupDate>
+        <ReadyByTime>10:20</ReadyByTime>
+        <CloseTime>09:20</CloseTime>
+        <Pieces>1</Pieces>
+        <RemotePickupFlag>Y</RemotePickupFlag>
+        <weight>
+            <Weight>20.</Weight>
+            <WeightUnit>L</WeightUnit>
+        </weight>
+        <SpecialInstructions>behind the front desk</SpecialInstructions>
+    </Pickup>
+    <PickupContact>
+        <PersonName>Subhayu</PersonName>
+        <Phone>4801313131</Phone>
+    </PickupContact>
+</req:BookPURequest>
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+:::info
+The mapping function instantiates the carrier data types like a tree to allow a global view and simplify the
+mental relation between the `code` and the formatted data output `schema`.
+:::
+
+### Generated schema data types
+
+To keep to robustness and simplify the maintenance of the codebase, In karrio, we use Python data types reflecting
+the schemas of carriers we want to integrate.
+That said, defining every schema object's structure can be tedious, long and unproductive. Therefore, code generators
+are used to generate Python data types based of the schema format definition.
+
+- For `XML` and `SOAP` services, [generateDs](https://pypi.org/project/generateDS/) is used to generate `.xsd` files
+  into Python data types
+
+:::info
+Check the [generate.sh](https://github.com/karrio/karrio/blob/main/schemas/) file
+to see how genereDs is used.
+:::
+
+- For `JSON` services, [quicktype](https://github.com/karrio/quicktype) is used to generate `.json` files
+  into Python data types. We then use [jstruct](https://github.com/karrio/jstruct) as a replacement
+  for python dataclass to add automated nested object instantiation.

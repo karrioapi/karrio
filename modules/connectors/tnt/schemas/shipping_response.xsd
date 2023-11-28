@@ -1,0 +1,172 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+    <xs:include schemaLocation="shipping_common_definitions.xsd" />
+    <xs:element name="document">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="GROUPCODE" />
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="CREATE" />
+                </xs:sequence>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="RATE" />
+                </xs:sequence>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="BOOK" />
+                </xs:sequence>
+                <xs:sequence minOccurs="0">
+                    <xs:element ref="SHIP" />
+                </xs:sequence>
+                <xs:element ref="PRINT" />
+                <xs:element ref="ERROR" maxOccurs="unbounded" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="runtime_error">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>The runtime error messages returned by ExpressConnect e.g. login
+                    details not recognised </xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element name="error_reason" type="xs:string" />
+                <xs:element name="error_srcText" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="parse_error">
+        <xs:complexType>
+            <xs:annotation>
+                <xs:documentation>The XML parse error messages returned by ExpressConnect e.g.
+                    Element content is invalid according to the DTD/Schema.</xs:documentation>
+            </xs:annotation>
+            <xs:sequence>
+                <xs:element name="error_reason" type="xs:string" />
+                <xs:element name="error_line" type="xs:string" />
+                <xs:element name="error_linepos" type="xs:string" />
+                <xs:element name="error_srcText" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="ERROR">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="CODE" type="xs:string" />
+                <xs:element name="DESCRIPTION" type="xs:string" />
+                <xs:element name="SOURCE" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="PRINT">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="ERROR" minOccurs="0" maxOccurs="unbounded" />
+                <xs:element ref="CONNOTE" minOccurs="0" />
+                <xs:element ref="LABEL" minOccurs="0" />
+                <xs:element ref="MANIFEST" minOccurs="0" />
+                <xs:element ref="INVOICE" minOccurs="0" />
+                <xs:element name="EMAILTO" type="xs:string" />
+                <xs:element name="EMAILFROM" type="xs:string" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="LABEL">
+        <xs:complexType mixed="true">
+            <xs:choice>
+                <xs:element ref="ERROR" minOccurs="0" maxOccurs="unbounded" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CONNOTE">
+        <xs:complexType mixed="true">
+            <xs:choice>
+                <xs:element ref="ERROR" minOccurs="0" maxOccurs="unbounded" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="MANIFEST">
+        <xs:complexType mixed="true">
+            <xs:choice>
+                <xs:element ref="ERROR" minOccurs="0" maxOccurs="unbounded" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="INVOICE">
+        <xs:complexType mixed="true">
+            <xs:choice>
+                <xs:element ref="ERROR" minOccurs="0" maxOccurs="unbounded" />
+            </xs:choice>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RATE">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="ERROR" />
+                </xs:sequence>
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="PRICE" />
+                </xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CREATE">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="CONREF" />
+                <xs:element ref="CONNUMBER" />
+                <xs:element ref="SUCCESS" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="BOOK">
+        <xs:complexType>
+            <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="CONSIGNMENT" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SHIP">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="ERROR" />
+                </xs:sequence>
+                <xs:sequence minOccurs="0" maxOccurs="unbounded">
+                    <xs:element ref="CONSIGNMENT" />
+                </xs:sequence>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="CONSIGNMENT">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="CONREF" />
+                <xs:element ref="CONNUMBER" />
+                <xs:element ref="SUCCESS" />
+                <xs:element ref="FIRSTTIMETRADER" minOccurs="0" />
+                <xs:element ref="BOOKINGREF" minOccurs="0" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="SUCCESS" type="xs:string" />
+    <xs:element name="PRICE">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="RATEID" />
+                <xs:element ref="SERVICE" />
+                <xs:element ref="SERVICEDESC" />
+                <xs:element ref="OPTION" />
+                <xs:element ref="OPTIONDESC" />
+                <xs:element ref="CURRENCY" />
+                <xs:element name="RATE" type="xs:decimal" />
+                <xs:element ref="RESULT" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    <xs:element name="RATEID" type="xs:string" />
+    <xs:element name="SERVICEDESC" type="xs:string" />
+    <xs:element name="OPTIONDESC" type="xs:string" />
+    <xs:element name="RESULT" type="xs:string" />
+    <xs:element name="FIRSTTIMETRADER" type="xs:string" />
+    <xs:element name="BOOKINGREF" type="xs:string" />
+</xs:schema>

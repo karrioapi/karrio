@@ -1,0 +1,69 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="unqualified"
+    xmlns:jaxb="http://java.sun.com/xml/ns/jaxb"
+    jaxb:version="2.0">
+
+    <xs:annotation>
+        <xs:documentation>Schema for defining the various entities that will be used for all
+            ExpressConnect functions. </xs:documentation>
+    </xs:annotation>
+
+    <xs:complexType name="product">
+        <xs:all>
+            <xs:element name="id" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The identifier for the requested product/service e.g. 15N. </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="division" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The identifier for the requested product/service division.
+                        This is an optional element and if not specified will default to an
+                        appropriate division based on the origin and destination country selected </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="productDesc" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A short description of the product e.g. Express</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="type" type="xs:string" minOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Type of service for product chosen. Values are "D" for a
+                        document or "N" for non-documents. This is a mandatory element.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="options" type="options" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A container element for TNT product option codes.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+    <xs:complexType name="options">
+        <xs:sequence minOccurs="0" maxOccurs="4">
+            <xs:element name="option" type="option">
+                <xs:annotation>
+                    <xs:documentation>A container element for a TNT product option</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="option">
+        <xs:all>
+            <xs:element name="optionCode" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>The option must be a valid code from the TNT dataset e.g. PR</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="optionDesc" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>A short description of the option .e.g priority</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:all>
+    </xs:complexType>
+
+
+</xs:schema>

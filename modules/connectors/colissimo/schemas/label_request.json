@@ -1,0 +1,200 @@
+{
+  "contractNumber": "string",
+  "password": "string",
+  "outputFormat": {
+    "x": 0,
+    "y": 0,
+    "outputPrintingType": "string",
+    "dematerialized": true,
+    "returnType": "string",
+    "printCODDocument": true
+  },
+  "letter": {
+    "service": {
+      "productCode": "string",
+      "depositDate": "2019-08-24T14:15:22Z",
+      "mailBoxPicking": true,
+      "mailBoxPickingDate": "2019-08-24T14:15:22Z",
+      "vatCode": 0,
+      "vatPercentage": 0,
+      "vatAmount": 0,
+      "transportationAmount": 0,
+      "totalAmount": 0,
+      "orderNumber": "string",
+      "commercialName": "string",
+      "returnTypeChoice": 0,
+      "reseauPostal": "string"
+    },
+    "parcel": {
+      "parcelNumber": "string",
+      "insuranceAmount": 0,
+      "insuranceValue": 0,
+      "recommendationLevel": "string",
+      "weight": 0,
+      "nonMachinable": true,
+      "returnReceipt": true,
+      "instructions": "string",
+      "pickupLocationId": "string",
+      "ftd": true,
+      "ddp": true,
+      "codamount": 0,
+      "codcurrency": "string",
+      "cod": true
+    },
+    "customsDeclarations": {
+      "includeCustomsDeclarations": true,
+      "numberOfCopies": 0,
+      "contents": {
+        "article": [
+          {
+            "description": "string",
+            "quantity": 0,
+            "weight": 0,
+            "value": 0,
+            "hsCode": "string",
+            "originCountry": "string",
+            "originCountryLabel": "string",
+            "currency": "string",
+            "artref": "string",
+            "originalIdent": "string",
+            "vatAmount": 0,
+            "customsFees": 0
+          }
+        ],
+        "category": {
+          "value": 0
+        },
+        "original": [
+          {
+            "originalIdent": "string",
+            "originalInvoiceNumber": "string",
+            "originalInvoiceDate": "2019-08-24T14:15:22Z",
+            "originalParcelNumber": "string"
+          }
+        ],
+        "explanations": "string"
+      },
+      "importersReference": "string",
+      "importersContact": "string",
+      "officeOrigin": "string",
+      "comments": "string",
+      "description": "string",
+      "invoiceNumber": "string",
+      "licenceNumber": "string",
+      "certificatNumber": "string",
+      "importerAddress": {
+        "companyName": "string",
+        "lastName": "string",
+        "firstName": "string",
+        "line0": "string",
+        "line1": "string",
+        "line2": "string",
+        "line3": "string",
+        "countryCode": "string",
+        "countryLabel": "string",
+        "city": "string",
+        "zipCode": "string",
+        "phoneNumber": "string",
+        "mobileNumber": "string",
+        "doorCode1": "string",
+        "doorCode2": "string",
+        "intercom": "string",
+        "email": "string",
+        "language": "string",
+        "stateOrProvinceCode": "string"
+      }
+    },
+    "sender": {
+      "senderParcelRef": "string",
+      "address": {
+        "companyName": "string",
+        "lastName": "string",
+        "firstName": "string",
+        "line0": "string",
+        "line1": "string",
+        "line2": "string",
+        "line3": "string",
+        "countryCode": "string",
+        "countryLabel": "string",
+        "city": "string",
+        "zipCode": "string",
+        "phoneNumber": "string",
+        "mobileNumber": "string",
+        "doorCode1": "string",
+        "doorCode2": "string",
+        "intercom": "string",
+        "email": "string",
+        "language": "string",
+        "stateOrProvinceCode": "string"
+      }
+    },
+    "addressee": {
+      "addresseeParcelRef": "string",
+      "codeBarForReference": true,
+      "serviceInfo": "string",
+      "promotionCode": "string",
+      "address": {
+        "companyName": "string",
+        "lastName": "string",
+        "firstName": "string",
+        "line0": "string",
+        "line1": "string",
+        "line2": "string",
+        "line3": "string",
+        "countryCode": "string",
+        "countryLabel": "string",
+        "city": "string",
+        "zipCode": "string",
+        "phoneNumber": "string",
+        "mobileNumber": "string",
+        "doorCode1": "string",
+        "doorCode2": "string",
+        "intercom": "string",
+        "email": "string",
+        "language": "string",
+        "stateOrProvinceCode": "string"
+      }
+    },
+    "codSenderAddress": {
+      "companyName": "string",
+      "lastName": "string",
+      "firstName": "string",
+      "line0": "string",
+      "line1": "string",
+      "line2": "string",
+      "line3": "string",
+      "countryCode": "string",
+      "countryLabel": "string",
+      "city": "string",
+      "zipCode": "string",
+      "phoneNumber": "string",
+      "mobileNumber": "string",
+      "doorCode1": "string",
+      "doorCode2": "string",
+      "intercom": "string",
+      "email": "string",
+      "language": "string",
+      "stateOrProvinceCode": "string"
+    },
+    "uploadDocument": {
+      "documentContent": ["string"]
+    },
+    "features": {
+      "printTrackingBarcode": true
+    }
+  },
+  "fields": {
+    "field": [
+      {
+        "key": "string",
+        "value": "string"
+      }
+    ],
+    "customField": [
+      {
+        "key": "string",
+        "value": "string"
+      }
+    ]
+  }
+}

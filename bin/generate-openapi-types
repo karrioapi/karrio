@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+docker run --rm -v ${PWD}:/local openapitools/openapi-generator-cli generate \
+  -i "/local/schemas/openapi.yml" \
+  -g typescript-axios \
+  -o /local/packages/types/rest \
+  --additional-properties=typescriptThreePlus=true \
+  --additional-properties=modelPropertyNaming=snake_case \
+  --additional-properties=useSingleRequestParameter=true
+
+rm -rf packages/types/rest/.openapi-generator/ \
+  packages/types/rest/.openapi-generator-ignore \
+  packages/types/rest/.gitignore \
+  packages/types/rest/.npmignore \
+  packages/types/rest/git_push.sh

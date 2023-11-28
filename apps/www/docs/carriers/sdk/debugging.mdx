@@ -1,0 +1,67 @@
+---
+id: debugging
+title: Error & Debugging
+---
+
+
+Karrio is designed to fail early whenever possible. Meaning that once you provide a valid input and
+call the right interface, no exceptions are raised but all requests return a tuple of: `Tuple[ResponseType, List[Messages]]`.
+
+Here, the `List[Messages]` will contain the **errors**, **notes** or **messages** raised during the process or returned
+by the carrier web service.
+
+## Examples
+
+### Processing Error
+
+```python
+response = (
+    [],
+    [
+        Message(
+            carrier_name="canadapost",
+            carrier_id="canadapost",
+            message="Invalid request payload",
+            code="KARRIO_FIELD_ERROR",
+            details={
+                "parcel[0].weight": {
+                    "code": "required",
+                    "message": "This field is required",
+                }
+            },
+        )
+    ],
+)
+```
+
+### Carrier Error
+
+```python
+response = (
+    [],
+    [
+        Message(
+            carrier_name="canadapost",
+            carrier_id="canadapost",
+            message="You cannot mail on behalf of the requested customer.",
+            code="AA004",
+            details=None,
+        )
+    ],
+)
+```
+
+## Debugging
+
+Karrio uses [Python's built-in logging system](https://docs.python.org/3.8/howto/logging.html). So to visualize the
+request workflow, set the log level of the default logger to `DEBUG`.
+
+```python
+import logging
+logging.basicConfig(level=logging.DEBUG)
+```
+
+:::tip
+  Setting the log level to `DEBUG` is very useful to understand how Karrio works and visualize
+  the carrier raw requests generated as well as raw responses parsed during requests.
+:::

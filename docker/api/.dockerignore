@@ -1,0 +1,6 @@
+# Ignore everything
+*
+
+!/requirements.txt
+!/docker/api/*
+!/apps/api/gunicorn-cfg.py

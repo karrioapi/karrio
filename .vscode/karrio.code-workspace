@@ -5,11 +5,16 @@
         }
     ],
     "settings": {
+        "editor.formatOnPaste": true,
+        "python.terminal.activateEnvInCurrentTerminal": true,
+        "editor.formatOnSave": true,
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/karrio",
         "files.associations": {
             "**/*.html": "html",
             "**/templates/**/*.html": "django-html",
             "**/templates/**/*": "django-txt",
             "**/requirements{/**,*}.{txt,in}": "pip-requirements"
-        }
+        },
+        "python.analysis.autoImportCompletions": true,
     }
 }

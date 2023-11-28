@@ -1,0 +1,6 @@
+# openapi generator files
+rest/.openapi-generator/
+rest/.openapi-generator-ignore
+rest/.gitignore
+rest/.npmignore
+rest/git_push.sh

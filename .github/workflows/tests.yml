@@ -33,3 +33,15 @@ jobs:
           ./bin/setup-server-env &&
           ./bin/migrate &&
           ./bin/run-server-tests
+
+  dashbaord-ci:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install
+        run: |
+          npm install
+      - name: Test Build
+        run: |
+          npm run build -w apps/dashboard 

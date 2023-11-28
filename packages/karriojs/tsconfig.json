@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "lib": [
+      "es2016",
+      "dom",
+      "es5"
+    ],
+    "sourceMap": true,
+    "noImplicitAny": true,
+    "strictPropertyInitialization": false,
+    "isolatedModules": false,
+    "baseUrl": ".",
+  },
+  "files": [
+    "api/karrio.ts",
+  ]
+}

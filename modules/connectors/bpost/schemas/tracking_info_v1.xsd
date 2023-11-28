@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns="http://schema.post.be/tracking/v1/"
+    xmlns:common="http://schema.post.be/announcement/common/v1/"
+    targetNamespace="http://schema.post.be/tracking/v1/" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:import namespace="http://schema.post.be/announcement/common/v1/"
+        schemaLocation="announcement_common_v1.xsd" />
+
+    <xs:element name="itemTracking" type="itemTrackingType">
+    </xs:element>
+
+    <xs:complexType name="itemTrackingType">
+        <xs:sequence>
+            <xs:element name="itemCode" type="common:itemCodeType" />
+            <xs:element name="sender" type="common:clientType" />
+            <xs:element name="addressee" type="common:clientType" />
+            <xs:element name="cityOrCountryOfdeparture" type="xs:string" minOccurs="0" />
+            <xs:element name="cityOrCountryOfDestination" type="xs:string" minOccurs="0" />
+            <xs:element name="dateReceipt" type="xs:date" minOccurs="0" />
+            <xs:element name="nameOfDestination" type="xs:string" minOccurs="0" />
+            <xs:element name="deliveryTime" type="xs:dateTime" minOccurs="0" />
+            <xs:element name="customerReference" type="xs:string" minOccurs="0" />
+            <xs:element name="crossReference" type="xs:string" minOccurs="0" />
+            <xs:element name="costCenter" type="xs:string" minOccurs="0" />
+            <xs:element name="deliveryTimeWindow" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="plannedDeliveryDateWindowStart" type="xs:dateTime"
+                            minOccurs="0" />
+                        <xs:element name="plannedDeliveryDateWindowEnd" type="xs:dateTime"
+                            minOccurs="0" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="itemDetail" type="itemDetailType" />
+            <xs:element name="stateInfo" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="time" type="xs:dateTime" />
+                        <xs:element name="location" type="xs:string" minOccurs="0" />
+                        <xs:element name="stateCode" type="xs:string" />
+                        <xs:element name="stateDescription" type="xs:string" minOccurs="0" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="trackingId" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Tracking id a.k.a. : External id / unique id</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="pickupPoint" type="pickupPointType" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Information concerning the pickup point if applicable</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="itemDetailType">
+        <xs:sequence>
+            <xs:element name="weightInGrams" type="common:weightInGramsType" />
+            <xs:element name="type" type="common:announcementTypeType" />
+            <xs:element name="productCode" type="common:productCodeType" minOccurs="0" />
+            <xs:element name="deliveryMethod" type="common:deliveryMethodType" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Only provided if the delivery method is atShop</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="options" type="common:optionsType" minOccurs="0" />
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="pickupPointType">
+        <xs:sequence>
+            <xs:element name="id" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Pickup point id</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="name" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Pickup point name</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="streetName" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Pickup point street (can be empty in case of parcel lockers or
+                        click and collect)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="houseNumber" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Pickup point house number (can be empty in case of parcel
+                        lockers or click and collect)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="postalCode" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Pickup point postal code (can be empty in case of click and
+                        collect)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="city" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Pickup point city (can be empty in case of click and collect)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

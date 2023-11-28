@@ -4,9 +4,15 @@
 source "bin/activate-env" > /dev/null 2>&1
 
 echo "running sdk typecheck with mypy"
-packages=$(find "sdk" -type f -name "setup.py" ! -path "sdk/setup.py" -exec dirname '{}' \;)
+
+
+for submodule in $(find "modules/sdk" -type f -name "__init__.py" ! -path "*tests*" ! -path "*schemas*" -exec dirname '{}' \;); do
+    mypy ${submodule} || exit $?;
+done;
+
+packages=$(find "modules/connectors" -type f -name "setup.py" -exec dirname '{}' \;)
 for module in ${packages}; do
-    for submodule in $(find ${module} -type f -name "__init__.py" ! -path "*tests*"  ! -path "*_lib*" -exec dirname '{}' \;); do
+    for submodule in $(find ${module} -type f -name "__init__.py" ! -path "*tests*" ! -path "*schemas*" -exec dirname '{}' \;); do
         mypy ${submodule} || exit $?;
     done;
 done

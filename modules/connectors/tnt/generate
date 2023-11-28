@@ -1,0 +1,16 @@
+SCHEMAS=./schemas
+LIB_MODULES=./karrio/schemas/tnt
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+touch "${LIB_MODULES}/__init__.py"
+
+generateDS --no-namespace-defs -o "${LIB_MODULES}/label_common_definitions.py" $SCHEMAS/label_common_definitions.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/label_request.py" $SCHEMAS/label_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/label_response.py" $SCHEMAS/label_response.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/rating_common_definitions.py" $SCHEMAS/rating_common_definitions.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/rating_request.py" $SCHEMAS/rating_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/rating_response.py" $SCHEMAS/rating_response.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/shipping_common_definitions.py" $SCHEMAS/shipping_common_definitions.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/shipping_request.py" $SCHEMAS/shipping_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/shipping_response.py" $SCHEMAS/shipping_response.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_request.py" $SCHEMAS/tracking_request.xsd
+generateDS --no-namespace-defs -o "${LIB_MODULES}/tracking_response.py" $SCHEMAS/tracking_response.xsd

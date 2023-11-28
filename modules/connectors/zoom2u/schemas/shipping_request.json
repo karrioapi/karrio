@@ -1,0 +1,36 @@
+{
+  "PurchaseOrderNumber": "ABCD1234",
+  "PackageDescription": "1 box with some cakes",
+  "DeliverySpeed": "VIP",
+  "ReadyDateTime": "2020-12-24T10:20:00.06Z",
+  "VehicleType": "Car",
+  "PackageType": "Box",
+
+  "Pickup": {
+    "ContactName": "John Smith",
+    "Email": "test@test.com",
+    "Phone": "0000 0000",
+    "UnitNumber": "",
+    "StreetNumber": "123",
+    "Street": "Main St",
+    "Suburb": "North Sydney",
+    "State": "NSW",
+    "Postcode": "2000",
+    "Country": "Australia",
+    "Notes": ""
+  },
+
+  "Dropoff": {
+    "ContactName": "Jane Smith",
+    "Email": "test@test.com",
+    "Phone": "0000 0000",
+    "UnitNumber": "ACME Co.",
+    "StreetNumber": "123",
+    "Street": "Main St",
+    "Suburb": "North Sydney",
+    "State": "NSW",
+    "Postcode": "2000",
+    "Country": "Australia",
+    "Notes": ""
+  }
+}

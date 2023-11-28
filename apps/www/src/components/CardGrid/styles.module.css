@@ -1,0 +1,55 @@
+/* Cards with icons */
+.homeGrid article>* {
+  margin: 0;
+  position: relative;
+}
+
+.homeGrid a:not(.card),
+.cardGrid a:not(.card) {
+  border: solid 1px var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-card-border-radius);
+  box-shadow: 0 1.5px 3px 0 rgb(0 0 0 / 15%);
+  color: inherit;
+  display: block;
+  font-size: 1rem;
+  font-weight: normal;
+  padding: 2rem;
+  transition: all var(--ifm-transition-fast) ease;
+  transition-property: border, box-shadow;
+}
+
+.cardGrid a:not(.card):active,
+.cardGrid a:not(.card):hover {
+  border: 1px solid var(--ifm-color-primary);
+}
+
+.cardGrid a strong {
+  display: block;
+  color: var(--ifm-link-color);
+  font-size: 1.2rem;
+  font-weight: var(--ifm-heading-font-weight);
+  line-height: var(--ifm-heading-line-height);
+  margin: var(--ifm-heading-margin-top) 0 var(--ifm-heading-margin-bottom) 0;
+}
+
+.cardGrid a strong img {
+  height: 1em;
+  vertical-align: baseline;
+  width: auto;
+}
+
+.cardGrid a:active,
+.cardGrid a:hover {
+  text-decoration: none;
+}
+
+/* Make grids responsive*/
+
+/* Add spacing between grids and sections */
+h2+.cardGrid {
+  margin-top: var(--ifm-spacing-vertical);
+}
+
+.cardGrid+h2 {
+  padding-top: 20px;
+}
