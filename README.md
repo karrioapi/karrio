@@ -10,8 +10,8 @@
 <img referrerpolicy="no-referrer-when-downgrade" src="https://static.scarf.sh/a.png?x-pxid=e72dd847-dc7f-4f81-bce4-88eeb20d807f" />
 <a href="https://karrio.io" target="_blank">
   <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karrioapi/karrio/main/server/main/karrio/server/static/extra/branding/logo-inverted.svg" height="100px" />
-    <img alt="Karrio" src="https://raw.githubusercontent.com/karrioapi/karrio/main/server/main/karrio/server/static/extra/branding/logo.svg" height="100px" />
+    <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/karrioapi/karrio/main/apps/api/karrio/server/static/extra/branding/logo-inverted.svg" height="100px" />
+    <img alt="Karrio" src="https://raw.githubusercontent.com/karrioapi/karrio/main/apps/api/karrio/server/static/extra/branding/logo.svg" height="100px" />
   </picture>
 </a>
 
