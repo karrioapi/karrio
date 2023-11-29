@@ -45,6 +45,7 @@ Django==4.2.8
 -e ./modules/core
 -e ./apps/api
 -e ./modules/graph
+-e ./modules/admin
 -e ./modules/apps
 -e ./modules/data
 -e ./modules/events
