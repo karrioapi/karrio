@@ -7,17 +7,16 @@ from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from karrio.server.core import gateway
 import karrio.lib as lib
-import karrio.server.core.filters as filters
-import karrio.server.serializers as serializers
-import karrio.server.user.serializers as user_serializers
-import karrio.server.providers.models as providers
-import karrio.server.manager.models as manager
-import karrio.server.tracing.models as tracing
-import karrio.server.graph.models as graph
 import karrio.server.core.models as core
 import karrio.server.graph.utils as utils
+import karrio.server.graph.models as graph
+import karrio.server.core.filters as filters
+import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
+import karrio.server.serializers as serializers
+import karrio.server.providers.models as providers
+import karrio.server.user.serializers as user_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 
 User = get_user_model()
@@ -28,7 +27,9 @@ class UserType:
     email: str
     full_name: str
     is_staff: bool
+    is_active: bool
     date_joined: datetime.datetime
+    is_superuser: typing.Optional[bool] = strawberry.UNSET
     last_login: typing.Optional[datetime.datetime] = strawberry.UNSET
 
     @staticmethod
@@ -771,7 +772,10 @@ class ConnectionType:
         return list(map(ConnectionType.parse, connections))
 
     @staticmethod
-    def parse(carrier: providers.Carrier) -> "CarrierConnectionType":
+    def parse(
+        carrier: providers.Carrier,
+        settings_types: dict = None,
+    ) -> "CarrierConnectionType":
         carrier_name = (
             carrier.carrier_name
             if carrier.carrier_name in providers.MODELS
@@ -790,7 +794,7 @@ class ConnectionType:
         )
         display_name = dict(display_name=carrier.carrier_display_name)
 
-        return CarrierSettings[carrier_name](
+        return (settings_types or CarrierSettings)[carrier_name](
             id=carrier.id,
             active=carrier.active,
             carrier_name=carrier_name,

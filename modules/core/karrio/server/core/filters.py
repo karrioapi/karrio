@@ -1,6 +1,7 @@
 import typing
 from django.db.models import Q
 from django.conf import settings
+import django.contrib.auth as auth
 
 import karrio.server.core.serializers as serializers
 import karrio.server.core.dataunits as dataunits
@@ -8,6 +9,35 @@ import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
 import karrio.server.filters as filters
 import karrio.server.openapi as openapi
+
+User = auth.get_user_model()
+
+
+class UserFilter(filters.FilterSet):
+    id = filters.CharFilter(field_name="id", help_text="user id")
+    email = filters.CharFilter(field_name="email", help_text="user email")
+    is_active = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    is_staff = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    is_superuser = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    order_by = filters.OrderingFilter(
+        fields=(
+            ("is_active", "is_active"),
+            ("is_staff", "is_staff"),
+            ("is_superuser", "is_superuser"),
+            ("date_joined", "date_joined"),
+            ("last_login", "last_login"),
+        ),
+    )
+
+    class Meta:
+        model = User
+        fields: list = []
 
 
 class CarrierFilters(filters.FilterSet):
@@ -246,6 +276,7 @@ class ShipmentFilters(filters.FilterSet):
 
             return queryset.annotate(
                 search=SearchVector(
+                    "id",
                     "reference",
                     "tracking_number",
                     "recipient__address_line1",
