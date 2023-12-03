@@ -1983,6 +1983,32 @@ export interface UpdateSurchargeVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL mutation operation: DeleteSurcharge
+// ====================================================
+
+export interface DeleteSurcharge_delete_surcharge_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteSurcharge_delete_surcharge {
+  id: string;
+  errors: DeleteSurcharge_delete_surcharge_errors[] | null;
+}
+
+export interface DeleteSurcharge {
+  delete_surcharge: DeleteSurcharge_delete_surcharge;
+}
+
+export interface DeleteSurchargeVariables {
+  data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CreateCarrierConnection
 // ====================================================
 
@@ -2026,6 +2052,32 @@ export interface UpdateCarrierConnection {
 
 export interface UpdateCarrierConnectionVariables {
   data: UpdateConnectionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteCarrierConnection
+// ====================================================
+
+export interface DeleteCarrierConnection_delete_carrier_connection_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteCarrierConnection_delete_carrier_connection {
+  id: string;
+  errors: DeleteCarrierConnection_delete_carrier_connection_errors[] | null;
+}
+
+export interface DeleteCarrierConnection {
+  delete_carrier_connection: DeleteCarrierConnection_delete_carrier_connection;
+}
+
+export interface DeleteCarrierConnectionVariables {
+  data: DeleteMutationInput;
 }
 
 
@@ -2549,6 +2601,11 @@ export interface UpdateSurchargeMutationInput {
   carriers?: string[] | null;
   services?: string[] | null;
   carrier_accounts?: string[] | null;
+  id: string;
+}
+
+// null
+export interface DeleteMutationInput {
   id: string;
 }
 

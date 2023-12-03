@@ -158,7 +158,7 @@ export const GET_SURCHARGE = gql`query GetSurcharge($id: String!) {
 }
 `;
 
-export const GET_USER_CONNECTIONS = gql`query GetSystemConnections {
+export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
   system_connections {
     __typename
     ... on AmazonShippingSettingsType {
@@ -844,7 +844,7 @@ export const GET_USER_CONNECTIONS = gql`query GetSystemConnections {
 }
 `;
 
-export const GET_USER_CONNECTION = gql`query GetSystemConnection($id: String!) {
+export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!) {
   system_connection(id: $id) {
     __typename
     ... on AmazonShippingSettingsType {
@@ -1608,6 +1608,17 @@ export const UPDATE_SURCHARGE = gql`mutation UpdateSurcharge($data: UpdateSurcha
 }
 `;
 
+export const DELETE_SURCHARGE = gql`mutation DeleteSurcharge($data: DeleteMutationInput!) {
+  delete_surcharge(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
 export const CREATE_CARRIER_CONNECTION = gql`mutation CreateCarrierConnection($data: CreateConnectionMutationInput!) {
   create_carrier_connection(input: $data) {
     errors {
@@ -1620,6 +1631,17 @@ export const CREATE_CARRIER_CONNECTION = gql`mutation CreateCarrierConnection($d
 
 export const UPDATE_CARRIER_CONNECTION = gql`mutation UpdateCarrierConnection($data: UpdateConnectionMutationInput!) {
   update_carrier_connection(input: $data) {
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_CARRIER_CONNECTION = gql`mutation DeleteCarrierConnection($data: DeleteMutationInput!) {
+  delete_carrier_connection(input: $data) {
+    id
     errors {
       field
       messages
