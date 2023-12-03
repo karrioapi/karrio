@@ -74,9 +74,10 @@ class UpdateSurchargeMutationInput(CreateSurchargeMutationInput):
 
 
 @strawberry.input
-class UsageFilter:
+class UsageFilter(utils.BaseInput):
     date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    omit: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 InstanceConfigMutationInput = strawberry.input(

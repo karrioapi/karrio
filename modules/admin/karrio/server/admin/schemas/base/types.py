@@ -1,14 +1,22 @@
 import typing
+import datetime
 import strawberry
 from constance import config
 from django.conf import settings
 from strawberry.types import Info
+import django.db.models as models
 import django.contrib.auth as auth
+import django.db.models.functions as functions
 
+import karrio.lib as lib
+import karrio.server.core.models as core
 import karrio.server.admin.utils as admin
 import karrio.server.graph.utils as utils
 import karrio.server.core.filters as filters
+import karrio.server.orders.models as orders
 import karrio.server.pricing.models as pricing
+import karrio.server.manager.models as manager
+import karrio.server.orders.filters as order_filters
 import karrio.server.providers.models as providers
 import karrio.server.graph.schemas.base.types as base
 import karrio.server.admin.schemas.base.inputs as inputs
@@ -135,7 +143,7 @@ SystemCarrierConnectionType: typing.Any = strawberry.union(
 @strawberry.type
 class UsageStatType:
     label: typing.Optional[str] = None
-    count: typing.Optional[int] = None
+    count: typing.Optional[float] = None
     date: typing.Optional[str] = None
 
     @staticmethod
@@ -148,15 +156,15 @@ class UsageStatType:
 @strawberry.type
 class SystemUsageType:
     total_errors: typing.Optional[int] = None
-    total_orders: typing.Optional[int] = None
     total_requests: typing.Optional[int] = None
-    total_trackers: typing.Optional[int] = None
     total_shipments: typing.Optional[int] = None
+    order_volume: typing.Optional[float] = None
     api_errors: typing.List[UsageStatType] = None
     api_requests: typing.List[UsageStatType] = None
+    shipment_spend: typing.List[UsageStatType] = None
+    shipments: typing.List[UsageStatType] = None
     order_volumes: typing.List[UsageStatType] = None
-    tracker_volumes: typing.List[UsageStatType] = None
-    shipment_volumes: typing.List[UsageStatType] = None
+    organization_count: typing.Optional[int] = None
 
     @staticmethod
     @utils.authentication_required
@@ -165,29 +173,105 @@ class SystemUsageType:
         info,
         filter: typing.Optional[inputs.UsageFilter] = strawberry.UNSET,
     ) -> "SurchargeType":
-        api_errors = []
-        api_requests = []
-        order_volumes = []
-        tracker_volumes = []
-        shipment_volumes = []
+        _filter = {
+            "date_before": datetime.datetime.now(),
+            "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
+            **(
+                filter if not utils.is_unset(filter) else inputs.UsageFilter()
+            ).to_dict(),
+        }
 
-        total_errors = 0
-        total_orders = 0
-        total_requests = 0
-        total_trackers = 0
-        total_shipments = 0
+        api_requests = (
+            filters.LogFilter(
+                _filter,
+                core.APILogIndex.objects.filter(),
+            )
+            .qs.annotate(date=functions.TruncDay("requested_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
+        api_errors = (
+            filters.LogFilter(
+                {**_filter, "status": "failed"},
+                core.APILogIndex.objects.filter(),
+            )
+            .qs.annotate(date=functions.TruncDay("requested_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
+        order_volumes = (
+            order_filters.OrderFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                orders.Order.objects.filter(),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(
+                count=models.Sum(
+                    models.F("line_items__value_amount")
+                    * models.F("line_items__quantity")
+                )
+            )
+            .order_by("-date")
+        )
+        shipments = (
+            filters.ShipmentFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Shipment.objects.filter(),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
+        shipment_spend = (
+            filters.ShipmentFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Shipment.objects.filter(status__in=["cancelled", "draft"]),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(
+                count=functions.Cast(
+                    models.Sum("selected_rate__total_charge"), models.FloatField()
+                )
+            )
+            .order_by("-date")
+        )
+
+        total_errors = sum([item["count"] for item in api_errors], 0)
+        total_requests = sum([item["count"] for item in api_requests], 0)
+        total_shipments = sum([item["count"] for item in shipments], 0)
+        order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
+        organization_count = 0
+
+        if settings.MULTI_ORGANIZATIONS:
+            import karrio.server.orgs.models as orgs
+
+            organization_count = orgs.Organization.objects.count()
 
         return SystemUsageType(
             total_errors=total_errors,
-            total_orders=total_orders,
             total_requests=total_requests,
-            total_trackers=total_trackers,
             total_shipments=total_shipments,
+            order_volume=order_volume,
             api_errors=[UsageStatType.parse(item) for item in api_errors],
             api_requests=[UsageStatType.parse(item) for item in api_requests],
+            shipment_spend=[UsageStatType.parse(item) for item in shipment_spend],
+            shipments=[UsageStatType.parse(item) for item in shipments],
             order_volumes=[UsageStatType.parse(item) for item in order_volumes],
-            tracker_volumes=[UsageStatType.parse(item) for item in tracker_volumes],
-            shipment_volumes=[UsageStatType.parse(item) for item in shipment_volumes],
+            organization_count=organization_count,
         )
 
 
