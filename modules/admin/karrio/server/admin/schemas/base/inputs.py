@@ -19,6 +19,14 @@ class UserFilter(utils.Paginated):
 
 
 @strawberry.input
+class SurchargeFilter(utils.BaseInput):
+    id: typing.Optional[str] = strawberry.UNSET
+    name: typing.Optional[str] = strawberry.UNSET
+    active: typing.Optional[bool] = strawberry.UNSET
+    surcharge_type: typing.Optional[admin.SurchargeTypeEnum] = strawberry.UNSET
+
+
+@strawberry.input
 class CreateUserMutationInput(utils.BaseInput):
     email: str
     password1: str

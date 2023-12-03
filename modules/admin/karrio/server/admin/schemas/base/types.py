@@ -309,7 +309,10 @@ class SurchargeType:
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
-    def resolve_list(info) -> typing.List["SurchargeType"]:
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.SurchargeFilter] = strawberry.UNSET,
+    ) -> typing.List["SurchargeType"]:
         return pricing.Surcharge.objects.filter()
 
 
