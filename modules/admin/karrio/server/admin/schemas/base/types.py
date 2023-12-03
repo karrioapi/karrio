@@ -2,13 +2,13 @@ import typing
 import datetime
 import strawberry
 from constance import config
-from django.conf import settings
 from strawberry.types import Info
 import django.db.models as models
 import django.contrib.auth as auth
 import django.db.models.functions as functions
 
 import karrio.lib as lib
+import karrio.server.conf as conf
 import karrio.server.core.models as core
 import karrio.server.admin.utils as admin
 import karrio.server.graph.utils as utils
@@ -42,7 +42,7 @@ class UserType(base.UserType):
     ) -> typing.Optional["UserType"]:
         queryset = User.objects.filter(email=email)
 
-        if settings.MULTI_ORGANIZATIONS:
+        if conf.settings.MULTI_ORGANIZATIONS:
             return queryset.filter(
                 orgs_organization__users__id=info.context.request.user.id
             ).first()
@@ -59,7 +59,7 @@ class UserType(base.UserType):
         _filter = filter if not utils.is_unset(filter) else inputs.UserFilter()
         queryset = filters.UserFilter(_filter.to_dict(), User.objects.filter()).qs
 
-        if settings.MULTI_ORGANIZATIONS:
+        if conf.settings.MULTI_ORGANIZATIONS:
             queryset = queryset.filter(
                 orgs_organization__users__id=info.context.request.user.id
             )
@@ -172,7 +172,7 @@ class SystemUsageType:
     def resolve(
         info,
         filter: typing.Optional[inputs.UsageFilter] = strawberry.UNSET,
-    ) -> "SurchargeType":
+    ) -> "SystemUsageType":
         _filter = {
             "date_before": datetime.datetime.now(),
             "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
@@ -237,8 +237,9 @@ class SystemUsageType:
                 dict(
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
+                    status=["cancelled", "draft"],
                 ),
-                manager.Shipment.objects.filter(status__in=["cancelled", "draft"]),
+                manager.Shipment.objects.filter(),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
@@ -256,7 +257,7 @@ class SystemUsageType:
         order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
         organization_count = 0
 
-        if settings.MULTI_ORGANIZATIONS:
+        if conf.settings.MULTI_ORGANIZATIONS:
             import karrio.server.orgs.models as orgs
 
             organization_count = orgs.Organization.objects.count()
@@ -319,7 +320,7 @@ class _InstanceConfigType:
     @admin.staff_required
     def resolve(info: Info) -> "InstanceConfigType":
         return InstanceConfigType(  # type: ignore
-            **{k: getattr(config, k) for k in settings.CONSTANCE_CONFIG.keys()}
+            **{k: getattr(config, k) for k in conf.settings.CONSTANCE_CONFIG.keys()}
         )
 
 
@@ -328,10 +329,10 @@ InstanceConfigType = strawberry.type(
         "InstanceConfigType",
         (_InstanceConfigType,),
         {
-            **{k: strawberry.UNSET for k, _ in settings.CONSTANCE_CONFIG.items()},
+            **{k: strawberry.UNSET for k, _ in conf.settings.CONSTANCE_CONFIG.items()},
             "__annotations__": {
                 k: typing.Optional[_def[2]]
-                for k, _def in settings.CONSTANCE_CONFIG.items()
+                for k, _def in conf.settings.CONSTANCE_CONFIG.items()
             },
         },
     )
