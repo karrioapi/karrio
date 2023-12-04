@@ -51,12 +51,15 @@ export default function WebhooksPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 pb-3 pt-6">
+
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Endpoints</span>
-          <button className="button is-default is-pulled-right" onClick={() => editWebhook()}>
-            <span className="icon"><i className="fas fa-plus"></i></span>
-            <span>Add endpoint</span>
-          </button>
+          <div>
+            <button className="button is-small is-default is-pulled-right" onClick={() => editWebhook()}>
+              <span className="icon"><i className="fas fa-plus"></i></span>
+              <span>Add endpoint</span>
+            </button>
+          </div>
         </header>
 
         {((query.data?.webhooks.edges || []).length > 0) && <div className="table-container">

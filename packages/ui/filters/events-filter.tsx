@@ -72,7 +72,7 @@ export const EventsFilter: React.FC<EventsFilterComponent> = ({ context }) => {
         <span className="icon is-small">
           <i className="fas fa-filter"></i>
         </span>
-        <span className="is-size-6 has-text-weight-semibold">Filter</span>
+        <span className="has-text-weight-bold">Filter</span>
       </button>
 
       {/* Dropdown content  */}

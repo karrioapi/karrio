@@ -29,8 +29,10 @@ export default function ApiPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-1 py-6 is-flex is-justify-content-space-between">
+
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">API</span>
+          <div></div>
         </header>
 
         {/* APIs Overview */}

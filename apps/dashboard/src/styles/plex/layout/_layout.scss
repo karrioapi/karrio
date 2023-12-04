@@ -72,37 +72,37 @@ Collapsed sidebar
       }
 
       &:first-child {
-        ~ .compressed-naver {
+        ~.compressed-naver {
           margin-top: 0;
         }
       }
 
       &:nth-child(2) {
-        ~ .compressed-naver {
+        ~.compressed-naver {
           margin-top: 60px;
         }
       }
 
       &:nth-child(3) {
-        ~ .compressed-naver {
+        ~.compressed-naver {
           margin-top: 120px;
         }
       }
 
       &:nth-child(4) {
-        ~ .compressed-naver {
+        ~.compressed-naver {
           margin-top: 180px;
         }
       }
 
       &:nth-child(5) {
-        ~ .compressed-naver {
+        ~.compressed-naver {
           margin-top: 240px;
         }
       }
 
       &:nth-child(6) {
-        ~ .compressed-naver {
+        ~.compressed-naver {
           margin-top: 300px;
         }
       }
@@ -124,10 +124,10 @@ Expanded sidebar
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px;
+  width: 240px;
   height: 100%;
   background: $light-grey;
-  border-right: 1px solid $fade-grey;
+  // border-right: 1px solid $fade-grey;
   z-index: 91;
   transform: translateX(0);
   transition: all 0.3s;
@@ -225,7 +225,7 @@ Expanded sidebar
       &.is-active {
         @for $i from 1 through 10 {
           &.menu-item:nth-child(n + #{$i}) {
-            ~ .naver {
+            ~.naver {
               margin-top: ($i - 1) * 35px;
               display: block;
             }
@@ -245,8 +245,8 @@ Expanded sidebar
 
       span {
         display: block;
-        font-size: 0.9rem;
-        font-weight: 500;
+        font-size: 0.85rem;
+        font-weight: 600;
         // margin-left: 16px;
         color: lighten($dark-text, 18%);
       }
@@ -279,8 +279,8 @@ Main wrappers
 ========================================================================== */
 
 .plex-wrapper {
-  width: calc(100% - 280px);
-  margin-left: 280px;
+  width: calc(100% - 240px);
+  margin-left: 240px;
   min-height: 98vh;
   background: $white;
   padding: 0 40px;
@@ -292,7 +292,7 @@ Main wrappers
   }
 
   .wrapper-inner {
-    max-width: 1080px;
+    max-width: 1300px;
     width: 100%;
     margin: 0 auto;
 
@@ -305,7 +305,7 @@ Main wrappers
         align-items: center;
         padding: 30px 0 20px 0;
 
-        > svg {
+        >svg {
           height: 22px;
           width: 22px;
           stroke: $muted-grey;
@@ -313,7 +313,7 @@ Main wrappers
           margin-right: 8px;
         }
 
-        > h3 {
+        >h3 {
           text-transform: uppercase;
           font-family: $font;
           font-weight: 500;

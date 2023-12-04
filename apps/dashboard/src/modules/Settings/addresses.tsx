@@ -44,11 +44,13 @@ export default function AddressPage(pageProps: any) {
     return (
       <>
 
-        <header className="px-0 py-6">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Addresses</span>
-          <button className="button is-primary is-small is-pulled-right" onClick={() => editAddress()}>
-            <span>Create address</span>
-          </button>
+          <div>
+            <button className="button is-primary is-small is-pulled-right" onClick={() => editAddress()}>
+              <span>Create address</span>
+            </button>
+          </div>
         </header>
 
         {((query?.data?.address_templates?.edges || []).length > 0) &&

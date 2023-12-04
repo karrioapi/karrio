@@ -45,11 +45,13 @@ export default function ParcelsPage(pageProps: any) {
     return (
       <>
 
-        <header className="px-0 py-6">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Parcels</span>
-          <button className="button is-primary is-small is-pulled-right" onClick={() => editParcel()}>
-            <span>Create parcel</span>
-          </button>
+          <div>
+            <button className="button is-primary is-small is-pulled-right" onClick={() => editParcel()}>
+              <span>Create parcel</span>
+            </button>
+          </div>
         </header>
 
         {((parcel_templates?.edges || []).length > 0) && <div className="table-container">
@@ -134,7 +136,7 @@ export default function ParcelsPage(pageProps: any) {
   };
 
   return AuthenticatedPage((
-    <DashboardLayout showModeIndicator={true}>
+    <DashboardLayout>
       <Head><title>{`Parcel Templates - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
       <ConfirmModal>
         <ParcelEditModal>

@@ -7,6 +7,7 @@ import React, { useRef } from 'react';
 import getConfig from 'next/config';
 import { p } from '@karrio/lib';
 import Image from 'next/image';
+import { useUser } from '@karrio/hooks/user';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -15,6 +16,7 @@ interface ExpandedSidebarComponent { }
 export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
   const router = useRouter();
   const sidebar = useRef<HTMLDivElement>(null);
+  const { query: { data: { user } = {} } } = useUser();
   const { testMode, basePath, switchMode } = useAppMode();
   const { metadata: { MULTI_ORGANIZATIONS, ORDERS_MANAGEMENT, DOCUMENTS_MANAGEMENT } } = useAPIMetadata();
   const [showSettingsMenus, setShowSettingsMenus] = React.useState(false);
@@ -31,7 +33,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
 
   return (
     <div className="plex-sidebar" ref={sidebar}>
-      <div className="sidebar-header pl-5 mb-4">
+      <div className="sidebar-header pl-5 mb-2">
         {MULTI_ORGANIZATIONS
           ? <OrganizationDropdown />
           : <Image src={p`/icon.svg`} className="mt-1" width="30" height="100" alt="logo" />}
@@ -41,48 +43,48 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
       </div>
       <div className="sidebar-menu has-slimscroll py-2" style={{ height: "calc(100% - 60px)" }}>
         <AppLink href="/" className={"menu-item " + activeClass(basePath)} shallow={false} prefetch={false}>
-          <i className={`fa fa-truck pr-3 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
-          <span className="has-text-weight-semibold">Shipments</span>
+          <i className={`fa fa-truck pr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Shipments</span>
         </AppLink>
 
         <AppLink href="/trackers" className={"menu-item " + activeClass("/trackers")} shallow={false} prefetch={false}>
-          <i className={`fa fa-location-arrow pr-3 ${isActive("/trackers") ? "" : 'has-text-grey'}`}></i>
-          <span className="has-text-weight-semibold">Trackers</span>
+          <i className={`fa fa-location-arrow pr-2 ${isActive("/trackers") ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Trackers</span>
         </AppLink>
 
         {ORDERS_MANAGEMENT &&
           <AppLink href="/orders" className={"menu-item " + activeClass("/orders")} shallow={false} prefetch={false}>
-            <i className={`fa fa-inbox pr-3 ${isActive("/orders") ? "" : 'has-text-grey'}`}></i>
-            <span className="has-text-weight-semibold">Orders</span>
+            <i className={`fa fa-inbox pr-2 ${isActive("/orders") ? "" : 'has-text-grey'}`}></i>
+            <span className="has-text-weight-bold">Orders</span>
           </AppLink>}
 
         <AppLink href="/connections" className={"menu-item " + activeClass("/connections")} shallow={false} prefetch={false}>
-          <i className={`fa fa-th-list pr-3 ${isActive("/connections") ? "" : 'has-text-grey'}`}></i>
-          <span className="has-text-weight-semibold">Carriers</span>
+          <i className={`fa fa-th-list pr-2 ${isActive("/connections") ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Carriers</span>
         </AppLink>
 
         {/* Settings */}
         <a className="menu-item menu-item my-0" onClick={() => setShowSettingsMenus(!showSettingsMenus)}>
-          <i className={`fa fa-cog pr-3 has-text-grey`}></i>
-          <span className="has-text-weight-semibold">Settings</span>
+          <i className={`fa fa-cog pr-2 has-text-grey`}></i>
+          <span className="has-text-weight-bold">Settings</span>
         </a>
 
         {(showSettingsMenus || window.location.pathname.includes('/settings')) && <>
           <AppLink href="/settings/account" className={"menu-item ml-5 " + activeClass("/settings/account")}>
-            <span>Account</span>
+            <span className="has-text-weight-semibold">Account</span>
           </AppLink>
 
           <AppLink href="/settings/addresses" className={"menu-item ml-5 " + activeClass("/settings/addresses")} shallow={false} prefetch={false}>
-            <span>Addresses</span>
+            <span className="has-text-weight-semibold">Addresses</span>
           </AppLink>
 
           <AppLink href="/settings/parcels" className={"menu-item ml-5 " + activeClass("/settings/parcels")} shallow={false} prefetch={false}>
-            <span>Parcels</span>
+            <span className="has-text-weight-semibold">Parcels</span>
           </AppLink>
 
           {DOCUMENTS_MANAGEMENT && <>
             <AppLink href="/settings/templates" className={"menu-item ml-5 " + activeClass("/settings/templates")} shallow={false} prefetch={false}>
-              <span>Templates</span>
+              <span className="has-text-weight-semibold">Templates</span>
             </AppLink>
           </>}
         </>}
@@ -91,42 +93,50 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
 
         {testMode ?
           <a className="menu-item mode-menu-item" onClick={switchMode}>
-            <i className="fas fa-toggle-on pr-3"></i>
-            <span className="mode-menu-item has-text-weight-semibold">Viewing test data</span>
+            <i className="fas fa-toggle-on pr-2"></i>
+            <span className="mode-menu-item has-text-weight-bold">Viewing test data</span>
           </a>
           :
           <a className="menu-item has-text-grey" onClick={switchMode}>
-            <i className="fas fa-toggle-off pr-3"></i>
-            <span className="has-text-weight-semibold">View test data</span>
+            <i className="fas fa-toggle-off pr-2"></i>
+            <span className="has-text-weight-bold">View test data</span>
           </a>
         }
 
         {/* Developers */}
         <AppLink href="/developers/api" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
-          <i className={`fa fa-terminal pr-3 has-text-grey`}></i>
-          <span className="has-text-weight-semibold">Developers</span>
+          <i className={`fa fa-terminal pr-2 has-text-grey`}></i>
+          <span className="has-text-weight-bold">Developers</span>
         </AppLink>
 
         {window.location.pathname.includes('/developers') && <>
           <AppLink href="/developers/api" className={"menu-item ml-5 " + activeClass("/developers/api")} shallow={false} prefetch={false}>
-            <span>API</span>
+            <span className="has-text-weight-semibold">API</span>
           </AppLink>
 
           <AppLink href="/developers/webhooks" className={"menu-item ml-5 " + activeClass("/developers/webhooks")} shallow={false} prefetch={false}>
-            <span>Webhooks</span>
+            <span className="has-text-weight-semibold">Webhooks</span>
           </AppLink>
 
           <AppLink href="/developers/events" className={"menu-item ml-5 " + activeClass("/developers/events")} shallow={false} prefetch={false}>
-            <span>Events</span>
+            <span className="has-text-weight-semibold">Events</span>
           </AppLink>
 
           <AppLink href="/developers/logs" className={"menu-item ml-5 " + activeClass("/developers/logs")} shallow={false} prefetch={false}>
-            <span>Logs</span>
+            <span className="has-text-weight-semibold">Logs</span>
+          </AppLink>
+        </>}
+
+        {/* Administration */}
+        {user?.is_staff && <>
+          <AppLink href="/admin" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
+            <i className={`fa fa-toolbox pr-2 has-text-grey`}></i>
+            <span className="has-text-weight-bold">Administration</span>
           </AppLink>
         </>}
       </div>
       <div style={{ position: 'absolute', bottom: 10, left: 30, right: 10 }}>
-        <span className="menu-item has-text-grey-light">
+        <span className="menu-item has-text-weight-semibold has-text-grey-light">
           Version: {publicRuntimeConfig.DASHBOARD_VERSION}
         </span>
       </div>

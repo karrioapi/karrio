@@ -26,8 +26,10 @@ export default function AccountPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 py-4">
+
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Settings</span>
+          <div></div>
         </header>
 
         <Tabs>

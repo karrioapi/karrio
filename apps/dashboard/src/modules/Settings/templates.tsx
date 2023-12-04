@@ -38,11 +38,13 @@ export default function TemplatesPage(pageProps: any) {
     return (
       <>
 
-        <header className="px-0 py-6">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Templates</span>
-          <AppLink className="button is-primary is-small is-pulled-right" href="/settings/template?id=new">
-            <span>Create template</span>
-          </AppLink>
+          <div>
+            <AppLink className="button is-primary is-small is-pulled-right" href="/settings/template?id=new">
+              <span>Create template</span>
+            </AppLink>
+          </div>
         </header>
 
         {((document_templates?.edges || [])?.length > 0) && <div className="table-container">

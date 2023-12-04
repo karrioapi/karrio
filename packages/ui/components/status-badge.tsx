@@ -29,7 +29,7 @@ export const StatusBadge: React.FC<StatusBadgeComponent> = ({ status, className,
   }[status || ""] || "is-light";
 
   return (
-    <span className={`tag is-size-7 is-capitalized has-text-weight-semibold ${color} ${className}`} {...props}>
+    <span className={`tag is-size-7 has-text-weight-semibold ${color} ${className}`} {...props}>
       {formatRef(status || "").toLocaleLowerCase()}
     </span>
   )
