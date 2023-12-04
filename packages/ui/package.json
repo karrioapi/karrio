@@ -9,17 +9,18 @@
   },
   "dependencies": {
     "@karrio/hooks": "*",
-    "@karrio/types": "*",
     "@karrio/lib": "*",
+    "@karrio/types": "*",
+    "chart.js": "^4.4.0",
     "highlight.js": "^11.2.0"
   },
   "devDependencies": {
+    "@karrio/eslint-config-custom": "*",
+    "@karrio/tsconfig": "*",
     "@turbo/gen": "^1.10.12",
     "@types/node": "^20.5.2",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
-    "@karrio/eslint-config-custom": "*",
-    "@karrio/tsconfig": "*",
     "react": "^18.2.0",
     "typescript": "^4.5.2"
   }
