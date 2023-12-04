@@ -28,7 +28,7 @@ export const GET_SYSTEM_USAGE = gql`query GetSystemUsage($filter: UsageFilter) {
       count
       date
     }
-    shipments {
+    shipment_count {
       label
       count
       date

@@ -25,7 +25,7 @@ export interface GetSystemUsage_system_usage_order_volumes {
   date: string | null;
 }
 
-export interface GetSystemUsage_system_usage_shipments {
+export interface GetSystemUsage_system_usage_shipment_count {
   label: string | null;
   count: number | null;
   date: string | null;
@@ -46,7 +46,7 @@ export interface GetSystemUsage_system_usage {
   api_errors: GetSystemUsage_system_usage_api_errors[];
   api_requests: GetSystemUsage_system_usage_api_requests[];
   order_volumes: GetSystemUsage_system_usage_order_volumes[];
-  shipments: GetSystemUsage_system_usage_shipments[];
+  shipment_count: GetSystemUsage_system_usage_shipment_count[];
   shipment_spend: GetSystemUsage_system_usage_shipment_spend[];
 }
 
@@ -102,10 +102,10 @@ export interface GetAccounts_accounts_edges_node_usage {
   order_volume: number | null;
   total_requests: number | null;
   total_shipments: number | null;
-  api_requests: GetAccounts_accounts_edges_node_usage_api_requests[];
-  order_volumes: GetAccounts_accounts_edges_node_usage_order_volumes[];
-  shipment_count: GetAccounts_accounts_edges_node_usage_shipment_count[];
-  shipment_spend: GetAccounts_accounts_edges_node_usage_shipment_spend[];
+  api_requests: GetAccounts_accounts_edges_node_usage_api_requests[] | null;
+  order_volumes: GetAccounts_accounts_edges_node_usage_order_volumes[] | null;
+  shipment_count: GetAccounts_accounts_edges_node_usage_shipment_count[] | null;
+  shipment_spend: GetAccounts_accounts_edges_node_usage_shipment_spend[] | null;
 }
 
 export interface GetAccounts_accounts_edges_node {

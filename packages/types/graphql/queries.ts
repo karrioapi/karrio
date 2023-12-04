@@ -193,6 +193,33 @@ export const GET_ORGANIZATION = gql`query get_organization($id: String!) {
       }
       last_login
     }
+    usage {
+      members
+      order_volume
+      total_requests
+      total_shipments
+      unfulfilled_orders
+      api_requests {
+        date
+        label
+        count
+      }
+      order_volumes {
+        date
+        label
+        count
+      }
+      shipment_count {
+        date
+        label
+        count
+      }
+      shipment_spend {
+        date
+        label
+        count
+      }
+    }
   }
 }
 `;
@@ -223,6 +250,33 @@ export const GET_ORGANIZATIONS = gql`query get_organizations {
         modified
       }
       last_login
+    }
+    usage {
+      members
+      order_volume
+      total_requests
+      total_shipments
+      unfulfilled_orders
+      api_requests {
+        date
+        label
+        count
+      }
+      order_volumes {
+        date
+        label
+        count
+      }
+      shipment_count {
+        date
+        label
+        count
+      }
+      shipment_spend {
+        date
+        label
+        count
+      }
     }
   }
 }

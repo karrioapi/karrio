@@ -1,6 +1,8 @@
+import enum
+import typing
 import base64
 import logging
-import typing
+import datetime
 import functools
 import strawberry
 import dataclasses
@@ -160,6 +162,26 @@ class BaseInput:
 @strawberry.type
 class BaseMutation:
     errors: typing.Optional[typing.List[ErrorType]] = None
+
+
+@strawberry.type
+class UsageStatType:
+    date: typing.Optional[str] = None
+    label: typing.Optional[str] = None
+    count: typing.Optional[float] = None
+
+    @staticmethod
+    def parse(value: dict) -> "UsageStatType":
+        return UsageStatType(
+            **{k: v for k, v in value.items() if k in UsageStatType.__annotations__}
+        )
+
+
+@strawberry.input
+class UsageFilter(BaseInput):
+    date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
+    date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    omit: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @dataclasses.dataclass

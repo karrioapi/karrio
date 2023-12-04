@@ -141,44 +141,29 @@ SystemCarrierConnectionType: typing.Any = strawberry.union(
 
 
 @strawberry.type
-class UsageStatType:
-    label: typing.Optional[str] = None
-    count: typing.Optional[float] = None
-    date: typing.Optional[str] = None
-
-    @staticmethod
-    def parse(value: dict):
-        return UsageStatType(
-            **{k: v for k, v in value.items() if k in UsageStatType.__annotations__}
-        )
-
-
-@strawberry.type
 class SystemUsageType:
     total_errors: typing.Optional[int] = None
     total_requests: typing.Optional[int] = None
-    total_shipments: typing.Optional[int] = None
     order_volume: typing.Optional[float] = None
-    api_errors: typing.List[UsageStatType] = None
-    api_requests: typing.List[UsageStatType] = None
-    shipment_spend: typing.List[UsageStatType] = None
-    shipments: typing.List[UsageStatType] = None
-    order_volumes: typing.List[UsageStatType] = None
+    total_shipments: typing.Optional[int] = None
     organization_count: typing.Optional[int] = None
+    api_errors: typing.List[utils.UsageStatType] = None
+    api_requests: typing.List[utils.UsageStatType] = None
+    order_volumes: typing.List[utils.UsageStatType] = None
+    shipment_count: typing.List[utils.UsageStatType] = None
+    shipment_spend: typing.List[utils.UsageStatType] = None
 
     @staticmethod
     @utils.authentication_required
     @admin.staff_required
     def resolve(
         info,
-        filter: typing.Optional[inputs.UsageFilter] = strawberry.UNSET,
+        filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
     ) -> "SystemUsageType":
         _filter = {
             "date_before": datetime.datetime.now(),
             "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
-            **(
-                filter if not utils.is_unset(filter) else inputs.UsageFilter()
-            ).to_dict(),
+            **(filter if not utils.is_unset(filter) else utils.UsageFilter()).to_dict(),
         }
 
         api_requests = (
@@ -219,7 +204,7 @@ class SystemUsageType:
             )
             .order_by("-date")
         )
-        shipments = (
+        shipment_count = (
             filters.ShipmentFilters(
                 dict(
                     created_before=_filter["date_before"],
@@ -253,7 +238,7 @@ class SystemUsageType:
 
         total_errors = sum([item["count"] for item in api_errors], 0)
         total_requests = sum([item["count"] for item in api_requests], 0)
-        total_shipments = sum([item["count"] for item in shipments], 0)
+        total_shipments = sum([item["count"] for item in shipment_count], 0)
         order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
         organization_count = 0
 
@@ -263,16 +248,16 @@ class SystemUsageType:
             organization_count = orgs.Organization.objects.count()
 
         return SystemUsageType(
+            order_volume=order_volume,
             total_errors=total_errors,
             total_requests=total_requests,
             total_shipments=total_shipments,
-            order_volume=order_volume,
-            api_errors=[UsageStatType.parse(item) for item in api_errors],
-            api_requests=[UsageStatType.parse(item) for item in api_requests],
-            shipment_spend=[UsageStatType.parse(item) for item in shipment_spend],
-            shipments=[UsageStatType.parse(item) for item in shipments],
-            order_volumes=[UsageStatType.parse(item) for item in order_volumes],
             organization_count=organization_count,
+            api_errors=[utils.UsageStatType.parse(item) for item in api_errors],
+            api_requests=[utils.UsageStatType.parse(item) for item in api_requests],
+            order_volumes=[utils.UsageStatType.parse(item) for item in order_volumes],
+            shipment_count=[utils.UsageStatType.parse(item) for item in shipment_count],
+            shipment_spend=[utils.UsageStatType.parse(item) for item in shipment_spend],
         )
 
 
