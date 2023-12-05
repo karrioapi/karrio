@@ -1,15 +1,16 @@
 # Ignore everything
 *
 
-!/public/
-!/karrio/
-!/src/
+!apps/dashboard/public/
+!apps/dashboard/src/
 !/docker/entrypoint
-!/package.json
-!/package-lock.json
-!/sentry.client.config.js
-!/sentry.server.config.js
-!/tsconfig.json
-!/.eslintrc
-!/next.config.js
-!/LICENSE
+!apps/dashboard/.eslintrc
+!apps/dashboard/next.config.js
+!apps/dashboard/package-lock.json
+!apps/dashboard/package.json
+!apps/dashboard/sentry.client.config.js
+!apps/dashboard/sentry.edge.config.js
+!apps/dashboard/sentry.server.config.js
+!apps/dashboard/tsconfig.json
+!packge-lock.json
+!package.json

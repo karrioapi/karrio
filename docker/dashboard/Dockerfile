@@ -7,9 +7,10 @@ RUN apk add --no-cache libc6-compat
 FROM node:21.2.0-alpine3.17 AS builder
 WORKDIR /app
 COPY . .
-RUN npm ci
+RUN npm ci -w apps/dashboard 
 RUN npm run build -w apps/dashboard && \
-  npm install --production --ignore-scripts --prefer-offline
+  rm -rf node_modules && \
+  npm install --omit=dev --ignore-scripts --prefer-offline -w apps/dashboard
 
 # Production image, copy all the files and run next
 FROM node:21.2.0-alpine3.17 AS runner
