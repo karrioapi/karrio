@@ -105,7 +105,7 @@ def shipment_request(
         and not is_document
         and (
             units.EUCountry.map(payload.shipper.country_code).value is None
-            and units.EUCountry.map(payload.recipient.country_code).value is None
+            or units.EUCountry.map(payload.recipient.country_code).value is None
         )
     )
     options = lib.to_shipping_options(
