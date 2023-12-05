@@ -102,13 +102,12 @@ def rate_request(
         raise errors.DestinationNotServicedError(payload.shipper.country_code)
 
     is_document = all([parcel.is_document for parcel in payload.parcels])
+    is_from_EU = payload.shipper.country_code in units.EUCountry
+    is_to_EU = payload.recipient.country_code in units.EUCountry
     is_dutiable = (
         is_international
         and not is_document
-        and (
-            units.EUCountry.map(payload.shipper.country_code).value is None
-            or units.EUCountry.map(payload.recipient.country_code).value is None
-        )
+        and not (is_from_EU and is_to_EU)
     )
 
     services = lib.to_services(

@@ -100,13 +100,12 @@ def shipment_request(
     )
     is_document = all(p.parcel.is_document for p in packages)
     is_international = shipper.country_code != recipient.country_code
+    is_from_EU = payload.shipper.country_code in units.EUCountry
+    is_to_EU = payload.recipient.country_code in units.EUCountry
     is_dutiable = (
         is_international
         and not is_document
-        and (
-            units.EUCountry.map(payload.shipper.country_code).value is None
-            or units.EUCountry.map(payload.recipient.country_code).value is None
-        )
+        and not (is_from_EU and is_to_EU)
     )
     options = lib.to_shipping_options(
         payload.options,

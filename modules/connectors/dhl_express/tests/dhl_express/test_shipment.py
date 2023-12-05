@@ -264,9 +264,37 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
         <CommodityCode>cc</CommodityCode>
         <CommodityName>cn</CommodityName>
     </Commodity>
-    <UseDHLInvoice></UseDHLInvoice>
-    <DHLInvoiceLanguageCode></DHLInvoiceLanguageCode>
-    <DHLInvoiceType></DHLInvoiceType>
+    <Dutiable>
+        <DeclaredValue>200</DeclaredValue>
+        <DeclaredCurrency>USD</DeclaredCurrency>
+        <TermsOfTrade>DAP</TermsOfTrade>
+    </Dutiable>
+    <UseDHLInvoice>Y</UseDHLInvoice>
+    <DHLInvoiceType>PFI</DHLInvoiceType>
+    <ExportDeclaration>
+        <InvoiceNumber>N/A</InvoiceNumber>
+        <InvoiceDate>2021-05-03</InvoiceDate>
+        <ExportLineItem>
+            <LineNumber>1</LineNumber>
+            <Quantity>1</Quantity>
+            <QuantityUnit>PCS</QuantityUnit>
+            <Description>cn</Description>
+            <Value>0</Value>
+            <CommodityCode>cc</CommodityCode>
+            <Weight>
+                <Weight>4</Weight>
+                <WeightUnit>K</WeightUnit>
+            </Weight>
+            <GrossWeight>
+                <Weight>4</Weight>
+                <WeightUnit>K</WeightUnit>
+            </GrossWeight>
+            <ManufactureCountryCode>US</ManufactureCountryCode>
+            <ManufactureCountryName>United States</ManufactureCountryName>
+        </ExportLineItem>
+        <PlaceOfIncoterm>N/A</PlaceOfIncoterm>
+        <ShipmentPurpose>PERSONAL</ShipmentPurpose>
+    </ExportDeclaration>
     <ShipmentDetails>
         <Pieces>
             <Piece>
@@ -288,7 +316,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
         <Contents>N/A</Contents>
         <DimensionUnit>C</DimensionUnit>
         <PackageType>PA</PackageType>
-        <IsDutiable>N</IsDutiable>
+        <IsDutiable>Y</IsDutiable>
         <CurrencyCode>USD</CurrencyCode>
     </ShipmentDetails>
     <Shipper>
