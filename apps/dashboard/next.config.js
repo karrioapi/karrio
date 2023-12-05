@@ -41,6 +41,7 @@ const moduleExports = {
     MULTI_TENANT: MULTI_TENANT,
     KARRIO_PUBLIC_URL: KARRIO_PUBLIC_URL,
     NEXTAUTH_URL: process.env.DASHBOARD_URL,
+    DASHBOARD_URL: process.env.DASHBOARD_URL,
     DASHBOARD_VERSION: process.env.DASHBOARD_VERSION,
   },
   sentry: {

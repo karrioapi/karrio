@@ -1,3 +1,4 @@
+import { AdminSidebar } from '@karrio/ui/components/admin-sidebar';
 import { AdminNavbar } from '@karrio/ui/components/admin-navbar';
 import { Notifier } from '@karrio/ui/components/notifier';
 import React from 'react';
@@ -12,9 +13,9 @@ export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: Rea
 
       <div className="is-flex is-flex-grow-1" style={{ paddingTop: 0, height: '100%' }}>
         <div className="modal-background"></div>
-        <div className="modal-card m-4" style={{ width: '100%' }}>
+        <div className="modal-card admin-modal" style={{ width: '100%' }}>
 
-          <section className="modal-card-body modal-form">
+          <section className="modal-card-body modal-form p-0">
             <div className="form-floating-header p-2">
               <span className="icon-text has-text-weight-bold is-size-6">
                 <span className="icon">
@@ -23,15 +24,12 @@ export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: Rea
                 <span>Administration</span>
               </span>
             </div>
-            <div className="p-3 my-4"></div>
 
-            <div className="columns px-6 pb-6 m-0">
+            <div className="admin-wrapper is-relative" style={{ paddingTop: '60px', margin: 'auto', maxWidth: '1080px' }}>
 
-              <div className="column is-5 px-0 pb-6 is-relative"></div>
+              <AdminSidebar />
 
-              <div className="p-2"></div>
-
-              <div className="column px-0">
+              <div className="plex-wrapper" style={{ background: 'inherit', minHeight: '70vh' }}>
                 {children}
               </div>
 

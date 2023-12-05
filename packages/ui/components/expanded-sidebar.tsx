@@ -2,12 +2,12 @@ import { OrganizationDropdown } from './organization-dropdown';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useRouter } from 'next/dist/client/router';
 import { useAppMode } from '@karrio/hooks/app-mode';
-import { AppLink } from './app-link';
+import { useUser } from '@karrio/hooks/user';
 import React, { useRef } from 'react';
+import { AppLink } from './app-link';
 import getConfig from 'next/config';
 import { p } from '@karrio/lib';
 import Image from 'next/image';
-import { useUser } from '@karrio/hooks/user';
 
 const { publicRuntimeConfig } = getConfig();
 
@@ -37,8 +37,11 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         {MULTI_ORGANIZATIONS
           ? <OrganizationDropdown />
           : <Image src={p`/icon.svg`} className="mt-1" width="30" height="100" alt="logo" />}
-        <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger ml-2" onClick={dismiss}>
-          <span></span>
+
+        <button className="button" style={{ position: 'fixed', top: 15, right: -40 }} onClick={dismiss}>
+          <span className="icon is-small">
+            <i className="fas fa-times"></i>
+          </span>
         </button>
       </div>
       <div className="sidebar-menu has-slimscroll py-2" style={{ height: "calc(100% - 60px)" }}>

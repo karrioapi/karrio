@@ -477,11 +477,25 @@ pre.code {
     overflow: unset;
     overflow-y: unset;
   }
+
+  .admin-modal {
+    margin: 1.5rem;
+  }
+
+  .admin-sidebar {
+    position: absolute !important;
+    top: 60px !important;
+    z-index: 0 !important;
+  }
 }
 
 @media screen and (max-width: 768px) {
   .table-container {
     overflow-y: visible;
+  }
+
+  .admin-modal {
+    margin: 0;
   }
 }
 
@@ -489,7 +503,7 @@ pre.code {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
-  height: 6px;
+  max-height: 4px;
 }
 
 /* Track */
