@@ -382,7 +382,10 @@ class ShipmentCancelSerializer(Shipment):
     ) -> datatypes.ConfirmationResponse:
         if instance.status == ShipmentStatus.purchased.value:
             gateway.Shipments.cancel(
-                payload=ShipmentCancelRequest(instance).data,
+                payload={
+                    **ShipmentCancelRequest(instance).data,
+                    "options": {**instance.options, **instance.meta}
+                },
                 carrier=instance.selected_rate_carrier,
             )
 
