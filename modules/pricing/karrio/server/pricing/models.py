@@ -93,7 +93,7 @@ class Surcharge(core.Entity):
         return f"{self.id} ({self.amount} {type_})"
 
     def apply_charge(self, response: datatypes.RateResponse) -> datatypes.RateResponse:
-        def apply(rate: Rate) -> Rate:
+        def apply(rate: datatypes.Rate) -> datatypes.Rate:
             applicable = []
             carrier_ids = [c.carrier_id for c in self.carrier_accounts.all()]
             charges = getattr(rate, "extra_charges", None) or []
