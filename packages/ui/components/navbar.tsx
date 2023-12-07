@@ -12,6 +12,7 @@ export const Navbar: React.FC<NavbarComponent> = ({ showModeIndicator }) => {
   const openSidebar = (e: React.MouseEvent) => {
     e.preventDefault();
     document.querySelector('.plex-sidebar')?.classList.add('is-mobile-active');
+    document.querySelector('.sidebar-menu-button')?.classList.add('is-mobile-active');
   };
 
   return (

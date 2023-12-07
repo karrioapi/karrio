@@ -1,12 +1,10 @@
-import { OrganizationDropdown } from './organization-dropdown';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useRouter } from 'next/dist/client/router';
 import { useAppMode } from '@karrio/hooks/app-mode';
-import { useUser } from '@karrio/hooks/user';
+import { formatRef, p } from '@karrio/lib';
 import React, { useRef } from 'react';
 import { AppLink } from './app-link';
 import getConfig from 'next/config';
-import { formatRef, p } from '@karrio/lib';
 import Image from 'next/image';
 
 const { publicRuntimeConfig } = getConfig();
@@ -16,12 +14,14 @@ interface AdminSidebarComponent { }
 export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
   const router = useRouter();
   const sidebar = useRef<HTMLDivElement>(null);
+  const dismissAction = useRef<HTMLButtonElement>(null);
   const { basePath } = useAppMode();
   const { metadata } = useAPIMetadata();
 
   const dismiss = (e: React.MouseEvent) => {
     e.preventDefault();
     sidebar.current?.classList.remove('is-mobile-active');
+    dismissAction.current?.classList.remove('is-mobile-active');
   };
   const isActive = (path: string) => {
     if (path === "/admin") return path === router.pathname;
@@ -32,9 +32,9 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
   return (
     <div className="plex-sidebar admin-sidebar" ref={sidebar}>
 
-      <div className="card px-0">
+      <div className="admin-sidebar-menu card px-0 ml-2">
 
-        <header className="p-3 has-background-light">
+        <header className="admin-sidebar-header p-3 has-background-light">
           <div className="media">
             <div className="media-left">
               <figure className="image is-32x32">
@@ -47,7 +47,7 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
             </div>
           </div>
         </header>
-        <button className="button" style={{ position: 'fixed', top: 10, right: -40 }} onClick={dismiss}>
+        <button className="button sidebar-menu-button" onClick={dismiss} ref={dismissAction}>
           <span className="icon is-small">
             <i className="fas fa-times"></i>
           </span>

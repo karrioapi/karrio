@@ -19,13 +19,13 @@ export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: Rea
             <div className="form-floating-header p-2">
               <span className="icon-text has-text-weight-bold is-size-6">
                 <span className="icon">
-                  <i className="fas fa-toolbox"></i>
+                  <i className="fas fa-tools"></i>
                 </span>
                 <span>Administration</span>
               </span>
             </div>
 
-            <div className="admin-wrapper is-relative" style={{ paddingTop: '60px', margin: 'auto', maxWidth: '1080px' }}>
+            <div className="admin-wrapper is-relative">
 
               <AdminSidebar />
 

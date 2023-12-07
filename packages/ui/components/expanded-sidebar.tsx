@@ -16,6 +16,7 @@ interface ExpandedSidebarComponent { }
 export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
   const router = useRouter();
   const sidebar = useRef<HTMLDivElement>(null);
+  const dismissAction = useRef<HTMLButtonElement>(null);
   const { query: { data: { user } = {} } } = useUser();
   const { testMode, basePath, switchMode } = useAppMode();
   const { metadata: { MULTI_ORGANIZATIONS, ORDERS_MANAGEMENT, DOCUMENTS_MANAGEMENT } } = useAPIMetadata();
@@ -24,6 +25,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
   const dismiss = (e: React.MouseEvent) => {
     e.preventDefault();
     sidebar.current?.classList.remove('is-mobile-active');
+    dismissAction.current?.classList.remove('is-mobile-active');
   };
   const isActive = (path: string) => {
     if (path === basePath) return path === router.pathname;
@@ -38,7 +40,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           ? <OrganizationDropdown />
           : <Image src={p`/icon.svg`} className="mt-1" width="30" height="100" alt="logo" />}
 
-        <button className="button" style={{ position: 'fixed', top: 15, right: -40 }} onClick={dismiss}>
+        <button className="button sidebar-menu-button" onClick={dismiss} ref={dismissAction}>
           <span className="icon is-small">
             <i className="fas fa-times"></i>
           </span>
@@ -133,7 +135,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         {/* Administration */}
         {user?.is_staff && <>
           <AppLink href="/admin" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
-            <i className={`fa fa-toolbox pr-2 has-text-grey`}></i>
+            <i className={`fa fa-tools pr-2 has-text-grey`}></i>
             <span className="has-text-weight-bold">Administration</span>
           </AppLink>
         </>}
