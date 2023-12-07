@@ -1,4 +1,3 @@
-import enum
 import typing
 import base64
 import logging

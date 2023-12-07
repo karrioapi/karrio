@@ -130,6 +130,14 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           <AppLink href="/developers/logs" className={"menu-item ml-5 " + activeClass("/developers/logs")} shallow={false} prefetch={false}>
             <span className="has-text-weight-semibold">Logs</span>
           </AppLink>
+
+          <AppLink href="/developers/docs" className={"menu-item ml-5 " + activeClass("/developers/docs")} shallow={false} prefetch={false}>
+            <span className="has-text-weight-semibold">API Docs</span>
+          </AppLink>
+
+          <AppLink href="/developers/graphiql" className={"menu-item ml-5 " + activeClass("/developers/graphiql")} shallow={false} prefetch={false}>
+            <span className="has-text-weight-semibold">GraphiQL</span>
+          </AppLink>
         </>}
 
         {/* Administration */}

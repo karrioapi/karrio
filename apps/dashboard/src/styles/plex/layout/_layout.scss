@@ -281,9 +281,9 @@ Main wrappers
 .plex-wrapper {
   width: calc(100% - 240px);
   margin-left: 240px;
-  min-height: 98vh;
+  min-height: 100vh;
   background: $white;
-  padding: 0 40px;
+  padding: 0 20px;
   transition: all 0.3s;
 
   &.is-expanded {

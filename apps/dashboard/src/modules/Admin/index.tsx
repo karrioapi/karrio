@@ -20,7 +20,7 @@ export default function Page(pageProps: any) {
     };
 
     return AuthenticatedPage((
-        <AdminLayout>
+        <AdminLayout showModeIndicator={true}>
             <Head><title>{`Administration - ${APP_NAME}`}</title></Head>
 
             <Component />

@@ -373,8 +373,9 @@ hr {
 }
 
 .mode-indicator {
-  position: absolute;
-  top: 60px;
+  position: fixed;
+  top: 0;
+  z-index: 40;
   border-top: 1px solid rgb(196, 76, 52);
   padding: 0;
   text-align: center;
@@ -385,10 +386,10 @@ hr {
     margin: 0 auto;
     background: rgb(196, 76, 52);
     display: inline;
-    padding: 2px 14px;
+    padding: 0 10px;
     border-radius: 0 0 5px 5px;
     color: white;
-    font-size: 0.55em;
+    font-size: 0.60em;
     font-weight: bold;
   }
 }

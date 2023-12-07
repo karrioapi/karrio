@@ -1,6 +1,5 @@
 import { ShortcutDropdown } from './shortcut-dropdown';
 import { AccountDropdown } from './account-dropdown';
-import { ModeIndicator } from './mode-indicator';
 import { SearchBar } from '../forms/search-bar';
 import { AppLink } from './app-link';
 import { p } from '@karrio/lib';
@@ -8,10 +7,9 @@ import Image from 'next/image';
 import React from 'react';
 
 interface NavbarComponent {
-  showModeIndicator?: boolean;
 }
 
-export const AdminNavbar: React.FC<NavbarComponent> = ({ showModeIndicator }) => {
+export const AdminNavbar: React.FC<NavbarComponent> = ({ }) => {
   const openSidebar = (e: React.MouseEvent) => {
     e.preventDefault();
     document.querySelector('.plex-sidebar')?.classList.add('is-mobile-active');
@@ -66,8 +64,6 @@ export const AdminNavbar: React.FC<NavbarComponent> = ({ showModeIndicator }) =>
             </div>
           </div>
         </div> */}
-
-        {showModeIndicator && <ModeIndicator />}
       </nav>
     </>
   );
