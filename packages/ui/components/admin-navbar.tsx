@@ -20,7 +20,7 @@ export const AdminNavbar: React.FC<NavbarComponent> = ({ showModeIndicator }) =>
 
   return (
     <>
-      <nav className="navbar is-align-items-center is-justify-content-space-between" role="navigation" aria-label="main navigation">
+      <nav className="navbar is-align-items-center is-justify-content-space-between px-4" role="navigation" aria-label="main navigation">
         <div className="navbar-brand is-flex-grow-1 is-align-items-center">
 
           <div className="nav-item mobile-item is-flex px-2">

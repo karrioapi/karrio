@@ -60,13 +60,13 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
             <i className={`fa fa-layer-group mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Platform details</span>
           </AppLink>
-          <AppLink href="/admin/user_accounts" className={"menu-item px-3 " + activeClass("/admin/user_accounts")} shallow={false} prefetch={false}>
-            <i className={`fa fa-user-lock mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
-            <span className="has-text-weight-bold">Users and permissions</span>
-          </AppLink>
           <AppLink href="/admin/carrier_connections" className={"menu-item px-3 " + activeClass("/admin/carrier_connections")} shallow={false} prefetch={false}>
             <i className={`fa fa-truck mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Carrier connections</span>
+          </AppLink>
+          <AppLink href="/admin/user_accounts" className={"menu-item px-3 " + activeClass("/admin/user_accounts")} shallow={false} prefetch={false}>
+            <i className={`fa fa-user-lock mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+            <span className="has-text-weight-bold">Users and permissions</span>
           </AppLink>
           {metadata?.MULTI_ORGANIZATIONS && <>
             <AppLink href="/admin/organization_accounts" className={"menu-item px-3 " + activeClass("/admin/organization_accounts")} shallow={false} prefetch={false}>
