@@ -2,7 +2,6 @@ import typing
 import logging
 import strawberry
 from constance import config
-from django.conf import settings
 from strawberry.types import Info
 import django.db.models as models
 import django.db.transaction as transaction
@@ -35,7 +34,7 @@ class CreateUserMutation(utils.BaseMutation):
         **input: inputs.CreateUserMutationInput,
     ) -> "CreateUserMutation":
         try:
-            if settings.MULTI_ORGANIZATIONS:
+            if conf.settings.MULTI_ORGANIZATIONS:
                 import karrio.server.orgs.models as orgs
 
                 org_id = organization_id or info.context.request.org.id
@@ -70,7 +69,7 @@ class UpdateUserMutation(utils.BaseMutation):
             models.Q(email=email)
             & (
                 models.Q(orgs_organization__users__id=info.context.request.user.id)
-                if settings.MULTI_ORGANIZATIONS
+                if conf.settings.MULTI_ORGANIZATIONS
                 else models.Q()
             )
         ).first()
@@ -194,6 +193,7 @@ class CreateSurchargeMutation(utils.BaseMutation):
         info: Info,
         **input: inputs.CreateSurchargeMutationInput,
     ) -> "CreateConnectionMutation":
+        organizations = input.pop("organizations", [])
         carrier_accounts = input.pop("carrier_accounts", [])
         instance = pricing.Surcharge(**input)
 
@@ -201,6 +201,13 @@ class CreateSurchargeMutation(utils.BaseMutation):
 
         if any(carrier_accounts):
             instance.carrier_accounts.set(carrier_accounts)
+
+        if conf.settings.MULTI_ORGANIZATIONS and any(organizations):
+            import karrio.server.orgs.models as orgs
+
+            instance.organizations.set(
+                orgs.Organization.objects.filter(id__in=organizations)
+            )
 
         return UpdateSurchargeMutation(
             surcharge=pricing.Surcharge.objects.get(id=instance.id)
@@ -228,6 +235,13 @@ class UpdateSurchargeMutation(utils.BaseMutation):
 
         if any(carrier_accounts):
             instance.carrier_accounts.set(carrier_accounts)
+
+        if conf.settings.MULTI_ORGANIZATIONS and any(organizations):
+            import karrio.server.orgs.models as orgs
+
+            instance.organizations.set(
+                orgs.Organization.objects.filter(id__in=organizations)
+            )
 
         instance.save()
 

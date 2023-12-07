@@ -2589,6 +2589,7 @@ export interface CreateSurchargeMutationInput {
   active?: boolean | null;
   carriers?: string[] | null;
   services?: string[] | null;
+  organizations?: string[] | null;
   carrier_accounts?: string[] | null;
 }
 
@@ -2600,6 +2601,7 @@ export interface UpdateSurchargeMutationInput {
   active?: boolean | null;
   carriers?: string[] | null;
   services?: string[] | null;
+  organizations?: string[] | null;
   carrier_accounts?: string[] | null;
   id: string;
 }

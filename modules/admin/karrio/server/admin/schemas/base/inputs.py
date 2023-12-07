@@ -70,6 +70,7 @@ class CreateSurchargeMutationInput(utils.BaseInput):
     active: typing.Optional[bool] = strawberry.UNSET
     carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
     services: typing.Optional[typing.List[str]] = strawberry.UNSET
+    organizations: typing.Optional[typing.List[str]] = strawberry.UNSET
     carrier_accounts: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
