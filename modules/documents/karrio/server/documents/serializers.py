@@ -1,9 +1,9 @@
-import enum
+import karrio.lib as lib
 import karrio.server.serializers as serializers
 import karrio.server.documents.models as models
 
 
-class TemplateRelatedObject(enum.StrEnum):
+class TemplateRelatedObject(lib.StrEnum):
     shipment = "shipment"
     order = "order"
 

@@ -1,5 +1,5 @@
 # The base image compilation
-FROM python:3.10-slim AS compile-image
+FROM python:3.12-slim AS compile-image
 
 ARG REQUIREMENTS="requirements.txt"
 ARG REGISTRY_TOKEN
@@ -17,7 +17,7 @@ RUN cd /temp/app && \
 
 
 # The runtime image
-FROM python:3.10-slim AS build-image
+FROM python:3.12-slim AS build-image
 
 LABEL maintainer=hello@karrio.io
 LABEL org.opencontainers.image.title="karrio server"

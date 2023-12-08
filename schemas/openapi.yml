@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.9.1`.
+    The current version is `2023.9.2`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.9.1
+  version: 2023.9.2
 paths:
   /:
     get:
@@ -12720,7 +12720,7 @@ tags:
     | dhl_express_envelope | X |
     | dhl_express_12_00_nondoc | Y |
     | dhl_destination_charges | Z |
-    | dhl_express_all | None |
+    | dhl_express_all |  |
 
     ### Colissimo
     | Code         | Service Name |

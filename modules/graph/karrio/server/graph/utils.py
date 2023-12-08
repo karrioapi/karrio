@@ -1,4 +1,3 @@
-import enum
 import base64
 import logging
 import typing
@@ -35,40 +34,40 @@ MANUAL_SHIPMENT_STATUSES = [
 ]
 
 CurrencyCodeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("CurrencyCodeEnum", serializers.CURRENCIES)
+    lib.Enum("CurrencyCodeEnum", serializers.CURRENCIES)
 )
 CountryCodeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("CountryCodeEnum", serializers.COUNTRIES)
+    lib.Enum("CountryCodeEnum", serializers.COUNTRIES)
 )
 DimensionUnitEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("DimensionUnitEnum", serializers.DIMENSION_UNIT)
+    lib.Enum("DimensionUnitEnum", serializers.DIMENSION_UNIT)
 )
 WeightUnitEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("WeightUnitEnum", serializers.WEIGHT_UNIT)
+    lib.Enum("WeightUnitEnum", serializers.WEIGHT_UNIT)
 )
 CustomsContentTypeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("CustomsContentTypeEnum", serializers.CUSTOMS_CONTENT_TYPE)
+    lib.Enum("CustomsContentTypeEnum", serializers.CUSTOMS_CONTENT_TYPE)
 )
 IncotermCodeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("IncotermCodeEnum", serializers.INCOTERMS)
+    lib.Enum("IncotermCodeEnum", serializers.INCOTERMS)
 )
 PaidByEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
+    lib.Enum("PaidByEnum", serializers.PAYMENT_TYPES)
 )
 LabelTypeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("LabelTypeEnum", serializers.LABEL_TYPES)
+    lib.Enum("LabelTypeEnum", serializers.LABEL_TYPES)
 )
 LabelTemplateTypeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("LabelTemplateTypeEnum", serializers.LABEL_TEMPLATE_TYPES)
+    lib.Enum("LabelTemplateTypeEnum", serializers.LABEL_TEMPLATE_TYPES)
 )
 ShipmentStatusEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("ShipmentStatusEnum", serializers.SHIPMENT_STATUS)
+    lib.Enum("ShipmentStatusEnum", serializers.SHIPMENT_STATUS)
 )
 ManualShipmentStatusEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("ManualShipmentStatusEnum", MANUAL_SHIPMENT_STATUSES)
+    lib.Enum("ManualShipmentStatusEnum", MANUAL_SHIPMENT_STATUSES)
 )
 TrackerStatusEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum("TrackerStatusEnum", serializers.TRACKER_STATUS)
+    lib.Enum("TrackerStatusEnum", serializers.TRACKER_STATUS)
 )
 
 
@@ -82,7 +81,7 @@ class MetadataObjectType(lib.Enum):
 
 
 MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.StrEnum(
+    lib.StrEnum(
         "MetadataObjectTypeEnum", [(c.name, c.name) for c in list(MetadataObjectType)]
     )
 )

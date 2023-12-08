@@ -1,9 +1,9 @@
-import enum
+import karrio.lib as lib
 import rest_framework.fields as fields
 import karrio.server.serializers as serializers
 
 
-class ResourceType(enum.StrEnum):
+class ResourceType(lib.StrEnum):
     order = "orders"
     shipment = "shipments"
     trackers = "trackers"
@@ -57,7 +57,7 @@ class ResourceType(enum.StrEnum):
         return None
 
 
-class ResourceStatus(enum.StrEnum):
+class ResourceStatus(lib.StrEnum):
     queued = "queued"
     created = "created"
     has_errors = "has_errors"
@@ -65,7 +65,7 @@ class ResourceStatus(enum.StrEnum):
     processed = "processed"
 
 
-class BatchOperationStatus(enum.StrEnum):
+class BatchOperationStatus(lib.StrEnum):
     queued = "queued"
     running = "running"
     failed = "failed"

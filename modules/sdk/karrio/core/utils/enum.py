@@ -1,6 +1,9 @@
 import attr
 import enum
 import typing
+import karrio.lib as lib
+
+BaseStrEnum = getattr(enum, "StrEnum", enum.Flag)
 
 
 class MetaEnum(enum.EnumMeta):
@@ -43,7 +46,7 @@ class Flag(enum.Flag, metaclass=MetaEnum):
     pass
 
 
-class StrEnum(enum.StrEnum, metaclass=MetaEnum):  # type: ignore
+class StrEnum(BaseStrEnum, metaclass=MetaEnum):  # type: ignore
     pass
 
 

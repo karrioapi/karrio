@@ -1,8 +1,8 @@
-import enum
 import pydoc
+import karrio.lib as lib
 
 
-class CarrierFeatures(enum.StrEnum):
+class CarrierFeatures(lib.StrEnum):
     tracking = "tracking"
     rating = "rating"
     shipping = "shipping"
