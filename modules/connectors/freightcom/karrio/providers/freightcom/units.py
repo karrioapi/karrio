@@ -1,10 +1,9 @@
 import re
-from karrio.core import units
-from karrio.core.utils import Enum, Flag
-from karrio.core.utils.enum import OptionEnum
+import karrio.lib as lib
+import karrio.core.units as units
 
 
-class FreightPackagingType(Flag):
+class FreightPackagingType(lib.StrEnum):
     freightcom_pallet = "Pallet"
     freightcom_drum = "Drum"
     freightcom_boxes = "Boxes"
@@ -32,7 +31,7 @@ class FreightPackagingType(Flag):
     your_packaging = freightcom_package
 
 
-class PaymentType(Flag):  # TODO:: retrieve the complete list of payment types
+class PaymentType(lib.StrEnum):  # TODO:: retrieve the complete list of payment types
     check = "Check"
 
     sender = "Sender"
@@ -41,7 +40,7 @@ class PaymentType(Flag):  # TODO:: retrieve the complete list of payment types
     credit_card = "Card"
 
 
-class ShippingService(Enum):
+class ShippingService(lib.StrEnum):
     freightcom_all = "0"
     freightcom_usf_holland = "1911"
     freightcom_central_transport = "2029"
@@ -112,26 +111,28 @@ CARRIER_IDS = {
 }
 
 
-class ShippingOption(Flag):
-    freightcom_saturday_pickup_required = OptionEnum("saturdayPickupRequired", bool)
-    freightcom_homeland_security = OptionEnum("homelandSecurity", bool)
-    freightcom_exhibition_convention_site = OptionEnum("exhibitionConventionSite", bool)
-    freightcom_military_base_delivery = OptionEnum("militaryBaseDelivery", bool)
-    freightcom_customs_in_bond_freight = OptionEnum("customsIn_bondFreight", bool)
-    freightcom_limited_access = OptionEnum("limitedAccess", bool)
-    freightcom_excess_length = OptionEnum("excessLength", bool)
-    freightcom_tailgate_pickup = OptionEnum("tailgatePickup", bool)
-    freightcom_residential_pickup = OptionEnum("residentialPickup", bool)
-    freightcom_cross_border_fee = OptionEnum("crossBorderFee", bool)
-    freightcom_notify_recipient = OptionEnum("notifyRecipient", bool)
-    freightcom_single_shipment = OptionEnum("singleShipment", bool)
-    freightcom_tailgate_delivery = OptionEnum("tailgateDelivery", bool)
-    freightcom_residential_delivery = OptionEnum("residentialDelivery", bool)
-    freightcom_insurance_type = OptionEnum("insuranceType", float)
-    freightcom_inside_delivery = OptionEnum("insideDelivery", bool)
-    freightcom_is_saturday_service = OptionEnum("isSaturdayService", bool)
-    freightcom_dangerous_goods_type = OptionEnum("dangerousGoodsType", bool)
-    freightcom_stackable = OptionEnum("stackable", bool)
+class ShippingOption(lib.Enum):
+    freightcom_saturday_pickup_required = lib.OptionEnum("saturdayPickupRequired", bool)
+    freightcom_homeland_security = lib.OptionEnum("homelandSecurity", bool)
+    freightcom_exhibition_convention_site = lib.OptionEnum(
+        "exhibitionConventionSite", bool
+    )
+    freightcom_military_base_delivery = lib.OptionEnum("militaryBaseDelivery", bool)
+    freightcom_customs_in_bond_freight = lib.OptionEnum("customsIn_bondFreight", bool)
+    freightcom_limited_access = lib.OptionEnum("limitedAccess", bool)
+    freightcom_excess_length = lib.OptionEnum("excessLength", bool)
+    freightcom_tailgate_pickup = lib.OptionEnum("tailgatePickup", bool)
+    freightcom_residential_pickup = lib.OptionEnum("residentialPickup", bool)
+    freightcom_cross_border_fee = lib.OptionEnum("crossBorderFee", bool)
+    freightcom_notify_recipient = lib.OptionEnum("notifyRecipient", bool)
+    freightcom_single_shipment = lib.OptionEnum("singleShipment", bool)
+    freightcom_tailgate_delivery = lib.OptionEnum("tailgateDelivery", bool)
+    freightcom_residential_delivery = lib.OptionEnum("residentialDelivery", bool)
+    freightcom_insurance_type = lib.OptionEnum("insuranceType", float)
+    freightcom_inside_delivery = lib.OptionEnum("insideDelivery", bool)
+    freightcom_is_saturday_service = lib.OptionEnum("isSaturdayService", bool)
+    freightcom_dangerous_goods_type = lib.OptionEnum("dangerousGoodsType", bool)
+    freightcom_stackable = lib.OptionEnum("stackable", bool)
 
 
 def shipping_options_initializer(

@@ -12,7 +12,7 @@ MeasurementOptions = lib.units.MeasurementOptionsType(
 )
 
 
-class PackagePresets(lib.Flag):
+class PackagePresets(lib.Enum):
     """
     Note that dimensions are in CM and weight in KG
     """
@@ -68,7 +68,7 @@ class LabelType(lib.Enum):
     ZPL = ZPL_4x6
 
 
-class PaymentType(lib.Flag):
+class PaymentType(lib.StrEnum):
     account = "Account"
     card = "CreditCard"
     supplier_account = "SupplierAccount"

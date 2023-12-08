@@ -72,7 +72,7 @@ TrackerStatusEnum: typing.Any = strawberry.enum(  # type: ignore
 )
 
 
-class MetadataObjectType(lib.Flag):
+class MetadataObjectType(lib.Enum):
     app = apps.App
     carrier = providers.Carrier
     commodity = manager.Commodity
@@ -82,7 +82,7 @@ class MetadataObjectType(lib.Flag):
 
 
 MetadataObjectTypeEnum: typing.Any = strawberry.enum(  # type: ignore
-    enum.Enum(
+    enum.StrEnum(
         "MetadataObjectTypeEnum", [(c.name, c.name) for c in list(MetadataObjectType)]
     )
 )

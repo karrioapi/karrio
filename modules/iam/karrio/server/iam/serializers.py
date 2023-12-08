@@ -2,7 +2,7 @@ import enum
 import typing
 
 
-class PermissionGroup(enum.Enum):
+class PermissionGroup(enum.StrEnum):
     manage_apps = "manage_apps"
     manage_team = "manage_team"
     manage_system = "manage_system"

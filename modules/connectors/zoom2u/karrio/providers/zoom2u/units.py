@@ -1,8 +1,9 @@
+import enum
 import karrio.lib as lib
 import karrio.core.units as units
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     zoom2u_documents = "Documents"
@@ -27,7 +28,7 @@ class ConnectionConfig(lib.Enum):
     shipping_services = lib.OptionEnum("shipping_services", list)
 
 
-class VehiculeType(lib.Enum):
+class VehiculeType(lib.StrEnum):
     """Zoom2u vehicule type"""
 
     zoom2u_bike = "Bike"
@@ -35,7 +36,7 @@ class VehiculeType(lib.Enum):
     zoom2u_van = "Van"
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     zoom2u_VIP = "VIP"

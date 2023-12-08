@@ -7,7 +7,7 @@ PRESET_DEFAULTS = dict(
 )
 
 
-class PackagePresets(utils.Flag):
+class PackagePresets(utils.Enum):
     ups_small_express_box = units.PackagePreset(
         **dict(weight=30.0, width=13.0, height=11.0, length=2.0), **PRESET_DEFAULTS
     )
@@ -28,7 +28,7 @@ class PackagePresets(utils.Flag):
     )
 
 
-class LabelType(utils.Flag):
+class LabelType(utils.Enum):
     PDF_6x4 = ("PNG", 6, 4)
     PDF_8x4 = ("PNG", 8, 4)
     ZPL_6x4 = ("ZPL", 6, 4)
@@ -38,7 +38,7 @@ class LabelType(utils.Flag):
     ZPL = ZPL_6x4
 
 
-class Incoterm(utils.Enum):
+class Incoterm(utils.StrEnum):
     CFR = "Cost and Freight"
     CIF = "Cost Insurance and Freight"
     CIP = "Carriage and Insurance Paid"
@@ -54,7 +54,7 @@ class Incoterm(utils.Enum):
     FOB = "Free On Board"
 
 
-class CustomsContentType(utils.Enum):
+class CustomsContentType(utils.StrEnum):
     sale = "SALE"
     gift = "GIFT"
     sample = "SAMPLE"
@@ -68,12 +68,12 @@ class CustomsContentType(utils.Enum):
     merchandise = sale
 
 
-class WeightUnit(utils.Enum):
+class WeightUnit(utils.StrEnum):
     KG = "KGS"
     LB = "LBS"
 
 
-class PackagingType(utils.Flag):
+class PackagingType(utils.StrEnum):
     ups_unknown = "00"
     ups_letter = "01"
     ups_customer_supplied_package = "02"
@@ -118,7 +118,7 @@ class ConnectionConfig(utils.Enum):
     shipping_services = utils.OptionEnum("shipping_services", list)
 
 
-class ServiceCode(utils.Enum):
+class ServiceCode(utils.StrEnum):
     ups_express = "07"
     ups_standard = "11"
     ups_worldwide_expedited = "08"
@@ -262,7 +262,7 @@ class ServiceZone(utils.Enum):
         return ServiceCode.map(service_type)
 
 
-class ShippingService(utils.Enum):
+class ShippingService(utils.StrEnum):
     ups_standard = "UPS Standard"
     ups_worldwide_express = "UPS Worldwide Express"
     ups_worldwide_expedited = "UPS Worldwide Expedited"
@@ -427,7 +427,7 @@ def shipping_options_initializer(
     return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
-class UploadDocumentType(utils.Flag):
+class UploadDocumentType(utils.StrEnum):
     ups_authorization_form = "001"
     ups_commercial_invoice = "002"
     ups_certificate_of_origin = "003"

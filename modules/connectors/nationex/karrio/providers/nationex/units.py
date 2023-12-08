@@ -8,14 +8,14 @@ MeasurementOptions = lib.units.MeasurementOptionsType(
 )
 
 
-class MeasurementUnit(lib.Flag):
+class MeasurementUnit(lib.StrEnum):
     CM = "KC"
     IN = "LI"
     KG = "KC"
     LB = "LI"
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -30,7 +30,7 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     nationex_delivery = "Delivery"

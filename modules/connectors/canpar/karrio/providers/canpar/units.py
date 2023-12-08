@@ -1,20 +1,19 @@
 import typing
-from karrio.core.utils import Enum, Flag
+import karrio.lib as lib
 from karrio.core.units import Options
-from karrio.core.utils.enum import OptionEnum
 
 
-class WeightUnit(Flag):
+class WeightUnit(lib.StrEnum):
     LB = "L"
     KG = "K"
 
 
-class DimensionUnit(Enum):
+class DimensionUnit(lib.StrEnum):
     IN = "I"
     CM = "C"
 
 
-class Charges(Flag):
+class Charges(lib.StrEnum):
     cod_charge = "Cash On Delivery"
     cos_charge = "Chain of Signature"
     dg_charge = "Dangerous Goods"
@@ -29,7 +28,7 @@ class Charges(Flag):
     xc_charge = "Extra Care Charge"
 
 
-class Service(Enum):
+class Service(lib.StrEnum):
     canpar_ground = "1"
     canpar_usa = "2"
     canpar_select_letter = "3"
@@ -44,15 +43,15 @@ class Service(Enum):
     canpar_international = "I"
 
 
-class ShippingOption(Flag):
-    canpar_cash_on_delivery = OptionEnum("Y")
-    canpar_dangerous_goods = OptionEnum("dg", bool)
-    canpar_extra_care = OptionEnum("xc", bool)
-    canpar_ten_am = OptionEnum("A", bool)
-    canpar_noon = OptionEnum("B", bool)
-    canpar_no_signature_required = OptionEnum("2", bool)
-    canpar_not_no_signature_required = OptionEnum("0", bool)
-    canpar_saturday = OptionEnum("S", bool)
+class ShippingOption(lib.Enum):
+    canpar_cash_on_delivery = lib.OptionEnum("Y")
+    canpar_dangerous_goods = lib.OptionEnum("dg", bool)
+    canpar_extra_care = lib.OptionEnum("xc", bool)
+    canpar_ten_am = lib.OptionEnum("A", bool)
+    canpar_noon = lib.OptionEnum("B", bool)
+    canpar_no_signature_required = lib.OptionEnum("2", bool)
+    canpar_not_no_signature_required = lib.OptionEnum("0", bool)
+    canpar_saturday = lib.OptionEnum("S", bool)
 
     """ Unified Option type mapping """
     cash_on_delivery = canpar_cash_on_delivery

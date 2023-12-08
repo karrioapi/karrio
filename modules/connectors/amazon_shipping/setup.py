@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.amazon_shipping",
-    version="2023.9",
+    version="2023.9.2",
     description="Karrio - Amazon Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

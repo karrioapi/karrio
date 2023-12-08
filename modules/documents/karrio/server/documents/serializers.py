@@ -3,7 +3,7 @@ import karrio.server.serializers as serializers
 import karrio.server.documents.models as models
 
 
-class TemplateRelatedObject(enum.Enum):
+class TemplateRelatedObject(enum.StrEnum):
     shipment = "shipment"
     order = "order"
 

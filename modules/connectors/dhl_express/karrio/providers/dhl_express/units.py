@@ -11,7 +11,7 @@ PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 UNSUPPORTED_PAPERLESS_COUNTRIES = ["JM"]
 
 
-class PackagePresets(lib.Flag):
+class PackagePresets(lib.Enum):
     dhl_express_envelope = lib.units.PackagePreset(
         **dict(
             weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"
@@ -128,7 +128,7 @@ class PackagePresets(lib.Flag):
     )
 
 
-class LabelType(lib.Flag):
+class LabelType(lib.Enum):
     PDF_6x4 = ("PDF", "6X4_PDF")
     PDF_8x4 = ("PDF", "8X4_PDF")
     PDF_8x4_A4 = ("PDF", "8X4_A4_PDF")
@@ -180,7 +180,7 @@ class ExportReasonCode(lib.Enum):
     return_merchandise = return_to_origin
 
 
-class PaymentType(lib.Enum):
+class PaymentType(lib.StrEnum):
     sender = "S"
     recipient = "R"
     third_party = "T"
@@ -221,7 +221,7 @@ class UploadDocumentType(lib.Enum):
     other = INV
 
 
-class DCTPackageType(lib.Enum):
+class DCTPackageType(lib.StrEnum):
     dhl_flyer_smalls = "FLY"
     dhl_parcels_conveyables = "COY"
     dhl_non_conveyables = "NCY"
@@ -246,7 +246,7 @@ class NetworkType(lib.Enum):
     time_definite = "TD"
 
 
-class PackageType(lib.Flag):
+class PackageType(lib.StrEnum):
     dhl_jumbo_document = "BD"
     dhl_jumbo_parcel = "BP"
     dhl_customer_provided = "CP"
@@ -290,7 +290,7 @@ class ConnectionConfig(lib.Enum):
     shipping_services = lib.OptionEnum("shipping_services", list)
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     dhl_logistics_services = "0"
     dhl_domestic_express_12_00 = "1"
     dhl_express_choice = "2"
@@ -327,7 +327,7 @@ class ShippingService(lib.Enum):
     dhl_express_envelope = "X"
     dhl_express_12_00_nondoc = "Y"
     dhl_destination_charges = "Z"
-    dhl_express_all = None
+    dhl_express_all = ""
 
 
 def shipping_services_initializer(

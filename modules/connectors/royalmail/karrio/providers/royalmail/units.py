@@ -1,11 +1,12 @@
 """ Royal Mail Native Types """
 
+# import karrio.lib as lib
 # from karrio.core.utils import Enum, Flag
 #
 # PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 #
 #
-# class PackagePresets(Flag):
+# class PackagePresets(lib.Enum):
 #     # carrier_envelope = PackagePreset(
 #     #     **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"),
 #     #     **PRESET_DEFAULTS
@@ -17,7 +18,7 @@
 #     pass
 #
 #
-# class PackageType(Flag):
+# class PackageType(lib.StrEnum):
 #     carrier_envelope = "ENVELOPE CODE"
 #     carrier_box = "BOX CODE"
 #     carrier_your_packaging = "CUSTOM PACKAGING CODE"
@@ -39,7 +40,7 @@
 #     carrier_overnight = "OVERNIGHT CODE"
 #
 #
-# class Option(Flag):
+# class Option(lib.Enum):
 #     carrier_signature = "SIGNATURE CODE"
 #     carrier_saturday_delivery = "SATURDAY DELIVERY CODE"
 #     carrier_dry_ice = "DRY ICE CODE"

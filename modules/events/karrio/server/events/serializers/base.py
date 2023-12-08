@@ -1,9 +1,8 @@
-from enum import Enum
+import enum
+import karrio.server.serializers as serializers
 
-from karrio.server import serializers
 
-
-class EventTypes(Enum):
+class EventTypes(enum.StrEnum):
     all = "all"
     shipment_purchased = "shipment_purchased"
     shipment_cancelled = "shipment_cancelled"

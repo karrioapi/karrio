@@ -1,12 +1,10 @@
 """Karrio USPS enumerations module"""
 
 import typing
-from karrio.core import units
-from karrio.core.utils import Enum, Flag
-from karrio.core.utils.enum import OptionEnum
+import karrio.lib as lib
 
 
-class ContentType(Enum):
+class ContentType(lib.Enum):
     cremated_remains = "CREMATEDREMAINS"
     merchandise = "MERCHANDISE"
     sample = "SAMPLE"
@@ -21,7 +19,7 @@ class ContentType(Enum):
     other = "OTHER"
 
 
-class LabelFormat(Enum):
+class LabelFormat(lib.Enum):
     usps_barcode_only = "BARCODE ONLY"
     usps_crop = "CROP"
     usps_4_x_6_label = "4X6LABEL"
@@ -38,7 +36,7 @@ class LabelFormat(Enum):
     ZPL = usps_4_x_6_zpl_203_dpi
 
 
-class PackagingType(Flag):
+class PackagingType(lib.StrEnum):
     variable = "VARIABLE"
     flat_rate_envelope = "FLAT RATE ENVELOPE"
     padded_flat_rate_envelope = "PADDED FLAT RATE ENVELOPE"
@@ -64,7 +62,7 @@ class PackagingType(Flag):
     your_packaging = variable
 
 
-class FirstClassMailType(Flag):
+class FirstClassMailType(lib.StrEnum):
     flat = "FLAT"
     letter = "LETTER"
     postcard = "POSTCARD"
@@ -88,7 +86,7 @@ class FirstClassMailType(Flag):
     regional_rate_box_b = package_service_retail
 
 
-class SortLevelType(Flag):
+class SortLevelType(lib.StrEnum):
     letter = "LETTER"
     large_envelope = "LARGEENVELOPE"
     package = "PACKAGE"
@@ -111,61 +109,63 @@ class SortLevelType(Flag):
     regional_rate_box_b = package
 
 
-class ShippingOption(Enum):
-    usps_insurance = OptionEnum("100", float)
-    usps_insurance_priority_mail_express = OptionEnum("101", float)
-    usps_return_receipt = OptionEnum("102")
-    usps_collect_on_delivery = OptionEnum("103")
-    usps_certificate_of_mailing_form_3665 = OptionEnum("104")
-    usps_certified_mail = OptionEnum("105")
-    usps_tracking = OptionEnum("106")
-    usps_signature_confirmation = OptionEnum("108")
-    usps_registered_mail = OptionEnum("109")
-    usps_return_receipt_electronic = OptionEnum("110")
-    usps_registered_mail_cod_collection_charge = OptionEnum("112")
-    usps_return_receipt_priority_mail_express = OptionEnum("118")
-    usps_adult_signature_required = OptionEnum("119")
-    usps_adult_signature_restricted_delivery = OptionEnum("120")
-    usps_insurance_priority_mail = OptionEnum("125", float)
-    usps_tracking_electronic = OptionEnum("155")
-    usps_signature_confirmation_electronic = OptionEnum("156")
-    usps_certificate_of_mailing_form_3817 = OptionEnum("160")
-    usps_priority_mail_express_10_30_am_delivery = OptionEnum("161")
-    usps_certified_mail_restricted_delivery = OptionEnum("170")
-    usps_certified_mail_adult_signature_required = OptionEnum("171")
-    usps_certified_mail_adult_signature_restricted_delivery = OptionEnum("172")
-    usps_signature_confirm_restrict_delivery = OptionEnum("173")
-    usps_signature_confirmation_electronic_restricted_delivery = OptionEnum("174")
-    usps_collect_on_delivery_restricted_delivery = OptionEnum("175")
-    usps_registered_mail_restricted_delivery = OptionEnum("176")
-    usps_insurance_restricted_delivery = OptionEnum("177", float)
-    usps_insurance_restrict_delivery_priority_mail = OptionEnum("179", float)
-    usps_insurance_restrict_delivery_priority_mail_express = OptionEnum("178", float)
-    usps_insurance_restrict_delivery_bulk_only = OptionEnum("180", float)
-    usps_scan_retention = OptionEnum("181")
-    usps_scan_signature_retention = OptionEnum("182")
-    usps_special_handling_fragile = OptionEnum("190")
+class ShippingOption(lib.Enum):
+    usps_insurance = lib.OptionEnum("100", float)
+    usps_insurance_priority_mail_express = lib.OptionEnum("101", float)
+    usps_return_receipt = lib.OptionEnum("102")
+    usps_collect_on_delivery = lib.OptionEnum("103")
+    usps_certificate_of_mailing_form_3665 = lib.OptionEnum("104")
+    usps_certified_mail = lib.OptionEnum("105")
+    usps_tracking = lib.OptionEnum("106")
+    usps_signature_confirmation = lib.OptionEnum("108")
+    usps_registered_mail = lib.OptionEnum("109")
+    usps_return_receipt_electronic = lib.OptionEnum("110")
+    usps_registered_mail_cod_collection_charge = lib.OptionEnum("112")
+    usps_return_receipt_priority_mail_express = lib.OptionEnum("118")
+    usps_adult_signature_required = lib.OptionEnum("119")
+    usps_adult_signature_restricted_delivery = lib.OptionEnum("120")
+    usps_insurance_priority_mail = lib.OptionEnum("125", float)
+    usps_tracking_electronic = lib.OptionEnum("155")
+    usps_signature_confirmation_electronic = lib.OptionEnum("156")
+    usps_certificate_of_mailing_form_3817 = lib.OptionEnum("160")
+    usps_priority_mail_express_10_30_am_delivery = lib.OptionEnum("161")
+    usps_certified_mail_restricted_delivery = lib.OptionEnum("170")
+    usps_certified_mail_adult_signature_required = lib.OptionEnum("171")
+    usps_certified_mail_adult_signature_restricted_delivery = lib.OptionEnum("172")
+    usps_signature_confirm_restrict_delivery = lib.OptionEnum("173")
+    usps_signature_confirmation_electronic_restricted_delivery = lib.OptionEnum("174")
+    usps_collect_on_delivery_restricted_delivery = lib.OptionEnum("175")
+    usps_registered_mail_restricted_delivery = lib.OptionEnum("176")
+    usps_insurance_restricted_delivery = lib.OptionEnum("177", float)
+    usps_insurance_restrict_delivery_priority_mail = lib.OptionEnum("179", float)
+    usps_insurance_restrict_delivery_priority_mail_express = lib.OptionEnum(
+        "178", float
+    )
+    usps_insurance_restrict_delivery_bulk_only = lib.OptionEnum("180", float)
+    usps_scan_retention = lib.OptionEnum("181")
+    usps_scan_signature_retention = lib.OptionEnum("182")
+    usps_special_handling_fragile = lib.OptionEnum("190")
 
     """ Non official options """
-    usps_option_machinable_item = OptionEnum("usps_option_machinable_item", bool)
-    usps_option_ground_only = OptionEnum("usps_option_ground_only", bool)
-    usps_option_return_service_info = OptionEnum(
+    usps_option_machinable_item = lib.OptionEnum("usps_option_machinable_item", bool)
+    usps_option_ground_only = lib.OptionEnum("usps_option_ground_only", bool)
+    usps_option_return_service_info = lib.OptionEnum(
         "usps_option_return_service_info", bool
     )
-    usps_option_ship_info = OptionEnum("usps_option_ship_info", bool)
+    usps_option_ship_info = lib.OptionEnum("usps_option_ship_info", bool)
 
     """ Unified Shipment Option type mapping """
     insurance = usps_insurance
 
     @classmethod
-    def insurance_from(cls, options: units.Options) -> typing.Optional[float]:
+    def insurance_from(cls, options: lib.units.Options) -> typing.Optional[float]:
         return next(
             (option.state for key, option in options if "usps_insurance" in key),
             options.insurance,
         )
 
     @classmethod
-    def non_delivery_from(cls, options: units.Options) -> typing.Optional[str]:
+    def non_delivery_from(cls, options: lib.units.Options) -> typing.Optional[str]:
         # Gets the first provided non delivery option or default to "RETURN"
         return next(
             (option.state for name, option in options if "non_delivery" in name),
@@ -175,8 +175,8 @@ class ShippingOption(Enum):
 
 def shipping_options_initializer(
     options: dict,
-    package_options: units.Options = None,
-) -> units.Options:
+    package_options: lib.units.Options = None,
+) -> lib.units.Options:
     """
     Apply default values to the given options.
     """
@@ -188,10 +188,12 @@ def shipping_options_initializer(
     def items_filter(code: str) -> bool:
         return code in ShippingOption and "usps_option" not in code  # type:ignore
 
-    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
+    return lib.units.ShippingOptions(
+        _options, ShippingOption, items_filter=items_filter
+    )
 
 
-class ShipmentService(Enum):
+class ShipmentService(lib.Enum):
     usps_first_class = "First Class"
     usps_first_class_commercial = "First Class Commercial"
     usps_first_class_hfp_commercial = "First Class HFPCommercial"
@@ -223,7 +225,7 @@ class ShipmentService(Enum):
     usps_ground_advantage_cubic = "Ground Advantage Cubic"
 
 
-class ServiceClassID(Enum):
+class ServiceClassID(lib.Enum):
     usps_first_class = "0"
     usps_first_class_mail_large_envelope = usps_first_class
     usps_first_class_mail_lt_letter = usps_first_class
@@ -294,7 +296,7 @@ class ServiceClassID(Enum):
     usps_ground_advantage_parcel_locker = "6058"
 
 
-class ServiceType(Enum):
+class ServiceType(lib.Enum):
     usps_bpm = "BPM"
     usps_media = "MEDIA"
     usps_library = "LIBRARY"
@@ -375,7 +377,7 @@ class ServiceType(Enum):
     )
 
 
-class TrackingStatus(Enum):
+class TrackingStatus(lib.Enum):
     in_transit = [""]
     delivered = ["1"]
     ready_for_pickup = ["16"]

@@ -1,7 +1,7 @@
-from karrio.core.utils import Enum, Flag
+import karrio.lib as lib
 
 
-class PackagingType(Flag):
+class PackagingType(lib.StrEnum):
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -14,7 +14,7 @@ class PackagingType(Flag):
     your_packaging = PACKAGE
 
 
-class Service(Enum):
+class Service(lib.StrEnum):
     amazon_shipping_ground = "Amazon Shipping Ground"
     amazon_shipping_standard = "Amazon Shipping Standard"
     amazon_shipping_premium = "Amazon Shipping Premium"

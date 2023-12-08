@@ -14,7 +14,7 @@ COUNTRY_PREFERED_UNITS = dict(
 )
 
 
-class PackagePresets(utils.Flag):
+class PackagePresets(utils.Enum):
     fedex_envelope_legal_size = units.PackagePreset(
         **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"),
         **PRESET_DEFAULTS
@@ -107,7 +107,7 @@ class PackagePresets(utils.Flag):
     fedex_pak = fedex_padded_pak
 
 
-class LabelType(utils.Flag):
+class LabelType(utils.Enum):
     PDF_4x6 = ("PDF", "STOCK_4X6")
     PDF_4x6_75 = ("PDF", "STOCK_4X6.75")
     PDF_4x8 = ("PDF", "STOCK_4X8")
@@ -151,7 +151,7 @@ class PurposeType(utils.Enum):
     return_merchandise = repair_and_return
 
 
-class PackagingType(utils.Flag):
+class PackagingType(utils.StrEnum):
     fedex_envelope = "FEDEX_ENVELOPE"
     fedex_pak = "FEDEX_PAK"
     fedex_box = "FEDEX_BOX"
@@ -175,7 +175,7 @@ class PackagingType(utils.Flag):
     extra_large_box = fedex_extra_large_box
 
 
-class PhysicalPackagingType(utils.Flag):
+class PhysicalPackagingType(utils.StrEnum):
     bag = "BAG"
     barrel = "BBL"
     basket = "BSK"
@@ -206,7 +206,7 @@ class PhysicalPackagingType(utils.Flag):
     pieces = piece
 
 
-class FreightPackagingType(utils.Flag):
+class FreightPackagingType(utils.StrEnum):
     fedex_10_kg_box = "FEDEX_10KG_BOX"
     fedex_25_kg_box = "FEDEX_25KG_BOX"
     fedex_box = "FEDEX_BOX"
@@ -230,7 +230,7 @@ class FreightPackagingType(utils.Flag):
     extra_large_box = fedex_extra_large_box
 
 
-class PaymentType(utils.Flag):
+class PaymentType(utils.StrEnum):
     account = "ACCOUNT"
     collect = "COLLECT"
     recipient = "RECIPIENT"
@@ -486,7 +486,7 @@ class RateType(utils.Enum):
     preferred_list_shipment = "PREFERRED_LIST_SHIPMENT"
 
 
-class UploadDocumentType(utils.Flag):
+class UploadDocumentType(utils.StrEnum):
     fedex_certificate_of_origin = "CERTIFICATE_OF_ORIGIN"
     fedex_commercial_invoice = "COMMERCIAL_INVOICE"
     fedex_etd_label = "ETD_LABEL"

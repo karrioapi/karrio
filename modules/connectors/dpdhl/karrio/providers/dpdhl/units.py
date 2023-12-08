@@ -5,7 +5,7 @@ import karrio.core.models as models
 import karrio.core.settings as settings
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -20,7 +20,7 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
-class LabelType(lib.Flag):
+class LabelType(lib.Enum):
     B_64 = "B64"
     ZPL_2 = "ZPL2"
 
@@ -29,7 +29,7 @@ class LabelType(lib.Flag):
     ZPL = ZPL_2
 
 
-class CustomsContentType(lib.Flag):
+class CustomsContentType(lib.StrEnum):
     OTHER = "OTHER"
     PRESENT = "PRESENT"
     COMMERCIAL_SAMPLE = "COMMERCIAL_SAMPLE"
@@ -75,7 +75,7 @@ class ConnectionConfig(lib.Enum):
     shipping_services = lib.OptionEnum("shipping_services", list)
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     dpdhl_paket = "V01PAK"

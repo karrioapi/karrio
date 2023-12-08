@@ -1,5 +1,5 @@
-from enum import Enum
-from rest_framework import fields
+import enum
+import rest_framework.fields as fields
 
 import karrio.server.serializers as serializers
 import karrio.server.core.validators as validators
@@ -12,7 +12,7 @@ from karrio.server.core.serializers import (
 )
 
 
-class OrderStatus(Enum):
+class OrderStatus(enum.StrEnum):
     unfulfilled = "unfulfilled"
     cancelled = "cancelled"
     fulfilled = "fulfilled"

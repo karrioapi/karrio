@@ -7,7 +7,7 @@ class WeightUnit(lib.Enum):
     LB = "Lb"
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -27,7 +27,7 @@ class ConnectionConfig(lib.Enum):
     processing_location = lib.OptionEnum("processing_location")
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     asendia_us_e_com_tracked_ddp = "19"
