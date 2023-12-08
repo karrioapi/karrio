@@ -6,8 +6,10 @@ from strawberry.types import Info
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+from django.contrib.contenttypes.models import ContentType
 
 import karrio.lib as lib
+import karrio.server.iam.models as iam
 import karrio.server.core.models as core
 import karrio.server.graph.utils as utils
 import karrio.server.graph.models as graph
@@ -31,6 +33,32 @@ class UserType:
     date_joined: datetime.datetime
     is_superuser: typing.Optional[bool] = strawberry.UNSET
     last_login: typing.Optional[datetime.datetime] = strawberry.UNSET
+    permissions: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+    @strawberry.field
+    def permissions(self: User, info) -> typing.Optional[typing.List[str]]:
+        # Return permissions from token if exists
+        if hasattr(getattr(info.context.request, "token", None), "permissions"):
+            return info.context.request.token.permissions
+
+        # Return permissions from org user if multiple orgs context
+        if hasattr(info.context.request, "org"):
+            org_user = info.context.request.org.organization_users.filter(
+                user_id=self.id
+            )
+            return (
+                iam.ContextPermission.objects.get(
+                    object_pk=org_user.first().pk,
+                    content_type=ContentType.objects.get_for_model(org_user.first()),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+                if org_user.exists()
+                else []
+            )
+
+        # Return permissions from user
+        return info.context.request.user.permissions
 
     @staticmethod
     @utils.authentication_required
@@ -159,8 +187,13 @@ class TracingRecordType:
 @strawberry.type
 class TokenType:
     object_type: str
+    label: str
     key: str
     created: datetime.datetime
+
+    @strawberry.field
+    def permissions(self: "Token", info) -> typing.Optional[typing.List[str]]:
+        return self.permissions
 
     @staticmethod
     @utils.authentication_required

@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.contrib.auth import models as auth
 from rest_framework.authtoken import models as authtoken
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
 from karrio.server.core.models import (
@@ -68,9 +69,14 @@ class User(auth.AbstractUser):
     def object_type(self):
         return "user"
 
+    @property
+    def permissions(self):
+        return [_.name for _ in self.groups.all()]
+
 
 @register_model
 class Token(authtoken.Token, ControlledAccessModel):
+    label = models.CharField(_("label"), max_length=50)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens"
     )
@@ -95,6 +101,41 @@ class Token(authtoken.Token, ControlledAccessModel):
     @property
     def object_type(self):
         return "token"
+
+    @property
+    def permissions(self):
+        import karrio.server.conf as conf
+        import karrio.server.iam.models as iam
+
+        _permissions = []
+        if iam.ContextPermission.objects.filter(object_pk=self.pk).exists():
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=self.pk,
+                    content_type=ContentType.objects.get_for_model(Token),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+            )
+
+        if (
+            not any(_permissions)
+            and conf.settings.MULTI_ORGANIZATIONS
+            and self.org.exists()
+        ):
+            org_user = self.org.first().organization_users.filter(user_id=self.user_id)
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=org_user.first().pk,
+                    content_type=ContentType.objects.get_for_model(org_user.first()),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+                if org_user.exists()
+                else []
+            )
+
+        return _permissions if any(_permissions) else self.user.permissions
 
 
 @register_model
