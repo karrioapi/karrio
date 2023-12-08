@@ -6,16 +6,16 @@ import karrio.server.providers.models as providers
 class DPDHLSettings(providers.Carrier):
     class Meta:
         db_table = "dpdhl-settings"
-        verbose_name = 'Deutsche Post DHL Settings'
-        verbose_name_plural = 'Deutsche Post DHL Settings'
+        verbose_name = "Deutsche Post DHL Settings"
+        verbose_name_plural = "Deutsche Post DHL Settings"
 
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
-    zt_id = models.CharField(max_length=100, blank=True, null=True, default='')
-    zt_password = models.CharField(max_length=100, blank=True, null=True, default='')
-    app_id = models.CharField(max_length=100, blank=True, null=True, default='')
-    app_token = models.CharField(max_length=100, blank=True, null=True, default='')
-    account_number = models.CharField(max_length=100, blank=True, null=True, default='')
+    zt_id = models.CharField(max_length=100, blank=True, null=True, default="")
+    zt_password = models.CharField(max_length=100, blank=True, null=True, default="")
+    app_id = models.CharField(max_length=100, blank=True, null=True, default="")
+    app_token = models.CharField(max_length=100, blank=True, null=True, default="")
+    account_number = models.CharField(max_length=100, blank=True, null=True, default="")
     services = models.ManyToManyField("ServiceLevel", blank=True)
 
     @property
@@ -24,7 +24,7 @@ class DPDHLSettings(providers.Carrier):
 
     @property
     def default_services(self):
-        from karrio.mappers.dpdhl import units
+        from karrio.providers.dpdhl import units
 
         return lib.to_dict(units.DEFAULT_SERVICES)
 

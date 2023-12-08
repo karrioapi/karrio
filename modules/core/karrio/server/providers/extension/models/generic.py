@@ -33,9 +33,9 @@ class GenericSettings(Carrier):
 
     @property
     def default_services(self):
-        from karrio.mappers.generic import DEFAULT_SERVICES
+        from karrio.providers.generic import units
 
-        return DP.to_dict(DEFAULT_SERVICES)
+        return DP.to_dict(units.DEFAULT_SERVICES)
 
 
 SETTINGS = GenericSettings

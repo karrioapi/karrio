@@ -19,7 +19,7 @@ class BelgianPostSettings(providers.Carrier):
 
     @property
     def default_services(self):
-        from karrio.mappers.bpost import DEFAULT_SERVICES
+        from karrio.providers.bpost.units import DEFAULT_SERVICES
 
         return lib.to_dict(DEFAULT_SERVICES)
 

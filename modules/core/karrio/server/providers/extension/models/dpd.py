@@ -15,7 +15,9 @@ class DPDSettings(providers.Carrier):
     password = models.CharField(max_length=75)
     depot = models.CharField(max_length=25, null=True, blank=True)
     services = models.ManyToManyField("ServiceLevel", blank=True)
-    account_country_code = models.CharField(max_length=3, blank=True, null=True, choices=providers.COUNTRIES)
+    account_country_code = models.CharField(
+        max_length=3, blank=True, null=True, choices=providers.COUNTRIES
+    )
 
     @property
     def carrier_name(self) -> str:
@@ -23,7 +25,7 @@ class DPDSettings(providers.Carrier):
 
     @property
     def default_services(self):
-        from karrio.mappers.dpd import units
+        from karrio.providers.dpd import units
 
         return lib.to_dict(
             units.DEFAULT_NL_SERVICES
