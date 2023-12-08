@@ -8,7 +8,6 @@ COUNTRY_PREFERED_UNITS = dict(
     JM=(lib.units.WeightUnit.KG, lib.units.DimensionUnit.CM),
 )
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
-UNSUPPORTED_PAPERLESS_COUNTRIES = ["JM"]
 
 
 class PackagePresets(lib.Enum):
@@ -592,6 +591,7 @@ class ShippingOption(lib.Enum):
 
     """ Unified Option type mapping """
     insurance = dhl_shipment_insurance
+    paperless_trade = dhl_paperless_trade
     cash_on_delivery = dhl_cash_on_delivery
 
 
@@ -608,6 +608,7 @@ def shipping_options_initializer(
 
     if (
         is_dutiable
+        and ShippingOption.paperless_trade.name not in options
         and ShippingOption.dhl_paperless_trade.name not in options
         and shipper_country not in UNSUPPORTED_PAPERLESS_COUNTRIES
     ):
@@ -868,3 +869,98 @@ class CountryRegion(lib.Enum):
     ZA = "AP"
     ZM = "AP"
     ZW = "AP"
+
+
+UNSUPPORTED_PAPERLESS_COUNTRIES = [
+    "AF",  # N
+    "AG",  # N
+    "AI",  # N
+    "AM",  # N
+    "AN",  # N
+    "AR",  # N
+    "AW",  # N
+    "AZ",  # N
+    "BB",  # N
+    "BD",  # N
+    "BR",  # N
+    "BS",  # N
+    "BY",  # N
+    "BZ",  # N
+    "CR",  # N
+    "CU",  # N
+    "DM",  # N
+    "DZ",  # N
+    "GD",  # N
+    "GE",  # N
+    "GY",  # N
+    "HT",  # N
+    "IQ",  # N
+    "IR",  # N
+    "JM",  # N
+    "KG",  # N
+    "KH",  # N
+    "KN",  # N
+    "KP",  # N
+    "KV",  # N
+    "KY",  # N
+    "KZ",  # N
+    "LC",  # N
+    "LR",  # N
+    "LS",  # N
+    "MA",  # N
+    "MD",  # N
+    "ME",  # N
+    "MK",  # N
+    "ML",  # N
+    "MM",  # N
+    "MQ",  # N
+    "MS",  # N
+    "MT",  # N
+    "NC",  # N
+    "NI",  # N
+    "NP",  # N
+    "NR",  # N
+    "NU",  # N
+    "PK",  # N
+    "PW",  # N
+    "PY",  # N
+    "RS",  # N
+    "RW",  # N
+    "SB",  # N
+    "SC",  # N
+    "SD",  # N
+    "SH",  # N
+    "SL",  # N
+    "SM",  # N
+    "SN",  # N
+    "SO",  # N
+    "SR",  # N
+    "SS",  # N
+    "ST",  # N
+    "SZ",  # N
+    "TC",  # N
+    "TD",  # N
+    "TG",  # N
+    "TJ",  # N
+    "TL",  # N
+    "TN",  # N
+    "TO",  # N
+    "TT",  # N
+    "TV",  # N
+    "UA",  # N
+    "UG",  # N
+    "UZ",  # N
+    "VA",  # N
+    "VC",  # N
+    "VE",  # N
+    "VG",  # N
+    "XB",  # N
+    "XC",  # N
+    "XE",  # N
+    "XM",  # N
+    "XN",  # N
+    "XS",  # N
+    "XY",  # N
+    "YE",  # N
+    "YT",  # N
+]
