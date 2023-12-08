@@ -40,7 +40,6 @@
 
 
 # karrio server modules
--e ./modules/iam
 -e ./modules/core
 -e ./apps/api
 -e ./modules/graph

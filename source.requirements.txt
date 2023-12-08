@@ -86,7 +86,6 @@ karrio.server.data @ file://${PWD}/modules/data
 karrio.server.documents @ file://${PWD}/modules/documents
 karrio.server.events @ file://${PWD}/modules/events
 karrio.server.graph @ file://${PWD}/modules/graph
-karrio.server.iam @ file://${PWD}/modules/iam
 karrio.server.manager @ file://${PWD}/modules/manager
 karrio.server.orders @ file://${PWD}/modules/orders
 karrio.server.pricing @ file://${PWD}/modules/pricing
