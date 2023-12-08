@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.australiapost",
-    version="2023.4",
+    version="2023.9.2",
     description="Karrio - Australia Post Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

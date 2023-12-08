@@ -1,4 +1,3 @@
-
 """Warning: This setup.py is only there for git install until poetry support git subdirectory"""
 from setuptools import setup, find_namespace_packages
 
@@ -7,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.asendia_us",
-    version="2023.9",
+    version="2023.9.2",
     description="Karrio - Asendia US Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

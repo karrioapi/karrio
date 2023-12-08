@@ -3,7 +3,7 @@ import karrio.core.units as units
 import karrio.core.models as models
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -89,7 +89,7 @@ class ServiceName(lib.Enum):
     )
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     colissimo_home_without_signature = "DOM"

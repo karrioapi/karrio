@@ -3,7 +3,7 @@ import karrio.core.units as units
 import karrio.core.models as models
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -18,7 +18,7 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     locate2u_local_delivery = "Locate2u Local Delivery"

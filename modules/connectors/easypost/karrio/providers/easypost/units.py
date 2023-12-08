@@ -1,18 +1,18 @@
 import re
-from karrio.schemas.easypost.shipment_request import ShipmentRequest
-from karrio.core import units
-from karrio.core.models import Address
-from karrio.core.utils import Enum, Flag, OptionEnum
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
 
 
-class LabelType(Enum):
+class LabelType(lib.Enum):
     PDF = "PDF"
     ZPL = "ZPL"
     PNG = "PNG"
     EPL2 = "EPL2"
 
 
-class PaymentType(Enum):
+class PaymentType(lib.StrEnum):
     sender = "SENDER"
     third_party = "THIRD_PARTY"
     receiver = "RECEIVER"
@@ -21,7 +21,7 @@ class PaymentType(Enum):
     recipient = receiver
 
 
-class PackagingType(Flag):
+class PackagingType(lib.StrEnum):
     easypost_dhl_jumbo_document = "JumboDocument"
     easypost_dhl_jumbo_parcel = "JumboParcel"
     easypost_dhl_document = "Document"
@@ -141,7 +141,7 @@ class PackagingType(Flag):
     easyport_usps_pmod_sack = "PMODSack"
 
     """ Unified Packaging type mapping """
-    envelope = None
+    envelope = ""
     pak = envelope
     tube = envelope
     pallet = envelope
@@ -150,7 +150,7 @@ class PackagingType(Flag):
     your_packaging = envelope
 
 
-class Service(Enum):
+class Service(lib.StrEnum):
     easypost_amazonmws_ups_rates = "UPS Rates"
     easypost_amazonmws_usps_rates = "USPS Rates"
     easypost_amazonmws_fedex_rates = "FedEx Rates"
@@ -871,7 +871,7 @@ class Service(Enum):
         return rate_provider, service.name_or_key, service_name
 
 
-class CarrierId(Flag):
+class CarrierId(lib.StrEnum):
     amazon_shipping = "AmazonMws"
     apc = "APC"
     asendia = "Asendia"
@@ -941,50 +941,50 @@ class CarrierId(Flag):
         return {key: enum.value for key, enum in CarrierId.__members__.items()}
 
 
-class ShippingOption(Flag):
-    easypost_additional_handling = OptionEnum("additional_handling", bool)
-    easypost_address_validation_level = OptionEnum("address_validation_level")
-    easypost_alcohol = OptionEnum("alcohol", bool)
-    easypost_by_drone = OptionEnum("by_drone", bool)
-    easypost_carbon_neutral = OptionEnum("carbon_neutral", bool)
-    easypost_cod_amount = OptionEnum("cod_amount")
-    easypost_cod_method = OptionEnum("cod_method")
-    easypost_cod_address_id = OptionEnum("cod_address_id")
-    easypost_currency = OptionEnum("currency")
-    easypost_delivery_confirmation = OptionEnum("delivery_confirmation")
-    easypost_dropoff_type = OptionEnum("dropoff_type")
-    easypost_dry_ice = OptionEnum("dry_ice", bool)
-    easypost_dry_ice_medical = OptionEnum("dry_ice_medical", bool)
-    easypost_dry_ice_weight = OptionEnum("dry_ice_weight")
-    easypost_endorsement = OptionEnum("endorsement")
-    easypost_freight_charge = OptionEnum("freight_charge", float)
-    easypost_handling_instructions = OptionEnum("handling_instructions")
-    easypost_hazmat = OptionEnum("hazmat")
-    easypost_hold_for_pickup = OptionEnum("hold_for_pickup", bool)
-    easypost_incoterm = OptionEnum("incoterm")
-    easypost_invoice_number = OptionEnum("invoice_number")
-    easypost_label_date = OptionEnum("label_date")
-    easypost_label_format = OptionEnum("label_format")
-    easypost_machinable = OptionEnum("machinable", bool)
-    easypost_payment = OptionEnum("payment", dict)
-    easypost_print_custom_1 = OptionEnum("print_custom_1")
-    easypost_print_custom_2 = OptionEnum("print_custom_2")
-    easypost_print_custom_3 = OptionEnum("print_custom_3")
-    easypost_print_custom_1_barcode = OptionEnum("print_custom_1_barcode")
-    easypost_print_custom_2_barcode = OptionEnum("print_custom_2_barcode")
-    easypost_print_custom_3_barcode = OptionEnum("print_custom_3_barcode")
-    easypost_print_custom_1_code = OptionEnum("print_custom_1_code")
-    easypost_print_custom_2_code = OptionEnum("print_custom_2_code")
-    easypost_print_custom_3_code = OptionEnum("print_custom_3_code")
-    easypost_saturday_delivery = OptionEnum("saturday_delivery", bool)
-    easypost_special_rates_eligibility = OptionEnum("special_rates_eligibility")
-    easypost_smartpost_hub = OptionEnum("smartpost_hub")
-    easypost_smartpost_manifest = OptionEnum("smartpost_manifest")
-    easypost_billing_ref = OptionEnum("billing_ref")
-    easypost_certified_mail = OptionEnum("certified_mail", bool)
-    easypost_registered_mail = OptionEnum("registered_mail", bool)
-    easypost_registered_mail_amount = OptionEnum("registered_mail_amount", float)
-    easypost_return_receipt = OptionEnum("return_receipt", bool)
+class ShippingOption(lib.Enum):
+    easypost_additional_handling = lib.OptionEnum("additional_handling", bool)
+    easypost_address_validation_level = lib.OptionEnum("address_validation_level")
+    easypost_alcohol = lib.OptionEnum("alcohol", bool)
+    easypost_by_drone = lib.OptionEnum("by_drone", bool)
+    easypost_carbon_neutral = lib.OptionEnum("carbon_neutral", bool)
+    easypost_cod_amount = lib.OptionEnum("cod_amount")
+    easypost_cod_method = lib.OptionEnum("cod_method")
+    easypost_cod_address_id = lib.OptionEnum("cod_address_id")
+    easypost_currency = lib.OptionEnum("currency")
+    easypost_delivery_confirmation = lib.OptionEnum("delivery_confirmation")
+    easypost_dropoff_type = lib.OptionEnum("dropoff_type")
+    easypost_dry_ice = lib.OptionEnum("dry_ice", bool)
+    easypost_dry_ice_medical = lib.OptionEnum("dry_ice_medical", bool)
+    easypost_dry_ice_weight = lib.OptionEnum("dry_ice_weight")
+    easypost_endorsement = lib.OptionEnum("endorsement")
+    easypost_freight_charge = lib.OptionEnum("freight_charge", float)
+    easypost_handling_instructions = lib.OptionEnum("handling_instructions")
+    easypost_hazmat = lib.OptionEnum("hazmat")
+    easypost_hold_for_pickup = lib.OptionEnum("hold_for_pickup", bool)
+    easypost_incoterm = lib.OptionEnum("incoterm")
+    easypost_invoice_number = lib.OptionEnum("invoice_number")
+    easypost_label_date = lib.OptionEnum("label_date")
+    easypost_label_format = lib.OptionEnum("label_format")
+    easypost_machinable = lib.OptionEnum("machinable", bool)
+    easypost_payment = lib.OptionEnum("payment", dict)
+    easypost_print_custom_1 = lib.OptionEnum("print_custom_1")
+    easypost_print_custom_2 = lib.OptionEnum("print_custom_2")
+    easypost_print_custom_3 = lib.OptionEnum("print_custom_3")
+    easypost_print_custom_1_barcode = lib.OptionEnum("print_custom_1_barcode")
+    easypost_print_custom_2_barcode = lib.OptionEnum("print_custom_2_barcode")
+    easypost_print_custom_3_barcode = lib.OptionEnum("print_custom_3_barcode")
+    easypost_print_custom_1_code = lib.OptionEnum("print_custom_1_code")
+    easypost_print_custom_2_code = lib.OptionEnum("print_custom_2_code")
+    easypost_print_custom_3_code = lib.OptionEnum("print_custom_3_code")
+    easypost_saturday_delivery = lib.OptionEnum("saturday_delivery", bool)
+    easypost_special_rates_eligibility = lib.OptionEnum("special_rates_eligibility")
+    easypost_smartpost_hub = lib.OptionEnum("smartpost_hub")
+    easypost_smartpost_manifest = lib.OptionEnum("smartpost_manifest")
+    easypost_billing_ref = lib.OptionEnum("billing_ref")
+    easypost_certified_mail = lib.OptionEnum("certified_mail", bool)
+    easypost_registered_mail = lib.OptionEnum("registered_mail", bool)
+    easypost_registered_mail_amount = lib.OptionEnum("registered_mail_amount", float)
+    easypost_return_receipt = lib.OptionEnum("return_receipt", bool)
 
     """ Unified Option type mapping """
     currency = easypost_currency
@@ -994,8 +994,8 @@ class ShippingOption(Flag):
 
 
 def shipping_options_initializer(
-    payload: ShipmentRequest,
-    payor: Address = None,
+    payload: typing.Any,
+    payor: models.Address = None,
     package_options: units.Options = None,
 ) -> dict:
     """

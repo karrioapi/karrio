@@ -3,7 +3,7 @@ import karrio.core.units as units
 import karrio.core.models as models
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -23,7 +23,7 @@ class Incoterm(lib.Enum):
     DAP_enhanced = "07"
 
 
-class CustomsContentType(lib.Flag):
+class CustomsContentType(lib.StrEnum):
     sale = "01"
     return_replacement = "02"
     gift = "03"
@@ -34,7 +34,7 @@ class CustomsContentType(lib.Flag):
     return_merchandise = return_replacement
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     dpd_cl = "CL"
@@ -159,7 +159,12 @@ DEFAULT_SERVICES = [
         weight_unit="KG",
         domicile=True,
         international=True,
-        zones=[models.ServiceZone(rate=0.0, country_codes=["AT", "DK", "CZ", "EE", "FI", "LV", "LT", "PL", "CH"])],
+        zones=[
+            models.ServiceZone(
+                rate=0.0,
+                country_codes=["AT", "DK", "CZ", "EE", "FI", "LV", "LT", "PL", "CH"],
+            )
+        ],
     ),
     models.ServiceLevel(
         service_name="DPD Business International",
@@ -230,19 +235,43 @@ DEFAULT_NL_SERVICES = [
         international=True,
         zones=[
             # The Netherlands
-            models.ServiceZone(label="2shop", max_weight=1.00, min_weight=0.00, rate=4.25),
-            models.ServiceZone(label="2shop", max_weight=10.0, min_weight=1.00, rate=4.40),
-            models.ServiceZone(label="2shop", max_weight=20.0, min_weight=10.0, rate=9.00),
-            models.ServiceZone(label="2home", max_weight=1.00, min_weight=0.00, rate=5.25),
-            models.ServiceZone(label="2home", max_weight=10.0, min_weight=1.00, rate=5.60),
-            models.ServiceZone(label="2home", max_weight=20.0, min_weight=10.0, rate=9.50),
+            models.ServiceZone(
+                label="2shop", max_weight=1.00, min_weight=0.00, rate=4.25
+            ),
+            models.ServiceZone(
+                label="2shop", max_weight=10.0, min_weight=1.00, rate=4.40
+            ),
+            models.ServiceZone(
+                label="2shop", max_weight=20.0, min_weight=10.0, rate=9.00
+            ),
+            models.ServiceZone(
+                label="2home", max_weight=1.00, min_weight=0.00, rate=5.25
+            ),
+            models.ServiceZone(
+                label="2home", max_weight=10.0, min_weight=1.00, rate=5.60
+            ),
+            models.ServiceZone(
+                label="2home", max_weight=20.0, min_weight=10.0, rate=9.50
+            ),
             # Belgium
-            models.ServiceZone(label="2shop", max_weight=1.00, min_weight=0.00, rate=4.25),
-            models.ServiceZone(label="2shop", max_weight=10.0, min_weight=1.00, rate=4.40),
-            models.ServiceZone(label="2shop", max_weight=20.0, min_weight=10.0, rate=9.00),
-            models.ServiceZone(label="2home", max_weight=1.00, min_weight=0.00, rate=5.25),
-            models.ServiceZone(label="2home", max_weight=10.0, min_weight=1.00, rate=5.60),
-            models.ServiceZone(label="2home", max_weight=20.0, min_weight=10.0, rate=9.50),
+            models.ServiceZone(
+                label="2shop", max_weight=1.00, min_weight=0.00, rate=4.25
+            ),
+            models.ServiceZone(
+                label="2shop", max_weight=10.0, min_weight=1.00, rate=4.40
+            ),
+            models.ServiceZone(
+                label="2shop", max_weight=20.0, min_weight=10.0, rate=9.00
+            ),
+            models.ServiceZone(
+                label="2home", max_weight=1.00, min_weight=0.00, rate=5.25
+            ),
+            models.ServiceZone(
+                label="2home", max_weight=10.0, min_weight=1.00, rate=5.60
+            ),
+            models.ServiceZone(
+                label="2home", max_weight=20.0, min_weight=10.0, rate=9.50
+            ),
         ],
     ),
 ]

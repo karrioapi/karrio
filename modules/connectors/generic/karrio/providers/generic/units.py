@@ -6,7 +6,7 @@ class Service(lib.Enum):
     standard_service = "standard"
 
 
-class Option(lib.Flag):
+class Option(lib.Enum):
     tracking_number_reference = lib.OptionEnum("tracking_number")
 
 

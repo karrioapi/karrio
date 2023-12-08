@@ -1,6 +1,5 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/
 asgiref==3.7.2
-async-timeout==4.0.3
 attrs==23.1.0
 Brotli==1.1.0
 certifi==2023.11.17
@@ -14,12 +13,12 @@ Deprecated==1.2.14
 deprecation==2.1.0
 diff-match-patch==20230430
 dj-database-url==2.1.0
-Django==4.2.7
+Django==5.0
 django-constance==3.1.0
 django-cors-headers==4.3.1
 django-downloadview==2.3.0
 django-email-verification==0.3.3
-django-filter==23.4
+django-filter==23.5
 django-formtools==2.4.1
 django-health-check==3.17.0
 django-import-export==3.3.3
@@ -30,11 +29,11 @@ django-picklefield==3.1
 django-redis==5.4.0
 django-two-factor-auth==1.15.5
 djangorestframework==3.14.0
-djangorestframework-simplejwt==5.3.0
+djangorestframework-simplejwt==5.3.1
 drf-api-tracking==1.8.4
 drf-spectacular==0.26.5
 et-xmlfile==1.1.0
-fonttools==4.45.1
+fonttools==4.46.0
 graphql-core==3.2.3
 gunicorn==21.2.0
 h11==0.14.0
@@ -46,7 +45,7 @@ inflection==0.5.1
 Jinja2==3.1.2
 jsonfield==3.1.0
 jsonschema==4.20.0
-jsonschema-specifications==2023.11.1
+jsonschema-specifications==2023.11.2
 jstruct==2021.11
 jwcrypto==1.5.0
 karrio @ file://${PWD}/modules/sdk
@@ -124,13 +123,13 @@ pytz==2023.3.post1
 PyYAML==6.0.1
 qrcode==7.4.2
 redis==5.0.1
-referencing==0.31.0
+referencing==0.32.0
 requests==2.31.0
-rpds-py==0.13.1
-sentry-sdk==1.37.1
+rpds-py==0.13.2
+sentry-sdk==1.38.0
 six==1.16.0
 sqlparse==0.4.4
-strawberry-graphql==0.215.1
+strawberry-graphql==0.216.0
 tablib==3.5.0
 tinycss2==1.2.1
 treepoem==3.23.0

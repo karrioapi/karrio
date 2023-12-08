@@ -3,7 +3,7 @@ import karrio.core.units as units
 import karrio.core.models as models
 
 
-class CustomsContentType(lib.Flag):
+class CustomsContentType(lib.StrEnum):
     other = "9"
     sale_of_goods = "11"
     return_of_goods = "21"
@@ -18,7 +18,7 @@ class CustomsContentType(lib.Flag):
     return_merchandise = return_of_goods
 
 
-class LabelType(lib.Flag):
+class LabelType(lib.StrEnum):
     BLP_LABEL = "BLP"
     LBLP_LABEL_A4_PDF = "LBLP"
     ZBLP_LABEL_ZPL = "ZBLP"
@@ -28,7 +28,7 @@ class LabelType(lib.Flag):
     ZPL = ZBLP_LABEL_ZPL
 
 
-class PaymentType(lib.Flag):
+class PaymentType(lib.StrEnum):
     shipper = "SHIPPER"
     receiver = "RECEIVER"
     user = "USER"
@@ -39,7 +39,7 @@ class PaymentType(lib.Flag):
     third_party = user
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     dhl_poland_envelope = "ENVELOPE"
     dhl_poland_package = "PACKAGE"
     dhl_poland_pallet = "PALLET"
@@ -64,7 +64,7 @@ class Service(lib.Enum):
     dhl_poland_international = "PI"
 
 
-class ShippingOption(lib.Flag):
+class ShippingOption(lib.Enum):
     dhl_poland_delivery_in_18_22_hours = lib.OptionEnum("1722", bool)
     dhl_poland_delivery_on_saturday = lib.OptionEnum("SATURDAY", bool)
     dhl_poland_pickup_on_staturday = lib.OptionEnum("NAD_SOBOTA", bool)
@@ -105,41 +105,41 @@ DEFAULT_SERVICES = [
         service_code="dhl_poland_premium",
         currency="EUR",
         domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Poland Polska",
         service_code="dhl_poland_polska",
         currency="EUR",
         domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Poland 09",
         service_code="dhl_poland_09",
         currency="EUR",
         domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Poland 12",
         service_code="dhl_poland_12",
         currency="EUR",
         domicile=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Poland Connect",
         service_code="dhl_poland_connect",
         currency="EUR",
         international=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
     ),
     models.ServiceLevel(
         service_name="DHL Poland International",
         service_code="dhl_poland_international",
         currency="EUR",
         international=True,
-        zones=[models.ServiceZone(label="Zone 1", rate=0.0)]
+        zones=[models.ServiceZone(label="Zone 1", rate=0.0)],
     ),
 ]

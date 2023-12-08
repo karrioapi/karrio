@@ -17,7 +17,7 @@ class LabelType(lib.Enum):
     PNG = PDF
 
 
-class Incoterm(lib.Enum):
+class Incoterm(lib.StrEnum):
     CFR = "COST AND FREIGHT"
     CIF = "COST, INSURANCE AND FREIGHT"
     CIP = "CARRIAGE AND INSURANCE PAID TO"
@@ -39,7 +39,7 @@ class Incoterm(lib.Enum):
     P = "CARRIAGE PAID"
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -58,7 +58,7 @@ class ConnectionConfig(lib.Enum):
     agency_code = lib.OptionEnum("agency_code")
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     geodis_EXP = "EXP"

@@ -1,8 +1,8 @@
 import pydoc
-from enum import Enum
+import karrio.lib as lib
 
 
-class CarrierFeatures(str, Enum):
+class CarrierFeatures(lib.StrEnum):
     tracking = "tracking"
     rating = "rating"
     shipping = "shipping"
@@ -24,7 +24,7 @@ def gen(entity):
 
 def format_dimension(code, dim):
     return (
-        f'| `{ code }` '
+        f"| `{ code }` "
         f'| { f" x ".join([str(d) for d in dim.values() if isinstance(d, float)]) } '
         f'| { f" x ".join([k for k in dim.keys() if isinstance(dim[k], float)]) }'
     )

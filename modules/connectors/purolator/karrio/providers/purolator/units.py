@@ -1,29 +1,27 @@
 import typing
-from karrio.core import units
-from karrio.core.utils import Enum, Flag
-from karrio.core.units import MeasurementOptionsType, PackagePreset
-from karrio.core.utils.enum import OptionEnum
+import karrio.lib as lib
+import karrio.core.units as units
 
 PRESET_DEFAULTS = dict(dimension_unit="IN", weight_unit="LB")
 
 
-class PackagePresets(Flag):
+class PackagePresets(lib.Enum):
     """Purolator package presets
     Note that dimensions are in IN and weight in LB
     """
 
-    purolator_express_envelope = PackagePreset(
+    purolator_express_envelope = units.PackagePreset(
         **dict(width=12.5, height=16, length=1.5, weight=1.0), **PRESET_DEFAULTS
     )
-    purolator_express_pack = PackagePreset(
+    purolator_express_pack = units.PackagePreset(
         **dict(width=12.5, height=16, length=1.0, weight=3.0), **PRESET_DEFAULTS
     )
-    purolator_express_box = PackagePreset(
+    purolator_express_box = units.PackagePreset(
         **dict(width=18, height=12, length=3.5, weight=7.0), **PRESET_DEFAULTS
     )
 
 
-class PackagingType(Flag):
+class PackagingType(lib.StrEnum):
     purolator_express_envelope = "Envelope"
     purolator_express_pack = "Pack"
     purolator_express_box = "Box"
@@ -40,53 +38,57 @@ class PackagingType(Flag):
     your_packaging = purolator_customer_packaging
 
 
-MeasurementOptions = MeasurementOptionsType(min_kg=0.45, min_lb=1)
+MeasurementOptions = units.MeasurementOptionsType(min_kg=0.45, min_lb=1)
 
 
-class LabelType(Flag):
+class LabelType(lib.Enum):
     PDF = "Regular"
     ZPL = "Thermal"
 
 
-class PrintType(Enum):
+class PrintType(lib.StrEnum):
     PDF = "Regular"
     ZPL = "Thermal"
 
 
-class PaymentType(Flag):
+class PaymentType(lib.StrEnum):
     sender = "Sender"
     recipient = "Receiver"
     third_party = "ThirdParty"
     credit_card = "CreditCard"
 
 
-class DutyPaymentType(Enum):
+class DutyPaymentType(lib.StrEnum):
     sender = "Sender"
     recipient = "Receiver"
     third_party = "Buyer"
 
 
-class CreditCardType(Flag):
+class CreditCardType(lib.StrEnum):
     visa = "Visa"
     mastercard = "Mastercard"
     american_express = "AmericanExpress"
 
 
-class ShippingOption(Enum):
-    purolator_dangerous_goods = OptionEnum("Dangerous Goods")
-    purolator_chain_of_signature = OptionEnum("Chain of Signature")
-    purolator_express_cheque = OptionEnum("ExpressCheque")
-    purolator_hold_for_pickup = OptionEnum("Hold For Pickup")
-    purolator_return_services = OptionEnum("Return Services")
-    purolator_saturday_service = OptionEnum("Saturday Service")
-    purolator_origin_signature_not_required = OptionEnum(
+class ShippingOption(lib.Enum):
+    purolator_dangerous_goods = lib.OptionEnum("Dangerous Goods")
+    purolator_chain_of_signature = lib.OptionEnum("Chain of Signature")
+    purolator_express_cheque = lib.OptionEnum("ExpressCheque")
+    purolator_hold_for_pickup = lib.OptionEnum("Hold For Pickup")
+    purolator_return_services = lib.OptionEnum("Return Services")
+    purolator_saturday_service = lib.OptionEnum("Saturday Service")
+    purolator_origin_signature_not_required = lib.OptionEnum(
         "Origin Signature Not Required (OSNR)"
     )
-    purolator_adult_signature_required = OptionEnum("Adult Signature Required (ASR)")
-    purolator_special_handling = OptionEnum("Special Handling")
+    purolator_adult_signature_required = lib.OptionEnum(
+        "Adult Signature Required (ASR)"
+    )
+    purolator_special_handling = lib.OptionEnum("Special Handling")
 
     """Karrio specific option"""
-    purolator_show_alternative_services = OptionEnum("Show Alternate Services", bool)
+    purolator_show_alternative_services = lib.OptionEnum(
+        "Show Alternate Services", bool
+    )
 
 
 def shipping_options_initializer(
@@ -121,7 +123,7 @@ def shipping_options_initializer(
 NON_OFFICIAL_SERVICES = [ShippingOption.purolator_show_alternative_services.name]
 
 
-class ShippingService(Enum):
+class ShippingService(lib.StrEnum):
     purolator_express_9_am = "PurolatorExpress9AM"
     purolator_express_us = "PurolatorExpressU.S."
     purolator_express_10_30_am = "PurolatorExpress10:30AM"
@@ -218,7 +220,7 @@ def shipping_services_initializer(
     return units.Services(services, ShippingService)
 
 
-class TrackingStatus(Enum):
+class TrackingStatus(lib.Enum):
     in_transit = [""]
     delivered = ["Delivery"]
     delivery_failed = ["Undeliverable"]

@@ -3,7 +3,7 @@ import karrio.core.units as units
 import karrio.core.models as models
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -50,7 +50,7 @@ class ConnectionConfig(lib.Enum):
     shipping_services = lib.OptionEnum("shipping_services", list)
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     # fmt: off

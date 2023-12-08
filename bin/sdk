@@ -13,6 +13,8 @@ if [[ "$*" == *build:pkgs* ]]; then
 		./bin/build-package-wheel "${module}" || exit 1
     done
 
+    ./bin/build-package-wheel "${ROOT:?}/modules/sdk" || exit 1
+
 	cd -
 else
     echo "Help: You can pass any the following commands to the sdk scripts"

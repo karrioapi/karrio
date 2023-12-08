@@ -2,12 +2,12 @@ import karrio.lib as lib
 import karrio.core.units as units
 
 
-class DimensionUnit(lib.Flag):
+class DimensionUnit(lib.StrEnum):
     CM = "cm"
     IN = "inch"
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
     PACKAGE = "PACKAGE"
@@ -22,7 +22,7 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
     boxknight_sameday = "SAMEDAY"

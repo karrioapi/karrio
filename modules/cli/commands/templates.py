@@ -692,7 +692,7 @@ import karrio.lib as lib
 import karrio.core.units as units
 
 
-class PackagingType(lib.Flag):
+class PackagingType(lib.StrEnum):
     """ Carrier specific packaging type """
     PACKAGE = "PACKAGE"
 
@@ -706,7 +706,7 @@ class PackagingType(lib.Flag):
     your_packaging = PACKAGE
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     """ Carrier specific services """
     {{id}}_standard_service = "{{name}} Standard Service"
 

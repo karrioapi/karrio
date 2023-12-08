@@ -1,8 +1,8 @@
-import enum
 import typing
+import karrio.lib as lib
 
 
-class PermissionGroup(enum.Enum):
+class PermissionGroup(lib.StrEnum):
     manage_apps = "manage_apps"
     manage_team = "manage_team"
     manage_system = "manage_system"

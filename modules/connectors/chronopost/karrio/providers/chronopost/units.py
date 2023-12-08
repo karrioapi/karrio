@@ -3,11 +3,11 @@ import karrio.core.units as units
 from karrio.core.utils.enum import OptionEnum
 
 
-class WeightUnit(lib.Flag):
+class WeightUnit(lib.StrEnum):
     KG = "KGM"
 
 
-class LabelType(lib.Flag):
+class LabelType(lib.StrEnum):
     PDF_LABEL = "PDF"
     PPR_LABEL = "PPR"
     SPD_LABEL = "SPD"
@@ -24,7 +24,7 @@ class LabelType(lib.Flag):
     ZPL = ZPL300_LABEL
 
 
-class CustomsContentType(lib.Flag):
+class CustomsContentType(lib.StrEnum):
     document = "DOC"
     marchandise = "MAR"
 
@@ -33,7 +33,7 @@ class CustomsContentType(lib.Flag):
     merchandise = marchandise
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     chronopost_retrait_bureau = "0"
     chronopost_13 = "1"
     chronopost_10 = "2"
@@ -44,7 +44,7 @@ class ShippingService(lib.Enum):
     chronopost_classic_international = "44"
 
 
-class ShippingOption(lib.Flag):
+class ShippingOption(lib.Enum):
     chronopost_delivery_on_monday = OptionEnum("1")
     chronopost_delivery_on_saturday = OptionEnum("6")
     chronopost_delivery_normal = OptionEnum("0")

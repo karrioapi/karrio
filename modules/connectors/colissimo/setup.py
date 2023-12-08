@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.colissimo",
-    version="2023.9",
+    version="2023.9.2",
     description="Karrio - Colissimo Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

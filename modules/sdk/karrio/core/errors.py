@@ -1,9 +1,10 @@
 """Karrio Custom Errors(Exception) definition modules"""
-from enum import Enum
-from typing import Dict
+
+import enum
+import typing
 
 
-class FieldErrorCode(Enum):
+class FieldErrorCode(enum.Enum):
     required = dict(code="required", message="This field is required")
     invalid = dict(code="invalid", message="This field is invalid")
     exceeds = dict(code="exceeds", message="This field exceeds the max value")
@@ -28,7 +29,7 @@ class FieldError(ShippingSDKDetailedError):
 
     code = "SHIPPING_SDK_FIELD_ERROR"
 
-    def __init__(self, fields: Dict[str, FieldErrorCode]):
+    def __init__(self, fields: typing.Dict[str, FieldErrorCode]):
         super().__init__("Invalid request payload")
         self.details = {name: code.value for name, code in fields.items()}
 
@@ -38,7 +39,7 @@ class ParsedMessagesError(ShippingSDKDetailedError):
 
     code = "SHIPPING_SDK_FIELD_ERROR"
 
-    def __init__(self, messages = []):
+    def __init__(self, messages=[]):
         super().__init__("Invalid request payload")
         self.messages = messages
 

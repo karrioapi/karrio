@@ -1,9 +1,8 @@
-from karrio.core import units
-from karrio.core.utils import Flag, Enum
-from karrio.core.utils.enum import OptionEnum
+import karrio.lib as lib
+import karrio.core.units as units
 
 
-class UnitOfMeasurement(Enum):
+class UnitOfMeasurement(lib.StrEnum):
     K = "K"
     L = "L"
     KC = "KC"
@@ -12,14 +11,14 @@ class UnitOfMeasurement(Enum):
     LF = "LF"
 
 
-class Category(Enum):
+class Category(lib.StrEnum):
     parcel = "Parcel"
     freight = "Freight"
     distribution = "Distribution"
     logistics = "Logistics"
 
 
-class Purpose(Enum):
+class Purpose(lib.StrEnum):
     com = "COM"
     per = "PER"
     doc = "DOC"
@@ -35,7 +34,7 @@ class Purpose(Enum):
     other = per
 
 
-class PaymentType(Flag):
+class PaymentType(lib.StrEnum):
     prepaid = "Prepaid"
     third_party = "ThirdParty"
     collect = "Collect"
@@ -46,7 +45,7 @@ class PaymentType(Flag):
     recipient = collect
 
 
-class ParcelType(Flag):
+class ParcelType(lib.StrEnum):
     dicom_barrel = "Barrel"
     dicom_bundle = "Bundle"
     dicom_box = "Box"
@@ -72,40 +71,40 @@ class ParcelType(Flag):
     your_packaging = dicom_other
 
 
-class Service(Enum):  # DeliveryType
+class Service(lib.StrEnum):  # DeliveryType
     dicom_air_delivery = "AIR"
     dicom_ground_delivery = "GRD"
 
 
-class ShippingOption(Enum):
-    dicom_common_declared_value = OptionEnum("DCV")
-    dicom_common_dangerous_goods = OptionEnum("DGG")
-    dicom_common_residential_delivery = OptionEnum("PHD")
-    dicom_common_tradeshow_delivery = OptionEnum("TRD")
-    dicom_common_signature_not_required = OptionEnum("SNR")
-    dicom_parcel_ca_hold_for_pickup = OptionEnum("HFP")
-    dicom_parcel_ca_non_conveyable = OptionEnum("NCV")
-    dicom_parcel_ca_residential_delivery_signature = OptionEnum("PHDS")
-    dicom_parcel_ca_weekend_delivery = OptionEnum("WKD")
-    dicom_freight_construction_site_delivery = OptionEnum("CNSTD")
-    dicom_freight_collect_on_delivery = OptionEnum("COD")
-    dicom_freight_heating = OptionEnum("HEAT")
-    dicom_freight_inside_delivery = OptionEnum("IDEL")
-    dicom_freight_residential_delivery_signature = OptionEnum("PHDS")
-    dicom_freight_residential_pickup = OptionEnum("PHPU")
-    dicom_freight_tailgate_delivery = OptionEnum("TGT")
-    dicom_freight_tailgate_pickup = OptionEnum("TGTPU")
-    dicom_parcel_us_adult_signature = OptionEnum("ADLSIG")
-    dicom_parcel_us_direct_signature = OptionEnum("DIRSIG")
-    dicom_parcel_us_saturday_delivery = OptionEnum("SAT")
-    dicom_parcel_us_sunday_delivery = OptionEnum("SUN")
-    dicom_parcel_us_residential_delivery_signature = OptionEnum("PHDS")
-    dicom_parcel_us_earliest_possible = OptionEnum("EP")
-    dicom_parcel_us_priority_service = OptionEnum("PR")
-    dicom_parcel_us_pouch_service = OptionEnum("PO")
-    dicom_parcel_us_pallet_service_pa = OptionEnum("PA")
-    dicom_parcel_us_pallet_service_rap = OptionEnum("RAP")
-    dicom_parcel_us_pallet_service_nd = OptionEnum("ND")
+class ShippingOption(lib.Enum):
+    dicom_common_declared_value = lib.OptionEnum("DCV")
+    dicom_common_dangerous_goods = lib.OptionEnum("DGG")
+    dicom_common_residential_delivery = lib.OptionEnum("PHD")
+    dicom_common_tradeshow_delivery = lib.OptionEnum("TRD")
+    dicom_common_signature_not_required = lib.OptionEnum("SNR")
+    dicom_parcel_ca_hold_for_pickup = lib.OptionEnum("HFP")
+    dicom_parcel_ca_non_conveyable = lib.OptionEnum("NCV")
+    dicom_parcel_ca_residential_delivery_signature = lib.OptionEnum("PHDS")
+    dicom_parcel_ca_weekend_delivery = lib.OptionEnum("WKD")
+    dicom_freight_construction_site_delivery = lib.OptionEnum("CNSTD")
+    dicom_freight_collect_on_delivery = lib.OptionEnum("COD")
+    dicom_freight_heating = lib.OptionEnum("HEAT")
+    dicom_freight_inside_delivery = lib.OptionEnum("IDEL")
+    dicom_freight_residential_delivery_signature = lib.OptionEnum("PHDS")
+    dicom_freight_residential_pickup = lib.OptionEnum("PHPU")
+    dicom_freight_tailgate_delivery = lib.OptionEnum("TGT")
+    dicom_freight_tailgate_pickup = lib.OptionEnum("TGTPU")
+    dicom_parcel_us_adult_signature = lib.OptionEnum("ADLSIG")
+    dicom_parcel_us_direct_signature = lib.OptionEnum("DIRSIG")
+    dicom_parcel_us_saturday_delivery = lib.OptionEnum("SAT")
+    dicom_parcel_us_sunday_delivery = lib.OptionEnum("SUN")
+    dicom_parcel_us_residential_delivery_signature = lib.OptionEnum("PHDS")
+    dicom_parcel_us_earliest_possible = lib.OptionEnum("EP")
+    dicom_parcel_us_priority_service = lib.OptionEnum("PR")
+    dicom_parcel_us_pouch_service = lib.OptionEnum("PO")
+    dicom_parcel_us_pallet_service_pa = lib.OptionEnum("PA")
+    dicom_parcel_us_pallet_service_rap = lib.OptionEnum("RAP")
+    dicom_parcel_us_pallet_service_nd = lib.OptionEnum("ND")
 
 
 def shipping_options_initializer(
@@ -123,7 +122,7 @@ def shipping_options_initializer(
     return units.ShippingOptions(_options, ShippingOption)
 
 
-class Surcharge(Flag):
+class Surcharge(lib.StrEnum):
     dicom_common_base = "BAS"
     dicom_common_declared_value = "DCV"
     dicom_common_dangerous_goods = "DGG"

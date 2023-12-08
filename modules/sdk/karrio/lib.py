@@ -27,6 +27,7 @@ Job = utils.Job
 OptionEnum = utils.OptionEnum
 Enum = utils.Enum
 Flag = utils.Flag
+StrEnum = utils.StrEnum
 identity = utils.identity
 
 

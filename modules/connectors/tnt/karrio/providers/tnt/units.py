@@ -5,7 +5,7 @@ import karrio.lib as lib
 PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
 
 
-class PackagePresets(lib.Flag):
+class PackagePresets(lib.Enum):
     tnt_envelope_doc = lib.units.PackagePreset(
         **dict(width=35.0, height=1.0, length=27.5, packaging_type="envelope"),
         **PRESET_DEFAULTS
@@ -68,7 +68,7 @@ class PackagePresets(lib.Flag):
     )
 
 
-class PackageType(lib.Flag):
+class PackageType(lib.StrEnum):
     tnt_envelope = "envelope"
     tnt_satchel = "satchel"
     tnt_box = "box"
@@ -86,7 +86,7 @@ class PackageType(lib.Flag):
     your_packaging = "your_packaging"
 
 
-class PaymentType(lib.Flag):
+class PaymentType(lib.StrEnum):
     sender = "S"
     recipient = "R"
     third_party = recipient
@@ -97,7 +97,7 @@ class ConnectionConfig(lib.Enum):
     email_from = lib.OptionEnum("email_from")
 
 
-class ShippingService(lib.Enum):
+class ShippingService(lib.StrEnum):
     tnt_special_express = "1N"
     tnt_9_00_express = "09N"
     tnt_10_00_express = "10N"
@@ -107,7 +107,7 @@ class ShippingService(lib.Enum):
     tnt_global_express = "15N"
 
 
-class ShippingOption(lib.Flag):
+class ShippingOption(lib.Enum):
     tnt_priority = lib.OptionEnum("PR")
     tnt_insurance = lib.OptionEnum("IN", lib.to_money)
     tnt_enhanced_liability = lib.OptionEnum("EL")

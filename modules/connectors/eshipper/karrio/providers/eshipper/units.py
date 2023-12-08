@@ -1,10 +1,9 @@
 import re
-from karrio.core import units
-from karrio.core.utils import Enum, Flag
-from karrio.core.utils.enum import OptionEnum
+import karrio.lib as lib
+import karrio.core.units as units
 
 
-class PackagingType(Flag):
+class PackagingType(lib.StrEnum):
     eshipper_pallet = "Pallet"
     eshipper_drum = "Drum"
     eshipper_boxes = "Boxes"
@@ -30,7 +29,7 @@ class PackagingType(Flag):
     your_packaging = eshipper_package
 
 
-class PaymentType(Flag):
+class PaymentType(lib.StrEnum):
     check = "Check"
     receiver = "Receiver"
     shipper = "Shipper"
@@ -40,7 +39,8 @@ class PaymentType(Flag):
     sender = shipper
     recipient = receiver
 
-class DutyBillToType(Flag):
+
+class DutyBillToType(lib.StrEnum):
     receiver = "Receiver"
     shipper = "Shipper"
     consignee_account = "Consignee Account"
@@ -51,7 +51,7 @@ class DutyBillToType(Flag):
     third_party = consignee_account
 
 
-class ShippingService(Enum):
+class ShippingService(lib.StrEnum):
     eshipper_all = "0"
     eshipper_fedex_priority = "1"
     eshipper_fedex_first_overnight = "2"
@@ -222,26 +222,28 @@ CARRIER_IDS = {
 }
 
 
-class ShippingOption(Flag):
-    eshipper_saturday_pickup_required = OptionEnum("saturdayPickupRequired", bool)
-    eshipper_homeland_security = OptionEnum("homelandSecurity", bool)
-    eshipper_exhibition_convention_site = OptionEnum("exhibitionConventionSite", bool)
-    eshipper_military_base_delivery = OptionEnum("militaryBaseDelivery", bool)
-    eshipper_customs_in_bond_freight = OptionEnum("customsIn_bondFreight", bool)
-    eshipper_limited_access = OptionEnum("limitedAccess", bool)
-    eshipper_excess_length = OptionEnum("excessLength", bool)
-    eshipper_tailgate_pickup = OptionEnum("tailgatePickup", bool)
-    eshipper_residential_pickup = OptionEnum("residentialPickup", bool)
-    eshipper_cross_border_fee = OptionEnum("crossBorderFee", bool)
-    eshipper_notify_recipient = OptionEnum("notifyRecipient", bool)
-    eshipper_single_shipment = OptionEnum("singleShipment", bool)
-    eshipper_tailgate_delivery = OptionEnum("tailgateDelivery", bool)
-    eshipper_residential_delivery = OptionEnum("residentialDelivery", bool)
-    eshipper_insurance_type = OptionEnum("insuranceType", float)
-    eshipper_inside_delivery = OptionEnum("insideDelivery", bool)
-    eshipper_is_saturday_service = OptionEnum("isSaturdayService", bool)
-    eshipper_dangerous_goods_type = OptionEnum("dangerousGoodsType", bool)
-    eshipper_stackable = OptionEnum("stackable", bool)
+class ShippingOption(lib.Enum):
+    eshipper_saturday_pickup_required = lib.OptionEnum("saturdayPickupRequired", bool)
+    eshipper_homeland_security = lib.OptionEnum("homelandSecurity", bool)
+    eshipper_exhibition_convention_site = lib.OptionEnum(
+        "exhibitionConventionSite", bool
+    )
+    eshipper_military_base_delivery = lib.OptionEnum("militaryBaseDelivery", bool)
+    eshipper_customs_in_bond_freight = lib.OptionEnum("customsIn_bondFreight", bool)
+    eshipper_limited_access = lib.OptionEnum("limitedAccess", bool)
+    eshipper_excess_length = lib.OptionEnum("excessLength", bool)
+    eshipper_tailgate_pickup = lib.OptionEnum("tailgatePickup", bool)
+    eshipper_residential_pickup = lib.OptionEnum("residentialPickup", bool)
+    eshipper_cross_border_fee = lib.OptionEnum("crossBorderFee", bool)
+    eshipper_notify_recipient = lib.OptionEnum("notifyRecipient", bool)
+    eshipper_single_shipment = lib.OptionEnum("singleShipment", bool)
+    eshipper_tailgate_delivery = lib.OptionEnum("tailgateDelivery", bool)
+    eshipper_residential_delivery = lib.OptionEnum("residentialDelivery", bool)
+    eshipper_insurance_type = lib.OptionEnum("insuranceType", float)
+    eshipper_inside_delivery = lib.OptionEnum("insideDelivery", bool)
+    eshipper_is_saturday_service = lib.OptionEnum("isSaturdayService", bool)
+    eshipper_dangerous_goods_type = lib.OptionEnum("dangerousGoodsType", bool)
+    eshipper_stackable = lib.OptionEnum("stackable", bool)
 
 
 def shipping_options_initializer(
