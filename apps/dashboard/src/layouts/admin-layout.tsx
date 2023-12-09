@@ -1,9 +1,9 @@
+import { ModeIndicator } from '@karrio/ui/components/mode-indicator';
 import { AdminSidebar } from '@karrio/ui/components/admin-sidebar';
 import { AdminNavbar } from '@karrio/ui/components/admin-navbar';
 import { Notifier } from '@karrio/ui/components/notifier';
-import React from 'react';
 import { AppLink } from '@karrio/ui/components/app-link';
-import { ModeIndicator } from '@karrio/ui/components/mode-indicator';
+import React from 'react';
 
 
 export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: React.ReactNode }> = ({ children, ...props }) => {
@@ -20,7 +20,7 @@ export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: Rea
           <div className="modal-background"></div>
           <div className="modal-card admin-modal" style={{ width: '100%' }}>
 
-            <section className="modal-card-body modal-form p-0">
+            <section className="modal-card-body modal-form p-0 pt-5">
               <header className="form-floating-header p-2 is-flex is-justify-content-space-between">
                 <span className="icon-text has-text-weight-bold is-size-6">
                   <span className="icon">
@@ -37,7 +37,7 @@ export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: Rea
                 </div>
               </header>
 
-              <div className="admin-wrapper is-relative">
+              <div className="admin-wrapper is-relative mt-6">
 
                 <AdminSidebar />
 

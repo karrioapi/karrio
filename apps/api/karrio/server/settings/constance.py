@@ -59,7 +59,7 @@ CONSTANCE_CONFIG = {
     ),
     "TRACKER_DATA_RETENTION": (
         TRACKER_DATA_RETENTION,
-        "Order data retention period (in days)",
+        "Trackers data retention period (in days)",
         int,
     ),
     "SHIPMENT_DATA_RETENTION": (

@@ -489,7 +489,7 @@ pre.code {
 .admin-wrapper {
   margin: auto;
   max-width: 1080px;
-  padding: 60px 0 20px;
+  padding: 0 20px;
 }
 
 .admin-sidebar-header {
@@ -501,6 +501,11 @@ pre.code {
   top: 10px;
   right: -40px;
   display: none;
+}
+
+.admin-modal {
+  width: calc(100%);
+  max-height: 91vh !important;
 }
 
 @media screen and (min-width: 1080px) {
@@ -517,7 +522,6 @@ pre.code {
 @media screen and (min-width: 768px) {
   .admin-sidebar {
     position: absolute !important;
-    top: 60px !important;
     z-index: 0 !important;
   }
 }
@@ -529,6 +533,7 @@ pre.code {
 
   .admin-modal {
     margin: 0;
+    max-height: 95vh !important;
   }
 
   .admin-sidebar-menu {

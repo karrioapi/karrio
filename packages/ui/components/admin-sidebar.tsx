@@ -57,25 +57,25 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
 
         <div className="sidebar-menu has-slimscroll py-2" style={{ height: "calc(100% - 60px)" }}>
           <AppLink href="/admin" className={"menu-item px-3 " + activeClass("/admin")} shallow={false} prefetch={false}>
-            <i className={`fa fa-layer-group mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+            <i className={`fa fa-layer-group mr-2 ${isActive("/admin") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Platform details</span>
           </AppLink>
           <AppLink href="/admin/carrier_connections" className={"menu-item px-3 " + activeClass("/admin/carrier_connections")} shallow={false} prefetch={false}>
-            <i className={`fa fa-truck mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+            <i className={`fa fa-truck mr-2 ${isActive("/admin/carrier_connections") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Carrier connections</span>
           </AppLink>
           <AppLink href="/admin/user_accounts" className={"menu-item px-3 " + activeClass("/admin/user_accounts")} shallow={false} prefetch={false}>
-            <i className={`fa fa-user-lock mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+            <i className={`fa fa-user-lock mr-2 ${isActive("/admin/user_accounts") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Users and permissions</span>
           </AppLink>
           {metadata?.MULTI_ORGANIZATIONS && <>
             <AppLink href="/admin/organization_accounts" className={"menu-item px-3 " + activeClass("/admin/organization_accounts")} shallow={false} prefetch={false}>
-              <i className={`fa fa-user mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+              <i className={`fa fa-users mr-2 ${isActive("/admin/organization_accounts") ? "" : 'has-text-grey'}`}></i>
               <span className="has-text-weight-bold">Organization accounts</span>
             </AppLink>
           </>}
           <AppLink href="/admin/surcharges" className={"menu-item px-3 " + activeClass("/admin/surcharges")} shallow={false} prefetch={false}>
-            <i className={`fa fa-percent mr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+            <i className={`fa fa-percent mr-2 ${isActive("/admin/surcharges") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Surcharge and discounts</span>
           </AppLink>
         </div>
