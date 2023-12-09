@@ -12,7 +12,7 @@ export function useAccounts({ setVariablesToURL = false, ...initialData }: Filte
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<AccountFilter>({ ...PAGINATION, ...initialData });
-  const fetch = (variables: { filter: AccountFilter }) => karrio.graphql.request<GetAccounts>(
+  const fetch = (variables: { filter: AccountFilter }) => karrio.admin.request<GetAccounts>(
     gqlstr(GET_ACCOUNTS), { variables }
   );
 

@@ -72,7 +72,7 @@ class User(auth.AbstractUser):
     @property
     def permissions(self):
         _permissions = self.groups.all().values_list("name", flat=True)
-        print(self.email, _permissions, self.is_superuser, self.is_staff)
+
         if not any(_permissions) and self.is_superuser:
             return Group.objects.all().values_list("name", flat=True)
 

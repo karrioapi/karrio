@@ -12,7 +12,7 @@ export function useSurcharges() {
   // Queries
   const query = useQuery(
     ['surcharges', filter],
-    () => karrio.graphql.request<GetSurcharges>(gqlstr(GET_SURCHARGES), { variables: filter }),
+    () => karrio.admin.request<GetSurcharges>(gqlstr(GET_SURCHARGES), { variables: filter }),
     { onError },
   );
 
@@ -29,7 +29,7 @@ export function useSurcharge(id: string) {
   // Queries
   const query = useQuery({
     queryKey: ['surcharges', id],
-    queryFn: () => karrio.graphql.request<GetSurcharge>(gqlstr(GET_SURCHARGE), { variables: { id } }),
+    queryFn: () => karrio.admin.request<GetSurcharge>(gqlstr(GET_SURCHARGE), { variables: { id } }),
     enabled: !!id,
     onError,
   });
@@ -48,19 +48,19 @@ export function useSurchargeMutation() {
 
   // Mutations
   const createSurcharge = useMutation(
-    (data: CreateSurchargeMutationInput) => karrio.graphql.request<CreateSurcharge>(
+    (data: CreateSurchargeMutationInput) => karrio.admin.request<CreateSurcharge>(
       gqlstr(CREATE_SURCHARGE), { data }
     ),
     { onSuccess: invalidateCache, onError }
   );
   const updateSurcharge = useMutation(
-    (data: UpdateSurchargeMutationInput) => karrio.graphql.request<UpdateSurcharge>(
+    (data: UpdateSurchargeMutationInput) => karrio.admin.request<UpdateSurcharge>(
       gqlstr(UPDATE_SURCHARGE), { data }
     ),
     { onSuccess: invalidateCache, onError }
   );
   const deleteSurcharge = useMutation(
-    (data: { id: string }) => karrio.graphql.request<DeleteSurcharge>(gqlstr(DELETE_SURCHARGE), { data }),
+    (data: { id: string }) => karrio.admin.request<DeleteSurcharge>(gqlstr(DELETE_SURCHARGE), { data }),
     { onSuccess: invalidateCache, onError }
   );
 

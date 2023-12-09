@@ -37,11 +37,11 @@ export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: Rea
                 </div>
               </header>
 
-              <div className="admin-wrapper is-relative mt-6">
+              <div className="admin-wrapper is-relative mt-6 p-0">
 
                 <AdminSidebar />
 
-                <div className="plex-wrapper" style={{ background: 'inherit', minHeight: '70vh' }}>
+                <div className="plex-wrapper" style={{ background: 'inherit', marginLeft: '260px', minHeight: '70vh' }}>
                   {children}
                 </div>
 

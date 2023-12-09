@@ -321,6 +321,20 @@ Karrio custom styling
   }
 }
 
+.surcharges-table {
+  .surcharge {
+    width: 20%;
+  }
+
+  .name {
+    width: 60%;
+  }
+
+  .action {
+    width: 20%;
+  }
+}
+
 hr {
   background-color: #dddddd;
 }
@@ -492,6 +506,10 @@ pre.code {
   padding: 0 20px;
 }
 
+.admin-sidebar {
+  width: 260px !important;
+}
+
 .admin-sidebar-header {
   border-radius: 6px;
 }
@@ -549,7 +567,6 @@ pre.code {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
-  max-height: 4px;
 }
 
 /* Track */

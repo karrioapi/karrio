@@ -118,7 +118,7 @@ export default function Page(pageProps: any) {
 
     return AuthenticatedPage((
         <AdminLayout>
-            <Head><title>{`Administration - ${APP_NAME}`}</title></Head>
+            <Head><title>{`Users - ${APP_NAME}`}</title></Head>
 
             <Component />
 

@@ -12,7 +12,7 @@ export function useSystemCarrierConnections() {
   // Queries
   const query = useQuery(
     ['system_carrier_connections'],
-    () => karrio.graphql.request<GetSystemConnection>(gqlstr(GET_SYSTEM_CONNECTIONS)),
+    () => karrio.admin.request<GetSystemConnection>(gqlstr(GET_SYSTEM_CONNECTIONS)),
     { keepPreviousData: true, staleTime: 5000, onError },
   );
 
@@ -29,15 +29,15 @@ export function useSystemCarrierConnectionMutation() {
 
   // Mutations
   const createSystemCarrierConnection = useMutation(
-    (data: CreateConnectionMutationInput) => karrio.graphql.request(gqlstr(CREATE_CARRIER_CONNECTION), { data }),
+    (data: CreateConnectionMutationInput) => karrio.admin.request(gqlstr(CREATE_CARRIER_CONNECTION), { data }),
     { onSuccess: invalidateCache, onError }
   );
   const updateSystemCarrierConnection = useMutation(
-    (data: UpdateConnectionMutationInput) => karrio.graphql.request(gqlstr(UPDATE_CARRIER_CONNECTION), { data }),
+    (data: UpdateConnectionMutationInput) => karrio.admin.request(gqlstr(UPDATE_CARRIER_CONNECTION), { data }),
     { onSuccess: invalidateCache, onError }
   );
   const deleteSystemCarrierConnection = useMutation(
-    (data: { id: string }) => karrio.graphql.request(gqlstr(DELETE_CARRIER_CONNECTION), { data }),
+    (data: { id: string }) => karrio.admin.request(gqlstr(DELETE_CARRIER_CONNECTION), { data }),
     { onSuccess: invalidateCache, onError }
   );
 

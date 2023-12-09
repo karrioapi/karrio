@@ -12,7 +12,7 @@ export function useSystemUsage() {
   // Queries
   const query = useQuery(
     ['system_usage', filter],
-    () => karrio.graphql.request<GetSystemUsage>(gqlstr(GET_SYSTEM_USAGE), { variables: filter }),
+    () => karrio.admin.request<GetSystemUsage>(gqlstr(GET_SYSTEM_USAGE), { variables: filter }),
     { onError },
   );
 
