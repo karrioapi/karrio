@@ -155,8 +155,10 @@ export interface GetUsers_users_edges_node {
   email: string;
   full_name: string;
   is_staff: boolean;
+  is_superuser: boolean | null;
   date_joined: any;
   last_login: any | null;
+  permissions: string[] | null;
 }
 
 export interface GetUsers_users_edges {

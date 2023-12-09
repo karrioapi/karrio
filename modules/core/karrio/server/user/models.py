@@ -71,7 +71,17 @@ class User(auth.AbstractUser):
 
     @property
     def permissions(self):
-        return [_.name for _ in self.groups.all()]
+        _permissions = self.groups.all().values_list("name", flat=True)
+        print(self.email, _permissions, self.is_superuser, self.is_staff)
+        if not any(_permissions) and self.is_superuser:
+            return Group.objects.all().values_list("name", flat=True)
+
+        if not any(_permissions) and self.is_staff:
+            return Group.objects.exclude(
+                name__in=["manage_system", "manage_team", "manage_org_owner"]
+            ).values_list("name", flat=True)
+
+        return _permissions
 
 
 @register_model

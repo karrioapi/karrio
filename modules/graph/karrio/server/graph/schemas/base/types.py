@@ -33,7 +33,6 @@ class UserType:
     date_joined: datetime.datetime
     is_superuser: typing.Optional[bool] = strawberry.UNSET
     last_login: typing.Optional[datetime.datetime] = strawberry.UNSET
-    permissions: typing.Optional[typing.List[str]] = strawberry.UNSET
 
     @strawberry.field
     def permissions(self: User, info) -> typing.Optional[typing.List[str]]:

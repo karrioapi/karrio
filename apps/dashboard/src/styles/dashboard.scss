@@ -308,12 +308,12 @@ Karrio custom styling
   }
 
   .role {
-    width: 30%;
+    width: 25%;
   }
 
   .last-login {
-    width: 20%;
-    min-width: 130px;
+    width: 25%;
+    min-width: 150px;
   }
 
   .action {
@@ -505,7 +505,7 @@ pre.code {
 
 .admin-modal {
   width: calc(100%);
-  max-height: 91vh !important;
+  max-height: 90vh !important;
 }
 
 @media screen and (min-width: 1080px) {

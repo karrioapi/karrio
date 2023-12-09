@@ -104,8 +104,10 @@ export const GET_USERS = gql`query GetUsers($filter: UserFilter) {
         email
         full_name
         is_staff
+        is_superuser
         date_joined
         last_login
+        permissions
       }
     }
   }

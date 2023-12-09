@@ -12,7 +12,7 @@ export function useUsers({ setVariablesToURL = false, ...initialData }: FilterTy
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<UserFilter>({ ...PAGINATION, ...initialData });
-  const fetch = (variables: { filter: UserFilter }) => karrio.graphql.request<GetUsers>(
+  const fetch = (variables: { filter: UserFilter }) => karrio.admin.request<GetUsers>(
     gqlstr(GET_USERS), { variables }
   );
 

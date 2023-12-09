@@ -12,8 +12,8 @@ export default function Page(pageProps: any) {
 
         return (
             <>
-                <header className="px-0 pb-0 pt-2">
-                    <span className="title is-4">Surcharge & discounts</span>
+                <header className="px-0 pb-5 pt-1 mb-1">
+                    <span className="title is-4 has-text-weight-bold">Surcharge & discounts</span>
                 </header>
             </>
         );

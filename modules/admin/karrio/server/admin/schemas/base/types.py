@@ -28,6 +28,10 @@ User = auth.get_user_model()
 class UserType(base.UserType):
     id: int
 
+    @strawberry.field
+    def permissions(self: User, info) -> typing.Optional[typing.List[str]]:
+        return self.permissions
+
     @staticmethod
     @utils.authentication_required
     def me(info) -> "UserType":
@@ -62,7 +66,7 @@ class UserType(base.UserType):
         if conf.settings.MULTI_ORGANIZATIONS:
             queryset = queryset.filter(
                 orgs_organization__users__id=info.context.request.user.id
-            )
+            ).distinct()
 
         return utils.paginated_connection(queryset, **_filter.pagination())
 
