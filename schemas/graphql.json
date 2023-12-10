@@ -256,7 +256,7 @@
             "deprecationReason": null
           },
           {
-            "name": "tracingrecord",
+            "name": "tracing_record",
             "description": null,
             "args": [
               {
@@ -283,7 +283,7 @@
             "deprecationReason": null
           },
           {
-            "name": "tracingrecords",
+            "name": "tracing_records",
             "description": null,
             "args": [
               {

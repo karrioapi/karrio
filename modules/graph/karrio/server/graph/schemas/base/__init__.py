@@ -45,10 +45,10 @@ class Query:
     logs: utils.Connection[types.LogType] = strawberry.field(
         resolver=types.LogType.resolve_list
     )
-    tracingrecord: typing.Optional[types.TracingRecordType] = strawberry.field(
+    tracing_record: typing.Optional[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve
     )
-    tracingrecords: utils.Connection[types.TracingRecordType] = strawberry.field(
+    tracing_records: utils.Connection[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve_list
     )
     shipment: typing.Optional[types.ShipmentType] = strawberry.field(
