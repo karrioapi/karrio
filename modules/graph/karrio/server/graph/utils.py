@@ -10,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
 import karrio.server.apps.models as apps
+import karrio.server.core.utils as utils
 import karrio.server.orders.models as orders
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -20,6 +21,8 @@ Cursor = str
 T = typing.TypeVar("T")
 GenericType = typing.TypeVar("GenericType")
 logger = logging.getLogger(__name__)
+
+error_logger = utils.error_wrapper
 
 JSON: typing.Any = strawberry.scalar(
     typing.NewType("JSON", object),

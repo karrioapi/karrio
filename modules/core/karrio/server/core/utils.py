@@ -54,7 +54,7 @@ def error_wrapper(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         try:
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
         except Exception as e:
             logger.exception(e)
             raise e
@@ -66,7 +66,7 @@ def async_wrapper(func):
     @functools.wraps(func)
     def wrapper(*args, run_synchronous: bool = False, **kwargs):
         def _run():
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
 
         if run_synchronous:
             return _run()
@@ -211,8 +211,8 @@ def compute_tracking_status(
         return serializers.TrackerStatus.pending
 
     if (
-        any(details.status or "") and
-        serializers.TrackerStatus.map(details.status).value is not None
+        any(details.status or "")
+        and serializers.TrackerStatus.map(details.status).value is not None
     ):
         return serializers.TrackerStatus.map(details.status)
 

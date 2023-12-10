@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 
 import karrio.lib as lib
 import karrio.server.iam.models as iam
+import karrio.server.user.models as auth
 import karrio.server.core.models as core
 import karrio.server.graph.utils as utils
 import karrio.server.graph.models as graph
@@ -186,12 +187,13 @@ class TracingRecordType:
 @strawberry.type
 class TokenType:
     object_type: str
-    label: str
     key: str
+    label: str
+    test_mode: bool
     created: datetime.datetime
 
     @strawberry.field
-    def permissions(self: "Token", info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
         return self.permissions
 
     @staticmethod
@@ -201,6 +203,44 @@ class TokenType:
             info.context.request,
             **({"org_id": org_id} if org_id is not strawberry.UNSET else {}),
         )
+
+
+@strawberry.type
+class APIKeyType:
+    object_type: str
+    key: str
+    label: str
+    test_mode: bool
+    created: datetime.datetime
+
+    @strawberry.field
+    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+        return self.permissions
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+    ) -> typing.List["APIKeyType"]:
+        _filters = {
+            "user__id": info.context.request.user.id,
+            "test_mode": info.context.request.test_mode,
+            **(
+                {"org__id": info.context.request.org.id}
+                if hasattr(info.context.request, "org")
+                else {}
+            ),
+        }
+        keys = auth.Token.objects.filter(**_filters)
+
+        if keys.exists():
+            return keys
+
+        user_serializers.TokenSerializer.map(
+            data={}, context=info.context.request
+        ).save()
+
+        return auth.Token.objects.filter(**_filters)
 
 
 @strawberry.type

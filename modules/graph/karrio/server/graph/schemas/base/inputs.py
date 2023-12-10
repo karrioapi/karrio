@@ -78,6 +78,19 @@ class TokenMutationInput(utils.BaseInput):
 
 
 @strawberry.input
+class CreateAPIKeyMutationInput(utils.BaseInput):
+    password: str
+    label: str
+    permissions: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class DeleteAPIKeyMutationInput(utils.BaseInput):
+    password: str
+    key: str
+
+
+@strawberry.input
 class RequestEmailChangeMutationInput(utils.BaseInput):
     email: str
     password: str

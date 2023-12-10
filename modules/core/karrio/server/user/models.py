@@ -118,21 +118,8 @@ class Token(authtoken.Token, ControlledAccessModel):
         import karrio.server.iam.models as iam
 
         _permissions = []
-        if iam.ContextPermission.objects.filter(object_pk=self.pk).exists():
-            _permissions = (
-                iam.ContextPermission.objects.get(
-                    object_pk=self.pk,
-                    content_type=ContentType.objects.get_for_model(Token),
-                )
-                .groups.all()
-                .values_list("name", flat=True)
-            )
 
-        if (
-            not any(_permissions)
-            and conf.settings.MULTI_ORGANIZATIONS
-            and self.org.exists()
-        ):
+        if conf.settings.MULTI_ORGANIZATIONS and self.org.exists():
             org_user = self.org.first().organization_users.filter(user_id=self.user_id)
             _permissions = (
                 iam.ContextPermission.objects.get(
@@ -143,6 +130,19 @@ class Token(authtoken.Token, ControlledAccessModel):
                 .values_list("name", flat=True)
                 if org_user.exists()
                 else []
+            )
+
+        if (
+            not any(_permissions)
+            and iam.ContextPermission.objects.filter(object_pk=self.pk).exists()
+        ):
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=self.pk,
+                    content_type=ContentType.objects.get_for_model(Token),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
             )
 
         return _permissions if any(_permissions) else self.user.permissions
