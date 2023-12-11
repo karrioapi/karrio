@@ -2384,8 +2384,10 @@ export const GET_USER = gql`query GetUser {
     email
     full_name
     is_staff
+    is_superuser
     last_login
     date_joined
+    permissions
   }
 }
 `;
@@ -2393,10 +2395,13 @@ export const GET_USER = gql`query GetUser {
 export const UPDATE_USER = gql`mutation update_user($data: UpdateUserInput!) {
   update_user(input: $data) {
     user {
+      email
       full_name
       is_staff
+      is_superuser
       last_login
       date_joined
+      permissions
     }
     errors {
       field

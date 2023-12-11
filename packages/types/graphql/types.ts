@@ -3363,8 +3363,10 @@ export interface GetUser_user {
   email: string;
   full_name: string;
   is_staff: boolean;
+  is_superuser: boolean | null;
   last_login: any | null;
   date_joined: any;
+  permissions: string[] | null;
 }
 
 export interface GetUser {
@@ -3380,10 +3382,13 @@ export interface GetUser {
 // ====================================================
 
 export interface update_user_update_user_user {
+  email: string;
   full_name: string;
   is_staff: boolean;
+  is_superuser: boolean | null;
   last_login: any | null;
   date_joined: any;
+  permissions: string[] | null;
 }
 
 export interface update_user_update_user_errors {

@@ -141,12 +141,12 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         </>}
 
         {/* Administration */}
-        {user?.is_staff && <>
+        {/* {user?.is_staff && <>
           <AppLink href="/admin" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
             <i className={`fa fa-tools pr-2 has-text-grey`}></i>
             <span className="has-text-weight-bold">Administration</span>
           </AppLink>
-        </>}
+        </>} */}
       </div>
       <div style={{ position: 'absolute', bottom: 10, left: 30, right: 10 }}>
         <span className="menu-item has-text-weight-semibold has-text-grey-light">

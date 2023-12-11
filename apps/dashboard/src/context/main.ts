@@ -35,6 +35,15 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     }
   }
 
+  if (needStaffAccess(pathname, data)) {
+    return {
+      redirect: {
+        permanent: false,
+        destination: '/'
+      }
+    }
+  }
+
   return {
     props: { pathname, orgId, ...metadata, ...subscription, ...data }
   };
@@ -197,6 +206,14 @@ function needValidSubscription({ subscription }: { subscription?: SubscriptionTy
   )
 }
 
+function needStaffAccess(pathname, { user }: { user?: any | null }) {
+  return (
+    pathname.includes('/admin') &&
+    !!user &&
+    user?.is_staff === false
+  )
+}
+
 async function getAPIURL(ctx: RequestContext) {
   if (!publicRuntimeConfig?.MULTI_TENANT) {
     return KARRIO_API;
@@ -226,8 +243,10 @@ const USER_DATA_QUERY = `{
     email
     full_name
     is_staff
+    is_superuser
     last_login
     date_joined
+    permissions
   }
 }`;
 const ORG_DATA_QUERY = `{
