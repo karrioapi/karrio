@@ -6517,6 +6517,7 @@ export interface UpdateAddressTemplateInput {
 
 // null
 export interface TokenMutationInput {
+  key: string;
   password?: string | null;
   refresh?: boolean | null;
 }

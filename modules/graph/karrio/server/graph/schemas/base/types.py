@@ -6,7 +6,6 @@ from strawberry.types import Info
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from django.contrib.contenttypes.models import ContentType
 
 import karrio.lib as lib
 import karrio.server.iam.models as iam
@@ -40,22 +39,6 @@ class UserType:
         # Return permissions from token if exists
         if hasattr(getattr(info.context.request, "token", None), "permissions"):
             return info.context.request.token.permissions
-
-        # Return permissions from org user if multiple orgs context
-        if hasattr(info.context.request, "org"):
-            org_user = info.context.request.org.organization_users.filter(
-                user_id=self.id
-            )
-            return (
-                iam.ContextPermission.objects.get(
-                    object_pk=org_user.first().pk,
-                    content_type=ContentType.objects.get_for_model(org_user.first()),
-                )
-                .groups.all()
-                .values_list("name", flat=True)
-                if org_user.exists()
-                else []
-            )
 
         # Return permissions from user
         return info.context.request.user.permissions
@@ -227,7 +210,7 @@ class APIKeyType:
             "test_mode": info.context.request.test_mode,
             **(
                 {"org__id": info.context.request.org.id}
-                if hasattr(info.context.request, "org")
+                if getattr(info.context.request, "org", None) is not None
                 else {}
             ),
         }

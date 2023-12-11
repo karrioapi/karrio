@@ -64,9 +64,12 @@ class TokenMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.authorization_required()
     def mutate(
-        info: Info, refresh: bool = None, password: str = None
+        info: Info,
+        key: str = None,
+        refresh: bool = None,
+        password: str = None,
     ) -> "UserUpdateMutation":
-        tokens = user_models.Token.access_by(info.context.request)
+        tokens = user_models.Token.access_by(info.context.request).filter(key=key)
 
         if refresh:
             if len(password or "") == 0:
@@ -79,6 +82,9 @@ class TokenMutation(utils.BaseMutation):
 
             if any(tokens):
                 tokens.delete()
+
+        else:
+            return TokenMutation(token=tokens.first())  # type:ignore
 
         token = (
             TokenSerializer.map(data={}, context=info.context.request).save().instance
@@ -105,7 +111,11 @@ class CreateAPIKeyMutation(utils.BaseMutation):
         api_key = TokenSerializer.map(data=data, context=context).save().instance
 
         if any(permissions):
-            _auth_ctx = getattr(context, "token", context.user)
+            _auth_ctx = (
+                context.token
+                if hasattr(getattr(info.context.request, "token", None), "permissions")
+                else context.user
+            )
             _ctx_permissions = getattr(_auth_ctx, "permissions", [])
             _invalid_permissions = [_ for _ in permissions if _ not in _ctx_permissions]
 

@@ -73,6 +73,7 @@ class UpdateUserInput(utils.BaseInput):
 
 @strawberry.input
 class TokenMutationInput(utils.BaseInput):
+    key: str
     password: typing.Optional[str] = strawberry.UNSET
     refresh: typing.Optional[bool] = strawberry.UNSET
 

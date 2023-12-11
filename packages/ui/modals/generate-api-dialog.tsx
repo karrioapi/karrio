@@ -1,4 +1,4 @@
-import { useAPITokenMutation } from '@karrio/hooks/api-token';
+import { useAPIToken, useAPITokenMutation } from '@karrio/hooks/api-token';
 import React, { useContext, useRef, useState } from 'react';
 import { Notifier, Notify } from '../components/notifier';
 import { NotificationType } from '@karrio/types';
@@ -12,13 +12,14 @@ export const GenerateAPIModal: React.FC<{ children?: React.ReactNode }> = ({ chi
   const { loading, setLoading } = useLoader();
   const password = useRef<HTMLInputElement>(null);
   const { query: { data: { user } = {} } } = useUser();
+  const { query: { data: { token } = {} } } = useAPIToken();
   const [isActive, setIsActive] = useState<boolean>(false);
 
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     try {
       setLoading(true);
-      await mutation.updateToken.mutateAsync({ refresh: true, password: password.current?.value });
+      await mutation.updateToken.mutateAsync({ refresh: true, key: token!.key, password: password.current?.value });
       setLoading(false);
       setIsActive(false);
       notify({ type: NotificationType.success, message: "New token generated successfully!" });

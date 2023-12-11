@@ -71,7 +71,28 @@ class User(auth.AbstractUser):
 
     @property
     def permissions(self):
-        _permissions = self.groups.all().values_list("name", flat=True)
+        import karrio.server.conf as conf
+        import karrio.server.iam.models as iam
+        import karrio.server.core.middleware as middleware
+
+        ctx = middleware.SessionContext.get_current_request()
+        _permissions = []
+
+        if conf.settings.MULTI_ORGANIZATIONS and ctx.org is not None:
+            org_user = ctx.org.organization_users.filter(user_id=self.pk)
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=org_user.first().pk,
+                    content_type=ContentType.objects.get_for_model(org_user.first()),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+                if org_user.exists()
+                else []
+            )
+
+        if not any(_permissions):
+            _permissions = self.groups.all().values_list("name", flat=True)
 
         if not any(_permissions) and self.is_superuser:
             return Group.objects.all().values_list("name", flat=True)
@@ -119,7 +140,21 @@ class Token(authtoken.Token, ControlledAccessModel):
 
         _permissions = []
 
-        if conf.settings.MULTI_ORGANIZATIONS and self.org.exists():
+        if iam.ContextPermission.objects.filter(object_pk=self.pk).exists():
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=self.pk,
+                    content_type=ContentType.objects.get_for_model(Token),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+            )
+
+        if (
+            not any(_permissions)
+            and conf.settings.MULTI_ORGANIZATIONS
+            and self.org.exists()
+        ):
             org_user = self.org.first().organization_users.filter(user_id=self.user_id)
             _permissions = (
                 iam.ContextPermission.objects.get(
@@ -130,19 +165,6 @@ class Token(authtoken.Token, ControlledAccessModel):
                 .values_list("name", flat=True)
                 if org_user.exists()
                 else []
-            )
-
-        if (
-            not any(_permissions)
-            and iam.ContextPermission.objects.filter(object_pk=self.pk).exists()
-        ):
-            _permissions = (
-                iam.ContextPermission.objects.get(
-                    object_pk=self.pk,
-                    content_type=ContentType.objects.get_for_model(Token),
-                )
-                .groups.all()
-                .values_list("name", flat=True)
             )
 
         return _permissions if any(_permissions) else self.user.permissions
