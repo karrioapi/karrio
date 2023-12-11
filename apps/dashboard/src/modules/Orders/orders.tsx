@@ -82,7 +82,7 @@ export default function OrdersPage(pageProps: any) {
     return (
       <>
 
-        <header className="px-0 pb-3 pt-6 is-flex is-justify-content-space-between">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Orders</span>
           <div>
             <OrdersFilter context={context} />

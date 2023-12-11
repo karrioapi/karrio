@@ -1,4 +1,4 @@
-import yaml # type: ignore
+import yaml  # type: ignore
 import pydoc
 import logging
 import functools
@@ -201,38 +201,14 @@ class AuthenticationMiddleware(BaseAuthenticationMiddleware):
         request = authenticate_user(request)
 
         if hasattr(request, "user") and getattr(request, "org", None) is None:
-            request.org = self._get_organization(request)
+            request.org = get_request_org(
+                request,
+                request.user,
+                org_id=request.META.get("HTTP_X_ORG_ID"),
+            )
 
         if not hasattr(request, "test_mode"):
             request.test_mode = get_request_test_mode(request)
-
-    def _get_organization(self, request):
-        """
-        Attempts to find and return an organization using the given validated token.
-        """
-        if settings.MULTI_ORGANIZATIONS:
-            try:
-                from karrio.server.orgs.models import Organization
-
-                org_id = request.META.get("HTTP_X_ORG_ID")
-                orgs = Organization.objects.filter(users__id=request.user.id)
-                org = (
-                    orgs.filter(id=org_id).first()
-                    if org_id is not None
-                    else orgs.filter(is_active=True).first()
-                )
-
-                # org was found but is not active
-                if (org is not None) and (not org.is_active):
-                    raise exceptions.AuthenticationFailed(
-                        _("Organization is inactive"), code="organization_inactive"
-                    )
-
-                return org
-            except ProgrammingError:
-                pass
-
-        return None
 
 
 def authenticate_user(request):

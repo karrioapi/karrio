@@ -42,7 +42,9 @@ class TestTokenMutation(GraphTestCase):
             }
             """,
             operation_name="mutate_token",
-            variables=TOKEN_MUTATION_DATA,
+            variables={
+                "data": {"refresh": True, "password": "test", "key": current_token}
+            },
         )
         response_data = response.data
 
@@ -67,5 +69,3 @@ USER_UPDATE_RESPONSE = {
         }
     }
 }
-
-TOKEN_MUTATION_DATA = {"data": {"refresh": True, "password": "test"}}

@@ -53,7 +53,8 @@ export default function ShipmentsPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 pb-3 pt-6 is-flex is-justify-content-space-between">
+
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Shipments</span>
           <div>
             <ShipmentsFilter context={context} />
@@ -95,7 +96,7 @@ export default function ShipmentsPage(pageProps: any) {
               <tbody>
 
                 <tr>
-                  <td className="carrier is-size-7 has-text-centered">CARRIER</td>
+                  <td className="carrier is-size-7">CARRIER</td>
                   <td className="service is-size-7">SERVICE</td>
                   <td className="status"></td>
                   <td className="recipient is-size-7">RECIPIENT</td>
@@ -105,7 +106,7 @@ export default function ShipmentsPage(pageProps: any) {
 
                 {(shipments?.edges || []).map(({ node: shipment }) => (
                   <tr key={shipment.id} className="items is-clickable">
-                    <td className="carrier is-vcentered has-text-centered p-2" onClick={() => previewShipment(shipment.id)}>
+                    <td className="carrier is-vcentered p-2" onClick={() => previewShipment(shipment.id)}>
                       {!!shipment.carrier_name && <CarrierBadge
                         className="has-background-primary has-text-weight-bold has-text-white-bis"
                         style={{ fontSize: '0.6rem' }}

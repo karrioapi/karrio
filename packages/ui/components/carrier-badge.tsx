@@ -11,7 +11,7 @@ interface CarrierBadgeComponent extends React.AllHTMLAttributes<HTMLDivElement> 
 export const CarrierBadge: React.FC<CarrierBadgeComponent> = ({ carrier_name, className, ...props }) => {
   return (
     <div className='mt-1'>
-      <Image src={p`/carriers/${carrier_name}_logo.svg`} height="25" width="100" alt="carrier logo" />
+      <Image src={p`/carriers/${carrier_name}_logo.svg`} height="20" width="80" alt="carrier logo" />
     </div>
   );
 };

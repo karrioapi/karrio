@@ -314,7 +314,6 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             "updated_at",
             "created_by",
             "carrier_id",
-            "test_mode",
             "active",
             "capabilities",
             "active_users",
@@ -326,7 +325,10 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             (k for k in validated_data.keys() if k in CARRIER_MODEL_SERIALIZERS.keys()),
             "",
         )
-        settings_data = validated_data.get(name, {})
+        settings_data = {
+            **validated_data.get(name, {}),
+            "test_mode": context.test_mode,
+        }
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
         settings_name = serializer.Meta.model.__name__.lower()
 

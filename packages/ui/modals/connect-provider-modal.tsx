@@ -49,7 +49,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
   const mutation = useCarrierConnectionMutation();
   const { loading, setLoading } = useContext(Loading);
   const { addUrlParam, removeUrlParam } = useLocation();
-  const DEFAULT_STATE = (): Partial<CarrierConnectionType> => ({ carrier_name: NoneEnum.none, test_mode: testMode });
+  const DEFAULT_STATE = (): Partial<CarrierConnectionType> => ({ carrier_name: NoneEnum.none });
   const [key, setKey] = useState<string>(`connection-${Date.now()}`);
   const [isNew, setIsNew] = useState<boolean>(true);
   const [payload, dispatch] = useReducer(reducer, DEFAULT_STATE());
@@ -106,7 +106,6 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
       }
       return acc;
     }, {
-      test_mode: testMode,
       carrier_id: `${value.toLocaleLowerCase()}${testMode ? '-test' : ''}`
     });
 
@@ -129,7 +128,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
     evt.preventDefault();
     setLoading(true);
     try {
-      const { carrier_name: _, __typename, capabilities, display_name, ...content } = payload;
+      const { carrier_name: _, __typename, capabilities, display_name, test_mode, ...content } = payload;
       const data = { [carrier_name]: carrier_name.includes('generic') ? { ...content, display_name } : content };
       if (isNew) {
         await mutation.createCarrierConnection.mutateAsync(data);

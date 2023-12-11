@@ -20,9 +20,9 @@ class DHLPolandSettings(Carrier):
 
     @property
     def default_services(self):
-        from karrio.providers.dhl_poland.units import DEFAULT_SERVICES
+        from karrio.mappers.dhl_poland import units
 
-        return DP.to_dict(DEFAULT_SERVICES)
+        return DP.to_dict(units.DEFAULT_SERVICES)
 
 
 SETTINGS = DHLPolandSettings

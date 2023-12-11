@@ -9,6 +9,10 @@ if [[ "$*" == *gen:graph* ]]; then
 	cd "${ROOT:?}"
     npx apollo service:download --endpoint=http://0.0.0.0:5002/graphql/ "${ROOT:?}/schemas/graphql.json"
 	cd -
+elif [[ "$*" == *gen:admin* ]]; then
+	cd "${ROOT:?}"
+    npx apollo service:download --endpoint=http://0.0.0.0:5002/admin/graphql/ "${ROOT:?}/schemas/graphql-admin.json"
+	cd -
 elif [[ "$*" == *gen:openapi* ]]; then
 	cd "${ROOT:?}"
     curl http://localhost:5002/shipping-openapi -o "${ROOT:?}/schemas/openapi.yml"
@@ -39,7 +43,8 @@ else
     echo "Help: You can pass any the following commands to the server"
     echo "-----"
     echo "gen:graph - Generate GraphQL schema"
+    echo "gen:admin - Generate Admin GraphQL schema"
     echo "gen:openapi - Generate OpenAPI schema"
-    echo "gen:js - Generate Javascript client"
-    echo "build:pkgs - Build server packages"
+    echo "gen:ts:cli - Generate Typescript fetch client"
+    echo "build:js - Build Browser Javascript client"
 fi

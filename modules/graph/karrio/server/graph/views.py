@@ -6,13 +6,12 @@ import typing
 import logging
 from django.urls import path
 from django.conf import settings
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import exceptions
-
-import strawberry.http as http
-import strawberry.types as types
-import strawberry.django.views as views
+from django.views.decorators.csrf import csrf_exempt
 import graphql.error.graphql_error as graphql
+import strawberry.django.views as views
+import strawberry.types as types
+import strawberry.http as http
 
 import karrio.lib as lib
 import karrio.server.conf as conf
@@ -53,11 +52,6 @@ class GraphQLView(AccessMixin, views.GraphQLView):
         return data
 
     def format_graphql_error(self, error: graphql.GraphQLError):
-        logger.error(error)
-
-        if getattr(error, "original_error", None):
-            logger.exception(error.original_error)
-
         formatted_error: dict = (
             graphql.format_error(error)  # type: ignore
             if isinstance(error, graphql.GraphQLError)

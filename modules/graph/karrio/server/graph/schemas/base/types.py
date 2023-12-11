@@ -7,17 +7,18 @@ from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from karrio.server.core import gateway
 import karrio.lib as lib
-import karrio.server.core.filters as filters
-import karrio.server.serializers as serializers
-import karrio.server.user.serializers as user_serializers
-import karrio.server.providers.models as providers
-import karrio.server.manager.models as manager
-import karrio.server.tracing.models as tracing
-import karrio.server.graph.models as graph
+import karrio.server.iam.models as iam
+import karrio.server.user.models as auth
 import karrio.server.core.models as core
 import karrio.server.graph.utils as utils
+import karrio.server.graph.models as graph
+import karrio.server.core.filters as filters
+import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
+import karrio.server.serializers as serializers
+import karrio.server.providers.models as providers
+import karrio.server.user.serializers as user_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 
 User = get_user_model()
@@ -28,8 +29,19 @@ class UserType:
     email: str
     full_name: str
     is_staff: bool
+    is_active: bool
     date_joined: datetime.datetime
+    is_superuser: typing.Optional[bool] = strawberry.UNSET
     last_login: typing.Optional[datetime.datetime] = strawberry.UNSET
+
+    @strawberry.field
+    def permissions(self: User, info) -> typing.Optional[typing.List[str]]:
+        # Return permissions from token if exists
+        if hasattr(getattr(info.context.request, "token", None), "permissions"):
+            return info.context.request.token.permissions
+
+        # Return permissions from user
+        return info.context.request.user.permissions
 
     @staticmethod
     @utils.authentication_required
@@ -159,7 +171,13 @@ class TracingRecordType:
 class TokenType:
     object_type: str
     key: str
+    label: str
+    test_mode: bool
     created: datetime.datetime
+
+    @strawberry.field
+    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+        return self.permissions
 
     @staticmethod
     @utils.authentication_required
@@ -168,6 +186,44 @@ class TokenType:
             info.context.request,
             **({"org_id": org_id} if org_id is not strawberry.UNSET else {}),
         )
+
+
+@strawberry.type
+class APIKeyType:
+    object_type: str
+    key: str
+    label: str
+    test_mode: bool
+    created: datetime.datetime
+
+    @strawberry.field
+    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+        return self.permissions
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+    ) -> typing.List["APIKeyType"]:
+        _filters = {
+            "user__id": info.context.request.user.id,
+            "test_mode": info.context.request.test_mode,
+            **(
+                {"org__id": info.context.request.org.id}
+                if getattr(info.context.request, "org", None) is not None
+                else {}
+            ),
+        }
+        keys = auth.Token.objects.filter(**_filters)
+
+        if keys.exists():
+            return keys
+
+        user_serializers.TokenSerializer.map(
+            data={}, context=info.context.request
+        ).save()
+
+        return auth.Token.objects.filter(**_filters)
 
 
 @strawberry.type
@@ -771,7 +827,10 @@ class ConnectionType:
         return list(map(ConnectionType.parse, connections))
 
     @staticmethod
-    def parse(carrier: providers.Carrier) -> "CarrierConnectionType":
+    def parse(
+        carrier: providers.Carrier,
+        settings_types: dict = None,
+    ) -> "CarrierConnectionType":
         carrier_name = (
             carrier.carrier_name
             if carrier.carrier_name in providers.MODELS
@@ -790,7 +849,7 @@ class ConnectionType:
         )
         display_name = dict(display_name=carrier.carrier_display_name)
 
-        return CarrierSettings[carrier_name](
+        return (settings_types or CarrierSettings)[carrier_name](
             id=carrier.id,
             active=carrier.active,
             carrier_name=carrier_name,

@@ -57,7 +57,7 @@ export default function TrackersPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 pb-3 pt-6 is-flex is-justify-content-space-between">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Trackers</span>
           <div>
             <TrackersFilter context={context} />
@@ -98,7 +98,7 @@ export default function TrackersPage(pageProps: any) {
 
               <tbody className="trackers-table">
                 <tr>
-                  <td className="carrier is-size-7 has-text-centered">CARRIER</td>
+                  <td className="carrier is-size-7">CARRIER</td>
                   <td className="tracking-number is-size-7">TRACKING #</td>
                   <td className="status"></td>
                   <td className="last-event is-size-7">LAST EVENT</td>

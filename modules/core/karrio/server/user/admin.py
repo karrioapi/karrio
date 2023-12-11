@@ -66,11 +66,12 @@ class TokenAdmin(admin.ModelAdmin):
     list_display = (
         "key",
         "user",
+        "label",
         *(["organization"] if settings.MULTI_ORGANIZATIONS else []),
         "test_mode",
         "created",
     )
-    fields = ("user", "test_mode")
+    fields = ("user", "label", "test_mode")
     ordering = ("-created",)
 
     def get_queryset(self, request):

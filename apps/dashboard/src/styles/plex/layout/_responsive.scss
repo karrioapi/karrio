@@ -54,8 +54,10 @@ Tablet Landscape
 Tablet Portrait
 ========================================================================== */
 
-@media only screen and (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
-    .static-nav, .cloned-nav {
+@media only screen and (min-width: 768px) and (max-width: 768px) and (orientation: portrait) {
+
+    .static-nav,
+    .cloned-nav {
         .nav-start {
             .field {
                 padding: 0 20px;
@@ -91,7 +93,8 @@ Tablet Portrait
         display: none;
     }
 
-    .plex-sidebar, .plex-sidebar.is-inactive {
+    .plex-sidebar,
+    .plex-sidebar.is-inactive {
         transform: translateX(-100%);
 
         &.is-mobile-active {
@@ -131,7 +134,9 @@ Mobile Only
 ========================================================================== */
 
 @media (max-width: 767px) {
-    .static-nav, .cloned-nav {
+
+    .static-nav,
+    .cloned-nav {
         .nav-start {
             .field {
                 display: none;
@@ -162,7 +167,8 @@ Mobile Only
         display: none;
     }
 
-    .plex-sidebar, .plex-sidebar.is-inactive {
+    .plex-sidebar,
+    .plex-sidebar.is-inactive {
         transform: translateX(-100%);
 
         &.is-mobile-active {

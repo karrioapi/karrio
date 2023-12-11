@@ -84,6 +84,10 @@ KARRIO_CONF = [
             "urls": "karrio.server.core.urls",
         },
         {
+            "app": "karrio.server.iam",
+            "module": "karrio.server.iam",
+        },
+        {
             "app": "karrio.server.providers",
             "module": "karrio.server.providers",
             "urls": "karrio.server.providers.urls",
@@ -127,8 +131,14 @@ KARRIO_CONF = [
             "module": "karrio.server.admin",
             "urls": "karrio.server.admin.urls",
         },
-        {"app": "karrio.server.pricing", "module": "karrio.server.pricing"},
-        {"app": "karrio.server.apps", "module": "karrio.server.apps"},
+        {
+            "app": "karrio.server.pricing",
+            "module": "karrio.server.pricing",
+        },
+        {
+            "app": "karrio.server.apps",
+            "module": "karrio.server.apps",
+        },
     ]
     if importlib.util.find_spec(app["module"]) is not None  # type:ignore
 ]
@@ -430,7 +440,7 @@ SIMPLE_JWT = {
     ),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
-    "UPDATE_LAST_LOGIN": False,
+    "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": None,

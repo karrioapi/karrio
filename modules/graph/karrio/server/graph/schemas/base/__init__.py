@@ -18,6 +18,9 @@ extra_types = [*types.CarrierSettings.values()]
 class Query:
     user: types.UserType = strawberry.field(resolver=types.UserType.resolve)
     token: types.TokenType = strawberry.field(resolver=types.TokenType.resolve)
+    api_keys: typing.List[types.APIKeyType] = strawberry.field(
+        resolver=types.APIKeyType.resolve_list
+    )
 
     user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
         resolver=types.ConnectionType.resolve_list
@@ -45,10 +48,10 @@ class Query:
     logs: utils.Connection[types.LogType] = strawberry.field(
         resolver=types.LogType.resolve_list
     )
-    tracingrecord: typing.Optional[types.TracingRecordType] = strawberry.field(
+    tracing_record: typing.Optional[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve
     )
-    tracingrecords: utils.Connection[types.TracingRecordType] = strawberry.field(
+    tracing_records: utils.Connection[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve_list
     )
     shipment: typing.Optional[types.ShipmentType] = strawberry.field(
@@ -84,6 +87,18 @@ class Mutation:
         self, info: Info, input: inputs.TokenMutationInput
     ) -> mutations.TokenMutation:
         return mutations.TokenMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def create_api_key(
+        self, info: Info, input: inputs.CreateAPIKeyMutationInput
+    ) -> mutations.CreateAPIKeyMutation:
+        return mutations.CreateAPIKeyMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_api_key(
+        self, info: Info, input: inputs.DeleteAPIKeyMutationInput
+    ) -> mutations.DeleteAPIKeyMutation:
+        return mutations.DeleteAPIKeyMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def request_email_change(

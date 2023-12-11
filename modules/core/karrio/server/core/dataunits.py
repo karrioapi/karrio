@@ -3,8 +3,8 @@ from django.urls import reverse
 from rest_framework.request import Request
 
 from karrio.server.conf import settings
-import karrio.references as references
 import karrio.core.units as units
+import karrio.references as references
 import karrio.server.providers.models as providers
 
 
@@ -53,8 +53,8 @@ def contextual_metadata(request: Request):
 
 
 def contextual_reference(request: Request = None, reduced: bool = True):
-    import karrio.server.core.validators as validators
     import karrio.server.core.gateway as gateway
+    import karrio.server.core.validators as validators
     import karrio.server.core.middleware as middleware
 
     request = request or middleware.SessionContext.get_current_request()

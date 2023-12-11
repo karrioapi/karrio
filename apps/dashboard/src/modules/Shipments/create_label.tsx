@@ -183,7 +183,7 @@ export default function CreateLabelPage(pageProps: any) {
 
         {/* Shipment details section */}
         {ready && <div className="columns pb-6 m-0">
-          <div className="column px-0" style={{ minHeight: '850px' }}>
+          <div className="column px-0">
 
             {/* Address section */}
             <div className="card p-0">

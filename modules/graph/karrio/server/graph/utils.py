@@ -1,6 +1,7 @@
+import typing
 import base64
 import logging
-import typing
+import datetime
 import functools
 import strawberry
 import dataclasses
@@ -9,6 +10,7 @@ from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
 import karrio.server.apps.models as apps
+import karrio.server.core.utils as utils
 import karrio.server.orders.models as orders
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -19,6 +21,8 @@ Cursor = str
 T = typing.TypeVar("T")
 GenericType = typing.TypeVar("GenericType")
 logger = logging.getLogger(__name__)
+
+error_logger = utils.error_wrapper
 
 JSON: typing.Any = strawberry.scalar(
     typing.NewType("JSON", object),
@@ -160,6 +164,26 @@ class BaseInput:
 @strawberry.type
 class BaseMutation:
     errors: typing.Optional[typing.List[ErrorType]] = None
+
+
+@strawberry.type
+class UsageStatType:
+    date: typing.Optional[str] = None
+    label: typing.Optional[str] = None
+    count: typing.Optional[float] = None
+
+    @staticmethod
+    def parse(value: dict) -> "UsageStatType":
+        return UsageStatType(
+            **{k: v for k, v in value.items() if k in UsageStatType.__annotations__}
+        )
+
+
+@strawberry.input
+class UsageFilter(BaseInput):
+    date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
+    date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    omit: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @dataclasses.dataclass

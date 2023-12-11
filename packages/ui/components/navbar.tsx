@@ -1,21 +1,20 @@
 import { ShortcutDropdown } from './shortcut-dropdown';
 import { AccountDropdown } from './account-dropdown';
-import { ModeIndicator } from './mode-indicator';
 import { SearchBar } from '../forms/search-bar';
 import React from 'react';
 
-interface NavbarComponent {
-  showModeIndicator?: boolean;
-}
+interface NavbarComponent { }
 
-export const Navbar: React.FC<NavbarComponent> = ({ showModeIndicator }) => {
+export const Navbar: React.FC<NavbarComponent> = ({ }) => {
   const openSidebar = (e: React.MouseEvent) => {
     e.preventDefault();
     document.querySelector('.plex-sidebar')?.classList.add('is-mobile-active');
+    document.querySelector('.sidebar-menu-button')?.classList.add('is-mobile-active');
   };
 
   return (
     <>
+
       <div className="static-nav">
         <div className="nav-start">
 
@@ -55,7 +54,6 @@ export const Navbar: React.FC<NavbarComponent> = ({ showModeIndicator }) => {
           </div>
         </div>
 
-        {showModeIndicator && <ModeIndicator />}
       </div>
     </>
   );

@@ -53,9 +53,10 @@ export class KarrioClient implements KarrioClientInterface {
     webhooks: WebhooksApi;
     documents: DocumentsApi;
     batches: BatchesApi;
-    graphql: GraphQLApi;
     config: ConfigurationParameters;
     axios: AxiosInstance;
+    graphql: GraphQLApi;
+    admin: GraphQLApi;
 
     constructor({ headers, ...clientConfig }: ConfigurationParameters & { headers?: AxiosRequestHeaders }) {
         const config = new Configuration(clientConfig);
@@ -63,7 +64,6 @@ export class KarrioClient implements KarrioClientInterface {
 
         this.axios = axiosInstance;
         this.config = clientConfig;
-        this.graphql = new GraphQLApi(config.basePath, axiosInstance);
         this.API = new APIApi(config, config.basePath, axiosInstance);
         this.addresses = new AddressesApi(config, config.basePath, axiosInstance);
         this.carriers = new CarriersApi(config, config.basePath, axiosInstance);
@@ -77,6 +77,8 @@ export class KarrioClient implements KarrioClientInterface {
         this.webhooks = new WebhooksApi(config, config.basePath, axiosInstance);
         this.documents = new DocumentsApi(config, config.basePath, axiosInstance);
         this.batches = new BatchesApi(config, config.basePath, axiosInstance);
+        this.graphql = new GraphQLApi(config.basePath, axiosInstance);
+        this.admin = new GraphQLApi(`${config.basePath}/admin`, axiosInstance);
     }
 }
 

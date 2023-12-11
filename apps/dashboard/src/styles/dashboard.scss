@@ -308,16 +308,30 @@ Karrio custom styling
   }
 
   .role {
-    width: 30%;
+    width: 25%;
   }
 
   .last-login {
-    width: 20%;
-    min-width: 130px;
+    width: 25%;
+    min-width: 150px;
   }
 
   .action {
     width: 10%;
+  }
+}
+
+.surcharges-table {
+  .surcharge {
+    width: 20%;
+  }
+
+  .name {
+    width: 60%;
+  }
+
+  .action {
+    width: 20%;
   }
 }
 
@@ -373,8 +387,9 @@ hr {
 }
 
 .mode-indicator {
-  position: absolute;
-  top: 60px;
+  position: fixed;
+  top: 0;
+  z-index: 40;
   border-top: 1px solid rgb(196, 76, 52);
   padding: 0;
   text-align: center;
@@ -385,10 +400,10 @@ hr {
     margin: 0 auto;
     background: rgb(196, 76, 52);
     display: inline;
-    padding: 2px 14px;
+    padding: 0 10px;
     border-radius: 0 0 5px 5px;
     color: white;
-    font-size: 0.55em;
+    font-size: 0.60em;
     font-weight: bold;
   }
 }
@@ -423,6 +438,19 @@ td>div.dropdown.is-active .dropdown-menu {
 .small-icon>svg {
   width: 0.8em !important;
   height: 0.8em !important;
+}
+
+.tabs>ul {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+}
+
+.tabs>ul::-webkit-scrollbar {
+  /* WebKit */
+  width: 0;
+  height: 0;
 }
 
 .tab-content {
@@ -472,16 +500,66 @@ pre.code {
   border: 1px solid #f2f2f2;
 }
 
+.admin-wrapper {
+  margin: auto;
+  max-width: 1080px;
+  padding: 0 20px;
+}
+
+.admin-sidebar {
+  width: 260px !important;
+}
+
+.admin-sidebar-header {
+  border-radius: 6px;
+}
+
+.sidebar-menu-button {
+  position: fixed;
+  top: 10px;
+  right: -40px;
+  display: none;
+}
+
+.admin-modal {
+  width: calc(100%);
+  max-height: 90vh !important;
+}
+
 @media screen and (min-width: 1080px) {
   .table-container {
     overflow: unset;
     overflow-y: unset;
+  }
+
+  .admin-modal {
+    margin: 1.5rem;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .admin-sidebar {
+    position: absolute !important;
+    z-index: 0 !important;
   }
 }
 
 @media screen and (max-width: 768px) {
   .table-container {
     overflow-y: visible;
+  }
+
+  .admin-modal {
+    margin: 0;
+    max-height: 95vh !important;
+  }
+
+  .admin-sidebar-menu {
+    height: calc(100%);
+  }
+
+  .sidebar-menu-button.is-mobile-active {
+    display: block !important;
   }
 }
 

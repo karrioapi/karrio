@@ -307,6 +307,42 @@ export interface get_organization_organization_members {
   last_login: any | null;
 }
 
+export interface get_organization_organization_usage_api_requests {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organization_organization_usage_order_volumes {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organization_organization_usage_shipment_count {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organization_organization_usage_shipment_spend {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organization_organization_usage {
+  members: number | null;
+  order_volume: number | null;
+  total_requests: number | null;
+  total_shipments: number | null;
+  unfulfilled_orders: number | null;
+  api_requests: get_organization_organization_usage_api_requests[] | null;
+  order_volumes: get_organization_organization_usage_order_volumes[] | null;
+  shipment_count: get_organization_organization_usage_shipment_count[] | null;
+  shipment_spend: get_organization_organization_usage_shipment_spend[] | null;
+}
+
 export interface get_organization_organization {
   id: string;
   name: string;
@@ -314,6 +350,7 @@ export interface get_organization_organization {
   token: string;
   current_user: get_organization_organization_current_user;
   members: get_organization_organization_members[];
+  usage: get_organization_organization_usage;
 }
 
 export interface get_organization {
@@ -357,6 +394,42 @@ export interface get_organizations_organizations_members {
   last_login: any | null;
 }
 
+export interface get_organizations_organizations_usage_api_requests {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organizations_organizations_usage_order_volumes {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organizations_organizations_usage_shipment_count {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organizations_organizations_usage_shipment_spend {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
+export interface get_organizations_organizations_usage {
+  members: number | null;
+  order_volume: number | null;
+  total_requests: number | null;
+  total_shipments: number | null;
+  unfulfilled_orders: number | null;
+  api_requests: get_organizations_organizations_usage_api_requests[] | null;
+  order_volumes: get_organizations_organizations_usage_order_volumes[] | null;
+  shipment_count: get_organizations_organizations_usage_shipment_count[] | null;
+  shipment_spend: get_organizations_organizations_usage_shipment_spend[] | null;
+}
+
 export interface get_organizations_organizations {
   id: string;
   name: string;
@@ -364,6 +437,7 @@ export interface get_organizations_organizations {
   token: string;
   current_user: get_organizations_organizations_current_user;
   members: get_organizations_organizations_members[];
+  usage: get_organizations_organizations_usage;
 }
 
 export interface get_organizations {
@@ -3289,8 +3363,10 @@ export interface GetUser_user {
   email: string;
   full_name: string;
   is_staff: boolean;
+  is_superuser: boolean | null;
   last_login: any | null;
   date_joined: any;
+  permissions: string[] | null;
 }
 
 export interface GetUser {
@@ -3306,10 +3382,13 @@ export interface GetUser {
 // ====================================================
 
 export interface update_user_update_user_user {
+  email: string;
   full_name: string;
   is_staff: boolean;
+  is_superuser: boolean | null;
   last_login: any | null;
   date_joined: any;
+  permissions: string[] | null;
 }
 
 export interface update_user_update_user_errors {
@@ -5161,7 +5240,6 @@ export interface AmazonShippingSettingsInput {
   mws_auth_token: string;
   aws_region: string;
   carrier_id: string;
-  test_mode?: boolean | null;
 }
 
 // null
@@ -5175,7 +5253,6 @@ export interface AramexSettingsInput {
   account_pin: string;
   account_entity: string;
   account_number: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5189,7 +5266,6 @@ export interface AsendiaUSSettingsInput {
   api_key: string;
   account_number: string;
   carrier_id: string;
-  test_mode?: boolean | null;
 }
 
 // null
@@ -5200,7 +5276,6 @@ export interface AustraliaPostSettingsInput {
   api_key: string;
   password: string;
   account_number: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5211,7 +5286,6 @@ export interface BoxKnightSettingsInput {
   metadata?: any | null;
   username: string;
   password: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5223,7 +5297,6 @@ export interface BelgianPostSettingsInput {
   metadata?: any | null;
   account_id: string;
   passphrase: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5272,7 +5345,6 @@ export interface CanadaPostSettingsInput {
   password: string;
   customer_number: string;
   contract_id: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5283,7 +5355,6 @@ export interface CanparSettingsInput {
   metadata?: any | null;
   username: string;
   password: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5295,7 +5366,6 @@ export interface ChronopostSettingsInput {
   metadata?: any | null;
   account_number: string;
   password: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5308,7 +5378,6 @@ export interface ColissimoSettingsInput {
   password: string;
   contract_number: string;
   laposte_api_key: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5321,7 +5390,6 @@ export interface DHLExpressSettingsInput {
   site_id: string;
   password: string;
   account_number: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5334,7 +5402,6 @@ export interface DHLPolandSettingsInput {
   username: string;
   password: string;
   account_number: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5345,7 +5412,6 @@ export interface DHLUniversalSettingsInput {
   metadata?: any | null;
   consumer_key: string;
   consumer_secret: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5357,7 +5423,6 @@ export interface DicomSettingsInput {
   username: string;
   password: string;
   billing_account?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5371,7 +5436,6 @@ export interface DPDSettingsInput {
   delis_id: string;
   password: string;
   depot?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5388,7 +5452,6 @@ export interface DPDHLSettingsInput {
   zt_id?: string | null;
   zt_password?: string | null;
   account_number?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5398,7 +5461,6 @@ export interface EasyPostSettingsInput {
   config?: any | null;
   metadata?: any | null;
   api_key: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5409,7 +5471,6 @@ export interface EShipperSettingsInput {
   metadata?: any | null;
   username: string;
   password: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5423,7 +5484,6 @@ export interface FedexSettingsInput {
   meter_number: string;
   account_number: string;
   user_key: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5434,7 +5494,6 @@ export interface FreightcomSettingsInput {
   metadata?: any | null;
   username: string;
   password: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5448,7 +5507,6 @@ export interface GenericSettingsInput {
   metadata?: any | null;
   display_name: string;
   custom_carrier_name: string;
-  test_mode?: boolean | null;
   carrier_id: string;
   account_number?: string | null;
 }
@@ -5473,7 +5531,6 @@ export interface GEODISSettingsInput {
   identifier: string;
   code_client: string;
   language?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5484,7 +5541,6 @@ export interface LaPosteSettingsInput {
   metadata?: any | null;
   api_key: string;
   lang?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5496,7 +5552,6 @@ export interface Locate2uSettingsInput {
   metadata?: any | null;
   client_id: string;
   client_secret: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5509,7 +5564,6 @@ export interface NationexSettingsInput {
   customer_id: string;
   billing_account?: string | null;
   language?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5522,7 +5576,6 @@ export interface PurolatorSettingsInput {
   password: string;
   account_number: string;
   user_token?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5532,7 +5585,6 @@ export interface RoadieSettingsInput {
   config?: any | null;
   metadata?: any | null;
   api_key: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5543,7 +5595,6 @@ export interface RoyalMailSettingsInput {
   metadata?: any | null;
   client_id: string;
   client_secret: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5554,7 +5605,6 @@ export interface SendleSettingsInput {
   metadata?: any | null;
   sendle_id: string;
   api_key: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5567,7 +5617,6 @@ export interface TNTSettingsInput {
   username: string;
   password: string;
   account_number: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5581,7 +5630,6 @@ export interface UPSSettingsInput {
   client_secret: string;
   account_number?: string | null;
   carrier_id: string;
-  test_mode?: boolean | null;
 }
 
 // null
@@ -5594,7 +5642,6 @@ export interface USPSSettingsInput {
   mailer_id?: string | null;
   customer_registration_id?: string | null;
   logistics_manager_mailer_id?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5608,7 +5655,6 @@ export interface USPSInternationalSettingsInput {
   mailer_id?: string | null;
   customer_registration_id?: string | null;
   logistics_manager_mailer_id?: string | null;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5619,7 +5665,6 @@ export interface Zoom2uSettingsInput {
   config?: any | null;
   metadata?: any | null;
   api_key: string;
-  test_mode?: boolean | null;
   carrier_id: string;
 }
 
@@ -5672,7 +5717,6 @@ export interface UpdateAmazonShippingSettingsInput {
   mws_auth_token?: string | null;
   aws_region?: string | null;
   carrier_id?: string | null;
-  test_mode?: boolean | null;
 }
 
 // null
@@ -5687,7 +5731,6 @@ export interface UpdateAramexSettingsInput {
   account_pin?: string | null;
   account_entity?: string | null;
   account_number?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5702,7 +5745,6 @@ export interface UpdateAsendiaUSSettingsInput {
   api_key?: string | null;
   account_number?: string | null;
   carrier_id?: string | null;
-  test_mode?: boolean | null;
 }
 
 // null
@@ -5714,7 +5756,6 @@ export interface UpdateAustraliaPostSettingsInput {
   api_key?: string | null;
   password?: string | null;
   account_number?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5726,7 +5767,6 @@ export interface UpdateBoxKnightSettingsInput {
   metadata?: any | null;
   username?: string | null;
   password?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5739,7 +5779,6 @@ export interface UpdateBelgianPostSettingsInput {
   metadata?: any | null;
   account_id?: string | null;
   passphrase?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5790,7 +5829,6 @@ export interface UpdateCanadaPostSettingsInput {
   password?: string | null;
   customer_number?: string | null;
   contract_id?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5802,7 +5840,6 @@ export interface UpdateCanparSettingsInput {
   metadata?: any | null;
   username?: string | null;
   password?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5815,7 +5852,6 @@ export interface UpdateChronopostSettingsInput {
   metadata?: any | null;
   account_number?: string | null;
   password?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5829,7 +5865,6 @@ export interface UpdateColissimoSettingsInput {
   password?: string | null;
   contract_number?: string | null;
   laposte_api_key?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5843,7 +5878,6 @@ export interface UpdateDHLExpressSettingsInput {
   site_id?: string | null;
   password?: string | null;
   account_number?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5857,7 +5891,6 @@ export interface UpdateDHLPolandSettingsInput {
   username?: string | null;
   password?: string | null;
   account_number?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5869,7 +5902,6 @@ export interface UpdateDHLUniversalSettingsInput {
   metadata?: any | null;
   consumer_key?: string | null;
   consumer_secret?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5882,7 +5914,6 @@ export interface UpdateDicomSettingsInput {
   username?: string | null;
   password?: string | null;
   billing_account?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5897,7 +5928,6 @@ export interface UpdateDPDSettingsInput {
   delis_id?: string | null;
   password?: string | null;
   depot?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5915,7 +5945,6 @@ export interface UpdateDPDHLSettingsInput {
   zt_id?: string | null;
   zt_password?: string | null;
   account_number?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5926,7 +5955,6 @@ export interface UpdateEasyPostSettingsInput {
   config?: any | null;
   metadata?: any | null;
   api_key?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5938,7 +5966,6 @@ export interface UpdateEShipperSettingsInput {
   metadata?: any | null;
   username?: string | null;
   password?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5953,7 +5980,6 @@ export interface UpdateFedexSettingsInput {
   meter_number?: string | null;
   account_number?: string | null;
   user_key?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5965,7 +5991,6 @@ export interface UpdateFreightcomSettingsInput {
   metadata?: any | null;
   username?: string | null;
   password?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -5980,7 +6005,6 @@ export interface UpdateGenericSettingsInput {
   metadata?: any | null;
   display_name?: string | null;
   custom_carrier_name?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
   account_number?: string | null;
 }
@@ -5995,7 +6019,6 @@ export interface UpdateGEODISSettingsInput {
   identifier?: string | null;
   code_client?: string | null;
   language?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6007,7 +6030,6 @@ export interface UpdateLaPosteSettingsInput {
   metadata?: any | null;
   api_key?: string | null;
   lang?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6020,7 +6042,6 @@ export interface UpdateLocate2uSettingsInput {
   metadata?: any | null;
   client_id?: string | null;
   client_secret?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6034,7 +6055,6 @@ export interface UpdateNationexSettingsInput {
   customer_id?: string | null;
   billing_account?: string | null;
   language?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6048,7 +6068,6 @@ export interface UpdatePurolatorSettingsInput {
   password?: string | null;
   account_number?: string | null;
   user_token?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6059,7 +6078,6 @@ export interface UpdateRoadieSettingsInput {
   config?: any | null;
   metadata?: any | null;
   api_key?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6071,7 +6089,6 @@ export interface UpdateRoyalMailSettingsInput {
   metadata?: any | null;
   client_id?: string | null;
   client_secret?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6083,7 +6100,6 @@ export interface UpdateSendleSettingsInput {
   metadata?: any | null;
   sendle_id?: string | null;
   api_key?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6097,7 +6113,6 @@ export interface UpdateTNTSettingsInput {
   username?: string | null;
   password?: string | null;
   account_number?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6112,7 +6127,6 @@ export interface UpdateUPSSettingsInput {
   client_secret?: string | null;
   account_number?: string | null;
   carrier_id?: string | null;
-  test_mode?: boolean | null;
 }
 
 // null
@@ -6126,7 +6140,6 @@ export interface UpdateUSPSSettingsInput {
   mailer_id?: string | null;
   customer_registration_id?: string | null;
   logistics_manager_mailer_id?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6141,7 +6154,6 @@ export interface UpdateUSPSInternationalSettingsInput {
   mailer_id?: string | null;
   customer_registration_id?: string | null;
   logistics_manager_mailer_id?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6153,7 +6165,6 @@ export interface UpdateZoom2uSettingsInput {
   config?: any | null;
   metadata?: any | null;
   api_key?: string | null;
-  test_mode?: boolean | null;
   carrier_id?: string | null;
 }
 
@@ -6506,6 +6517,7 @@ export interface UpdateAddressTemplateInput {
 
 // null
 export interface TokenMutationInput {
+  key: string;
   password?: string | null;
   refresh?: boolean | null;
 }

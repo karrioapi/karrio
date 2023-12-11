@@ -1,27 +1,26 @@
 import { ExpandedSidebar } from '@karrio/ui/components/expanded-sidebar';
+import { ModeIndicator } from '@karrio/ui/components/mode-indicator';
 import { Notifier } from '@karrio/ui/components/notifier';
 import { Navbar } from '@karrio/ui/components/navbar';
-import { Footer } from '@karrio/ui/components/footer';
 import React from 'react';
 
 
 export const DashboardLayout: React.FC<{ showModeIndicator?: boolean, children?: React.ReactNode }> = ({ children, ...props }) => {
   return (
     <>
+      {props.showModeIndicator && <ModeIndicator />}
       <ExpandedSidebar />
 
-      <div className="plex-wrapper is-flex is-flex-direction-column">
-        <div className="wrapper-inner is-flex-grow-1 mb-3">
+      <div className="plex-wrapper is-flex is-flex-direction-column pb-0">
+        <div className="wrapper-inner is-flex-grow-1 pb-0">
           <Notifier />
-          <Navbar showModeIndicator={props.showModeIndicator} />
+          <Navbar />
 
-          <div className="dashboard-content is-relative" style={{ paddingTop: 0, height: '100%' }}>
+          <div className="dashboard-content is-relative pt-0 pb-4" style={{ minHeight: "93vh" }}>
             {children}
           </div>
 
         </div>
-
-        <Footer />
       </div>
 
     </>

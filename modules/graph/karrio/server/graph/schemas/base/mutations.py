@@ -5,28 +5,31 @@ import strawberry
 from strawberry.types import Info
 from rest_framework import exceptions
 from django.utils.http import urlsafe_base64_decode
+from django.contrib.contenttypes.models import ContentType
 from django_email_verification import confirm as email_verification
 from django_otp.plugins.otp_email import models as otp
 from django.utils.translation import gettext_lazy as _
 from django.db import transaction
 
 import karrio.lib as lib
+from karrio.server.core.utils import ConfirmationToken, send_email
+from karrio.server.user.serializers import TokenSerializer
 from karrio.server.conf import settings
 from karrio.server.serializers import (
     save_many_to_many_data,
     process_dictionaries_mutations,
 )
-from karrio.server.core.utils import ConfirmationToken, send_email
-from karrio.server.user.serializers import TokenSerializer, Token
-import karrio.server.providers.models as providers
 import karrio.server.manager.serializers as manager_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.serializers as serializers
+import karrio.server.providers.models as providers
+import karrio.server.user.models as user_models
 import karrio.server.manager.models as manager
 import karrio.server.graph.models as graph
 import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
+import karrio.server.iam.models as iam
 
 logger = logging.getLogger(__name__)
 
@@ -61,9 +64,12 @@ class TokenMutation(utils.BaseMutation):
     @utils.authentication_required
     @utils.authorization_required()
     def mutate(
-        info: Info, refresh: bool = None, password: str = None
+        info: Info,
+        key: str = None,
+        refresh: bool = None,
+        password: str = None,
     ) -> "UserUpdateMutation":
-        tokens = Token.access_by(info.context.request)
+        tokens = user_models.Token.access_by(info.context.request).filter(key=key)
 
         if refresh:
             if len(password or "") == 0:
@@ -77,11 +83,73 @@ class TokenMutation(utils.BaseMutation):
             if any(tokens):
                 tokens.delete()
 
+        else:
+            return TokenMutation(token=tokens.first())  # type:ignore
+
         token = (
             TokenSerializer.map(data={}, context=info.context.request).save().instance
         )
 
         return TokenMutation(token=token)  # type:ignore
+
+
+@strawberry.type
+class CreateAPIKeyMutation(utils.BaseMutation):
+    api_key: typing.Optional[types.APIKeyType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    @utils.authorization_required()
+    @utils.password_required
+    def mutate(
+        info: Info, password: str, **input: inputs.CreateAPIKeyMutationInput
+    ) -> "CreateAPIKeyMutation":
+        context = info.context.request
+        data = input.copy()
+        permissions = data.pop("permissions", [])
+        api_key = TokenSerializer.map(data=data, context=context).save().instance
+
+        if any(permissions):
+            _auth_ctx = (
+                context.token
+                if hasattr(getattr(info.context.request, "token", None), "permissions")
+                else context.user
+            )
+            _ctx_permissions = getattr(_auth_ctx, "permissions", [])
+            _invalid_permissions = [_ for _ in permissions if _ not in _ctx_permissions]
+
+            if any(_invalid_permissions):
+                raise exceptions.ValidationError({"permissions": "Invalid permissions"})
+
+            _ctx = iam.ContextPermission.objects.create(
+                object_pk=api_key.pk,
+                content_object=api_key,
+                content_type=ContentType.objects.get_for_model(api_key),
+            )
+            _ctx.groups.set(user_models.Group.objects.filter(name__in=permissions))
+
+        return CreateAPIKeyMutation(
+            api_key=user_models.Token.access_by(context).get(key=api_key.key)
+        )  # type:ignore
+
+
+@strawberry.type
+class DeleteAPIKeyMutation(utils.BaseMutation):
+    label: typing.Optional[str] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @utils.authorization_required()
+    @utils.password_required
+    def mutate(
+        info: Info, password: str, **input: inputs.DeleteAPIKeyMutationInput
+    ) -> "DeleteAPIKeyMutation":
+        api_key = user_models.Token.access_by(info.context.request).get(**input)
+        label = api_key.label
+        api_key.delete()
+
+        return DeleteAPIKeyMutation(label=label)  # type:ignore
 
 
 @strawberry.type
@@ -131,7 +199,9 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
         user = info.context.request.user
 
         if user.id != validated_token["user_id"]:
-            raise exceptions.ValidationError({"token": "Token is invalid or expired"})
+            raise exceptions.ValidationError(
+                {"token": "user_models.Token is invalid or expired"}
+            )
 
         if user.email == validated_token["new_email"]:
             raise exceptions.APIException("Email is already confirmed")
