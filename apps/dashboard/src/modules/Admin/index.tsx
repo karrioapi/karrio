@@ -1,9 +1,10 @@
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { Switch } from "@karrio/ui/components/switch";
 import { AdminLayout } from "@/layouts/admin-layout";
 import getConfig from 'next/config';
-import Head from "next/head";
 import { url$ } from "@karrio/lib";
+import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
 
@@ -22,7 +23,7 @@ export default function Page(pageProps: any) {
                     <span className="title is-4 has-text-weight-bold">Platform details</span>
                 </header>
 
-                {/* Platfrom feature flags */}
+                {/* Platfrom config */}
                 <div className="card px-0">
 
                     <header className="px-3 mt-3 is-flex is-justify-content-space-between">
@@ -81,11 +82,7 @@ export default function Page(pageProps: any) {
                                 <p className="help">Allow user signup</p>
                             </div>
                             <div>
-                                <button className="button is-white is-large">
-                                    <span className={`icon is-medium ${true ? 'has-text-success' : 'has-text-grey'}`}>
-                                        <i className={`fas fa-${true ? 'toggle-on' : 'toggle-off'} fa-lg`}></i>
-                                    </span>
-                                </button>
+                                <Switch checked={true} />
                             </div>
                         </div>
 
@@ -97,11 +94,7 @@ export default function Page(pageProps: any) {
                                 <p className="help">user signup will require admin approval</p>
                             </div>
                             <div>
-                                <button className="button is-white is-large">
-                                    <span className={`icon is-medium ${true ? 'has-text-success' : 'has-text-grey'}`}>
-                                        <i className={`fas fa-${true ? 'toggle-on' : 'toggle-off'} fa-lg`}></i>
-                                    </span>
-                                </button>
+                                <Switch checked={true} />
                             </div>
                         </div>
 
@@ -113,11 +106,7 @@ export default function Page(pageProps: any) {
                                 <p className="help">Toggle audit logging functionality</p>
                             </div>
                             <div>
-                                <button className="button is-white is-large">
-                                    <span className={`icon is-medium ${false ? 'has-text-success' : 'has-text-grey'}`}>
-                                        <i className={`fas fa-${false ? 'toggle-on' : 'toggle-off'} fa-lg`}></i>
-                                    </span>
-                                </button>
+                                <Switch checked={false} />
                             </div>
                         </div>
 
@@ -129,11 +118,7 @@ export default function Page(pageProps: any) {
                                 <p className="help">Enable order management panel</p>
                             </div>
                             <div>
-                                <button className="button is-white is-large">
-                                    <span className={`icon is-medium ${false ? 'has-text-success' : 'has-text-grey'}`}>
-                                        <i className={`fas fa-${false ? 'toggle-on' : 'toggle-off'} fa-lg`}></i>
-                                    </span>
-                                </button>
+                                <Switch checked={false} />
                             </div>
                         </div>
 
@@ -145,11 +130,7 @@ export default function Page(pageProps: any) {
                                 <p className="help">Enable apps</p>
                             </div>
                             <div>
-                                <button className="button is-white is-large">
-                                    <span className={`icon is-medium ${false ? 'has-text-success' : 'has-text-grey'}`}>
-                                        <i className={`fas fa-${false ? 'toggle-on' : 'toggle-off'} fa-lg`}></i>
-                                    </span>
-                                </button>
+                                <Switch checked={false} />
                             </div>
                         </div>
 
