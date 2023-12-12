@@ -444,9 +444,6 @@ RateRequestFromPresetXML = """<p:DCTRequest xmlns:p="http://www.dhl.com" xmlns:p
             <QtdShp>
                 <GlobalProductCode>P</GlobalProductCode>
                 <LocalProductCode>P</LocalProductCode>
-                <QtdShpExChrg>
-                    <SpecialServiceType>WY</SpecialServiceType>
-                </QtdShpExChrg>
             </QtdShp>
         </BkgDetails>
         <To>
