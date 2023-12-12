@@ -24,7 +24,7 @@ class TestEasyPostShipment(unittest.TestCase):
         self.assertEqual(request.serialize(), CancelShipmentRequestJSON)
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mocks:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mocks:
             mocks.side_effect = [ShipmentResponseJSON, BuyShipmentResponseJSON]
             Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -40,7 +40,7 @@ class TestEasyPostShipment(unittest.TestCase):
             )
 
     def test_create_cancel_shipment(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mock:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mock:
             mock.return_value = "{}"
             Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
@@ -50,7 +50,7 @@ class TestEasyPostShipment(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mocks:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mocks:
             mocks.side_effect = [ShipmentResponseJSON, BuyShipmentResponseJSON]
             response = Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -63,7 +63,7 @@ class TestEasyPostShipment(unittest.TestCase):
                 )
 
     def test_parse_cancel_shipment_response(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mock:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mock:
             mock.return_value = CancelShipmentResponseJSON
             parsed_response = (
                 Shipment.cancel(self.ShipmentCancelRequest).from_(gateway).parse()

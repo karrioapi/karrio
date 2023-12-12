@@ -21,7 +21,7 @@ class PaymentType(lib.StrEnum):
     recipient = receiver
 
 
-class PackagingType(lib.StrEnum):
+class PackagingType(lib.Enum):
     easypost_dhl_jumbo_document = "JumboDocument"
     easypost_dhl_jumbo_parcel = "JumboParcel"
     easypost_dhl_document = "Document"
@@ -141,7 +141,7 @@ class PackagingType(lib.StrEnum):
     easyport_usps_pmod_sack = "PMODSack"
 
     """ Unified Packaging type mapping """
-    envelope = ""
+    envelope = None
     pak = envelope
     tube = envelope
     pallet = envelope
