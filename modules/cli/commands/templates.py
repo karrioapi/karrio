@@ -222,7 +222,7 @@ setup(
 XML_GENERATE_TEMPLATE = Template(
     """SCHEMAS=./schemas
 LIB_MODULES=./karrio/schemas/{{id}}
-find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \\;
 touch "${LIB_MODULES}/__init__.py"
 
 
@@ -234,7 +234,7 @@ generateDS --no-namespace-defs -o "${LIB_MODULES}/error.py" $SCHEMAS/error.xsd
 JSON_GENERATE_TEMPLATE = Template(
     """SCHEMAS=./schemas
 LIB_MODULES=./karrio/schemas/{{id}}
-find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \;
+find "${LIB_MODULES}" -name "*.py" -exec rm -r {} \\;
 touch "${LIB_MODULES}/__init__.py"
 
 quicktype () {
