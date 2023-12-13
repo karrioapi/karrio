@@ -598,17 +598,21 @@ class ShippingOption(lib.Enum):
 def shipping_options_initializer(
     options: dict,
     package_options: lib.units.Options = None,
+    origin_country: str = None,
 ) -> lib.units.Options:
     """
     Apply default values to the given options.
     """
     _options = options.copy()
 
+    if origin_country in UNSUPPORTED_PAPERLESS_COUNTRIES:
+        _options.update({"dhl_paperless_trade": False})
+
     if package_options is not None:
         _options.update(package_options.content)
 
     def items_filter(key: str) -> bool:
-        return key in ShippingOption  # type: ignore
+        return (key in ShippingOption) and (_options.get(key) not in [False])  # type: ignore
 
     return lib.units.ShippingOptions(
         _options, ShippingOption, items_filter=items_filter

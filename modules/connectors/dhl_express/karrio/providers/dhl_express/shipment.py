@@ -106,6 +106,7 @@ def shipment_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+        origin_country=shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
 
@@ -275,7 +276,7 @@ def shipment_request(
                         ]
                     )
                     if (
-                        options.dhl_paperless_trade.state
+                        options.dhl_paperless_trade.state == True
                         and any(options.doc_references.state or [])
                     )
                     else None
@@ -420,7 +421,8 @@ def shipment_request(
                 ]
             )
             if (
-                options.dhl_paperless_trade.state and any(options.doc_files.state or [])
+                options.dhl_paperless_trade.state == True
+                and any(options.doc_files.state or [])
             )
             else None
         ),
