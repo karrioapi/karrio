@@ -77,7 +77,7 @@ def shipment_request(
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
 
-    customs = lib.to_customs_info(payload.customs)
+    customs = lib.to_customs_info(payload.customs, weight_unit=units.WeightUnit.KG.name)
     label_encoding, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
     ).value
