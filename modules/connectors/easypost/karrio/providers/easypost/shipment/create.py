@@ -1,5 +1,5 @@
 import karrio.schemas.easypost.shipment_request as easypost
-from karrio.schemas.easypost.shipments_response import Shipment
+import karrio.schemas.easypost.shipments_response as shipping
 
 import typing
 import karrio.lib as lib
@@ -15,11 +15,7 @@ def parse_shipment_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
-    errors = (
-        [provider_error.parse_error_response(response, settings)]
-        if "error" in response
-        else []
-    )
+    errors = provider_error.parse_error_response(response, settings)
     shipment = _extract_details(response, settings) if "error" not in response else None
 
     return shipment, errors
@@ -28,7 +24,7 @@ def parse_shipment_response(
 def _extract_details(
     response: dict, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
-    shipment = lib.to_object(Shipment, response)
+    shipment = lib.to_object(shipping.Shipment, response)
     label_type = shipment.postage_label.label_file_type.split("/")[-1]
     label = provider_utils.download_label(shipment.postage_label.label_url)
 

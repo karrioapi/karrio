@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.9.3`.
+    The current version is `2023.9.5`.
 
     Read our API changelog and to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.9.3
+  version: 2023.9.5
 paths:
   /:
     get:
@@ -125,8 +125,6 @@ paths:
                     TRACKER_DATA_RETENTION: true
                     SHIPMENT_DATA_RETENTION: true
                     API_LOGS_DATA_RETENTION: true
-                    ORG_LEVEL_BILLING: true
-                    TENANT_LEVEL_BILLING: true
           description: ''
   /api/token:
     post:
@@ -2337,8 +2335,6 @@ paths:
                     TRACKER_DATA_RETENTION: true
                     SHIPMENT_DATA_RETENTION: true
                     API_LOGS_DATA_RETENTION: true
-                    ORG_LEVEL_BILLING: true
-                    TENANT_LEVEL_BILLING: true
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
                     currencies: {}
@@ -3627,6 +3623,7 @@ components:
           - ZM
           - ZW
           type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           description: |-
             The address country code
 
@@ -4193,6 +4190,7 @@ components:
           - ZM
           - ZW
           type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           description: |-
             The address country code
 
@@ -4524,6 +4522,7 @@ components:
           - completed
           - completed_with_errors
           type: string
+          x-spec-enum-id: 75e3c72297e66209
           description: |-
             The batch operation resource status
 
@@ -4559,6 +4558,7 @@ components:
             * `failed` - failed
             * `completed` - completed
             * `completed_with_errors` - completed_with_errors
+          x-spec-enum-id: 75e3c72297e66209
         resource_type:
           enum:
           - orders
@@ -4571,6 +4571,7 @@ components:
             * `shipments` - shipments
             * `trackers` - trackers
             * `billing` - billing
+          x-spec-enum-id: 11343e2af644580f
         resources:
           type: array
           items:
@@ -4710,6 +4711,7 @@ components:
           - usps_international
           - zoom2u
           type: string
+          x-spec-enum-id: 3be4c2d55869de9e
           description: |-
             Indicates a carrier (type)
 
@@ -4813,6 +4815,7 @@ components:
           - OZ
           - G
           type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: |-
             The commodity's weight unit
 
@@ -4996,6 +4999,7 @@ components:
           - ZAR
           - null
           type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: |-
             The currency of the commodity value amount
@@ -5381,6 +5385,7 @@ components:
           - ZW
           - null
           type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
           description: |-
             The origin or manufacture country
@@ -5653,6 +5658,7 @@ components:
           - OZ
           - G
           type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: |-
             The commodity's weight unit
 
@@ -5836,6 +5842,7 @@ components:
           - ZAR
           - null
           type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: |-
             The currency of the commodity value amount
@@ -6221,6 +6228,7 @@ components:
           - ZW
           - null
           type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
           description: |-
             The origin or manufacture country
@@ -6515,6 +6523,7 @@ components:
             * `merchandise` - merchandise
             * `return_merchandise` - return_merchandise
             * `other` - other
+          x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
           type: string
@@ -6536,6 +6545,7 @@ components:
           - FOB
           - null
           type: string
+          x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
           description: |-
             The customs 'term of trade' also known as 'incoterm'
@@ -6626,6 +6636,7 @@ components:
             * `merchandise` - merchandise
             * `return_merchandise` - return_merchandise
             * `other` - other
+          x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
           type: string
@@ -6647,6 +6658,7 @@ components:
           - FOB
           - null
           type: string
+          x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
           description: |-
             The customs 'term of trade' also known as 'incoterm'
@@ -6849,6 +6861,7 @@ components:
           - ''
           - null
           type: string
+          x-spec-enum-id: 4d1fdef60a9538c0
           nullable: true
           description: |-
             The duty payer
@@ -7004,6 +7017,7 @@ components:
           - ''
           - null
           type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: |-
             The declared value currency
@@ -7193,6 +7207,7 @@ components:
           - OZ
           - G
           type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: |-
             The commodity's weight unit
 
@@ -7376,6 +7391,7 @@ components:
           - ZAR
           - null
           type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: |-
             The currency of the commodity value amount
@@ -7761,6 +7777,7 @@ components:
           - ZW
           - null
           type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
           description: |-
             The origin or manufacture country
@@ -8113,6 +8130,7 @@ components:
           - delivered
           - partial
           type: string
+          x-spec-enum-id: 4993b3ade2f339b3
           default: unfulfilled
           description: |-
             The order status.
@@ -8339,6 +8357,7 @@ components:
           - OZ
           - G
           type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: |-
             The parcel's weight unit
 
@@ -8352,6 +8371,7 @@ components:
           - IN
           - null
           type: string
+          x-spec-enum-id: 41993cb8117c279c
           nullable: true
           description: |-
             The parcel's dimension unit
@@ -8447,6 +8467,7 @@ components:
           - OZ
           - G
           type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: |-
             The parcel's weight unit
 
@@ -8460,6 +8481,7 @@ components:
           - IN
           - null
           type: string
+          x-spec-enum-id: 41993cb8117c279c
           nullable: true
           description: |-
             The parcel's dimension unit
@@ -8785,6 +8807,7 @@ components:
           - ZM
           - ZW
           type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           description: |-
             The address country code
 
@@ -9104,6 +9127,7 @@ components:
             * `merchandise` - merchandise
             * `return_merchandise` - return_merchandise
             * `other` - other
+          x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
           type: string
@@ -9125,6 +9149,7 @@ components:
           - FOB
           - null
           type: string
+          x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
           description: |-
             The customs 'term of trade' also known as 'incoterm'
@@ -9233,6 +9258,7 @@ components:
           - OZ
           - G
           type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: |-
             The parcel's weight unit
 
@@ -9246,6 +9272,7 @@ components:
           - IN
           - null
           type: string
+          x-spec-enum-id: 41993cb8117c279c
           nullable: true
           description: |-
             The parcel's dimension unit
@@ -9328,6 +9355,7 @@ components:
               * `batch_failed` - batch_failed
               * `batch_running` - batch_running
               * `batch_completed` - batch_completed
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -9342,6 +9370,7 @@ components:
           - recipient
           - third_party
           type: string
+          x-spec-enum-id: 4d1fdef60a9538c0
           default: sender
           description: |-
             The payor type
@@ -9497,6 +9526,7 @@ components:
           - ''
           - null
           type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: |-
             The payment amount currency
@@ -10218,6 +10248,7 @@ components:
           - ''
           - null
           type: string
+          x-spec-enum-id: d10a5d5e08394b13
           nullable: true
           description: |-
             The shipment label file type.
@@ -10265,6 +10296,7 @@ components:
           - out_for_delivery
           - delivery_failed
           type: string
+          x-spec-enum-id: e418e9eb782a00a9
           default: draft
           description: |-
             The current Shipment status
@@ -10420,6 +10452,7 @@ components:
           - ZPL
           - PNG
           type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: |-
             The shipment label file type.
@@ -10490,6 +10523,7 @@ components:
           - ZPL
           - PNG
           type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: |-
             The shipment label file type.
@@ -10549,6 +10583,7 @@ components:
           - ZPL
           - PNG
           type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: |-
             The shipment label file type.
@@ -10651,6 +10686,7 @@ components:
           - ZPL
           - PNG
           type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: |-
             The shipment label file type.
@@ -10773,6 +10809,7 @@ components:
           - ''
           - null
           type: string
+          x-spec-enum-id: d10a5d5e08394b13
           nullable: true
           description: |-
             The shipment label file type.
@@ -10820,6 +10857,7 @@ components:
           - out_for_delivery
           - delivery_failed
           type: string
+          x-spec-enum-id: e418e9eb782a00a9
           default: draft
           description: |-
             The current Shipment status
@@ -10994,6 +11032,7 @@ components:
           - usps_international
           - zoom2u
           type: string
+          x-spec-enum-id: 18c5d0ed9e85ec22
           description: |-
             The tracking carrier
 
@@ -11235,6 +11274,7 @@ components:
           - ready_for_pickup
           - delivery_failed
           type: string
+          x-spec-enum-id: e5df506dfd95c41b
           default: pending
           description: |-
             The current tracking status
@@ -11348,6 +11388,7 @@ components:
               * `batch_failed` - batch_failed
               * `batch_running` - batch_running
               * `batch_completed` - batch_completed
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -11426,6 +11467,7 @@ components:
               * `batch_failed` - batch_failed
               * `batch_running` - batch_running
               * `batch_completed` - batch_completed
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -12720,7 +12762,7 @@ tags:
     | dhl_express_envelope | X |
     | dhl_express_12_00_nondoc | Y |
     | dhl_destination_charges | Z |
-    | dhl_express_all |  |
+    | dhl_express_all | None |
 
     ### Colissimo
     | Code         | Service Name |

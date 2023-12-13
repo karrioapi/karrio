@@ -104,11 +104,7 @@ def rate_request(
     is_document = all([parcel.is_document for parcel in payload.parcels])
     is_from_EU = payload.shipper.country_code in units.EUCountry
     is_to_EU = payload.recipient.country_code in units.EUCountry
-    is_dutiable = (
-        is_international
-        and not is_document
-        and not (is_from_EU and is_to_EU)
-    )
+    is_dutiable = is_international and not is_document and not (is_from_EU and is_to_EU)
 
     services = lib.to_services(
         payload.services,
@@ -120,9 +116,7 @@ def rate_request(
     )
     options = lib.to_shipping_options(
         payload.options,
-        is_dutiable=is_dutiable,
         package_options=packages.options,
-        shipper_country=payload.shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
 
@@ -205,7 +199,7 @@ def rate_request(
                         )
                         for svc in services
                     ]
-                    if any(options.items())
+                    if any([_.value for _ in services])
                     else None
                 ),
             ),

@@ -30,7 +30,7 @@ export default function Page(pageProps: any) {
     return (
       <div className="playground-wrapper" style={{ position: 'absolute', top: 0, left: 0, bottom: 0, right: 0 }}>
 
-        <GraphiQL fetcher={fetcher} />
+        <GraphiQL fetcher={fetcher} editorTheme="light" />
 
       </div>
     );

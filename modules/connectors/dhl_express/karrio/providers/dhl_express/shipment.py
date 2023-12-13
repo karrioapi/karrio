@@ -102,16 +102,10 @@ def shipment_request(
     is_international = shipper.country_code != recipient.country_code
     is_from_EU = payload.shipper.country_code in units.EUCountry
     is_to_EU = payload.recipient.country_code in units.EUCountry
-    is_dutiable = (
-        is_international
-        and not is_document
-        and not (is_from_EU and is_to_EU)
-    )
+    is_dutiable = is_international and not is_document and not (is_from_EU and is_to_EU)
     options = lib.to_shipping_options(
         payload.options,
-        is_dutiable=is_dutiable,
         package_options=packages.options,
-        shipper_country=payload.shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
 

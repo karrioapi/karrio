@@ -289,7 +289,7 @@ class ConnectionConfig(lib.Enum):
     shipping_services = lib.OptionEnum("shipping_services", list)
 
 
-class ShippingService(lib.StrEnum):
+class ShippingService(lib.Enum):
     dhl_logistics_services = "0"
     dhl_domestic_express_12_00 = "1"
     dhl_express_choice = "2"
@@ -326,7 +326,7 @@ class ShippingService(lib.StrEnum):
     dhl_express_envelope = "X"
     dhl_express_12_00_nondoc = "Y"
     dhl_destination_charges = "Z"
-    dhl_express_all = ""
+    dhl_express_all = None
 
 
 def shipping_services_initializer(
@@ -597,22 +597,12 @@ class ShippingOption(lib.Enum):
 
 def shipping_options_initializer(
     options: dict,
-    is_dutiable: bool = False,
     package_options: lib.units.Options = None,
-    shipper_country: str = "",
 ) -> lib.units.Options:
     """
     Apply default values to the given options.
     """
     _options = options.copy()
-
-    if (
-        is_dutiable
-        and ShippingOption.paperless_trade.name not in options
-        and ShippingOption.dhl_paperless_trade.name not in options
-        and shipper_country not in UNSUPPORTED_PAPERLESS_COUNTRIES
-    ):
-        _options.update({ShippingOption.dhl_paperless_trade.name: True})
 
     if package_options is not None:
         _options.update(package_options.content)
