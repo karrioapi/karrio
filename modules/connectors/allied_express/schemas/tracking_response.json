@@ -1,0 +1,15 @@
+{
+    "soapenv:Body": {
+        "ns1:getShipmentsStatusResponse": {
+            "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
+            "result": {
+                "statusBarcodesList": {
+                    "consignmentNote": "123456789",
+                    "depotLocation": "BANKSTOWN AERODROME",
+                    "scannedBarcode": "123456789-001",
+                    "scannnedTimestamp": "2021-05-28T10:03:20.000+10:00"
+                }
+            }
+        }
+    }
+}
