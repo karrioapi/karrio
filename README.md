@@ -89,10 +89,12 @@ We are an open-source alternative to expensive in-house carrier integration and 
 ### Shipping for platforms
 
 With Karrio, you can extend your platform with native shipping capabilities. Improve merchants and customers experience on your Marketplace, eCommerce, ERP, WMS, OMS, 3PL and Logistics platform.
+With Karrio, 3PLs and large volume shippers regain control over their shipping tech stack and processes.
 
 ### Shipping for enterprise
 
-Karrio makes modern shipping accessible to brands, retailers as well as enterprises in regulated industries.
+Karrio makes modern shipping accessible to brands, retailers as well as businesses in regulated industries.
+Ideal for pharmacy shipping where compliance is a must.
 
 ## Support
 
