@@ -548,6 +548,24 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               className="is-small is-fullwidth"
                             />}
 
+                          {"sub_account" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.sub_account || ""}
+                              name="sub_account"
+                              label="Sub account"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"processing_location" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.cost_center || ""}
+                              name="processing_location"
+                              label="Processing location"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
                           {"language_code" in connection_configs[carrier_name.toString()] &&
                             <SelectField value={payload.config?.language_code}
                               name="language_code"
@@ -707,7 +725,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.AmazonShipping]: [["carrier_id", true], ["seller_id", true], ["developer_id", true], ["mws_auth_token", true], ["aws_region"]],
       [CarrierSettingsCarrierNameEnum.Aramex]: [["carrier_id", true], ["username", true], ["password", true], ["account_pin", true], ["account_entity", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Australiapost]: [["carrier_id", true], ["api_key", true], ["password", true], ["account_number", true]],
-      [CarrierSettingsCarrierNameEnum.AsendiaUs]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true]],
+      [CarrierSettingsCarrierNameEnum.AsendiaUs]: [["carrier_id", true], ["username", true], ["password", true], ["api_key", true], ["account_number", true]],
       [CarrierSettingsCarrierNameEnum.Boxknight]: [["carrier_id", true], ["username", true], ["password", true]],
       [CarrierSettingsCarrierNameEnum.Bpost]: [["carrier_id", true], ["account_id", true], ["passphrase", true]],
       [CarrierSettingsCarrierNameEnum.Canadapost]: [["carrier_id", true], ["username", true], ["password", true], ["customer_number", true], ["contract_id"]],
