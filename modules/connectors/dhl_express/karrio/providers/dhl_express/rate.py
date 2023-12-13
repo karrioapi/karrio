@@ -117,6 +117,7 @@ def rate_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+        origin_country=payload.shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
 
