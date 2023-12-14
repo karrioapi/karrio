@@ -78,11 +78,11 @@ def rate_request(
     request = allied.RateRequestType(
         bookedBy=shipper.contact,
         account=settings.account,
-        instructions=options.instructions.state,
+        instructions=options.instructions.state or "N/A",
         itemCount=len(packages),
         items=[
             allied.ItemType(
-                dangerous=pkg.options.dangerous_good.state,
+                dangerous=(True if pkg.options.dangerous_good.state else False),
                 height=pkg.height.CM,
                 length=pkg.length.CM,
                 width=pkg.width.CM,
@@ -98,7 +98,7 @@ def rate_request(
             emailAddress=shipper.email,
             geographicAddress=allied.GeographicAddressType(
                 address1=shipper.address_line1,
-                address2=shipper.address_line2,
+                address2=shipper.address_line2 or " ",
                 country=shipper.country_code,
                 postCode=shipper.postal_code,
                 state=shipper.state_code,
@@ -112,7 +112,7 @@ def rate_request(
             emailAddress=recipient.email,
             geographicAddress=allied.GeographicAddressType(
                 address1=recipient.address_line1,
-                address2=recipient.address_line2,
+                address2=recipient.address_line2 or " ",
                 country=recipient.country_code,
                 postCode=recipient.postal_code,
                 state=recipient.state_code,
@@ -120,9 +120,7 @@ def rate_request(
             ),
             phoneNumber=recipient.phone_number,
         ),
-        referenceNumbers=(
-            [payload.reference] if any(payload.reference or "") else None
-        ),
+        referenceNumbers=([payload.reference] if any(payload.reference or "") else []),
         serviceLevel=(service.value if service else "R"),
         weight=packages.weight.KG,
         volume=packages.volume,

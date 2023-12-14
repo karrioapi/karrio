@@ -43,10 +43,11 @@ class AlliedResponse:
 def parse_response(response: str) -> AlliedResponse:
     _response = lib.failsafe(
         lambda: lib.to_dict(
-            response.replace(": ", "$$ ")
-            .replace("@xmlns", "xmlns")
-            .replace(":", "")
-            .replace("$$ ", ": ")
+            (
+                response.replace("soapenv:", "soapenv")
+                .replace("@xmlns:", "xmlns")
+                .replace("ns1:", "ns1")
+            )
         )
     )
 
@@ -67,7 +68,10 @@ def parse_response(response: str) -> AlliedResponse:
             body=_body,
             envelope=_envelope,
             response=_response,
-            is_error=("statusError" in (_data or {}).get("result", {})),
+            is_error=(
+                ("statusError" in (_data or {}).get("result", {}))
+                or ("errors" in (_data or {}).get("result", {}))
+            ),
         )
 
     if "ns1calculatePriceResponse" in _body:
@@ -77,7 +81,10 @@ def parse_response(response: str) -> AlliedResponse:
             body=_body,
             envelope=_envelope,
             response=_response,
-            is_error=("statusError" in (_data or {}).get("result", {})),
+            is_error=(
+                ("statusError" in (_data or {}).get("result", {}))
+                or ("errors" in (_data or {}).get("result", {}))
+            ),
         )
 
     if "ns1cancelDispatchJobResponse" in _body:
@@ -87,7 +94,11 @@ def parse_response(response: str) -> AlliedResponse:
             body=_body,
             envelope=_envelope,
             response=_response,
-            is_error=((_data or {}).get("result") != "0"),
+            is_error=(
+                ((_data or {}).get("result") != "0")
+                or ("statusError" in (_data or {}).get("result", {}))
+                or ("errors" in (_data or {}).get("result", {}))
+            ),
         )
 
     if "ns1getLabelResponse" in _body:
@@ -97,7 +108,10 @@ def parse_response(response: str) -> AlliedResponse:
             body=_body,
             envelope=_envelope,
             response=_response,
-            is_error=("statusError" in (_data or {}).get("result", {})),
+            is_error=(
+                ("statusError" in (_data or {}).get("result", {}))
+                or ("errors" in (_data or {}).get("result", {}))
+            ),
         )
 
     return AlliedResponse(

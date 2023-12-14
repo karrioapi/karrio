@@ -57,11 +57,11 @@ def _extract_details(
                 description=description,
                 date=lib.fdate(
                     result.statusBarcodesList.scannnedTimestamp,
-                    "%Y-%m-%dT%H%M%S.%f%z",
+                    "%Y-%m-%dT%H:%M:%S.%f%z",
                 ),
                 time=lib.ftime(
                     result.statusBarcodesList.scannnedTimestamp,
-                    "%Y-%m-%dT%H%M%S.%f%z",
+                    "%Y-%m-%dT%H:%M:%S.%f%z",
                 ),
             )
         ],

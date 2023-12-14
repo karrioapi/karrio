@@ -36,6 +36,15 @@ class TestAlliedExpressRating(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.allied_express.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -108,6 +117,21 @@ ParsedRateResponse = [
     [],
 ]
 
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "allied_express",
+            "carrier_name": "allied_express",
+            "code": "400",
+            "details": {},
+            "message": "Validation failed: java.lang.Exception: Exception thrown in "
+            "SuburbDAO.getSuburb :java.lang.Exception: No valid JNDI name "
+            "found for state UM",
+        }
+    ],
+]
+
 
 RateRequest = {
     "account": "ACCOUNT",
@@ -153,6 +177,7 @@ RateRequest = {
         "emailAddress": "test@gmail.com",
         "geographicAddress": {
             "address1": "17 VULCAN RD",
+            "address2": " ",
             "country": "AU",
             "postCode": "6155",
             "state": "WA",
@@ -209,6 +234,25 @@ RateResponse = """{
                         }
                     ],
                     "totalCharge": "40.66"
+                }
+            }
+        }
+    }
+}
+"""
+
+ErrorResponse = """{
+    "soapenv:Envelope": {
+        "@xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
+        "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "soapenv:Body": {
+            "ns1:calculatePriceResponse": {
+                "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
+                "result": {
+                    "errors": "Validation failed: java.lang.Exception: Exception thrown in SuburbDAO.getSuburb :java.lang.Exception: No valid JNDI name found for state UM",
+                    "jobCharge": "0.0",
+                    "totalCharge": "0.0"
                 }
             }
         }

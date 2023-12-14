@@ -14,7 +14,13 @@ def parse_error_response(
         errors.append(["500", response.error])
 
     if response.is_error and response.data is not None:
-        errors.append(["400", response.data["result"]["statusError"]])
+        errors.append(
+            [
+                "400",
+                response.data["result"].get("statusError")
+                or response.data["result"].get("errors"),
+            ]
+        )
 
     return [
         models.Message(

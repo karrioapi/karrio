@@ -15,7 +15,10 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Basic {self.settings.authorization}"},
+            headers={
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Content-Type": "application/json",
+            },
         )
 
         return lib.Deserializable(response, provider_utils.parse_response)
@@ -26,7 +29,10 @@ class Proxy(proxy.Proxy):
             data=request.serialize(),
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Basic {self.settings.authorization}"},
+            headers={
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Content-Type": "application/json",
+            },
         )
 
         return lib.Deserializable(response, provider_utils.parse_response, request.ctx)
@@ -37,7 +43,10 @@ class Proxy(proxy.Proxy):
             url=f"{self.settings.server_url}/cancelJob/{payload['shipmentno']}/{payload['postalcode']}",
             trace=self.trace_as("json"),
             method="POST",
-            headers={"Authorization": f"Basic {self.settings.authorization}"},
+            headers={
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Content-Type": "application/json",
+            },
         )
 
         return lib.Deserializable(response, provider_utils.parse_response)
@@ -50,7 +59,10 @@ class Proxy(proxy.Proxy):
                     url=f"{self.settings.server_url}/getShipmentsStatus/{payload['shipmentno']}",
                     trace=self.trace_as("json"),
                     method="POST",
-                    headers={"Authorization": f"Basic {self.settings.authorization}"},
+                    headers={
+                        "Authorization": f"Basic {self.settings.authorization}",
+                        "Content-Type": "application/json",
+                    },
                 ),
             ),
             request.serialize(),
