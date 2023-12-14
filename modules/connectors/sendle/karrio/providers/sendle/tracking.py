@@ -1,72 +1,60 @@
-import karrio.schemas.sendle.tracking_response as sendle
+
 import typing
 import karrio.lib as lib
+import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.sendle.error as error
 import karrio.providers.sendle.utils as provider_utils
+import karrio.providers.sendle.units as provider_units
 
 
 def parse_tracking_response(
     _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    response = _response.deserialize()
-    errors = [e for _, e in response if "error" in e]
-    tracking_details = [
-        _extract_detail((ref, lib.to_object(sendle.Tracking, d)), settings)
-        for ref, d in response
-        if "tracking_events" in d
-    ]
+    responses = _response.deserialize()
 
-    return tracking_details, error.parse_error_response(errors, settings)
-
-
-def _extract_detail(
-    detail: typing.Tuple[str, sendle.Tracking], settings: provider_utils.Settings
-) -> models.TrackingDetails:
-    tracking_number, tracking_details = detail
-    estimated_delivery = (
-        tracking_details.scheduling.estimated_delivery_date_minimum
-        or tracking_details.scheduling.estimated_delivery_date_maximum
-        or tracking_details.scheduling.delivered_on
+    messages = sum(
+        [
+            error.parse_error_response(response, settings, tracking_number=_)
+            for _, response in responses
+        ],
+        start=[],
     )
+    tracking_details = [_extract_details(details, settings) for _, details in responses]
+
+    return tracking_details, messages
+
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.TrackingDetails:
+    tracking = None  # parse carrier tracking object type
 
     return models.TrackingDetails(
-        carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
-        tracking_number=tracking_number,
+        carrier_name=settings.carrier_name,
+        tracking_number="",  # extract tracking number from tracking
         events=[
             models.TrackingEvent(
-                date=lib.fdatetime(
-                    getattr(event, "local_scan_time", None) or event.scan_time,
-                    try_formats=["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"],
-                    output_format="%Y-%m-%d",
-                ),
-                description=event.description,
-                location=(
-                    lib.text(
-                        event.origin_location,
-                        event.destination_location,
-                        separator=" to ",
-                    )
-                    if (event.origin_location and event.destination_location)
-                    else event.location
-                ),
-                code=event.event_type,
-                time=lib.fdatetime(
-                    getattr(event, "local_scan_time", None) or event.scan_time,
-                    try_formats=["%Y-%m-%dT%H:%M:%S", "%Y-%m-%dT%H:%M:%SZ"],
-                    output_format="%H:%M",
-                ),
+                date=lib.fdate(""), # extract tracking event date
+                description="",  # extract tracking event description or code
+                code="",  # extract tracking event code
+                time=lib.ftime(""), # extract tracking event time
+                location="",  # extract tracking event address
             )
-            for event in reversed(tracking_details.tracking_events)
+            for event in []  # extract tracking events
         ],
-        estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%d"),
-        delivered=(tracking_details.state == "Delivered"),
+        estimated_delivery=lib.fdate(""), # extract tracking estimated date if provided
+        delivered=False,  # compute tracking delivered status
     )
 
 
-def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
-    request = payload.tracking_numbers
+def tracking_request(
+    payload: models.TrackingRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    request = None  # map data to convert karrio model to sendle specific type
 
     return lib.Serializable(request)

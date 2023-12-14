@@ -1,4 +1,73 @@
-[
+import unittest
+from unittest.mock import patch, ANY
+from .fixture import gateway
+
+import karrio
+import karrio.lib as lib
+import karrio.core.models as models
+
+
+class TestSendleRating(unittest.TestCase):
+    def setUp(self):
+        self.maxDiff = None
+        self.RateRequest = models.RateRequest(**RatePayload)
+
+    def test_create_rate_request(self):
+        request = gateway.mapper.create_rate_request(self.RateRequest)
+
+        self.assertEqual(request.serialize(), RateRequest)
+
+    def test_get_rate(self):
+        with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Rating.fetch(self.RateRequest).from_(gateway)
+
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}",
+            )
+
+    def test_parse_rate_response(self):
+        with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
+            mock.return_value = RateResponse
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+
+
+if __name__ == "__main__":
+    unittest.main()
+
+
+RatePayload = {}
+
+ParsedRateResponse = []
+
+
+RateRequest = {
+    "sender_address_line1": "",
+    "sender_address_line2": "",
+    "sender_suburb": "",
+    "sender_postcode": "",
+    "sender_country": "",
+    "receiver_address_line1": "",
+    "receiver_address_line2": "",
+    "receiver_suburb": "",
+    "receiver_postcode": "",
+    "receiver_country": "",
+    "weight_value": 0.0,
+    "weight_units": "kg",
+    "volume_value": "0.0",
+    "volume_units": "m3",
+    "length_value": 0.0,
+    "width_value": 0.0,
+    "height_value": 0.0,
+    "dimension_units": "cm",
+}
+
+RateResponse = """[
   {
     "quote": {
       "gross": {
@@ -53,16 +122,6 @@
         "amount": 0.77,
         "currency": "AUD",
         "rate": 0.1
-      },
-      "hst": {
-        "amount": 0.77,
-        "currency": "AUD",
-        "rate": 0.1
-      },
-      "qst": {
-        "amount": 0.77,
-        "currency": "AUD",
-        "rate": 0.1
       }
     },
     "plan": "Sendle Pro",
@@ -87,6 +146,22 @@
       "name": "Standard Pickup",
       "first_mile_option": "pickup",
       "service": "standard"
+    },
+    "cover": {
+      "price": {
+        "gross": {
+          "amount": 0,
+          "currency": "AUD"
+        },
+        "net": {
+          "amount": 0,
+          "currency": "AUD"
+        },
+        "tax": {
+          "amount": 0,
+          "currency": "AUD"
+        }
+      }
     }
   },
   {
@@ -143,16 +218,6 @@
         "amount": 0.77,
         "currency": "AUD",
         "rate": 0.1
-      },
-      "hst": {
-        "amount": 0.77,
-        "currency": "AUD",
-        "rate": 0.1
-      },
-      "qst": {
-        "amount": 0.77,
-        "currency": "AUD",
-        "rate": 0.1
       }
     },
     "plan": "Sendle Pro",
@@ -177,6 +242,23 @@
       "name": "Standard Drop Off",
       "first_mile_option": "drop off",
       "service": "standard"
+    },
+    "cover": {
+      "price": {
+        "gross": {
+          "amount": 0,
+          "currency": "AUD"
+        },
+        "net": {
+          "amount": 0,
+          "currency": "AUD"
+        },
+        "tax": {
+          "amount": 0,
+          "currency": "AUD"
+        }
+      }
     }
   }
 ]
+"""

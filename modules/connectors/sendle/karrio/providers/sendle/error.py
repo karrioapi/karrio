@@ -1,21 +1,24 @@
-from typing import List
-from karrio.schemas.sendle.validation_error import ValidationError
-from karrio.providers.sendle import Settings
-from karrio.core.models import Message
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.sendle.utils as provider_utils
 
 
-def parse_error_response(response: List[dict], settings: Settings) -> List[Message]:
-    carrier_errors = [ValidationError(**e) for e in response]
-    return [_extract_error(node, settings) for node in carrier_errors]
+def parse_error_response(
+    response: dict,
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    errors = []  # compute the carrier error object list
 
-
-def _extract_error(carrier_error: ValidationError, settings: Settings) -> Message:
-    return Message(
-        # context info
-        carrier_name=settings.carrier_name,
-        carrier_id=settings.carrier_id,
-        # carrier error info
-        code=carrier_error.error,
-        message=carrier_error.error_description,
-        details=carrier_error.messages,
-    )
+    return [
+        models.Message(
+            carrier_id=settings.carrier_id,
+            carrier_name=settings.carrier_name,
+            code="",
+            message="",
+            details={**kwargs},
+        )
+        for error in errors
+    ]

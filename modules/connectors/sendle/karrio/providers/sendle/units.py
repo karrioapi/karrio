@@ -1,46 +1,61 @@
-""" Sendle Native Types """
+import karrio.lib as lib
+import karrio.core.units as units
 
-# import karrio.lib as lib
-# from karrio.core.utils import Enum, Flag
-#
-# PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
-#
-#
-# class PackagePresets(lib.Enum):
-#     # carrier_envelope = PackagePreset(
-#     #     **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"),
-#     #     **PRESET_DEFAULTS
-#     # )
-#     # carrier_box = PackagePreset(
-#     #     **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="medium_box"),
-#     #     **PRESET_DEFAULTS
-#     # )
-#     pass
-#
-#
-# class PackageType(lib.StrEnum):
-#     carrier_envelope = "ENVELOPE CODE"
-#     carrier_box = "BOX CODE"
-#     carrier_your_packaging = "CUSTOM PACKAGING CODE"
-#
-#     """ Unified Packaging type mapping """
-#     envelope = carrier_envelope
-#     pak = carrier_envelope
-#     tube = carrier_your_packaging
-#     pallet = carrier_your_packaging
-#     small_box = carrier_box
-#     medium_box = carrier_box
-#     large_box = carrier_box
-#     your_packaging = carrier_your_packaging
-#
-#
-# class Service(Enum):
-#     carrier_standard = "STANDARD CODE"
-#     carrier_premium = "PREMIUM CODE"
-#     carrier_overnight = "OVERNIGHT CODE"
-#
-#
-# class Option(lib.Enum):
-#     carrier_signature = "SIGNATURE CODE"
-#     carrier_saturday_delivery = "SATURDAY DELIVERY CODE"
-#     carrier_dry_ice = "DRY ICE CODE"
+
+class PackagingType(lib.StrEnum):
+    """Carrier specific packaging type"""
+
+    PACKAGE = "PACKAGE"
+
+    """ Unified Packaging type mapping """
+    envelope = PACKAGE
+    pak = PACKAGE
+    tube = PACKAGE
+    pallet = PACKAGE
+    small_box = PACKAGE
+    medium_box = PACKAGE
+    your_packaging = PACKAGE
+
+
+class ShippingService(lib.StrEnum):
+    """Carrier specific services"""
+
+    sendle_standard_pickup = "STANDARD-PICKUP"
+    sendle_standard_dropoff = "STANDARD-DROPOFF"
+    sendle_express_pickup = "EXPRESS-PICKUP"
+
+
+class ShippingOption(lib.Enum):
+    """Carrier specific options"""
+
+    sendle_cover = lib.OptionEnum("cover", float)
+
+    """ Unified Option type mapping """
+    insurance = sendle_cover
+
+
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.ShippingOptions = None,
+) -> units.ShippingOptions:
+    """
+    Apply default values to the given options.
+    """
+
+    if package_options is not None:
+        options.update(package_options.content)
+
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption  # type: ignore
+
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+
+class TrackingStatus(lib.Enum):
+    on_hold = ["on_hold"]
+    delivered = ["delivered"]
+    in_transit = ["in_transit"]
+    delivery_failed = ["delivery_failed"]
+    delivery_delayed = ["delivery_delayed"]
+    out_for_delivery = ["out_for_delivery"]
+    ready_for_pickup = ["ready_for_pickup"]

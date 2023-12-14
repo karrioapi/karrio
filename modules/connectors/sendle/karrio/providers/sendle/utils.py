@@ -1,17 +1,12 @@
-from base64 import b64encode
-from karrio.core import Settings as BaseSettings
+import base64
+import karrio.core as core
 
 
-class Settings(BaseSettings):
+class Settings(core.Settings):
     """Sendle connection settings."""
 
-    # Carrier specific properties
     sendle_id: str
-    api_key: str
-
-    id: str = None
-    account_country_code: str = "AU"
-    metadata: dict = {}
+    sendle_api_key: str
 
     @property
     def carrier_name(self):
@@ -25,5 +20,5 @@ class Settings(BaseSettings):
 
     @property
     def authorization(self):
-        pair = "%s:%s" % (self.sendle_id, self.api_key)
-        return b64encode(pair.encode("utf-8")).decode("ascii")
+        pair = "%s:%s" % (self.sendle_id, self.sendle_api_key)
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")

@@ -1,73 +1,92 @@
 {
-  "tracking": [
-    {
-      "state": "Delivered",
-      "status": {
-        "description": "Parcel in transit from Adelaide",
-        "last_changed_at": "2021-01-29 01:25:57 UTC"
-      },
-      "tracking_events": [
+    "state": "Delivered",
+    "status": {
+        "description": "Your package has been delivered to your mailbox!",
+        "last_changed_at": "2023-04-05 18:56:00 UTC"
+    },
+    "origin": {
+        "country": "US"
+    },
+    "destination": {
+        "country": "US"
+    },
+    "scheduling": {
+        "pickup_date": "",
+        "picked_up_on": "2023-04-04",
+        "delivered_on": "2023-04-05",
+        "estimated_delivery_date_minimum": "",
+        "estimated_delivery_date_maximum": "",
+        "status": ""
+    },
+    "tracking_events": [
         {
-          "event_type": "Pickup Attempted",
-          "scan_time": "2015-11-23T01:04:00Z",
-          "description": "We attempted to pick up the parcel but were unsuccessful",
-          "reason": "Parcel not ready"
+            "event_type": "Pickup Attempted",
+            "scan_time": "2023-04-03T08:20:00Z",
+            "description": "We attempted to pick up the parcel but were unsuccessful",
+            "reason": "Parcel not ready",
+            "display_time": "2023-04-03T08:20:00Z"
         },
         {
-          "event_type": "In Transit",
-          "scan_time": "2020-07-06T09:38:00Z",
-          "local_scan_time": "2020-07-06T09:38:00",
-          "description": "USPS in possession of item",
-          "location": "CLARKDALE, GA"
+            "event_type": "Pickup",
+            "scan_time": "2023-04-04T16:12:00Z",
+            "description": "Parcel picked up",
+            "display_time": "2023-04-04T16:12:00Z"
         },
         {
-          "event_type": "Info",
-          "scan_time": "2015-11-25T01:04:00Z",
-          "description": "In transit between locations"
+            "event_type": "In Transit",
+            "scan_time": "2023-04-04T20:55:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "TEANECK, NJ",
+            "local_scan_time": "2023-04-04T16:55:00",
+            "display_time": "2023-04-04T16:55:00-04:00"
         },
         {
-          "event_type": "In Transit",
-          "scan_time": "2015-11-25T01:14:00Z",
-          "description": "In transit",
-          "origin_location": "Sydney",
-          "destination_location": "Brisbane",
-          "location": "SYDNEY",
-          "requester": ""
+            "event_type": "In Transit",
+            "scan_time": "2023-04-04T22:43:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "JERSEY CITY NJ NETWORK DISTRIBUTION CENTER",
+            "local_scan_time": "2023-04-04T22:43:00",
+            "display_time": "2023-04-04T22:43:00Z"
         },
         {
-          "event_type": "Info",
-          "scan_time": "2015-11-26T19:46:00Z",
-          "description": "Arrived at the depot for processing"
+            "event_type": "In Transit",
+            "scan_time": "2023-04-05T03:14:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "NEW YORK NY DISTRIBUTION CENTER",
+            "local_scan_time": "2023-04-05T03:14:00",
+            "display_time": "2023-04-05T03:14:00Z"
         },
         {
-          "event_type": "Info",
-          "scan_time": "2015-11-26T23:00:00Z",
-          "description": "Parcel is loaded for delivery"
+            "event_type": "In Transit",
+            "scan_time": "2023-04-05T12:04:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T08:04:00",
+            "display_time": "2023-04-05T08:04:00-04:00"
         },
         {
-          "event_type": "Delivered",
-          "scan_time": "2015-11-27T23:46:00Z",
-          "description": "Parcel delivered"
+            "event_type": "In Transit",
+            "scan_time": "2023-04-05T12:59:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T08:59:00",
+            "display_time": "2023-04-05T08:59:00-04:00"
         },
         {
-          "event_type": "Info",
-          "scan_time": "2015-11-27T23:47:00Z",
-          "description": "Your parcel was signed for by JIMMY"
+            "event_type": "Out for Delivery",
+            "scan_time": "2023-04-05T13:10:00Z",
+            "description": "Your package is on board for delivery!",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T09:10:00",
+            "display_time": "2023-04-05T09:10:00-04:00"
+        },
+        {
+            "event_type": "Delivered",
+            "scan_time": "2023-04-05T18:56:00Z",
+            "description": "Your package has been delivered to your mailbox!",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T14:56:00",
+            "display_time": "2023-04-05T14:56:00-04:00"
         }
-      ],
-      "origin": {
-        "country": "AU"
-      },
-      "destination": {
-        "country": "AU"
-      },
-      "scheduling": {
-        "pickup_date": "2015-11-24",
-        "picked_up_on": "",
-        "delivered_on": "",
-        "estimated_delivery_date_minimum": "2015-11-26",
-        "estimated_delivery_date_maximum": "2015-11-27"
-      }
-    }
-  ]
+    ]
 }
