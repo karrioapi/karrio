@@ -169,7 +169,7 @@ export default function CreateLabelPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 py-6 is-flex is-justify-content-space-between">
+        <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">
             Create label
           </span>
