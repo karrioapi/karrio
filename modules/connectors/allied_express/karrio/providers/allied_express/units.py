@@ -1,10 +1,10 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 
 
 class PackagingType(lib.StrEnum):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -18,18 +18,16 @@ class PackagingType(lib.StrEnum):
 
 
 class ShippingService(lib.StrEnum):
-    """ Carrier specific services """
-    allied_express_standard_service = "Allied Express Standard Service"
+    """Carrier specific services"""
+
+    allied_standard = "R"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
-    # allied_express_option = lib.OptionEnum("code")
+    """Carrier specific options"""
 
-    """ Unified Option type mapping """
-    # insurance = allied_express_coverage  #  maps unified karrio option to carrier specific
-
-    pass
+    instructions = lib.OptionEnum("instructions")
+    dangerous_good = lib.OptionEnum("dangerous_good", bool)
 
 
 def shipping_options_initializer(

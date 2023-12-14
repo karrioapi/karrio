@@ -24,7 +24,7 @@ class TestAlliedExpressTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/getShipmentsStatus/AOE946862J",
             )
 
     def test_parse_tracking_response(self):
@@ -51,15 +51,45 @@ if __name__ == "__main__":
 
 
 TrackingPayload = {
-    "tracking_numbers": ["89108749065090"],
+    "tracking_numbers": ["AOE946862J"],
 }
 
-ParsedTrackingResponse = []
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "allied_express",
+            "carrier_name": "allied_express",
+            "delivered": False,
+            "events": [
+                {
+                    "code": "123456789-001",
+                    "date": "2021-05-28",
+                    "description": "123456789",
+                    "location": "BANKSTOWN AERODROME",
+                    "time": "10:03",
+                }
+            ],
+            "tracking_number": {"shipmentno": "AOE946862J"},
+        }
+    ],
+    [],
+]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "allied_express",
+            "carrier_name": "allied_express",
+            "code": "400",
+            "details": {"tracking_number": {"shipmentno": "AOE946862J"}},
+            "message": "No Shipment status found.",
+        }
+    ],
+]
 
 
-TrackingRequest = {"shipment_no": "123456789"}
+TrackingRequest = [{"shipmentno": "AOE946862J"}]
 
 TrackingResponse = """{
   "soapenv:Body": {

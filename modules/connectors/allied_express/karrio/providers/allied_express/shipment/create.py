@@ -1,4 +1,5 @@
-
+import karrio.schemas.allied_express.label_request as allied
+import karrio.schemas.allied_express.label_response as shipping
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -9,38 +10,40 @@ import karrio.providers.allied_express.units as provider_units
 
 
 def parse_shipment_response(
-    response: lib.Deserializable[dict],
+    _response: lib.Deserializable[provider_utils.AlliedResponse],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response_messages: list = []  # extract carrier response errors
-    response_shipment: typing.Any = None  # extract carrier response shipment
+    response = _response.deserialize()
 
-    messages = error.parse_error_response(response_messages, settings)
-    shipment = _extract_details(response_shipment, settings)
+    messages = error.parse_error_response(response, settings)
+    shipment = (
+        _extract_details(response, settings, ctx=_response.ctx)
+        if not response.is_error and "result" in (response.data or {})
+        else None
+    )
 
     return shipment, messages
 
 
 def _extract_details(
-    data: dict,
+    data: provider_utils.AlliedResponse,
     settings: provider_utils.Settings,
+    ctx: dict = {},
 ) -> models.ShipmentDetails:
-    shipment = None  # parse carrier shipment type from "data"
-    label = ""  # extract and process the shipment label to a valid base64 text
-    # invoice = ""  # extract and process the shipment invoice to a valid base64 text if applies
+    shipment: shipping.LabelResponseType = lib.to_object(
+        shipping.LabelResponseType, data.response
+    )
+    label = shipment.soapenvBody.ns1getLabelResponse.result
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from shipment
-        shipment_identifier="",  # extract shipment identifier from shipment
-        label_type="PDF",  # extract shipment label file format
-        docs=models.Documents(
-            label=label,  # pass label base64 text
-            # invoice=invoice,  # pass invoice base64 text if applies
-        ),
+        tracking_number=shipment.Tracking,
+        shipment_identifier=shipment.Tracking,
+        label_type="PDF",
+        docs=models.Documents(label=label),
         meta=dict(
-            # any relevent meta
+            postal_code=ctx.get("postal_code", ""),
         ),
     )
 
@@ -49,14 +52,77 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
-    service = provider_units.ShippingService.map(payload.service).value_or_key  # preprocess the request services
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        package_options=packages.options,
         option_type=provider_units.ShippingOption,
-    )   # preprocess the request options
+    )
+    packages = lib.to_packages(
+        payload.parcels,
+        options=options,
+        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
+    )
 
-    request = None  # map data to convert karrio model to allied_express specific type
+    request = allied.LabelRequestType(
+        bookedBy=shipper.contact,
+        account=settings.account,
+        instructions=options.instructions.state,
+        itemCount=len(packages),
+        items=[
+            allied.ItemType(
+                dangerous=pkg.options.dangerous_good.state,
+                height=pkg.height.CM,
+                length=pkg.length.CM,
+                width=pkg.width.CM,
+                weight=pkg.weight.KG,
+                volume=pkg.volume.value,
+                itemCount=(pkg.items.quantity if any(pkg.items) else 1),
+            )
+            for pkg in packages
+        ],
+        jobStopsP=allied.JobStopsType(
+            companyName=shipper.company_name,
+            contact=shipper.contact,
+            emailAddress=shipper.email,
+            geographicAddress=allied.GeographicAddressType(
+                address1=shipper.address_line1,
+                address2=shipper.address_line2,
+                country=shipper.country_code,
+                postCode=shipper.postal_code,
+                state=shipper.state_code,
+                suburb=shipper.city,
+            ),
+            phoneNumber=shipper.phone_number,
+        ),
+        jobStopsD=allied.JobStopsType(
+            companyName=recipient.company_name,
+            contact=recipient.contact,
+            emailAddress=recipient.email,
+            geographicAddress=allied.GeographicAddressType(
+                address1=recipient.address_line1,
+                address2=recipient.address_line2,
+                country=recipient.country_code,
+                postCode=recipient.postal_code,
+                state=recipient.state_code,
+                suburb=recipient.city,
+            ),
+            phoneNumber=recipient.phone_number,
+        ),
+        referenceNumbers=(
+            [payload.reference] if any(payload.reference or "") else None
+        ),
+        weight=packages.weight.KG,
+        volume=packages.volume,
+        serviceLevel=service,
+    )
 
-    return lib.Serializable(request)
+    return lib.Serializable(
+        request,
+        lambda _: lib.to_json(_)
+        .replace("jobStopsP", "jobStops_P")
+        .replace("jobStopsD", "jobStops_D"),
+        dict(postal_code=recipient.postal_code),
+    )

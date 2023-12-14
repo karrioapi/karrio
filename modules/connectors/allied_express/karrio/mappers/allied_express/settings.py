@@ -19,3 +19,4 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "allied_express"
     account_country_code: str = "AU"
     metadata: dict = {}
+    config: dict = {}

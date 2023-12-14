@@ -1,4 +1,5 @@
-
+import karrio.schemas.allied_express.void_request as allied
+import karrio.schemas.allied_express.void_response as shipping
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -8,12 +9,12 @@ import karrio.providers.allied_express.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    response: lib.Deserializable[dict],
+    _response: lib.Deserializable[provider_utils.AlliedResponse],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    response_messages: list = []  # extract carrier response errors and messages
-    messages = error.parse_error_response(response_messages, settings)
-    success = True  # compute shipment cancel success state
+    response = _response.deserialize()
+    messages = error.parse_error_response(response, settings)
+    success = not response.is_error and (response.data.get("result")) == "0"
 
     confirmation = (
         models.ConfirmationDetails(
@@ -21,7 +22,9 @@ def parse_shipment_cancel_response(
             carrier_name=settings.carrier_name,
             operation="Cancel Shipment",
             success=success,
-        ) if success else None
+        )
+        if success
+        else None
     )
 
     return confirmation, messages
@@ -31,7 +34,9 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    request = allied.VoidRequestType(
+        shipmentno=payload.shipment_identifier,
+        postalcode=(payload.options or {}).get("postal_code", ""),
+    )
 
-    request = None  # map data to convert karrio model to allied_express specific type
-
-    return lib.Serializable(request)
+    return lib.Serializable(request, lib.to_dict)

@@ -2,6 +2,7 @@
 
 import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.providers.allied_express.utils as provider_utils
 import karrio.mappers.allied_express.settings as provider_settings
 
 
@@ -17,7 +18,7 @@ class Proxy(proxy.Proxy):
             headers={"Authorization": f"Basic {self.settings.authorization}"},
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, provider_utils.parse_response)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
@@ -28,25 +29,25 @@ class Proxy(proxy.Proxy):
             headers={"Authorization": f"Basic {self.settings.authorization}"},
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, provider_utils.parse_response, request.ctx)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         payload = request.serialize()
         response = lib.request(
-            url=f"{self.settings.server_url}/cancelJob/{payload['shipment_no']}/{payload['postal_code']}",
+            url=f"{self.settings.server_url}/cancelJob/{payload['shipmentno']}/{payload['postalcode']}",
             trace=self.trace_as("json"),
             method="POST",
             headers={"Authorization": f"Basic {self.settings.authorization}"},
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, provider_utils.parse_response)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.run_asynchronously(
-            lambda shipment_no: (
-                shipment_no,
+            lambda payload: (
+                payload,
                 lib.request(
-                    url=f"{self.settings.server_url}/getShipmentsStatus/{shipment_no}",
+                    url=f"{self.settings.server_url}/getShipmentsStatus/{payload['shipmentno']}",
                     trace=self.trace_as("json"),
                     method="POST",
                     headers={"Authorization": f"Basic {self.settings.authorization}"},
@@ -55,4 +56,7 @@ class Proxy(proxy.Proxy):
             request.serialize(),
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            response,
+            lambda __: [(no, provider_utils.parse_response(_)) for no, _ in __],
+        )

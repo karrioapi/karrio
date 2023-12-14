@@ -496,6 +496,7 @@ class Settings(provider_utils.Settings):
     carrier_id: str = "{{id}}"
     account_country_code: str = None
     metadata: dict = {}
+    config: dict = {}
 
 '''
 )

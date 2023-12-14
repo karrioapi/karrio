@@ -15,7 +15,7 @@ class TestAlliedExpressRating(unittest.TestCase):
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
 
-        self.assertEqual(request.serialize(), RateRequest)
+        self.assertEqual(lib.to_dict(request.serialize()), RateRequest)
 
     def test_get_rate(self):
         with patch("karrio.mappers.allied_express.proxy.lib.request") as mock:
@@ -24,7 +24,7 @@ class TestAlliedExpressRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/calculatePrice",
             )
 
     def test_parse_rate_response(self):
@@ -41,50 +41,99 @@ if __name__ == "__main__":
     unittest.main()
 
 
-RatePayload = {}
+RatePayload = {
+    "shipper": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+        "phone_number": "(07) 3114 1499",
+    },
+    "recipient": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "address_line2": "test",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+    },
+    "parcels": [
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+            "options": {"dangerous_good": False},
+        },
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+            "options": {"dangerous_good": True},
+        },
+    ],
+    "services": ["allied_standard"],
+    "options": {
+        "instructions": "This is just an instruction",
+    },
+    "reference": "REF-001",
+}
 
-ParsedRateResponse = []
+ParsedRateResponse = [
+    [
+        {
+            "carrier_id": "allied_express",
+            "carrier_name": "allied_express",
+            "currency": "AUD",
+            "extra_charges": [
+                {"amount": 14.18, "currency": "AUD", "name": "Job charge"}
+            ],
+            "meta": {"service_name": "allied_standard"},
+            "service": "allied_standard",
+            "total_charge": 40.66,
+        }
+    ],
+    [],
+]
 
 
 RateRequest = {
-    "bookedBy": "TEST USER",
     "account": "ACCOUNT",
+    "bookedBy": "TEST USER",
     "instructions": "This is just an instruction",
     "itemCount": 2,
     "items": [
         {
             "dangerous": False,
-            "height": 50,
+            "height": 50.0,
             "itemCount": 1,
-            "length": 50,
-            "volume": 0.036,
-            "weight": 20,
-            "width": 12,
+            "length": 50.0,
+            "volume": 0.03,
+            "weight": 20.0,
+            "width": 12.0,
         },
         {
             "dangerous": True,
-            "height": 50,
+            "height": 50.0,
             "itemCount": 1,
-            "length": 50,
-            "volume": 0.036,
-            "weight": 20,
-            "width": 12,
+            "length": 50.0,
+            "volume": 0.03,
+            "weight": 20.0,
+            "width": 12.0,
         },
     ],
-    "jobStops_P": {
-        "companyName": "TESTING COMPANY",
-        "contact": "TEST USER",
-        "emailAddress": "test@gmail.com",
-        "geographicAddress": {
-            "address1": "17 VULCAN RD",
-            "address2": "test",
-            "country": "AU",
-            "postCode": "6155",
-            "state": "WA",
-            "suburb": "CANNING VALE",
-        },
-        "phoneNumber": "(07) 3114 1499",
-    },
     "jobStops_D": {
         "companyName": "TESTING COMPANY",
         "contact": "TEST USER",
@@ -97,12 +146,24 @@ RateRequest = {
             "state": "WA",
             "suburb": "CANNING VALE",
         },
+    },
+    "jobStops_P": {
+        "companyName": "TESTING COMPANY",
+        "contact": "TEST USER",
+        "emailAddress": "test@gmail.com",
+        "geographicAddress": {
+            "address1": "17 VULCAN RD",
+            "country": "AU",
+            "postCode": "6155",
+            "state": "WA",
+            "suburb": "CANNING VALE",
+        },
         "phoneNumber": "(07) 3114 1499",
     },
-    "referenceNumbers": ["REF-001", "REF-001"],
+    "referenceNumbers": ["REF-001"],
     "serviceLevel": "R",
-    "volume": 0.072,
-    "weight": 41,
+    "volume": 0.06,
+    "weight": 40.0,
 }
 
 RateResponse = """{

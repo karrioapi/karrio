@@ -18,7 +18,7 @@ class TestAlliedExpressShipping(unittest.TestCase):
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
-        self.assertEqual(request.serialize(), ShipmentRequest)
+        self.assertEqual(lib.to_dict(request.serialize()), ShipmentRequest)
 
     def test_create_cancel_shipment_request(self):
         request = gateway.mapper.create_cancel_shipment_request(
@@ -34,7 +34,7 @@ class TestAlliedExpressShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/GetLabelfull",
             )
 
     def test_cancel_shipment(self):
@@ -44,7 +44,7 @@ class TestAlliedExpressShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/cancelJob/123456789/12345",
             )
 
     def test_parse_shipment_response(self):
@@ -74,42 +74,125 @@ if __name__ == "__main__":
     unittest.main()
 
 
-ShipmentPayload = {}
-
-ShipmentCancelPayload = {
-    "shipment_identifier": "794947717776",
+ShipmentPayload = {
+    "shipper": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "address_line2": "test",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+        "phone_number": "(07) 3114 1499",
+    },
+    "recipient": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "address_line2": "test",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+    },
+    "parcels": [
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+            "options": {"dangerous_good": False},
+        },
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+            "options": {"dangerous_good": True},
+        },
+    ],
+    "service": "allied_standard",
+    "options": {
+        "instructions": "This is just an instruction",
+    },
+    "reference": "REF-001",
 }
 
-ParsedShipmentResponse = []
 
-ParsedCancelShipmentResponse = []
+ShipmentCancelPayload = {
+    "shipment_identifier": "123456789",
+    "options": {"postal_code": "12345"},
+}
+
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "allied_express",
+        "carrier_name": "allied_express",
+        "docs": {"label": ANY},
+        "label_type": "PDF",
+        "meta": {"postal_code": "6155"},
+        "shipment_identifier": "AOE946862J",
+        "tracking_number": "AOE946862J",
+    },
+    [],
+]
+
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "allied_express",
+        "carrier_name": "allied_express",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
 
 
 ShipmentRequest = {
-    "bookedBy": "TEST USER",
     "account": "ACCOUNT",
+    "bookedBy": "TEST USER",
     "instructions": "This is just an instruction",
     "itemCount": 2,
     "items": [
         {
             "dangerous": False,
-            "height": 50,
+            "height": 50.0,
             "itemCount": 1,
-            "length": 50,
-            "volume": 0.036,
-            "weight": 20,
-            "width": 12,
+            "length": 50.0,
+            "volume": 0.03,
+            "weight": 20.0,
+            "width": 12.0,
         },
         {
-            "dangerous": true,
-            "height": 50,
+            "dangerous": True,
+            "height": 50.0,
             "itemCount": 1,
-            "length": 50,
-            "volume": 0.036,
-            "weight": 20,
-            "width": 12,
+            "length": 50.0,
+            "volume": 0.03,
+            "weight": 20.0,
+            "width": 12.0,
         },
     ],
+    "jobStops_D": {
+        "companyName": "TESTING COMPANY",
+        "contact": "TEST USER",
+        "emailAddress": "test@gmail.com",
+        "geographicAddress": {
+            "address1": "17 VULCAN RD",
+            "address2": "test",
+            "country": "AU",
+            "postCode": "6155",
+            "state": "WA",
+            "suburb": "CANNING VALE",
+        },
+    },
     "jobStops_P": {
         "companyName": "TESTING COMPANY",
         "contact": "TEST USER",
@@ -124,27 +207,13 @@ ShipmentRequest = {
         },
         "phoneNumber": "(07) 3114 1499",
     },
-    "jobStops_D": {
-        "companyName": "TESTING COMPANY",
-        "contact": "TEST USER",
-        "emailAddress": "test@gmail.com",
-        "geographicAddress": {
-            "address1": "17 VULCAN RD",
-            "address2": "test",
-            "country": "AU",
-            "postCode": "6155",
-            "state": "WA",
-            "suburb": "CANNING VALE",
-        },
-        "phoneNumber": "(07) 3114 1499",
-    },
-    "referenceNumbers": ["REF-001", "REF-001"],
+    "referenceNumbers": ["REF-001"],
     "serviceLevel": "R",
-    "volume": 0.072,
-    "weight": 41,
+    "volume": 0.06,
+    "weight": 40.0,
 }
 
-ShipmentCancelRequest = {"shipment_no": "123456789", "postal_code": "12345"}
+ShipmentCancelRequest = {"shipmentno": "123456789", "postalcode": "12345"}
 
 ShipmentResponse = """{
     "Price": {
