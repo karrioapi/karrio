@@ -5,9 +5,10 @@ from jstruct import JStruct
 
 @s(auto_attribs=True)
 class StatusBarcodesListType:
-    consignmentNote: Optional[int] = None
+    consignmentNote: Optional[str] = None
     depotLocation: Optional[str] = None
     scannedBarcode: Optional[str] = None
+    scannedStatus: Optional[str] = None
     scannnedTimestamp: Optional[str] = None
 
 

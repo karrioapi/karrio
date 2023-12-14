@@ -36,6 +36,17 @@ class TestAlliedExpressTracking(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
+    def test_parse_delivered_tracking_response(self):
+        with patch("karrio.mappers.allied_express.proxy.lib.request") as mock:
+            mock.return_value = DeliveredTrackingResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response), DeliveredParsedTrackingResponse
+            )
+
     def test_parse_error_response(self):
         with patch("karrio.mappers.allied_express.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
@@ -64,12 +75,35 @@ ParsedTrackingResponse = [
                 {
                     "code": "123456789-001",
                     "date": "2021-05-28",
-                    "description": "123456789",
+                    "description": "In Transit",
                     "location": "BANKSTOWN AERODROME",
                     "time": "10:03",
                 }
             ],
-            "tracking_number": {"shipmentno": "AOE946862J"},
+            "status": "in_transit",
+            "tracking_number": "123456789",
+        }
+    ],
+    [],
+]
+
+DeliveredParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "allied_express",
+            "carrier_name": "allied_express",
+            "delivered": True,
+            "events": [
+                {
+                    "code": "AOE10060817R",
+                    "date": "2023-10-26",
+                    "description": "Freight has been delivered",
+                    "location": "NOWRA",
+                    "time": "14:03",
+                }
+            ],
+            "status": "delivered",
+            "tracking_number": "AOE10060817R",
         }
     ],
     [],
@@ -82,7 +116,7 @@ ParsedErrorResponse = [
             "carrier_id": "allied_express",
             "carrier_name": "allied_express",
             "code": "400",
-            "details": {"tracking_number": {"shipmentno": "AOE946862J"}},
+            "details": {"tracking_number": "AOE946862J"},
             "message": "No Shipment status found.",
         }
     ],
@@ -101,6 +135,24 @@ TrackingResponse = """{
           "depotLocation": "BANKSTOWN AERODROME",
           "scannedBarcode": "123456789-001",
           "scannnedTimestamp": "2021-05-28T10:03:20.000+10:00"
+        }
+      }
+    }
+  }
+}
+"""
+
+DeliveredTrackingResponse = """{
+  "soapenv:Body": {
+    "ns1:getShipmentsStatusResponse": {
+      "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
+      "result": {
+        "statusBarcodesList": {
+          "consignmentNote": "AOE10060817R",
+          "depotLocation": "NOWRA",
+          "scannedBarcode": "AOE10060817R",
+          "scannedStatus": "Freight has been delivered",
+          "scannnedTimestamp": "2023-10-26T14:03:55.000+11:00"
         }
       }
     }

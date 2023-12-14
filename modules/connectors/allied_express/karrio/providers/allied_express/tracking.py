@@ -26,7 +26,7 @@ def parse_tracking_response(
         start=[],
     )
     tracking_details = [
-        _extract_details((_, details.data["result"]), settings)
+        _extract_details(details.data["result"], settings)
         for _, details in responses
         if not details.is_error and "result" in (details.data or {})
     ]
@@ -35,32 +35,38 @@ def parse_tracking_response(
 
 
 def _extract_details(
-    data: typing.Tuple[str, dict],
+    data: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    tracking_number, _ = data
-    result = lib.to_object(tracking.ResultType, _)
+    result = lib.to_object(tracking.ResultType, data)
+    description = result.statusBarcodesList.scannedStatus or "In Transit"
+    status = (
+        provider_units.TrackingStatus.delivered.name
+        if "delivered" in description
+        else provider_units.TrackingStatus.in_transit.name
+    )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=tracking_number,
+        tracking_number=result.statusBarcodesList.consignmentNote,
         events=[
             models.TrackingEvent(
+                code=result.statusBarcodesList.scannedBarcode,
+                location=result.statusBarcodesList.depotLocation,
+                description=description,
                 date=lib.fdate(
                     result.statusBarcodesList.scannnedTimestamp,
                     "%Y-%m-%dT%H%M%S.%f%z",
                 ),
-                description=result.statusBarcodesList.consignmentNote,
-                code=result.statusBarcodesList.scannedBarcode,
                 time=lib.ftime(
                     result.statusBarcodesList.scannnedTimestamp,
                     "%Y-%m-%dT%H%M%S.%f%z",
                 ),
-                location=result.statusBarcodesList.depotLocation,
             )
         ],
-        delivered=False,
+        status=status,
+        delivered=status == "delivered",
     )
 
 

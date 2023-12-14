@@ -45,7 +45,7 @@ class Proxy(proxy.Proxy):
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.run_asynchronously(
             lambda payload: (
-                payload,
+                payload["shipmentno"],
                 lib.request(
                     url=f"{self.settings.server_url}/getShipmentsStatus/{payload['shipmentno']}",
                     trace=self.trace_as("json"),
