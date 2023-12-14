@@ -1,5 +1,6 @@
 # Carrier Extentions packages
 -e ./modules/sdk
+-e ./modules/connectors/allied_express
 -e ./modules/connectors/amazon_shipping
 -e ./modules/connectors/aramex
 -e ./modules/connectors/asendia_us

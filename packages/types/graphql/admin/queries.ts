@@ -163,6 +163,20 @@ export const GET_SURCHARGE = gql`query GetSurcharge($id: String!) {
 export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
   system_connections {
     __typename
+    ... on AlliedExpressSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+    }
     ... on AmazonShippingSettingsType {
       id
       carrier_id

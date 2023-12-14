@@ -400,6 +400,13 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("account_number").required}
                 />}
 
+                {field("account").exists && <InputField label="Account" value={payload.account}
+                  name="account"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("account").required}
+                />}
+
                 {field("billing_account").exists && <InputField label="Billing Account" value={payload.billing_account}
                   name="billing_account"
                   onChange={handleChange}
@@ -722,6 +729,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 function fieldState(carrier_name: CarrierNameType, property: string) {
   const field = (
     ({
+      [CarrierSettingsCarrierNameEnum.AlliedExpress]: [["carrier_id", true], ["username", true], ["password", true], ["account", false]],
       [CarrierSettingsCarrierNameEnum.AmazonShipping]: [["carrier_id", true], ["seller_id", true], ["developer_id", true], ["mws_auth_token", true], ["aws_region"]],
       [CarrierSettingsCarrierNameEnum.Aramex]: [["carrier_id", true], ["username", true], ["password", true], ["account_pin", true], ["account_entity", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Australiapost]: [["carrier_id", true], ["api_key", true], ["password", true], ["account_number", true]],
