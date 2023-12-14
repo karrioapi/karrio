@@ -69,6 +69,15 @@ class TestAlliedExpressShipping(unittest.TestCase):
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
 
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.allied_express.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -154,6 +163,20 @@ ParsedCancelShipmentResponse = [
     [],
 ]
 
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "allied_express",
+            "carrier_name": "allied_express",
+            "code": "500",
+            "details": {},
+            "message": '"account" is a required property\n'
+            "\n"
+            'Failed validating "required" in schema',
+        }
+    ],
+]
 
 ShipmentRequest = {
     "account": "ACCOUNT",
