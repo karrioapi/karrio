@@ -1697,6 +1697,20 @@ export const GET_API_TOKEN = gql`query GetToken($org_id: String) {
 export const GET_USER_CONNECTIONS = gql`query get_user_connections {
   user_connections {
     __typename
+    ... on AlliedExpressSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+    }
     ... on AmazonShippingSettingsType {
       id
       carrier_id
