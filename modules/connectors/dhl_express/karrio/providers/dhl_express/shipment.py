@@ -277,7 +277,7 @@ def shipment_request(
                         ]
                     )
                     if (
-                        options.dhl_paperless_trade.state == True
+                        options.paperless_trade.state == True
                         and any(options.doc_references.state or [])
                     )
                     else None
@@ -424,7 +424,7 @@ def shipment_request(
                 ]
             )
             if (
-                options.dhl_paperless_trade.state == True
+                options.paperless_trade.state == True
                 and any(options.doc_files.state or [])
             )
             else None

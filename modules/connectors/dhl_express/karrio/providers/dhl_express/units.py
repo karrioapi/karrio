@@ -606,7 +606,7 @@ def shipping_options_initializer(
     _options = options.copy()
 
     if origin_country in UNSUPPORTED_PAPERLESS_COUNTRIES:
-        _options.update({"dhl_paperless_trade": False})
+        _options.update({"paperless_trade": False})
 
     if package_options is not None:
         _options.update(package_options.content)
