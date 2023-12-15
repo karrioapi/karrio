@@ -119,6 +119,7 @@ def shipment_request(
         or settings.default_currency
     )
 
+    dhl_special_services = {k: v for k, v in options.items() if v}
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
         Request=settings.Request(
@@ -392,8 +393,10 @@ def shipment_request(
                     currency if lib.to_money(svc.state) is not None else None
                 ),
             )
-            for _, svc in options.items()
-        ],
+            for _, svc in dhl_special_services
+        ]
+        if dhl_special_services
+        else None,
         Notification=(
             dhl.Notification(
                 EmailAddress=options.email_notification_to.state or recipient.email
