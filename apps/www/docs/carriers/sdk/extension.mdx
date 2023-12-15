@@ -38,11 +38,15 @@ The package naming convention for extensions is `karrio.[carrier_name]`
 
 #### 1. Create a karrio extension package
 
-Once you have [karrio installed for development](/local-development) on your machine,
+Once you have [karrio installed for development](/contributing/development) on your machine,
 You can run the following command to scafold a karrio extension for you carrier.
 
 ```terminal
-python run add-extension
+python modules/cli add-extension
+```
+or 
+```terminal
+./bin/cli add-extension
 ```
 
 ```
@@ -53,7 +57,7 @@ Version [2023.1]:                       # The extension initial version
 Is XML API? [y/n]:                      # Specify whether the carrier' API data format is XML. (n - for JSON APIs)
 ```
 
-This command will create a karrio compatible extension folder under `sdk/extensions/[carrier_name]`
+This command will create a karrio compatible extension folder under `modules/connectors/[carrier_name]`
 with all the boilerplate code required for your integration.
 From there, all you have to do is implement the API data mapping from and to karrio unified interface and add API contract tests
 to ensure that karrio generates the right requests for your API.
@@ -71,7 +75,7 @@ the datatypes available and makes maintenance easy.
 - Generate Python datatypes for an XML/SOAP API
 
 Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
-Please check the [canadapost schema package](https://github.com/karrioapi/karrio/blob/main/schemas/canadapost/generate.sh) as an example.
+Please check the [canadapost schema package](https://github.com/karrioapi/karrio/blob/main/modules/connectors/canadapost/generate) as an example.
 
 > generateDS is installed along with karrio' dev dependencies. So it should already be available.
 
@@ -79,7 +83,7 @@ Please check the [canadapost schema package](https://github.com/karrioapi/karrio
 
 Karrio uses a fork of `quicktype` to generate Python dataclasses from the `jstruct` library to turn JSON request and response
 samples.
-Please check the [amazon_mws schema scripting](https://github.com/karrioapi/karrio/blob/main/sdk/extensions/amazon_mws/generate.sh) as an example.
+Please check the [amazon_mws schema scripting](https://github.com/karrioapi/karrio/blob/main/modules/connectors/amazon_shipping/generate) as an example.
 
 
 :::info
@@ -140,16 +144,16 @@ import karrio.providers.[carrier_name].units as units
 METADATA = Metadata(
     id="[carrier_name]",  # e.g: "ddp_uk"
     label="[Carrier Name]",  # e.g: "DDP UK"
-
+    
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
 
     # Data Units (Optional...)
-    options=units.OptionCode,  # Enum of Shipping options supported by the carrier
+    options=units.ShippingOption,  # Enum of Shipping options supported by the carrier
     package_presets=units.PackagePresets, # Enum of parcel presets/templates
-    services=units.ServiceType,  # Enum of Shipping services supported by the carrier
+    services=units.ShippingService,  # Enum of Shipping services supported by the carrier
 
     is_hub=False # True if the carrier is a hub like (EasyPost, Shippo, Postmen...)
 )
@@ -161,6 +165,8 @@ The carrier extension package folder structure looks like this
 
 ```text
 extensions/[carrier_name]/
+├── setup.py
+├── generate
 ├── karrio
 │   ├── mappers
 │   │   └── [carrier_name]
@@ -168,25 +174,30 @@ extensions/[carrier_name]/
 │   │       ├── mapper.py
 │   │       ├── proxy.py
 │   │       └── settings.py
-│   └── providers
+│   ├── providers
+│   │   └── [carrier_name]
+│   │       ├── __init__.py
+│   │       ├── address.py
+│   │       ├── error.py
+│   │       ├── pickup
+│   │       │   ├── __init__.py
+│   │       │   ├── cancel.py
+│   │       │   ├── create.py
+│   │       │   └── update.py
+│   │       ├── rate.py
+│   │       ├── shipment
+│   │       │   ├── __init__.py
+│   │       │   ├── cancel.py
+│   │       │   └── create.py
+│   │       ├── tracking.py
+│   |       ├── units.py
+│   |       └── utils.py
+│   └── schemas
 │       └── [carrier_name]
-│           ├── __init__.py
-│           ├── address.py
-│           ├── error.py
-│           ├── pickup
-│           │   ├── __init__.py
-│           │   ├── cancel.py
-│           │   ├── create.py
-│           │   └── update.py
-│           ├── rate.py
-│           ├── shipment
-│           │   ├── __init__.py
-│           │   ├── cancel.py
-│           │   └── create.py
-│           ├── tracking.py
-│           ├── units.py
-│           └── utils.py
-└── setup.py
+│           ├── error_response.py
+│           └── ....
+└── schemas
+    └── error_response.json
 ```
 
 :::info
@@ -338,11 +349,6 @@ are used to generate Python data types based of the schema format definition.
 
 - For `XML` and `SOAP` services, [generateDs](https://pypi.org/project/generateDS/) is used to generate `.xsd` files
   into Python data types
-
-:::info
-Check the [generate.sh](https://github.com/karrio/karrio/blob/main/schemas/) file
-to see how genereDs is used.
-:::
 
 - For `JSON` services, [quicktype](https://github.com/karrio/quicktype) is used to generate `.json` files
   into Python data types. We then use [jstruct](https://github.com/karrio/jstruct) as a replacement

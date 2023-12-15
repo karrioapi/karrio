@@ -30,6 +30,19 @@ cd karrio
 
 ### Installation
 
+- Install system dependencies:
+
+```terminal title="Terminal"
+./bin/install-binaries
+```
+
+:::info
+The `install-binaries` script will install the following binaries: `gcc`, `pango`, `libffi`, `ghostscript`
+
+They are required for the following Python packages: `weasyprint and treepoem` used by the document generation
+feature for HTML to PDF document generation and barcode image rendering.
+:::
+
 - Setup a Python environment with all dependencies:
 
 ```terminal title="Terminal"
@@ -107,25 +120,21 @@ karrio createsuperuser
 
 ## Dashboard
 
-- Fork [karrio-dashboard](https://github.com/karrioapi/karrio-dashboard.git) on Github.
-
-- Clone the repository:
-
-```terminal title="Terminal"
-git clone https://github.com/[YOUR_USERNAME]/karrio-dashboard.git
-cd karrio-dashboard
-```
+The Karrio dashboard codebase is now in the same repository as we move towards a monorepo structure.
+You can simply setup the dashboard by following the steps below. 
 
 - Install node dependencies:
 
+Run this at the root of the repository. `cd karrio`
+
 ```terminal title="Terminal"
-npm install
+npm i
 ```
 
 - Setup environment variables:
 
 ```terminal title="Terminal"
-cp .env.sample .env
+cp apps/dashboard/.env.sample apps/dashboard/.env
 ```
 
 - Start the dashboard:
@@ -167,16 +176,19 @@ _This will create and activate an isolated Python environment with the dev depen
 
 ```terminal title="Terminal"
 cd karrio
-# pip install -e sdk/extensions/[carrier_extension]
-pip install -e sdk/extensions/fedex
+# install karrio core SDK
+pip install -e modules/sdk
+
+# pip install -e modules/connectors/[carrier_extension]
+pip install -e modules/connectors/fedex
 ```
 
 - Running tests for a single extension
 
 ```terminal title="Terminal"
 cd karrio
-# python -m unittest discover -v -f sdk/extensions/[carrier_extension]/tests
-python -m unittest discover -v -f sdk/extensions/fedex/tests
+# python -m unittest discover -v -f modules/connectors/[carrier_extension]/tests
+python -m unittest discover -v -f modules/connectors/fedex/tests
 ```
 
 ### Working on karrio server
@@ -218,8 +230,8 @@ docker-compose -f docker/docker-compose.yml up -d db
 
 ```terminal title="Terminal"
 cd karrio
-karrio dumpdata -e contenttypes -o [BACKUP_LOCATION_PATH]/data[VERSION].json
-# e.g: karrio dumpdata -e contenttypes -o ../backup/data2022.10-3.json
+karrio dumpdata --natural-foreign --natural-primary -o [BACKUP_LOCATION_PATH]/data[VERSION].json
+# e.g: karrio dumpdata --natural-foreign --natural-primary -o ../backup/data2024.1.json
 ```
 
 ### Load dev data
@@ -227,33 +239,8 @@ karrio dumpdata -e contenttypes -o [BACKUP_LOCATION_PATH]/data[VERSION].json
 ```terminal title="Terminal"
 cd karrio
 karrio loaddata [BACKUP_LOCATION_PATH]/data[VERSION].json
-# e.g: karrio loaddata ../backup/data2022.10-1.json
+# e.g: karrio loaddata ../backup/data2024.1.json
 ```
-
-## Advanced setup
-
-- Developing with the document module component
-
-To work with Karrio's document module component, you will need to install some addional dependencies.
-Karrio's `karrio.server.document` module and its system dependencies.
-
-```terminal title="Terminal"
-# simply rerun the setup-server-env script without the --light flag
-source ./bin/setup-server-env
-
-# and OS dependencies binaries
-./bin/install-binaries
-
-# rerun the migration to create the document module tables
-karrio migrate
-```
-
-:::info
-The `install-binaries` script will install the following binaries: `gcc`, `pango`, `libffi`, `ghostscript`
-
-They are required for the following Python packages: `weasyprint and treepoem` used by the document generation
-feature for HTML to PDF document generation and barcode image rendering.
-:::
 
 ## Developing with docker
 
@@ -318,7 +305,7 @@ exec:      Execute command in docker dev environment.
 ./bin/docker-env exec './bin/run-server-tests'
 
 # to run a carrier integration tests.
-./bin/docker-env exec 'python -m unittest discover -v -f sdk/extensions/dhl_express/tests'
+./bin/docker-env exec 'python -m unittest discover -v -f modules/connectors/dhl_express/tests'
 ```
 
 :::

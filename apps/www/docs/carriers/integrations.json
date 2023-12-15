@@ -1,5 +1,15 @@
 [
   {
+    "name": "Allied Express",
+    "href": "/carriers/integrations/allied_express",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
     "name": "Amazon Shipping",
     "href": "/carriers/integrations/amazon_shipping",
     "status": "beta",
@@ -31,6 +41,26 @@
     "href": "/carriers/integrations/australiapost",
     "status": "beta",
     "features": [
+      "Tracking"
+    ]
+  },
+  {
+    "name": "BoxKnight",
+    "href": "/carriers/integrations/boxknight",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
+    "name": "Belgium Post",
+    "href": "/carriers/integrations/bpost",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
       "Tracking"
     ]
   },
@@ -136,6 +166,34 @@
     ]
   },
   {
+    "name": "GEODIS",
+    "href": "/carriers/integrations/geodis",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
+    "name": "La Poste",
+    "href": "/carriers/integrations/laposte",
+    "status": "production",
+    "features": [
+      "Tracking"
+    ]
+  },
+  {
+    "name": "Nationex",
+    "href": "/carriers/integrations/nationex",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
+    ]
+  },
+  {
     "name": "Purolator",
     "href": "/carriers/integrations/purolator",
     "status": "production",
@@ -144,6 +202,16 @@
       "Shipping",
       "Tracking",
       "Pickup"
+    ]
+  },
+  {
+    "name": "Roadie",
+    "href": "/carriers/integrations/roadie",
+    "status": "beta",
+    "features": [
+      "Rating",
+      "Shipping",
+      "Tracking"
     ]
   },
   {
@@ -167,6 +235,8 @@
     "href": "/carriers/integrations/tnt",
     "status": "beta",
     "features": [
+      "Rating",
+      "Shipping",
       "Tracking"
     ]
   },

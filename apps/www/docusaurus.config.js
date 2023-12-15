@@ -55,7 +55,7 @@ const config = {
         // Plugin Options for loading OpenAPI files
         specs: [
           {
-            spec: 'https://raw.githubusercontent.com/karrioapi/karrio/main/server/schemas/openapi.yml',
+            spec: 'https://raw.githubusercontent.com/karrioapi/karrio/main/schemas/openapi.yml',
             route: '/api/',
           },
         ],
