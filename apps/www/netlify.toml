@@ -7,4 +7,4 @@
   publish = "./www/build/"
 
 # This will be your default build command
-  command = "cd ../ && npm ci -w apps/www && npm run build -w apps/www"
+  command = "cd ../ && npm i -w apps/www && npm run build -w apps/www"
