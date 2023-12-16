@@ -29,7 +29,7 @@ export default function Page(pageProps: any) {
 
   return AuthenticatedPage((
     <EmbedLayout showModeIndicator={true}>
-      <Head><title>{`API Docs - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
+      <Head><title>{`API Reference - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
 
       <Component />
 

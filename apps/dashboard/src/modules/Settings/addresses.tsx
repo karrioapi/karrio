@@ -1,7 +1,7 @@
 import { AddressEditModal, AddressEditContext } from "@karrio/ui/modals/address-edit-modal";
 import { useAddressTemplateMutation, useAddressTemplates } from "@karrio/hooks/address";
-import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
+import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
 import { AddressDescription } from "@karrio/ui/components/address-description";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -16,6 +16,8 @@ export { getServerSideProps } from '@/context/main';
 
 
 export default function AddressPage(pageProps: any) {
+  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
+
   const Component: React.FC = () => {
     const router = useRouter();
     const { query } = useAddressTemplates();
@@ -57,11 +59,11 @@ export default function AddressPage(pageProps: any) {
                 <span>Account</span>
               </AppLink>
             </li>
-            <li className={`is-capitalized has-text-weight-semibold`}>
+            {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/organization" shallow={false} prefetch={false}>
                 <span>Organization</span>
               </AppLink>
-            </li>
+            </li>}
             <li className={`is-capitalized has-text-weight-semibold is-active`}>
               <AppLink href="/settings/addresses" shallow={false} prefetch={false}>
                 <span>Addresses</span>
@@ -158,7 +160,7 @@ export default function AddressPage(pageProps: any) {
   return AuthenticatedPage((
     <DashboardLayout>
       <GoogleGeocodingScript />
-      <Head><title>{`Address Templates - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
+      <Head><title>{`Addresses Settings - ${APP_NAME}`}</title></Head>
       <ConfirmModal>
         <AddressEditModal>
 

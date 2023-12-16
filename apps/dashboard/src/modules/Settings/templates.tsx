@@ -1,6 +1,6 @@
 import { useDocumentTemplateMutation, useDocumentTemplates } from "@karrio/hooks/document-template";
-import { TemplateDescription } from "@karrio/ui/components/template-description";
 import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
+import { TemplateDescription } from "@karrio/ui/components/template-description";
 import { DocumentTemplateType, NotificationType } from "@karrio/types";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -14,6 +14,8 @@ export { getServerSideProps } from "@/context/main";
 
 
 export default function TemplatesPage(pageProps: any) {
+  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
+
   const Component: React.FC = () => {
     const { notify } = useContext(Notify);
     const mutation = useDocumentTemplateMutation();
@@ -50,11 +52,11 @@ export default function TemplatesPage(pageProps: any) {
                 <span>Account</span>
               </AppLink>
             </li>
-            <li className={`is-capitalized has-text-weight-semibold`}>
+            {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/organization" shallow={false} prefetch={false}>
                 <span>Organization</span>
               </AppLink>
-            </li>
+            </li>}
             <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/addresses" shallow={false} prefetch={false}>
                 <span>Addresses</span>
@@ -158,7 +160,7 @@ export default function TemplatesPage(pageProps: any) {
 
   return AuthenticatedPage((
     <DashboardLayout>
-      <Head><title>{`Document Templates - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
+      <Head><title>{`Templates Settings - ${APP_NAME}`}</title></Head>
       <ConfirmModal>
 
         <Component />

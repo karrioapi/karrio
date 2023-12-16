@@ -1,27 +1,18 @@
-import { OrganizationManagement } from "@karrio/ui/forms/organization-management";
-import { SubscriptionManagement } from "@karrio/ui/forms/subscription-management";
-import { InviteMemberProvider } from "@karrio/ui/modals/invite-member-modal";
 import { CloseAccountAction } from "@karrio/ui/forms/close-account-action";
 import { ProfileUpdateInput } from "@karrio/ui/forms/profile-update-input";
 import { PasswordManagement } from "@karrio/ui/forms/password-management";
-import { Tabs, TabStateProvider } from "@karrio/ui/components/tabs";
 import { EmailManagement } from "@karrio/ui/forms/email-management";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
-import Head from "next/head";
 import { AppLink } from "@karrio/ui/components/app-link";
+import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
 
 
 export default function AccountPage(pageProps: any) {
   const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
-  const tabs: string[] = [
-    'Account',
-    ...(MULTI_ORGANIZATIONS ? ['Organization'] : []),
-    ...((pageProps as any).subscription ? ['Billing'] : []),
-  ];
 
   const Component: React.FC = () => {
 
@@ -40,11 +31,11 @@ export default function AccountPage(pageProps: any) {
                 <span>Account</span>
               </AppLink>
             </li>
-            <li className={`is-capitalized has-text-weight-semibold`}>
+            {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/organization" shallow={false} prefetch={false}>
                 <span>Organization</span>
               </AppLink>
-            </li>
+            </li>}
             <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/addresses" shallow={false} prefetch={false}>
                 <span>Addresses</span>
@@ -114,9 +105,7 @@ export default function AccountPage(pageProps: any) {
       <Head><title>{`Account Settings - ${APP_NAME}`}</title></Head>
 
       <ConfirmModal>
-        <TabStateProvider tabs={tabs} setSelectedToURL>
-          <Component />
-        </TabStateProvider>
+        <Component />
       </ConfirmModal>
 
     </DashboardLayout>

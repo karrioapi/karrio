@@ -16,6 +16,8 @@ export { getServerSideProps } from "@/context/main";
 
 
 export default function ParcelsPage(pageProps: any) {
+  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
+
   const Component: React.FC = () => {
     const router = useRouter();
     const { setLoading } = useContext(Loading);
@@ -58,11 +60,11 @@ export default function ParcelsPage(pageProps: any) {
                 <span>Account</span>
               </AppLink>
             </li>
-            <li className={`is-capitalized has-text-weight-semibold`}>
+            {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/organization" shallow={false} prefetch={false}>
                 <span>Organization</span>
               </AppLink>
-            </li>
+            </li>}
             <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/addresses" shallow={false} prefetch={false}>
                 <span>Addresses</span>
@@ -168,7 +170,7 @@ export default function ParcelsPage(pageProps: any) {
 
   return AuthenticatedPage((
     <DashboardLayout>
-      <Head><title>{`Parcel Templates - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
+      <Head><title>{`Parcels Settings - ${APP_NAME}`}</title></Head>
       <ConfirmModal>
         <ParcelEditModal>
 
