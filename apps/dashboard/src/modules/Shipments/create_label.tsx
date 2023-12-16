@@ -16,6 +16,7 @@ import { LineItemSelector } from '@karrio/ui/forms/line-item-selector';
 import { DEFAULT_PARCEL_CONTENT } from '@karrio/ui/forms/parcel-form';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
 import { CheckBoxField } from '@karrio/ui/components/checkbox-field';
+import { TextAreaField } from '@karrio/ui/components/textarea-field';
 import { useConnections } from '@karrio/hooks/carrier-connections';
 import { CarrierImage } from '@karrio/ui/components/carrier-image';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
@@ -550,6 +551,26 @@ export default function CreateLabelPage(pageProps: any) {
                   <span>Paperless trade</span>
                 </CheckBoxField>
 
+
+                {/* hold at location */}
+                <CheckBoxField name="hold_at_location"
+                  fieldClass="column mb-0 is-12 px-0 py-2"
+                  defaultChecked={shipment.options?.hold_at_location}
+                  onChange={e => onChange({ options: { ...shipment.options, hold_at_location: e.target.checked } })}
+                >
+                  <span>Hold at location</span>
+                </CheckBoxField>
+
+
+                {/* dangerous good */}
+                <CheckBoxField name="dangerous_good"
+                  fieldClass="column mb-0 is-12 px-0 py-2"
+                  defaultChecked={shipment.options?.dangerous_good}
+                  onChange={e => onChange({ options: { ...shipment.options, dangerous_good: e.target.checked } })}
+                >
+                  <span>Dangerous good</span>
+                </CheckBoxField>
+
               </div>
 
               {/* CARRIER OPTIONS SECTION */}
@@ -969,6 +990,27 @@ export default function CreateLabelPage(pageProps: any) {
 
                     </>)}</MetadataEditorContext.Consumer>
                   </MetadataEditor>
+                </div>
+
+              </div>
+
+              {/* Instructions section */}
+              <div className="card px-0 mt-5">
+
+                <div className="p-3">
+
+                  <TextAreaField
+                    rows={2}
+                    label="Shipping instructions"
+                    autoComplete="off"
+                    name="instructions"
+                    className="is-small"
+                    placeholder="shipping instructions"
+                    defaultValue={shipment.options?.instructions}
+                    required={!isNone(shipment.options?.instructions)}
+                    onChange={e => onChange({ options: { ...shipment.options, instructions: e.target.value } })}
+                  />
+
                 </div>
 
               </div>
