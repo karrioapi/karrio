@@ -612,7 +612,7 @@ def shipping_options_initializer(
         _options.update(package_options.content)
 
     def items_filter(key: str) -> bool:
-        return (key in ShippingOption) and (_options.get(key) not in [False])  # type: ignore
+        return key in ShippingOption  # type: ignore
 
     return lib.units.ShippingOptions(
         _options, ShippingOption, items_filter=items_filter

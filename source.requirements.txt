@@ -49,6 +49,7 @@ jsonschema-specifications==2023.11.2
 jstruct==2021.11
 jwcrypto==1.5.0
 karrio @ file://${PWD}/modules/sdk
+karrio.allied-express @ file://${PWD}/modules/connectors/allied_express
 karrio.amazon-shipping @ file://${PWD}/modules/connectors/amazon_shipping
 karrio.aramex @ file://${PWD}/modules/connectors/aramex
 karrio.asendia-us @ file://${PWD}/modules/connectors/asendia_us
