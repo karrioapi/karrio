@@ -1,9 +1,9 @@
 import { GenerateAPIModal } from "@karrio/ui/modals/generate-api-dialog";
-import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { useContext, useEffect, useRef, useState } from "react";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
 import { useAPIToken } from "@karrio/hooks/api-token";
 import Head from "next/head";
@@ -31,49 +31,46 @@ export default function ApiPage(pageProps: any) {
       <>
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">API</span>
+          <span className="title is-4">Developers</span>
           <div></div>
         </header>
 
-        {/* APIs Overview */}
-        <div className="card px-0 py-3">
-
-          <div className="p-3">
-            <span className="has-text-weight-bold is-size-6">Overview</span>
-          </div>
-
-          <hr className='my-1' style={{ height: '1px' }} />
-
-          <div className="is-flex my-0 px-3">
-            <div className="py-1" style={{ width: '40%' }}>API Version</div>
-            <div className="py-1" style={{ width: '40%' }}><code>{references?.VERSION}</code></div>
-          </div>
-          <div className="is-flex my-0 px-3">
-            <div className="py-1" style={{ width: '40%' }}>REST API</div>
-            <div className="py-1" style={{ width: '40%' }}>
-              <CopiableLink className="button is-white py-2 px-1" text={references?.HOST} />
-            </div>
-          </div>
-          <div className="is-flex my-0 px-3">
-            <div className="py-1" style={{ width: '40%' }}>GRAPHQL API</div>
-            <div className="py-1" style={{ width: '40%' }}>
-              <CopiableLink className="button is-white py-2 px-1" text={references?.GRAPHQL} />
-            </div>
-          </div>
+        <div className="tabs">
+          <ul>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers" shallow={false} prefetch={false}>
+                <span>Overview</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <AppLink href="/developers/apikeys" shallow={false} prefetch={false}>
+                <span>API Keys</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/webhooks" shallow={false} prefetch={false}>
+                <span>Webhooks</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/events" shallow={false} prefetch={false}>
+                <span>Events</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/logs" shallow={false} prefetch={false}>
+                <span>Logs</span>
+              </AppLink>
+            </li>
+          </ul>
         </div>
 
         {/* API Keys */}
         <div className="card px-0 py-3 mt-6">
 
-          <div className="p-3">
-            <span className="has-text-weight-bold is-size-6">API Keys</span>
-          </div>
-
-          <hr className='my-1' style={{ height: '1px' }} />
-
           <div className="is-flex my-0 px-3">
             <div className="py-1" style={{ width: '40%' }}>
-              <p className="subtitle is-6 py-1">Token</p>
+              <p className="subtitle is-6 py-1">Public Key</p>
               <p className="is-size-7 has-text-weight-semibold pr-6">
                 <span>Use this key to authenticate your API calls. </span>
                 <a

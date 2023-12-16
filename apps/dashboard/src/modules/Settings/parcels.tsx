@@ -4,6 +4,7 @@ import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-mod
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
@@ -46,13 +47,39 @@ export default function ParcelsPage(pageProps: any) {
       <>
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Parcels</span>
-          <div>
-            <button className="button is-primary is-small is-pulled-right" onClick={() => editParcel()}>
-              <span>Create parcel</span>
-            </button>
-          </div>
+          <span className="title is-4">Settings</span>
+          <div></div>
         </header>
+
+        <div className="tabs">
+          <ul>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/account" shallow={false} prefetch={false}>
+                <span>Account</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/organization" shallow={false} prefetch={false}>
+                <span>Organization</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/addresses" shallow={false} prefetch={false}>
+                <span>Addresses</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <AppLink href="/settings/parcels" shallow={false} prefetch={false}>
+                <span>Parcels</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/templates" shallow={false} prefetch={false}>
+                <span>Templates</span>
+              </AppLink>
+            </li>
+          </ul>
+        </div>
 
         {((parcel_templates?.edges || []).length > 0) && <div className="table-container">
           <table className="table is-fullwidth">
@@ -60,7 +87,11 @@ export default function ParcelsPage(pageProps: any) {
             <tbody className="templates-table">
               <tr>
                 <td className="is-size-7" colSpan={2}>PARCEL TEMPLATES</td>
-                <td className="action"></td>
+                <td className="action pr-0">
+                  <button className="button is-primary is-small is-pulled-right" onClick={() => editParcel()}>
+                    <span>Create parcel</span>
+                  </button>
+                </td>
               </tr>
 
               {(parcel_templates?.edges || []).map(({ node: template }) => (

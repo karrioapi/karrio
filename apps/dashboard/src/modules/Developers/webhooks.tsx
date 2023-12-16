@@ -6,6 +6,7 @@ import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { NotificationType, WebhookType } from "@karrio/types";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
+import { AppLink } from "@karrio/ui/components/app-link";
 import { Notify } from "@karrio/ui/components/notifier";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
@@ -53,24 +54,54 @@ export default function WebhooksPage(pageProps: any) {
       <>
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Endpoints</span>
-          <div>
-            <button className="button is-small is-default is-pulled-right" onClick={() => editWebhook()}>
-              <span className="icon"><i className="fas fa-plus"></i></span>
-              <span>Add endpoint</span>
-            </button>
-          </div>
+          <span className="title is-4">Developers</span>
+          <div></div>
         </header>
+
+        <div className="tabs">
+          <ul>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers" shallow={false} prefetch={false}>
+                <span>Overview</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/apikeys" shallow={false} prefetch={false}>
+                <span>API Keys</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <AppLink href="/developers/webhooks" shallow={false} prefetch={false}>
+                <span>Webhooks</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/events" shallow={false} prefetch={false}>
+                <span>Events</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/logs" shallow={false} prefetch={false}>
+                <span>Logs</span>
+              </AppLink>
+            </li>
+          </ul>
+        </div>
 
         {((query.data?.webhooks.edges || []).length > 0) && <div className="table-container">
           <table className="webhooks-table table is-fullwidth">
 
             <tbody>
               <tr>
-                <td className="url is-size-7">URL</td>
-                <td className="mode is-size-7">MODE</td>
-                <td className="last_event is-size-7">LAST EVENT</td>
-                <td className="action"></td>
+                <td className="url is-size-7 is-vcentered">URL</td>
+                <td className="mode is-size-7 is-vcentered">MODE</td>
+                <td className="last_event is-size-7 is-vcentered">LAST EVENT</td>
+                <td className="action pr-1">
+                  <button className="button is-small is-default is-pulled-right" onClick={() => editWebhook()}>
+                    <span className="icon"><i className="fas fa-plus"></i></span>
+                    <span>Add endpoint</span>
+                  </button>
+                </td>
               </tr>
 
               {(query.data?.webhooks.edges || []).map(({ node: webhook }) => (

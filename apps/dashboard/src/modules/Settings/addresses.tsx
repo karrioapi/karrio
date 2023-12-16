@@ -5,6 +5,7 @@ import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-sc
 import { AddressDescription } from "@karrio/ui/components/address-description";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
+import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
@@ -45,13 +46,39 @@ export default function AddressPage(pageProps: any) {
       <>
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Addresses</span>
-          <div>
-            <button className="button is-primary is-small is-pulled-right" onClick={() => editAddress()}>
-              <span>Create address</span>
-            </button>
-          </div>
+          <span className="title is-4">Settings</span>
+          <div></div>
         </header>
+
+        <div className="tabs">
+          <ul>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/account" shallow={false} prefetch={false}>
+                <span>Account</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/organization" shallow={false} prefetch={false}>
+                <span>Organization</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <AppLink href="/settings/addresses" shallow={false} prefetch={false}>
+                <span>Addresses</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/parcels" shallow={false} prefetch={false}>
+                <span>Parcels</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/templates" shallow={false} prefetch={false}>
+                <span>Templates</span>
+              </AppLink>
+            </li>
+          </ul>
+        </div>
 
         {((query?.data?.address_templates?.edges || []).length > 0) &&
           <div className="table-container">
@@ -60,7 +87,11 @@ export default function AddressPage(pageProps: any) {
 
                 <tr>
                   <td className="is-size-7" colSpan={2}>ADDRESS TEMPLATES</td>
-                  <td className="action"></td>
+                  <td className="action pr-0">
+                    <button className="button is-primary is-small is-pulled-right" onClick={() => editAddress()}>
+                      <span>Create address</span>
+                    </button>
+                  </td>
                 </tr>
 
                 {query!.data!.address_templates!.edges.map(({ node: template }) => (

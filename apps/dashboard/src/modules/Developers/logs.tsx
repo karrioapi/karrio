@@ -10,6 +10,7 @@ import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import { useLogs } from "@karrio/hooks/log";
 import Head from "next/head";
+import { AppLink } from "@karrio/ui/components/app-link";
 
 export { getServerSideProps } from "@/context/main";
 
@@ -44,10 +45,41 @@ export default function LogsPage(pageProps: any) {
 
     return (
       <>
+
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Logs</span>
-          <LogsFilter context={context} />
+          <span className="title is-4">Developers</span>
+          <div></div>
         </header>
+
+        <div className="tabs">
+          <ul>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers" shallow={false} prefetch={false}>
+                <span>Overview</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/apikeys" shallow={false} prefetch={false}>
+                <span>API Keys</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/webhooks" shallow={false} prefetch={false}>
+                <span>Webhooks</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/developers/events" shallow={false} prefetch={false}>
+                <span>Events</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <AppLink href="/developers/logs" shallow={false} prefetch={false}>
+                <span>Logs</span>
+              </AppLink>
+            </li>
+          </ul>
+        </div>
 
         <div className="tabs">
           <ul>
@@ -71,9 +103,11 @@ export default function LogsPage(pageProps: any) {
 
             <tbody className="logs-table">
               <tr>
-                <td className="status is-size-7"><span className="ml-2">STATUS</span></td>
-                <td className="description is-size-7">DESCRIPTION</td>
-                <td className="date has-text-right is-size-7"><span className="mr-2">DATE</span></td>
+                <td className="status is-size-7 is-vcentered"><span className="ml-2">STATUS</span></td>
+                <td className="description is-size-7 is-vcentered">DESCRIPTION</td>
+                <td className="date has-text-right is-size-7">
+                  <LogsFilter context={context} />
+                </td>
               </tr>
 
               {(logs?.edges || []).map(({ node: log }) => (

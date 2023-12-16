@@ -39,13 +39,39 @@ export default function TemplatesPage(pageProps: any) {
       <>
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Templates</span>
-          <div>
-            <AppLink className="button is-primary is-small is-pulled-right" href="/settings/template?id=new">
-              <span>Create template</span>
-            </AppLink>
-          </div>
+          <span className="title is-4">Settings</span>
+          <div></div>
         </header>
+
+        <div className="tabs">
+          <ul>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/account" shallow={false} prefetch={false}>
+                <span>Account</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/organization" shallow={false} prefetch={false}>
+                <span>Organization</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/addresses" shallow={false} prefetch={false}>
+                <span>Addresses</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <AppLink href="/settings/parcels" shallow={false} prefetch={false}>
+                <span>Parcels</span>
+              </AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/templates" shallow={false} prefetch={false}>
+                <span>Templates</span>
+              </AppLink>
+            </li>
+          </ul>
+        </div>
 
         {((document_templates?.edges || [])?.length > 0) && <div className="table-container">
           <table className="table is-fullwidth">
@@ -53,7 +79,11 @@ export default function TemplatesPage(pageProps: any) {
             <tbody className="templates-table">
               <tr>
                 <td className="is-size-7">DOCUMENT TEMPLATES</td>
-                <td className="action"></td>
+                <td className="action pr-0">
+                  <AppLink className="button is-primary is-small is-pulled-right" href="/settings/template?id=new">
+                    <span>Create template</span>
+                  </AppLink>
+                </td>
               </tr>
 
               {(document_templates?.edges || []).map(({ node: template }) => (
