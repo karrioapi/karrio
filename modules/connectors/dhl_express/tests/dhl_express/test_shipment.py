@@ -12,6 +12,9 @@ class TestDHLShipment(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = ShipmentRequest(**shipment_data)
+        self.NonPaperlessShipmentRequest = ShipmentRequest(
+            **non_paperless_intl_shipment_data
+        )
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
@@ -24,6 +27,20 @@ class TestDHLShipment(unittest.TestCase):
         )
 
         self.assertEqual(serialized_request, ShipmentRequestXml)
+
+    def test_create_non_paperless_shipment_request(self):
+        request = gateway.mapper.create_shipment_request(
+            self.NonPaperlessShipmentRequest
+        )
+
+        # remove MessageTime, Date for testing purpose
+        serialized_request = re.sub(
+            "            <MessageTime>[^>]+</MessageTime>",
+            "",
+            request.serialize(),
+        )
+
+        self.assertEqual(serialized_request, NonParelessShipmentRequestXml)
 
     @patch("karrio.mappers.dhl_express.proxy.lib.request", return_value="<a></a>")
     def test_create_shipment(self, http_mock):
@@ -110,7 +127,7 @@ shipment_data = {
         }
     ],
     "service": "dhl_express_worldwide_nondoc",
-    "options": {"paperless_trade": True, "insurance": 148.0},
+    "options": {"dhl_paperless_trade": True, "insurance": 148.0},
     "payment": {"paid_by": "sender", "account_number": "123456789"},
     "customs": {
         "incoterm": "DAP",
@@ -124,6 +141,81 @@ shipment_data = {
         },
     },
 }
+
+non_paperless_intl_shipment_data = {
+    "customs": {
+        "certify": True,
+        "commercial_invoice": True,
+        "commodities": [
+            {
+                "description": "description",
+                "hs_code": "12345",
+                "metadata": {},
+                "quantity": 1,
+                "sku": "sku",
+                "title": "title",
+                "value_amount": 928.1,
+                "value_currency": "EUR",
+                "weight": 0.847,
+                "weight_unit": "KG",
+            }
+        ],
+        "content_type": "merchandise",
+        "duty": {"currency": "EUR", "declared_value": 928.1, "paid_by": "sender"},
+        "incoterm": "DDP",
+        "invoice": "36892319",
+        "invoice_date": "2023-12-15",
+        "options": {},
+    },
+    "options": {
+        "currency": "EUR",
+        "declared_value": 928.1,
+        "paperless_trade": False,
+        "shipment_date": "2023-12-15",
+    },
+    "parcels": [
+        {
+            "dimension_unit": "CM",
+            "height": 5,
+            "is_document": False,
+            "items": [
+                {
+                    "description": "description",
+                    "hs_code": "123456",
+                    "metadata": {},
+                    "quantity": 1,
+                    "sku": "sku",
+                    "title": "title",
+                    "value_amount": 928.1,
+                    "value_currency": "EUR",
+                    "weight": 0.847,
+                    "weight_unit": "KG",
+                }
+            ],
+            "length": 30,
+            "packaging_type": "small_box",
+            "weight": 0.847,
+            "weight_unit": "KG",
+            "width": 22,
+        }
+    ],
+    "recipient": {
+        "address_line1": "Biryat Hadid 34",
+        "city": "Istanbul",
+        "country_code": "TR",
+        "email": "store@customer.com",
+        "person_name": "Store Customer",
+        "postal_code": "34020",
+    },
+    "service": "dhl_express_easy_nondoc",
+    "shipper": {
+        "address_line1": "address_line_1",
+        "city": "city",
+        "country_code": "CZ",
+        "person_name": "person_name",
+    },
+}
+
 
 ParsedShipmentMissingArgsError = [
     None,
@@ -347,6 +439,123 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
     </SpecialService>
     <Notification>
         <EmailAddress>c_orlander@gc.ca</EmailAddress>
+    </Notification>
+    <LabelImageFormat>PDF</LabelImageFormat>
+    <Label>
+        <LabelTemplate>6X4_PDF</LabelTemplate>
+    </Label>
+</req:ShipmentRequest>
+"""
+
+NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http://www.dhl.com ship-val-global-req.xsd" xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" schemaVersion="10.0">
+    <Request>
+        <ServiceHeader>
+
+            <MessageReference>1234567890123456789012345678901</MessageReference>
+            <SiteID>site_id</SiteID>
+            <Password>password</Password>
+        </ServiceHeader>
+        <MetaData>
+            <SoftwareName>3PV</SoftwareName>
+            <SoftwareVersion>10.0</SoftwareVersion>
+        </MetaData>
+    </Request>
+    <RegionCode>EU</RegionCode>
+    <LanguageCode>en</LanguageCode>
+    <Billing>
+        <ShipperAccountNumber>123456789</ShipperAccountNumber>
+        <ShippingPaymentType>S</ShippingPaymentType>
+        <BillingAccountNumber>123456789</BillingAccountNumber>
+    </Billing>
+    <Consignee>
+        <CompanyName>N/A</CompanyName>
+        <AddressLine1>34 Biryat Hadid</AddressLine1>
+        <City>Istanbul</City>
+        <PostalCode>34020</PostalCode>
+        <CountryCode>TR</CountryCode>
+        <CountryName>Turkey</CountryName>
+        <Contact>
+            <PersonName>Store Customer</PersonName>
+            <PhoneNumber>0000</PhoneNumber>
+            <Email>store@customer.com</Email>
+        </Contact>
+        <StreetName>Biryat Hadid</StreetName>
+        <StreetNumber>34</StreetNumber>
+    </Consignee>
+    <Commodity>
+        <CommodityCode>sku</CommodityCode>
+        <CommodityName>title</CommodityName>
+    </Commodity>
+    <Dutiable>
+        <DeclaredValue>928.1</DeclaredValue>
+        <DeclaredCurrency>EUR</DeclaredCurrency>
+        <TermsOfTrade>DDP</TermsOfTrade>
+    </Dutiable>
+    <UseDHLInvoice>Y</UseDHLInvoice>
+    <ExportDeclaration>
+        <ExportReason>merchandise</ExportReason>
+        <ExportReasonCode>C</ExportReasonCode>
+        <InvoiceNumber>36892319</InvoiceNumber>
+        <InvoiceDate>2023-12-15</InvoiceDate>
+        <ExportLineItem>
+            <LineNumber>1</LineNumber>
+            <Quantity>1</Quantity>
+            <QuantityUnit>PCS</QuantityUnit>
+            <Description>title</Description>
+            <Value>928.1</Value>
+            <CommodityCode>sku</CommodityCode>
+            <Weight>
+                <Weight>0.85</Weight>
+                <WeightUnit>K</WeightUnit>
+            </Weight>
+            <GrossWeight>
+                <Weight>0.85</Weight>
+                <WeightUnit>K</WeightUnit>
+            </GrossWeight>
+            <ManufactureCountryCode>CZ</ManufactureCountryCode>
+            <ManufactureCountryName>Czech Republic</ManufactureCountryName>
+            <ImportCommodityCode>12345</ImportCommodityCode>
+        </ExportLineItem>
+        <PlaceOfIncoterm>N/A</PlaceOfIncoterm>
+        <ShipmentPurpose>COMMERCIAL</ShipmentPurpose>
+    </ExportDeclaration>
+    <ShipmentDetails>
+        <Pieces>
+            <Piece>
+                <PieceID>1</PieceID>
+                <PackageType>JJ</PackageType>
+                <Weight>0.85</Weight>
+                <Width>22</Width>
+                <Height>5</Height>
+                <Depth>30</Depth>
+            </Piece>
+        </Pieces>
+        <WeightUnit>K</WeightUnit>
+        <GlobalProductCode>8</GlobalProductCode>
+        <LocalProductCode>8</LocalProductCode>
+        <Date>2023-12-15</Date>
+        <Contents>N/A</Contents>
+        <DimensionUnit>C</DimensionUnit>
+        <PackageType>JJ</PackageType>
+        <IsDutiable>Y</IsDutiable>
+        <CurrencyCode>EUR</CurrencyCode>
+    </ShipmentDetails>
+    <Shipper>
+        <ShipperID>123456789</ShipperID>
+        <CompanyName>N/A</CompanyName>
+        <RegisteredAccount>123456789</RegisteredAccount>
+        <AddressLine1>address_line_1</AddressLine1>
+        <City>city</City>
+        <CountryCode>CZ</CountryCode>
+        <CountryName>Czech Republic</CountryName>
+        <Contact>
+            <PersonName>person_name</PersonName>
+            <PhoneNumber>0000</PhoneNumber>
+        </Contact>
+        <StreetNumber>address_line_1</StreetNumber>
+    </Shipper>
+    <Notification>
+        <EmailAddress>store@customer.com</EmailAddress>
     </Notification>
     <LabelImageFormat>PDF</LabelImageFormat>
     <Label>

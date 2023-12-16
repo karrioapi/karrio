@@ -109,7 +109,9 @@ def shipment_request(
         origin_country=shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
-
+    option_items = [
+        option for _, option in options.items() if option.state is not False
+    ]
     duty = customs.duty or models.Duty(paid_by="sender")
     content = packages[0].parcel.content or customs.content_description or "N/A"
     reference = payload.reference or getattr(payload, "id", None)
@@ -119,7 +121,6 @@ def shipment_request(
         or settings.default_currency
     )
 
-    dhl_special_services = {k: v for k, v in options.items() if v}
     request = dhl.ShipmentRequest(
         schemaVersion="10.0",
         Request=settings.Request(
@@ -277,7 +278,7 @@ def shipment_request(
                         ]
                     )
                     if (
-                        options.paperless_trade.state == True
+                        options.dhl_paperless_trade.state == True
                         and any(options.doc_references.state or [])
                     )
                     else None
@@ -393,10 +394,8 @@ def shipment_request(
                     currency if lib.to_money(svc.state) is not None else None
                 ),
             )
-            for _, svc in dhl_special_services
-        ]
-        if dhl_special_services
-        else None,
+            for svc in option_items
+        ],
         Notification=(
             dhl.Notification(
                 EmailAddress=options.email_notification_to.state or recipient.email
@@ -424,7 +423,7 @@ def shipment_request(
                 ]
             )
             if (
-                options.paperless_trade.state == True
+                options.dhl_paperless_trade.state == True
                 and any(options.doc_files.state or [])
             )
             else None

@@ -606,13 +606,13 @@ def shipping_options_initializer(
     _options = options.copy()
 
     if origin_country in UNSUPPORTED_PAPERLESS_COUNTRIES:
-        _options.update({"paperless_trade": False})
+        _options.update({"dhl_paperless_trade": False})
 
     if package_options is not None:
         _options.update(package_options.content)
 
     def items_filter(key: str) -> bool:
-        return (key in ShippingOption) and (_options.get(key) not in [False])  # type: ignore
+        return key in ShippingOption  # type: ignore
 
     return lib.units.ShippingOptions(
         _options, ShippingOption, items_filter=items_filter

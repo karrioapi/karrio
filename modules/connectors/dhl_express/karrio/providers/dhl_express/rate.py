@@ -120,7 +120,9 @@ def rate_request(
         origin_country=payload.shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
-
+    option_items = [
+        option for _, option in options.items() if option.state is not False
+    ]
     weight_unit, dim_unit = (
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
         or packages.compatible_units
@@ -192,9 +194,9 @@ def rate_request(
                             QtdShpExChrg=(
                                 [
                                     dhl.QtdShpExChrgType(SpecialServiceType=option.code)
-                                    for _, option in options.items()
+                                    for option in option_items
                                 ]
-                                if any(options.items())
+                                if any(option_items)
                                 else None
                             ),
                         )
