@@ -43,7 +43,7 @@ Karrio custom styling
 .shipments-table {
   .carrier {
     width: 8%;
-    min-width: 50px;
+    min-width: 90px;
   }
 
   .service {
@@ -60,9 +60,15 @@ Karrio custom styling
     max-width: 200px;
   }
 
+  .reference {
+    min-width: 10vw;
+    max-width: 150px;
+  }
+
   .date {
     width: 15%;
     min-width: 120px;
+    max-width: 120px;
   }
 
   .action {
@@ -390,7 +396,7 @@ hr {
   position: fixed;
   top: 0;
   z-index: 40;
-  border-top: 1px solid rgb(196, 76, 52);
+  border-top: 2px solid rgb(196, 76, 52);
   padding: 0;
   text-align: center;
   width: 100%;

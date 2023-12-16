@@ -1,4 +1,4 @@
-import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
+import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, formatCarrierSlug } from "@karrio/lib";
 import { ShipmentPreview, ShipmentPreviewContext } from "@/components/shipment-preview";
 import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
@@ -16,6 +16,7 @@ import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import { AddressType } from "@karrio/types";
 import Head from "next/head";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 export { getServerSideProps } from "@/context/main";
 
@@ -24,6 +25,7 @@ export default function ShipmentsPage(pageProps: any) {
   const Component: React.FC = () => {
     const router = useRouter();
     const { setLoading } = useLoader();
+    const { metadata } = useAPIMetadata();
     const [initialized, setInitialized] = React.useState(false);
     const { previewShipment } = useContext(ShipmentPreviewContext);
     const context = useShipments({
@@ -100,6 +102,7 @@ export default function ShipmentsPage(pageProps: any) {
                   <td className="service is-size-7">SERVICE</td>
                   <td className="status"></td>
                   <td className="recipient is-size-7">RECIPIENT</td>
+                  <td className="reference is-size-7">REFERENCE</td>
                   <td className="date is-size-7">DATE</td>
                   <td className="action"></td>
                 </tr>
@@ -107,12 +110,11 @@ export default function ShipmentsPage(pageProps: any) {
                 {(shipments?.edges || []).map(({ node: shipment }) => (
                   <tr key={shipment.id} className="items is-clickable">
                     <td className="carrier is-vcentered p-2" onClick={() => previewShipment(shipment.id)}>
-                      {!!shipment.carrier_name && <CarrierBadge
+                      <CarrierBadge
                         className="has-background-primary has-text-weight-bold has-text-white-bis"
                         style={{ fontSize: '0.6rem' }}
-                        carrier_name={shipment.meta.carrier || shipment.carrier_name}
-                      />}
-                      {!shipment.carrier_name && <AppBadge />}
+                        carrier_name={shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(metadata.APP_NAME)}
+                      />
                     </td>
                     <td className="service is-vcentered p-1 pl-2 is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
                       onClick={() => previewShipment(shipment.id)}
@@ -137,6 +139,9 @@ export default function ShipmentsPage(pageProps: any) {
                       </span>
                       <br />
                       <span className="has-text-weight-medium">{formatAddressLocationShort(shipment.recipient as AddressType)}</span>
+                    </td>
+                    <td className="reference is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis" onClick={() => previewShipment(shipment.id)}>
+                      <span>{shipment.reference || ''}</span>
                     </td>
                     <td className="date is-vcentered px-1" onClick={() => previewShipment(shipment.id)}>
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">
