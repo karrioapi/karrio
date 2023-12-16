@@ -50,7 +50,11 @@ export default function ParcelsPage(pageProps: any) {
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Settings</span>
-          <div></div>
+          <div>
+            <button className="button is-primary is-small is-pulled-right" onClick={() => editParcel()}>
+              <span>Create parcel</span>
+            </button>
+          </div>
         </header>
 
         <div className="tabs">
@@ -89,11 +93,7 @@ export default function ParcelsPage(pageProps: any) {
             <tbody className="templates-table">
               <tr>
                 <td className="is-size-7" colSpan={2}>PARCEL TEMPLATES</td>
-                <td className="action pr-0">
-                  <button className="button is-primary is-small is-pulled-right" onClick={() => editParcel()}>
-                    <span>Create parcel</span>
-                  </button>
-                </td>
+                <td className="action pr-0"></td>
               </tr>
 
               {(parcel_templates?.edges || []).map(({ node: template }) => (
@@ -158,8 +158,8 @@ export default function ParcelsPage(pageProps: any) {
           <div className="card my-6">
 
             <div className="card-content has-text-centered">
-              <p>No parcel has been added yet.</p>
-              <p>Use the <strong>New Parcel</strong> button above to add</p>
+              <p>{`There aren't any results for that query.`}</p>
+              <p>{`Create a new parcel`}</p>
             </div>
 
           </div>}
