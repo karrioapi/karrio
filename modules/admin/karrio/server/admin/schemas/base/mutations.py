@@ -12,10 +12,12 @@ import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
 import karrio.server.admin.forms as forms
 import karrio.server.pricing.models as pricing
+import karrio.server.serializers as serializers
 import karrio.server.providers.models as providers
 import karrio.server.admin.schemas.base.types as types
 import karrio.server.admin.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.mutations as base
+import karrio.server.graph.serializers as graph_serializers
 
 logger = logging.getLogger(__name__)
 
@@ -248,3 +250,76 @@ class UpdateSurchargeMutation(utils.BaseMutation):
         return UpdateSurchargeMutation(
             surcharge=pricing.Surcharge.objects.get(id=id)
         )  # type:ignore
+
+
+@strawberry.type
+class CreateRateSheetMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
+    @admin.staff_required
+    def mutate(
+        info: Info, **input: inputs.base.CreateRateSheetMutationInput
+    ) -> "CreateRateSheetMutation":
+        data = input.copy()
+        slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
+        serializer = graph_serializers.RateSheetModelSerializer(
+            data={**data, "slug": slug, "is_system": True},
+            context=info.context.request,
+        )
+
+        serializer.is_valid(raise_exception=True)
+        rate_sheet = serializer.save()
+
+        if "services" in data:
+            serializers.save_many_to_many_data(
+                "services",
+                graph_serializers.ServiceLevelModelSerializer,
+                rate_sheet,
+                payload=data,
+                context=info.context.request,
+            )
+
+        return CreateRateSheetMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class UpdateRateSheetMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
+    @admin.staff_required
+    def mutate(
+        info: Info, **input: inputs.base.UpdateRateSheetMutationInput
+    ) -> "UpdateRateSheetMutation":
+        data = input.copy()
+        instance = providers.RateSheet.access_by(info.context.request).get(
+            id=input["id"]
+        )
+        serializer = graph_serializers.RateSheetModelSerializer(
+            instance,
+            data=data,
+            context=info.context.request,
+            partial=True,
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        if "services" in data:
+            serializers.save_many_to_many_data(
+                "services",
+                graph_serializers.ServiceLevelModelSerializer,
+                instance,
+                payload=data,
+                context=info.context.request,
+            )
+
+        rate_sheet = serializer.save()
+
+        return UpdateRateSheetMutation(rate_sheet=rate_sheet)

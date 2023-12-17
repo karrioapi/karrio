@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
-import karrio.server.iam.models as iam
 import karrio.server.user.models as auth
 import karrio.server.core.models as core
 import karrio.server.graph.utils as utils
@@ -764,6 +763,43 @@ class LabelTemplateType:
     width: typing.Optional[int]
     height: typing.Optional[int]
     shipment_sample: typing.Optional[utils.JSON]
+
+
+@strawberry.type
+class RateSheetType:
+    id: str
+    object_type: str
+    name: str
+    slug: str
+    carrier_name: utils.CarrierNameEnum
+
+    @strawberry.field
+    def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+        try:
+            return lib.to_dict(self.metadata)
+        except:
+            return self.metadata
+
+    @strawberry.field
+    def services(self: providers.RateSheet) -> typing.List[ServiceLevelType]:
+        return self.services.all()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info, id: str) -> typing.Optional["RateSheetType"]:
+        return providers.RateSheet.access_by(info.context.request).filter(id=id).first()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.RateSheetFilter] = strawberry.UNSET,
+    ) -> utils.Connection["RateSheetType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.RateSheetFilter()
+        queryset = filters.RateSheetFilter(
+            _filter.to_dict(), providers.RateSheet.access_by(info.context.request)
+        ).qs
+        return utils.paginated_connection(queryset, **_filter.pagination())
 
 
 @strawberry.type

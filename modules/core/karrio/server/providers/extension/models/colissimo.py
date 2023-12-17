@@ -1,9 +1,8 @@
-import karrio.lib as lib
 import django.db.models as models
+import karrio.server.providers.models as providers
 
-import karrio.server.providers.models.carrier as providers
 
-
+@providers.has_rate_sheet("colissimo")
 class ColissimoSettings(providers.Carrier):
     class Meta:
         db_table = "colissimo-settings"
@@ -18,12 +17,6 @@ class ColissimoSettings(providers.Carrier):
     @property
     def carrier_name(self) -> str:
         return "colissimo"
-
-    @property
-    def default_services(self):
-        from karrio.providers.colissimo.units import DEFAULT_SERVICES
-
-        return lib.to_dict(DEFAULT_SERVICES)
 
 
 SETTINGS = ColissimoSettings

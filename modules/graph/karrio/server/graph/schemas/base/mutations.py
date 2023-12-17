@@ -11,7 +11,6 @@ from django_otp.plugins.otp_email import models as otp
 from django.utils.translation import gettext_lazy as _
 from django.db import transaction
 
-import karrio.lib as lib
 from karrio.server.core.utils import ConfirmationToken, send_email
 from karrio.server.user.serializers import TokenSerializer
 from karrio.server.conf import settings
@@ -468,6 +467,77 @@ class DeleteMutation(utils.BaseMutation):
             manager_serializers.reset_related_shipment_rates(shipment)
 
         return DeleteMutation(id=id)  # type:ignore
+
+
+@strawberry.type
+class CreateRateSheetMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
+    def mutate(
+        info: Info, **input: inputs.CreateRateSheetMutationInput
+    ) -> "CreateRateSheetMutation":
+        data = input.copy()
+        slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
+        serializer = serializers.RateSheetModelSerializer(
+            data={**data, "slug": slug},
+            context=info.context.request,
+        )
+
+        serializer.is_valid(raise_exception=True)
+        rate_sheet = serializer.save()
+
+        if "services" in data:
+            save_many_to_many_data(
+                "services",
+                serializers.ServiceLevelModelSerializer,
+                rate_sheet,
+                payload=data,
+                context=info.context.request,
+            )
+
+        return CreateRateSheetMutation(rate_sheet=rate_sheet)
+
+
+@strawberry.type
+class UpdateRateSheetMutation(utils.BaseMutation):
+    rate_sheet: typing.Optional[types.RateSheetType] = None
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
+    def mutate(
+        info: Info, **input: inputs.UpdateRateSheetMutationInput
+    ) -> "UpdateRateSheetMutation":
+        data = input.copy()
+        instance = providers.RateSheet.access_by(info.context.request).get(
+            id=input["id"]
+        )
+        serializer = serializers.RateSheetModelSerializer(
+            instance,
+            data=data,
+            context=info.context.request,
+            partial=True,
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        if "services" in data:
+            save_many_to_many_data(
+                "services",
+                serializers.ServiceLevelModelSerializer,
+                instance,
+                payload=data,
+                context=info.context.request,
+            )
+
+        rate_sheet = serializer.save()
+
+        return UpdateRateSheetMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type

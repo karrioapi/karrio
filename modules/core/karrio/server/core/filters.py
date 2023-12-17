@@ -1,6 +1,6 @@
 import typing
-from django.db.models import Q
-from django.conf import settings
+import django.conf as conf
+import django.db.models as models
 import django.contrib.auth as auth
 
 import karrio.server.core.serializers as serializers
@@ -240,7 +240,7 @@ class ShipmentFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def address_filter(self, queryset, name, value):
-        if "postgres" in settings.DB_ENGINE:
+        if "postgres" in conf.settings.DB_ENGINE:
             from django.contrib.postgres.search import SearchVector
 
             return queryset.annotate(
@@ -258,20 +258,20 @@ class ShipmentFilters(filters.FilterSet):
             ).filter(search=value)
 
         return queryset.filter(
-            Q(id__icontains=value)
-            | Q(recipient__address_line1__icontains=value)
-            | Q(recipient__address_line2__icontains=value)
-            | Q(recipient__postal_code__icontains=value)
-            | Q(recipient__person_name__icontains=value)
-            | Q(recipient__company_name__icontains=value)
-            | Q(recipient__country_code__icontains=value)
-            | Q(recipient__city__icontains=value)
-            | Q(recipient__email__icontains=value)
-            | Q(recipient__phone_number__icontains=value)
+            models.Q(id__icontains=value)
+            | models.Q(recipient__address_line1__icontains=value)
+            | models.Q(recipient__address_line2__icontains=value)
+            | models.Q(recipient__postal_code__icontains=value)
+            | models.Q(recipient__person_name__icontains=value)
+            | models.Q(recipient__company_name__icontains=value)
+            | models.Q(recipient__country_code__icontains=value)
+            | models.Q(recipient__city__icontains=value)
+            | models.Q(recipient__email__icontains=value)
+            | models.Q(recipient__phone_number__icontains=value)
         )
 
     def keyword_filter(self, queryset, name, value):
-        if "postgres" in settings.DB_ENGINE:
+        if "postgres" in conf.settings.DB_ENGINE:
             from django.contrib.postgres.search import SearchVector
 
             return queryset.annotate(
@@ -292,30 +292,30 @@ class ShipmentFilters(filters.FilterSet):
             ).filter(search=value)
 
         return queryset.filter(
-            Q(id__icontains=value)
-            | Q(recipient__address_line1__icontains=value)
-            | Q(recipient__address_line2__icontains=value)
-            | Q(recipient__postal_code__icontains=value)
-            | Q(recipient__person_name__icontains=value)
-            | Q(recipient__company_name__icontains=value)
-            | Q(recipient__country_code__icontains=value)
-            | Q(recipient__city__icontains=value)
-            | Q(recipient__email__icontains=value)
-            | Q(recipient__phone_number__icontains=value)
-            | Q(tracking_number__icontains=value)
-            | Q(reference__icontains=value)
+            models.Q(id__icontains=value)
+            | models.Q(recipient__address_line1__icontains=value)
+            | models.Q(recipient__address_line2__icontains=value)
+            | models.Q(recipient__postal_code__icontains=value)
+            | models.Q(recipient__person_name__icontains=value)
+            | models.Q(recipient__company_name__icontains=value)
+            | models.Q(recipient__country_code__icontains=value)
+            | models.Q(recipient__city__icontains=value)
+            | models.Q(recipient__email__icontains=value)
+            | models.Q(recipient__phone_number__icontains=value)
+            | models.Q(tracking_number__icontains=value)
+            | models.Q(reference__icontains=value)
         )
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
-            Q(
+            models.Q(
                 **{
                     f"selected_rate_carrier__{value.replace('_', '')}settings__isnull": False
                 }
             )
             for value in values
         ]
-        query = Q(meta__rate_provider__in=values)
+        query = models.Q(meta__rate_provider__in=values)
 
         for item in _filters:
             query |= item
@@ -323,7 +323,7 @@ class ShipmentFilters(filters.FilterSet):
         return queryset.filter(query)
 
     def option_key_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__has_keys=value))
+        return queryset.filter(models.Q(options__has_keys=value))
 
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(
@@ -347,7 +347,7 @@ class ShipmentFilters(filters.FilterSet):
         )
 
     def service_filter(self, queryset, name, values):
-        return queryset.filter(Q(selected_rate__service__in=values))
+        return queryset.filter(models.Q(selected_rate__service__in=values))
 
 
 class TrackerFilters(filters.FilterSet):
@@ -427,7 +427,9 @@ class TrackerFilters(filters.FilterSet):
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
-            Q(**{f"tracking_carrier__{value.replace('_', '')}settings__isnull": False})
+            models.Q(
+                **{f"tracking_carrier__{value.replace('_', '')}settings__isnull": False}
+            )
             for value in values
         ]
         query = _filters.pop()
@@ -540,3 +542,36 @@ class PickupFilters(filters.FilterSet):
 
         model = manager.Pickup
         fields: list = []
+
+
+class RateSheetFilter(filters.FilterSet):
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="rate sheet keyword and indexes search",
+    )
+
+    class Meta:
+        import karrio.server.providers.models as providers
+
+        model = providers.RateSheet
+        fields: typing.List[str] = []
+
+    def keyword_filter(self, queryset, name, value):
+        if "postgres" in conf.settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "id",
+                    "name",
+                    "slug",
+                    "carrier_name",
+                )
+            ).filter(search=value)
+
+        return queryset.filter(
+            models.Q(id__icontains=value)
+            | models.Q(name__icontains=value)
+            | models.Q(slug__icontains=value)
+            | models.Q(carrier_name__icontains=value)
+        )

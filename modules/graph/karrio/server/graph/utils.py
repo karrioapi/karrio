@@ -73,6 +73,9 @@ ManualShipmentStatusEnum: typing.Any = strawberry.enum(  # type: ignore
 TrackerStatusEnum: typing.Any = strawberry.enum(  # type: ignore
     lib.Enum("TrackerStatusEnum", serializers.TRACKER_STATUS)
 )
+CarrierNameEnum: typing.Any = strawberry.enum(  # type: ignore
+    lib.Enum("CarrierNameEnum", serializers.CARRIERS)
+)
 
 
 class MetadataObjectType(lib.Enum):

@@ -1,10 +1,10 @@
-from django.db import models
-from django.core.validators import RegexValidator
-from karrio.core.utils import DP
-from karrio.server.providers.models.carrier import Carrier, COUNTRIES
+import django.db.models as models
+import django.core.validators as validators
+import karrio.server.providers.models as providers
 
 
-class GenericSettings(Carrier):
+@providers.has_rate_sheet("bpost")
+class GenericSettings(providers.Carrier):
     CARRIER_NAME = "generic"
 
     class Meta:
@@ -15,7 +15,7 @@ class GenericSettings(Carrier):
     display_name = models.CharField(max_length=30, help_text="Carrier display name")
     custom_carrier_name = models.CharField(
         max_length=30,
-        validators=[RegexValidator(r"^[a-z0-9_]+$")],
+        validators=[validators.RegexValidator(r"^[a-z0-9_]+$")],
         help_text="Unique carrier slug, lowercase alphanumeric characters and underscores only",
     )
     services = models.ManyToManyField("ServiceLevel", blank=True)
@@ -24,18 +24,12 @@ class GenericSettings(Carrier):
     )
     account_number = models.CharField(max_length=20, null=True, blank=True, default="")
     account_country_code = models.CharField(
-        max_length=3, null=True, blank=True, choices=COUNTRIES
+        max_length=3, null=True, blank=True, choices=providers.COUNTRIES
     )
 
     @property
     def carrier_name(self) -> str:
         return self.custom_carrier_name  # "generic"
-
-    @property
-    def default_services(self):
-        from karrio.providers.generic import units
-
-        return DP.to_dict(units.DEFAULT_SERVICES)
 
 
 SETTINGS = GenericSettings
