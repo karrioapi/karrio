@@ -69,8 +69,8 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         </AppLink>
 
         {/* Settings */}
-        <AppLink href="/settings/account" className={"menu-item " + activeClass("/settings/account")} shallow={false} prefetch={false}>
-          <i className={`fa fa-cog pr-2 ${isActive("/settings/account") ? "" : 'has-text-grey'}`}></i>
+        <AppLink href="/settings/account" className={"menu-item " + activeClass("/settings")} shallow={false} prefetch={false}>
+          <i className={`fa fa-cog pr-2 ${isActive("/settings") ? "" : 'has-text-grey'}`}></i>
           <span className="has-text-weight-bold">Settings</span>
         </AppLink>
 
@@ -89,7 +89,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         }
 
         {/* Developers */}
-        <AppLink href="/developers" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
+        <AppLink href="/developers" className={"menu-item " + activeClass("/developers")} shallow={false} prefetch={false}>
           <i className={`fa fa-terminal pr-2 ${isActive("/developers") ? "" : 'has-text-grey'}`}></i>
           <span className="has-text-weight-bold">Developers</span>
         </AppLink>
