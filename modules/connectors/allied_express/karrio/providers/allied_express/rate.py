@@ -30,7 +30,11 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.ResultType, data)
-    service = provider_units.ShippingService.map(settings.service_type or "R")
+    service = provider_units.ShippingService.map(
+        settings.connection_config.account_service_type.state
+        or settings.service_type
+        or "R"
+    )
     charges = [
         ("Job charge", lib.to_money(rate.jobCharge)),
         *((s.chargeCode, lib.to_money(s.netValue)) for s in rate.surcharges),

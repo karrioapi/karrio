@@ -407,6 +407,21 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("account").required}
                 />}
 
+                {field("service_type").exists &&
+                  <SelectField value={payload.service_type}
+                    name="service_type"
+                    label="Service type"
+                    onChange={handleChange}
+                    className="is-small is-fullwidth"
+                    required={field("service_type").required}
+                  >
+                    {!field("service_type").required && <option value='none'></option>}
+                    <option value={`R`}>{`Road service - R`}</option>
+                    <option value={`P`}>{`Road service - P`}</option>
+                    <option value={`PT`}>{`Road service - PT`}</option>
+                    <option value={`PT2`}>{`Road service - PT2`}</option>
+                  </SelectField>}
+
                 {field("billing_account").exists && <InputField label="Billing Account" value={payload.billing_account}
                   name="billing_account"
                   onChange={handleChange}
@@ -639,6 +654,21 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               className="is-small is-fullwidth"
                             />}
 
+                          {"account_service_type" in connection_configs[carrier_name.toString()] &&
+                            <SelectField value={payload.config?.account_service_type}
+                              name="account_service_type"
+                              label="Account service type"
+                              onChange={handleConfigChange}
+                              className="is-small is-fullwidth"
+                              fieldClass="column is-6 mb-0"
+                            >
+                              <option value='none'></option>
+                              <option value={`R`}>{`Road service - R`}</option>
+                              <option value={`P`}>{`Road service - P`}</option>
+                              <option value={`PT`}>{`Road service - PT`}</option>
+                              <option value={`PT2`}>{`Road service - PT2`}</option>
+                            </SelectField>}
+
                           {"shipping_services" in connection_configs[carrier_name.toString()] &&
                             <SelectField defaultValue={payload.config?.shipping_services}
                               name="shipping_services"
@@ -729,7 +759,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 function fieldState(carrier_name: CarrierNameType, property: string) {
   const field = (
     ({
-      [CarrierSettingsCarrierNameEnum.AlliedExpress]: [["carrier_id", true], ["username", true], ["password", true], ["account", false]],
+      [CarrierSettingsCarrierNameEnum.AlliedExpress]: [["carrier_id", true], ["username", true], ["password", true], ["account", false], ["service_type", false]],
       [CarrierSettingsCarrierNameEnum.AmazonShipping]: [["carrier_id", true], ["seller_id", true], ["developer_id", true], ["mws_auth_token", true], ["aws_region"]],
       [CarrierSettingsCarrierNameEnum.Aramex]: [["carrier_id", true], ["username", true], ["password", true], ["account_pin", true], ["account_entity", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Australiapost]: [["carrier_id", true], ["api_key", true], ["password", true], ["account_number", true]],

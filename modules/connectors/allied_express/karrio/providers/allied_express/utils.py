@@ -30,6 +30,15 @@ class Settings(core.Settings):
         pair = "%s:%s" % (self.username, self.password)
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.allied_express.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
+
 
 @attr.s(auto_attribs=True)
 class AlliedResponse:

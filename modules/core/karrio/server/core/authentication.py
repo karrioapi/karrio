@@ -244,7 +244,7 @@ def get_request_org(request, user, org_id: str = None, default_org=None):
                 orgs = Organization.objects.filter(users__id=user.id)
                 org = (
                     orgs.filter(id=org_id).first()
-                    if org_id is not None
+                    if org_id is not None and orgs.filter(id=org_id).exists()
                     else orgs.filter(is_active=True).first()
                 )
 
