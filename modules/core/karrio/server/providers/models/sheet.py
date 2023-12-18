@@ -41,3 +41,11 @@ class RateSheet(core.OwnedEntity):
     @property
     def object_type(self):
         return "rate-sheet"
+
+    @property
+    def carriers(self):
+        import karrio.server.providers.models as providers
+
+        return providers.MODELS[self.carrier_name].objects.filter(
+            rate_sheet__id=self.id
+        )

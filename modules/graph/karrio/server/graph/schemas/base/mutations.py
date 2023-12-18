@@ -25,6 +25,7 @@ import karrio.server.graph.serializers as serializers
 import karrio.server.providers.models as providers
 import karrio.server.user.models as user_models
 import karrio.server.manager.models as manager
+import karrio.server.core.gateway as gateway
 import karrio.server.graph.models as graph
 import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
@@ -481,6 +482,7 @@ class CreateRateSheetMutation(utils.BaseMutation):
         info: Info, **input: inputs.CreateRateSheetMutationInput
     ) -> "CreateRateSheetMutation":
         data = input.copy()
+        carriers = data.pop("carriers", [])
         slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
         serializer = serializers.RateSheetModelSerializer(
             data={**data, "slug": slug},
@@ -499,7 +501,18 @@ class CreateRateSheetMutation(utils.BaseMutation):
                 context=info.context.request,
             )
 
-        return CreateRateSheetMutation(rate_sheet=rate_sheet)
+        if any(carriers):
+            _carriers = gateway.Carriers.list(
+                context=info.context.request,
+                carrier_name=rate_sheet.carrier_name,
+            ).filter(id__in=carriers)
+            for _ in _carriers:
+                _.settings.rate_sheet = rate_sheet
+                _.settings.save(update_fields=["rate_sheet"])
+
+        return CreateRateSheetMutation(
+            rate_sheet=providers.RateSheet.objects.get(id=input["id"])
+        )
 
 
 @strawberry.type
@@ -514,6 +527,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         info: Info, **input: inputs.UpdateRateSheetMutationInput
     ) -> "UpdateRateSheetMutation":
         data = input.copy()
+        carriers = data.pop("carriers", []) if "carriers" in data else None
         instance = providers.RateSheet.access_by(info.context.request).get(
             id=input["id"]
         )
@@ -525,6 +539,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         )
 
         serializer.is_valid(raise_exception=True)
+        rate_sheet = serializer.save()
 
         if "services" in data:
             save_many_to_many_data(
@@ -535,9 +550,20 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 context=info.context.request,
             )
 
-        rate_sheet = serializer.save()
+        if carriers is not None:
+            _ids = set([*carriers, *(rate_sheet.carriers.values_list("id", flat=True))])
+            _carriers = gateway.Carriers.list(
+                context=info.context.request,
+                carrier_name=rate_sheet.carrier_name,
+            ).filter(id__in=list(_ids))
 
-        return UpdateRateSheetMutation(rate_sheet=rate_sheet)
+            for _ in _carriers:
+                _.settings.rate_sheet = rate_sheet if _.id in carriers else None
+                _.settings.save(update_fields=["rate_sheet"])
+
+        return UpdateRateSheetMutation(
+            rate_sheet=providers.RateSheet.objects.get(id=input["id"])
+        )
 
 
 @strawberry.type

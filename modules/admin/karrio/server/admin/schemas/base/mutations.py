@@ -7,7 +7,6 @@ import django.db.models as models
 import django.db.transaction as transaction
 
 import karrio.server.conf as conf
-import karrio.server.core.utils as core
 import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
 import karrio.server.admin.forms as forms
@@ -254,7 +253,7 @@ class UpdateSurchargeMutation(utils.BaseMutation):
 
 @strawberry.type
 class CreateRateSheetMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
 
     @staticmethod
     @transaction.atomic
@@ -265,6 +264,7 @@ class CreateRateSheetMutation(utils.BaseMutation):
         info: Info, **input: inputs.base.CreateRateSheetMutationInput
     ) -> "CreateRateSheetMutation":
         data = input.copy()
+        carriers = data.pop("carriers", [])
         slug = f"{input.get('name', '').lower()}_sheet".replace(" ", "").lower()
         serializer = graph_serializers.RateSheetModelSerializer(
             data={**data, "slug": slug, "is_system": True},
@@ -283,12 +283,19 @@ class CreateRateSheetMutation(utils.BaseMutation):
                 context=info.context.request,
             )
 
+        if any(carriers):
+            (
+                providers.MODELS[rate_sheet.carrier_name]
+                .objects.filter(id__in=carriers, is_system=True)
+                .update(rate_sheet=rate_sheet)
+            )
+
         return CreateRateSheetMutation(rate_sheet=rate_sheet)
 
 
 @strawberry.type
 class UpdateRateSheetMutation(utils.BaseMutation):
-    rate_sheet: typing.Optional[types.RateSheetType] = None
+    rate_sheet: typing.Optional[types.SystemRateSheetType] = None
 
     @staticmethod
     @transaction.atomic
@@ -299,6 +306,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         info: Info, **input: inputs.base.UpdateRateSheetMutationInput
     ) -> "UpdateRateSheetMutation":
         data = input.copy()
+        carriers = data.pop("carriers", [])
         instance = providers.RateSheet.access_by(info.context.request).get(
             id=input["id"]
         )
@@ -310,6 +318,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         )
 
         serializer.is_valid(raise_exception=True)
+        rate_sheet = serializer.save()
 
         if "services" in data:
             serializers.save_many_to_many_data(
@@ -320,6 +329,19 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 context=info.context.request,
             )
 
-        rate_sheet = serializer.save()
+        if any(carriers):
+            # Link listed carriers to rate sheet
+            (
+                providers.MODELS[rate_sheet.carrier_name]
+                .objects.filter(id__in=carriers, is_system=True)
+                .update(rate_sheet=rate_sheet)
+            )
+            # Unlink missing carriers from rate sheet
+            (
+                providers.MODELS[rate_sheet.carrier_name]
+                .objects.filter(rate_sheet=rate_sheet, is_system=True)
+                .exclude(id__in=carriers)
+                .update(rate_sheet=None)
+            )
 
         return UpdateRateSheetMutation(rate_sheet=rate_sheet)

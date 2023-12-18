@@ -767,8 +767,8 @@ class LabelTemplateType:
 
 @strawberry.type
 class RateSheetType:
-    id: str
     object_type: str
+    id: str
     name: str
     slug: str
     carrier_name: utils.CarrierNameEnum
@@ -779,6 +779,10 @@ class RateSheetType:
             return lib.to_dict(self.metadata)
         except:
             return self.metadata
+
+    @strawberry.field
+    def carriers(self: providers.RateSheet) -> typing.List["ConnectionType"]:
+        return list(map(ConnectionType.parse, self.carriers))
 
     @strawberry.field
     def services(self: providers.RateSheet) -> typing.List[ServiceLevelType]:
@@ -884,6 +888,11 @@ class ConnectionType:
             else {}
         )
         display_name = dict(display_name=carrier.carrier_display_name)
+        rate_sheet = (
+            dict(rate_sheet=carrier.settings.rate_sheet)
+            if "rate_sheet" in settings
+            else {}
+        )
 
         return (settings_types or CarrierSettings)[carrier_name](
             id=carrier.id,
@@ -891,7 +900,7 @@ class ConnectionType:
             carrier_name=carrier_name,
             capabilities=carrier.capabilities,
             config=getattr(carrier.config, "config", None),
-            **{**settings, **services, **display_name},
+            **{**settings, **services, **display_name, **rate_sheet},
         )
 
 
@@ -905,13 +914,13 @@ def create_carrier_settings_type(name: str, model):
         config: typing.Optional[utils.JSON] = None
 
         if hasattr(model, "account_number"):
-            account_number: typing.Optional[str] = strawberry.UNSET
+            account_number: typing.Optional[str] = None
 
         if hasattr(model, "account_country_code"):
-            account_country_code: typing.Optional[str] = strawberry.UNSET
+            account_country_code: typing.Optional[str] = None
 
         if hasattr(model, "label_template"):
-            label_template: typing.Optional[LabelTemplateType] = strawberry.UNSET
+            label_template: typing.Optional[LabelTemplateType] = None
 
         if hasattr(model, "services"):
 
@@ -920,6 +929,9 @@ def create_carrier_settings_type(name: str, model):
                 self: providers.Carrier,
             ) -> typing.Optional[typing.List[ServiceLevelType]]:
                 return self.services.all()
+
+        if hasattr(model, "rate_sheet"):
+            rate_sheet: typing.Optional[RateSheetType] = None
 
     annotations = {
         **getattr(_RawSettings, "__annotations__", {}),

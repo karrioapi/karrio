@@ -1,4 +1,3 @@
-from operator import is_
 import typing
 import datetime
 import strawberry
@@ -333,7 +332,7 @@ InstanceConfigType = strawberry.type(
 
 
 @strawberry.type
-class RateSheetType(base.RateSheetType):
+class SystemRateSheetType(base.RateSheetType):
     id: str
 
     @staticmethod
@@ -342,7 +341,7 @@ class RateSheetType(base.RateSheetType):
     def resolve(
         info,
         id: str,
-    ) -> typing.Optional["RateSheetType"]:
+    ) -> typing.Optional["SystemRateSheetType"]:
         return providers.RateSheet.objects.filter(id=id, is_system=True).first()
 
     @staticmethod
@@ -351,7 +350,7 @@ class RateSheetType(base.RateSheetType):
     def resolve_list(
         info,
         filter: typing.Optional[inputs.base.RateSheetFilter] = strawberry.UNSET,
-    ) -> utils.Connection["RateSheetType"]:
+    ) -> utils.Connection["SystemRateSheetType"]:
         _filter = (
             filter if not utils.is_unset(filter) else inputs.base.RateSheetFilter()
         )

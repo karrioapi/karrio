@@ -44,11 +44,11 @@ class Query:
         types.SystemCarrierConnectionType
     ] = strawberry.field(resolver=types.SystemConnectionType.resolve_list)
 
-    rate_sheet: typing.Optional[types.RateSheetType] = strawberry.field(
-        resolver=types.RateSheetType.resolve
+    rate_sheet: typing.Optional[types.SystemRateSheetType] = strawberry.field(
+        resolver=types.SystemRateSheetType.resolve
     )
-    rate_sheets: utils.Connection[types.RateSheetType] = strawberry.field(
-        resolver=types.RateSheetType.resolve_list
+    rate_sheets: utils.Connection[types.SystemRateSheetType] = strawberry.field(
+        resolver=types.SystemRateSheetType.resolve_list
     )
 
 
