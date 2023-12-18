@@ -55,7 +55,12 @@ export default function WebhooksPage(pageProps: any) {
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Developers</span>
-          <div></div>
+          <div>
+            <button className="button is-small is-default is-pulled-right" onClick={() => editWebhook()}>
+              <span className="icon"><i className="fas fa-plus"></i></span>
+              <span>Add endpoint</span>
+            </button>
+          </div>
         </header>
 
         <div className="tabs">
@@ -96,12 +101,7 @@ export default function WebhooksPage(pageProps: any) {
                 <td className="url is-size-7 is-vcentered">URL</td>
                 <td className="mode is-size-7 is-vcentered">MODE</td>
                 <td className="last_event is-size-7 is-vcentered">LAST EVENT</td>
-                <td className="action pr-1">
-                  <button className="button is-small is-default is-pulled-right" onClick={() => editWebhook()}>
-                    <span className="icon"><i className="fas fa-plus"></i></span>
-                    <span>Add endpoint</span>
-                  </button>
-                </td>
+                <td className="action pr-1"></td>
               </tr>
 
               {(query.data?.webhooks.edges || []).map(({ node: webhook }) => (

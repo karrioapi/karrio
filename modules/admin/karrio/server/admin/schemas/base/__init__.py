@@ -44,6 +44,13 @@ class Query:
         types.SystemCarrierConnectionType
     ] = strawberry.field(resolver=types.SystemConnectionType.resolve_list)
 
+    rate_sheet: typing.Optional[types.SystemRateSheetType] = strawberry.field(
+        resolver=types.SystemRateSheetType.resolve
+    )
+    rate_sheets: utils.Connection[types.SystemRateSheetType] = strawberry.field(
+        resolver=types.SystemRateSheetType.resolve_list
+    )
+
 
 @strawberry.type
 class Mutation:
@@ -118,4 +125,24 @@ class Mutation:
     ) -> mutations.base.DeleteMutation:
         return mutations.base.DeleteMutation.mutate(
             info, model=pricing.Surcharge, **input.to_dict()
+        )
+
+    @strawberry.mutation
+    def create_rate_sheet(
+        self, info: Info, input: inputs.base.CreateRateSheetMutationInput
+    ) -> mutations.CreateRateSheetMutation:
+        return mutations.CreateRateSheetMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_rate_sheet(
+        self, info: Info, input: inputs.base.UpdateRateSheetMutationInput
+    ) -> mutations.UpdateRateSheetMutation:
+        return mutations.UpdateRateSheetMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_rate_sheet(
+        self, info: Info, input: inputs.base.DeleteMutationInput
+    ) -> mutations.base.DeleteMutation:
+        return mutations.base.DeleteMutation.mutate(
+            info, model=providers.RateSheet, **input.to_dict()
         )

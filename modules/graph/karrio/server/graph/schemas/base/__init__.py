@@ -67,6 +67,13 @@ class Query:
         resolver=types.TrackerType.resolve_list
     )
 
+    rate_sheet: typing.Optional[types.RateSheetType] = strawberry.field(
+        resolver=types.RateSheetType.resolve
+    )
+    rate_sheets: utils.Connection[types.RateSheetType] = strawberry.field(
+        resolver=types.RateSheetType.resolve_list
+    )
+
 
 @strawberry.type
 class Mutation:
@@ -273,4 +280,24 @@ class Mutation:
             model=manager.Parcel,
             validator=manager_serializers.can_mutate_parcel,
             **input.to_dict()
+        )
+
+    @strawberry.mutation
+    def create_rate_sheet(
+        self, info: Info, input: inputs.CreateRateSheetMutationInput
+    ) -> mutations.CreateRateSheetMutation:
+        return mutations.CreateRateSheetMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_rate_sheet(
+        self, info: Info, input: inputs.UpdateRateSheetMutationInput
+    ) -> mutations.UpdateRateSheetMutation:
+        return mutations.UpdateRateSheetMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_rate_sheet(
+        self, info: Info, input: inputs.DeleteMutationInput
+    ) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(
+            info, model=providers.RateSheet, **input.to_dict()
         )

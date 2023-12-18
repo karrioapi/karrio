@@ -422,6 +422,27 @@ class UpdateServiceLevelInput(CreateServiceLevelInput):
     zones: typing.Optional[typing.List[UpdateServiceZoneInput]] = strawberry.UNSET
 
 
+@strawberry.input
+class CreateRateSheetMutationInput(utils.BaseInput):
+    name: str
+    carrier_name: utils.CarrierNameEnum
+    services: typing.Optional[typing.List[CreateServiceLevelInput]] = strawberry.UNSET
+    carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateRateSheetMutationInput(utils.BaseInput):
+    id: str
+    name: typing.Optional[str] = strawberry.UNSET
+    services: typing.Optional[typing.List[UpdateServiceLevelInput]] = strawberry.UNSET
+    carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class RateSheetFilter(utils.Paginated):
+    keyword: typing.Optional[str] = strawberry.UNSET
+
+
 def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.Type]:
     def carrier_settings_input(name: str, model):
         _name = f"{'Update' if is_update else ''}{model.__name__}Input"

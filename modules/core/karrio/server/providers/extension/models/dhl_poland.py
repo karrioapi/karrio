@@ -1,9 +1,9 @@
-from django.db import models
-from karrio.core.utils import DP
-from karrio.server.providers.models.carrier import Carrier
+import django.db.models as models
+import karrio.server.providers.models as providers
 
 
-class DHLPolandSettings(Carrier):
+@providers.has_rate_sheet("dhl_poland")
+class DHLPolandSettings(providers.Carrier):
     class Meta:
         db_table = "dhl-poland-settings"
         verbose_name = "DHL Poland Settings"
@@ -17,12 +17,6 @@ class DHLPolandSettings(Carrier):
     @property
     def carrier_name(self) -> str:
         return "dhl_poland"
-
-    @property
-    def default_services(self):
-        from karrio.mappers.dhl_poland import units
-
-        return DP.to_dict(units.DEFAULT_SERVICES)
 
 
 SETTINGS = DHLPolandSettings

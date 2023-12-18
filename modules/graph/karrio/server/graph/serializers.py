@@ -232,6 +232,14 @@ class LabelTemplateModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
+class RateSheetModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = providers.RateSheet
+        exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id", "services"]}
+
+
+@serializers.owned_model_serializer
 class CarrierConfigModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = providers.CarrierConfig

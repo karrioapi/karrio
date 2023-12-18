@@ -329,3 +329,33 @@ InstanceConfigType = strawberry.type(
         },
     )
 )
+
+
+@strawberry.type
+class SystemRateSheetType(base.RateSheetType):
+    id: str
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.staff_required
+    def resolve(
+        info,
+        id: str,
+    ) -> typing.Optional["SystemRateSheetType"]:
+        return providers.RateSheet.objects.filter(id=id, is_system=True).first()
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.staff_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.base.RateSheetFilter] = strawberry.UNSET,
+    ) -> utils.Connection["SystemRateSheetType"]:
+        _filter = (
+            filter if not utils.is_unset(filter) else inputs.base.RateSheetFilter()
+        )
+        queryset = filters.RateSheetFilter(
+            _filter.to_dict(), providers.RateSheet.objects.filter(is_system=True)
+        ).qs
+
+        return utils.paginated_connection(queryset, **_filter.pagination())

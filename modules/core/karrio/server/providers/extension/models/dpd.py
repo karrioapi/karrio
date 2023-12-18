@@ -1,10 +1,9 @@
 import django.db.models as models
-import django.core.cache as caching
-
-import karrio.lib as lib
-import karrio.server.providers.models.carrier as providers
+import karrio.server.providers.models as providers
 
 
+@providers.has_auth_cache
+@providers.has_rate_sheet("dpd")
 class DPDSettings(providers.Carrier):
     class Meta:
         db_table = "dpd-settings"
@@ -25,6 +24,7 @@ class DPDSettings(providers.Carrier):
 
     @property
     def default_services(self):
+        import karrio.lib as lib
         from karrio.providers.dpd import units
 
         return lib.to_dict(
@@ -32,10 +32,6 @@ class DPDSettings(providers.Carrier):
             if self.account_country_code == "NL"
             else units.DEFAULT_SERVICES
         )
-
-    @property
-    def cache(self):
-        return lib.Cache(cache=caching.cache)
 
 
 SETTINGS = DPDSettings

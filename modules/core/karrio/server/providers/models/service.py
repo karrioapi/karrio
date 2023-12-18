@@ -1,10 +1,7 @@
-import typing
 import functools
 import django.db.models as models
 import django.core.validators as validators
 
-import karrio
-import karrio.core.units as units
 import karrio.server.core.models as core
 import karrio.server.core.datatypes as datatypes
 

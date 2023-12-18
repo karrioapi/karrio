@@ -29,7 +29,7 @@ export default function AccountPage(pageProps: any) {
                 <span>Account</span>
               </AppLink>
             </li>
-            {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold`}>
+            {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold is-active`}>
               <AppLink href="/settings/organization" shallow={false} prefetch={false}>
                 <span>Organization</span>
               </AppLink>

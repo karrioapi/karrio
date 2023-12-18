@@ -8,3 +8,6 @@
 
 # This will be your default build command
   command = "cd ../ && npm i && npm run build -w apps/www"
+
+# Ignore build
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF apps/www"
