@@ -12,6 +12,7 @@ class AlliedExpressSettings(providers.Carrier):
     username = models.CharField(max_length=50)
     password = models.CharField(max_length=50)
     account = models.CharField(max_length=50, null=True, blank=True)
+    service_type = models.CharField(max_length=50, null=True, blank=True)
 
     @property
     def carrier_name(self) -> str:
