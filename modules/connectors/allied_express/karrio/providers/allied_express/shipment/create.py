@@ -84,9 +84,9 @@ def shipment_request(
             for pkg in packages
         ],
         jobStopsP=allied.JobStopsType(
-            companyName=shipper.company_name,
+            companyName=(shipper.company_name or shipper.contact),
             contact=shipper.contact,
-            emailAddress=shipper.email,
+            emailAddress=shipper.email or " ",
             geographicAddress=allied.GeographicAddressType(
                 address1=shipper.address_line1,
                 address2=shipper.address_line2 or " ",
@@ -95,12 +95,12 @@ def shipment_request(
                 state=shipper.state_code,
                 suburb=shipper.city,
             ),
-            phoneNumber=shipper.phone_number,
+            phoneNumber=shipper.phone_number or "(00) 0000 0000",
         ),
         jobStopsD=allied.JobStopsType(
-            companyName=recipient.company_name,
+            companyName=(recipient.company_name or recipient.contact),
             contact=recipient.contact,
-            emailAddress=recipient.email,
+            emailAddress=recipient.email or " ",
             geographicAddress=allied.GeographicAddressType(
                 address1=recipient.address_line1,
                 address2=recipient.address_line2 or " ",
@@ -109,7 +109,7 @@ def shipment_request(
                 state=recipient.state_code,
                 suburb=recipient.city,
             ),
-            phoneNumber=recipient.phone_number,
+            phoneNumber=recipient.phone_number or "(00) 0000 0000",
         ),
         referenceNumbers=([payload.reference] if any(payload.reference or "") else []),
         weight=packages.weight.KG,

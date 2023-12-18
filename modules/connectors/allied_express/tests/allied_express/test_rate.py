@@ -170,6 +170,7 @@ RateRequest = {
             "state": "WA",
             "suburb": "CANNING VALE",
         },
+        "phoneNumber": "(00) 0000 0000",
     },
     "jobStops_P": {
         "companyName": "TESTING COMPANY",
