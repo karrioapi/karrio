@@ -276,6 +276,7 @@ export interface GetSystemConnections_system_connections_AlliedExpressSettingsTy
   username: string;
   password: string;
   account: string | null;
+  service_type: string | null;
 }
 
 export interface GetSystemConnections_system_connections_AmazonShippingSettingsType {
@@ -3001,6 +3002,7 @@ export interface AlliedExpressSettingsInput {
   username: string;
   password: string;
   account?: string | null;
+  service_type?: string | null;
   carrier_id: string;
 }
 
@@ -3490,6 +3492,7 @@ export interface UpdateAlliedExpressSettingsInput {
   username?: string | null;
   password?: string | null;
   account?: string | null;
+  service_type?: string | null;
   carrier_id?: string | null;
 }
 

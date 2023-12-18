@@ -176,6 +176,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
       username
       password
       account
+      service_type
     }
     ... on AmazonShippingSettingsType {
       id

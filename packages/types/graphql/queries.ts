@@ -1710,6 +1710,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       username
       password
       account
+      service_type
     }
     ... on AmazonShippingSettingsType {
       id

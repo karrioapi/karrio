@@ -30,7 +30,11 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.ResultType, data)
-    service = provider_units.ShippingService.allied_standard
+    service = provider_units.ShippingService.map(
+        settings.connection_config.account_service_type.state
+        or settings.service_type
+        or "R"
+    )
     charges = [
         ("Job charge", lib.to_money(rate.jobCharge)),
         *((s.chargeCode, lib.to_money(s.netValue)) for s in rate.surcharges),
@@ -39,7 +43,7 @@ def _extract_details(
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=service.name,
+        service=service.name_or_key,
         total_charge=lib.to_money(rate.totalCharge),
         currency=units.Currency.AUD.name,
         extra_charges=[

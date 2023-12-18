@@ -11,6 +11,7 @@ class Settings(core.Settings):
     username: str
     password: str
     account: str = None
+    service_type: str = "R"
 
     account_country_code: str = "AU"
 
@@ -28,6 +29,15 @@ class Settings(core.Settings):
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        from karrio.providers.allied_express.units import ConnectionConfig
+
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
 
 
 @attr.s(auto_attribs=True)

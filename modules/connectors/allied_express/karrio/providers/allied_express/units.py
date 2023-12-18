@@ -17,10 +17,17 @@ class PackagingType(lib.StrEnum):
     your_packaging = PACKAGE
 
 
+class ConnectionConfig(lib.Enum):
+    account_service_type = lib.OptionEnum("account_service_type")
+
+
 class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
-    allied_standard = "R"
+    allied_road_service = "R"
+    allied_parcel_service = "P"
+    allied_standard_pallet_service = "PT"
+    allied_oversized_pallet_service = "PT2"
 
 
 class ShippingOption(lib.Enum):
