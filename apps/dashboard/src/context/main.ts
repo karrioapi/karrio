@@ -26,15 +26,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
   await setSessionCookies(ctx, orgId);
 
-  if (needValidSubscription(subscription)) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/billing'
-      }
-    }
-  }
-
   if (needStaffAccess(pathname, data)) {
     return {
       redirect: {
@@ -197,13 +188,6 @@ export async function loadTenantInfo(filter: { app_domain?: string, schema_name?
 
     return null;
   }
-}
-
-function needValidSubscription({ subscription }: { subscription?: SubscriptionType | null }) {
-  return (
-    subscription &&
-    !ACTIVE_SUBSCRIPTIONS.includes(subscription?.status as string)
-  )
 }
 
 function needStaffAccess(pathname, { user }: { user?: any | null }) {
