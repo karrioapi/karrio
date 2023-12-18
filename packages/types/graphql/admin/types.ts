@@ -396,6 +396,14 @@ export interface GetSystemConnections_system_connections_BelgianPostSettingsType
   zones: GetSystemConnections_system_connections_BelgianPostSettingsType_services_zones[];
 }
 
+export interface GetSystemConnections_system_connections_BelgianPostSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnections_system_connections_BelgianPostSettingsType {
   __typename: "BelgianPostSettingsType";
   id: string;
@@ -410,6 +418,7 @@ export interface GetSystemConnections_system_connections_BelgianPostSettingsType
   account_id: string;
   passphrase: string;
   services: GetSystemConnections_system_connections_BelgianPostSettingsType_services[] | null;
+  rate_sheet: GetSystemConnections_system_connections_BelgianPostSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnections_system_connections_CanadaPostSettingsType {
@@ -494,6 +503,14 @@ export interface GetSystemConnections_system_connections_ColissimoSettingsType_s
   zones: GetSystemConnections_system_connections_ColissimoSettingsType_services_zones[];
 }
 
+export interface GetSystemConnections_system_connections_ColissimoSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnections_system_connections_ColissimoSettingsType {
   __typename: "ColissimoSettingsType";
   id: string;
@@ -509,6 +526,7 @@ export interface GetSystemConnections_system_connections_ColissimoSettingsType {
   contract_number: string;
   laposte_api_key: string;
   services: GetSystemConnections_system_connections_ColissimoSettingsType_services[] | null;
+  rate_sheet: GetSystemConnections_system_connections_ColissimoSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnections_system_connections_DHLExpressSettingsType {
@@ -562,6 +580,14 @@ export interface GetSystemConnections_system_connections_DHLPolandSettingsType_s
   zones: GetSystemConnections_system_connections_DHLPolandSettingsType_services_zones[];
 }
 
+export interface GetSystemConnections_system_connections_DHLPolandSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnections_system_connections_DHLPolandSettingsType {
   __typename: "DHLPolandSettingsType";
   id: string;
@@ -570,13 +596,14 @@ export interface GetSystemConnections_system_connections_DHLPolandSettingsType {
   display_name: string;
   test_mode: boolean;
   active: boolean;
-  metadata: any | null;
   capabilities: string[];
+  metadata: any | null;
+  config: any | null;
   username: string;
   password: string;
   account_number: string | null;
   services: GetSystemConnections_system_connections_DHLPolandSettingsType_services[] | null;
-  config: any | null;
+  rate_sheet: GetSystemConnections_system_connections_DHLPolandSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnections_system_connections_DHLUniversalSettingsType {
@@ -644,6 +671,14 @@ export interface GetSystemConnections_system_connections_DPDSettingsType_service
   zones: GetSystemConnections_system_connections_DPDSettingsType_services_zones[];
 }
 
+export interface GetSystemConnections_system_connections_DPDSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnections_system_connections_DPDSettingsType {
   __typename: "DPDSettingsType";
   id: string;
@@ -653,13 +688,14 @@ export interface GetSystemConnections_system_connections_DPDSettingsType {
   test_mode: boolean;
   active: boolean;
   metadata: any | null;
+  config: any | null;
   capabilities: string[];
   delis_id: string;
   password: string;
   depot: string | null;
   account_country_code: string | null;
-  config: any | null;
   services: GetSystemConnections_system_connections_DPDSettingsType_services[] | null;
+  rate_sheet: GetSystemConnections_system_connections_DPDSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnections_system_connections_DPDHLSettingsType_services_zones {
@@ -696,6 +732,14 @@ export interface GetSystemConnections_system_connections_DPDHLSettingsType_servi
   zones: GetSystemConnections_system_connections_DPDHLSettingsType_services_zones[];
 }
 
+export interface GetSystemConnections_system_connections_DPDHLSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnections_system_connections_DPDHLSettingsType {
   __typename: "DPDHLSettingsType";
   id: string;
@@ -715,6 +759,7 @@ export interface GetSystemConnections_system_connections_DPDHLSettingsType {
   account_number: string | null;
   config: any | null;
   services: GetSystemConnections_system_connections_DPDHLSettingsType_services[] | null;
+  rate_sheet: GetSystemConnections_system_connections_DPDHLSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnections_system_connections_EShipperSettingsType {
@@ -823,6 +868,14 @@ export interface GetSystemConnections_system_connections_GenericSettingsType_lab
   height: number | null;
 }
 
+export interface GetSystemConnections_system_connections_GenericSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnections_system_connections_GenericSettingsType {
   __typename: "GenericSettingsType";
   id: string;
@@ -834,11 +887,12 @@ export interface GetSystemConnections_system_connections_GenericSettingsType {
   test_mode: boolean;
   active: boolean;
   metadata: any | null;
+  config: any | null;
   capabilities: string[];
   account_country_code: string | null;
   services: GetSystemConnections_system_connections_GenericSettingsType_services[] | null;
   label_template: GetSystemConnections_system_connections_GenericSettingsType_label_template | null;
-  config: any | null;
+  rate_sheet: GetSystemConnections_system_connections_GenericSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnections_system_connections_GEODISSettingsType {
@@ -1857,6 +1911,142 @@ export interface GetSystemConnectionVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: get_rate_sheet
+// ====================================================
+
+export interface get_rate_sheet_rate_sheet_services_zones {
+  object_type: string;
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+}
+
+export interface get_rate_sheet_rate_sheet_services {
+  id: string;
+  object_type: string;
+  service_name: string | null;
+  service_code: string | null;
+  description: string | null;
+  active: boolean | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  dimension_unit: DimensionUnitEnum | null;
+  zones: get_rate_sheet_rate_sheet_services_zones[];
+}
+
+export interface get_rate_sheet_rate_sheet_carriers {
+  id: string;
+  active: boolean;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  capabilities: string[];
+  test_mode: boolean;
+}
+
+export interface get_rate_sheet_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  services: get_rate_sheet_rate_sheet_services[];
+  carriers: get_rate_sheet_rate_sheet_carriers[];
+}
+
+export interface get_rate_sheet {
+  rate_sheet: get_rate_sheet_rate_sheet | null;
+}
+
+export interface get_rate_sheetVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_rate_sheets
+// ====================================================
+
+export interface get_rate_sheets_rate_sheets_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_rate_sheets_rate_sheets_edges_node_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+}
+
+export interface get_rate_sheets_rate_sheets_edges_node_services {
+  id: string;
+  service_name: string | null;
+  service_code: string | null;
+  description: string | null;
+  active: boolean | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  dimension_unit: DimensionUnitEnum | null;
+  zones: get_rate_sheets_rate_sheets_edges_node_services_zones[];
+}
+
+export interface get_rate_sheets_rate_sheets_edges_node_carriers {
+  id: string;
+  active: boolean;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  capabilities: string[];
+  test_mode: boolean;
+}
+
+export interface get_rate_sheets_rate_sheets_edges_node {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  services: get_rate_sheets_rate_sheets_edges_node_services[];
+  carriers: get_rate_sheets_rate_sheets_edges_node_carriers[];
+}
+
+export interface get_rate_sheets_rate_sheets_edges {
+  node: get_rate_sheets_rate_sheets_edges_node;
+}
+
+export interface get_rate_sheets_rate_sheets {
+  page_info: get_rate_sheets_rate_sheets_page_info;
+  edges: get_rate_sheets_rate_sheets_edges[];
+}
+
+export interface get_rate_sheets {
+  rate_sheets: get_rate_sheets_rate_sheets;
+}
+
+export interface get_rate_sheetsVariables {
+  filter?: RateSheetFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CreateUser
 // ====================================================
 
@@ -2125,6 +2315,92 @@ export interface UpdateOrganizationAccount {
 
 export interface UpdateOrganizationAccountVariables {
   data: UpdateOrganizationAccountMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: create_rate_sheet
+// ====================================================
+
+export interface create_rate_sheet_create_rate_sheet_rate_sheet {
+  id: string;
+}
+
+export interface create_rate_sheet_create_rate_sheet_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface create_rate_sheet_create_rate_sheet {
+  rate_sheet: create_rate_sheet_create_rate_sheet_rate_sheet | null;
+  errors: create_rate_sheet_create_rate_sheet_errors[] | null;
+}
+
+export interface create_rate_sheet {
+  create_rate_sheet: create_rate_sheet_create_rate_sheet;
+}
+
+export interface create_rate_sheetVariables {
+  data: CreateRateSheetMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: update_rate_sheet
+// ====================================================
+
+export interface update_rate_sheet_update_rate_sheet_rate_sheet {
+  id: string;
+}
+
+export interface update_rate_sheet_update_rate_sheet_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface update_rate_sheet_update_rate_sheet {
+  rate_sheet: update_rate_sheet_update_rate_sheet_rate_sheet | null;
+  errors: update_rate_sheet_update_rate_sheet_errors[] | null;
+}
+
+export interface update_rate_sheet {
+  update_rate_sheet: update_rate_sheet_update_rate_sheet;
+}
+
+export interface update_rate_sheetVariables {
+  data: UpdateRateSheetMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: delete_rate_sheet
+// ====================================================
+
+export interface delete_rate_sheet_delete_rate_sheet_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface delete_rate_sheet_delete_rate_sheet {
+  id: string;
+  errors: delete_rate_sheet_delete_rate_sheet_errors[] | null;
+}
+
+export interface delete_rate_sheet {
+  delete_rate_sheet: delete_rate_sheet_delete_rate_sheet;
+}
+
+export interface delete_rate_sheetVariables {
+  data: DeleteMutationInput;
 }
 
 /* tslint:disable */
@@ -2534,6 +2810,44 @@ export enum CountryCodeEnum {
   ZW = "ZW",
 }
 
+export enum CarrierNameEnum {
+  allied_express = "allied_express",
+  amazon_shipping = "amazon_shipping",
+  aramex = "aramex",
+  asendia_us = "asendia_us",
+  australiapost = "australiapost",
+  boxknight = "boxknight",
+  bpost = "bpost",
+  canadapost = "canadapost",
+  canpar = "canpar",
+  chronopost = "chronopost",
+  colissimo = "colissimo",
+  dhl_express = "dhl_express",
+  dhl_poland = "dhl_poland",
+  dhl_universal = "dhl_universal",
+  dicom = "dicom",
+  dpd = "dpd",
+  dpdhl = "dpdhl",
+  easypost = "easypost",
+  eshipper = "eshipper",
+  fedex = "fedex",
+  freightcom = "freightcom",
+  generic = "generic",
+  geodis = "geodis",
+  laposte = "laposte",
+  locate2u = "locate2u",
+  nationex = "nationex",
+  purolator = "purolator",
+  roadie = "roadie",
+  royalmail = "royalmail",
+  sendle = "sendle",
+  tnt = "tnt",
+  ups = "ups",
+  usps = "usps",
+  usps_international = "usps_international",
+  zoom2u = "zoom2u",
+}
+
 export enum LabelTemplateTypeEnum {
   SVG = "SVG",
   ZPL = "ZPL",
@@ -2575,6 +2889,13 @@ export interface SurchargeFilter {
   name?: string | null;
   active?: boolean | null;
   surcharge_type?: SurchargeTypeEnum | null;
+}
+
+// null
+export interface RateSheetFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
 }
 
 // null
@@ -3640,6 +3961,22 @@ export interface UpdateOrganizationAccountMutationInput {
   name?: string | null;
   slug?: string | null;
   is_active?: boolean | null;
+}
+
+// null
+export interface CreateRateSheetMutationInput {
+  name: string;
+  carrier_name: CarrierNameEnum;
+  services?: CreateServiceLevelInput[] | null;
+  carriers?: string[] | null;
+}
+
+// null
+export interface UpdateRateSheetMutationInput {
+  id: string;
+  name?: string | null;
+  services?: UpdateServiceLevelInput[] | null;
+  carriers?: string[] | null;
 }
 
 //==============================================================

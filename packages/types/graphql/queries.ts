@@ -1828,6 +1828,13 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           country_codes
         }
       }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
     }
     ... on CanadaPostSettingsType {
       id
@@ -1915,6 +1922,13 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           country_codes
         }
       }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
     }
     ... on DHLExpressSettingsType {
       id
@@ -1938,8 +1952,9 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       display_name
       test_mode
       active
-      metadata
       capabilities
+      metadata
+      config
       username
       password
       account_number
@@ -1974,7 +1989,13 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           country_codes
         }
       }
-      config
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
     }
     ... on DHLUniversalSettingsType {
       id
@@ -2011,12 +2032,12 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       test_mode
       active
       metadata
+      config
       capabilities
       delis_id
       password
       depot
       account_country_code
-      config
       services {
         active
         currency
@@ -2047,6 +2068,13 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           transit_days
           transit_time
         }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
       }
     }
     ... on DPDHLSettingsType {
@@ -2096,6 +2124,13 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           cities
           country_codes
         }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
       }
     }
     ... on EShipperSettingsType {
@@ -2162,6 +2197,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       test_mode
       active
       metadata
+      config
       capabilities
       account_country_code
       services {
@@ -2204,7 +2240,13 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         width
         height
       }
-      config
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
     }
     ... on GEODISSettingsType {
       id
@@ -3284,3 +3326,130 @@ export const SEARCH_DATA = gql`query search_data($keyword: String) {
   }
 }
 `;
+
+export const CREATE_RATE_SHEET = gql`mutation create_rate_sheet($data: CreateRateSheetMutationInput!) {
+  create_rate_sheet(input: $data) {
+    rate_sheet {
+      id
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const UPDATE_RATE_SHEET = gql`mutation update_rate_sheet($data: UpdateRateSheetMutationInput!) {
+  update_rate_sheet(input: $data) {
+    rate_sheet {
+      id
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_RATE_SHEET = gql`mutation delete_rate_sheet($data: DeleteMutationInput!) {
+  delete_rate_sheet(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const GET_RATE_SHEET = gql`query get_rate_sheet($id: String!) {
+  rate_sheet(id: $id) {
+    id
+    name
+    slug
+    carrier_name
+    services {
+      id
+      object_type
+      service_name
+      service_code
+      description
+      active
+      currency
+      transit_days
+      transit_time
+      max_width
+      max_height
+      max_length
+      dimension_unit
+      zones {
+        object_type
+        label
+        rate
+        min_weight
+        max_weight
+        transit_days
+      }
+    }
+    carriers {
+      id
+      active
+      carrier_id
+      carrier_name
+      display_name
+      capabilities
+      test_mode
+    }
+  }
+}`;
+
+export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilter) {
+  rate_sheets(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        name
+        slug
+        carrier_name
+        services {
+          id
+          service_name
+          service_code
+          description
+          active
+          currency
+          transit_days
+          transit_time
+          max_width
+          max_height
+          max_length
+          dimension_unit
+          zones {
+            label
+            rate
+            min_weight
+            max_weight
+            transit_days
+          }
+        }
+        carriers {
+          id
+          active
+          carrier_id
+          carrier_name
+          display_name
+          capabilities
+          test_mode
+        }
+      }
+    }
+  }
+}`;

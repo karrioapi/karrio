@@ -1205,13 +1205,13 @@ export interface Commodity {
      * @type {string}
      * @memberof Commodity
      */
-    'value_currency'?: CommodityValueCurrencyEnum;
+    'value_currency'?: CommodityValueCurrencyEnum | null;
     /**
      * The origin or manufacture country  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
      * @type {string}
      * @memberof Commodity
      */
-    'origin_country'?: CommodityOriginCountryEnum;
+    'origin_country'?: CommodityOriginCountryEnum | null;
     /**
      * The id of the related order line item.
      * @type {string}
@@ -1687,13 +1687,13 @@ export interface CommodityData {
      * @type {string}
      * @memberof CommodityData
      */
-    'value_currency'?: CommodityDataValueCurrencyEnum;
+    'value_currency'?: CommodityDataValueCurrencyEnum | null;
     /**
      * The origin or manufacture country  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
      * @type {string}
      * @memberof CommodityData
      */
-    'origin_country'?: CommodityDataOriginCountryEnum;
+    'origin_country'?: CommodityDataOriginCountryEnum | null;
     /**
      * The id of the related order line item.
      * @type {string}
@@ -2139,7 +2139,7 @@ export interface Customs {
      * @type {string}
      * @memberof Customs
      */
-    'content_type'?: CustomsContentTypeEnum;
+    'content_type'?: CustomsContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -2151,7 +2151,7 @@ export interface Customs {
      * @type {string}
      * @memberof Customs
      */
-    'incoterm'?: CustomsIncotermEnum;
+    'incoterm'?: CustomsIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -2256,7 +2256,7 @@ export interface CustomsData {
      * @type {string}
      * @memberof CustomsData
      */
-    'content_type'?: CustomsDataContentTypeEnum;
+    'content_type'?: CustomsDataContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -2268,7 +2268,7 @@ export interface CustomsData {
      * @type {string}
      * @memberof CustomsData
      */
-    'incoterm'?: CustomsDataIncotermEnum;
+    'incoterm'?: CustomsDataIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -2692,13 +2692,13 @@ export interface CustomsDuty {
      * @type {string}
      * @memberof CustomsDuty
      */
-    'paid_by'?: CustomsDutyPaidByEnum;
+    'paid_by'?: CustomsDutyPaidByEnum | null;
     /**
      * The declared value currency  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
      * @type {string}
      * @memberof CustomsDuty
      */
-    'currency'?: CustomsDutyCurrencyEnum;
+    'currency'?: CustomsDutyCurrencyEnum | null;
     /**
      * The package declared value
      * @type {number}
@@ -3449,13 +3449,13 @@ export interface Duty {
      * @type {string}
      * @memberof Duty
      */
-    'paid_by'?: DutyPaidByEnum;
+    'paid_by'?: DutyPaidByEnum | null;
     /**
      * The declared value currency  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
      * @type {string}
      * @memberof Duty
      */
-    'currency'?: DutyCurrencyEnum;
+    'currency'?: DutyCurrencyEnum | null;
     /**
      * The package declared value
      * @type {number}
@@ -3720,13 +3720,13 @@ export interface LineItem {
      * @type {string}
      * @memberof LineItem
      */
-    'value_currency'?: LineItemValueCurrencyEnum;
+    'value_currency'?: LineItemValueCurrencyEnum | null;
     /**
      * The origin or manufacture country  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
      * @type {string}
      * @memberof LineItem
      */
-    'origin_country'?: LineItemOriginCountryEnum;
+    'origin_country'?: LineItemOriginCountryEnum | null;
     /**
      * The id of the related order line item.
      * @type {string}
@@ -5604,7 +5604,7 @@ export interface Parcel {
      * @type {string}
      * @memberof Parcel
      */
-    'dimension_unit'?: ParcelDimensionUnitEnum;
+    'dimension_unit'?: ParcelDimensionUnitEnum | null;
     /**
      * The parcel items.
      * @type {Array<Commodity>}
@@ -5724,7 +5724,7 @@ export interface ParcelData {
      * @type {string}
      * @memberof ParcelData
      */
-    'dimension_unit'?: ParcelDataDimensionUnitEnum;
+    'dimension_unit'?: ParcelDataDimensionUnitEnum | null;
     /**
      * The parcel items.
      * @type {Array<CommodityData>}
@@ -6170,7 +6170,7 @@ export interface PatchedCustomsData {
      * @type {string}
      * @memberof PatchedCustomsData
      */
-    'content_type'?: PatchedCustomsDataContentTypeEnum;
+    'content_type'?: PatchedCustomsDataContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -6182,7 +6182,7 @@ export interface PatchedCustomsData {
      * @type {string}
      * @memberof PatchedCustomsData
      */
-    'incoterm'?: PatchedCustomsDataIncotermEnum;
+    'incoterm'?: PatchedCustomsDataIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -6323,7 +6323,7 @@ export interface PatchedParcelData {
      * @type {string}
      * @memberof PatchedParcelData
      */
-    'dimension_unit'?: PatchedParcelDataDimensionUnitEnum;
+    'dimension_unit'?: PatchedParcelDataDimensionUnitEnum | null;
     /**
      * The parcel items.
      * @type {Array<CommodityData>}
@@ -6438,7 +6438,7 @@ export interface Payment {
      * @type {string}
      * @memberof Payment
      */
-    'currency'?: PaymentCurrencyEnum;
+    'currency'?: PaymentCurrencyEnum | null;
     /**
      * The payor account number
      * @type {string}
@@ -7306,7 +7306,7 @@ export interface Shipment {
      * @type {string}
      * @memberof Shipment
      */
-    'label_type'?: ShipmentLabelTypeEnum;
+    'label_type'?: ShipmentLabelTypeEnum | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
      * @type {Array<string>}
@@ -7855,7 +7855,7 @@ export interface ShipmentCustoms {
      * @type {string}
      * @memberof ShipmentCustoms
      */
-    'content_type'?: ShipmentCustomsContentTypeEnum;
+    'content_type'?: ShipmentCustomsContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -7867,7 +7867,7 @@ export interface ShipmentCustoms {
      * @type {string}
      * @memberof ShipmentCustoms
      */
-    'incoterm'?: ShipmentCustomsIncotermEnum;
+    'incoterm'?: ShipmentCustomsIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -8409,7 +8409,7 @@ export interface ShipmentDataCustoms {
      * @type {string}
      * @memberof ShipmentDataCustoms
      */
-    'content_type'?: ShipmentDataCustomsContentTypeEnum;
+    'content_type'?: ShipmentDataCustomsContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -8421,7 +8421,7 @@ export interface ShipmentDataCustoms {
      * @type {string}
      * @memberof ShipmentDataCustoms
      */
-    'incoterm'?: ShipmentDataCustomsIncotermEnum;
+    'incoterm'?: ShipmentDataCustomsIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -8895,7 +8895,7 @@ export interface ShippingResponse {
      * @type {string}
      * @memberof ShippingResponse
      */
-    'label_type'?: ShippingResponseLabelTypeEnum;
+    'label_type'?: ShippingResponseLabelTypeEnum | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
      * @type {Array<string>}
