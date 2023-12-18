@@ -49,7 +49,7 @@ def _extract_tracking(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if track_detail.StatusDetail.Code in status.value
+            if getattr(track_detail.StatusDetail, "Code") in status.value
         ),
         provider_units.TrackingStatus.in_transit.name,
     )

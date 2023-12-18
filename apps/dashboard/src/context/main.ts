@@ -10,7 +10,6 @@ import axios from "axios";
 
 type RequestContext = GetServerSidePropsContext | { req: NextApiRequest, res: NextApiResponse };
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
-const ACTIVE_SUBSCRIPTIONS = ["active", "trialing", "incomplete", "free"];
 const AUTH_HTTP_CODES = [401, 403, 407];
 
 
@@ -25,15 +24,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const subscription = await checkSubscription(session, metadata.metadata);
 
   await setSessionCookies(ctx, orgId);
-
-  if (needValidSubscription(subscription)) {
-    return {
-      redirect: {
-        permanent: false,
-        destination: '/billing'
-      }
-    }
-  }
 
   if (needStaffAccess(pathname, data)) {
     return {
@@ -84,7 +74,7 @@ export async function loadContextData(session: SessionType, metadata: Metadata):
   const { accessToken, orgId, testMode } = session;
   const headers = {
     ...(orgId ? { 'x-org-id': orgId } : {}),
-    ...(testMode ? { 'x-test-id': testMode } : {}),
+    ...(testMode ? { 'x-test-mode': testMode } : {}),
     'authorization': `Bearer ${accessToken}`,
   } as any;
 
@@ -197,13 +187,6 @@ export async function loadTenantInfo(filter: { app_domain?: string, schema_name?
 
     return null;
   }
-}
-
-function needValidSubscription({ subscription }: { subscription?: SubscriptionType | null }) {
-  return (
-    subscription &&
-    !ACTIVE_SUBSCRIPTIONS.includes(subscription?.status as string)
-  )
 }
 
 function needStaffAccess(pathname, { user }: { user?: any | null }) {
