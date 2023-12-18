@@ -11,6 +11,7 @@ class Settings(core.Settings):
     username: str
     password: str
     account: str = None
+    service_type: str = "R"
 
     account_country_code: str = "AU"
 

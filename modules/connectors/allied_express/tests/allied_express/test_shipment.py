@@ -127,7 +127,7 @@ ShipmentPayload = {
             "options": {"dangerous_good": True},
         },
     ],
-    "service": "allied_standard",
+    "service": "allied_road_service",
     "options": {
         "instructions": "This is just an instruction",
     },

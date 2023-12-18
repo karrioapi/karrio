@@ -12,6 +12,7 @@ class Settings(provider_utils.Settings):
     username: str
     password: str
     account: str = None
+    service_type: str = "R"
 
     # generic properties
     id: str = None
