@@ -5,8 +5,8 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useAPIToken } from '@karrio/hooks/api-token';
 import { isNoneOrEmpty } from '@karrio/lib';
-import { Loading } from './loader';
 import { useRouter } from 'next/router';
+import { Loading } from './loader';
 import { p } from '@karrio/lib';
 import Image from 'next/image';
 

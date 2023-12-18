@@ -1,7 +1,7 @@
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { SessionType, KarrioClient } from "@karrio/types";
 import { useSyncedSession } from "@karrio/hooks/session";
-import { logger, url$ } from "@karrio/lib";
+import { getCookie, logger, url$ } from "@karrio/lib";
 import getConfig from 'next/config';
 import React from "react";
 
@@ -38,9 +38,9 @@ export function useKarrio() {
 
 function requestInterceptor(session?: SessionType) {
   return (config: any = { headers: {} }) => {
-    const orgHeader: any = !!session?.orgId ? { 'x-org-id': session.orgId } : {};
     const testHeader: any = !!session?.testMode ? { 'x-test-mode': session.testMode } : {};
     const authHeader: any = !!session?.accessToken ? { 'authorization': `Bearer ${session.accessToken}` } : {};
+    const orgHeader: any = !!session?.orgId ? { 'x-org-id': getCookie("orgId") } : {};
 
     config.headers = {
       ...config.headers,

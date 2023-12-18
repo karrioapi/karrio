@@ -10,7 +10,6 @@ import axios from "axios";
 
 type RequestContext = GetServerSidePropsContext | { req: NextApiRequest, res: NextApiResponse };
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
-const ACTIVE_SUBSCRIPTIONS = ["active", "trialing", "incomplete", "free"];
 const AUTH_HTTP_CODES = [401, 403, 407];
 
 
@@ -75,7 +74,7 @@ export async function loadContextData(session: SessionType, metadata: Metadata):
   const { accessToken, orgId, testMode } = session;
   const headers = {
     ...(orgId ? { 'x-org-id': orgId } : {}),
-    ...(testMode ? { 'x-test-id': testMode } : {}),
+    ...(testMode ? { 'x-test-mode': testMode } : {}),
     'authorization': `Bearer ${accessToken}`,
   } as any;
 

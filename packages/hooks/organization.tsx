@@ -1,6 +1,7 @@
 import { accept_organization_invitation, ACCEPT_ORGANIZATION_INVITATION, ChangeOrganizationOwnerMutationInput, change_organization_owner, CHANGE_ORGANIZATION_OWNER, CreateOrganizationMutationInput, create_organization, CREATE_ORGANIZATION, delete_organization, DELETE_ORGANIZATION, delete_organization_invitation, DELETE_ORGANIZATION_INVITES, get_organizations, GET_ORGANIZATIONS, get_organizations_organizations, get_organization_invitation, GET_ORGANIZATION_INVITATION, SendOrganizationInvitesMutationInput, send_organization_invites, SEND_ORGANIZATION_INVITES, SetOrganizationUserRolesMutationInput, set_organization_user_roles, SET_ORGANIZATION_USER_ROLES, UpdateOrganizationMutationInput, update_organization, UPDATE_ORGANIZATION } from "@karrio/types";
 import { DefinedUseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, onError, setCookie } from "@karrio/lib";
+import { useSession } from "next-auth/react";
 import { useKarrio } from "./karrio";
 import React from "react";
 
@@ -61,6 +62,7 @@ export function useOrganizations() {
 }
 
 export function useOrganizationMutation() {
+  const { update } = useSession();
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const invalidateCache = () => { queryClient.invalidateQueries(['organizations']) };
@@ -112,6 +114,7 @@ export function useOrganizationMutation() {
   // Helpers
   const changeActiveOrganization = async (orgId: string) => {
     setCookie("orgId", orgId);
+    update({ orgId });
     insertUrlParam({});
     setTimeout(() => location.reload(), 1000);
   };

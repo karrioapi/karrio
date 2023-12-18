@@ -36,6 +36,7 @@ async function AuthAPI(req: NextApiRequest, res: NextApiResponse) {
             );
 
             return {
+              email: credentials.email,
               accessToken: token.access,
               refreshToken: token.refresh,
               orgId: org?.id,
@@ -51,7 +52,7 @@ async function AuthAPI(req: NextApiRequest, res: NextApiResponse) {
       })
     ],
     callbacks: {
-      jwt: async ({ token, user }: any): Promise<JWT> => {
+      jwt: async ({ token, user, trigger, session }: any): Promise<JWT> => {
         if (user?.accessToken) {
           token.orgId = user.orgId;
           token.testMode = user.testMode;
@@ -62,12 +63,9 @@ async function AuthAPI(req: NextApiRequest, res: NextApiResponse) {
           token.testMode = computeTestMode(req);
         }
 
-        // Check if organization updated
-        const cookieOrgId = req.cookies['orgId'];
-        if (!isNoneOrEmpty(cookieOrgId) && !isNoneOrEmpty((token as any).orgId) && cookieOrgId !== (token as any).orgId) {
-          logger.debug(`Switching organization to ${cookieOrgId}...`);
-
-          const org = await auth.getCurrentOrg((token as any).accessToken, cookieOrgId);
+        if (trigger === "update" && session?.orgId) {
+          // Note, that `session` can be any arbitrary object, remember to validate it!
+          const org = await auth.getCurrentOrg((token as any).accessToken, session.orgId);
           token.orgId = org?.id;
         }
 
@@ -76,7 +74,7 @@ async function AuthAPI(req: NextApiRequest, res: NextApiResponse) {
           return token;
         }
 
-        // Access token has expired, try to update it OR orgId has changed
+        // Access token has expired, try to update it
         try {
           logger.info('Refreshing expired token...');
           const { access, refresh } = await auth.refreshToken(token.refreshToken as string);
@@ -95,14 +93,20 @@ async function AuthAPI(req: NextApiRequest, res: NextApiResponse) {
           }
         }
       },
-      session: async ({ session, token }: any) => {
+      session: async ({ session, token, user }: any) => {
         session.accessToken = token.accessToken;
         session.expires = token.expiration;
         session.testMode = token.testMode;
         session.error = token.error;
         session.orgId = token.orgId;
+        session.user = {
+          ...(user || session.user || {}),
+          accessToken: token.accessToken,
+          testMode: token.testMode,
+          orgId: token.orgId,
+        };
 
-        return session
+        return session;
       }
     }
   })(req, res);
