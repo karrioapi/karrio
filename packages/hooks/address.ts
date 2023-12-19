@@ -1,22 +1,64 @@
 import { AddressFilter, CreateAddressTemplateInput, create_address_template, CREATE_ADDRESS_TEMPLATE, delete_template, DELETE_TEMPLATE, get_address_templates, GET_ADDRESS_TEMPLATES, UpdateAddressTemplateInput, update_address_template, UPDATE_ADDRESS_TEMPLATE } from "@karrio/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { gqlstr, onError } from "@karrio/lib";
+import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useKarrio } from "./karrio";
 import React from "react";
 
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
+type FilterType = AddressFilter & { setVariablesToURL?: boolean };
 
-export function useAddressTemplates() {
+export function useAddressTemplates({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
-  const [filter, setFilter] = React.useState<AddressFilter>(PAGINATION);
+  const queryClient = useQueryClient();
+  const [filter, _setFilter] = React.useState<AddressFilter>({ ...PAGINATION, ...initialData });
+  const fetch = (variables: { filter: AddressFilter }) => karrio.graphql.request<get_address_templates>(
+    gqlstr(GET_ADDRESS_TEMPLATES), { variables }
+  );
 
   // Queries
   const query = useQuery(
     ['addresses', filter],
-    () => karrio.graphql.request<get_address_templates>(gqlstr(GET_ADDRESS_TEMPLATES), { variables: filter }),
-    { onError },
+    () => fetch({ filter }),
+    { keepPreviousData: true, staleTime: 5000, onError },
   );
+
+  function setFilter(options: AddressFilter) {
+    const params = Object.keys(options).reduce((acc, key) => {
+      if (["modal"].includes(key)) return acc;
+      return isNoneOrEmpty(options[key as keyof AddressFilter]) ? acc : {
+        ...acc,
+        [key]: (["label", "address"].includes(key)
+          ? ([].concat(options[key as keyof AddressFilter] as any).reduce(
+            (acc, item: string) => (
+              typeof item == 'string'
+                ? [].concat(acc, item.split(',') as any)
+                : [].concat(acc, item)
+            ), []
+          ))
+          : (["offset", "first"].includes(key)
+            ? parseInt(options[key as keyof AddressFilter] as any)
+            : options[key as keyof AddressFilter]
+          )
+        )
+      };
+    }, PAGINATION);
+
+    if (setVariablesToURL) insertUrlParam(params);
+    _setFilter(params);
+
+    return params;
+  }
+
+  React.useEffect(() => {
+    if (query.data?.address_templates.page_info.has_next_page) {
+      const _filter = { ...filter, offset: filter.offset as number + 20 };
+      queryClient.prefetchQuery(
+        ['addresses', _filter],
+        () => fetch({ filter: _filter }),
+      )
+    }
+  }, [query.data, filter.offset, queryClient])
 
   return {
     query,

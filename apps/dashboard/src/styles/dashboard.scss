@@ -137,6 +137,50 @@ Karrio custom styling
   }
 }
 
+.address-templates-table {
+  .template {
+    width: 20%;
+    min-width: 10vw;
+  }
+
+  .address {
+    width: 40%;
+    min-width: 10vw;
+  }
+
+  .email {
+    min-width: 10vw;
+  }
+
+  .default {
+    width: 100px;
+  }
+
+  .action {
+    width: 90px;
+  }
+}
+
+.parcel-templates-table {
+  .template {
+    width: 30%;
+    min-width: 10vw;
+  }
+
+  .parcel {
+    min-width: 10vw;
+  }
+
+  .default {
+    width: 10%;
+    width: 100px;
+  }
+
+  .action {
+    width: 90px;
+  }
+}
+
 .commodities-table {
   .commodity {}
 
