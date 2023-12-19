@@ -4073,7 +4073,7 @@
         "description": null,
         "fields": [
           {
-            "name": "id",
+            "name": "object_type",
             "description": null,
             "args": [],
             "type": {
@@ -4089,7 +4089,7 @@
             "deprecationReason": null
           },
           {
-            "name": "object_type",
+            "name": "id",
             "description": null,
             "args": [],
             "type": {
@@ -13803,7 +13803,7 @@
         "description": null,
         "fields": [
           {
-            "name": "id",
+            "name": "object_type",
             "description": null,
             "args": [],
             "type": {
@@ -13819,7 +13819,7 @@
             "deprecationReason": null
           },
           {
-            "name": "object_type",
+            "name": "id",
             "description": null,
             "args": [],
             "type": {
