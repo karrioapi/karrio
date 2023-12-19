@@ -417,9 +417,9 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   >
                     {!field("service_type").required && <option value='none'></option>}
                     <option value={`R`}>{`Road service - R`}</option>
-                    <option value={`P`}>{`Road service - P`}</option>
-                    <option value={`PT`}>{`Road service - PT`}</option>
-                    <option value={`PT2`}>{`Road service - PT2`}</option>
+                    <option value={`P`}>{`Road parcel service - P`}</option>
+                    <option value={`PT`}>{`Standard pallet service - PT`}</option>
+                    <option value={`PT2`}>{`Oversized pallet service - PT2`}</option>
                   </SelectField>}
 
                 {field("billing_account").exists && <InputField label="Billing Account" value={payload.billing_account}
@@ -664,9 +664,9 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                             >
                               <option value='none'></option>
                               <option value={`R`}>{`Road service - R`}</option>
-                              <option value={`P`}>{`Road service - P`}</option>
-                              <option value={`PT`}>{`Road service - PT`}</option>
-                              <option value={`PT2`}>{`Road service - PT2`}</option>
+                              <option value={`P`}>{`Road parcel service - P`}</option>
+                              <option value={`PT`}>{`Standard pallet service - PT`}</option>
+                              <option value={`PT2`}>{`Oversized pallet service - PT2`}</option>
                             </SelectField>}
 
                           {"shipping_services" in connection_configs[carrier_name.toString()] &&
