@@ -3549,7 +3549,7 @@
         "description": null,
         "fields": [
           {
-            "name": "id",
+            "name": "object_type",
             "description": null,
             "args": [],
             "type": {
@@ -3565,7 +3565,7 @@
             "deprecationReason": null
           },
           {
-            "name": "object_type",
+            "name": "id",
             "description": null,
             "args": [],
             "type": {
@@ -14643,6 +14643,16 @@
             "defaultValue": null
           },
           {
+            "name": "keyword",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "address",
             "description": null,
             "type": {
@@ -14846,6 +14856,16 @@
           },
           {
             "name": "label",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "keyword",
             "description": null,
             "type": {
               "kind": "SCALAR",

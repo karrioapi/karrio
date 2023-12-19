@@ -2,6 +2,8 @@ import pydoc
 import typing
 import datetime
 import strawberry
+import django.conf as conf
+from django.db import models
 from strawberry.types import Info
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
@@ -410,23 +412,49 @@ class AddressTemplateType:
         filter: typing.Optional[inputs.AddressFilter] = strawberry.UNSET,
     ) -> utils.Connection["AddressTemplateType"]:
         _filter = inputs.AddressFilter() if utils.is_unset(filter) else filter
-        _query = {
-            **(  # type: ignore
-                {"label__icontain": _filter.label}
-                if _filter.label != strawberry.UNSET
-                else {}
-            ),
-            **(
-                {"address__icontain": _filter.address}
-                if _filter.address != strawberry.UNSET
-                else {}
-            ),
-        }
-        queryset = graph.Template.access_by(info.context.request).filter(
-            address__isnull=False, **_query
+        _search = _filter.to_dict()
+        _query = models.Q()
+
+        if any(_search.get("label") or ""):
+            _value = _search.get("label")
+            _query = _query | models.Q(label__icontains=_value)
+
+        if any(_search.get("address") or ""):
+            _value = _search.get("address")
+            _query = (
+                _query
+                | models.Q(address__address_line1__icontains=_value)
+                | models.Q(address__address_line2__icontains=_value)
+                | models.Q(address__postal_code__icontains=_value)
+                | models.Q(address__person_name__icontains=_value)
+                | models.Q(address__company_name__icontains=_value)
+                | models.Q(address__country_code__icontains=_value)
+                | models.Q(address__city__icontains=_value)
+                | models.Q(address__email__icontains=_value)
+                | models.Q(address__phone_number__icontains=_value)
+            )
+
+        if any(_search.get("keyword") or ""):
+            _value = _search.get("keyword")
+            _query = (
+                _query
+                | models.Q(label__icontains=_value)
+                | models.Q(address__address_line1__icontains=_value)
+                | models.Q(address__address_line2__icontains=_value)
+                | models.Q(address__postal_code__icontains=_value)
+                | models.Q(address__person_name__icontains=_value)
+                | models.Q(address__company_name__icontains=_value)
+                | models.Q(address__country_code__icontains=_value)
+                | models.Q(address__city__icontains=_value)
+                | models.Q(address__email__icontains=_value)
+                | models.Q(address__phone_number__icontains=_value)
+            )
+
+        _queryset = graph.Template.access_by(info.context.request).filter(
+            _query, address__isnull=False
         )
 
-        return utils.paginated_connection(queryset, **_filter.pagination())
+        return utils.paginated_connection(_queryset, **_filter.pagination())
 
 
 @strawberry.type
@@ -444,15 +472,22 @@ class ParcelTemplateType:
         filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
     ) -> utils.Connection["ParcelTemplateType"]:
         _filter = inputs.TemplateFilter() if filter == strawberry.UNSET else filter
+        _search = _filter.to_dict()
+        _query = models.Q()
+
+        if any(_search.get("label") or ""):
+            _value = _search.get("label")
+            _query = _query | models.Q(label__icontains=_value)
+
+        if any(_search.get("keyword") or ""):
+            _value = _search.get("keyword")
+            _query = _query | models.Q(label__icontains=_value)
 
         queryset = graph.Template.access_by(info.context.request).filter(
+            _query,
             parcel__isnull=False,
-            **(
-                {"label__icontain": _filter.label}
-                if _filter.label != strawberry.UNSET
-                else {}
-            ),
         )
+
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 

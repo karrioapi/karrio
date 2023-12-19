@@ -4,7 +4,7 @@ import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useKarrio } from "./karrio";
 import React from "react";
 
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 25;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = AddressFilter & { setVariablesToURL?: boolean };
 
@@ -28,7 +28,7 @@ export function useAddressTemplates({ setVariablesToURL = false, ...initialData 
       if (["modal"].includes(key)) return acc;
       return isNoneOrEmpty(options[key as keyof AddressFilter]) ? acc : {
         ...acc,
-        [key]: (["label", "address"].includes(key)
+        [key]: ([""].includes(key)
           ? ([].concat(options[key as keyof AddressFilter] as any).reduce(
             (acc, item: string) => (
               typeof item == 'string'

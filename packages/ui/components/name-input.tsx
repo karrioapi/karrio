@@ -11,7 +11,7 @@ interface NameInputComponent extends InputFieldComponent {
 }
 
 export const NameInput: React.FC<NameInputComponent> = ({ disableSuggestion, onValueChange, ...props }) => {
-  const { query } = useAddressTemplates();
+  const { query, filter, setFilter } = useAddressTemplates();
 
   const onInput = (e: ChangeEvent<any>) => {
     e.preventDefault();
@@ -19,6 +19,7 @@ export const NameInput: React.FC<NameInputComponent> = ({ disableSuggestion, onV
       .find(t => t.node.address?.person_name === e.target.value)
       ?.node;
     let value = template?.address || { person_name: e.target.value };
+    setFilter({ ...filter, keyword: e.target.value })
     onValueChange(value as Partial<AddressType>, !isNone(template));
   };
 

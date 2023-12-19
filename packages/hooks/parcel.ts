@@ -28,7 +28,7 @@ export function useParcelTemplates({ setVariablesToURL = false, ...initialData }
       if (["modal"].includes(key)) return acc;
       return isNoneOrEmpty(options[key as keyof TemplateFilter]) ? acc : {
         ...acc,
-        [key]: (["label"].includes(key)
+        [key]: ([""].includes(key)
           ? ([].concat(options[key as keyof TemplateFilter] as any).reduce(
             (acc, item: string) => (
               typeof item == 'string'

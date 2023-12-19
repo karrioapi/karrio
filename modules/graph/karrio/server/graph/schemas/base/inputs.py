@@ -58,6 +58,7 @@ class ShipmentFilter(utils.Paginated):
 @strawberry.input
 class TemplateFilter(utils.Paginated):
     label: typing.Optional[str] = strawberry.UNSET
+    keyword: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

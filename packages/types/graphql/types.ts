@@ -5512,6 +5512,7 @@ export interface AddressFilter {
   offset?: number | null;
   first?: number | null;
   label?: string | null;
+  keyword?: string | null;
   address?: string | null;
 }
 
@@ -5520,6 +5521,7 @@ export interface TemplateFilter {
   offset?: number | null;
   first?: number | null;
   label?: string | null;
+  keyword?: string | null;
 }
 
 // null
