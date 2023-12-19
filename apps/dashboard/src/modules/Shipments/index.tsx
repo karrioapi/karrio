@@ -7,7 +7,7 @@ import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
-import { AppBadge } from "@karrio/ui/components/app-badge";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
@@ -16,7 +16,6 @@ import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import { AddressType } from "@karrio/types";
 import Head from "next/head";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 export { getServerSideProps } from "@/context/main";
 

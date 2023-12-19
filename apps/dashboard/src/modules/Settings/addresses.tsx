@@ -1,15 +1,15 @@
+import { formatAddressLocationShort, formatAddressShort, getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
 import { AddressEditModal, AddressEditContext } from "@karrio/ui/modals/address-edit-modal";
 import { useAddressTemplateMutation, useAddressTemplates } from "@karrio/hooks/address";
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
 import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
-import { AddressDescription } from "@karrio/ui/components/address-description";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
-import { isNoneOrEmpty } from "@karrio/lib";
+import { AddressType } from "@karrio/types";
 import Head from "next/head";
 
 export { getServerSideProps } from '@/context/main';
@@ -20,21 +20,33 @@ export default function AddressPage(pageProps: any) {
 
   const Component: React.FC = () => {
     const router = useRouter();
-    const { query } = useAddressTemplates();
     const { setLoading } = useContext(Loading);
     const { confirm } = useContext(ConfirmModalContext);
     const { editAddress } = useContext(AddressEditContext);
     const { deleteAddressTemplate } = useAddressTemplateMutation();
     const [initialized, setInitialized] = React.useState(false);
+    const { query: { data: { address_templates } = {}, ...query }, filter, setFilter } = useAddressTemplates({
+      setVariablesToURL: true,
+    });
 
     const remove = (id: string) => async () => {
       await deleteAddressTemplate.mutateAsync({ id });
     };
+    const updateFilter = (extra: Partial<any> = {}) => {
+      const query = {
+        ...filter,
+        ...getURLSearchParams(),
+        ...extra
+      };
 
-    useEffect(() => { setLoading(query.isFetching); });
+      setFilter(query);
+    };
+
+    useEffect(() => { updateFilter(); }, [router.query]);
+    useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
     useEffect(() => {
       if (query.isFetched && !initialized && !isNoneOrEmpty(router.query.modal)) {
-        const templates = query.data?.address_templates?.edges || [];
+        const templates = address_templates?.edges || [];
         const addressTemplate: any = templates
           .find(c => c.node.id === router.query.modal)?.node;
         if (addressTemplate || router.query.modal === 'new') {
@@ -86,26 +98,40 @@ export default function AddressPage(pageProps: any) {
           </ul>
         </div>
 
-        {((query?.data?.address_templates?.edges || []).length > 0) &&
+        {((address_templates?.edges || []).length > 0) &&
           <div className="table-container">
             <table className="table is-fullwidth">
-              <tbody className="templates-table">
+              <tbody className="address-templates-table">
 
                 <tr>
-                  <td className="is-size-7" colSpan={2}>ADDRESS TEMPLATES</td>
+                  <td className="template is-size-7">LABEL</td>
+                  <td className="address is-size-7">ADDRESS</td>
+                  <td className="email is-size-7">EMAIL</td>
+                  <td className="default is-size-7"></td>
                   <td className="action pr-0"></td>
                 </tr>
 
-                {query!.data!.address_templates!.edges.map(({ node: template }) => (
+                {(address_templates?.edges || []).map(({ node: template }) => (
 
                   <tr key={`${template.id}-${Date.now()}`}>
-                    <td className="template">
-                      <p className="is-subtitle is-size-6 my-1 has-text-weight-semibold">{template.label}</p>
-                      <AddressDescription address={template.address as any} />
+                    <td className="template is-vcentered is-size-6 has-text-weight-bold text-ellipsis">
+                      <span className="text-ellipsis" title={template.label}>{template.label}</span>
                     </td>
-                    <td className="default is-vcentered">
+                    <td className="address is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
+                      <span className="text-ellipsis" title={formatAddressShort(template.address as AddressType)}>
+                        {formatAddressShort(template.address as AddressType)}
+                      </span>
+                      <br />
+                      <span className="has-text-weight-medium">
+                        {formatAddressLocationShort(template.address as AddressType)}
+                      </span>
+                    </td>
+                    <td className="email is-vcentered is-size-7 has-text-weight-bold text-ellipsis">
+                      <span className="text-ellipsis" title={template.address.email || ''}>{template.address.email}</span>
+                    </td>
+                    <td className="default is-vcentered has-text-right">
                       {template.is_default && <span className="is-size-7 has-text-weight-semibold">
-                        <span className="icon has-text-success"><i className="fas fa-check"></i></span> Default shipper address
+                        <span className="icon has-text-success"><i className="fas fa-check"></i></span> default
                       </span>}
                     </td>
                     <td className="action is-vcentered pr-0">
@@ -129,21 +155,34 @@ export default function AddressPage(pageProps: any) {
                       </div>
                     </td>
                   </tr>
+
                 ))}
 
               </tbody>
             </table>
 
             <footer className="px-2 py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">{query!.data!.address_templates!.edges.length} results</span>
+              <span className="is-size-7 has-text-weight-semibold">
+                {(address_templates?.edges || []).length} results
+              </span>
 
               <div className="buttons has-addons is-centered is-pulled-right">
+                <button className="button is-small"
+                  onClick={() => updateFilter({ offset: (filter.offset as number - 25) })}
+                  disabled={filter.offset == 0}>
+                  Previous
+                </button>
+                <button className="button is-small"
+                  onClick={() => updateFilter({ offset: (filter.offset as number + 25) })}
+                  disabled={!address_templates?.page_info.has_next_page}>
+                  Next
+                </button>
               </div>
             </footer>
 
           </div>}
 
-        {(query.isFetched && (query?.data?.address_templates?.edges || []).length == 0) &&
+        {(query.isFetched && (address_templates?.edges || []).length == 0) &&
           <div className="card my-6">
 
             <div className="card-content has-text-centered">

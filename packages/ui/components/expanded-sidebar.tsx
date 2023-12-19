@@ -74,7 +74,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           <span className="has-text-weight-bold">Settings</span>
         </AppLink>
 
-        <hr className="my-3 mx-5" style={{ height: '1px' }} />
+        <hr className="my-3 mx-3" style={{ height: '1px' }} />
 
         {testMode ?
           <a className="menu-item mode-menu-item" onClick={switchMode}>
@@ -122,14 +122,15 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         </>}
 
         {/* Administration */}
-        {/* {user?.is_staff && <>
+        {user?.is_staff && <>
           <AppLink href="/admin" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
             <i className={`fa fa-tools pr-2 has-text-grey`}></i>
             <span className="has-text-weight-bold">Administration</span>
           </AppLink>
-        </>} */}
+        </>}
+
       </div>
-      <div style={{ position: 'absolute', bottom: 10, left: 30, right: 10 }}>
+      <div style={{ position: 'absolute', bottom: 10, left: 20, right: 20 }}>
         <span className="menu-item has-text-weight-semibold has-text-grey-light">
           Version: {publicRuntimeConfig.DASHBOARD_VERSION}
         </span>

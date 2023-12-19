@@ -14655,6 +14655,16 @@
             "defaultValue": null
           },
           {
+            "name": "keyword",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "address",
             "description": null,
             "type": {
@@ -14858,6 +14868,16 @@
           },
           {
             "name": "label",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "keyword",
             "description": null,
             "type": {
               "kind": "SCALAR",

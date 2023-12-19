@@ -124,7 +124,7 @@ Expanded sidebar
   position: fixed;
   top: 0;
   left: 0;
-  width: 240px;
+  width: 200px;
   height: 100%;
   background: $light-grey;
   // border-right: 1px solid $fade-grey;
@@ -220,7 +220,7 @@ Expanded sidebar
       display: flex;
       align-items: center;
       height: 34px;
-      padding: 0 16px 0 30px;
+      padding: 0 10px 0 20px;
 
       &.is-active {
         @for $i from 1 through 10 {
@@ -279,8 +279,8 @@ Main wrappers
 ========================================================================== */
 
 .plex-wrapper {
-  width: calc(100% - 240px);
-  margin-left: 240px;
+  width: calc(100% - 200px);
+  margin-left: 200px;
   min-height: 100vh;
   background: $white;
   padding: 0 20px;

@@ -8,7 +8,7 @@ import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
 import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
-import { isNoneOrEmpty } from "@karrio/lib";
+import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
 import Head from "next/head";
 import React from "react";
 
@@ -25,12 +25,24 @@ export default function ParcelsPage(pageProps: any) {
     const { editParcel } = useContext(ParcelEditContext);
     const [initialized, setInitialized] = React.useState(false);
     const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
-    const { query: { data: { parcel_templates } = {}, ...query }, filter, setFilter } = useParcelTemplates();
+    const { query: { data: { parcel_templates } = {}, ...query }, filter, setFilter } = useParcelTemplates({
+      setVariablesToURL: true,
+    });
 
     const remove = (id: string) => async () => {
       await mutation.deleteParcelTemplate.mutateAsync({ id });
     };
+    const updateFilter = (extra: Partial<any> = {}) => {
+      const query = {
+        ...filter,
+        ...getURLSearchParams(),
+        ...extra
+      };
 
+      setFilter(query);
+    };
+
+    useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
     useEffect(() => {
       if (query.isFetched && !initialized && !isNoneOrEmpty(router.query.modal)) {
@@ -90,22 +102,27 @@ export default function ParcelsPage(pageProps: any) {
         {((parcel_templates?.edges || []).length > 0) && <div className="table-container">
           <table className="table is-fullwidth">
 
-            <tbody className="templates-table">
+            <tbody className="parcel-templates-table">
+
               <tr>
-                <td className="is-size-7" colSpan={2}>PARCEL TEMPLATES</td>
+                <td className="template is-size-7">LABEL</td>
+                <td className="parcel is-size-7">PARCEL</td>
+                <td className="default is-size-7"></td>
                 <td className="action pr-0"></td>
               </tr>
 
               {(parcel_templates?.edges || []).map(({ node: template }) => (
 
                 <tr key={`${template.id}-${Date.now()}`}>
-                  <td className="template">
-                    <p className="is-subtitle is-size-6 my-1 has-text-weight-semibold">{template.label}</p>
+                  <td className="template is-vcentered is-size-6 has-text-weight-bold text-ellipsis">
+                    <span className="text-ellipsis" title={template.label}>{template.label}</span>
+                  </td>
+                  <td className="parcel is-vcentered">
                     <ParcelDescription parcel={template.parcel as any} />
                   </td>
-                  <td className="default is-vcentered">
+                  <td className="default is-vcentered has-text-right">
                     {template.is_default && <span className="is-size-7 has-text-weight-semibold">
-                      <span className="icon has-text-success"><i className="fas fa-check"></i></span> Default shipping parcel
+                      <span className="icon has-text-success"><i className="fas fa-check"></i></span> default
                     </span>}
                   </td>
                   <td className="action is-vcentered pr-0">
