@@ -234,7 +234,7 @@ Karrio custom styling
 .trackers-table {
   .carrier {
     width: 8%;
-    min-width: 50px;
+    min-width: 90px;
   }
 
   .tracking-number {
@@ -254,6 +254,7 @@ Karrio custom styling
   .date {
     width: 15%;
     min-width: 130px;
+    max-width: 130px;
   }
 
   .action {
