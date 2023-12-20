@@ -114,10 +114,10 @@ export default function ParcelsPage(pageProps: any) {
               {(parcel_templates?.edges || []).map(({ node: template }) => (
 
                 <tr key={`${template.id}-${Date.now()}`}>
-                  <td className="template is-vcentered is-size-6 has-text-weight-bold text-ellipsis">
+                  <td className="template is-vcentered is-size-7 has-text-weight-bold text-ellipsis">
                     <span className="text-ellipsis" title={template.label}>{template.label}</span>
                   </td>
-                  <td className="parcel is-vcentered">
+                  <td className="parcel is-vcentered text-ellipsis">
                     <ParcelDescription parcel={template.parcel as any} />
                   </td>
                   <td className="default is-vcentered has-text-right">
