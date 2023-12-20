@@ -61,7 +61,7 @@ export const NameInput: React.FC<NameInputComponent> = ({ disableSuggestion, val
                 />
 
                 {!disableSuggestion && <>
-                  <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{ width: "calc(100%)" }}>
+                  <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{ width: "calc(100%)", maxHeight: '40vh' }}>
                     <Combobox.Options className={'dropdown-content'}>
                       {(address_templates?.edges || []).map(({ node: template }) => (
                         <Combobox.Option
