@@ -21,7 +21,7 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        return lib.Deserializable(response, provider_utils.parse_response)
+        return lib.Deserializable(response, provider_utils.parse_response, request.ctx)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(

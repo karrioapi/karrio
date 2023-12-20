@@ -36,11 +36,13 @@ export const OrganizationManagement: React.FC<OrganizationManagementComponent> =
           <p className="subtitle is-6 py-1">Organization Name</p>
         </div>
 
-        <div className="column is-7">
+        <div className="column is-5">
 
           <OrganizationUpdateInput propertyKey="name" inputType="text" />
 
         </div>
+
+        <div className="column is-2"></div>
       </div>
 
       <header className="px-0 pt-4">
@@ -83,6 +85,7 @@ export const OrganizationManagement: React.FC<OrganizationManagementComponent> =
                     {member.is_admin && <span className="is-size-7">Admin</span>}
                     {member.is_admin && member.is_owner && ', '}
                     {member.is_owner && <span className="is-size-7">Owner</span>}
+                    {!member.is_admin && !member.is_owner && <span className="is-size-7">View Only</span>}
                   </p>
                 </td>
                 <td className="last-login is-vcentered">

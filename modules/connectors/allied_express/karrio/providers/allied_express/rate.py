@@ -17,7 +17,7 @@ def parse_rate_response(
 
     messages = error.parse_error_response(response, settings)
     rates = [
-        _extract_details(rate.data["result"], settings)
+        _extract_details(rate.data["result"], settings, _response.ctx)
         for rate in [response]
         if not rate.is_error and "result" in (rate.data or {})
     ]
@@ -28,10 +28,12 @@ def parse_rate_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
+    ctx: dict,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.ResultType, data)
     service = provider_units.ShippingService.map(
-        settings.connection_config.account_service_type.state
+        ctx.get("service")
+        or settings.connection_config.account_service_type.state
         or settings.service_type
         or "R"
     )
@@ -67,7 +69,7 @@ def rate_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    service = lib.to_services(payload.services, provider_units.ShippingService).first
+    services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
         option_type=provider_units.ShippingOption,
@@ -77,6 +79,12 @@ def rate_request(
         options=options,
         package_option_type=provider_units.ShippingOption,
         shipping_options_initializer=provider_units.shipping_options_initializer,
+    )
+    service = (
+        getattr(services.first, "value", None)
+        or settings.connection_config.account_service_type.state
+        or settings.service_type
+        or "R"
     )
 
     request = allied.RateRequestType(
@@ -91,7 +99,7 @@ def rate_request(
                 length=pkg.length.CM,
                 width=pkg.width.CM,
                 weight=pkg.weight.KG,
-                volume=pkg.volume.value,
+                volume=pkg.volume.m3,
                 itemCount=(pkg.items.quantity if any(pkg.items) else 1),
             )
             for pkg in packages
@@ -125,9 +133,9 @@ def rate_request(
             phoneNumber=recipient.phone_number or "(00) 0000 0000",
         ),
         referenceNumbers=([payload.reference] if any(payload.reference or "") else []),
-        serviceLevel=(service.value if service else "R"),
+        serviceLevel=service,
         weight=packages.weight.KG,
-        volume=packages.volume,
+        volume=packages.volume.m3,
     )
 
     return lib.Serializable(
@@ -135,4 +143,5 @@ def rate_request(
         lambda _: lib.to_json(_)
         .replace("jobStopsP", "jobStops_P")
         .replace("jobStopsD", "jobStops_D"),
+        dict(service=service),
     )

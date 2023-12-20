@@ -69,28 +69,28 @@ export const PasswordManagement: React.FC<{}> = () => {
   }
 
   return (
-    <form method="post" onSubmit={onSubmit} className="column is-7">
+    <form method="post" onSubmit={onSubmit} className="column">
 
       <InputField
         label="Current Password" name="old_password" type="password"
         placeholder="Current Password" className="is-small" fieldClass="mt-3"
-        onChange={handleChange} value={data.old_password} style={{ maxWidth: "60%" }} required>
+        onChange={handleChange} value={data.old_password} required>
         {renderFieldError("old_password", error)}
       </InputField>
 
-      <hr style={{ height: "1px", maxWidth: "60%" }} />
+      <hr style={{ height: "1px" }} />
 
       <InputField
         label="New Password" name="new_password1" type="password"
         placeholder="New Password" className="is-small" fieldClass="mt-3"
-        onChange={handleChange} value={data.new_password1} style={{ maxWidth: "60%" }} required>
+        onChange={handleChange} value={data.new_password1} required>
         {renderFieldError("new_password1", error)}
       </InputField>
 
       <InputField
         label="Confirm New Password" name="new_password2" type="password"
         placeholder="Confirm Password" className="is-small" fieldClass="mt-3"
-        onChange={handleChange} value={data.new_password2} style={{ maxWidth: "60%" }} required>
+        onChange={handleChange} value={data.new_password2} required>
         {renderFieldError("new_password2", error)}
       </InputField>
 

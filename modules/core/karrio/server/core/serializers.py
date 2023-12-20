@@ -149,7 +149,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=30,
+        max_length=50,
         help_text="""Attention to
         **(required for shipment purchase)**
         """,
@@ -158,7 +158,7 @@ class AddressData(validators.AugmentedAddressSerializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        max_length=30,
+        max_length=50,
         help_text="The company name if the party is a company",
     )
     country_code = serializers.ChoiceField(

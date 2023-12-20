@@ -133,7 +133,8 @@ Karrio custom styling
   }
 
   .action {
-    width: 15%;
+    width: 150px;
+    min-width: 150px;
   }
 }
 
@@ -154,10 +155,12 @@ Karrio custom styling
 
   .default {
     width: 100px;
+    min-width: 100px;
   }
 
   .action {
     width: 90px;
+    min-width: 90px;
   }
 }
 
@@ -168,16 +171,17 @@ Karrio custom styling
   }
 
   .parcel {
-    min-width: 10vw;
+    min-width: 250px;
   }
 
   .default {
-    width: 10%;
     width: 100px;
+    min-width: 100px;
   }
 
   .action {
     width: 90px;
+    min-width: 90px;
   }
 }
 
@@ -234,7 +238,7 @@ Karrio custom styling
 .trackers-table {
   .carrier {
     width: 8%;
-    min-width: 50px;
+    min-width: 90px;
   }
 
   .tracking-number {
@@ -254,6 +258,7 @@ Karrio custom styling
   .date {
     width: 15%;
     min-width: 130px;
+    max-width: 130px;
   }
 
   .action {
@@ -355,15 +360,17 @@ Karrio custom styling
 .members-table {
   .member {
     width: 40%;
+    min-width: 150px;
   }
 
   .role {
     width: 25%;
+    min-width: 150px;
   }
 
   .last-login {
-    width: 25%;
-    min-width: 150px;
+    width: 180px;
+    min-width: 180px;
   }
 
   .action {

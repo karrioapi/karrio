@@ -50,7 +50,8 @@ export const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ labe
           onChange={handleOnChange}
           defaultValue={((user || {}) as any)[propertyKey] || ""}
           type={inputType}
-          style={{ maxWidth: "60%" }} required />
+          required
+        />
 
         <input className="button is-success is-small mr-1" type="submit" value="Save"
           style={{ visibility: (hasChanged ? "visible" : "hidden") }} />

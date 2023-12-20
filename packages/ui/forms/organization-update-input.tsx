@@ -53,7 +53,6 @@ export const OrganizationUpdateInput: React.FC<OrganizationUpdateInputComponent>
           onChange={handleOnChange}
           defaultValue={((organization || {}) as any)[propertyKey] || ""}
           type={inputType}
-          style={{ maxWidth: "60%" }}
           disabled={!organization?.current_user?.is_admin}
           required
         />

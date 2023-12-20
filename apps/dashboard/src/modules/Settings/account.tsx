@@ -57,15 +57,17 @@ export default function AccountPage(pageProps: any) {
 
         <div>
           <div className="columns py-6 my-4">
-            <div className="column is-5 pr-6">
+            <div className="column is-5 pr-2">
               <p className="subtitle is-6 py-1">Profile</p>
-              <p className="is-size-7 pr-6">Your email address is your identity on {APP_NAME} and is used to log in.</p>
+              <p className="is-size-7 pr-2">Your email address is your identity on {APP_NAME} and is used to log in.</p>
             </div>
 
-            <div className="column is-7">
+            <div className="column is-4">
               <EmailManagement />
               <ProfileUpdateInput label="Name (Optional)" propertyKey="full_name" inputType="text" />
             </div>
+
+            <div className="column is-3"></div>
           </div>
 
           <hr style={{ height: '1px' }} />
@@ -77,6 +79,8 @@ export default function AccountPage(pageProps: any) {
             </div>
 
             <PasswordManagement />
+
+            <div className="column is-3"></div>
           </div>
 
           <hr style={{ height: '1px' }} />

@@ -52,8 +52,8 @@ class Address(OwnedEntity):
     city = models.CharField(max_length=30, null=True, blank=True, db_index=True)
     federal_tax_id = models.CharField(max_length=20, null=True, blank=True)
     state_tax_id = models.CharField(max_length=20, null=True, blank=True)
-    person_name = models.CharField(max_length=30, null=True, blank=True, db_index=True)
-    company_name = models.CharField(max_length=30, null=True, blank=True, db_index=True)
+    person_name = models.CharField(max_length=50, null=True, blank=True, db_index=True)
+    company_name = models.CharField(max_length=50, null=True, blank=True, db_index=True)
     phone_number = models.CharField(max_length=50, null=True, blank=True)
     street_number = models.CharField(
         max_length=20, null=True, blank=True, db_index=True

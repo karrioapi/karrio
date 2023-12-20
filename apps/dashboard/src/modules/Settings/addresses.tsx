@@ -114,7 +114,7 @@ export default function AddressPage(pageProps: any) {
                 {(address_templates?.edges || []).map(({ node: template }) => (
 
                   <tr key={`${template.id}-${Date.now()}`}>
-                    <td className="template is-vcentered is-size-6 has-text-weight-bold text-ellipsis">
+                    <td className="template is-vcentered is-size-7 has-text-weight-bold text-ellipsis">
                       <span className="text-ellipsis" title={template.label}>{template.label}</span>
                     </td>
                     <td className="address is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis">

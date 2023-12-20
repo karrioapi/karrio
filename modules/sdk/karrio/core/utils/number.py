@@ -16,7 +16,8 @@ class NUMBERFORMAT:
         if value is None or isinstance(value, bool):
             return None
         if quant is not None:
-            return float(Decimal(str(value)).quantize(Decimal(str(quant))))
+            _result = float(Decimal(str(value)).quantize(Decimal(str(quant))))
+            return _result if _result != 0 else float(Decimal(str(value)))
 
         return round(float(value), 2)
 
