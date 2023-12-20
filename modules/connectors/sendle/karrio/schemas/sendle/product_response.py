@@ -23,9 +23,9 @@ class CoverType:
 
 @s(auto_attribs=True)
 class EtaType:
-    daysrange: List[int] = []
-    daterange: List[str] = []
-    forsenddate: Optional[str] = None
+    days_range: List[int] = []
+    date_range: List[str] = []
+    for_send_date: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -33,18 +33,18 @@ class PriceBreakdownType:
     base: Optional[BaseType] = JStruct[BaseType]
     discount: Optional[BaseType] = JStruct[BaseType]
     cover: Optional[BaseType] = JStruct[BaseType]
-    fuelsurcharge: Optional[BaseType] = JStruct[BaseType]
-    basetax: Optional[BaseType] = JStruct[BaseType]
-    discounttax: Optional[BaseType] = JStruct[BaseType]
-    covertax: Optional[BaseType] = JStruct[BaseType]
-    fuelsurchargetax: Optional[BaseType] = JStruct[BaseType]
+    fuel_surcharge: Optional[BaseType] = JStruct[BaseType]
+    base_tax: Optional[BaseType] = JStruct[BaseType]
+    discount_tax: Optional[BaseType] = JStruct[BaseType]
+    cover_tax: Optional[BaseType] = JStruct[BaseType]
+    fuel_surcharge_tax: Optional[BaseType] = JStruct[BaseType]
 
 
 @s(auto_attribs=True)
 class ProductType:
     code: Optional[str] = None
     name: Optional[str] = None
-    firstmileoption: Optional[str] = None
+    first_mile_option: Optional[str] = None
     service: Optional[str] = None
 
 
@@ -69,11 +69,11 @@ class TaxBreakdownType:
 @s(auto_attribs=True)
 class ProductResponseElementType:
     quote: Optional[QuoteType] = JStruct[QuoteType]
-    pricebreakdown: Optional[PriceBreakdownType] = JStruct[PriceBreakdownType]
-    taxbreakdown: Optional[TaxBreakdownType] = JStruct[TaxBreakdownType]
+    price_breakdown: Optional[PriceBreakdownType] = JStruct[PriceBreakdownType]
+    tax_breakdown: Optional[TaxBreakdownType] = JStruct[TaxBreakdownType]
     plan: Optional[str] = None
     eta: Optional[EtaType] = JStruct[EtaType]
     route: Optional[RouteType] = JStruct[RouteType]
-    allowedpackaging: Optional[str] = None
+    allowed_packaging: Optional[str] = None
     product: Optional[ProductType] = JStruct[ProductType]
     cover: Optional[CoverType] = JStruct[CoverType]

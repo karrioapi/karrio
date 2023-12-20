@@ -10,7 +10,7 @@ class Settings(provider_utils.Settings):
 
     # required carrier specific properties
     sendle_id: str
-    sendle_api_key: str
+    api_key: str
 
     # generic properties
     id: str = None

@@ -24,7 +24,11 @@
             "scan_time": "2023-04-03T08:20:00Z",
             "description": "We attempted to pick up the parcel but were unsuccessful",
             "reason": "Parcel not ready",
-            "display_time": "2023-04-03T08:20:00Z"
+            "display_time": "2023-04-03T08:20:00Z",
+            "origin_location": "origin location",
+            "destination_location": "destination location",
+            "location": "location",
+            "requester": "requester"
         },
         {
             "event_type": "Pickup",

@@ -6,7 +6,7 @@ from jstruct import JStruct, JList
 @s(auto_attribs=True)
 class ContentsType:
     description: Optional[str] = None
-    countryoforigin: Optional[str] = None
+    country_of_origin: Optional[str] = None
     value: Optional[str] = None
     currency: Optional[str] = None
 
@@ -45,17 +45,12 @@ class LabelType:
 
 
 @s(auto_attribs=True)
-class MetadataType:
-    pass
-
-
-@s(auto_attribs=True)
 class ParcelContentType:
     description: Optional[str] = None
-    countryoforigin: Optional[str] = None
+    country_of_origin: Optional[str] = None
     value: Optional[str] = None
     currency: Optional[str] = None
-    hscode: Optional[str] = None
+    hs_code: Optional[str] = None
     quantity: Optional[int] = None
 
 
@@ -64,28 +59,28 @@ class PriceBreakdownType:
     base: Optional[GrossType] = JStruct[GrossType]
     discount: Optional[GrossType] = JStruct[GrossType]
     cover: Optional[GrossType] = JStruct[GrossType]
-    fuelsurcharge: Optional[GrossType] = JStruct[GrossType]
-    basetax: Optional[GrossType] = JStruct[GrossType]
-    discounttax: Optional[GrossType] = JStruct[GrossType]
-    covertax: Optional[GrossType] = JStruct[GrossType]
-    fuelsurchargetax: Optional[GrossType] = JStruct[GrossType]
+    fuel_surcharge: Optional[GrossType] = JStruct[GrossType]
+    base_tax: Optional[GrossType] = JStruct[GrossType]
+    discount_tax: Optional[GrossType] = JStruct[GrossType]
+    cover_tax: Optional[GrossType] = JStruct[GrossType]
+    fuel_surcharge_tax: Optional[GrossType] = JStruct[GrossType]
 
 
 @s(auto_attribs=True)
 class ProductType:
-    atlonly: Optional[bool] = None
+    atl_only: Optional[bool] = None
     code: Optional[str] = None
     name: Optional[str] = None
-    firstmileoption: Optional[str] = None
+    first_mile_option: Optional[str] = None
     service: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class AddressType:
-    addressline1: Optional[str] = None
-    addressline2: Optional[str] = None
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
     suburb: Optional[str] = None
-    statename: Optional[str] = None
+    state_name: Optional[str] = None
     postcode: Optional[int] = None
     country: Optional[str] = None
 
@@ -96,7 +91,7 @@ class ContactType:
     phone: Optional[str] = None
     email: Optional[str] = None
     company: Optional[str] = None
-    sendleid: Optional[str] = None
+    sendle_id: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -110,17 +105,17 @@ class ReceiverType:
 class RouteType:
     description: Optional[str] = None
     type: Optional[str] = None
-    deliveryguaranteestatus: Optional[str] = None
+    delivery_guarantee_status: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class SchedulingType:
-    iscancellable: Optional[bool] = None
-    pickupdate: Optional[str] = None
-    pickedupon: Optional[str] = None
-    deliveredon: Optional[str] = None
-    estimateddeliverydateminimum: Optional[str] = None
-    estimateddeliverydatemaximum: Optional[str] = None
+    is_cancellable: Optional[bool] = None
+    pickup_date: Optional[str] = None
+    picked_up_on: Optional[str] = None
+    delivered_on: Optional[str] = None
+    estimated_delivery_date_minimum: Optional[str] = None
+    estimated_delivery_date_maximum: Optional[str] = None
     status: Optional[str] = None
 
 
@@ -145,30 +140,30 @@ class VolumeType:
 
 @s(auto_attribs=True)
 class OrderResponseType:
-    orderid: Optional[str] = None
+    order_id: Optional[str] = None
     state: Optional[str] = None
-    orderurl: Optional[str] = None
-    sendlereference: Optional[str] = None
-    trackingurl: Optional[str] = None
+    order_url: Optional[str] = None
+    sendle_reference: Optional[str] = None
+    tracking_url: Optional[str] = None
     labels: List[LabelType] = JList[LabelType]
     scheduling: Optional[SchedulingType] = JStruct[SchedulingType]
-    hidepickupaddress: Optional[bool] = None
+    hide_pickup_address: Optional[bool] = None
     description: Optional[str] = None
     weight: Optional[VolumeType] = JStruct[VolumeType]
     volume: Optional[VolumeType] = JStruct[VolumeType]
     dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
-    customerreference: Optional[str] = None
+    customer_reference: Optional[str] = None
     metadata: Optional[dict] = {}
     sender: Optional[ReceiverType] = JStruct[ReceiverType]
     receiver: Optional[ReceiverType] = JStruct[ReceiverType]
     route: Optional[RouteType] = JStruct[RouteType]
     price: Optional[PriceType] = JStruct[PriceType]
-    pricebreakdown: Optional[PriceBreakdownType] = JStruct[PriceBreakdownType]
-    taxbreakdown: Optional[TaxBreakdownType] = JStruct[TaxBreakdownType]
+    price_breakdown: Optional[PriceBreakdownType] = JStruct[PriceBreakdownType]
+    tax_breakdown: Optional[TaxBreakdownType] = JStruct[TaxBreakdownType]
     cover: Optional[CoverType] = JStruct[CoverType]
-    packagingtype: Optional[str] = None
+    packaging_type: Optional[str] = None
     contents: Optional[ContentsType] = JStruct[ContentsType]
-    parcelcontents: List[ParcelContentType] = JList[ParcelContentType]
-    contentstype: Optional[str] = None
-    labelprovider: Optional[str] = None
+    parcel_contents: List[ParcelContentType] = JList[ParcelContentType]
+    contents_type: Optional[str] = None
+    label_provider: Optional[str] = None
     product: Optional[ProductType] = JStruct[ProductType]

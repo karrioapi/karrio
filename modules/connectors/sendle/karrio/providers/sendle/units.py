@@ -28,10 +28,8 @@ class ShippingService(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    sendle_cover = lib.OptionEnum("cover", float)
-
-    """ Unified Option type mapping """
-    insurance = sendle_cover
+    sendle_hide_pickup_address = lib.OptionEnum("hide_pickup_address", bool)
+    sendle_first_mile_option = lib.OptionEnum("first_mile_option", bool)
 
 
 def shipping_options_initializer(
@@ -52,10 +50,10 @@ def shipping_options_initializer(
 
 
 class TrackingStatus(lib.Enum):
-    on_hold = ["on_hold"]
-    delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
-    delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
-    ready_for_pickup = ["ready_for_pickup"]
+    on_hold = ["Pickup Attempted", "Delivery Attempted"]
+    delivered = ["Delivered"]
+    in_transit = ["Pickup", "Drop Off", "Dropped Off", "In Transit"]
+    delivery_failed = ["Damaged", "Unable to Deliver"]
+    delivery_delayed = ["Card Left"]
+    out_for_delivery = ["Out for Delivery", "Local Delivery"]
+    ready_for_pickup = ["Left with Agent"]

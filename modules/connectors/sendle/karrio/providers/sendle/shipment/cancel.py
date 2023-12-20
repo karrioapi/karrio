@@ -1,4 +1,4 @@
-
+import karrio.schemas.sendle.cancel_request as sendle
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -8,12 +8,18 @@ import karrio.providers.sendle.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    response: lib.Deserializable[dict],
+    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-    response_messages: list = []  # extract carrier response errors and messages
-    messages = error.parse_error_response(response_messages, settings)
-    success = True  # compute shipment cancel success state
+    responses = _response.deserialize()
+    messages: typing.List[models.Message] = sum(
+        [
+            error.parse_error_response(response, settings, tracking_number=_)
+            for _, response in responses
+        ],
+        start=[],
+    )
+    success = any([response.get("state") == "Cancelled" for _, response in responses])
 
     confirmation = (
         models.ConfirmationDetails(
@@ -21,7 +27,9 @@ def parse_shipment_cancel_response(
             carrier_name=settings.carrier_name,
             operation="Cancel Shipment",
             success=success,
-        ) if success else None
+        )
+        if success
+        else None
     )
 
     return confirmation, messages
@@ -31,7 +39,15 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    order_ids = list(
+        set(
+            [
+                payload.shipment_identifier,
+                *((payload.options or {}).get("shipment_identifiers") or []),
+            ]
+        )
+    )
 
-    request = None  # map data to convert karrio model to sendle specific type
+    request = [sendle.CancelRequestType(id=order_id) for order_id in order_ids]
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, lib.to_dict)

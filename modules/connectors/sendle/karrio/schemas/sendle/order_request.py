@@ -12,28 +12,23 @@ class DimensionsType:
 
 
 @s(auto_attribs=True)
-class MetadataType:
-    pass
-
-
-@s(auto_attribs=True)
 class ParcelContentType:
     description: Optional[str] = None
     value: Optional[int] = None
     currency: Optional[str] = None
     quantity: Optional[int] = None
-    countryoforigin: Optional[str] = None
-    hscode: Optional[int] = None
+    country_of_origin: Optional[str] = None
+    hs_code: Optional[int] = None
 
 
 @s(auto_attribs=True)
 class AddressType:
     country: Optional[str] = None
-    addressline1: Optional[str] = None
-    addressline2: Optional[str] = None
+    address_line1: Optional[str] = None
+    address_line2: Optional[str] = None
     suburb: Optional[str] = None
     postcode: Optional[int] = None
-    statename: Optional[str] = None
+    state_name: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -54,7 +49,7 @@ class ReceiverType:
     address: Optional[AddressType] = JStruct[AddressType]
     contact: Optional[ContactType] = JStruct[ContactType]
     instructions: Optional[str] = None
-    taxids: Optional[TaxIDSType] = JStruct[TaxIDSType]
+    tax_ids: Optional[TaxIDSType] = JStruct[TaxIDSType]
 
 
 @s(auto_attribs=True)
@@ -68,14 +63,14 @@ class OrderRequestType:
     sender: Optional[ReceiverType] = JStruct[ReceiverType]
     receiver: Optional[ReceiverType] = JStruct[ReceiverType]
     description: Optional[str] = None
-    customerreference: Optional[str] = None
-    productcode: Optional[str] = None
-    firstmileoption: Optional[str] = None
-    pickupdate: Optional[str] = None
+    customer_reference: Optional[str] = None
+    product_code: Optional[str] = None
+    first_mile_option: Optional[str] = None
+    pickup_date: Optional[str] = None
     weight: Optional[VolumeType] = JStruct[VolumeType]
     volume: Optional[VolumeType] = JStruct[VolumeType]
     dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
     metadata: Optional[dict] = {}
-    hidepickupaddress: Optional[bool] = None
-    parcelcontents: List[ParcelContentType] = JList[ParcelContentType]
-    contentstype: Optional[str] = None
+    hide_pickup_address: Optional[bool] = None
+    parcel_contents: List[ParcelContentType] = JList[ParcelContentType]
+    contents_type: Optional[str] = None

@@ -106,7 +106,7 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    weight_unit, dim_unit = packages.compatible_units
+    weight_unit, _ = packages.compatible_units
     customs = lib.to_customs_info(
         payload.customs,
         shipper=payload.shipper,

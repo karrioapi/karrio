@@ -1,4 +1,3 @@
-
 from karrio.core.metadata import Metadata
 
 from karrio.mappers.sendle.mapper import Mapper
@@ -10,10 +9,12 @@ import karrio.providers.sendle.units as units
 METADATA = Metadata(
     id="sendle",
     label="Sendle",
+    is_hub=False,
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,
     Settings=Settings,
     # Data Units
-    is_hub=False
+    options=units.ShippingOption,
+    services=units.ShippingService,
 )

@@ -4,18 +4,13 @@ from jstruct import JStruct
 
 
 @s(auto_attribs=True)
-class MetadataType:
-    pass
-
-
-@s(auto_attribs=True)
 class CancelResponseType:
-    orderid: Optional[str] = None
+    order_id: Optional[str] = None
     state: Optional[str] = None
-    orderurl: Optional[str] = None
-    sendlereference: Optional[str] = None
-    trackingurl: Optional[str] = None
-    customerreference: Optional[str] = None
+    order_url: Optional[str] = None
+    sendle_reference: Optional[str] = None
+    tracking_url: Optional[str] = None
+    customer_reference: Optional[str] = None
     metadata: Optional[dict] = {}
-    cancelledat: Optional[str] = None
-    cancellationmessage: Optional[str] = None
+    cancelled_at: Optional[str] = None
+    cancellation_message: Optional[str] = None
