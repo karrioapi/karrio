@@ -1,17 +1,14 @@
-from base64 import b64encode
-from karrio.core import Settings as BaseSettings
+import base64
+import typing
+import karrio.lib as lib
+import karrio.core as core
 
 
-class Settings(BaseSettings):
+class Settings(core.Settings):
     """Sendle connection settings."""
 
-    # Carrier specific properties
     sendle_id: str
     api_key: str
-
-    id: str = None
-    account_country_code: str = "AU"
-    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -26,4 +23,49 @@ class Settings(BaseSettings):
     @property
     def authorization(self):
         pair = "%s:%s" % (self.sendle_id, self.api_key)
-        return b64encode(pair.encode("utf-8")).decode("ascii")
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+
+
+def check_for_order_failures(responses: typing.List[str]) -> bool:
+    """Check for shipment failures."""
+    _responses = [lib.to_dict(_) for _ in responses]
+
+    return any(
+        [
+            response.get("order_id") is None
+            for response in _responses
+            if response.get("order_id") is not None
+        ]
+    )
+
+
+def shipment_next_call(response: dict, settings: Settings, has_failure: bool) -> dict:
+    """Get next call for shipment."""
+    _response = lib.to_dict(response)
+
+    return (
+        dict(
+            method="GET",
+            response=_response,
+            url=_response["labels"][0]["url"],
+        )
+        if _response.get("labels") is not None and not has_failure
+        else dict(
+            method="DELETE",
+            response=_response,
+            url=f"{settings.server_url}/api/orders/{_response['order_id']}",
+        )
+    )
+
+
+def label_decoder(response):
+    _content = lib.failsafe(lambda: response.read())
+    _label = lib.failsafe(lambda: lib.encode_base64(_content))
+    _data = lib.failsafe(lambda: lib.to_dict(_content)) or {}
+
+    return lib.to_dict(
+        {
+            **_data,
+            "label": _label,
+        }
+    )

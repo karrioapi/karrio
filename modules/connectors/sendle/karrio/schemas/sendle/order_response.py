@@ -1,10 +1,36 @@
 from attr import s
-from typing import Optional, Any, List
+from typing import Optional, List
 from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
-class Dimensions:
+class ContentsType:
+    description: Optional[str] = None
+    country_of_origin: Optional[str] = None
+    value: Optional[str] = None
+    currency: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class GrossType:
+    amount: Optional[float] = None
+    currency: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PriceType:
+    gross: Optional[GrossType] = JStruct[GrossType]
+    net: Optional[GrossType] = JStruct[GrossType]
+    tax: Optional[GrossType] = JStruct[GrossType]
+
+
+@s(auto_attribs=True)
+class CoverType:
+    price: Optional[PriceType] = JStruct[PriceType]
+
+
+@s(auto_attribs=True)
+class DimensionsType:
     length: Optional[str] = None
     width: Optional[str] = None
     height: Optional[str] = None
@@ -12,19 +38,14 @@ class Dimensions:
 
 
 @s(auto_attribs=True)
-class Label:
+class LabelType:
     format: Optional[str] = None
     size: Optional[str] = None
     url: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class Metadata:
-    pass
-
-
-@s(auto_attribs=True)
-class ParcelContent:
+class ParcelContentType:
     description: Optional[str] = None
     country_of_origin: Optional[str] = None
     value: Optional[str] = None
@@ -34,32 +55,19 @@ class ParcelContent:
 
 
 @s(auto_attribs=True)
-class Gross:
-    amount: Optional[float] = None
-    currency: Optional[str] = None
+class PriceBreakdownType:
+    base: Optional[GrossType] = JStruct[GrossType]
+    discount: Optional[GrossType] = JStruct[GrossType]
+    cover: Optional[GrossType] = JStruct[GrossType]
+    fuel_surcharge: Optional[GrossType] = JStruct[GrossType]
+    base_tax: Optional[GrossType] = JStruct[GrossType]
+    discount_tax: Optional[GrossType] = JStruct[GrossType]
+    cover_tax: Optional[GrossType] = JStruct[GrossType]
+    fuel_surcharge_tax: Optional[GrossType] = JStruct[GrossType]
 
 
 @s(auto_attribs=True)
-class Price:
-    gross: Optional[Gross] = JStruct[Gross]
-    net: Optional[Gross] = JStruct[Gross]
-    tax: Optional[Gross] = JStruct[Gross]
-
-
-@s(auto_attribs=True)
-class PriceBreakdown:
-    base: Optional[Gross] = JStruct[Gross]
-    discount: Optional[Gross] = JStruct[Gross]
-    cover: Optional[Gross] = JStruct[Gross]
-    fuel_surcharge: Optional[Gross] = JStruct[Gross]
-    base_tax: Optional[Gross] = JStruct[Gross]
-    discount_tax: Optional[Gross] = JStruct[Gross]
-    cover_tax: Optional[Gross] = JStruct[Gross]
-    fuel_surcharge_tax: Optional[Gross] = JStruct[Gross]
-
-
-@s(auto_attribs=True)
-class Product:
+class ProductType:
     atl_only: Optional[bool] = None
     code: Optional[str] = None
     name: Optional[str] = None
@@ -68,7 +76,7 @@ class Product:
 
 
 @s(auto_attribs=True)
-class Address:
+class AddressType:
     address_line1: Optional[str] = None
     address_line2: Optional[str] = None
     suburb: Optional[str] = None
@@ -78,7 +86,7 @@ class Address:
 
 
 @s(auto_attribs=True)
-class Contact:
+class ContactType:
     name: Optional[str] = None
     phone: Optional[str] = None
     email: Optional[str] = None
@@ -87,77 +95,75 @@ class Contact:
 
 
 @s(auto_attribs=True)
-class Receiver:
-    contact: Optional[Contact] = JStruct[Contact]
-    address: Optional[Address] = JStruct[Address]
+class ReceiverType:
+    contact: Optional[ContactType] = JStruct[ContactType]
+    address: Optional[AddressType] = JStruct[AddressType]
     instructions: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class Route:
+class RouteType:
     description: Optional[str] = None
     type: Optional[str] = None
+    delivery_guarantee_status: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class Scheduling:
+class SchedulingType:
     is_cancellable: Optional[bool] = None
     pickup_date: Optional[str] = None
     picked_up_on: Optional[str] = None
     delivered_on: Optional[str] = None
     estimated_delivery_date_minimum: Optional[str] = None
     estimated_delivery_date_maximum: Optional[str] = None
-    status: Any = None
+    status: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class Status:
-    description: Optional[str] = None
-    last_changed_at: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class Gst:
-    amount: Optional[int] = None
+class GstType:
+    amount: Optional[float] = None
     currency: Optional[str] = None
     rate: Optional[float] = None
 
 
 @s(auto_attribs=True)
-class TaxBreakdown:
-    gst: Optional[Gst] = JStruct[Gst]
-    hst: Optional[Gst] = JStruct[Gst]
-    qst: Optional[Gst] = JStruct[Gst]
+class TaxBreakdownType:
+    gst: Optional[GstType] = JStruct[GstType]
+    qst: Optional[GstType] = JStruct[GstType]
 
 
 @s(auto_attribs=True)
-class Volume:
-    value: Optional[str] = None
+class VolumeType:
     units: Optional[str] = None
+    value: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class OrderResponse:
+class OrderResponseType:
     order_id: Optional[str] = None
     state: Optional[str] = None
-    status: Optional[Status] = JStruct[Status]
     order_url: Optional[str] = None
     sendle_reference: Optional[str] = None
     tracking_url: Optional[str] = None
-    metadata: Optional[Metadata] = JStruct[Metadata]
-    labels: List[Label] = JList[Label]
-    scheduling: Optional[Scheduling] = JStruct[Scheduling]
+    labels: List[LabelType] = JList[LabelType]
+    scheduling: Optional[SchedulingType] = JStruct[SchedulingType]
     hide_pickup_address: Optional[bool] = None
     description: Optional[str] = None
-    weight: Optional[Volume] = JStruct[Volume]
-    volume: Optional[Volume] = JStruct[Volume]
-    dimensions: Optional[Dimensions] = JStruct[Dimensions]
+    weight: Optional[VolumeType] = JStruct[VolumeType]
+    volume: Optional[VolumeType] = JStruct[VolumeType]
+    dimensions: Optional[DimensionsType] = JStruct[DimensionsType]
     customer_reference: Optional[str] = None
-    sender: Optional[Receiver] = JStruct[Receiver]
-    receiver: Optional[Receiver] = JStruct[Receiver]
-    route: Optional[Route] = JStruct[Route]
-    price: Optional[Price] = JStruct[Price]
-    price_breakdown: Optional[PriceBreakdown] = JStruct[PriceBreakdown]
-    tax_breakdown: Optional[TaxBreakdown] = JStruct[TaxBreakdown]
-    parcel_contents: List[ParcelContent] = JList[ParcelContent]
-    product: Optional[Product] = JStruct[Product]
+    metadata: Optional[dict] = {}
+    sender: Optional[ReceiverType] = JStruct[ReceiverType]
+    receiver: Optional[ReceiverType] = JStruct[ReceiverType]
+    route: Optional[RouteType] = JStruct[RouteType]
+    price: Optional[PriceType] = JStruct[PriceType]
+    price_breakdown: Optional[PriceBreakdownType] = JStruct[PriceBreakdownType]
+    tax_breakdown: Optional[TaxBreakdownType] = JStruct[TaxBreakdownType]
+    cover: Optional[CoverType] = JStruct[CoverType]
+    packaging_type: Optional[str] = None
+    contents: Optional[ContentsType] = JStruct[ContentsType]
+    parcel_contents: List[ParcelContentType] = JList[ParcelContentType]
+    contents_type: Optional[str] = None
+    label_provider: Optional[str] = None
+    product: Optional[ProductType] = JStruct[ProductType]

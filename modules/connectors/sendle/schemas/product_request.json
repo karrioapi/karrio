@@ -1,0 +1,20 @@
+{
+    "sender_address_line1": "",
+    "sender_address_line2": "",
+    "sender_suburb": "",
+    "sender_postcode": "",
+    "sender_country": "",
+    "receiver_address_line1": "",
+    "receiver_address_line2": "",
+    "receiver_suburb": "",
+    "receiver_postcode": "",
+    "receiver_country": "",
+    "weight_value": 0.0,
+    "weight_units": "kg",
+    "volume_value": "0.0",
+    "volume_units": "m3",
+    "length_value": 0.0,
+    "width_value": 0.0,
+    "height_value": 0.0,
+    "dimension_units": "cm"
+}

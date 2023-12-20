@@ -1,54 +1,58 @@
 import unittest
-from unittest.mock import patch
-from karrio.core.utils import DP
-from karrio import Tracking
-from karrio.core.models import TrackingRequest
+from unittest.mock import patch, ANY
 from .fixture import gateway
 
+import karrio
+import karrio.lib as lib
+import karrio.core.models as models
 
-class TestCarrierTracking(unittest.TestCase):
+
+class TestSendleTracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.TrackingRequest = TrackingRequest(tracking_numbers=TRACKING_PAYLOAD)
+        self.TrackingRequest = models.TrackingRequest(**TrackingPayload)
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        self.assertEqual(request.serialize(), TrackingRequestJSON)
+        self.assertEqual(request.serialize(), TrackingRequest)
 
     def test_get_tracking(self):
-        with patch("karrio.mappers.sendle.proxy.http") as mock:
+        with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
             mock.return_value = "{}"
-            Tracking.fetch(self.TrackingRequest).from_(gateway)
+            karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/api/tracking/S3ND73",
+                f"{gateway.settings.server_url}/api/tracking/S34WER4S",
             )
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.sendle.proxy.http") as mock:
-            mock.return_value = TrackingResponseJSON
+        with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
+            mock.return_value = TrackingResponse
             parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.sendle.proxy.http") as mock:
-            mock.return_value = ErrorResponseJSON
+        with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
             parsed_response = (
-                Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedErrorResponse)
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
-TRACKING_PAYLOAD = ["S3ND73"]
+
+TrackingPayload = {
+    "tracking_numbers": ["S34WER4S"],
+}
 
 ParsedTrackingResponse = [
     [
@@ -56,60 +60,74 @@ ParsedTrackingResponse = [
             "carrier_id": "sendle",
             "carrier_name": "sendle",
             "delivered": True,
-            "estimated_delivery": "2015-11-26",
+            "estimated_delivery": "2023-04-05",
             "events": [
                 {
-                    "code": "Info",
-                    "date": "2015-11-27",
-                    "description": "Your parcel was signed for by JIMMY",
-                    "time": "23:47",
-                },
-                {
                     "code": "Delivered",
-                    "date": "2015-11-27",
-                    "description": "Parcel delivered",
-                    "time": "23:46",
+                    "date": "2023-04-05",
+                    "description": "Your package has been delivered to your "
+                    "mailbox!",
+                    "location": "NEW YORK, NY",
+                    "time": "14:56",
                 },
                 {
-                    "code": "Info",
-                    "date": "2015-11-26",
-                    "description": "Parcel is loaded for delivery",
-                    "time": "23:00",
-                },
-                {
-                    "code": "Info",
-                    "date": "2015-11-26",
-                    "description": "Arrived at the depot for processing",
-                    "time": "19:46",
+                    "code": "Out for Delivery",
+                    "date": "2023-04-05",
+                    "description": "Your package is on board for delivery!",
+                    "location": "NEW YORK, NY",
+                    "time": "09:10",
                 },
                 {
                     "code": "In Transit",
-                    "date": "2015-11-25",
-                    "description": "In transit",
-                    "location": "Sydney to Brisbane",
-                    "time": "01:14",
-                },
-                {
-                    "code": "Info",
-                    "date": "2015-11-25",
-                    "description": "In transit between locations",
-                    "time": "01:04",
+                    "date": "2023-04-05",
+                    "description": "Your package is in transit with the carrier.",
+                    "location": "NEW YORK, NY",
+                    "time": "08:59",
                 },
                 {
                     "code": "In Transit",
-                    "date": "2020-07-06",
-                    "description": "USPS in possession of item",
-                    "location": "CLARKDALE, GA",
-                    "time": "09:38",
+                    "date": "2023-04-05",
+                    "description": "Your package is in transit with the carrier.",
+                    "location": "NEW YORK, NY",
+                    "time": "08:04",
+                },
+                {
+                    "code": "In Transit",
+                    "date": "2023-04-05",
+                    "description": "Your package is in transit with the carrier.",
+                    "location": "NEW YORK NY DISTRIBUTION CENTER",
+                    "time": "03:14",
+                },
+                {
+                    "code": "In Transit",
+                    "date": "2023-04-04",
+                    "description": "Your package is in transit with the carrier.",
+                    "location": "JERSEY CITY NJ NETWORK DISTRIBUTION CENTER",
+                    "time": "22:43",
+                },
+                {
+                    "code": "In Transit",
+                    "date": "2023-04-04",
+                    "description": "Your package is in transit with the carrier.",
+                    "location": "TEANECK, NJ",
+                    "time": "16:55",
+                },
+                {
+                    "code": "Pickup",
+                    "date": "2023-04-04",
+                    "description": "Parcel picked up",
+                    "time": "16:12",
                 },
                 {
                     "code": "Pickup Attempted",
-                    "date": "2015-11-23",
-                    "description": "We attempted to pick up the parcel but were unsuccessful",
-                    "time": "01:04",
+                    "date": "2023-04-03",
+                    "description": "We attempted to pick up the parcel but were "
+                    "unsuccessful",
+                    "time": "08:20",
                 },
             ],
-            "tracking_number": "S3ND73",
+            "status": "delivered",
+            "tracking_number": "S34WER4S",
         }
     ],
     [],
@@ -121,88 +139,117 @@ ParsedErrorResponse = [
         {
             "carrier_id": "sendle",
             "carrier_name": "sendle",
-            "code": "payment_required",
-            "message": "The account associated with this API key has no method of payment. Please go to your Account Settings in your Sendle Dashboard and add a payment method.",
+            "code": "not_found",
+            "details": {
+                "error_description": "The resource you requested was not found. "
+                "Please check the URI and try again.",
+                "tracking_number": "S34WER4S",
+            },
+            "message": "The resource you requested was not found. Please check the URI "
+            "and try again.",
         }
     ],
 ]
 
 
-TrackingRequestJSON = ["S3ND73"]
+TrackingRequest = [{"ref": "S34WER4S"}]
 
-TrackingResponseJSON = """{
+TrackingResponse = """{
     "state": "Delivered",
     "status": {
-        "description": "Parcel in transit from Adelaide",
-        "last_changed_at": "2021-01-29 01:25:57 UTC"
+        "description": "Your package has been delivered to your mailbox!",
+        "last_changed_at": "2023-04-05 18:56:00 UTC"
+    },
+    "origin": {
+        "country": "US"
+    },
+    "destination": {
+        "country": "US"
+    },
+    "scheduling": {
+        "pickup_date": "",
+        "picked_up_on": "2023-04-04",
+        "delivered_on": "2023-04-05",
+        "estimated_delivery_date_minimum": "",
+        "estimated_delivery_date_maximum": "",
+        "status": ""
     },
     "tracking_events": [
         {
             "event_type": "Pickup Attempted",
-            "scan_time": "2015-11-23T01:04:00Z",
+            "scan_time": "2023-04-03T08:20:00Z",
             "description": "We attempted to pick up the parcel but were unsuccessful",
-            "reason": "Parcel not ready"
+            "reason": "Parcel not ready",
+            "display_time": "2023-04-03T08:20:00Z"
+        },
+        {
+            "event_type": "Pickup",
+            "scan_time": "2023-04-04T16:12:00Z",
+            "description": "Parcel picked up",
+            "display_time": "2023-04-04T16:12:00Z"
         },
         {
             "event_type": "In Transit",
-            "scan_time": "2020-07-06T09:38:00Z",
-            "local_scan_time": "2020-07-06T09:38:00",
-            "description": "USPS in possession of item",
-            "location": "CLARKDALE, GA"
-        },
-        {
-            "event_type": "Info",
-            "scan_time": "2015-11-25T01:04:00Z",
-            "description": "In transit between locations"
+            "scan_time": "2023-04-04T20:55:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "TEANECK, NJ",
+            "local_scan_time": "2023-04-04T16:55:00",
+            "display_time": "2023-04-04T16:55:00-04:00"
         },
         {
             "event_type": "In Transit",
-            "scan_time": "2015-11-25T01:14:00Z",
-            "description": "In transit",
-            "origin_location": "Sydney",
-            "destination_location": "Brisbane",
-            "location": "SYDNEY",
-            "requester": ""
+            "scan_time": "2023-04-04T22:43:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "JERSEY CITY NJ NETWORK DISTRIBUTION CENTER",
+            "local_scan_time": "2023-04-04T22:43:00",
+            "display_time": "2023-04-04T22:43:00Z"
         },
         {
-            "event_type": "Info",
-            "scan_time": "2015-11-26T19:46:00Z",
-            "description": "Arrived at the depot for processing"
+            "event_type": "In Transit",
+            "scan_time": "2023-04-05T03:14:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "NEW YORK NY DISTRIBUTION CENTER",
+            "local_scan_time": "2023-04-05T03:14:00",
+            "display_time": "2023-04-05T03:14:00Z"
         },
         {
-            "event_type": "Info",
-            "scan_time": "2015-11-26T23:00:00Z",
-            "description": "Parcel is loaded for delivery"
+            "event_type": "In Transit",
+            "scan_time": "2023-04-05T12:04:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T08:04:00",
+            "display_time": "2023-04-05T08:04:00-04:00"
+        },
+        {
+            "event_type": "In Transit",
+            "scan_time": "2023-04-05T12:59:00Z",
+            "description": "Your package is in transit with the carrier.",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T08:59:00",
+            "display_time": "2023-04-05T08:59:00-04:00"
+        },
+        {
+            "event_type": "Out for Delivery",
+            "scan_time": "2023-04-05T13:10:00Z",
+            "description": "Your package is on board for delivery!",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T09:10:00",
+            "display_time": "2023-04-05T09:10:00-04:00"
         },
         {
             "event_type": "Delivered",
-            "scan_time": "2015-11-27T23:46:00Z",
-            "description": "Parcel delivered"
-        },
-        {
-            "event_type": "Info",
-            "scan_time": "2015-11-27T23:47:00Z",
-            "description": "Your parcel was signed for by JIMMY"
+            "scan_time": "2023-04-05T18:56:00Z",
+            "description": "Your package has been delivered to your mailbox!",
+            "location": "NEW YORK, NY",
+            "local_scan_time": "2023-04-05T14:56:00",
+            "display_time": "2023-04-05T14:56:00-04:00"
         }
-    ],
-    "origin": {
-        "country": "AU"
-    },
-    "destination": {
-        "country": "AU"
-    },
-    "scheduling": {
-        "pickup_date": "2015-11-24",
-        "picked_up_on": "",
-        "delivered_on": "",
-        "estimated_delivery_date_minimum": "2015-11-26",
-        "estimated_delivery_date_maximum": "2015-11-27"
-    }
+    ]
 }
 """
 
-ErrorResponseJSON = """{
-    "error": "payment_required",
-    "error_description": "The account associated with this API key has no method of payment. Please go to your Account Settings in your Sendle Dashboard and add a payment method."
+ErrorResponse = """{
+  "error": "not_found",
+  "error_description": "The resource you requested was not found. Please check the URI and try again."
 }
 """
