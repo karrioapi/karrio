@@ -143,6 +143,7 @@ RateRequest = """<priceRequest xmlns:xsi="http://www.w3.org/2001/XMLSchema-insta
         <priceBreakDown>true</priceBreakDown>
         <consignmentDetails>
             <totalWeight>1.25</totalWeight>
+            <totalVolume>6e-06</totalVolume>
             <totalNumberOfPieces>1</totalNumberOfPieces>
         </consignmentDetails>
         <pieceLine>

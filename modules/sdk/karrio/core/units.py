@@ -24,20 +24,20 @@ class PackagePreset:
     packaging_type: str = None
 
 
-class LabelType(utils.Enum):
+class LabelType(utils.StrEnum):
     PDF = "PDF"
     ZPL = "ZPL"
     PNG = "PNG"
 
 
-class DocFormat(utils.Enum):
+class DocFormat(utils.StrEnum):
     gif = "GIF"
     jpg = "JPG"
     pdf = "PDF"
     png = "PNG"
 
 
-class PackagingUnit(utils.Enum):
+class PackagingUnit(utils.StrEnum):
     envelope = "Small Envelope"
     pak = "Pak"
     tube = "Tube"
@@ -47,19 +47,19 @@ class PackagingUnit(utils.Enum):
     your_packaging = "Your Packaging"
 
 
-class PaymentType(utils.Enum):
+class PaymentType(utils.StrEnum):
     sender = "SENDER"
     recipient = "RECIPIENT"
     third_party = "THIRD_PARTY"
 
 
-class CreditCardType(utils.Enum):
+class CreditCardType(utils.StrEnum):
     visa = "Visa"
     mastercard = "Mastercard"
     american_express = "AmericanExpress"
 
 
-class CustomsContentType(utils.Enum):
+class CustomsContentType(utils.StrEnum):
     documents = "DOCUMENTS"
     gift = "GIFT"
     sample = "SAMPLE"
@@ -68,7 +68,7 @@ class CustomsContentType(utils.Enum):
     other = "OTHER"
 
 
-class Incoterm(utils.Enum):
+class Incoterm(utils.StrEnum):
     """universal international shipment incoterm (term of trades)"""
 
     CFR = "Cost and Freight"
@@ -86,7 +86,7 @@ class Incoterm(utils.Enum):
     FOB = "Free On Board"
 
 
-class WeightUnit(utils.Enum):
+class WeightUnit(utils.StrEnum):
     """universal weight units"""
 
     KG = "KG"
@@ -95,11 +95,25 @@ class WeightUnit(utils.Enum):
     G = "G"
 
 
-class DimensionUnit(utils.Enum):
+class DimensionUnit(utils.StrEnum):
     """universal dimension units"""
 
     CM = "CM"
     IN = "IN"
+
+
+class VolumeUnit(utils.StrEnum):
+    """universal dimension units"""
+
+    l = "l"
+    m3 = "m3"
+    i3 = "i3"
+    ft3 = "ft3"
+    cm3 = "cm3"
+
+    """ mapping from dimension units to volume units """
+    CM = "cm3"
+    IN = "i3"
 
 
 class FreightClass(utils.Enum):
@@ -125,7 +139,7 @@ class FreightClass(utils.Enum):
     freight_class_400 = 400
 
 
-class UploadDocumentType(utils.Enum):
+class UploadDocumentType(utils.StrEnum):
     """universal upload document types"""
 
     certificate_of_origin = "certificate_of_origin"
@@ -260,24 +274,131 @@ class Volume:
     """The volume common processing helper"""
 
     def __init__(
-        self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
+        self,
+        side1: Dimension = None,
+        side2: Dimension = None,
+        side3: Dimension = None,
+        value: float = None,
+        unit: typing.Union[VolumeUnit, str] = VolumeUnit.cm3,
     ):
         self._side1 = side1
         self._side2 = side2
         self._side3 = side3
 
+        self._value = value
+        self._unit = VolumeUnit[unit] if isinstance(unit, str) else unit
+
+        self._quant = 0.001
+
+    def __getitem__(self, item):
+        return getattr(self, item)
+
     @property
-    def value(self):
-        if not all([self._side1.value, self._side2.value, self._side3.value]):
+    def unit(self) -> str:
+        if self._unit is None:
             return None
 
-        return utils.NF.decimal(self._side1.M * self._side2.M * self._side3.M)
+        return self._unit.value
+
+    @property
+    def value(self):
+        missing_side_value = not all(
+            [
+                getattr(self._side1, "value", None),
+                getattr(self._side2, "value", None),
+                getattr(self._side3, "value", None),
+            ]
+        )
+        missing_value = self._unit is None or self._value is None
+
+        if missing_side_value and missing_value:
+            return None
+
+        if not missing_value:
+            return self._value
+
+        return utils.NF.decimal(
+            self._side1.value * self._side2.value * self._side3.value
+        )
+
+    @property
+    def l(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.m3:
+            return utils.NF.decimal(self.value * 1000, quant=self._quant)
+        elif self._unit == VolumeUnit.i3:
+            return utils.NF.decimal(self.value / 61.024, quant=self._quant)
+        elif self._unit == VolumeUnit.ft3:
+            return utils.NF.decimal(self.value * 28.317, quant=self._quant)
+        if self._unit == VolumeUnit.cm3:
+            return utils.NF.decimal(self.value / 1000, quant=self._quant)
+        else:
+            return self.value
+
+    @property
+    def m3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return utils.NF.decimal(self.value / 1000, quant=self._quant)
+        if self._unit == VolumeUnit.cm3:
+            return utils.NF.decimal(self.value / 1e6, quant=self._quant)
+        elif self._unit == VolumeUnit.i3:
+            return utils.NF.decimal(self.value / 61020, quant=self._quant)
+        elif self._unit == VolumeUnit.ft3:
+            return utils.NF.decimal(self.value / 35.315, quant=self._quant)
+        else:
+            return self.value
+
+    @property
+    def i3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return utils.NF.decimal(self.value * 61.024, quant=self._quant)
+        if self._unit == VolumeUnit.m3:
+            return utils.NF.decimal(self.value * 1000000, quant=self._quant)
+        elif self._unit == VolumeUnit.cm3:
+            return utils.NF.decimal(self.value / 16.387, quant=self._quant)
+        elif self._unit == VolumeUnit.ft3:
+            return utils.NF.decimal(self.value * 1728, quant=self._quant)
+        else:
+            return self.value
+
+    @property
+    def ft3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return utils.NF.decimal(self.value / 28.317, quant=self._quant)
+        if self._unit == VolumeUnit.m3:
+            return utils.NF.decimal(self.value * 35.315, quant=self._quant)
+        elif self._unit == VolumeUnit.i3:
+            return utils.NF.decimal(self.value / 1728, quant=self._quant)
+        elif self._unit == VolumeUnit.cm3:
+            return utils.NF.decimal(self.value / 28320, quant=self._quant)
+        else:
+            return self.value
+
+    @property
+    def cm3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return utils.NF.decimal(self.value * 1000, quant=self._quant)
+        if self._unit == VolumeUnit.m3:
+            return utils.NF.decimal(self.value * 1e6, quant=self._quant)
+        elif self._unit == VolumeUnit.i3:
+            return utils.NF.decimal(self.value * 16.387, quant=self._quant)
+        elif self._unit == VolumeUnit.ft3:
+            return utils.NF.decimal(self.value * 28320, quant=self._quant)
+        else:
+            return self.value
 
     @property
     def cubic_meter(self):
-        if self.value is None:
-            return None
-        return utils.NF.decimal(self.value * 250)
+        return self.m3
 
 
 class Girth:
@@ -565,7 +686,9 @@ class Package:
 
     @property
     def volume(self) -> Volume:
-        return Volume(self.width, self.length, self.height)
+        return Volume(
+            self.width, self.length, self.height, unit=self.dimension_unit.value
+        )
 
     @property
     def thickness(self) -> Dimension:
@@ -695,11 +818,22 @@ class Packages(typing.Iterable[Package]):
         return Weight(unit=unit, value=value)
 
     @property
-    def volume(self) -> typing.Optional[float]:
+    def volume(self) -> Volume:
         if not any([pkg.volume.value for pkg in self._items]):
-            return None
+            return Volume(value=None)
 
-        return sum([pkg.volume.value or 0.0 for pkg in self._items], 0.0)
+        _, _dimension_unit = self._compatible_units
+        _volume_unit = VolumeUnit[_dimension_unit.name]
+        _total_volume = sum(
+            [
+                pkg.volume[_volume_unit.name]
+                for pkg in self._items
+                if pkg.volume is not None
+            ],
+            0.0,
+        )
+
+        return Volume(value=_total_volume, unit=_volume_unit)
 
     @property
     def package_type(self) -> str:

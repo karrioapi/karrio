@@ -99,7 +99,7 @@ def rate_request(
                 length=pkg.length.CM,
                 width=pkg.width.CM,
                 weight=pkg.weight.KG,
-                volume=pkg.volume.value,
+                volume=pkg.volume.m3,
                 itemCount=(pkg.items.quantity if any(pkg.items) else 1),
             )
             for pkg in packages
@@ -135,7 +135,7 @@ def rate_request(
         referenceNumbers=([payload.reference] if any(payload.reference or "") else []),
         serviceLevel=service,
         weight=packages.weight.KG,
-        volume=packages.volume,
+        volume=packages.volume.m3,
     )
 
     return lib.Serializable(
