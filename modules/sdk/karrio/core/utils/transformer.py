@@ -46,7 +46,7 @@ def to_multi_piece_rates(
                     **acc,
                     charge.name: models.ChargeDetails(
                         name=charge.name,
-                        amount=(
+                        amount=utils.NF.decimal(
                             charge.amount + getattr(acc.get(charge.name), "amount", 0.0)
                         ),
                         currency=charge.currency,
@@ -55,9 +55,14 @@ def to_multi_piece_rates(
                 all_charges,
                 {},
             )
-            total_charge = sum(
-                (utils.NF.decimal(rate.total_charge or 0.0) for rate in similar_rates),
-                0.0,
+            total_charge = utils.NF.decimal(
+                sum(
+                    (
+                        utils.NF.decimal(rate.total_charge or 0.0)
+                        for rate in similar_rates
+                    ),
+                    0.0,
+                )
             )
             multi_piece_rates.append(
                 models.RateDetails(
