@@ -497,7 +497,7 @@ class TracingRecordFilter(filters.FilterSet):
         fields: list = []
 
     def request_log_id_filter(self, queryset, name, value):
-        return queryset.filter(meta__request_log_id__icontains=value)
+        return queryset.filter(meta__request_log_id=value)
 
 
 class UploadRecordFilter(filters.FilterSet):

@@ -90,7 +90,7 @@ class LogType:
         self: tracing.TracingRecord, info: Info
     ) -> typing.List["TracingRecordType"]:
         queryset = tracing.TracingRecord.objects.filter(
-            meta__request_log_id__icontains=self.id
+            meta__request_log_id=self.id
         )
 
         if User.objects.filter(
