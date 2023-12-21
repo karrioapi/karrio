@@ -1428,6 +1428,7 @@ class ComputedDocumentFile(models.DocumentFile):
 
 class TrackingStatus(utils.Enum):
     on_hold = ["on_hold"]
+    pending = ["pending"]
     delivered = ["delivered"]
     in_transit = ["in_transit"]
     delivery_failed = ["delivery_failed"]

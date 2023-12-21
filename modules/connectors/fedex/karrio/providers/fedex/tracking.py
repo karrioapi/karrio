@@ -45,11 +45,16 @@ def _extract_tracking(
         or _parse_date_or_timestamp(date_or_timestamps, "ANTICIPATED_TENDER")
         or _parse_date_or_timestamp(date_or_timestamps, "ESTIMATED_DELIVERY")
     )
+    last_event = (
+        track_detail.Events[0].EventType
+        if any(track_detail.Events)
+        else getattr(track_detail.StatusDetail, "Code", "")
+    )
     status = next(
         (
             status.name
             for status in list(provider_units.TrackingStatus)
-            if getattr(track_detail.StatusDetail, "Code", "") in status.value
+            if last_event in status.value
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
