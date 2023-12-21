@@ -63,6 +63,11 @@ class UpdateConnectionMutationInput(base.UpdateCarrierConnectionMutationInput):
 
 
 @strawberry.input
+class DeleteConnectionMutationInput(utils.BaseInput):
+    id: str
+
+
+@strawberry.input
 class CreateSurchargeMutationInput(utils.BaseInput):
     name: str
     amount: float

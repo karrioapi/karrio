@@ -277,6 +277,7 @@ export interface Metadata {
     ALLOW_SIGNUP: boolean;
     ALLOW_ADMIN_APPROVED_SIGNUP: boolean;
     ALLOW_MULTI_ACCOUNT: boolean;
+    ADMIN_DASHBOARD: boolean;
     ORDERS_MANAGEMENT: boolean;
     APPS_MANAGEMENT: boolean;
     DOCUMENTS_MANAGEMENT: boolean;
@@ -301,6 +302,7 @@ export interface References {
     ALLOW_SIGNUP: boolean;
     ALLOW_ADMIN_APPROVED_SIGNUP: boolean;
     ALLOW_MULTI_ACCOUNT: boolean;
+    ADMIN_DASHBOARD: boolean;
     ORDERS_MANAGEMENT: boolean;
     APPS_MANAGEMENT: boolean;
     DOCUMENTS_MANAGEMENT: boolean;
@@ -437,7 +439,7 @@ export const CARRIER_IMAGES: Collection = {
     'veho': 'generic',
     'yanwen': 'yanwen',
     'eshipper': 'eshipper',
-    'easypost': 'generic',
+    'easypost': 'easypost',
     'freightcom': 'freightcom',
     'generic': 'generic',
     'sf_express': 'sf_express',

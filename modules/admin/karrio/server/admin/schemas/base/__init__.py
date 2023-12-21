@@ -101,11 +101,9 @@ class Mutation:
 
     @strawberry.mutation
     def delete_carrier_connection(
-        self, info: Info, input: inputs.base.DeleteMutationInput
-    ) -> mutations.base.DeleteMutation:
-        return mutations.DeleteMutation.mutate(
-            info, model=providers.Carrier, **input.to_dict()
-        )
+        self, info: Info, input: inputs.DeleteConnectionMutationInput
+    ) -> mutations.DeleteConnectionMutation:
+        return mutations.DeleteConnectionMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def create_surcharge(

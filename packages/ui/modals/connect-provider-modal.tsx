@@ -1,7 +1,7 @@
 import { Collection, LABEL_TYPES, NoneEnum, NotificationType, CarrierSettingsCarrierNameEnum } from '@karrio/types';
-import { CarrierConnectionType, useCarrierConnectionMutation } from '@karrio/hooks/user-connection';
 import { isEqual, isNone, useLocation, validationMessage, validityCheck } from '@karrio/lib';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
+import { CarrierConnectionType } from '@karrio/hooks/user-connection';
 import React, { useContext, useReducer, useState } from 'react';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { Notifier, Notify } from '../components/notifier';
@@ -16,6 +16,8 @@ import { Loading } from '../components/loader';
 type CarrierNameType = CarrierSettingsCarrierNameEnum | NoneEnum;
 type OperationType = {
   connection?: CarrierConnectionType;
+  create?: (data: any) => Promise<any>;
+  update?: (data: any) => Promise<any>;
   onConfirm?: () => Promise<any>;
 };
 type ConnectProviderModalContextType = {
@@ -46,7 +48,6 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
   const { references: { carriers, connection_configs, service_names, option_names } } = useAPIMetadata();
   const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
-  const mutation = useCarrierConnectionMutation();
   const { loading, setLoading } = useContext(Loading);
   const { addUrlParam, removeUrlParam } = useLocation();
   const DEFAULT_STATE = (): Partial<CarrierConnectionType> => ({ carrier_name: NoneEnum.none });
@@ -131,9 +132,9 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
       const { carrier_name: _, __typename, capabilities, display_name, test_mode, ...content } = payload;
       const data = { [carrier_name]: carrier_name.includes('generic') ? { ...content, display_name } : content };
       if (isNew) {
-        await mutation.createCarrierConnection.mutateAsync(data);
+        operation.create && await operation.create(data);
       } else {
-        await mutation.updateCarrierConnection.mutateAsync(data);
+        operation.update && await operation.update(data);
         dispatch({ name: "partial", value: payload });
       }
       notify({
@@ -804,4 +805,8 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
     get required() { return field[1] === true; },
     get default() { return field[2]; }
   }
+}
+
+export function useConnectCarrierModal() {
+  return useContext(ConnectProviderModalContext);
 }

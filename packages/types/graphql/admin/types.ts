@@ -2292,7 +2292,7 @@ export interface DeleteCarrierConnection {
 }
 
 export interface DeleteCarrierConnectionVariables {
-  data: DeleteMutationInput;
+  data: DeleteConnectionMutationInput;
 }
 
 
@@ -3960,6 +3960,11 @@ export interface UpdateZoom2uSettingsInput {
   metadata?: any | null;
   api_key?: string | null;
   carrier_id?: string | null;
+}
+
+// null
+export interface DeleteConnectionMutationInput {
+  id: string;
 }
 
 // null

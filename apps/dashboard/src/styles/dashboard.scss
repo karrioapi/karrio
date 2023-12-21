@@ -106,6 +106,28 @@ Karrio custom styling
   }
 }
 
+.admin-connections-table {
+  .carrier {
+    width: 160px;
+    min-width: 160px;
+  }
+
+  .mode {
+    width: 6%;
+  }
+
+  .active {
+    width: 6%;
+  }
+
+  .details {}
+
+  .action {
+    width: 20%;
+    min-width: 180px;
+  }
+}
+
 .system-connections-table {
   .carrier {
     width: 24%;

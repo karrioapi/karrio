@@ -19,7 +19,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
   const dismissAction = useRef<HTMLButtonElement>(null);
   const { query: { data: { user } = {} } } = useUser();
   const { testMode, basePath, switchMode } = useAppMode();
-  const { metadata: { MULTI_ORGANIZATIONS, ORDERS_MANAGEMENT } } = useAPIMetadata();
+  const { metadata } = useAPIMetadata();
   const [showResourcesMenus, setShowResourcesMenus] = React.useState(false);
 
   const dismiss = (e: React.MouseEvent) => {
@@ -36,7 +36,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
   return (
     <div className="plex-sidebar" ref={sidebar}>
       <div className="sidebar-header pl-5 mb-2">
-        {MULTI_ORGANIZATIONS
+        {metadata?.MULTI_ORGANIZATIONS
           ? <OrganizationDropdown />
           : <Image src={p`/icon.svg`} className="mt-1" width="30" height="100" alt="logo" />}
 
@@ -57,11 +57,12 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           <span className="has-text-weight-bold">Trackers</span>
         </AppLink>
 
-        {ORDERS_MANAGEMENT &&
+        {metadata?.ORDERS_MANAGEMENT && <>
           <AppLink href="/orders" className={"menu-item " + activeClass("/orders")} shallow={false} prefetch={false}>
             <i className={`fa fa-inbox pr-2 ${isActive("/orders") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Orders</span>
-          </AppLink>}
+          </AppLink>
+        </>}
 
         <AppLink href="/connections" className={"menu-item " + activeClass("/connections")} shallow={false} prefetch={false}>
           <i className={`fa fa-th-list pr-2 ${isActive("/connections") ? "" : 'has-text-grey'}`}></i>
@@ -122,7 +123,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         </>}
 
         {/* Administration */}
-        {user?.is_staff && <>
+        {(metadata?.ADMIN_DASHBOARD && user?.is_staff) && <>
           <AppLink href="/admin" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
             <i className={`fa fa-tools pr-2 has-text-grey`}></i>
             <span className="has-text-weight-bold">Administration</span>

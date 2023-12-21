@@ -87,6 +87,21 @@ class UpdateUserMutation(utils.BaseMutation):
 
 
 @strawberry.type
+class DeleteConnectionMutation(utils.BaseMutation):
+    id: str = strawberry.UNSET
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
+    @admin.staff_required
+    def mutate(info: Info, **input) -> "DeleteConnectionMutation":
+        instance = providers.Carrier.system_carriers.get(id=input["id"])
+        instance.delete()
+        return DeleteConnectionMutation(id=input["id"])
+
+
+@strawberry.type
 class DeleteUserMutation(base.DeleteMutation):
     id: int = strawberry.UNSET
 

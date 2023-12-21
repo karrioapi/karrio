@@ -1788,7 +1788,7 @@ export const UPDATE_CARRIER_CONNECTION = gql`mutation UpdateCarrierConnection($d
 }
 `;
 
-export const DELETE_CARRIER_CONNECTION = gql`mutation DeleteCarrierConnection($data: DeleteMutationInput!) {
+export const DELETE_CARRIER_CONNECTION = gql`mutation DeleteCarrierConnection($data: DeleteConnectionMutationInput!) {
   delete_carrier_connection(input: $data) {
     id
     errors {

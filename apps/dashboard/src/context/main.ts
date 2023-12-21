@@ -189,11 +189,12 @@ export async function loadTenantInfo(filter: { app_domain?: string, schema_name?
   }
 }
 
-function needStaffAccess(pathname, { user }: { user?: any | null }) {
+function needStaffAccess(pathname, { user, metadata }: { user?: any | null, metadata?: Metadata }) {
   return (
     pathname.includes('/admin') &&
     !!user &&
-    user?.is_staff === false
+    user?.is_staff === false &&
+    metadata?.ADMIN_DASHBOARD == false
   )
 }
 
