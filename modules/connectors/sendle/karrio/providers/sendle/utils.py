@@ -30,31 +30,30 @@ def check_for_order_failures(responses: typing.List[str]) -> bool:
     """Check for shipment failures."""
     _responses = [lib.to_dict(_) for _ in responses]
 
-    return any(
-        [
-            response.get("order_id") is None
-            for response in _responses
-            if response.get("order_id") is not None
-        ]
-    )
+    return any([response.get("order_id") is None for response in _responses])
 
 
 def shipment_next_call(response: dict, settings: Settings, has_failure: bool) -> dict:
     """Get next call for shipment."""
     _response = lib.to_dict(response)
 
-    return (
-        dict(
+    if _response.get("labels") is not None and not has_failure:
+        return dict(
             method="GET",
             response=_response,
             url=_response["labels"][0]["url"],
         )
-        if _response.get("labels") is not None and not has_failure
-        else dict(
+
+    if _response.get("order_id") is not None:
+        return dict(
             method="DELETE",
             response=_response,
-            url=f"{settings.server_url}/api/orders/{_response['order_id']}",
+            url=f"{settings.server_url}/api/orders/{_response.get('order_id')}",
         )
+
+    return dict(
+        abort=True,
+        response=_response,
     )
 
 

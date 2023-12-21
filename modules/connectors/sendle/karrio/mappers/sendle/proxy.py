@@ -15,10 +15,9 @@ class Proxy(proxy.Proxy):
             lambda payload: lib.request(
                 url=f"{self.settings.server_url}/api/products?{urllib.parse.urlencode(payload)}",
                 trace=self.trace_as("json"),
-                method="POST",
+                method="GET",
                 headers={
                     "Accept": "application/json",
-                    "Content-type": "application/json",
                     "Authorization": f"Basic {self.settings.authorization}",
                 },
             ),
@@ -51,16 +50,20 @@ class Proxy(proxy.Proxy):
         responses = lib.run_asynchronously(
             lambda data: (
                 data["response"],
-                lib.request(
-                    url=data["url"],
-                    trace=self.trace_as("json"),
-                    method=data["method"],
-                    headers={
-                        "Accept": "application/json",
-                        "Content-type": "application/json",
-                        "Authorization": f"Basic {self.settings.authorization}",
-                    },
-                    decoder=provider_utils.label_decoder,
+                (
+                    lib.request(
+                        url=data["url"],
+                        trace=self.trace_as("json"),
+                        method=data["method"],
+                        headers={
+                            "Accept": "application/json",
+                            "Content-type": "application/json",
+                            "Authorization": f"Basic {self.settings.authorization}",
+                        },
+                        decoder=provider_utils.label_decoder,
+                    )
+                    if not data.get("abort")
+                    else {}
                 ),
             ),
             [
@@ -105,7 +108,7 @@ class Proxy(proxy.Proxy):
                 lib.request(
                     url=f"{self.settings.server_url}/api/tracking/{payload['ref']}",
                     trace=self.trace_as("json"),
-                    method="POST",
+                    method="GET",
                     headers={
                         "Accept": "application/json",
                         "Content-type": "application/json",

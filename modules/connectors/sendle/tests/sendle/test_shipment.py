@@ -35,7 +35,7 @@ class TestSendleShipping(unittest.TestCase):
 
     def test_create_shipment(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
-            mock.side_effect = [ShipmentResponse, LableResponse]
+            mock.side_effect = [ShipmentResponse, LabelResponse]
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
             self.assertEqual(
@@ -59,7 +59,7 @@ class TestSendleShipping(unittest.TestCase):
 
     def test_parse_shipment_response(self):
         with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
-            mock.side_effect = [ShipmentResponse, LableResponse]
+            mock.side_effect = [ShipmentResponse, LabelResponse]
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
@@ -78,6 +78,15 @@ class TestSendleShipping(unittest.TestCase):
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
+
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.sendle.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -211,6 +220,27 @@ ParsedCancelShipmentResponse = [
         "success": True,
     },
     [],
+]
+
+ParsedErrorResponse = [
+    None,
+    [
+        {
+            "carrier_id": "sendle",
+            "carrier_name": "sendle",
+            "code": "payment_required",
+            "details": {
+                "error_description": "One of the payment methods associated "
+                "with this account is expiring in the next "
+                "week. Please go to your Account Settings "
+                "in your Sendle Dashboard and add a new "
+                "payment method."
+            },
+            "message": "One of the payment methods associated with this account is "
+            "expiring in the next week. Please go to your Account Settings "
+            "in your Sendle Dashboard and add a new payment method.",
+        }
+    ],
 ]
 
 
@@ -674,4 +704,10 @@ ShipmentCancelResponse = """{
 }
 """
 
-LableResponse = {"label": "label content."}
+ErrorResponse = """{
+    "error": "payment_required",
+    "error_description": "One of the payment methods associated with this account is expiring in the next week. Please go to your Account Settings in your Sendle Dashboard and add a new payment method."
+}
+"""
+
+LabelResponse = {"label": "label content."}

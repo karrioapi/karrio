@@ -21,7 +21,7 @@ def parse_shipment_response(
                 f"{_}",
                 (
                     _extract_details(response, settings)
-                    if response[1].get("error") is None
+                    if response[0].get("error") is None
                     else None
                 ),
             )
@@ -30,7 +30,7 @@ def parse_shipment_response(
     )
     messages: typing.List[models.Message] = sum(
         [
-            provider_error.parse_error_response(response, settings)
+            provider_error.parse_error_response(list(response), settings)
             for response in responses
         ],
         start=[],

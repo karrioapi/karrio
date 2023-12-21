@@ -822,6 +822,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
       capabilities
       sendle_id
       api_key
+      account_country_code
       config
     }
     ... on TNTSettingsType {
@@ -1507,6 +1508,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       capabilities
       sendle_id
       api_key
+      account_country_code
       config
     }
     ... on TNTSettingsType {

@@ -3328,6 +3328,7 @@ export interface get_user_connections_user_connections_SendleSettingsType {
   capabilities: string[];
   sendle_id: string;
   api_key: string;
+  account_country_code: string | null;
   config: any | null;
 }
 
@@ -5946,6 +5947,7 @@ export interface RoyalMailSettingsInput {
 
 // null
 export interface SendleSettingsInput {
+  account_country_code?: string | null;
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
@@ -6455,6 +6457,7 @@ export interface UpdateRoyalMailSettingsInput {
 // null
 export interface UpdateSendleSettingsInput {
   id: string;
+  account_country_code?: string | null;
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
