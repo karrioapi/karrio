@@ -1914,10 +1914,10 @@ export interface GetSystemConnectionVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: get_rate_sheet
+// GraphQL query operation: GetRateSheet
 // ====================================================
 
-export interface get_rate_sheet_rate_sheet_services_zones {
+export interface GetRateSheet_rate_sheet_services_zones {
   object_type: string;
   label: string | null;
   rate: number | null;
@@ -1926,7 +1926,7 @@ export interface get_rate_sheet_rate_sheet_services_zones {
   transit_days: number | null;
 }
 
-export interface get_rate_sheet_rate_sheet_services {
+export interface GetRateSheet_rate_sheet_services {
   id: string;
   object_type: string;
   service_name: string | null;
@@ -1940,10 +1940,10 @@ export interface get_rate_sheet_rate_sheet_services {
   max_height: number | null;
   max_length: number | null;
   dimension_unit: DimensionUnitEnum | null;
-  zones: get_rate_sheet_rate_sheet_services_zones[];
+  zones: GetRateSheet_rate_sheet_services_zones[];
 }
 
-export interface get_rate_sheet_rate_sheet_carriers {
+export interface GetRateSheet_rate_sheet_carriers {
   id: string;
   active: boolean;
   carrier_id: string;
@@ -1953,20 +1953,20 @@ export interface get_rate_sheet_rate_sheet_carriers {
   test_mode: boolean;
 }
 
-export interface get_rate_sheet_rate_sheet {
+export interface GetRateSheet_rate_sheet {
   id: string;
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
-  services: get_rate_sheet_rate_sheet_services[];
-  carriers: get_rate_sheet_rate_sheet_carriers[];
+  services: GetRateSheet_rate_sheet_services[];
+  carriers: GetRateSheet_rate_sheet_carriers[];
 }
 
-export interface get_rate_sheet {
-  rate_sheet: get_rate_sheet_rate_sheet | null;
+export interface GetRateSheet {
+  rate_sheet: GetRateSheet_rate_sheet | null;
 }
 
-export interface get_rate_sheetVariables {
+export interface GetRateSheetVariables {
   id: string;
 }
 
@@ -1975,17 +1975,17 @@ export interface get_rate_sheetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: get_rate_sheets
+// GraphQL query operation: GetRateSheets
 // ====================================================
 
-export interface get_rate_sheets_rate_sheets_page_info {
+export interface GetRateSheets_rate_sheets_page_info {
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
   end_cursor: string | null;
 }
 
-export interface get_rate_sheets_rate_sheets_edges_node_services_zones {
+export interface GetRateSheets_rate_sheets_edges_node_services_zones {
   label: string | null;
   rate: number | null;
   min_weight: number | null;
@@ -1993,7 +1993,7 @@ export interface get_rate_sheets_rate_sheets_edges_node_services_zones {
   transit_days: number | null;
 }
 
-export interface get_rate_sheets_rate_sheets_edges_node_services {
+export interface GetRateSheets_rate_sheets_edges_node_services {
   id: string;
   service_name: string | null;
   service_code: string | null;
@@ -2006,10 +2006,10 @@ export interface get_rate_sheets_rate_sheets_edges_node_services {
   max_height: number | null;
   max_length: number | null;
   dimension_unit: DimensionUnitEnum | null;
-  zones: get_rate_sheets_rate_sheets_edges_node_services_zones[];
+  zones: GetRateSheets_rate_sheets_edges_node_services_zones[];
 }
 
-export interface get_rate_sheets_rate_sheets_edges_node_carriers {
+export interface GetRateSheets_rate_sheets_edges_node_carriers {
   id: string;
   active: boolean;
   carrier_id: string;
@@ -2019,29 +2019,29 @@ export interface get_rate_sheets_rate_sheets_edges_node_carriers {
   test_mode: boolean;
 }
 
-export interface get_rate_sheets_rate_sheets_edges_node {
+export interface GetRateSheets_rate_sheets_edges_node {
   id: string;
   name: string;
   slug: string;
   carrier_name: CarrierNameEnum;
-  services: get_rate_sheets_rate_sheets_edges_node_services[];
-  carriers: get_rate_sheets_rate_sheets_edges_node_carriers[];
+  services: GetRateSheets_rate_sheets_edges_node_services[];
+  carriers: GetRateSheets_rate_sheets_edges_node_carriers[];
 }
 
-export interface get_rate_sheets_rate_sheets_edges {
-  node: get_rate_sheets_rate_sheets_edges_node;
+export interface GetRateSheets_rate_sheets_edges {
+  node: GetRateSheets_rate_sheets_edges_node;
 }
 
-export interface get_rate_sheets_rate_sheets {
-  page_info: get_rate_sheets_rate_sheets_page_info;
-  edges: get_rate_sheets_rate_sheets_edges[];
+export interface GetRateSheets_rate_sheets {
+  page_info: GetRateSheets_rate_sheets_page_info;
+  edges: GetRateSheets_rate_sheets_edges[];
 }
 
-export interface get_rate_sheets {
-  rate_sheets: get_rate_sheets_rate_sheets;
+export interface GetRateSheets {
+  rate_sheets: GetRateSheets_rate_sheets;
 }
 
-export interface get_rate_sheetsVariables {
+export interface GetRateSheetsVariables {
   filter?: RateSheetFilter | null;
 }
 
@@ -2325,28 +2325,28 @@ export interface UpdateOrganizationAccountVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: create_rate_sheet
+// GraphQL mutation operation: CreateRateSheet
 // ====================================================
 
-export interface create_rate_sheet_create_rate_sheet_rate_sheet {
+export interface CreateRateSheet_create_rate_sheet_rate_sheet {
   id: string;
 }
 
-export interface create_rate_sheet_create_rate_sheet_errors {
+export interface CreateRateSheet_create_rate_sheet_errors {
   field: string;
   messages: string[];
 }
 
-export interface create_rate_sheet_create_rate_sheet {
-  rate_sheet: create_rate_sheet_create_rate_sheet_rate_sheet | null;
-  errors: create_rate_sheet_create_rate_sheet_errors[] | null;
+export interface CreateRateSheet_create_rate_sheet {
+  rate_sheet: CreateRateSheet_create_rate_sheet_rate_sheet | null;
+  errors: CreateRateSheet_create_rate_sheet_errors[] | null;
 }
 
-export interface create_rate_sheet {
-  create_rate_sheet: create_rate_sheet_create_rate_sheet;
+export interface CreateRateSheet {
+  create_rate_sheet: CreateRateSheet_create_rate_sheet;
 }
 
-export interface create_rate_sheetVariables {
+export interface CreateRateSheetVariables {
   data: CreateRateSheetMutationInput;
 }
 
@@ -2355,28 +2355,28 @@ export interface create_rate_sheetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: update_rate_sheet
+// GraphQL mutation operation: UpdateRateSheet
 // ====================================================
 
-export interface update_rate_sheet_update_rate_sheet_rate_sheet {
+export interface UpdateRateSheet_update_rate_sheet_rate_sheet {
   id: string;
 }
 
-export interface update_rate_sheet_update_rate_sheet_errors {
+export interface UpdateRateSheet_update_rate_sheet_errors {
   field: string;
   messages: string[];
 }
 
-export interface update_rate_sheet_update_rate_sheet {
-  rate_sheet: update_rate_sheet_update_rate_sheet_rate_sheet | null;
-  errors: update_rate_sheet_update_rate_sheet_errors[] | null;
+export interface UpdateRateSheet_update_rate_sheet {
+  rate_sheet: UpdateRateSheet_update_rate_sheet_rate_sheet | null;
+  errors: UpdateRateSheet_update_rate_sheet_errors[] | null;
 }
 
-export interface update_rate_sheet {
-  update_rate_sheet: update_rate_sheet_update_rate_sheet;
+export interface UpdateRateSheet {
+  update_rate_sheet: UpdateRateSheet_update_rate_sheet;
 }
 
-export interface update_rate_sheetVariables {
+export interface UpdateRateSheetVariables {
   data: UpdateRateSheetMutationInput;
 }
 
@@ -2385,24 +2385,24 @@ export interface update_rate_sheetVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: delete_rate_sheet
+// GraphQL mutation operation: DeleteRateSheet
 // ====================================================
 
-export interface delete_rate_sheet_delete_rate_sheet_errors {
+export interface DeleteRateSheet_delete_rate_sheet_errors {
   field: string;
   messages: string[];
 }
 
-export interface delete_rate_sheet_delete_rate_sheet {
+export interface DeleteRateSheet_delete_rate_sheet {
   id: string;
-  errors: delete_rate_sheet_delete_rate_sheet_errors[] | null;
+  errors: DeleteRateSheet_delete_rate_sheet_errors[] | null;
 }
 
-export interface delete_rate_sheet {
-  delete_rate_sheet: delete_rate_sheet_delete_rate_sheet;
+export interface DeleteRateSheet {
+  delete_rate_sheet: DeleteRateSheet_delete_rate_sheet;
 }
 
-export interface delete_rate_sheetVariables {
+export interface DeleteRateSheetVariables {
   data: DeleteMutationInput;
 }
 

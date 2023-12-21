@@ -60,9 +60,9 @@ export const SystemCarrierManagement: React.FC<SystemCarrierManagementComponent>
 
   return (
     <>
-      <div className="card px-0">
+      <div className="card px-0" style={{ maxHeight: '500px', minHeight: '500px' }}>
         <header className="px-3 mt-3 is-flex is-justify-content-space-between">
-          <span className="is-title is-size-6 has-text-weight-bold is-vcentered my-2">System Carrier Accounts</span>
+          <span className="is-title is-size-6 has-text-weight-bold is-vcentered my-2">System carrier accounts</span>
           <div className="is-vcentered">
             <button className="button is-primary is-small is-pulled-right" onClick={() => editConnection({
               create: mutation.createSystemCarrierConnection.mutateAsync,
@@ -74,12 +74,12 @@ export const SystemCarrierManagement: React.FC<SystemCarrierManagementComponent>
 
         <hr className='my-1' style={{ height: '1px' }} />
 
-        <div className="p-3">
+        <div className="p-0">
 
           {(query.isFetching && !query.isFetched) && <Spinner />}
 
           {(query.isFetched && system_connections.length > 0) && <>
-            <div className="table-container">
+            <div className="table-container px-2" style={{ overflowY: 'auto', maxHeight: '430px' }}>
               <table className="table is-fullwidth">
 
                 <tbody className="admin-connections-table">
@@ -87,10 +87,10 @@ export const SystemCarrierManagement: React.FC<SystemCarrierManagementComponent>
                   {system_connections.map((connection) => (
 
                     <tr key={`${connection.id}-${Date.now()}`}>
-                      <td className="carrier is-vcentered">
+                      <td className="carrier is-vcentered pl-1">
                         <CarrierBadge
                           className="has-background-primary has-text-weight-bold has-text-white-bis is-size-7"
-                          carrier_name={connection!.carrier_name}
+                          carrier_name={connection!.carrier_name == 'generic' ? connection.display_name : connection!.carrier_name}
                           width={150}
                           height={40}
                         />
@@ -116,7 +116,7 @@ export const SystemCarrierManagement: React.FC<SystemCarrierManagementComponent>
                       </td>
                       <td className="action is-vcentered pr-0">
                         <div className="buttons is-justify-content-end">
-                          <button className="button is-white is-medim" onClick={update({
+                          <button className="button is-white" onClick={update({
                             id: connection.id,
                             carrier_name: connection.carrier_name,
                             active: !connection.active
