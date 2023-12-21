@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.allied_express",
-    version="2023.12.3",
+    version="2023.12.4",
     description="Karrio - Allied Express Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
