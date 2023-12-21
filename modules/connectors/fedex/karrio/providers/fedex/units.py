@@ -510,6 +510,7 @@ class DocumentUploadOption(utils.Enum):
 
 class TrackingStatus(utils.Enum):
     on_hold = ["DE", "SE"]
+    pending = ["OC"]
     delivered = ["DL"]
     in_transit = [""]
     delivery_failed = ["CA", "RS"]

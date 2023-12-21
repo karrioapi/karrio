@@ -23,8 +23,8 @@ class ShipmentStatus(utils.Enum):
 class TrackerStatus(utils.Enum):
     pending = "pending"
     unknown = "unknown"
-    delivered = "delivered"
     on_hold = "on_hold"
+    delivered = "delivered"
     in_transit = "in_transit"
     delivery_delayed = "delivery_delayed"
     out_for_delivery = "out_for_delivery"
