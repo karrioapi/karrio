@@ -80,6 +80,7 @@ karrio.roadie @ file://${PWD}/modules/connectors/roadie
 karrio.royalmail @ file://${PWD}/modules/connectors/royalmail
 karrio.sendle @ file://${PWD}/modules/connectors/sendle
 karrio.server @ file://${PWD}/apps/api
+karrio.server.admin @ file://${PWD}/modules/admin
 karrio.server.apps @ file://${PWD}/modules/apps
 karrio.server.core @ file://${PWD}/modules/core
 karrio.server.data @ file://${PWD}/modules/data
