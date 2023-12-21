@@ -48,7 +48,9 @@ export default function LogsPage(pageProps: any) {
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Developers</span>
-          <div></div>
+          <div>
+            <LogsFilter context={context} />
+          </div>
         </header>
 
         <div className="tabs">
@@ -105,9 +107,7 @@ export default function LogsPage(pageProps: any) {
               <tr>
                 <td className="status is-size-7 is-vcentered"><span className="ml-2">STATUS</span></td>
                 <td className="description is-size-7 is-vcentered">DESCRIPTION</td>
-                <td className="date has-text-right is-size-7">
-                  <LogsFilter context={context} />
-                </td>
+                <td className="date has-text-right is-size-7"></td>
               </tr>
 
               {(logs?.edges || []).map(({ node: log }) => (

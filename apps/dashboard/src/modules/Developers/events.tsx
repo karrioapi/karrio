@@ -46,7 +46,9 @@ export default function EventsPage(pageProps: any) {
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Developers</span>
-          <div></div>
+          <div>
+            <EventsFilter context={context} />
+          </div>
         </header>
 
         <div className="tabs">
@@ -88,9 +90,7 @@ export default function EventsPage(pageProps: any) {
               <tr>
                 <td className="event is-size-7 px-0"><span className="ml-2">EVENT</span></td>
                 <td className="id has-text-right is-size-7"></td>
-                <td className="date has-text-right">
-                  <EventsFilter context={context} />
-                </td>
+                <td className="date has-text-right"></td>
               </tr>
 
               {(events?.edges || []).map(({ node: event }) => (
