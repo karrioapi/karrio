@@ -22,7 +22,7 @@ class TracingRecord(OwnedEntity):
                 name="trace_object_idx",
             ),
             models.Index(
-                json.KeyTextTransform("request_log_id", "meta"),
+                json.KeyTransform("request_log_id", "meta"),
                 condition=models.Q(meta__request_log_id__isnull=False),
                 name="request_log_idx",
             ),

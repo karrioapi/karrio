@@ -2356,6 +2356,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       capabilities
       sendle_id
       api_key
+      account_country_code
       config
     }
     ... on TNTSettingsType {

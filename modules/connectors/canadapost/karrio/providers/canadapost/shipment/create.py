@@ -14,19 +14,19 @@ def parse_shipment_response(
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     responses = _responses.deserialize()
 
-    shipment = lib.to_multi_piece_shipment(
-        [
+    shipment_details = [
+        (
+            f"{_}",
             (
-                f"{_}",
-                (
-                    _extract_shipment(response, settings)
-                    if len(lib.find_element("shipment-id", response[0])) > 0
-                    else None
-                ),
-            )
-            for _, response in enumerate(responses, start=1)
-        ]
-    )
+                _extract_shipment(response, settings, _responses.ctx)
+                if len(lib.find_element("shipment-id", response[0])) > 0
+                else None
+            ),
+        )
+        for _, response in enumerate(responses, start=1)
+    ]
+
+    shipment = lib.to_multi_piece_shipment(shipment_details)
     messages: typing.List[models.Message] = sum(
         [provider_error.parse_error_response(_, settings) for _, __ in responses],
         start=[],
@@ -38,6 +38,7 @@ def parse_shipment_response(
 def _extract_shipment(
     _response: typing.Tuple[lib.Element, str],
     settings: provider_utils.Settings,
+    ctx: dict,
 ) -> models.ShipmentDetails:
     response, label = _response
     info = lib.to_object(canadapost.ShipmentInfoType, response)
@@ -48,6 +49,7 @@ def _extract_shipment(
         tracking_number=info.tracking_pin,
         shipment_identifier=info.tracking_pin,
         docs=models.Documents(label=label),
+        label_type=ctx["label_type"],
         meta=dict(
             carrier_tracking_link=settings.tracking_url.format(info.tracking_pin),
         ),
@@ -268,4 +270,5 @@ def shipment_request(
             )
             for request in __
         ],
+        dict(label_type=label_encoding),
     )

@@ -1,11 +1,13 @@
 {
   "version": "0.2.0",
   "configurations": [
+    
+
     {
       "name": "Karrio: server",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": [
         "runserver",
         "0.0.0.0:5002"
@@ -17,7 +19,7 @@
       "name": "Test: proxy",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": [
         "test",
         "--failfast",
@@ -30,7 +32,7 @@
       "name": "Test: pricing",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": [
         "test",
         "--failfast",
@@ -43,7 +45,7 @@
       "name": "Test: manager",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": [
         "test",
         "--failfast",
@@ -56,7 +58,7 @@
       "name": "Test: events",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": [
         "test",
         "--failfast",
@@ -69,7 +71,7 @@
       "name": "Test: graph",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": [
         "test",
         "--failfast",
@@ -82,7 +84,7 @@
       "name": "Test: orders",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceFolder}/server/main/karrio/server/__main__.py",
+      "program": "${workspaceFolder}/apps/api/karrio/server/__main__.py",
       "args": [
         "test",
         "--failfast",

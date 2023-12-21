@@ -100,6 +100,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(
             responses,
             lambda __: [(lib.to_element(_["shipment"]), _["label"]) for _ in __],
+            requests.ctx,
         )
 
     def cancel_shipment(self, requests: lib.Serializable) -> lib.Deserializable:

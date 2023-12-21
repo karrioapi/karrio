@@ -12,7 +12,9 @@ class FedexSettings(Carrier):
     meter_number = models.CharField(max_length=200)
     account_number = models.CharField(max_length=200)
     user_key = models.CharField(max_length=200, blank=True)
-    account_country_code = models.CharField(max_length=3, blank=True, null=True, choices=COUNTRIES)
+    account_country_code = models.CharField(
+        max_length=3, blank=True, null=True, choices=COUNTRIES
+    )
 
     @property
     def carrier_name(self) -> str:

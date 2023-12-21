@@ -40,10 +40,14 @@ def _extract_details(
 ) -> models.TrackingDetails:
     result = lib.to_object(tracking.ResultType, data)
     description = result.statusBarcodesList.scannedStatus or "In Transit"
-    status = (
-        provider_units.TrackingStatus.delivered.name
-        if "delivered" in description
-        else provider_units.TrackingStatus.in_transit.name
+    delivered = "delivered" in description
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if description in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
     )
 
     return models.TrackingDetails(
@@ -66,7 +70,7 @@ def _extract_details(
             )
         ],
         status=status,
-        delivered=status == "delivered",
+        delivered=delivered,
     )
 
 

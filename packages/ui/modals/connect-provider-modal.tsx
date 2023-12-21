@@ -788,7 +788,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Fedex]: [["carrier_id", true], ["user_key"], ["password", true], ["meter_number", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Purolator]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true], ["user_token"]],
       [CarrierSettingsCarrierNameEnum.Royalmail]: [["carrier_id", true], ["client_id", true], ["client_secret", true]],
-      [CarrierSettingsCarrierNameEnum.Sendle]: [["carrier_id", true], ["sendle_id", true], ["api_key", true]],
+      [CarrierSettingsCarrierNameEnum.Sendle]: [["carrier_id", true], ["sendle_id", true], ["api_key", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Tnt]: [["carrier_id", true], ["username", true], ["password", true], ["account_number"], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Ups]: [["carrier_id", true], ["client_id", true], ["client_secret", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Usps]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],
