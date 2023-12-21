@@ -3,9 +3,6 @@ from unittest.mock import patch, ANY
 import karrio
 import karrio.lib as lib
 import karrio.core.models as models
-
-# from karrio.core.utils import DP
-# from karrio.core.models import models.ShipmentRequest, models.ShipmentCancelRequest
 from .fixture import gateway, LabelResponse
 
 
