@@ -51,6 +51,10 @@ class Query:
         resolver=types.SystemRateSheetType.resolve_list
     )
 
+    permission_groups: utils.Connection[types.PermissionGroupType] = strawberry.field(
+        resolver=types.PermissionGroupType.resolve_list
+    )
+
 
 @strawberry.type
 class Mutation:

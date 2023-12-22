@@ -2050,6 +2050,44 @@ export interface GetRateSheetsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetPermissionGroups
+// ====================================================
+
+export interface GetPermissionGroups_permission_groups_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetPermissionGroups_permission_groups_edges_node {
+  id: number;
+  name: string;
+  permissions: string[] | null;
+}
+
+export interface GetPermissionGroups_permission_groups_edges {
+  node: GetPermissionGroups_permission_groups_edges_node;
+}
+
+export interface GetPermissionGroups_permission_groups {
+  page_info: GetPermissionGroups_permission_groups_page_info;
+  edges: GetPermissionGroups_permission_groups_edges[];
+}
+
+export interface GetPermissionGroups {
+  permission_groups: GetPermissionGroups_permission_groups;
+}
+
+export interface GetPermissionGroupsVariables {
+  filter?: PermissionGroupFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: CreateUser
 // ====================================================
 
@@ -2902,6 +2940,12 @@ export interface RateSheetFilter {
 }
 
 // null
+export interface PermissionGroupFilter {
+  offset?: number | null;
+  first?: number | null;
+}
+
+// null
 export interface CreateUserMutationInput {
   email: string;
   password1: string;
@@ -2912,6 +2956,7 @@ export interface CreateUserMutationInput {
   is_active?: boolean | null;
   is_superuser?: boolean | null;
   organization_id?: string | null;
+  permissions?: string[] | null;
 }
 
 // null
@@ -2920,6 +2965,7 @@ export interface UpdateUserMutationInput {
   is_staff?: boolean | null;
   is_active?: boolean | null;
   is_superuser?: boolean | null;
+  permissions?: string[] | null;
 }
 
 // null

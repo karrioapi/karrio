@@ -1680,6 +1680,24 @@ export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter)
   }
 }`;
 
+export const GET_GROUP_PERMISSIONS = gql`query GetPermissionGroups($filter: PermissionGroupFilter) {
+  permission_groups(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        name
+        permissions
+      }
+    }
+  }
+}`
+
 //#endregion
 
 

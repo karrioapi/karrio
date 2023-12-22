@@ -7,6 +7,7 @@ import django.db.models as models
 import django.db.transaction as transaction
 
 import karrio.server.conf as conf
+import karrio.server.iam.models as iam
 import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
 import karrio.server.admin.forms as forms
@@ -31,7 +32,8 @@ class CreateUserMutation(utils.BaseMutation):
     @transaction.atomic
     def mutate(
         info: Info,
-        organization_id: typing.Optional[str] = strawberry.UNSET,
+        organization_id: typing.Optional[str] = None,
+        permissions: typing.Optional[typing.List[str]] = None,
         **input: inputs.CreateUserMutationInput,
     ) -> "CreateUserMutation":
         try:
@@ -48,7 +50,12 @@ class CreateUserMutation(utils.BaseMutation):
             form = forms.CreateUserForm(input)
             user = form.save()
 
-            return CreateUserMutation(user=user)  # type:ignore
+            if any(permissions or []):
+                user.groups.set(iam.Group.objects.filter(name__in=permissions))
+
+            return CreateUserMutation(
+                user=iam.User.objects.get(id=user.id)
+            )  # type:ignore
         except Exception as e:
             logger.exception(e)
             raise e
@@ -61,9 +68,11 @@ class UpdateUserMutation(utils.BaseMutation):
     @staticmethod
     @utils.authentication_required
     @admin.superuser_required
+    @transaction.atomic
     def mutate(
         info: Info,
         email: str,
+        permissions: typing.Optional[typing.List[str]] = None,
         **input: inputs.UpdateUserMutationInput,
     ) -> "UpdateUserMutation":
         instance = types.User.objects.filter(
@@ -80,6 +89,9 @@ class UpdateUserMutation(utils.BaseMutation):
 
         for k, v in input.items():
             setattr(instance, k, v)
+
+        if any(permissions or []):
+            instance.groups.set(iam.Group.objects.filter(name__in=permissions))
 
         instance.save()
 
