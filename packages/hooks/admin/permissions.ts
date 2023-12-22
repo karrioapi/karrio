@@ -5,7 +5,7 @@ import { useKarrio } from "../karrio";
 import React from "react";
 
 
-export function useGroupPermissions() {
+export function usePermissionGroups() {
   const karrio = useKarrio();
   const [filter, setFilter] = React.useState<PermissionGroupFilter>();
 

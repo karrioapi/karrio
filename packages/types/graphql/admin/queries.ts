@@ -104,6 +104,7 @@ export const GET_USERS = gql`query GetUsers($filter: UserFilter) {
         email
         full_name
         is_staff
+        is_active
         is_superuser
         date_joined
         last_login
@@ -1730,15 +1731,6 @@ export const UPDATE_USER = gql`mutation UpdateUser($data: UpdateUserMutationInpu
     errors {
       field
       messages
-    }
-    user {
-      email
-      full_name
-      is_staff
-      is_active
-      is_superuser
-      date_joined
-      last_login
     }
   }
 }

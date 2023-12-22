@@ -41,7 +41,9 @@ class CreateUserMutationInput(utils.BaseInput):
 
 @strawberry.input
 class UpdateUserMutationInput(utils.BaseInput):
-    email: str
+    id: int
+    email: typing.Optional[str] = strawberry.UNSET
+    full_name: typing.Optional[str] = strawberry.UNSET
     is_staff: typing.Optional[bool] = strawberry.UNSET
     is_active: typing.Optional[bool] = strawberry.UNSET
     is_superuser: typing.Optional[bool] = strawberry.UNSET

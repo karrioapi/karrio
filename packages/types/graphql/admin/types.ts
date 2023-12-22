@@ -155,6 +155,7 @@ export interface GetUsers_users_edges_node {
   email: string;
   full_name: string;
   is_staff: boolean;
+  is_active: boolean;
   is_superuser: boolean | null;
   date_joined: any;
   last_login: any | null;
@@ -2132,19 +2133,8 @@ export interface UpdateUser_update_user_errors {
   messages: string[];
 }
 
-export interface UpdateUser_update_user_user {
-  email: string;
-  full_name: string;
-  is_staff: boolean;
-  is_active: boolean;
-  is_superuser: boolean | null;
-  date_joined: any;
-  last_login: any | null;
-}
-
 export interface UpdateUser_update_user {
   errors: UpdateUser_update_user_errors[] | null;
-  user: UpdateUser_update_user_user | null;
 }
 
 export interface UpdateUser {
@@ -2961,7 +2951,9 @@ export interface CreateUserMutationInput {
 
 // null
 export interface UpdateUserMutationInput {
-  email: string;
+  id: number;
+  email?: string | null;
+  full_name?: string | null;
   is_staff?: boolean | null;
   is_active?: boolean | null;
   is_superuser?: boolean | null;

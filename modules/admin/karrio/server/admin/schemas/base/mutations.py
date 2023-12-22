@@ -71,18 +71,11 @@ class UpdateUserMutation(utils.BaseMutation):
     @transaction.atomic
     def mutate(
         info: Info,
-        email: str,
+        id: int,
         permissions: typing.Optional[typing.List[str]] = None,
         **input: inputs.UpdateUserMutationInput,
     ) -> "UpdateUserMutation":
-        instance = types.User.objects.filter(
-            models.Q(email=email)
-            & (
-                models.Q(orgs_organization__users__id=info.context.request.user.id)
-                if conf.settings.MULTI_ORGANIZATIONS
-                else models.Q()
-            )
-        ).first()
+        instance = iam.User.objects.get(id=id)
 
         if not instance:
             return UpdateUserMutation(user=None)  # type:ignore

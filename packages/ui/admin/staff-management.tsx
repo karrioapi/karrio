@@ -1,14 +1,21 @@
-import { useUsers } from "@karrio/hooks/admin/users";
+import { useUserMutation, useUsers } from "@karrio/hooks/admin/users";
+import { UserModalEditor } from "../modals/user-edit-modal";
+import { ConfirmModalWrapper } from "../modals/form-modals";
+import { useNotifier } from "../components/notifier";
 import { Dropdown } from "../components/dropdown";
-import { formatDateTimeLong } from "@karrio/lib";
+import { NotificationType } from "@karrio/types";
+import { formatDateTimeLong, p } from "@karrio/lib";
 import { useUser } from "@karrio/hooks/user";
 
 
 interface StaffManagementComponent { }
 
 export const StaffManagement: React.FC<StaffManagementComponent> = () => {
+  const notifier = useNotifier();
+  const mutation = useUserMutation();
   const { query: { data: { user } = {} } } = useUser();
   const { query: { data: { users } = {} } } = useUsers();
+  const redirect_url = location.origin + p`/password/reset`
 
   return (
     <>
@@ -16,9 +23,17 @@ export const StaffManagement: React.FC<StaffManagementComponent> = () => {
         <header className="px-3 mt-3 is-flex is-justify-content-space-between">
           <span className="is-title is-size-6 has-text-weight-bold is-vcentered my-2">Staff</span>
           <div className="is-vcentered">
-            <button className="button is-primary is-small is-pulled-right">
-              <span>New member</span>
-            </button>
+            <UserModalEditor
+              onSubmit={async (payload) => {
+                await mutation.createUser.mutateAsync({ ...payload, redirect_url });
+                notifier.notify({ type: NotificationType.success, message: 'User created successfully' });
+              }}
+              trigger={
+                <button className="button is-primary is-small is-pulled-right">
+                  <span>New member</span>
+                </button>
+              }
+            />
           </div>
         </header>
 
@@ -39,7 +54,7 @@ export const StaffManagement: React.FC<StaffManagementComponent> = () => {
 
                 {(users?.edges || []).map(({ node: member }) => (
 
-                  <tr key={`${member.email}-${Date.now()}`} style={{ height: '60px' }}>
+                  <tr key={`${member.email}`} style={{ height: '60px' }}>
                     <td className="member is-vcentered pl-0">
                       {member.full_name && <p className="is-size-7">
                         <span className="pr-2">{member.full_name}</span>
@@ -70,8 +85,18 @@ export const StaffManagement: React.FC<StaffManagementComponent> = () => {
 
                           {/* Menu items */}
                           <div className="dropdown-content is-menu">
-                            <a href="#" className="dropdown-item">Edit</a>
-                            <a href="#" className="dropdown-item">Remove</a>
+                            <UserModalEditor
+                              onSubmit={async (payload) => {
+                                await mutation.updateUser.mutateAsync(payload);
+                                notifier.notify({ type: NotificationType.success, message: 'User updated successfully' });
+                              }}
+                              trigger={<a className="dropdown-item">Edit</a>}
+                              user={member as any}
+                            />
+                            <ConfirmModalWrapper
+                              onSubmit={() => mutation.deleteUser.mutateAsync({ id: member.id })}
+                              trigger={<a className="dropdown-item">Remove</a>}
+                            />
                           </div>
                         </Dropdown>
                       </div>}

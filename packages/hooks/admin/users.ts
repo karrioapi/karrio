@@ -1,4 +1,4 @@
-import { CREATE_USER, CreateUser, CreateUserMutationInput, GET_USERS, GetUsers, REMOVE_USER, RemoveUser, UPDATE_USER, UpdateUser, UpdateUserMutationInput, UserFilter } from "@karrio/types/graphql/admin";
+import { CREATE_USER, CreateUser, CreateUserMutationInput, DeleteUserMutationInput, GET_USERS, GetUsers, REMOVE_USER, RemoveUser, UPDATE_USER, UpdateUser, UpdateUserMutationInput, UserFilter } from "@karrio/types/graphql/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useKarrio } from "../karrio";
@@ -7,6 +7,7 @@ import React from "react";
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = UserFilter & { setVariablesToURL?: boolean };
+export type StaffUserType = GetUsers['users']['edges'][0]['node'];
 
 export function useUsers({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
@@ -76,19 +77,19 @@ export function useUserMutation() {
 
   // Mutations
   const createUser = useMutation(
-    (data: CreateUserMutationInput) => karrio.graphql.request<CreateUser>(
+    (data: CreateUserMutationInput) => karrio.admin.request<CreateUser>(
       gqlstr(CREATE_USER), { data }
     ),
     { onSuccess: invalidateCache, onError }
   );
   const updateUser = useMutation(
-    (data: UpdateUserMutationInput) => karrio.graphql.request<UpdateUser>(
+    (data: UpdateUserMutationInput) => karrio.admin.request<UpdateUser>(
       gqlstr(UPDATE_USER), { data }
     ),
     { onSuccess: invalidateCache, onError }
   );
   const deleteUser = useMutation(
-    (data: { id: string }) => karrio.graphql.request<RemoveUser>(gqlstr(REMOVE_USER), { data }),
+    (data: DeleteUserMutationInput) => karrio.admin.request<RemoveUser>(gqlstr(REMOVE_USER), { data }),
     { onSuccess: invalidateCache, onError }
   );
 

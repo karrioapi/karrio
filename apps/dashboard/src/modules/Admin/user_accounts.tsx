@@ -1,9 +1,15 @@
 import { StaffManagement } from "@karrio/ui/admin/staff-management";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { ModalProvider } from "@karrio/ui/modals/modal";
+import { bundleContexts } from "@karrio/hooks/utils";
 import { AdminLayout } from "@/layouts/admin-layout";
 import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
+
+const ContextProviders = bundleContexts([
+    ModalProvider,
+]);
 
 
 export default function Page(pageProps: any) {
@@ -26,7 +32,9 @@ export default function Page(pageProps: any) {
         <AdminLayout>
             <Head><title>{`Users - ${APP_NAME}`}</title></Head>
 
-            <Component />
+            <ContextProviders>
+                <Component />
+            </ContextProviders>
 
         </AdminLayout>
     ), pageProps)
