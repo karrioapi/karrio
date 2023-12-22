@@ -2,6 +2,7 @@ import pkgutil
 import logging
 import strawberry
 import strawberry.schema.config as config
+import strawberry_django.optimizer as optimizer
 
 import karrio.server.admin.schemas as schemas
 
@@ -42,4 +43,7 @@ schema = strawberry.federation.Schema(  # type: ignore
     types=[*EXTRA_TYPES],
     config=config.StrawberryConfig(auto_camel_case=False),
     enable_federation_2=True,
+    extensions=[
+        optimizer.DjangoOptimizerExtension,
+    ],
 )
