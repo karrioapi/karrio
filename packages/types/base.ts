@@ -1,5 +1,6 @@
 import * as api from './rest/api';
 import * as graph from './graphql/index';
+import * as ee from './graphql/ee/index';
 
 export {
     CarrierSettingsCarrierNameEnum,
@@ -250,7 +251,7 @@ export type UserContextDataType = {
 };
 export type OrgContextDataType = {
     data: {
-        organizations?: graph.get_organizations_organizations[]
+        organizations?: ee.get_organizations_organizations[]
     }
 };
 

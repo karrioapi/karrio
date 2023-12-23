@@ -1,10 +1,11 @@
-import { CreateOrganizationMutationInput, NotificationType } from '@karrio/types';
+import { CreateOrganizationMutationInput } from '@karrio/types/graphql/ee';
 import { useOrganizationMutation } from '@karrio/hooks/organization';
 import React, { useContext, useReducer, useState } from 'react';
 import { Notifier, useNotifier } from '../components/notifier';
 import { InputField } from '../components/input-field';
-import { deepEqual, isNone } from '@karrio/lib';
+import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
+import { deepEqual, isNone } from '@karrio/lib';
 
 type OperationType = {
   onChange: (orgId: string) => Promise<any>;
