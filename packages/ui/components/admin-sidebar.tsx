@@ -86,6 +86,11 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
             <i className={`fa fa-percent mr-2 ${isActive("/admin/surcharges") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Surcharge and discounts</span>
           </AppLink>
+
+          <button className={"button is-white menu-item px-3"} disabled>
+            <i className={`fas fa-file-alt mr-2 has-text-grey`}></i>
+            <span className="has-text-weight-bold">Platform activity log</span>
+          </button>
         </div>
 
       </div>
