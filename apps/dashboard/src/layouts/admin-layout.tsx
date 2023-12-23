@@ -45,7 +45,7 @@ export const AdminLayout: React.FC<{ showModeIndicator?: boolean, children?: Rea
                   <article className="message is-warning is-size-7">
                     <div className="message-body">
                       <p className="has-text-weight-bold">The admin panel is under active development. Please join the chat on Github to propose things that we should consider adding here.</p>
-                      <p className='has-text-weight-semibold'>Note that only staff members of you instance see this menu.</p>
+                      <p className='has-text-weight-semibold'>Note that only staff members of your instance can access this section.</p>
                       <p className="has-text-weight-semibold">Thank you!</p>
                     </div>
                   </article>

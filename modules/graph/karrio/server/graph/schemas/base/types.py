@@ -2,6 +2,7 @@ import pydoc
 import typing
 import datetime
 import strawberry
+import strawberry_django
 import django.conf as conf
 from django.db import models
 from strawberry.types import Info
@@ -25,7 +26,7 @@ import karrio.server.graph.schemas.base.inputs as inputs
 User = get_user_model()
 
 
-@strawberry.type
+@strawberry_django.type(User)
 class UserType:
     email: str
     full_name: str
@@ -50,7 +51,7 @@ class UserType:
         return User.objects.get(id=info.context.request.user.id)
 
 
-@strawberry.type
+@strawberry_django.type(core.APILog)
 class LogType:
     object_type: str
     id: int
@@ -89,9 +90,7 @@ class LogType:
     def records(
         self: tracing.TracingRecord, info: Info
     ) -> typing.List["TracingRecordType"]:
-        queryset = tracing.TracingRecord.objects.filter(
-            meta__request_log_id=self.id
-        )
+        queryset = tracing.TracingRecord.objects.filter(meta__request_log_id=self.id)
 
         if User.objects.filter(
             id=info.context.request.user.id, is_staff=False
@@ -123,7 +122,7 @@ class LogType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(tracing.TracingRecord)
 class TracingRecordType:
     object_type: str
     id: typing.Optional[str]
@@ -168,7 +167,7 @@ class TracingRecordType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(auth.Token)
 class TokenType:
     object_type: str
     key: str
@@ -189,7 +188,7 @@ class TokenType:
         )
 
 
-@strawberry.type
+@strawberry_django.type(auth.Token)
 class APIKeyType:
     object_type: str
     key: str
@@ -367,7 +366,7 @@ class DutyType:
     bill_to: typing.Optional[AddressType] = None
 
 
-@strawberry.type
+@strawberry_django.type(manager.Customs)
 class CustomsType:
     id: str
     object_type: str
@@ -397,7 +396,7 @@ class CustomsType:
         return self.commodities.all()
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class AddressTemplateType:
     id: str
     object_type: str
@@ -457,7 +456,7 @@ class AddressTemplateType:
         return utils.paginated_connection(_queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class ParcelTemplateType:
     id: str
     object_type: str
@@ -491,7 +490,7 @@ class ParcelTemplateType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class CustomsTemplateType:
     id: str
     object_type: str
@@ -518,7 +517,7 @@ class CustomsTemplateType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class DefaultTemplatesType:
     default_address: typing.Optional[AddressTemplateType] = None
     default_customs: typing.Optional[CustomsTemplateType] = None
@@ -588,7 +587,7 @@ class TrackingInfoType:
         )
 
 
-@strawberry.type
+@strawberry_django.type(manager.Tracking)
 class TrackerType:
     id: str
     object_type: str
@@ -650,7 +649,7 @@ class PaymentType:
     currency: typing.Optional[utils.CurrencyCodeEnum] = None
 
 
-@strawberry.type
+@strawberry_django.type(manager.Shipment)
 class ShipmentType:
     id: str
     object_type: str
@@ -800,7 +799,7 @@ class LabelTemplateType:
     shipment_sample: typing.Optional[utils.JSON]
 
 
-@strawberry.type
+@strawberry_django.type(providers.RateSheet)
 class RateSheetType:
     object_type: str
     id: str
@@ -841,7 +840,7 @@ class RateSheetType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(providers.Carrier)
 class SystemConnectionType:
     id: str
     active: bool

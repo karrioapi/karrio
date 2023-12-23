@@ -2,11 +2,9 @@ import typing
 import strawberry
 from strawberry.types import Info
 
-import karrio.lib as lib
-import karrio.server.admin.utils as admin
+import karrio.server.iam.models as iam
 import karrio.server.graph.utils as utils
 import karrio.server.pricing.models as pricing
-import karrio.server.graph.schemas.base as base
 import karrio.server.providers.models as providers
 import karrio.server.admin.schemas.base.types as types
 import karrio.server.admin.schemas.base.inputs as inputs
@@ -51,6 +49,10 @@ class Query:
         resolver=types.SystemRateSheetType.resolve_list
     )
 
+    permission_groups: utils.Connection[types.PermissionGroupType] = strawberry.field(
+        resolver=types.PermissionGroupType.resolve_list
+    )
+
 
 @strawberry.type
 class Mutation:
@@ -76,7 +78,7 @@ class Mutation:
 
         return mutations.DeleteUserMutation.mutate(
             info,
-            model=types.User,
+            model=iam.User,
             validator=validator,
             **input.to_dict(),
         )
@@ -101,11 +103,9 @@ class Mutation:
 
     @strawberry.mutation
     def delete_carrier_connection(
-        self, info: Info, input: inputs.base.DeleteMutationInput
-    ) -> mutations.base.DeleteMutation:
-        return mutations.DeleteMutation.mutate(
-            info, model=providers.Carrier, **input.to_dict()
-        )
+        self, info: Info, input: inputs.DeleteConnectionMutationInput
+    ) -> mutations.DeleteConnectionMutation:
+        return mutations.DeleteConnectionMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def create_surcharge(

@@ -4,11 +4,11 @@ import strawberry
 from constance import config
 from strawberry.types import Info
 import django.db.models as models
-import django.contrib.auth as auth
 import django.db.models.functions as functions
 
 import karrio.lib as lib
 import karrio.server.conf as conf
+import karrio.server.iam.models as iam
 import karrio.server.core.models as core
 import karrio.server.admin.utils as admin
 import karrio.server.graph.utils as utils
@@ -21,21 +21,19 @@ import karrio.server.providers.models as providers
 import karrio.server.graph.schemas.base.types as base
 import karrio.server.admin.schemas.base.inputs as inputs
 
-User = auth.get_user_model()
-
 
 @strawberry.type
 class UserType(base.UserType):
     id: int
 
     @strawberry.field
-    def permissions(self: User, info) -> typing.Optional[typing.List[str]]:
+    def permissions(self: iam.User, info) -> typing.Optional[typing.List[str]]:
         return self.permissions
 
     @staticmethod
     @utils.authentication_required
     def me(info) -> "UserType":
-        return User.objects.get(id=info.context.request.user.id)
+        return iam.User.objects.get(id=info.context.request.user.id)
 
     @staticmethod
     @utils.authentication_required
@@ -44,7 +42,7 @@ class UserType(base.UserType):
         info,
         email: str = strawberry.UNSET,
     ) -> typing.Optional["UserType"]:
-        queryset = User.objects.filter(email=email)
+        queryset = iam.User.objects.filter(email=email)
 
         if conf.settings.MULTI_ORGANIZATIONS:
             return queryset.filter(
@@ -61,12 +59,36 @@ class UserType(base.UserType):
         filter: typing.Optional[inputs.UserFilter] = strawberry.UNSET,
     ) -> utils.Connection["UserType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.UserFilter()
-        queryset = filters.UserFilter(_filter.to_dict(), User.objects.filter()).qs
+        queryset = filters.UserFilter(_filter.to_dict(), iam.User.objects.filter()).qs
 
         if conf.settings.MULTI_ORGANIZATIONS:
             queryset = queryset.filter(
                 orgs_organization__users__id=info.context.request.user.id
             ).distinct()
+
+        return utils.paginated_connection(queryset, **_filter.pagination())
+
+
+@strawberry.type
+class PermissionGroupType:
+    id: int
+    name: str
+
+    @strawberry.field
+    def permissions(self: iam.Group) -> typing.Optional[typing.List[str]]:
+        return self.permissions.all().values_list("name", flat=True)
+
+    @staticmethod
+    @utils.authentication_required
+    @admin.staff_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.PermissionGroupFilter] = strawberry.UNSET,
+    ) -> utils.Connection["PermissionGroupType"]:
+        _filter = (
+            filter if not utils.is_unset(filter) else inputs.PermissionGroupFilter()
+        )
+        queryset = iam.Group.objects.filter()
 
         return utils.paginated_connection(queryset, **_filter.pagination())
 

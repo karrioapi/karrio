@@ -150,3 +150,67 @@ export const CustomsModalEditor: React.FC<ModalFormProps<CustomsModalEditorProps
     onClick: () => modal.open(<FormComponent {...args} />)
   });
 };
+
+
+type ConfirmModalWrapperProps = {
+  header?: string;
+  action?: string;
+  onSubmit: () => Promise<any>;
+};
+
+export const ConfirmModalWrapper: React.FC<ModalFormProps<ConfirmModalWrapperProps>> = ({ trigger, ...args }) => {
+  const modal = useModal();
+
+  const FormComponent: React.FC<ConfirmModalWrapperProps> = props => {
+    const { header, action, onSubmit } = props;
+    const loader = useLoader();
+    const { close } = useModal();
+    const notifier = useNotifier();
+    const [key, setKey] = React.useState<string>(`confirm-${Date.now()}`);
+
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      try {
+        loader.setLoading(true);
+        onSubmit && onSubmit();
+        setTimeout(() => close(), 1000);
+      } catch (message: any) {
+        notifier.notify({ type: NotificationType.error, message });
+      }
+      loader.setLoading(false);
+    };
+
+    return (
+      <section className="modal-card-body modal-form">
+        <div className="form-floating-header p-4">
+          <span className="has-text-weight-bold is-size-6">{header || `Confirm action`}</span>
+        </div>
+        <div className="p-3 my-4"></div>
+
+        <form className="px-1 py-2" onSubmit={handleSubmit} key={key}>
+
+          <div className="buttons my=2">
+            <button
+              className="button is-info is-light is-small"
+              onClick={close}
+              disabled={loader.loading}
+            >
+              <span>Cancel</span>
+            </button>
+            <input
+              type="submit"
+              className={"button is-danger is-small" + `${loader.loading ? " is-loading" : ""}`}
+              value={action || "Delete"}
+              disabled={loader.loading}
+            />
+          </div>
+
+        </form>
+      </section>
+    )
+  };
+
+  return React.cloneElement(trigger, {
+    onClick: () => modal.open(<FormComponent {...args} />)
+  });
+};

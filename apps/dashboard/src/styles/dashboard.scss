@@ -106,6 +106,28 @@ Karrio custom styling
   }
 }
 
+.admin-connections-table {
+  .carrier {
+    width: 160px;
+    min-width: 160px;
+  }
+
+  .mode {
+    width: 6%;
+  }
+
+  .active {
+    width: 6%;
+  }
+
+  .details {}
+
+  .action {
+    width: 20%;
+    min-width: 180px;
+  }
+}
+
 .system-connections-table {
   .carrier {
     width: 24%;
@@ -198,7 +220,10 @@ Karrio custom styling
     width: 8%;
   }
 
-  .description {}
+  .description {
+    min-width: 200px;
+    max-width: 200px;
+  }
 
   .date {
     width: 20%;
@@ -215,15 +240,16 @@ Karrio custom styling
 }
 
 .events-table {
-  .event {}
-
-  .id {
-    width: 20%;
+  .description {
+    width: 80%;
+    min-width: 200px;
+    max-width: 200px;
   }
 
   .date {
     width: 20%;
-    min-width: 185px;
+    min-width: 190px;
+    max-width: 190px;
   }
 
   tbody>tr.items {
@@ -251,7 +277,7 @@ Karrio custom styling
   }
 
   .last-event {
-    min-width: 10vw;
+    min-width: 200px;
     max-width: 200px;
   }
 
@@ -287,7 +313,6 @@ Karrio custom styling
   }
 
   .last-event {
-    width: 10%;
     min-width: 150px;
     max-width: 150px;
   }
@@ -354,6 +379,7 @@ Karrio custom styling
   .date {
     width: 15%;
     min-width: 130px;
+    max-width: 130px;
   }
 }
 

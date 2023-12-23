@@ -16764,13 +16764,13 @@
             "deprecationReason": null
           },
           {
-            "name": "delivered",
+            "name": "on_hold",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
           },
           {
-            "name": "on_hold",
+            "name": "delivered",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

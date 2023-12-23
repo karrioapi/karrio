@@ -4,7 +4,7 @@ import { Tabs, TabStateContext, TabStateProvider } from "@karrio/ui/components/t
 import { RateSheetEditModalProvider } from "@karrio/ui/modals/rate-sheet-edit-modal";
 import { SystemConnectionList } from "@karrio/ui/forms/system-carrier-list";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
-import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { useCarrierConnectionMutation, useCarrierConnections } from "@karrio/hooks/user-connection";
 import { UserConnectionList } from "@karrio/ui/forms/user-carrier-list";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -24,15 +24,19 @@ export default function ConnectionsPage(pageProps: any) {
     const router = useRouter();
     const { modal } = router.query;
     const { setLoading } = useContext(Loading);
+    const mutation = useCarrierConnectionMutation();
     const { selectTab } = useContext(TabStateContext);
-    const { editConnection } = useContext(ConnectProviderModalContext);
-    const { query: carrierQuery } = useCarrierConnections();
     const { query: systemQuery } = useSystemConnections();
+    const { query: carrierQuery } = useCarrierConnections();
+    const { editConnection } = useContext(ConnectProviderModalContext);
 
     useEffect(() => { setLoading(carrierQuery.isFetching || systemQuery.isFetching); });
     useEffect(() => {
       if (modal === 'new') {
-        editConnection({ onConfirm: async () => { selectTab(tabs[0]); } });
+        editConnection({
+          onConfirm: async () => { selectTab(tabs[0]); },
+          create: mutation.updateCarrierConnection.mutateAsync,
+        });
       }
     }, [modal]);
 
@@ -42,7 +46,9 @@ export default function ConnectionsPage(pageProps: any) {
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Carriers</span>
           <div>
-            <button className="button is-primary is-small is-pulled-right" onClick={() => editConnection()}>
+            <button className="button is-primary is-small is-pulled-right" onClick={() => editConnection({
+              create: mutation.createCarrierConnection.mutateAsync,
+            })}>
               <span>Register a carrier</span>
             </button>
           </div>

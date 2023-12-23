@@ -1,4 +1,4 @@
-import { CREATE_CARRIER_CONNECTION, GetSystemConnection, GetSystemConnection_system_connection, CreateConnectionMutationInput, UpdateConnectionMutationInput, GET_SYSTEM_CONNECTIONS, UPDATE_CARRIER_CONNECTION, DELETE_CARRIER_CONNECTION } from "@karrio/types/graphql/admin";
+import { CREATE_CARRIER_CONNECTION, GetSystemConnection_system_connection, CreateConnectionMutationInput, UpdateConnectionMutationInput, GET_SYSTEM_CONNECTIONS, UPDATE_CARRIER_CONNECTION, DELETE_CARRIER_CONNECTION, GetSystemConnections } from "@karrio/types/graphql/admin";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, onError } from "@karrio/lib";
 import { useKarrio } from "../karrio";
@@ -12,7 +12,7 @@ export function useSystemCarrierConnections() {
   // Queries
   const query = useQuery(
     ['system_carrier_connections'],
-    () => karrio.admin.request<GetSystemConnection>(gqlstr(GET_SYSTEM_CONNECTIONS)),
+    () => karrio.admin.request<GetSystemConnections>(gqlstr(GET_SYSTEM_CONNECTIONS)),
     { keepPreviousData: true, staleTime: 5000, onError },
   );
 

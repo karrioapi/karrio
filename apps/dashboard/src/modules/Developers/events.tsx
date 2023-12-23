@@ -46,7 +46,9 @@ export default function EventsPage(pageProps: any) {
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Developers</span>
-          <div></div>
+          <div>
+            <EventsFilter context={context} />
+          </div>
         </header>
 
         <div className="tabs">
@@ -81,34 +83,32 @@ export default function EventsPage(pageProps: any) {
 
         {!query.isFetched && <Spinner />}
 
-        {(query.isFetched && (events?.edges || []).length > 0) && <div className="table-container">
-          <table className="events-table is-size-7 table is-fullwidth">
+        {(query.isFetched && (events?.edges || []).length > 0) && <>
+          <div className="table-container">
+            <table className="events-table is-size-7 table is-fullwidth">
 
-            <tbody className="events-table">
-              <tr>
-                <td className="event is-size-7 px-0"><span className="ml-2">EVENT</span></td>
-                <td className="id has-text-right is-size-7"></td>
-                <td className="date has-text-right">
-                  <EventsFilter context={context} />
-                </td>
-              </tr>
-
-              {(events?.edges || []).map(({ node: event }) => (
-
-                <tr key={event.id} className="items is-clickable" onClick={() => previewEvent(event.id)}>
-                  <td className="description">{`${event.type}`}</td>
-                  <td className="id has-text-right">
-                    <span>{event.id}</span>
-                  </td>
-                  <td className="date has-text-right">
-                    <span className="mx-2">{formatDateTimeLong(event.created_at)}</span>
-                  </td>
+              <tbody className="events-table">
+                <tr>
+                  <td className="event is-size-7 px-0"><span className="ml-2">EVENT</span></td>
+                  <td className="date has-text-right"></td>
                 </tr>
 
-              ))}
-            </tbody>
+                {(events?.edges || []).map(({ node: event }) => (
 
-          </table>
+                  <tr key={event.id} className="items is-clickable" onClick={() => previewEvent(event.id)}>
+                    <td className="description">
+                      <span className="text-ellipsis" title={event.type || ""}>{`${event.type}`}</span>
+                    </td>
+                    <td className="date has-text-right">
+                      <span className="mx-2">{formatDateTimeLong(event.created_at)}</span>
+                    </td>
+                  </tr>
+
+                ))}
+              </tbody>
+
+            </table>
+          </div>
 
           <footer className="px-2 py-2 is-vcentered">
             <span className="is-size-7 has-text-weight-semibold">
@@ -128,8 +128,7 @@ export default function EventsPage(pageProps: any) {
               </button>
             </div>
           </footer>
-
-        </div>}
+        </>}
 
 
         {(query.isFetched && (events?.edges || []).length == 0) &&

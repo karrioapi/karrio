@@ -54,21 +54,38 @@ export default function ApiPage(pageProps: any) {
         {/* APIs Overview */}
         <div className="card px-0 py-3 mt-6">
 
-          <div className="is-flex my-0 px-3">
-            <div className="py-1" style={{ width: '40%' }}>API Version</div>
-            <div className="py-1" style={{ width: '40%' }}><code>{references?.VERSION}</code></div>
-          </div>
-          <div className="is-flex my-0 px-3">
-            <div className="py-1" style={{ width: '40%' }}>REST API</div>
-            <div className="py-1" style={{ width: '40%' }}>
-              <CopiableLink className="button is-white py-2 px-1" text={references?.HOST} />
+          <div className="columns my-0 px-3">
+            <div className="column is-4 py-1">
+              <span className="has-text-weight-bold has-text-grey">API Version</span>
             </div>
+            <div className="column is-6 py-1"><code>{references?.VERSION}</code></div>
+            <div className="column is-2"></div>
           </div>
-          <div className="is-flex my-0 px-3">
-            <div className="py-1" style={{ width: '40%' }}>GRAPHQL API</div>
-            <div className="py-1" style={{ width: '40%' }}>
-              <CopiableLink className="button is-white py-2 px-1" text={references?.GRAPHQL} />
+          <div className="columns my-0 px-3">
+            <div className="column is-4 py-1">
+              <span className="has-text-weight-bold has-text-grey">REST API</span>
             </div>
+            <div className="column is-6 py-1">
+              <CopiableLink
+                className="button is-white py-2 px-1 text-ellipsis"
+                text={references?.HOST}
+                title={references?.HOST}
+              />
+            </div>
+            <div className="column is-2"></div>
+          </div>
+          <div className="columns my-0 px-3">
+            <div className="column is-4 py-1">
+              <span className="has-text-weight-bold has-text-grey">GRAPHQL API</span>
+            </div>
+            <div className="column is-6 py-1">
+              <CopiableLink
+                className="button is-white py-2 px-1 text-ellipsis"
+                text={references?.GRAPHQL}
+                title={references?.GRAPHQL}
+              />
+            </div>
+            <div className="column is-2"></div>
           </div>
         </div>
 

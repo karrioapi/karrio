@@ -7,6 +7,7 @@ import django.db.models as models
 import django.db.transaction as transaction
 
 import karrio.server.conf as conf
+import karrio.server.iam.models as iam
 import karrio.server.graph.utils as utils
 import karrio.server.admin.utils as admin
 import karrio.server.admin.forms as forms
@@ -31,7 +32,8 @@ class CreateUserMutation(utils.BaseMutation):
     @transaction.atomic
     def mutate(
         info: Info,
-        organization_id: typing.Optional[str] = strawberry.UNSET,
+        organization_id: typing.Optional[str] = None,
+        permissions: typing.Optional[typing.List[str]] = None,
         **input: inputs.CreateUserMutationInput,
     ) -> "CreateUserMutation":
         try:
@@ -48,7 +50,12 @@ class CreateUserMutation(utils.BaseMutation):
             form = forms.CreateUserForm(input)
             user = form.save()
 
-            return CreateUserMutation(user=user)  # type:ignore
+            if any(permissions or []):
+                user.groups.set(iam.Group.objects.filter(name__in=permissions))
+
+            return CreateUserMutation(
+                user=iam.User.objects.get(id=user.id)
+            )  # type:ignore
         except Exception as e:
             logger.exception(e)
             raise e
@@ -61,19 +68,14 @@ class UpdateUserMutation(utils.BaseMutation):
     @staticmethod
     @utils.authentication_required
     @admin.superuser_required
+    @transaction.atomic
     def mutate(
         info: Info,
-        email: str,
+        id: int,
+        permissions: typing.Optional[typing.List[str]] = None,
         **input: inputs.UpdateUserMutationInput,
     ) -> "UpdateUserMutation":
-        instance = types.User.objects.filter(
-            models.Q(email=email)
-            & (
-                models.Q(orgs_organization__users__id=info.context.request.user.id)
-                if conf.settings.MULTI_ORGANIZATIONS
-                else models.Q()
-            )
-        ).first()
+        instance = iam.User.objects.get(id=id)
 
         if not instance:
             return UpdateUserMutation(user=None)  # type:ignore
@@ -81,9 +83,27 @@ class UpdateUserMutation(utils.BaseMutation):
         for k, v in input.items():
             setattr(instance, k, v)
 
+        if any(permissions or []):
+            instance.groups.set(iam.Group.objects.filter(name__in=permissions))
+
         instance.save()
 
         return UpdateUserMutation(user=instance)  # type:ignore
+
+
+@strawberry.type
+class DeleteConnectionMutation(utils.BaseMutation):
+    id: str = strawberry.UNSET
+
+    @staticmethod
+    @transaction.atomic
+    @utils.authentication_required
+    @utils.authorization_required(["manage_carriers"])
+    @admin.staff_required
+    def mutate(info: Info, **input) -> "DeleteConnectionMutation":
+        instance = providers.Carrier.system_carriers.get(id=input["id"])
+        instance.delete()
+        return DeleteConnectionMutation(id=input["id"])
 
 
 @strawberry.type

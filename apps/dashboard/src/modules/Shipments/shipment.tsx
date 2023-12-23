@@ -486,12 +486,12 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
                 {(logs.data?.logs.edges || []).map(({ node: log }) => (
                   <tr key={log.id} className="items is-clickable">
                     <td className="status is-vcentered p-0">
-                      <AppLink href={`/developers/logs/${log.id}`} className="pr-2">
+                      <AppLink href={`/developers/logs/${log.id}`} className="mr-4">
                         <StatusCode code={log.status_code as number} />
                       </AppLink>
                     </td>
                     <td className="description is-vcentered p-0">
-                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3">
+                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3 text-ellipsis">
                         {`${log.method} ${log.path}`}
                       </AppLink>
                     </td>
@@ -522,7 +522,7 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
                 {(events.data?.events.edges || []).map(({ node: event }) => (
                   <tr key={event.id} className="items is-clickable">
                     <td className="description is-vcentered p-0">
-                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3">
+                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3  text-ellipsis">
                         {`${event.type}`}
                       </AppLink>
                     </td>

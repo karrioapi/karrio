@@ -80,6 +80,7 @@ jwcrypto==1.5.0
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.royalmail&subdirectory=modules/connectors/royalmail
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.sendle&subdirectory=modules/connectors/sendle
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.server&subdirectory=apps/api
+-e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.server.admin&subdirectory=modules/admin
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.server.apps&subdirectory=modules/apps
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.server.core&subdirectory=modules/core
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.server.data&subdirectory=modules/data

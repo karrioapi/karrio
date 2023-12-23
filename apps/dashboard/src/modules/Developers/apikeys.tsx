@@ -66,10 +66,10 @@ export default function ApiPage(pageProps: any) {
         </div>
 
         {/* API Keys */}
-        <div className="card px-0 py-3 mt-6">
+        <div className="card p-3 mt-6">
 
-          <div className="is-flex my-0 px-3">
-            <div className="py-1" style={{ width: '40%' }}>
+          <div className="columns">
+            <div className="column is-5 pr-2">
               <p className="subtitle is-6 py-1">Public Key</p>
               <p className="is-size-7 has-text-weight-semibold pr-6">
                 <span>Use this key to authenticate your API calls. </span>
@@ -84,7 +84,7 @@ export default function ApiPage(pageProps: any) {
               <p className="is-size-7 pr-6"><strong>Warning:</strong> must be kept securely and never exposed to a client application.</p>
             </div>
 
-            <div className="py-1" style={{ width: '40%' }}>
+            <div className="column is-5">
               <div className="field has-addons">
                 <p className="control is-expanded">
                   <input className="input is-small"
@@ -122,6 +122,8 @@ export default function ApiPage(pageProps: any) {
                 <span> to revoke old keys and generate a new one.</span>
               </p>
             </div>
+
+            <div className="column is-2"></div>
           </div>
         </div>
 

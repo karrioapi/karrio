@@ -104,6 +104,7 @@ export const GET_USERS = gql`query GetUsers($filter: UserFilter) {
         email
         full_name
         is_staff
+        is_active
         is_superuser
         date_joined
         last_login
@@ -1590,7 +1591,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
 }
 `;
 
-export const GET_RATE_SHEET = gql`query get_rate_sheet($id: String!) {
+export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
   rate_sheet(id: $id) {
     id
     name
@@ -1631,7 +1632,7 @@ export const GET_RATE_SHEET = gql`query get_rate_sheet($id: String!) {
   }
 }`;
 
-export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilter) {
+export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter) {
   rate_sheets(filter: $filter) {
     page_info {
       has_next_page
@@ -1680,6 +1681,24 @@ export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilte
   }
 }`;
 
+export const GET_GROUP_PERMISSIONS = gql`query GetPermissionGroups($filter: PermissionGroupFilter) {
+  permission_groups(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        name
+        permissions
+      }
+    }
+  }
+}`
+
 //#endregion
 
 
@@ -1712,15 +1731,6 @@ export const UPDATE_USER = gql`mutation UpdateUser($data: UpdateUserMutationInpu
     errors {
       field
       messages
-    }
-    user {
-      email
-      full_name
-      is_staff
-      is_active
-      is_superuser
-      date_joined
-      last_login
     }
   }
 }
@@ -1788,7 +1798,7 @@ export const UPDATE_CARRIER_CONNECTION = gql`mutation UpdateCarrierConnection($d
 }
 `;
 
-export const DELETE_CARRIER_CONNECTION = gql`mutation DeleteCarrierConnection($data: DeleteMutationInput!) {
+export const DELETE_CARRIER_CONNECTION = gql`mutation DeleteCarrierConnection($data: DeleteConnectionMutationInput!) {
   delete_carrier_connection(input: $data) {
     id
     errors {
@@ -1809,7 +1819,7 @@ export const UPDATE_ORGANIZATION_ACCOUNT = gql`mutation UpdateOrganizationAccoun
 }
 `;
 
-export const CREATE_RATE_SHEET = gql`mutation create_rate_sheet($data: CreateRateSheetMutationInput!) {
+export const CREATE_RATE_SHEET = gql`mutation CreateRateSheet($data: CreateRateSheetMutationInput!) {
   create_rate_sheet(input: $data) {
     rate_sheet {
       id
@@ -1822,7 +1832,7 @@ export const CREATE_RATE_SHEET = gql`mutation create_rate_sheet($data: CreateRat
 }
 `;
 
-export const UPDATE_RATE_SHEET = gql`mutation update_rate_sheet($data: UpdateRateSheetMutationInput!) {
+export const UPDATE_RATE_SHEET = gql`mutation UpdateRateSheet($data: UpdateRateSheetMutationInput!) {
   update_rate_sheet(input: $data) {
     rate_sheet {
       id
@@ -1835,7 +1845,7 @@ export const UPDATE_RATE_SHEET = gql`mutation update_rate_sheet($data: UpdateRat
 }
 `;
 
-export const DELETE_RATE_SHEET = gql`mutation delete_rate_sheet($data: DeleteMutationInput!) {
+export const DELETE_RATE_SHEET = gql`mutation DeleteRateSheet($data: DeleteMutationInput!) {
   delete_rate_sheet(input: $data) {
     id
     errors {

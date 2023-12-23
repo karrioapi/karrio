@@ -1,5 +1,4 @@
 import typing
-import datetime
 import strawberry
 from django.conf import settings
 
@@ -37,14 +36,23 @@ class CreateUserMutationInput(utils.BaseInput):
     is_active: typing.Optional[bool] = strawberry.UNSET
     is_superuser: typing.Optional[bool] = strawberry.UNSET
     organization_id: typing.Optional[str] = strawberry.UNSET
+    permissions: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @strawberry.input
 class UpdateUserMutationInput(utils.BaseInput):
-    email: str
+    id: int
+    email: typing.Optional[str] = strawberry.UNSET
+    full_name: typing.Optional[str] = strawberry.UNSET
     is_staff: typing.Optional[bool] = strawberry.UNSET
     is_active: typing.Optional[bool] = strawberry.UNSET
     is_superuser: typing.Optional[bool] = strawberry.UNSET
+    permissions: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class PermissionGroupFilter(utils.Paginated):
+    pass
 
 
 @strawberry.input
@@ -60,6 +68,11 @@ class CreateConnectionMutationInput(base.CreateCarrierConnectionMutationInput):
 @strawberry.input
 class UpdateConnectionMutationInput(base.UpdateCarrierConnectionMutationInput):
     pass
+
+
+@strawberry.input
+class DeleteConnectionMutationInput(utils.BaseInput):
+    id: str
 
 
 @strawberry.input

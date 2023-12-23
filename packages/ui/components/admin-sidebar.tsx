@@ -42,8 +42,8 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
               </figure>
             </div>
             <div className="media-content" style={{ overflow: 'hidden' }}>
-              <p className="title is-size-6">{formatRef(metadata?.APP_NAME)?.toLocaleLowerCase()}</p>
-              <p className="subtitle is-size-7">{publicRuntimeConfig?.DASHBOARD_URL}</p>
+              <p className="title is-size-6 text-ellipsis">{formatRef(metadata?.APP_NAME)?.toLocaleLowerCase()}</p>
+              <p className="subtitle is-size-7">{location.host}</p>
             </div>
           </div>
         </header>
@@ -68,16 +68,29 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
             <i className={`fa fa-user-lock mr-2 ${isActive("/admin/user_accounts") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Users and permissions</span>
           </AppLink>
+
           {metadata?.MULTI_ORGANIZATIONS && <>
             <AppLink href="/admin/organization_accounts" className={"menu-item px-3 " + activeClass("/admin/organization_accounts")} shallow={false} prefetch={false}>
               <i className={`fa fa-users mr-2 ${isActive("/admin/organization_accounts") ? "" : 'has-text-grey'}`}></i>
               <span className="has-text-weight-bold">Organization accounts</span>
             </AppLink>
           </>}
+          {!metadata?.MULTI_ORGANIZATIONS && <>
+            <button className={"button is-white menu-item px-3"} disabled>
+              <i className={`fa fa-users mr-2 has-text-grey`}></i>
+              <span className="has-text-weight-bold">Organization accounts</span>
+            </button>
+          </>}
+
           <AppLink href="/admin/surcharges" className={"menu-item px-3 " + activeClass("/admin/surcharges")} shallow={false} prefetch={false}>
             <i className={`fa fa-percent mr-2 ${isActive("/admin/surcharges") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Surcharge and discounts</span>
           </AppLink>
+
+          <button className={"button is-white menu-item px-3"} disabled>
+            <i className={`fas fa-file-alt mr-2 has-text-grey`}></i>
+            <span className="has-text-weight-bold">Platform activity log</span>
+          </button>
         </div>
 
       </div>

@@ -49,7 +49,9 @@ export default function Page(pageProps: any) {
                     <div className="p-3">
 
                         <p className="is-size-7 my-1 has-text-weight-bold">API hostname</p>
-                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">{url$`${metadata?.HOST}`}</p>
+                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">
+                            {url$`${metadata?.HOST}`.replace('http://', '').replace('https://', '')}
+                        </p>
 
                     </div>
 
@@ -58,14 +60,16 @@ export default function Page(pageProps: any) {
                     <div className="p-3">
 
                         <p className="is-size-7 my-1 has-text-weight-bold">Dashboard hostname</p>
-                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">{url$`${publicRuntimeConfig?.DASHBOARD_URL}`}</p>
+                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">{location.host}</p>
 
                     </div>
 
                 </div>
 
+                <div className="p-4"></div>
+
                 {/* Feature flags */}
-                <div className="card px-0 py-3 mt-5">
+                <div className="card px-0 py-3">
 
                     <header className="px-3 is-flex is-justify-content-space-between">
                         <span className="is-title is-size-6 has-text-weight-bold is-vcentered my-2">Feature flags</span>
@@ -106,7 +110,19 @@ export default function Page(pageProps: any) {
                                 <p className="help">Toggle audit logging functionality</p>
                             </div>
                             <div>
-                                <Switch checked={false} />
+                                <Switch checked={false} disabled />
+                            </div>
+                        </div>
+
+                        <hr className='my-1' style={{ height: '1px' }} />
+
+                        <div className="is-flex is-justify-content-space-between">
+                            <div>
+                                <label className="label">APPS_MANAGEMENT</label>
+                                <p className="help">Enable apps</p>
+                            </div>
+                            <div>
+                                <Switch checked={false} disabled />
                             </div>
                         </div>
 
@@ -122,24 +138,14 @@ export default function Page(pageProps: any) {
                             </div>
                         </div>
 
-                        <hr className='my-1' style={{ height: '1px' }} />
-
-                        <div className="is-flex is-justify-content-space-between">
-                            <div>
-                                <label className="label">APPS_MANAGEMENT</label>
-                                <p className="help">Enable apps</p>
-                            </div>
-                            <div>
-                                <Switch checked={false} />
-                            </div>
-                        </div>
-
                     </div>
 
                 </div>
 
+                <div className="p-4"></div>
+
                 {/* Email config */}
-                <div className="card px-0 py-3 mt-5">
+                <div className="card px-0 py-3">
 
                     <header className="px-3 is-flex is-justify-content-space-between">
                         <span className="is-title is-size-6 has-text-weight-bold is-vcentered my-2">Email config</span>
@@ -202,8 +208,10 @@ export default function Page(pageProps: any) {
 
                 </div>
 
+                <div className="p-4"></div>
+
                 {/* Address validation */}
-                <div className="card px-0 py-3 mt-5">
+                <div className="card px-0 py-3">
 
                     <header className="px-3 is-flex is-justify-content-space-between">
                         <span className="is-title is-size-6 has-text-weight-bold is-vcentered my-2">Address Validation Service</span>
@@ -234,8 +242,10 @@ export default function Page(pageProps: any) {
 
                 </div>
 
+                <div className="p-4"></div>
+
                 {/* Data Retention */}
-                <div className="card px-0 py-3 mt-5">
+                <div className="card px-0 py-3">
 
                     <header className="px-3 is-flex is-justify-content-space-between">
                         <span className="is-title is-size-6 has-text-weight-bold is-vcentered my-2">Data retention</span>
@@ -282,7 +292,9 @@ export default function Page(pageProps: any) {
 
                 </div>
 
-                <div className="p-6 has-text-centered">
+                <div className="p-4"></div>
+
+                <div className="p-2 mb-6 has-text-centered">
                     <button className="button is-primary">Save</button>
                 </div>
             </>

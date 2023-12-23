@@ -48,7 +48,9 @@ export default function LogsPage(pageProps: any) {
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Developers</span>
-          <div></div>
+          <div>
+            <LogsFilter context={context} />
+          </div>
         </header>
 
         <div className="tabs">
@@ -98,32 +100,32 @@ export default function LogsPage(pageProps: any) {
         {!query.isFetched && <Spinner />}
 
 
-        {(query.isFetched && (logs?.edges || []).length > 0) && <div className="table-container">
-          <table className="logs-table table is-fullwidth is-size-7">
+        {(query.isFetched && (logs?.edges || []).length > 0) && <>
+          <div className="table-container">
+            <table className="logs-table table is-fullwidth is-size-7">
 
-            <tbody className="logs-table">
-              <tr>
-                <td className="status is-size-7 is-vcentered"><span className="ml-2">STATUS</span></td>
-                <td className="description is-size-7 is-vcentered">DESCRIPTION</td>
-                <td className="date has-text-right is-size-7">
-                  <LogsFilter context={context} />
-                </td>
-              </tr>
-
-              {(logs?.edges || []).map(({ node: log }) => (
-
-                <tr key={log.id} className="items is-clickable" onClick={() => previewLog(log.id as any)}>
-                  <td className="status"><StatusCode code={log.status_code as number} /></td>
-                  <td className="description">{`${log.method} ${log.path}`}</td>
-                  <td className="date has-text-right">
-                    <span className="mr-2">{formatDateTimeLong(log.requested_at)}</span>
-                  </td>
+              <tbody>
+                <tr>
+                  <td className="status is-size-7 is-vcentered"><span className="ml-2">STATUS</span></td>
+                  <td className="description is-size-7 is-vcentered">DESCRIPTION</td>
+                  <td className="date has-text-right is-size-7"></td>
                 </tr>
 
-              ))}
-            </tbody>
+                {(logs?.edges || []).map(({ node: log }) => (
 
-          </table>
+                  <tr key={log.id} className="items is-clickable" onClick={() => previewLog(log.id as any)}>
+                    <td className="status"><StatusCode code={log.status_code as number} /></td>
+                    <td className="description text-ellipsis">{`${log.method} ${log.path}`}</td>
+                    <td className="date has-text-right">
+                      <span className="mr-2">{formatDateTimeLong(log.requested_at)}</span>
+                    </td>
+                  </tr>
+
+                ))}
+              </tbody>
+
+            </table>
+          </div>
 
           <footer className="px-2 py-2 is-vcentered">
             <span className="is-size-7 has-text-weight-semibold">
@@ -143,8 +145,7 @@ export default function LogsPage(pageProps: any) {
               </button>
             </div>
           </footer>
-
-        </div>}
+        </>}
 
 
         {(query.isFetched && (logs?.edges || []).length == 0) && <div className="card my-6">
