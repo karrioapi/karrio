@@ -42,8 +42,8 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
               </figure>
             </div>
             <div className="media-content" style={{ overflow: 'hidden' }}>
-              <p className="title is-size-6">{formatRef(metadata?.APP_NAME)?.toLocaleLowerCase()}</p>
-              <p className="subtitle is-size-7">{publicRuntimeConfig?.DASHBOARD_URL}</p>
+              <p className="title is-size-6 text-ellipsis">{formatRef(metadata?.APP_NAME)?.toLocaleLowerCase()}</p>
+              <p className="subtitle is-size-7">{location.host}</p>
             </div>
           </div>
         </header>

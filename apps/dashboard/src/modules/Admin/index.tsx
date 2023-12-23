@@ -49,7 +49,9 @@ export default function Page(pageProps: any) {
                     <div className="p-3">
 
                         <p className="is-size-7 my-1 has-text-weight-bold">API hostname</p>
-                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">{url$`${metadata?.HOST}`}</p>
+                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">
+                            {url$`${metadata?.HOST}`.replace('http://', '').replace('https://', '')}
+                        </p>
 
                     </div>
 
@@ -58,7 +60,7 @@ export default function Page(pageProps: any) {
                     <div className="p-3">
 
                         <p className="is-size-7 my-1 has-text-weight-bold">Dashboard hostname</p>
-                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">{url$`${publicRuntimeConfig?.DASHBOARD_URL}`}</p>
+                        <p className="is-size-7 my-1 has-text-weight-semibold has-text-grey">{location.host}</p>
 
                     </div>
 
