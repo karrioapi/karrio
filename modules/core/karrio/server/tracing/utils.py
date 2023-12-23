@@ -11,6 +11,7 @@ from karrio.server.tracing import models
 logger = logging.getLogger(__name__)
 
 
+@utils.error_wrapper
 def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
     if settings.PERSIST_SDK_TRACING is False:
         return
@@ -22,16 +23,19 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
     @utils.tenant_aware
     def persist_records(**kwarg):
         actor = getattr(context, "user", None)
-
         if len(tracer.records) == 0 or getattr(actor, "id", None) is None:
             return
 
         try:
             records = []
-            exists = models.TracingRecord.access_by(context).filter(
-                meta__request_log_id__isnull=False,
-                meta__request_log_id=tracer.context.get("request_log_id")
-            ).exists()
+            exists = (
+                models.TracingRecord.access_by(context)
+                .filter(
+                    meta__request_log_id__isnull=False,
+                    meta__request_log_id=tracer.context.get("request_log_id"),
+                )
+                .exists()
+            )
 
             if exists:
                 return
@@ -71,6 +75,36 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
             logger.error(e, exc_info=False)
 
     persist_records(schema=schema)
+
+
+@utils.error_wrapper
+def bulk_save_tracing_records(tracer: Tracer, context=None):
+    if settings.PERSIST_SDK_TRACING is False:
+        return
+
+    if len(tracer.records) == 0 or context is None:
+        return
+
+    records = []
+
+    for record in tracer.records:
+        records.append(
+            models.TracingRecord(
+                key=record.key,
+                record=record.data,
+                timestamp=record.timestamp,
+                test_mode=getattr(context, "test_mode", False),
+                created_by_id=getattr(context.user, "id", None),
+                meta=DP.to_dict({"tracer_id": tracer.id, **(record.metadata or {})}),
+            )
+        )
+
+    saved_records = models.TracingRecord.objects.bulk_create(records)
+
+    if getattr(context, "org", None) is not None:
+        serializers.bulk_link_org(saved_records, context)
+
+    logger.info("> tracing records saved...")
 
 
 def set_tracing_context(**kwargs):
