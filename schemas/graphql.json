@@ -1056,7 +1056,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -1110,7 +1110,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -1164,7 +1164,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -1218,7 +1218,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "SCALAR",
-                    "name": "Int",
+                    "name": "String",
                     "ofType": null
                   }
                 },
@@ -23798,6 +23798,22 @@
             "deprecationReason": null
           },
           {
+            "name": "test_mode",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "status",
             "description": null,
             "args": [],
@@ -42955,7 +42971,7 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "name",
+            "name": "workflow_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -42969,21 +42985,25 @@
             "defaultValue": null
           },
           {
+            "name": "event_type",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "ENUM",
+                "name": "WorflowEventType",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "parameters",
             "description": null,
             "type": {
               "kind": "SCALAR",
               "name": "JSON",
-              "ofType": null
-            },
-            "defaultValue": "null"
-          },
-          {
-            "name": "event_type",
-            "description": null,
-            "type": {
-              "kind": "ENUM",
-              "name": "WorflowEventType",
               "ofType": null
             },
             "defaultValue": "null"

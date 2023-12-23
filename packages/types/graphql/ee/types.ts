@@ -174,6 +174,304 @@ export interface get_organizations {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetWorkflow
+// ====================================================
+
+export interface GetWorkflow_workflow {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  actions: any | null;
+  metadata: any | null;
+}
+
+export interface GetWorkflow {
+  workflow: GetWorkflow_workflow | null;
+}
+
+export interface GetWorkflowVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflows
+// ====================================================
+
+export interface GetWorkflows_workflows_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetWorkflows_workflows_edges_node {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  actions: any | null;
+  metadata: any | null;
+}
+
+export interface GetWorkflows_workflows_edges {
+  node: GetWorkflows_workflows_edges_node;
+}
+
+export interface GetWorkflows_workflows {
+  page_info: GetWorkflows_workflows_page_info;
+  edges: GetWorkflows_workflows_edges[];
+}
+
+export interface GetWorkflows {
+  workflows: GetWorkflows_workflows;
+}
+
+export interface GetWorkflowsVariables {
+  filter?: WorkflowFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowConnection
+// ====================================================
+
+export interface GetWorkflowConnection_workflow_connection {
+  id: string;
+  name: string;
+  slug: string;
+  auth_type: AuthType;
+  description: string | null;
+  auth_host: string | null;
+  auth_endpoint: string | null;
+  parameters_template: string | null;
+  auth_template: string | null;
+  credentials: any | null;
+  metadata: any | null;
+}
+
+export interface GetWorkflowConnection {
+  workflow_connection: GetWorkflowConnection_workflow_connection | null;
+}
+
+export interface GetWorkflowConnectionVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowConnections
+// ====================================================
+
+export interface GetWorkflowConnections_workflow_connections_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetWorkflowConnections_workflow_connections_edges_node {
+  id: string;
+  name: string;
+  slug: string;
+  auth_type: AuthType;
+  description: string | null;
+  auth_host: string | null;
+  auth_endpoint: string | null;
+  parameters_template: string | null;
+  auth_template: string | null;
+  credentials: any | null;
+  metadata: any | null;
+}
+
+export interface GetWorkflowConnections_workflow_connections_edges {
+  node: GetWorkflowConnections_workflow_connections_edges_node;
+}
+
+export interface GetWorkflowConnections_workflow_connections {
+  page_info: GetWorkflowConnections_workflow_connections_page_info;
+  edges: GetWorkflowConnections_workflow_connections_edges[];
+}
+
+export interface GetWorkflowConnections {
+  workflow_connections: GetWorkflowConnections_workflow_connections;
+}
+
+export interface GetWorkflowConnectionsVariables {
+  filter?: WorkflowConnectionFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowAction
+// ====================================================
+
+export interface GetWorkflowAction_workflow_action_connection {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface GetWorkflowAction_workflow_action {
+  id: string;
+  name: string;
+  slug: string;
+  action_type: ActionType;
+  description: string | null;
+  api_host: string | null;
+  api_endpoint: string | null;
+  method: HTTPMethod | null;
+  parameters_type: ParametersType | null;
+  parameters_template: string | null;
+  header_template: string | null;
+  content_type: HTTPContentType | null;
+  connection: GetWorkflowAction_workflow_action_connection | null;
+  metadata: any | null;
+}
+
+export interface GetWorkflowAction {
+  workflow_action: GetWorkflowAction_workflow_action | null;
+}
+
+export interface GetWorkflowActionVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowActions
+// ====================================================
+
+export interface GetWorkflowActions_workflow_actions_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetWorkflowActions_workflow_actions_edges_node_connection {
+  id: string;
+  name: string;
+  slug: string;
+}
+
+export interface GetWorkflowActions_workflow_actions_edges_node {
+  id: string;
+  name: string;
+  slug: string;
+  action_type: ActionType;
+  description: string | null;
+  api_host: string | null;
+  api_endpoint: string | null;
+  method: HTTPMethod | null;
+  parameters_type: ParametersType | null;
+  parameters_template: string | null;
+  header_template: string | null;
+  content_type: HTTPContentType | null;
+  connection: GetWorkflowActions_workflow_actions_edges_node_connection | null;
+  metadata: any | null;
+}
+
+export interface GetWorkflowActions_workflow_actions_edges {
+  node: GetWorkflowActions_workflow_actions_edges_node;
+}
+
+export interface GetWorkflowActions_workflow_actions {
+  page_info: GetWorkflowActions_workflow_actions_page_info;
+  edges: GetWorkflowActions_workflow_actions_edges[];
+}
+
+export interface GetWorkflowActions {
+  workflow_actions: GetWorkflowActions_workflow_actions;
+}
+
+export interface GetWorkflowActionsVariables {
+  filter?: WorkflowActionFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowEvent
+// ====================================================
+
+export interface GetWorkflowEvent_workflow_event {
+  id: string;
+  status: WorkflowEventStatus;
+  event_type: WorflowEventType;
+  parameters: any | null;
+}
+
+export interface GetWorkflowEvent {
+  workflow_event: GetWorkflowEvent_workflow_event | null;
+}
+
+export interface GetWorkflowEventVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowEvents
+// ====================================================
+
+export interface GetWorkflowEvents_workflow_events_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetWorkflowEvents_workflow_events_edges_node {
+  id: string;
+  status: WorkflowEventStatus;
+  event_type: WorflowEventType;
+  parameters: any | null;
+}
+
+export interface GetWorkflowEvents_workflow_events_edges {
+  node: GetWorkflowEvents_workflow_events_edges_node;
+}
+
+export interface GetWorkflowEvents_workflow_events {
+  page_info: GetWorkflowEvents_workflow_events_page_info;
+  edges: GetWorkflowEvents_workflow_events_edges[];
+}
+
+export interface GetWorkflowEvents {
+  workflow_events: GetWorkflowEvents_workflow_events;
+}
+
+export interface GetWorkflowEventsVariables {
+  filter?: WorkflowEventFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: delete_organization
 // ====================================================
 
@@ -420,6 +718,266 @@ export interface delete_organization_invitationVariables {
   data: DeleteMutationInput;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateWorkflow
+// ====================================================
+
+export interface CreateWorkflow_create_workflow_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateWorkflow_create_workflow {
+  errors: CreateWorkflow_create_workflow_errors[] | null;
+}
+
+export interface CreateWorkflow {
+  create_workflow: CreateWorkflow_create_workflow;
+}
+
+export interface CreateWorkflowVariables {
+  data: CreateWorkflowMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateWorkflow
+// ====================================================
+
+export interface UpdateWorkflow_update_workflow_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateWorkflow_update_workflow {
+  errors: UpdateWorkflow_update_workflow_errors[] | null;
+}
+
+export interface UpdateWorkflow {
+  update_workflow: UpdateWorkflow_update_workflow;
+}
+
+export interface UpdateWorkflowVariables {
+  data: UpdateWorkflowMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteWorkflow
+// ====================================================
+
+export interface DeleteWorkflow_delete_workflow {
+  id: string;
+}
+
+export interface DeleteWorkflow {
+  delete_workflow: DeleteWorkflow_delete_workflow;
+}
+
+export interface DeleteWorkflowVariables {
+  data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateWorkflowConnection
+// ====================================================
+
+export interface CreateWorkflowConnection_create_workflow_connection_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateWorkflowConnection_create_workflow_connection {
+  errors: CreateWorkflowConnection_create_workflow_connection_errors[] | null;
+}
+
+export interface CreateWorkflowConnection {
+  create_workflow_connection: CreateWorkflowConnection_create_workflow_connection;
+}
+
+export interface CreateWorkflowConnectionVariables {
+  data: CreateWorkflowConnectionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateWorkflowConnection
+// ====================================================
+
+export interface UpdateWorkflowConnection_update_workflow_connection_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateWorkflowConnection_update_workflow_connection {
+  errors: UpdateWorkflowConnection_update_workflow_connection_errors[] | null;
+}
+
+export interface UpdateWorkflowConnection {
+  update_workflow_connection: UpdateWorkflowConnection_update_workflow_connection;
+}
+
+export interface UpdateWorkflowConnectionVariables {
+  data: UpdateWorkflowConnectionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteWorkflowConnection
+// ====================================================
+
+export interface DeleteWorkflowConnection_delete_workflow_connection {
+  id: string;
+}
+
+export interface DeleteWorkflowConnection {
+  delete_workflow_connection: DeleteWorkflowConnection_delete_workflow_connection;
+}
+
+export interface DeleteWorkflowConnectionVariables {
+  data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateWorkflowAction
+// ====================================================
+
+export interface CreateWorkflowAction_create_workflow_action_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateWorkflowAction_create_workflow_action {
+  errors: CreateWorkflowAction_create_workflow_action_errors[] | null;
+}
+
+export interface CreateWorkflowAction {
+  create_workflow_action: CreateWorkflowAction_create_workflow_action;
+}
+
+export interface CreateWorkflowActionVariables {
+  data: CreateWorkflowActionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateWorkflowAction
+// ====================================================
+
+export interface UpdateWorkflowAction_update_workflow_action_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateWorkflowAction_update_workflow_action {
+  errors: UpdateWorkflowAction_update_workflow_action_errors[] | null;
+}
+
+export interface UpdateWorkflowAction {
+  update_workflow_action: UpdateWorkflowAction_update_workflow_action;
+}
+
+export interface UpdateWorkflowActionVariables {
+  data: UpdateWorkflowActionMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteWorkflowAction
+// ====================================================
+
+export interface DeleteWorkflowAction_delete_workflow_action {
+  id: string;
+}
+
+export interface DeleteWorkflowAction {
+  delete_workflow_action: DeleteWorkflowAction_delete_workflow_action;
+}
+
+export interface DeleteWorkflowActionVariables {
+  data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateWorkflowEvent
+// ====================================================
+
+export interface CreateWorkflowEvent_create_workflow_event_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateWorkflowEvent_create_workflow_event {
+  errors: CreateWorkflowEvent_create_workflow_event_errors[] | null;
+}
+
+export interface CreateWorkflowEvent {
+  create_workflow_event: CreateWorkflowEvent_create_workflow_event;
+}
+
+export interface CreateWorkflowEventVariables {
+  data: CreateWorkflowEventMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CancelWorkflowEvent
+// ====================================================
+
+export interface CancelWorkflowEvent_cancel_workflow_event_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CancelWorkflowEvent_cancel_workflow_event {
+  errors: CancelWorkflowEvent_cancel_workflow_event_errors[] | null;
+}
+
+export interface CancelWorkflowEvent {
+  cancel_workflow_event: CancelWorkflowEvent_cancel_workflow_event;
+}
+
+export interface CancelWorkflowEventVariables {
+  data: CancelWorkflowEventMutationInput;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -427,10 +985,94 @@ export interface delete_organization_invitationVariables {
 // START Enums and Input Objects
 //==============================================================
 
+export enum AuthType {
+  api_key = "api_key",
+  basic = "basic",
+  jwt = "jwt",
+  oauth2 = "oauth2",
+}
+
+export enum ActionType {
+  data_mapping = "data_mapping",
+  function_call = "function_call",
+  http_request = "http_request",
+}
+
+export enum HTTPMethod {
+  delete = "delete",
+  get = "get",
+  patch = "patch",
+  post = "post",
+  put = "put",
+}
+
+export enum ParametersType {
+  data = "data",
+  queystring = "queystring",
+}
+
+export enum HTTPContentType {
+  form = "form",
+  json = "json",
+  text = "text",
+  xml = "xml",
+}
+
+export enum WorkflowEventStatus {
+  cancelled = "cancelled",
+  failed = "failed",
+  pending = "pending",
+  running = "running",
+  success = "success",
+}
+
+export enum WorflowEventType {
+  auto = "auto",
+  manual = "manual",
+  scheduled = "scheduled",
+  webhook = "webhook",
+}
+
 export enum UserRole {
   admin = "admin",
   developer = "developer",
   member = "member",
+}
+
+// null
+export interface WorkflowFilter {
+  date_after?: any | null;
+  date_before?: any | null;
+  omit?: string[] | null;
+  keyword?: string | null;
+}
+
+// null
+export interface WorkflowConnectionFilter {
+  date_after?: any | null;
+  date_before?: any | null;
+  omit?: string[] | null;
+  keyword?: string | null;
+  auth_type?: AuthType | null;
+}
+
+// null
+export interface WorkflowActionFilter {
+  date_after?: any | null;
+  date_before?: any | null;
+  omit?: string[] | null;
+  keyword?: string | null;
+  action_type?: ActionType | null;
+}
+
+// null
+export interface WorkflowEventFilter {
+  date_after?: any | null;
+  date_before?: any | null;
+  omit?: string[] | null;
+  keyword?: string | null;
+  status?: WorkflowEventStatus | null;
+  event_type?: WorflowEventType | null;
 }
 
 // null
@@ -478,6 +1120,93 @@ export interface AcceptOrganizationInvitationMutationInput {
 
 // null
 export interface DeleteMutationInput {
+  id: string;
+}
+
+// null
+export interface CreateWorkflowMutationInput {
+  name: string;
+  actions: any;
+  description?: string | null;
+  metadata?: any | null;
+}
+
+// null
+export interface UpdateWorkflowMutationInput {
+  id: string;
+  name?: string | null;
+  actions?: any | null;
+  description?: string | null;
+  metadata?: any | null;
+}
+
+// null
+export interface CreateWorkflowConnectionMutationInput {
+  name: string;
+  description?: string | null;
+  api_host?: string | null;
+  api_endpoint?: string | null;
+  auth_type?: AuthType | null;
+  parameters_template?: string | null;
+  auth_template?: string | null;
+  metadata?: any | null;
+}
+
+// null
+export interface UpdateWorkflowConnectionMutationInput {
+  name?: string | null;
+  description?: string | null;
+  api_host?: string | null;
+  api_endpoint?: string | null;
+  auth_type?: AuthType | null;
+  parameters_template?: string | null;
+  auth_template?: string | null;
+  metadata?: any | null;
+  id: string;
+}
+
+// null
+export interface CreateWorkflowActionMutationInput {
+  name: string;
+  api_host?: string | null;
+  description?: string | null;
+  api_endpoint?: string | null;
+  action_type?: ActionType | null;
+  method?: HTTPMethod | null;
+  parameters_type?: ParametersType | null;
+  parameters_template?: string | null;
+  header_template?: string | null;
+  content_type?: HTTPContentType | null;
+  metadata?: any | null;
+  connection_id?: string | null;
+}
+
+// null
+export interface UpdateWorkflowActionMutationInput {
+  name?: string | null;
+  api_host?: string | null;
+  description?: string | null;
+  api_endpoint?: string | null;
+  action_type?: ActionType | null;
+  method?: HTTPMethod | null;
+  parameters_type?: ParametersType | null;
+  parameters_template?: string | null;
+  header_template?: string | null;
+  content_type?: HTTPContentType | null;
+  metadata?: any | null;
+  connection_id?: string | null;
+  id: string;
+}
+
+// null
+export interface CreateWorkflowEventMutationInput {
+  name: string;
+  parameters?: any | null;
+  event_type?: WorflowEventType | null;
+}
+
+// null
+export interface CancelWorkflowEventMutationInput {
   id: string;
 }
 
