@@ -129,7 +129,50 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
     name
     slug
     description
-    actions
+    trigger {
+      object_type
+      id
+      slug
+      trigger_type
+      schedule
+      secret
+      secret_key
+    }
+    action_nodes {
+      order
+      slug
+    }
+    actions {
+      object_type
+      id
+      slug
+      name
+      action_type
+      description
+      port
+      host
+      endpoint
+      method
+      parameters_type
+      header_template
+      content_type
+      connection {
+        object_type
+        id
+        name
+        slug
+        auth_type
+        port
+        host
+        endpoint
+        description
+        parameters_template
+        auth_template
+        credentials
+        metadata
+      }
+      metadata
+    }
     metadata
   }
 }
@@ -149,7 +192,51 @@ export const GET_WORKFLOWS = gql`query GetWorkflows($filter: WorkflowFilter) {
         name
         slug
         description
-        actions
+        trigger {
+          object_type
+          id
+          slug
+          trigger_type
+          schedule
+          id
+          secret
+          secret_key
+        }
+        action_nodes {
+          order
+          slug
+        }
+        actions {
+          object_type
+          id
+          slug
+          name
+          action_type
+          description
+          port
+          host
+          endpoint
+          method
+          parameters_type
+          header_template
+          content_type
+          connection {
+            object_type
+            id
+            name
+            slug
+            auth_type
+            port
+            host
+            endpoint
+            description
+            parameters_template
+            auth_template
+            credentials
+            metadata
+          }
+          metadata
+        }
         metadata
       }
     }
@@ -164,8 +251,9 @@ export const GET_WORKFLOW_CONNECTION = gql`query GetWorkflowConnection($id: Stri
     slug
     auth_type
     description
-    auth_host
-    auth_endpoint
+    host
+    port
+    endpoint
     parameters_template
     auth_template
     credentials
@@ -189,8 +277,9 @@ export const GET_WORKFLOW_CONNECTIONS = gql`query GetWorkflowConnections($filter
         slug
         auth_type
         description
-        auth_host
-        auth_endpoint
+        host
+        port
+        endpoint
         parameters_template
         auth_template
         credentials
@@ -203,22 +292,33 @@ export const GET_WORKFLOW_CONNECTIONS = gql`query GetWorkflowConnections($filter
 
 export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
   workflow_action(id: $id) {
+    object_type
     id
-    name
     slug
+    name
     action_type
     description
-    api_host
-    api_endpoint
+    port
+    host
+    endpoint
     method
     parameters_type
-    parameters_template
     header_template
     content_type
     connection {
+      object_type
       id
       name
       slug
+      auth_type
+      port
+      host
+      endpoint
+      description
+      parameters_template
+      auth_template
+      credentials
+      metadata
     }
     metadata
   }
@@ -235,22 +335,33 @@ export const GET_WORKFLOW_ACTIONS = gql`query GetWorkflowActions($filter: Workfl
     }
     edges {
       node {
+        object_type
         id
-        name
         slug
+        name
         action_type
         description
-        api_host
-        api_endpoint
+        port
+        host
+        endpoint
         method
         parameters_type
-        parameters_template
         header_template
         content_type
         connection {
+          object_type
           id
           name
           slug
+          auth_type
+          port
+          host
+          endpoint
+          description
+          parameters_template
+          auth_template
+          credentials
+          metadata
         }
         metadata
       }
@@ -261,10 +372,21 @@ export const GET_WORKFLOW_ACTIONS = gql`query GetWorkflowActions($filter: Workfl
 
 export const GET_WORKFLOW_EVENT = gql`query GetWorkflowEvent($id: String!) {
   workflow_event(id: $id) {
+    object_type
     id
     status
     event_type
     parameters
+    test_mode
+    records {
+      object_type
+      id
+      key
+      timestamp
+      test_mode
+      record
+      meta
+    }
   }
 }
 `;
@@ -279,10 +401,21 @@ export const GET_WORKFLOW_EVENTS = gql`query GetWorkflowEvents($filter: Workflow
     }
     edges {
       node {
+        object_type
         id
         status
         event_type
         parameters
+        test_mode
+        records {
+          object_type
+          id
+          key
+          timestamp
+          test_mode
+          record
+          meta
+        }
       }
     }
   }
@@ -501,6 +634,33 @@ export const CANCEL_WORKFLOW_EVENT = gql`mutation CancelWorkflowEvent($data: Can
       field
       messages
     }
+  }
+}
+`;
+
+export const CREATE_WORKFLOW_TRIGGER = gql`mutation CreateWorkflowTrigger($data: CreateWorkflowTriggerMutationInput!) {
+  create_workflow_trigger(input: $data) {
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const UPDATE_WORKFLOW_TRIGGER = gql`mutation UpdateWorkflowTrigger($data: UpdateWorkflowTriggerMutationInput!) {
+  update_workflow_trigger(input: $data) {
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_WORKFLOW_TRIGGER = gql`mutation DeleteWorkflowTrigger($data: DeleteMutationInput!) {
+  delete_workflow_trigger(input: $data) {
+    id
   }
 }
 `;
