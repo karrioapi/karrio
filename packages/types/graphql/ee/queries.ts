@@ -560,6 +560,10 @@ export const UPDATE_WORKFLOW = gql`mutation UpdateWorkflow($data: UpdateWorkflow
 export const DELETE_WORKFLOW = gql`mutation DeleteWorkflow($data: DeleteMutationInput!) {
   delete_workflow(input: $data) {
     id
+    errors {
+      field
+      messages
+    }
   }
 }
 `;
@@ -614,6 +618,10 @@ export const UPDATE_WORKFLOW_ACTION = gql`mutation UpdateWorkflowAction($data: U
 export const DELETE_WORKFLOW_ACTION = gql`mutation DeleteWorkflowAction($data: DeleteMutationInput!) {
   delete_workflow_action(input: $data) {
     id
+    errors {
+      field
+      messages
+    }
   }
 }
 `;

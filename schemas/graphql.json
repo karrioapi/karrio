@@ -22826,7 +22826,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "TriggerType",
+                "name": "AutomationTriggerType",
                 "ofType": null
               }
             },
@@ -22893,7 +22893,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "TriggerType",
+        "name": "AutomationTriggerType",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -23025,7 +23025,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ActionType",
+                "name": "AutomationActionType",
                 "ofType": null
               }
             },
@@ -23086,7 +23086,7 @@
             "args": [],
             "type": {
               "kind": "ENUM",
-              "name": "HTTPMethod",
+              "name": "AutomationHTTPMethod",
               "ofType": null
             },
             "isDeprecated": false,
@@ -23098,7 +23098,7 @@
             "args": [],
             "type": {
               "kind": "ENUM",
-              "name": "ParametersType",
+              "name": "AutomationParametersType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -23134,7 +23134,7 @@
             "args": [],
             "type": {
               "kind": "ENUM",
-              "name": "HTTPContentType",
+              "name": "AutomationHTTPContentType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -23188,7 +23188,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "ActionType",
+        "name": "AutomationActionType",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -23217,7 +23217,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "HTTPMethod",
+        "name": "AutomationHTTPMethod",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -23258,7 +23258,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "ParametersType",
+        "name": "AutomationParametersType",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -23281,7 +23281,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "HTTPContentType",
+        "name": "AutomationHTTPContentType",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -23376,7 +23376,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "AuthType",
+                "name": "AutomationAuthType",
                 "ofType": null
               }
             },
@@ -23503,7 +23503,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "AuthType",
+        "name": "AutomationAuthType",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -23748,7 +23748,7 @@
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "ActionType",
+              "name": "AutomationActionType",
               "ofType": null
             },
             "defaultValue": null
@@ -23911,7 +23911,7 @@
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "AuthType",
+              "name": "AutomationAuthType",
               "ofType": null
             },
             "defaultValue": null
@@ -24077,7 +24077,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "WorkflowEventStatus",
+                "name": "AutomationEventStatus",
                 "ofType": null
               }
             },
@@ -24093,7 +24093,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "WorflowEventType",
+                "name": "AutomationEventType",
                 "ofType": null
               }
             },
@@ -24160,7 +24160,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "WorkflowEventStatus",
+        "name": "AutomationEventStatus",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -24201,7 +24201,7 @@
       },
       {
         "kind": "ENUM",
-        "name": "WorflowEventType",
+        "name": "AutomationEventType",
         "description": null,
         "fields": null,
         "inputFields": null,
@@ -24293,7 +24293,7 @@
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "WorkflowEventStatus",
+              "name": "AutomationEventStatus",
               "ofType": null
             },
             "defaultValue": null
@@ -24303,7 +24303,7 @@
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "WorflowEventType",
+              "name": "AutomationEventType",
               "ofType": null
             },
             "defaultValue": null
@@ -24678,7 +24678,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "TriggerType",
+                "name": "AutomationTriggerType",
                 "ofType": null
               }
             },
@@ -24765,7 +24765,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ActionType",
+                "name": "AutomationActionType",
                 "ofType": null
               }
             },
@@ -24826,7 +24826,7 @@
             "args": [],
             "type": {
               "kind": "ENUM",
-              "name": "HTTPMethod",
+              "name": "AutomationHTTPMethod",
               "ofType": null
             },
             "isDeprecated": false,
@@ -24838,7 +24838,7 @@
             "args": [],
             "type": {
               "kind": "ENUM",
-              "name": "ParametersType",
+              "name": "AutomationParametersType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -24874,7 +24874,7 @@
             "args": [],
             "type": {
               "kind": "ENUM",
-              "name": "HTTPContentType",
+              "name": "AutomationHTTPContentType",
               "ofType": null
             },
             "isDeprecated": false,
@@ -24960,7 +24960,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "AuthType",
+                "name": "AutomationAuthType",
                 "ofType": null
               }
             },
@@ -42587,7 +42587,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -42597,7 +42597,7 @@
               "name": "JSON",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -42783,7 +42783,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "ActionType",
+                "name": "AutomationActionType",
                 "ofType": null
               }
             },
@@ -42797,7 +42797,7 @@
               "name": "Int",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "host",
@@ -42807,7 +42807,17 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
+          },
+          {
+            "name": "endpoint",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "description",
@@ -42817,37 +42827,27 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
-          },
-          {
-            "name": "api_endpoint",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "method",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "HTTPMethod",
+              "name": "AutomationHTTPMethod",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "parameters_type",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "ParametersType",
+              "name": "AutomationParametersType",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "parameters_template",
@@ -42857,7 +42857,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "header_template",
@@ -42867,17 +42867,17 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "content_type",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "HTTPContentType",
+              "name": "AutomationHTTPContentType",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -42887,7 +42887,7 @@
               "name": "JSON",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "connection_id",
@@ -42897,7 +42897,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -42961,17 +42961,17 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "action_type",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "ActionType",
+              "name": "AutomationActionType",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "port",
@@ -42981,7 +42981,7 @@
               "name": "Int",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "host",
@@ -42991,7 +42991,17 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
+          },
+          {
+            "name": "endpoint",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
           },
           {
             "name": "description",
@@ -43001,37 +43011,27 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
-          },
-          {
-            "name": "api_endpoint",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "method",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "HTTPMethod",
+              "name": "AutomationHTTPMethod",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "parameters_type",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "ParametersType",
+              "name": "AutomationParametersType",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "parameters_template",
@@ -43041,7 +43041,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "header_template",
@@ -43051,17 +43051,17 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "content_type",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "HTTPContentType",
+              "name": "AutomationHTTPContentType",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -43071,7 +43071,7 @@
               "name": "JSON",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "connection_id",
@@ -43081,7 +43081,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "id",
@@ -43173,7 +43173,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "AuthType",
+                "name": "AutomationAuthType",
                 "ofType": null
               }
             },
@@ -43187,7 +43187,7 @@
               "name": "Int",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "host",
@@ -43197,7 +43197,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "endpoint",
@@ -43207,7 +43207,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "description",
@@ -43217,7 +43217,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "parameters_template",
@@ -43227,7 +43227,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "auth_template",
@@ -43237,7 +43237,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -43247,7 +43247,7 @@
               "name": "JSON",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -43311,17 +43311,17 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "auth_type",
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "AuthType",
+              "name": "AutomationAuthType",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "port",
@@ -43331,7 +43331,7 @@
               "name": "Int",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "host",
@@ -43341,7 +43341,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "endpoint",
@@ -43351,7 +43351,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "description",
@@ -43361,7 +43361,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "parameters_template",
@@ -43371,7 +43371,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "auth_template",
@@ -43381,7 +43381,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "metadata",
@@ -43391,7 +43391,7 @@
               "name": "JSON",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "id",
@@ -43483,7 +43483,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "WorflowEventType",
+                "name": "AutomationEventType",
                 "ofType": null
               }
             },
@@ -43497,7 +43497,7 @@
               "name": "JSON",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -43643,7 +43643,7 @@
               "name": null,
               "ofType": {
                 "kind": "ENUM",
-                "name": "TriggerType",
+                "name": "AutomationTriggerType",
                 "ofType": null
               }
             },
@@ -43657,7 +43657,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "secret",
@@ -43667,7 +43667,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "secret_key",
@@ -43677,7 +43677,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           }
         ],
         "interfaces": null,
@@ -43752,10 +43752,10 @@
             "description": null,
             "type": {
               "kind": "ENUM",
-              "name": "TriggerType",
+              "name": "AutomationTriggerType",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "schedule",
@@ -43765,7 +43765,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "secret",
@@ -43775,7 +43775,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           },
           {
             "name": "secret_key",
@@ -43785,7 +43785,7 @@
               "name": "String",
               "ofType": null
             },
-            "defaultValue": "null"
+            "defaultValue": null
           }
         ],
         "interfaces": null,

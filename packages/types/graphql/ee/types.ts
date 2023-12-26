@@ -181,7 +181,7 @@ export interface GetWorkflow_workflow_trigger {
   object_type: string;
   id: string;
   slug: string;
-  trigger_type: TriggerType;
+  trigger_type: AutomationTriggerType;
   schedule: string | null;
   secret: string | null;
   secret_key: string | null;
@@ -197,7 +197,7 @@ export interface GetWorkflow_workflow_actions_connection {
   id: string;
   name: string;
   slug: string;
-  auth_type: AuthType;
+  auth_type: AutomationAuthType;
   port: number | null;
   host: string | null;
   endpoint: string | null;
@@ -213,15 +213,15 @@ export interface GetWorkflow_workflow_actions {
   id: string;
   slug: string;
   name: string;
-  action_type: ActionType;
+  action_type: AutomationActionType;
   description: string | null;
   port: number | null;
   host: string | null;
   endpoint: string | null;
-  method: HTTPMethod | null;
-  parameters_type: ParametersType | null;
+  method: AutomationHTTPMethod | null;
+  parameters_type: AutomationParametersType | null;
   header_template: string | null;
-  content_type: HTTPContentType | null;
+  content_type: AutomationHTTPContentType | null;
   connection: GetWorkflow_workflow_actions_connection | null;
   metadata: any | null;
 }
@@ -264,7 +264,7 @@ export interface GetWorkflows_workflows_edges_node_trigger {
   object_type: string;
   id: string;
   slug: string;
-  trigger_type: TriggerType;
+  trigger_type: AutomationTriggerType;
   schedule: string | null;
   secret: string | null;
   secret_key: string | null;
@@ -280,7 +280,7 @@ export interface GetWorkflows_workflows_edges_node_actions_connection {
   id: string;
   name: string;
   slug: string;
-  auth_type: AuthType;
+  auth_type: AutomationAuthType;
   port: number | null;
   host: string | null;
   endpoint: string | null;
@@ -296,15 +296,15 @@ export interface GetWorkflows_workflows_edges_node_actions {
   id: string;
   slug: string;
   name: string;
-  action_type: ActionType;
+  action_type: AutomationActionType;
   description: string | null;
   port: number | null;
   host: string | null;
   endpoint: string | null;
-  method: HTTPMethod | null;
-  parameters_type: ParametersType | null;
+  method: AutomationHTTPMethod | null;
+  parameters_type: AutomationParametersType | null;
   header_template: string | null;
-  content_type: HTTPContentType | null;
+  content_type: AutomationHTTPContentType | null;
   connection: GetWorkflows_workflows_edges_node_actions_connection | null;
   metadata: any | null;
 }
@@ -349,7 +349,7 @@ export interface GetWorkflowConnection_workflow_connection {
   id: string;
   name: string;
   slug: string;
-  auth_type: AuthType;
+  auth_type: AutomationAuthType;
   description: string | null;
   host: string | null;
   port: number | null;
@@ -387,7 +387,7 @@ export interface GetWorkflowConnections_workflow_connections_edges_node {
   id: string;
   name: string;
   slug: string;
-  auth_type: AuthType;
+  auth_type: AutomationAuthType;
   description: string | null;
   host: string | null;
   port: number | null;
@@ -428,7 +428,7 @@ export interface GetWorkflowAction_workflow_action_connection {
   id: string;
   name: string;
   slug: string;
-  auth_type: AuthType;
+  auth_type: AutomationAuthType;
   port: number | null;
   host: string | null;
   endpoint: string | null;
@@ -444,15 +444,15 @@ export interface GetWorkflowAction_workflow_action {
   id: string;
   slug: string;
   name: string;
-  action_type: ActionType;
+  action_type: AutomationActionType;
   description: string | null;
   port: number | null;
   host: string | null;
   endpoint: string | null;
-  method: HTTPMethod | null;
-  parameters_type: ParametersType | null;
+  method: AutomationHTTPMethod | null;
+  parameters_type: AutomationParametersType | null;
   header_template: string | null;
-  content_type: HTTPContentType | null;
+  content_type: AutomationHTTPContentType | null;
   connection: GetWorkflowAction_workflow_action_connection | null;
   metadata: any | null;
 }
@@ -485,7 +485,7 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection {
   id: string;
   name: string;
   slug: string;
-  auth_type: AuthType;
+  auth_type: AutomationAuthType;
   port: number | null;
   host: string | null;
   endpoint: string | null;
@@ -501,15 +501,15 @@ export interface GetWorkflowActions_workflow_actions_edges_node {
   id: string;
   slug: string;
   name: string;
-  action_type: ActionType;
+  action_type: AutomationActionType;
   description: string | null;
   port: number | null;
   host: string | null;
   endpoint: string | null;
-  method: HTTPMethod | null;
-  parameters_type: ParametersType | null;
+  method: AutomationHTTPMethod | null;
+  parameters_type: AutomationParametersType | null;
   header_template: string | null;
-  content_type: HTTPContentType | null;
+  content_type: AutomationHTTPContentType | null;
   connection: GetWorkflowActions_workflow_actions_edges_node_connection | null;
   metadata: any | null;
 }
@@ -552,8 +552,8 @@ export interface GetWorkflowEvent_workflow_event_records {
 export interface GetWorkflowEvent_workflow_event {
   object_type: string;
   id: string;
-  status: WorkflowEventStatus;
-  event_type: WorflowEventType;
+  status: AutomationEventStatus;
+  event_type: AutomationEventType;
   parameters: any | null;
   test_mode: boolean;
   records: GetWorkflowEvent_workflow_event_records[];
@@ -595,8 +595,8 @@ export interface GetWorkflowEvents_workflow_events_edges_node_records {
 export interface GetWorkflowEvents_workflow_events_edges_node {
   object_type: string;
   id: string;
-  status: WorkflowEventStatus;
-  event_type: WorflowEventType;
+  status: AutomationEventStatus;
+  event_type: AutomationEventType;
   parameters: any | null;
   test_mode: boolean;
   records: GetWorkflowEvents_workflow_events_edges_node_records[];
@@ -928,8 +928,14 @@ export interface UpdateWorkflowVariables {
 // GraphQL mutation operation: DeleteWorkflow
 // ====================================================
 
+export interface DeleteWorkflow_delete_workflow_errors {
+  field: string;
+  messages: string[];
+}
+
 export interface DeleteWorkflow_delete_workflow {
   id: string;
+  errors: DeleteWorkflow_delete_workflow_errors[] | null;
 }
 
 export interface DeleteWorkflow {
@@ -1068,8 +1074,14 @@ export interface UpdateWorkflowActionVariables {
 // GraphQL mutation operation: DeleteWorkflowAction
 // ====================================================
 
+export interface DeleteWorkflowAction_delete_workflow_action_errors {
+  field: string;
+  messages: string[];
+}
+
 export interface DeleteWorkflowAction_delete_workflow_action {
   id: string;
+  errors: DeleteWorkflowAction_delete_workflow_action_errors[] | null;
 }
 
 export interface DeleteWorkflowAction {
@@ -1207,19 +1219,19 @@ export interface DeleteWorkflowTriggerVariables {
 // START Enums and Input Objects
 //==============================================================
 
-export enum TriggerType {
+export enum AutomationTriggerType {
   manual = "manual",
   scheduled = "scheduled",
   webhook = "webhook",
 }
 
-export enum ActionType {
+export enum AutomationActionType {
   data_mapping = "data_mapping",
   function_call = "function_call",
   http_request = "http_request",
 }
 
-export enum HTTPMethod {
+export enum AutomationHTTPMethod {
   delete = "delete",
   get = "get",
   patch = "patch",
@@ -1227,26 +1239,26 @@ export enum HTTPMethod {
   put = "put",
 }
 
-export enum ParametersType {
+export enum AutomationParametersType {
   data = "data",
   queystring = "queystring",
 }
 
-export enum HTTPContentType {
+export enum AutomationHTTPContentType {
   form = "form",
   json = "json",
   text = "text",
   xml = "xml",
 }
 
-export enum AuthType {
+export enum AutomationAuthType {
   api_key = "api_key",
   basic = "basic",
   jwt = "jwt",
   oauth2 = "oauth2",
 }
 
-export enum WorkflowEventStatus {
+export enum AutomationEventStatus {
   cancelled = "cancelled",
   failed = "failed",
   pending = "pending",
@@ -1254,7 +1266,7 @@ export enum WorkflowEventStatus {
   success = "success",
 }
 
-export enum WorflowEventType {
+export enum AutomationEventType {
   auto = "auto",
   manual = "manual",
   scheduled = "scheduled",
@@ -1281,7 +1293,7 @@ export interface WorkflowConnectionFilter {
   date_before?: any | null;
   omit?: string[] | null;
   keyword?: string | null;
-  auth_type?: AuthType | null;
+  auth_type?: AutomationAuthType | null;
 }
 
 // null
@@ -1290,7 +1302,7 @@ export interface WorkflowActionFilter {
   date_before?: any | null;
   omit?: string[] | null;
   keyword?: string | null;
-  action_type?: ActionType | null;
+  action_type?: AutomationActionType | null;
 }
 
 // null
@@ -1299,8 +1311,8 @@ export interface WorkflowEventFilter {
   date_before?: any | null;
   omit?: string[] | null;
   keyword?: string | null;
-  status?: WorkflowEventStatus | null;
-  event_type?: WorflowEventType | null;
+  status?: AutomationEventStatus | null;
+  event_type?: AutomationEventType | null;
 }
 
 // null
@@ -1371,7 +1383,7 @@ export interface UpdateWorkflowMutationInput {
 // null
 export interface CreateWorkflowConnectionMutationInput {
   name: string;
-  auth_type: AuthType;
+  auth_type: AutomationAuthType;
   port?: number | null;
   host?: string | null;
   endpoint?: string | null;
@@ -1384,7 +1396,7 @@ export interface CreateWorkflowConnectionMutationInput {
 // null
 export interface UpdateWorkflowConnectionMutationInput {
   name?: string | null;
-  auth_type?: AuthType | null;
+  auth_type?: AutomationAuthType | null;
   port?: number | null;
   host?: string | null;
   endpoint?: string | null;
@@ -1398,16 +1410,16 @@ export interface UpdateWorkflowConnectionMutationInput {
 // null
 export interface CreateWorkflowActionMutationInput {
   name: string;
-  action_type: ActionType;
+  action_type: AutomationActionType;
   port?: number | null;
   host?: string | null;
+  endpoint?: string | null;
   description?: string | null;
-  api_endpoint?: string | null;
-  method?: HTTPMethod | null;
-  parameters_type?: ParametersType | null;
+  method?: AutomationHTTPMethod | null;
+  parameters_type?: AutomationParametersType | null;
   parameters_template?: string | null;
   header_template?: string | null;
-  content_type?: HTTPContentType | null;
+  content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   connection_id?: string | null;
 }
@@ -1415,16 +1427,16 @@ export interface CreateWorkflowActionMutationInput {
 // null
 export interface UpdateWorkflowActionMutationInput {
   name?: string | null;
-  action_type?: ActionType | null;
+  action_type?: AutomationActionType | null;
   port?: number | null;
   host?: string | null;
+  endpoint?: string | null;
   description?: string | null;
-  api_endpoint?: string | null;
-  method?: HTTPMethod | null;
-  parameters_type?: ParametersType | null;
+  method?: AutomationHTTPMethod | null;
+  parameters_type?: AutomationParametersType | null;
   parameters_template?: string | null;
   header_template?: string | null;
-  content_type?: HTTPContentType | null;
+  content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   connection_id?: string | null;
   id: string;
@@ -1433,7 +1445,7 @@ export interface UpdateWorkflowActionMutationInput {
 // null
 export interface CreateWorkflowEventMutationInput {
   workflow_id: string;
-  event_type: WorflowEventType;
+  event_type: AutomationEventType;
   parameters?: any | null;
 }
 
@@ -1445,7 +1457,7 @@ export interface CancelWorkflowEventMutationInput {
 // null
 export interface CreateWorkflowTriggerMutationInput {
   workflow_id: string;
-  trigger_type: TriggerType;
+  trigger_type: AutomationTriggerType;
   schedule?: string | null;
   secret?: string | null;
   secret_key?: string | null;
@@ -1454,7 +1466,7 @@ export interface CreateWorkflowTriggerMutationInput {
 // null
 export interface UpdateWorkflowTriggerMutationInput {
   id: string;
-  trigger_type?: TriggerType | null;
+  trigger_type?: AutomationTriggerType | null;
   schedule?: string | null;
   secret?: string | null;
   secret_key?: string | null;
