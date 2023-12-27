@@ -153,9 +153,10 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
       host
       endpoint
       method
-      parameters_type
-      header_template
       content_type
+      header_template
+      parameters_type
+      parameters_template
       connection {
         object_type
         id
@@ -170,10 +171,13 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
         auth_template
         credentials
         metadata
+        template_slug
       }
       metadata
+      template_slug
     }
     metadata
+    template_slug
   }
 }
 `;
@@ -217,9 +221,10 @@ export const GET_WORKFLOWS = gql`query GetWorkflows($filter: WorkflowFilter) {
           host
           endpoint
           method
-          parameters_type
-          header_template
           content_type
+          header_template
+          parameters_type
+          parameters_template
           connection {
             object_type
             id
@@ -234,10 +239,13 @@ export const GET_WORKFLOWS = gql`query GetWorkflows($filter: WorkflowFilter) {
             auth_template
             credentials
             metadata
+            template_slug
           }
           metadata
+          template_slug
         }
         metadata
+        template_slug
       }
     }
   }
@@ -258,6 +266,7 @@ export const GET_WORKFLOW_CONNECTION = gql`query GetWorkflowConnection($id: Stri
     auth_template
     credentials
     metadata
+    template_slug
   }
 }
 `;
@@ -284,6 +293,7 @@ export const GET_WORKFLOW_CONNECTIONS = gql`query GetWorkflowConnections($filter
         auth_template
         credentials
         metadata
+        template_slug
       }
     }
   }
@@ -302,9 +312,10 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
     host
     endpoint
     method
-    parameters_type
-    header_template
     content_type
+    header_template
+    parameters_type
+    parameters_template
     connection {
       object_type
       id
@@ -319,8 +330,10 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
       auth_template
       credentials
       metadata
+      template_slug
     }
     metadata
+    template_slug
   }
 }
 `;
@@ -345,9 +358,10 @@ export const GET_WORKFLOW_ACTIONS = gql`query GetWorkflowActions($filter: Workfl
         host
         endpoint
         method
-        parameters_type
-        header_template
         content_type
+        header_template
+        parameters_type
+        parameters_template
         connection {
           object_type
           id
@@ -362,8 +376,10 @@ export const GET_WORKFLOW_ACTIONS = gql`query GetWorkflowActions($filter: Workfl
           auth_template
           credentials
           metadata
+          template_slug
         }
         metadata
+        template_slug
       }
     }
   }
@@ -416,6 +432,133 @@ export const GET_WORKFLOW_EVENTS = gql`query GetWorkflowEvents($filter: Workflow
           record
           meta
         }
+      }
+    }
+  }
+}
+`;
+
+export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: WorkflowFilter) {
+  workflow_templates(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        name
+        slug
+        description
+        trigger {
+          object_type
+          slug
+          trigger_type
+          schedule
+        }
+        action_nodes {
+          order
+          slug
+        }
+        actions {
+          object_type
+          slug
+          name
+          action_type
+          description
+          port
+          host
+          endpoint
+          method
+          content_type
+          header_template
+          parameters_type
+          parameters_template
+          connection {
+            object_type
+            name
+            slug
+            auth_type
+            port
+            host
+            endpoint
+            description
+            parameters_template
+            auth_template
+            template_slug
+          }
+          template_slug
+        }
+      }
+    }
+  }
+}
+`;
+
+export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplates($filter: WorkflowActionFilter) {
+  workflow_action_templates(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        object_type
+        slug
+        name
+        action_type
+        description
+        port
+        host
+        endpoint
+        method
+        content_type
+        header_template
+        parameters_type
+        parameters_template
+        connection {
+          object_type
+          name
+          slug
+          auth_type
+          port
+          host
+          endpoint
+          description
+          parameters_template
+          auth_template
+          template_slug
+        }
+        template_slug
+      }
+    }
+  }
+}
+`;
+
+export const GET_WORKFLOW_CONNECTION_TEMPLATES = gql`query GetWorkflowConnectionTemplates($filter: WorkflowConnectionFilter) {
+  workflow_connection_templates(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        name
+        slug
+        auth_type
+        description
+        host
+        port
+        endpoint
+        parameters_template
+        auth_template
+        template_slug
       }
     }
   }

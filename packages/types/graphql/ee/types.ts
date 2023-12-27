@@ -206,6 +206,7 @@ export interface GetWorkflow_workflow_actions_connection {
   auth_template: string | null;
   credentials: any | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflow_workflow_actions {
@@ -219,11 +220,13 @@ export interface GetWorkflow_workflow_actions {
   host: string | null;
   endpoint: string | null;
   method: AutomationHTTPMethod | null;
-  parameters_type: AutomationParametersType | null;
-  header_template: string | null;
   content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
   connection: GetWorkflow_workflow_actions_connection | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflow_workflow {
@@ -235,6 +238,7 @@ export interface GetWorkflow_workflow {
   action_nodes: GetWorkflow_workflow_action_nodes[];
   actions: GetWorkflow_workflow_actions[];
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflow {
@@ -289,6 +293,7 @@ export interface GetWorkflows_workflows_edges_node_actions_connection {
   auth_template: string | null;
   credentials: any | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflows_workflows_edges_node_actions {
@@ -302,11 +307,13 @@ export interface GetWorkflows_workflows_edges_node_actions {
   host: string | null;
   endpoint: string | null;
   method: AutomationHTTPMethod | null;
-  parameters_type: AutomationParametersType | null;
-  header_template: string | null;
   content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
   connection: GetWorkflows_workflows_edges_node_actions_connection | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflows_workflows_edges_node {
@@ -318,6 +325,7 @@ export interface GetWorkflows_workflows_edges_node {
   action_nodes: GetWorkflows_workflows_edges_node_action_nodes[];
   actions: GetWorkflows_workflows_edges_node_actions[];
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflows_workflows_edges {
@@ -358,6 +366,7 @@ export interface GetWorkflowConnection_workflow_connection {
   auth_template: string | null;
   credentials: any | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflowConnection {
@@ -396,6 +405,7 @@ export interface GetWorkflowConnections_workflow_connections_edges_node {
   auth_template: string | null;
   credentials: any | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflowConnections_workflow_connections_edges {
@@ -437,6 +447,7 @@ export interface GetWorkflowAction_workflow_action_connection {
   auth_template: string | null;
   credentials: any | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflowAction_workflow_action {
@@ -450,11 +461,13 @@ export interface GetWorkflowAction_workflow_action {
   host: string | null;
   endpoint: string | null;
   method: AutomationHTTPMethod | null;
-  parameters_type: AutomationParametersType | null;
-  header_template: string | null;
   content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
   connection: GetWorkflowAction_workflow_action_connection | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflowAction {
@@ -494,6 +507,7 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection {
   auth_template: string | null;
   credentials: any | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges_node {
@@ -507,11 +521,13 @@ export interface GetWorkflowActions_workflow_actions_edges_node {
   host: string | null;
   endpoint: string | null;
   method: AutomationHTTPMethod | null;
-  parameters_type: AutomationParametersType | null;
-  header_template: string | null;
   content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
   connection: GetWorkflowActions_workflow_actions_edges_node_connection | null;
   metadata: any | null;
+  template_slug: string | null;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges {
@@ -617,6 +633,200 @@ export interface GetWorkflowEvents {
 
 export interface GetWorkflowEventsVariables {
   filter?: WorkflowEventFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowTemplates
+// ====================================================
+
+export interface GetWorkflowTemplates_workflow_templates_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetWorkflowTemplates_workflow_templates_edges_node_trigger {
+  object_type: string;
+  slug: string;
+  trigger_type: AutomationTriggerType;
+  schedule: string | null;
+}
+
+export interface GetWorkflowTemplates_workflow_templates_edges_node_action_nodes {
+  order: number;
+  slug: string;
+}
+
+export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_connection {
+  object_type: string;
+  name: string;
+  slug: string;
+  auth_type: AutomationAuthType;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  description: string | null;
+  parameters_template: string | null;
+  auth_template: string | null;
+  template_slug: string | null;
+}
+
+export interface GetWorkflowTemplates_workflow_templates_edges_node_actions {
+  object_type: string;
+  slug: string;
+  name: string;
+  action_type: AutomationActionType;
+  description: string | null;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  method: AutomationHTTPMethod | null;
+  content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
+  connection: GetWorkflowTemplates_workflow_templates_edges_node_actions_connection | null;
+  template_slug: string | null;
+}
+
+export interface GetWorkflowTemplates_workflow_templates_edges_node {
+  name: string;
+  slug: string;
+  description: string | null;
+  trigger: GetWorkflowTemplates_workflow_templates_edges_node_trigger | null;
+  action_nodes: GetWorkflowTemplates_workflow_templates_edges_node_action_nodes[];
+  actions: GetWorkflowTemplates_workflow_templates_edges_node_actions[];
+}
+
+export interface GetWorkflowTemplates_workflow_templates_edges {
+  node: GetWorkflowTemplates_workflow_templates_edges_node;
+}
+
+export interface GetWorkflowTemplates_workflow_templates {
+  page_info: GetWorkflowTemplates_workflow_templates_page_info;
+  edges: GetWorkflowTemplates_workflow_templates_edges[];
+}
+
+export interface GetWorkflowTemplates {
+  workflow_templates: GetWorkflowTemplates_workflow_templates;
+}
+
+export interface GetWorkflowTemplatesVariables {
+  filter?: WorkflowFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowActionTemplates
+// ====================================================
+
+export interface GetWorkflowActionTemplates_workflow_action_templates_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection {
+  object_type: string;
+  name: string;
+  slug: string;
+  auth_type: AutomationAuthType;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  description: string | null;
+  parameters_template: string | null;
+  auth_template: string | null;
+  template_slug: string | null;
+}
+
+export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node {
+  object_type: string;
+  slug: string;
+  name: string;
+  action_type: AutomationActionType;
+  description: string | null;
+  port: number | null;
+  host: string | null;
+  endpoint: string | null;
+  method: AutomationHTTPMethod | null;
+  content_type: AutomationHTTPContentType | null;
+  header_template: string | null;
+  parameters_type: AutomationParametersType | null;
+  parameters_template: string | null;
+  connection: GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection | null;
+  template_slug: string | null;
+}
+
+export interface GetWorkflowActionTemplates_workflow_action_templates_edges {
+  node: GetWorkflowActionTemplates_workflow_action_templates_edges_node;
+}
+
+export interface GetWorkflowActionTemplates_workflow_action_templates {
+  page_info: GetWorkflowActionTemplates_workflow_action_templates_page_info;
+  edges: GetWorkflowActionTemplates_workflow_action_templates_edges[];
+}
+
+export interface GetWorkflowActionTemplates {
+  workflow_action_templates: GetWorkflowActionTemplates_workflow_action_templates;
+}
+
+export interface GetWorkflowActionTemplatesVariables {
+  filter?: WorkflowActionFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkflowConnectionTemplates
+// ====================================================
+
+export interface GetWorkflowConnectionTemplates_workflow_connection_templates_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges_node {
+  name: string;
+  slug: string;
+  auth_type: AutomationAuthType;
+  description: string | null;
+  host: string | null;
+  port: number | null;
+  endpoint: string | null;
+  parameters_template: string | null;
+  auth_template: string | null;
+  template_slug: string | null;
+}
+
+export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges {
+  node: GetWorkflowConnectionTemplates_workflow_connection_templates_edges_node;
+}
+
+export interface GetWorkflowConnectionTemplates_workflow_connection_templates {
+  page_info: GetWorkflowConnectionTemplates_workflow_connection_templates_page_info;
+  edges: GetWorkflowConnectionTemplates_workflow_connection_templates_edges[];
+}
+
+export interface GetWorkflowConnectionTemplates {
+  workflow_connection_templates: GetWorkflowConnectionTemplates_workflow_connection_templates;
+}
+
+export interface GetWorkflowConnectionTemplatesVariables {
+  filter?: WorkflowConnectionFilter | null;
 }
 
 
@@ -1239,16 +1449,16 @@ export enum AutomationHTTPMethod {
   put = "put",
 }
 
-export enum AutomationParametersType {
-  data = "data",
-  queystring = "queystring",
-}
-
 export enum AutomationHTTPContentType {
   form = "form",
   json = "json",
   text = "text",
   xml = "xml",
+}
+
+export enum AutomationParametersType {
+  data = "data",
+  queystring = "queystring",
 }
 
 export enum AutomationAuthType {
@@ -1369,6 +1579,7 @@ export interface CreateWorkflowMutationInput {
   action_nodes: ActionNodeInput[];
   description?: string | null;
   metadata?: any | null;
+  template_slug?: string | null;
 }
 
 // null
@@ -1384,6 +1595,7 @@ export interface UpdateWorkflowMutationInput {
   description?: string | null;
   metadata?: any | null;
   action_nodes?: ActionNodeInput[] | null;
+  template_slug?: string | null;
 }
 
 // null
@@ -1398,6 +1610,7 @@ export interface CreateWorkflowConnectionMutationInput {
   auth_template?: string | null;
   metadata?: any | null;
   parameters_template?: string | null;
+  template_slug?: string | null;
 }
 
 // null
@@ -1412,6 +1625,7 @@ export interface UpdateWorkflowConnectionMutationInput {
   auth_template?: string | null;
   metadata?: any | null;
   parameters_template?: string | null;
+  template_slug?: string | null;
   id: string;
 }
 
@@ -1430,6 +1644,7 @@ export interface CreateWorkflowActionMutationInput {
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   connection_id?: string | null;
+  template_slug?: string | null;
 }
 
 // null
@@ -1447,6 +1662,7 @@ export interface UpdateWorkflowActionMutationInput {
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   connection_id?: string | null;
+  template_slug?: string | null;
   id: string;
 }
 
@@ -1469,6 +1685,7 @@ export interface CreateWorkflowTriggerMutationInput {
   schedule?: string | null;
   secret?: string | null;
   secret_key?: string | null;
+  template_slug?: string | null;
 }
 
 // null
@@ -1478,6 +1695,7 @@ export interface UpdateWorkflowTriggerMutationInput {
   schedule?: string | null;
   secret?: string | null;
   secret_key?: string | null;
+  template_slug?: string | null;
 }
 
 //==============================================================
