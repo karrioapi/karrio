@@ -1366,18 +1366,24 @@ export interface DeleteMutationInput {
 // null
 export interface CreateWorkflowMutationInput {
   name: string;
-  action_nodes: any;
+  action_nodes: ActionNodeInput[];
   description?: string | null;
   metadata?: any | null;
+}
+
+// null
+export interface ActionNodeInput {
+  slug: string;
+  order: number;
 }
 
 // null
 export interface UpdateWorkflowMutationInput {
   id: string;
   name?: string | null;
-  action_nodes?: any | null;
   description?: string | null;
   metadata?: any | null;
+  action_nodes?: ActionNodeInput[] | null;
 }
 
 // null
@@ -1388,9 +1394,10 @@ export interface CreateWorkflowConnectionMutationInput {
   host?: string | null;
   endpoint?: string | null;
   description?: string | null;
-  parameters_template?: string | null;
+  credentials?: any | null;
   auth_template?: string | null;
   metadata?: any | null;
+  parameters_template?: string | null;
 }
 
 // null
@@ -1401,9 +1408,10 @@ export interface UpdateWorkflowConnectionMutationInput {
   host?: string | null;
   endpoint?: string | null;
   description?: string | null;
-  parameters_template?: string | null;
+  credentials?: any | null;
   auth_template?: string | null;
   metadata?: any | null;
+  parameters_template?: string | null;
   id: string;
 }
 
