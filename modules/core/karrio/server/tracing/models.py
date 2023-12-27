@@ -14,7 +14,7 @@ class TracingRecord(OwnedEntity):
         db_table = "tracing-record"
         verbose_name = "Tracing Record"
         verbose_name_plural = "Tracing Records"
-        ordering = ["-created_at"]
+        ordering = ["-timestamp"]
         indexes = [
             models.Index(
                 json.KeyTextTransform("object_id", "meta"),
