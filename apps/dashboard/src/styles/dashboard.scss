@@ -261,6 +261,33 @@ Karrio custom styling
   }
 }
 
+.workflow-events-table {
+  .status {
+    min-width: 50px;
+    max-width: 50px;
+  }
+
+  .description {
+    width: 75%;
+    min-width: 200px;
+    max-width: 200px;
+  }
+
+  .date {
+    width: 20%;
+    min-width: 190px;
+    max-width: 190px;
+  }
+
+  tbody>tr.items {
+    cursor: pointer;
+  }
+
+  tbody>tr.items:hover {
+    background-color: #fafafa;
+  }
+}
+
 .trackers-table {
   .carrier {
     width: 8%;

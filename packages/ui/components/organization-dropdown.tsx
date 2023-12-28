@@ -76,11 +76,11 @@ export const OrganizationDropdown: React.FC = () => {
         <div className={`dropdown ${isActive ? 'is-active' : ''}`} style={{ widows: '100%' }}>
           <div className="dropdown-trigger">
 
-            <button className="button is-white has-text-weight-semibold select pr-4" aria-haspopup="true" aria-controls="dropdown-menu" onClick={handleOnClick} ref={trigger}>
+            <button className="button is-white has-text-weight-bold has-text-grey select pr-4" aria-haspopup="true" aria-controls="dropdown-menu" onClick={handleOnClick} ref={trigger}>
               <span className="icon">
                 <i className="fas fa-store"></i>
               </span>
-              <span className='ml-2 mr-4'>{selected?.name || ""}</span>
+              <span className='mr-4'>{selected?.name || ""}</span>
             </button>
 
           </div>

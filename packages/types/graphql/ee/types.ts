@@ -207,6 +207,8 @@ export interface GetWorkflow_workflow_actions_connection {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflow_workflow_actions {
@@ -227,6 +229,8 @@ export interface GetWorkflow_workflow_actions {
   connection: GetWorkflow_workflow_actions_connection | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflow_workflow {
@@ -239,6 +243,8 @@ export interface GetWorkflow_workflow {
   actions: GetWorkflow_workflow_actions[];
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflow {
@@ -272,6 +278,8 @@ export interface GetWorkflows_workflows_edges_node_trigger {
   schedule: string | null;
   secret: string | null;
   secret_key: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflows_workflows_edges_node_action_nodes {
@@ -294,6 +302,8 @@ export interface GetWorkflows_workflows_edges_node_actions_connection {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflows_workflows_edges_node_actions {
@@ -314,6 +324,8 @@ export interface GetWorkflows_workflows_edges_node_actions {
   connection: GetWorkflows_workflows_edges_node_actions_connection | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflows_workflows_edges_node {
@@ -326,6 +338,8 @@ export interface GetWorkflows_workflows_edges_node {
   actions: GetWorkflows_workflows_edges_node_actions[];
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflows_workflows_edges {
@@ -367,6 +381,8 @@ export interface GetWorkflowConnection_workflow_connection {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowConnection {
@@ -406,6 +422,8 @@ export interface GetWorkflowConnections_workflow_connections_edges_node {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowConnections_workflow_connections_edges {
@@ -448,6 +466,8 @@ export interface GetWorkflowAction_workflow_action_connection {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowAction_workflow_action {
@@ -468,6 +488,8 @@ export interface GetWorkflowAction_workflow_action {
   connection: GetWorkflowAction_workflow_action_connection | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowAction {
@@ -508,6 +530,8 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges_node {
@@ -528,6 +552,8 @@ export interface GetWorkflowActions_workflow_actions_edges_node {
   connection: GetWorkflowActions_workflow_actions_edges_node_connection | null;
   metadata: any | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges {
@@ -555,6 +581,19 @@ export interface GetWorkflowActionsVariables {
 // GraphQL query operation: GetWorkflowEvent
 // ====================================================
 
+export interface GetWorkflowEvent_workflow_event_workflow_action_nodes {
+  order: number;
+  slug: string;
+}
+
+export interface GetWorkflowEvent_workflow_event_workflow {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  action_nodes: GetWorkflowEvent_workflow_event_workflow_action_nodes[];
+}
+
 export interface GetWorkflowEvent_workflow_event_records {
   object_type: string;
   id: string | null;
@@ -563,6 +602,8 @@ export interface GetWorkflowEvent_workflow_event_records {
   test_mode: boolean | null;
   record: any | null;
   meta: any | null;
+  created_at: any | null;
+  updated_at: any | null;
 }
 
 export interface GetWorkflowEvent_workflow_event {
@@ -572,7 +613,10 @@ export interface GetWorkflowEvent_workflow_event {
   event_type: AutomationEventType;
   parameters: any | null;
   test_mode: boolean;
+  workflow: GetWorkflowEvent_workflow_event_workflow;
   records: GetWorkflowEvent_workflow_event_records[];
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowEvent {
@@ -598,6 +642,19 @@ export interface GetWorkflowEvents_workflow_events_page_info {
   end_cursor: string | null;
 }
 
+export interface GetWorkflowEvents_workflow_events_edges_node_workflow_action_nodes {
+  order: number;
+  slug: string;
+}
+
+export interface GetWorkflowEvents_workflow_events_edges_node_workflow {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  action_nodes: GetWorkflowEvents_workflow_events_edges_node_workflow_action_nodes[];
+}
+
 export interface GetWorkflowEvents_workflow_events_edges_node_records {
   object_type: string;
   id: string | null;
@@ -606,6 +663,8 @@ export interface GetWorkflowEvents_workflow_events_edges_node_records {
   test_mode: boolean | null;
   record: any | null;
   meta: any | null;
+  created_at: any | null;
+  updated_at: any | null;
 }
 
 export interface GetWorkflowEvents_workflow_events_edges_node {
@@ -615,7 +674,10 @@ export interface GetWorkflowEvents_workflow_events_edges_node {
   event_type: AutomationEventType;
   parameters: any | null;
   test_mode: boolean;
+  workflow: GetWorkflowEvents_workflow_events_edges_node_workflow;
   records: GetWorkflowEvents_workflow_events_edges_node_records[];
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowEvents_workflow_events_edges {
@@ -655,6 +717,8 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_trigger {
   slug: string;
   trigger_type: AutomationTriggerType;
   schedule: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node_action_nodes {
@@ -674,6 +738,8 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_conn
   parameters_template: string | null;
   auth_template: string | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node_actions {
@@ -692,6 +758,8 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions {
   parameters_template: string | null;
   connection: GetWorkflowTemplates_workflow_templates_edges_node_actions_connection | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node {
@@ -747,6 +815,8 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   parameters_template: string | null;
   auth_template: string | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node {
@@ -765,6 +835,8 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   parameters_template: string | null;
   connection: GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges {
@@ -810,6 +882,8 @@ export interface GetWorkflowConnectionTemplates_workflow_connection_templates_ed
   parameters_template: string | null;
   auth_template: string | null;
   template_slug: string | null;
+  created_at: any;
+  updated_at: any;
 }
 
 export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges {
@@ -1491,35 +1565,31 @@ export enum UserRole {
 
 // null
 export interface WorkflowFilter {
-  date_after?: any | null;
-  date_before?: any | null;
-  omit?: string[] | null;
+  offset?: number | null;
+  first?: number | null;
   keyword?: string | null;
 }
 
 // null
 export interface WorkflowConnectionFilter {
-  date_after?: any | null;
-  date_before?: any | null;
-  omit?: string[] | null;
+  offset?: number | null;
+  first?: number | null;
   keyword?: string | null;
   auth_type?: AutomationAuthType | null;
 }
 
 // null
 export interface WorkflowActionFilter {
-  date_after?: any | null;
-  date_before?: any | null;
-  omit?: string[] | null;
+  offset?: number | null;
+  first?: number | null;
   keyword?: string | null;
   action_type?: AutomationActionType | null;
 }
 
 // null
 export interface WorkflowEventFilter {
-  date_after?: any | null;
-  date_before?: any | null;
-  omit?: string[] | null;
+  offset?: number | null;
+  first?: number | null;
   keyword?: string | null;
   status?: AutomationEventStatus | null;
   event_type?: AutomationEventType | null;

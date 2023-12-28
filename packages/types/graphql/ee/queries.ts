@@ -172,12 +172,18 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
         credentials
         metadata
         template_slug
+        created_at
+        updated_at
       }
       metadata
       template_slug
+      created_at
+      updated_at
     }
     metadata
     template_slug
+    created_at
+    updated_at
   }
 }
 `;
@@ -205,6 +211,8 @@ export const GET_WORKFLOWS = gql`query GetWorkflows($filter: WorkflowFilter) {
           id
           secret
           secret_key
+          created_at
+          updated_at
         }
         action_nodes {
           order
@@ -240,12 +248,18 @@ export const GET_WORKFLOWS = gql`query GetWorkflows($filter: WorkflowFilter) {
             credentials
             metadata
             template_slug
+            created_at
+            updated_at
           }
           metadata
           template_slug
+          created_at
+          updated_at
         }
         metadata
         template_slug
+        created_at
+        updated_at
       }
     }
   }
@@ -267,6 +281,8 @@ export const GET_WORKFLOW_CONNECTION = gql`query GetWorkflowConnection($id: Stri
     credentials
     metadata
     template_slug
+    created_at
+    updated_at
   }
 }
 `;
@@ -294,6 +310,8 @@ export const GET_WORKFLOW_CONNECTIONS = gql`query GetWorkflowConnections($filter
         credentials
         metadata
         template_slug
+        created_at
+        updated_at
       }
     }
   }
@@ -331,9 +349,13 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
       credentials
       metadata
       template_slug
+      created_at
+      updated_at
     }
     metadata
     template_slug
+    created_at
+    updated_at
   }
 }
 `;
@@ -377,9 +399,13 @@ export const GET_WORKFLOW_ACTIONS = gql`query GetWorkflowActions($filter: Workfl
           credentials
           metadata
           template_slug
+          created_at
+          updated_at
         }
         metadata
         template_slug
+        created_at
+        updated_at
       }
     }
   }
@@ -394,6 +420,16 @@ export const GET_WORKFLOW_EVENT = gql`query GetWorkflowEvent($id: String!) {
     event_type
     parameters
     test_mode
+    workflow {
+      id
+      name
+      slug
+      description
+      action_nodes {
+        order
+        slug
+      }
+    }
     records {
       object_type
       id
@@ -402,7 +438,11 @@ export const GET_WORKFLOW_EVENT = gql`query GetWorkflowEvent($id: String!) {
       test_mode
       record
       meta
+      created_at
+      updated_at
     }
+    created_at
+    updated_at
   }
 }
 `;
@@ -423,6 +463,16 @@ export const GET_WORKFLOW_EVENTS = gql`query GetWorkflowEvents($filter: Workflow
         event_type
         parameters
         test_mode
+        workflow {
+          id
+          name
+          slug
+          description
+          action_nodes {
+            order
+            slug
+          }
+        }
         records {
           object_type
           id
@@ -431,7 +481,11 @@ export const GET_WORKFLOW_EVENTS = gql`query GetWorkflowEvents($filter: Workflow
           test_mode
           record
           meta
+          created_at
+          updated_at
         }
+        created_at
+        updated_at
       }
     }
   }
@@ -456,6 +510,8 @@ export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: Wo
           slug
           trigger_type
           schedule
+          created_at
+          updated_at
         }
         action_nodes {
           order
@@ -487,8 +543,12 @@ export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: Wo
             parameters_template
             auth_template
             template_slug
+            created_at
+            updated_at
           }
           template_slug
+          created_at
+          updated_at
         }
       }
     }
@@ -531,8 +591,12 @@ export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplate
           parameters_template
           auth_template
           template_slug
+          created_at
+          updated_at
         }
         template_slug
+        created_at
+        updated_at
       }
     }
   }
@@ -559,6 +623,8 @@ export const GET_WORKFLOW_CONNECTION_TEMPLATES = gql`query GetWorkflowConnection
         parameters_template
         auth_template
         template_slug
+        created_at
+        updated_at
       }
     }
   }

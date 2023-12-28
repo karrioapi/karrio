@@ -288,6 +288,7 @@ export interface Metadata {
     PERSIST_SDK_TRACING: boolean;
     ORG_LEVEL_BILLING: boolean;
     TENANT_LEVEL_BILLING: boolean;
+    WORKFLOW_MANAGEMENT: boolean;
 };
 
 export interface References {
@@ -313,6 +314,7 @@ export interface References {
     PERSIST_SDK_TRACING: boolean;
     ORG_LEVEL_BILLING: boolean;
     TENANT_LEVEL_BILLING: boolean;
+    WORKFLOW_MANAGEMENT: boolean;
 
     ADDRESS_AUTO_COMPLETE: Collection;
     countries: Collection;
