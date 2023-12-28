@@ -1,3 +1,4 @@
+import { WorkflowMenu } from "@karrio/ui/components/workflow-menu";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -63,11 +64,7 @@ export default function Page(pageProps: any) {
 
                 <div className="column p-0 is-vcentered">
                   <div className="buttons has-addons is-right">
-                    <button className="button is-default">
-                      <span className="icon is-small">
-                        <i className="fas fa-ellipsis-h"></i>
-                      </span>
-                    </button>
+                    <WorkflowMenu workflow={workflow} />
                   </div>
                 </div>
 

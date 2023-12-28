@@ -1,4 +1,4 @@
-import { WorkflowFilter, GetWorkflows, GET_WORKFLOWS, GetWorkflow, GET_WORKFLOW, CreateWorkflow, UpdateWorkflow, UpdateWorkflowMutationInput, CreateWorkflowMutationInput, DELETE_WORKFLOW, UPDATE_WORKFLOW, CREATE_WORKFLOW, DeleteMutationInput } from "@karrio/types/graphql/ee";
+import { WorkflowFilter, GetWorkflows, GET_WORKFLOWS, GetWorkflow, GET_WORKFLOW, CreateWorkflow, UpdateWorkflow, UpdateWorkflowMutationInput, CreateWorkflowMutationInput, DELETE_WORKFLOW, UPDATE_WORKFLOW, CREATE_WORKFLOW, DeleteMutationInput, GetWorkflows_workflows_edges_node } from "@karrio/types/graphql/ee";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useKarrio } from "./karrio";
@@ -7,6 +7,8 @@ import React from "react";
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = WorkflowFilter & { setVariablesToURL?: boolean };
+
+export type WorkflowType = GetWorkflows_workflows_edges_node;
 
 export function useWorkflows({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
