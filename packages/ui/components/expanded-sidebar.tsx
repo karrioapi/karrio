@@ -68,7 +68,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           <AppLink href="/workflows" className={"menu-item " + activeClass("/workflows")} shallow={false} prefetch={false}>
             <i className={`fa fa-bolt pr-2 ${isActive("/workflows") ? "" : 'has-text-grey'}`}></i>
             <span className="has-text-weight-bold">Workflows</span>
-            <span className="tag is-warning has-text-weight-bold has-text-grey mx-2 mt-1 p-1" style={{ fontSize: '.6em' }}>BETA</span>
+            <span className="tag is-warning has-text-weight-bold has-text-grey mx-2 is-size-7 p-1">BETA</span>
           </AppLink>
         </>}
 

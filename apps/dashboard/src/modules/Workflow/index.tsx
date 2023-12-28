@@ -21,7 +21,7 @@ export default function Page(pageProps: any) {
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <div className="title is-4">
             <span>Workflows</span>
-            <span className="tag is-warning is-light is-size-7 has-text-weight-bold mx-2">BETA</span>
+            <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">BETA</span>
           </div>
           <div>
             <button className="button is-small">

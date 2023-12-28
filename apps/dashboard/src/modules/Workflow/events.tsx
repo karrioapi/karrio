@@ -1,18 +1,23 @@
+import { WorkflowPreviewModal } from "@/components/workflow-event-preview";
+import { formatDateTimeLong, getURLSearchParams } from "@karrio/lib";
 import { useWorkflowEvents } from "@karrio/hooks/workflow-events";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
+import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { formatDateTimeLong, getURLSearchParams } from "@karrio/lib";
+import { ModalProvider } from "@karrio/ui/modals/modal";
+import { bundleContexts } from "@karrio/hooks/utils";
+import { Spinner } from "@karrio/ui/components";
 import { useRouter } from "next/router";
 import Head from "next/head";
 import React from "react";
-import { Spinner } from "@karrio/ui/components";
-import { StatusBadge } from "@karrio/ui/components/status-badge";
 
 export { getServerSideProps } from "@/context/main";
-
+const ContextProviders = bundleContexts([
+  ModalProvider,
+]);
 
 export default function Page(pageProps: any) {
   const { references } = useAPIMetadata();
@@ -50,7 +55,7 @@ export default function Page(pageProps: any) {
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <div className="title is-4">
             <span>Workflows</span>
-            <span className="tag is-warning is-light is-size-7 has-text-weight-bold mx-2">BETA</span>
+            <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">BETA</span>
           </div>
           <div></div>
         </header>
@@ -86,19 +91,25 @@ export default function Page(pageProps: any) {
 
                 {(workflow_events?.edges || []).map(({ node: event }) => (
 
-                  <tr key={event.id} className="items is-clickable">
-                    <td className="status is-vcentered">
-                      <StatusBadge status={event.status as string} style={{ width: '100%' }} />
-                    </td>
-                    <td className="description">
-                      <span className="text-ellipsis" title={event.event_type || ""}>
-                        {`${event.event_type} trigger of ${event.workflow.name}`}
-                      </span>
-                    </td>
-                    <td className="date has-text-right pr-0">
-                      <span className="mx-2">{formatDateTimeLong(event.created_at)}</span>
-                    </td>
-                  </tr>
+                  <WorkflowPreviewModal
+                    key={event.id}
+                    eventId={event.id}
+                    trigger={
+                      <tr key={event.id} className="items is-clickable">
+                        <td className="status is-vcentered">
+                          <StatusBadge status={event.status as string} style={{ width: '100%' }} />
+                        </td>
+                        <td className="description">
+                          <span className="text-ellipsis" title={event.event_type || ""}>
+                            {`${event.event_type} trigger of ${event.workflow.name}`}
+                          </span>
+                        </td>
+                        <td className="date has-text-right pr-0">
+                          <span className="mx-2">{formatDateTimeLong(event.created_at)}</span>
+                        </td>
+                      </tr>
+                    }
+                  />
 
                 ))}
               </tbody>
@@ -143,7 +154,11 @@ export default function Page(pageProps: any) {
   return AuthenticatedPage((
     <DashboardLayout showModeIndicator={true}>
       <Head><title>{`Workflows - ${references?.APP_NAME}`}</title></Head>
-      <Component />
+
+      <ContextProviders>
+        <Component />
+      </ContextProviders>
+
     </DashboardLayout>
   ), pageProps);
 }

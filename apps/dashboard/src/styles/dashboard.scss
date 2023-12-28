@@ -263,12 +263,12 @@ Karrio custom styling
 
 .workflow-events-table {
   .status {
-    min-width: 50px;
-    max-width: 50px;
+    width: 6%;
+    min-width: 60px;
+    max-width: 60px;
   }
 
   .description {
-    width: 75%;
     min-width: 200px;
     max-width: 200px;
   }

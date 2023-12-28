@@ -63,7 +63,7 @@ export function useWorkflowEvent(id: string) {
 
   // Queries
   const query = useQuery(['workflow-events', id], {
-    queryFn: () => karrio.graphql.request<GetWorkflowEvent>(gqlstr(GET_WORKFLOW_EVENT), { data: { id } }),
+    queryFn: () => karrio.graphql.request<GetWorkflowEvent>(gqlstr(GET_WORKFLOW_EVENT), { variables: { id } }),
     enabled: !!id,
     onError,
   });
