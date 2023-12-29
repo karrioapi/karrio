@@ -107,22 +107,22 @@ export const StaffManagement: React.FC<StaffManagementComponent> = () => {
               </tbody>
 
             </table>
-
-            <hr style={{ height: '1px' }} className="m-0 mb-3" />
-
-            <footer className="py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">{(users?.edges || []).length} results</span>
-
-              <div className="buttons has-addons is-centered is-pulled-right pr-0">
-                <button className="button is-small" disabled>
-                  <span>Previous</span>
-                </button>
-                <button className="button is-small" disabled>
-                  <span>Next</span>
-                </button>
-              </div>
-            </footer>
           </div>
+
+          <hr style={{ height: '1px' }} className="m-0 mb-3" />
+
+          <footer className="py-2 is-vcentered">
+            <span className="is-size-7 has-text-weight-semibold">{(users?.edges || []).length} results</span>
+
+            <div className="buttons has-addons is-centered is-pulled-right pr-0">
+              <button className="button is-small" disabled>
+                <span>Previous</span>
+              </button>
+              <button className="button is-small" disabled>
+                <span>Next</span>
+              </button>
+            </div>
+          </footer>
 
         </div>
       </div>
