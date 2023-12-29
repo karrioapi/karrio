@@ -1,9 +1,9 @@
-import { InputField, InputFieldComponent } from './input-field';
 import { useAddressTemplates } from '@karrio/hooks/address';
-import { formatAddress, isNone } from '@karrio/lib';
-import { AddressType } from '@karrio/types';
 import React, { ChangeEvent, RefObject } from 'react';
+import { formatAddress, isNone } from '@karrio/lib';
+import { InputFieldComponent } from './input-field';
 import { Combobox } from '@headlessui/react';
+import { AddressType } from '@karrio/types';
 
 interface NameInputComponent extends InputFieldComponent {
   onValueChange: (value: Partial<AddressType>, refresh?: boolean) => void;
@@ -71,7 +71,9 @@ export const NameInput: React.FC<NameInputComponent> = ({ disableSuggestion, val
                           className={'dropdown-item is-clickable'}
                           value={template.address}
                         >
-                          {template.label} - {formatAddress(template?.address as any)}
+                          <span className="is-size-7 has-text-dark-grey has-text-weight-bold">
+                            {template.label} - {formatAddress(template?.address as any)}
+                          </span>
                         </Combobox.Option>
                       ))}
                     </Combobox.Options>
