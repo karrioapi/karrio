@@ -47,7 +47,7 @@ jsonfield==3.1.0
 jsonschema==4.20.0
 jsonschema-specifications==2023.11.2
 jstruct==2021.11
-jwcrypto==1.5.0
+jwcrypto==1.5.1
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio&subdirectory=modules/sdk
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.allied_express&subdirectory=modules/connectors/allied_express
 -e git+ssh://git@github.com/karrioapi/karrio.git@c012a19dda60427c24a34c2996bc0122ab0695ed#egg=karrio.amazon_shipping&subdirectory=modules/connectors/amazon_shipping
