@@ -1,5 +1,5 @@
 import { ModalFormProps, useModal } from '@karrio/ui/modals/modal';
-import { Component } from '@/modules/Workflow/event';
+import { Component } from '@/modules/Workflows/event';
 import React from 'react';
 
 type EventPreviewModalProps = {

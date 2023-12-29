@@ -1,1 +1,1 @@
-export { default, getServerSideProps } from "@/modules/Workflow";
+export { default, getServerSideProps } from "@/modules/Workflows";

@@ -3,11 +3,16 @@ import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
+import { ModalProvider } from "@karrio/ui/modals/modal";
 import { useWorkflows } from "@karrio/hooks/workflows";
+import { bundleContexts } from "@karrio/hooks/utils";
 import { Spinner } from "@karrio/ui/components";
 import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
+const ContextProviders = bundleContexts([
+  ModalProvider,
+]);
 
 
 export default function Page(pageProps: any) {
@@ -50,10 +55,10 @@ export default function Page(pageProps: any) {
 
         {(query.isFetched && (workflows?.edges || []).length > 0) && <>
 
-          <nav className="panel is-shadowless" style={{ border: '1px solid #e5e5e5', boxShadow: '0.5px 0.5px 2.5px #efefef' }}>
-            {(workflows?.edges || []).map(({ node: workflow }) => (<>
+          <nav key={Date()} className="panel is-shadowless" style={{ border: '1px solid #e5e5e5', boxShadow: '0.5px 0.5px 2.5px #efefef' }}>
+            {(workflows?.edges || []).map(({ node: workflow }) => (
 
-              <a key={workflow.id} className="columns m-0 panel-block">
+              <label key={workflow.id} className="columns m-0 panel-block">
 
                 <div className="column is-11 is-size-7 has-text-grey p-0">
                   <div className="has-text-weight-bold is-size-6">{workflow.name}</div>
@@ -68,9 +73,9 @@ export default function Page(pageProps: any) {
                   </div>
                 </div>
 
-              </a>
+              </label>
 
-            </>))}
+            ))}
           </nav>
 
         </>}
@@ -92,7 +97,11 @@ export default function Page(pageProps: any) {
   return AuthenticatedPage((
     <DashboardLayout showModeIndicator={true}>
       <Head><title>{`Workflows - ${references?.APP_NAME}`}</title></Head>
-      <Component />
+
+      <ContextProviders>
+        <Component />
+      </ContextProviders>
+
     </DashboardLayout>
   ), pageProps);
 }

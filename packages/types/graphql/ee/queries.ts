@@ -748,6 +748,9 @@ export const DELETE_ORGANIZATION_INVITES = gql`mutation delete_organization_invi
 
 export const CREATE_WORKFLOW = gql`mutation CreateWorkflow($data: CreateWorkflowMutationInput!) {
   create_workflow(input: $data) {
+    workflow {
+      id
+    }
     errors {
       field
       messages
@@ -758,6 +761,9 @@ export const CREATE_WORKFLOW = gql`mutation CreateWorkflow($data: CreateWorkflow
 
 export const UPDATE_WORKFLOW = gql`mutation UpdateWorkflow($data: UpdateWorkflowMutationInput!) {
   update_workflow(input: $data) {
+    workflow {
+      id
+    }
     errors {
       field
       messages
@@ -779,6 +785,9 @@ export const DELETE_WORKFLOW = gql`mutation DeleteWorkflow($data: DeleteMutation
 
 export const CREATE_WORKFLOW_CONNECTION = gql`mutation CreateWorkflowConnection($data: CreateWorkflowConnectionMutationInput!) {
   create_workflow_connection(input: $data) {
+    workflow_connection {
+      id
+    }
     errors {
       field
       messages
@@ -789,6 +798,9 @@ export const CREATE_WORKFLOW_CONNECTION = gql`mutation CreateWorkflowConnection(
 
 export const UPDATE_WORKFLOW_CONNECTION = gql`mutation UpdateWorkflowConnection($data: UpdateWorkflowConnectionMutationInput!) {
   update_workflow_connection(input: $data) {
+    workflow_connection {
+      id
+    }
     errors {
       field
       messages
@@ -800,12 +812,19 @@ export const UPDATE_WORKFLOW_CONNECTION = gql`mutation UpdateWorkflowConnection(
 export const DELETE_WORKFLOW_CONNECTION = gql`mutation DeleteWorkflowConnection($data: DeleteMutationInput!) {
   delete_workflow_connection(input: $data) {
     id
+    errors {
+      field
+      messages
+    }
   }
 }
 `;
 
 export const CREATE_WORKFLOW_ACTION = gql`mutation CreateWorkflowAction($data: CreateWorkflowActionMutationInput!) {
   create_workflow_action(input: $data) {
+    workflow_action {
+      id
+    }
     errors {
       field
       messages
@@ -816,6 +835,9 @@ export const CREATE_WORKFLOW_ACTION = gql`mutation CreateWorkflowAction($data: C
 
 export const UPDATE_WORKFLOW_ACTION = gql`mutation UpdateWorkflowAction($data: UpdateWorkflowActionMutationInput!) {
   update_workflow_action(input: $data) {
+    workflow_action {
+      id
+    }
     errors {
       field
       messages
@@ -837,6 +859,9 @@ export const DELETE_WORKFLOW_ACTION = gql`mutation DeleteWorkflowAction($data: D
 
 export const CREATE_WORKFLOW_EVENT = gql`mutation CreateWorkflowEvent($data: CreateWorkflowEventMutationInput!) {
   create_workflow_event(input: $data) {
+    workflow_event {
+      id
+    }
     errors {
       field
       messages
@@ -847,6 +872,9 @@ export const CREATE_WORKFLOW_EVENT = gql`mutation CreateWorkflowEvent($data: Cre
 
 export const CANCEL_WORKFLOW_EVENT = gql`mutation CancelWorkflowEvent($data: CancelWorkflowEventMutationInput!) {
   cancel_workflow_event(input: $data) {
+    workflow_event {
+      id
+    }
     errors {
       field
       messages
@@ -857,6 +885,9 @@ export const CANCEL_WORKFLOW_EVENT = gql`mutation CancelWorkflowEvent($data: Can
 
 export const CREATE_WORKFLOW_TRIGGER = gql`mutation CreateWorkflowTrigger($data: CreateWorkflowTriggerMutationInput!) {
   create_workflow_trigger(input: $data) {
+    workflow_trigger {
+      id
+    }
     errors {
       field
       messages
@@ -867,6 +898,9 @@ export const CREATE_WORKFLOW_TRIGGER = gql`mutation CreateWorkflowTrigger($data:
 
 export const UPDATE_WORKFLOW_TRIGGER = gql`mutation UpdateWorkflowTrigger($data: UpdateWorkflowTriggerMutationInput!) {
   update_workflow_trigger(input: $data) {
+    workflow_trigger {
+      id
+    }
     errors {
       field
       messages
@@ -878,6 +912,10 @@ export const UPDATE_WORKFLOW_TRIGGER = gql`mutation UpdateWorkflowTrigger($data:
 export const DELETE_WORKFLOW_TRIGGER = gql`mutation DeleteWorkflowTrigger($data: DeleteMutationInput!) {
   delete_workflow_trigger(input: $data) {
     id
+    errors {
+      field
+      messages
+    }
   }
 }
 `;

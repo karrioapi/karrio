@@ -1,1 +1,1 @@
-export { default, getServerSideProps } from "@/modules/Workflow/event";
+export { default, getServerSideProps } from "@/modules/Workflows/event";

@@ -1162,12 +1162,17 @@ export interface delete_organization_invitationVariables {
 // GraphQL mutation operation: CreateWorkflow
 // ====================================================
 
+export interface CreateWorkflow_create_workflow_workflow {
+  id: string;
+}
+
 export interface CreateWorkflow_create_workflow_errors {
   field: string;
   messages: string[];
 }
 
 export interface CreateWorkflow_create_workflow {
+  workflow: CreateWorkflow_create_workflow_workflow | null;
   errors: CreateWorkflow_create_workflow_errors[] | null;
 }
 
@@ -1187,12 +1192,17 @@ export interface CreateWorkflowVariables {
 // GraphQL mutation operation: UpdateWorkflow
 // ====================================================
 
+export interface UpdateWorkflow_update_workflow_workflow {
+  id: string;
+}
+
 export interface UpdateWorkflow_update_workflow_errors {
   field: string;
   messages: string[];
 }
 
 export interface UpdateWorkflow_update_workflow {
+  workflow: UpdateWorkflow_update_workflow_workflow | null;
   errors: UpdateWorkflow_update_workflow_errors[] | null;
 }
 
@@ -1238,12 +1248,17 @@ export interface DeleteWorkflowVariables {
 // GraphQL mutation operation: CreateWorkflowConnection
 // ====================================================
 
+export interface CreateWorkflowConnection_create_workflow_connection_workflow_connection {
+  id: string;
+}
+
 export interface CreateWorkflowConnection_create_workflow_connection_errors {
   field: string;
   messages: string[];
 }
 
 export interface CreateWorkflowConnection_create_workflow_connection {
+  workflow_connection: CreateWorkflowConnection_create_workflow_connection_workflow_connection | null;
   errors: CreateWorkflowConnection_create_workflow_connection_errors[] | null;
 }
 
@@ -1263,12 +1278,17 @@ export interface CreateWorkflowConnectionVariables {
 // GraphQL mutation operation: UpdateWorkflowConnection
 // ====================================================
 
+export interface UpdateWorkflowConnection_update_workflow_connection_workflow_connection {
+  id: string;
+}
+
 export interface UpdateWorkflowConnection_update_workflow_connection_errors {
   field: string;
   messages: string[];
 }
 
 export interface UpdateWorkflowConnection_update_workflow_connection {
+  workflow_connection: UpdateWorkflowConnection_update_workflow_connection_workflow_connection | null;
   errors: UpdateWorkflowConnection_update_workflow_connection_errors[] | null;
 }
 
@@ -1288,8 +1308,14 @@ export interface UpdateWorkflowConnectionVariables {
 // GraphQL mutation operation: DeleteWorkflowConnection
 // ====================================================
 
+export interface DeleteWorkflowConnection_delete_workflow_connection_errors {
+  field: string;
+  messages: string[];
+}
+
 export interface DeleteWorkflowConnection_delete_workflow_connection {
   id: string;
+  errors: DeleteWorkflowConnection_delete_workflow_connection_errors[] | null;
 }
 
 export interface DeleteWorkflowConnection {
@@ -1308,12 +1334,17 @@ export interface DeleteWorkflowConnectionVariables {
 // GraphQL mutation operation: CreateWorkflowAction
 // ====================================================
 
+export interface CreateWorkflowAction_create_workflow_action_workflow_action {
+  id: string;
+}
+
 export interface CreateWorkflowAction_create_workflow_action_errors {
   field: string;
   messages: string[];
 }
 
 export interface CreateWorkflowAction_create_workflow_action {
+  workflow_action: CreateWorkflowAction_create_workflow_action_workflow_action | null;
   errors: CreateWorkflowAction_create_workflow_action_errors[] | null;
 }
 
@@ -1333,12 +1364,17 @@ export interface CreateWorkflowActionVariables {
 // GraphQL mutation operation: UpdateWorkflowAction
 // ====================================================
 
+export interface UpdateWorkflowAction_update_workflow_action_workflow_action {
+  id: string;
+}
+
 export interface UpdateWorkflowAction_update_workflow_action_errors {
   field: string;
   messages: string[];
 }
 
 export interface UpdateWorkflowAction_update_workflow_action {
+  workflow_action: UpdateWorkflowAction_update_workflow_action_workflow_action | null;
   errors: UpdateWorkflowAction_update_workflow_action_errors[] | null;
 }
 
@@ -1384,12 +1420,17 @@ export interface DeleteWorkflowActionVariables {
 // GraphQL mutation operation: CreateWorkflowEvent
 // ====================================================
 
+export interface CreateWorkflowEvent_create_workflow_event_workflow_event {
+  id: string;
+}
+
 export interface CreateWorkflowEvent_create_workflow_event_errors {
   field: string;
   messages: string[];
 }
 
 export interface CreateWorkflowEvent_create_workflow_event {
+  workflow_event: CreateWorkflowEvent_create_workflow_event_workflow_event | null;
   errors: CreateWorkflowEvent_create_workflow_event_errors[] | null;
 }
 
@@ -1409,12 +1450,17 @@ export interface CreateWorkflowEventVariables {
 // GraphQL mutation operation: CancelWorkflowEvent
 // ====================================================
 
+export interface CancelWorkflowEvent_cancel_workflow_event_workflow_event {
+  id: string;
+}
+
 export interface CancelWorkflowEvent_cancel_workflow_event_errors {
   field: string;
   messages: string[];
 }
 
 export interface CancelWorkflowEvent_cancel_workflow_event {
+  workflow_event: CancelWorkflowEvent_cancel_workflow_event_workflow_event | null;
   errors: CancelWorkflowEvent_cancel_workflow_event_errors[] | null;
 }
 
@@ -1434,12 +1480,17 @@ export interface CancelWorkflowEventVariables {
 // GraphQL mutation operation: CreateWorkflowTrigger
 // ====================================================
 
+export interface CreateWorkflowTrigger_create_workflow_trigger_workflow_trigger {
+  id: string;
+}
+
 export interface CreateWorkflowTrigger_create_workflow_trigger_errors {
   field: string;
   messages: string[];
 }
 
 export interface CreateWorkflowTrigger_create_workflow_trigger {
+  workflow_trigger: CreateWorkflowTrigger_create_workflow_trigger_workflow_trigger | null;
   errors: CreateWorkflowTrigger_create_workflow_trigger_errors[] | null;
 }
 
@@ -1459,12 +1510,17 @@ export interface CreateWorkflowTriggerVariables {
 // GraphQL mutation operation: UpdateWorkflowTrigger
 // ====================================================
 
+export interface UpdateWorkflowTrigger_update_workflow_trigger_workflow_trigger {
+  id: string;
+}
+
 export interface UpdateWorkflowTrigger_update_workflow_trigger_errors {
   field: string;
   messages: string[];
 }
 
 export interface UpdateWorkflowTrigger_update_workflow_trigger {
+  workflow_trigger: UpdateWorkflowTrigger_update_workflow_trigger_workflow_trigger | null;
   errors: UpdateWorkflowTrigger_update_workflow_trigger_errors[] | null;
 }
 
@@ -1484,8 +1540,14 @@ export interface UpdateWorkflowTriggerVariables {
 // GraphQL mutation operation: DeleteWorkflowTrigger
 // ====================================================
 
+export interface DeleteWorkflowTrigger_delete_workflow_trigger_errors {
+  field: string;
+  messages: string[];
+}
+
 export interface DeleteWorkflowTrigger_delete_workflow_trigger {
   id: string;
+  errors: DeleteWorkflowTrigger_delete_workflow_trigger_errors[] | null;
 }
 
 export interface DeleteWorkflowTrigger {
@@ -1532,7 +1594,7 @@ export enum AutomationHTTPContentType {
 
 export enum AutomationParametersType {
   data = "data",
-  queystring = "queystring",
+  querystring = "querystring",
 }
 
 export enum AutomationAuthType {
@@ -1650,12 +1712,44 @@ export interface CreateWorkflowMutationInput {
   description?: string | null;
   metadata?: any | null;
   template_slug?: string | null;
+  trigger?: PartialWorkflowTriggerMutationInput | null;
+  actions?: PartialWorkflowActionMutationInput[] | null;
 }
 
 // null
 export interface ActionNodeInput {
-  slug: string;
   order: number;
+  slug?: string | null;
+  index?: number | null;
+}
+
+// null
+export interface PartialWorkflowTriggerMutationInput {
+  id?: string | null;
+  trigger_type?: AutomationTriggerType | null;
+  schedule?: string | null;
+  secret?: string | null;
+  secret_key?: string | null;
+  template_slug?: string | null;
+}
+
+// null
+export interface PartialWorkflowActionMutationInput {
+  name?: string | null;
+  action_type?: AutomationActionType | null;
+  port?: number | null;
+  host?: string | null;
+  endpoint?: string | null;
+  description?: string | null;
+  method?: AutomationHTTPMethod | null;
+  parameters_type?: AutomationParametersType | null;
+  parameters_template?: string | null;
+  header_template?: string | null;
+  content_type?: AutomationHTTPContentType | null;
+  metadata?: any | null;
+  connection_id?: string | null;
+  template_slug?: string | null;
+  id?: string | null;
 }
 
 // null
@@ -1666,6 +1760,8 @@ export interface UpdateWorkflowMutationInput {
   metadata?: any | null;
   action_nodes?: ActionNodeInput[] | null;
   template_slug?: string | null;
+  trigger?: PartialWorkflowTriggerMutationInput | null;
+  actions?: PartialWorkflowActionMutationInput[] | null;
 }
 
 // null

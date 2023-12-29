@@ -1,4 +1,4 @@
-import { WorkflowFilter, GetWorkflows, GET_WORKFLOWS, GetWorkflow, GET_WORKFLOW, CreateWorkflow, UpdateWorkflow, UpdateWorkflowMutationInput, CreateWorkflowMutationInput, DELETE_WORKFLOW, UPDATE_WORKFLOW, CREATE_WORKFLOW, DeleteMutationInput, GetWorkflows_workflows_edges_node } from "@karrio/types/graphql/ee";
+import { WorkflowFilter, GetWorkflows, GET_WORKFLOWS, GetWorkflow, GET_WORKFLOW, CreateWorkflow, UpdateWorkflow, UpdateWorkflowMutationInput, CreateWorkflowMutationInput, DELETE_WORKFLOW, UPDATE_WORKFLOW, CREATE_WORKFLOW, DeleteMutationInput, GetWorkflows_workflows_edges_node, CreateWorkflowTriggerMutationInput, CREATE_WORKFLOW_TRIGGER, CreateWorkflowTrigger, UpdateWorkflowTriggerMutationInput, UPDATE_WORKFLOW_TRIGGER, UpdateWorkflowTrigger, DELETE_WORKFLOW_TRIGGER } from "@karrio/types/graphql/ee";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useKarrio } from "./karrio";
@@ -9,6 +9,7 @@ const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = WorkflowFilter & { setVariablesToURL?: boolean };
 
 export type WorkflowType = GetWorkflows_workflows_edges_node;
+export type WorkflowTriggerType = GetWorkflows_workflows_edges_node["trigger"];
 
 export function useWorkflows({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
@@ -60,18 +61,29 @@ export function useWorkflows({ setVariablesToURL = false, ...initialData }: Filt
   };
 }
 
-export function useWorkflow(id: string) {
+
+type Args = { id?: string, setVariablesToURL?: boolean };
+
+export function useWorkflow({ id, setVariablesToURL = false }: Args = {}) {
   const karrio = useKarrio();
+  const [workflowId, _setWorkflowId] = React.useState<string>(id || 'new');
 
   // Queries
   const query = useQuery(['workflows', id], {
-    queryFn: () => karrio.graphql.request<GetWorkflow>(gqlstr(GET_WORKFLOW), { data: { id } }),
-    enabled: !!id,
+    queryFn: () => karrio.graphql.request<GetWorkflow>(gqlstr(GET_WORKFLOW), { variables: { id: workflowId } }),
+    enabled: (workflowId !== 'new'),
     onError,
   });
 
+  function setWorkflowId(workflowId: string) {
+    if (setVariablesToURL) insertUrlParam({ id: workflowId });
+    _setWorkflowId(workflowId);
+  }
+
   return {
     query,
+    workflowId,
+    setWorkflowId,
   };
 }
 
@@ -100,10 +112,31 @@ export function useWorkflowMutation() {
     ),
     { onSuccess: invalidateCache, onError }
   );
+  const createWorkflowTrigger = useMutation(
+    (data: CreateWorkflowTriggerMutationInput) => karrio.graphql.request<CreateWorkflowTrigger>(
+      gqlstr(CREATE_WORKFLOW_TRIGGER), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+  const updateWorkflowTrigger = useMutation(
+    (data: UpdateWorkflowTriggerMutationInput) => karrio.graphql.request<UpdateWorkflowTrigger>(
+      gqlstr(UPDATE_WORKFLOW_TRIGGER), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
+  const deleteWorkflowTrigger = useMutation(
+    (data: { id: string }) => karrio.graphql.request<DeleteMutationInput>(
+      gqlstr(DELETE_WORKFLOW_TRIGGER), { data }
+    ),
+    { onSuccess: invalidateCache, onError }
+  );
 
   return {
     createWorkflow,
     updateWorkflow,
     deleteWorkflow,
+    createWorkflowTrigger,
+    updateWorkflowTrigger,
+    deleteWorkflowTrigger,
   };
 }

@@ -1,4 +1,4 @@
-import { Menu } from '@headlessui/react';
+import { Menu, MenuItemProps } from '@headlessui/react';
 import React from 'react';
 
 interface MenuProps {
@@ -22,13 +22,14 @@ const Wrapper: React.FC<MenuProps> = ({ trigger, children }) => {
               className="dropdown-menu"
             >
               <Menu.Items className={'dropdown-content is-menu'}>
-                {React.Children.map(children, (item: any, index) => {
+                {children}
+                {/* {React.Children.map(children, (item: any, index) => {
                   return (
                     <Menu.Item key={index} as='a' className={'dropdown-item'}>
                       {item}
                     </Menu.Item>
                   );
-                })}
+                })} */}
               </Menu.Items>
             </div>
 
@@ -39,8 +40,8 @@ const Wrapper: React.FC<MenuProps> = ({ trigger, children }) => {
   );
 };
 
-const Item: React.FC<{ children?: React.ReactNode; }> = ({ children }) => (
-  <Menu.Item>{children}</Menu.Item>
+const Item: React.FC<MenuItemProps<any>> = ({ children, ...props }) => (
+  <Menu.Item {...props}>{children}</Menu.Item>
 );
 
 export const MenuComponent = {
