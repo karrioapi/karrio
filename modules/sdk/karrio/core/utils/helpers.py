@@ -188,6 +188,7 @@ def process_request(
 
 def process_response(
     request_id: str,
+    http_response: Any,
     response,
     decoder: Callable,
     trace: Callable[[Any, str], Any] = None,
@@ -246,7 +247,7 @@ def request(
         _request = process_request(_request_id, trace, **kwargs)
 
         with urlopen(_request) as f:
-            _response = process_response(_request_id, f.read(), decoder, trace=trace)
+            _response = process_response(_request_id, f, f.read(), decoder, trace=trace)
 
     except HTTPError as e:
         _response = process_error(_request_id, e, on_error=on_error, trace=trace)

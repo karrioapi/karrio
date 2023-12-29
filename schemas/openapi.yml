@@ -114,6 +114,7 @@ paths:
                     ALLOW_SIGNUP: true
                     ALLOW_ADMIN_APPROVED_SIGNUP: true
                     ALLOW_MULTI_ACCOUNT: true
+                    ADMIN_DASHBOARD: true
                     MULTI_ORGANIZATIONS: true
                     ORDERS_MANAGEMENT: true
                     APPS_MANAGEMENT: true
@@ -2329,6 +2330,7 @@ paths:
                     ALLOW_SIGNUP: true
                     ALLOW_ADMIN_APPROVED_SIGNUP: true
                     ALLOW_MULTI_ACCOUNT: true
+                    ADMIN_DASHBOARD: true
                     MULTI_ORGANIZATIONS: true
                     ORDERS_MANAGEMENT: true
                     APPS_MANAGEMENT: true
@@ -2799,8 +2801,8 @@ paths:
         name: status
         schema:
           type: string
-        description: 'Valid tracker status. <br/>Values: `pending`, `unknown`, `delivered`,
-          `on_hold`, `in_transit`, `delivery_delayed`, `out_for_delivery`, `ready_for_pickup`,
+        description: 'Valid tracker status. <br/>Values: `pending`, `unknown`, `on_hold`,
+          `delivered`, `in_transit`, `delivery_delayed`, `out_for_delivery`, `ready_for_pickup`,
           `delivery_failed`'
       - in: query
         name: tracking_number
@@ -11276,23 +11278,23 @@ components:
           enum:
           - pending
           - unknown
-          - delivered
           - on_hold
+          - delivered
           - in_transit
           - delivery_delayed
           - out_for_delivery
           - ready_for_pickup
           - delivery_failed
           type: string
-          x-spec-enum-id: e5df506dfd95c41b
+          x-spec-enum-id: 979a07e5fd2a5042
           default: pending
           description: |-
             The current tracking status
 
             * `pending` - pending
             * `unknown` - unknown
-            * `delivered` - delivered
             * `on_hold` - on_hold
+            * `delivered` - delivered
             * `in_transit` - in_transit
             * `delivery_delayed` - delivery_delayed
             * `out_for_delivery` - out_for_delivery

@@ -1,3 +1,4 @@
+import re
 import enum
 import attr
 import json
@@ -50,6 +51,10 @@ class DICTPARSE:
         :return: a dictionary.
         """
         _clear_empty = clear_empty is not False
+        if isinstance(entity, str):
+            entity = re.sub(",[ \t\r\n]+}", "}", entity)
+            entity = re.sub(",[ \t\r\n]+\]", "]", entity)
+
         return json.loads(
             (
                 DICTPARSE.jsonify(entity)

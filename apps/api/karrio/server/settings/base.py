@@ -183,6 +183,9 @@ AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
     "karrio.server.audit"
 ) is not None and config("AUDIT_LOGGING", default=True, cast=bool)
 PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
+WORKFLOW_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
+)
 
 
 # Feature flags
@@ -203,6 +206,7 @@ FEATURE_FLAGS = [
     ("TRACKER_DATA_RETENTION", int),
     ("SHIPMENT_DATA_RETENTION", int),
     ("API_LOGS_DATA_RETENTION", int),
+    ("WORKFLOW_MANAGEMENT", bool),
 ]
 
 

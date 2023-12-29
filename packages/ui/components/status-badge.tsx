@@ -26,6 +26,9 @@ export const StatusBadge: React.FC<StatusBadgeComponent> = ({ status, className,
     "delivery_delayed": "is-warning is-light",
     "needs_attention": "is-warning is-light",
     "delivery_failed": "is-danger is-light",
+    "success": "is-success is-light",
+    "failed": "is-danger is-light",
+    "running": "is-info is-light",
   }[status || ""] || "is-light";
 
   return (

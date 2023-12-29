@@ -1,5 +1,6 @@
 import * as api from './rest/api';
 import * as graph from './graphql/index';
+import * as ee from './graphql/ee/index';
 
 export {
     CarrierSettingsCarrierNameEnum,
@@ -250,7 +251,7 @@ export type UserContextDataType = {
 };
 export type OrgContextDataType = {
     data: {
-        organizations?: graph.get_organizations_organizations[]
+        organizations?: ee.get_organizations_organizations[]
     }
 };
 
@@ -287,6 +288,7 @@ export interface Metadata {
     PERSIST_SDK_TRACING: boolean;
     ORG_LEVEL_BILLING: boolean;
     TENANT_LEVEL_BILLING: boolean;
+    WORKFLOW_MANAGEMENT: boolean;
 };
 
 export interface References {
@@ -312,6 +314,7 @@ export interface References {
     PERSIST_SDK_TRACING: boolean;
     ORG_LEVEL_BILLING: boolean;
     TENANT_LEVEL_BILLING: boolean;
+    WORKFLOW_MANAGEMENT: boolean;
 
     ADDRESS_AUTO_COMPLETE: Collection;
     countries: Collection;

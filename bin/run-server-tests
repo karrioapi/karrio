@@ -4,9 +4,15 @@
 source "bin/activate-env" > /dev/null 2>&1
 
 echo 'run server tests...'
-karrio test --failfast karrio.server.proxy.tests &&
-karrio test --failfast karrio.server.pricing.tests &&
-karrio test --failfast karrio.server.manager.tests &&
-karrio test --failfast karrio.server.events.tests &&
-karrio test --failfast karrio.server.graph.tests &&
-karrio test --failfast karrio.server.orders.tests
+karrio test --failfast karrio.server.proxy.tests || exit 1
+karrio test --failfast karrio.server.pricing.tests || exit 1
+karrio test --failfast karrio.server.manager.tests || exit 1
+karrio test --failfast karrio.server.events.tests || exit 1
+karrio test --failfast karrio.server.graph.tests || exit 1
+karrio test --failfast karrio.server.orders.tests || exit 1
+
+if [[ "$*" == *--cloud* ]];
+then
+    karrio test --failfast karrio.server.orgs.tests || exit 1
+    karrio test --failfast karrio.server.automation.tests || exit 1
+fi

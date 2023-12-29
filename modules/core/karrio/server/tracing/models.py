@@ -14,7 +14,7 @@ class TracingRecord(OwnedEntity):
         db_table = "tracing-record"
         verbose_name = "Tracing Record"
         verbose_name_plural = "Tracing Records"
-        ordering = ["-created_at"]
+        ordering = ["-timestamp"]
         indexes = [
             models.Index(
                 json.KeyTextTransform("object_id", "meta"),
@@ -30,6 +30,21 @@ class TracingRecord(OwnedEntity):
                 json.KeyTextTransform("carrier_account_id", "meta"),
                 condition=models.Q(meta__carrier_account_id__isnull=False),
                 name="carrier_account_idx",
+            ),
+            models.Index(
+                json.KeyTextTransform("workflow_action_id", "meta"),
+                condition=models.Q(meta__workflow_action_id__isnull=False),
+                name="workflow_action_idx",
+            ),
+            models.Index(
+                json.KeyTextTransform("workflow_event_id", "meta"),
+                condition=models.Q(meta__workflow_event_id__isnull=False),
+                name="workflow_event_idx",
+            ),
+            models.Index(
+                json.KeyTextTransform("workflow_id", "meta"),
+                condition=models.Q(meta__workflow_id__isnull=False),
+                name="workflow_idx",
             ),
         ]
 
