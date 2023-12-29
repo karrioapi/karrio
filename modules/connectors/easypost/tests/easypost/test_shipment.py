@@ -73,6 +73,19 @@ class TestEasyPostShipment(unittest.TestCase):
                 DP.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
 
+    def test_parse_shipment_with_fee_response(self):
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mocks:
+            mocks.side_effect = [ShipmentResponseJSON, ShipmentResponseWithFeeJSON]
+            response = Shipment.create(self.ShipmentRequest).from_(gateway)
+
+            with patch("karrio.providers.easypost.utils.request") as mock:
+                mock.return_value = ""
+                parsed_response = response.parse()
+
+                self.assertListEqual(
+                    DP.to_dict(parsed_response), ParsedShipmentWithFeeResponse
+                )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -133,6 +146,45 @@ ParsedCancelShipmentResponse = [
         "success": True,
     },
     [],
+]
+
+ParsedShipmentWithFeeResponse = [
+    {
+        "carrier_id": "easypost",
+        "carrier_name": "easypost",
+        "docs": {},
+        "label_type": "PDF",
+        "meta": {
+            "carrier_tracking_link": "https://track.easypost.com/djE6dHJrXzM3NGZjYzI5MTVkNjRmOGU4N2Y5NTQyNmRhMTkzYzBk",
+            "fees": [
+                {
+                    "amount": "0.00000",
+                    "charged": True,
+                    "object": "Fee",
+                    "refunded": False,
+                    "type": "LabelFee",
+                }
+            ],
+            "label_url": "https://easypost-files.s3.us-west-2.amazonaws.com/files/postage_label/20231228/e87613ef189ad041d092d5931a615391fc.pdf",
+            "rate_provider": "AustraliaPost",
+            "service_name": "ParcelPostSignature",
+        },
+        "shipment_identifier": "shp_00814fe0264b485b9d9cf7064d43a904",
+        "tracking_number": "34UNM501285701000931508",
+    },
+    [
+        {
+            "carrier_id": "easypost",
+            "carrier_name": "easypost",
+            "code": "rate_error",
+            "details": {
+                "carrier": "Toll",
+                "carrier_account_id": "ca_e36cbf9072434ef3966e1d324b70f835",
+            },
+            "message": "business_unit='Priority' is currently not supported, only "
+            "{'IPEC'}",
+        }
+    ],
 ]
 
 
@@ -538,5 +590,261 @@ CancelShipmentResponseJSON = """{
   },
   "tracking_code": "1ZE6A4850190733810",
   "updated_at": "2013-11-08T20:58:26Z"
+}
+"""
+
+ShipmentResponseWithFeeJSON = """{
+  "created_at": "2023-12-28T06:18:57Z",
+  "is_return": false,
+  "messages": [
+    {
+      "carrier": "Toll",
+      "carrier_account_id": "ca_e36cbf9072434ef3966e1d324b70f835",
+      "type": "rate_error",
+      "message": "business_unit='Priority' is currently not supported, only {'IPEC'}"
+    }
+  ],
+  "mode": "production",
+  "options": {
+    "label_date": "2023-12-28T00:00:00+00:00",
+    "label_format": "PDF",
+    "payment": {
+      "country": "AU",
+      "postal_code": "6155",
+      "type": "SENDER"
+    },
+    "currency": "USD",
+    "date_advance": 0
+  },
+  "reference": null,
+  "status": "unknown",
+  "tracking_code": "34UNM501285701000931508",
+  "updated_at": "2023-12-28T06:19:02Z",
+  "batch_id": null,
+  "batch_status": null,
+  "batch_message": null,
+  "customs_info": null,
+  "from_address": {
+    "id": "adr_fc07a3b5a54811ee9209ac1f6bc539ae",
+    "object": "Address",
+    "created_at": "2023-12-28T06:18:57+00:00",
+    "updated_at": "2023-12-28T06:18:57+00:00",
+    "name": "Tester",
+    "company": null,
+    "street1": "7-13 Bell St",
+    "street2": null,
+    "city": "Canning Vale",
+    "state": "WA",
+    "zip": "6155",
+    "country": "AU",
+    "phone": "61401595496",
+    "email": "test@user.com.au",
+    "mode": "production",
+    "carrier_facility": null,
+    "residential": false,
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "verifications": {}
+  },
+  "insurance": null,
+  "order_id": null,
+  "parcel": {
+    "id": "prcl_dbb0a34440c24831bcbe61d35f1d9fd5",
+    "object": "Parcel",
+    "created_at": "2023-12-28T06:18:57Z",
+    "updated_at": "2023-12-28T06:18:57Z",
+    "length": 6.02,
+    "width": 3.94,
+    "height": 1.97,
+    "predefined_package": null,
+    "weight": 229.28,
+    "mode": "production"
+  },
+  "postage_label": {
+    "object": "PostageLabel",
+    "id": "pl_371c57a639ed4886a01362e57b0dd394",
+    "created_at": "2023-12-28T06:19:02Z",
+    "updated_at": "2023-12-28T06:19:02Z",
+    "date_advance": 0,
+    "integrated_form": "none",
+    "label_date": "2023-12-28T06:19:02Z",
+    "label_resolution": 200,
+    "label_size": "4x6",
+    "label_type": "default",
+    "label_file_type": "application/pdf",
+    "label_url": "https://easypost-files.s3.us-west-2.amazonaws.com/files/postage_label/20231228/e87613ef189ad041d092d5931a615391fc.pdf",
+    "label_pdf_url": "https://easypost-files.s3.us-west-2.amazonaws.com/files/postage_label/20231228/e87613ef189ad041d092d5931a615391fc.pdf",
+    "label_zpl_url": null,
+    "label_epl2_url": null,
+    "label_file": null
+  },
+  "rates": [
+    {
+      "id": "rate_fdbea47d5d7f497898bf1e93414d1818",
+      "object": "Rate",
+      "created_at": "2023-12-28T06:18:58Z",
+      "updated_at": "2023-12-28T06:18:58Z",
+      "mode": "production",
+      "service": "ParcelPostSignature",
+      "carrier": "AustraliaPost",
+      "rate": "7.50",
+      "currency": "AUD",
+      "retail_rate": null,
+      "retail_currency": null,
+      "list_rate": null,
+      "list_currency": null,
+      "billing_type": "carrier",
+      "delivery_days": 4,
+      "delivery_date": null,
+      "delivery_date_guaranteed": null,
+      "est_delivery_days": 4,
+      "shipment_id": "shp_00814fe0264b485b9d9cf7064d43a904",
+      "carrier_account_id": "ca_3775938b95ba414aa4917482f44c7022"
+    },
+    {
+      "id": "rate_2c392ee0603345f0a87f429a9172e649",
+      "object": "Rate",
+      "created_at": "2023-12-28T06:18:58Z",
+      "updated_at": "2023-12-28T06:18:58Z",
+      "mode": "production",
+      "service": "ExpressPostSignature",
+      "carrier": "AustraliaPost",
+      "rate": "10.13",
+      "currency": "AUD",
+      "retail_rate": null,
+      "retail_currency": null,
+      "list_rate": null,
+      "list_currency": null,
+      "billing_type": "carrier",
+      "delivery_days": 1,
+      "delivery_date": null,
+      "delivery_date_guaranteed": null,
+      "est_delivery_days": 1,
+      "shipment_id": "shp_00814fe0264b485b9d9cf7064d43a904",
+      "carrier_account_id": "ca_3775938b95ba414aa4917482f44c7022"
+    }
+  ],
+  "refund_status": null,
+  "scan_form": null,
+  "selected_rate": {
+    "id": "rate_fdbea47d5d7f497898bf1e93414d1818",
+    "object": "Rate",
+    "created_at": "2023-12-28T06:19:02Z",
+    "updated_at": "2023-12-28T06:19:02Z",
+    "mode": "production",
+    "service": "ParcelPostSignature",
+    "carrier": "AustraliaPost",
+    "rate": "7.50",
+    "currency": "AUD",
+    "retail_rate": null,
+    "retail_currency": null,
+    "list_rate": null,
+    "list_currency": null,
+    "billing_type": "carrier",
+    "delivery_days": 4,
+    "delivery_date": null,
+    "delivery_date_guaranteed": null,
+    "est_delivery_days": 4,
+    "shipment_id": "shp_00814fe0264b485b9d9cf7064d43a904",
+    "carrier_account_id": "ca_3775938b95ba414aa4917482f44c7022"
+  },
+  "tracker": {
+    "id": "trk_374fcc2915d64f8e87f95426da193c0d",
+    "object": "Tracker",
+    "mode": "production",
+    "tracking_code": "34UNM501285701000931508",
+    "status": "unknown",
+    "status_detail": "unknown",
+    "created_at": "2023-12-28T06:19:02Z",
+    "updated_at": "2023-12-28T06:19:02Z",
+    "signed_by": null,
+    "weight": null,
+    "est_delivery_date": null,
+    "shipment_id": "shp_00814fe0264b485b9d9cf7064d43a904",
+    "carrier": "AustraliaPost",
+    "tracking_details": [],
+    "fees": [],
+    "carrier_detail": null,
+    "public_url": "https://track.easypost.com/djE6dHJrXzM3NGZjYzI5MTVkNjRmOGU4N2Y5NTQyNmRhMTkzYzBk"
+  },
+  "to_address": {
+    "id": "adr_fc052c99a54811ee9207ac1f6bc539ae",
+    "object": "Address",
+    "created_at": "2023-12-28T06:18:57+00:00",
+    "updated_at": "2023-12-28T06:18:57+00:00",
+    "name": "Test recipient",
+    "company": null,
+    "street1": "1 Dempsey Rd",
+    "street2": null,
+    "city": "Piara Waters",
+    "state": "WA",
+    "zip": "6112",
+    "country": "AU",
+    "phone": null,
+    "email": "test@gmail.com",
+    "mode": "production",
+    "carrier_facility": null,
+    "residential": true,
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "verifications": {}
+  },
+  "usps_zone": 2,
+  "return_address": {
+    "id": "adr_fc07a3b5a54811ee9209ac1f6bc539ae",
+    "object": "Address",
+    "created_at": "2023-12-28T06:18:57+00:00",
+    "updated_at": "2023-12-28T06:18:57+00:00",
+    "name": "Shipr",
+    "company": null,
+    "street1": "7-13 Bell St",
+    "street2": null,
+    "city": "Canning Vale",
+    "state": "WA",
+    "zip": "6155",
+    "country": "AU",
+    "phone": "61401595496",
+    "email": "test@mail.com.au",
+    "mode": "production",
+    "carrier_facility": null,
+    "residential": false,
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "verifications": {}
+  },
+  "buyer_address": {
+    "id": "adr_fc052c99a54811ee9207ac1f6bc539ae",
+    "object": "Address",
+    "created_at": "2023-12-28T06:18:57+00:00",
+    "updated_at": "2023-12-28T06:18:57+00:00",
+    "name": "Test recipient",
+    "company": null,
+    "street1": "1 Dempsey Rd",
+    "street2": null,
+    "city": "Piara Waters",
+    "state": "WA",
+    "zip": "6112",
+    "country": "AU",
+    "phone": null,
+    "email": "test@gmail.com",
+    "mode": "production",
+    "carrier_facility": null,
+    "residential": true,
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "verifications": {}
+  },
+  "forms": [],
+  "fees": [
+    {
+      "object": "Fee",
+      "type": "LabelFee",
+      "amount": "0.00000",
+      "charged": true,
+      "refunded": false
+    }
+  ],
+  "id": "shp_00814fe0264b485b9d9cf7064d43a904",
+  "object": "Shipment"
 }
 """
