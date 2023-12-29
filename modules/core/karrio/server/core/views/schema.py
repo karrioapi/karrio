@@ -55,7 +55,7 @@ def render_schema_description(APP_NAME):
     return f"""
 ## API Reference
 
-{APP_NAME} is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.
+{APP_NAME} is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.
 
 The {APP_NAME} API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded
 request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
@@ -69,7 +69,7 @@ These docs are customized to your version of the API.
 When backwards-incompatible changes are made to the API, a new, dated version is released.
 The current version is `{VERSION}`.
 
-Read our API changelog and to learn more about backwards compatibility.
+Read our API changelog to learn more about backwards compatibility.
 
 As a precaution, use API versioning to check a new API version before committing to an upgrade.
 
@@ -106,7 +106,7 @@ The limit parameter take a limit on the number of objects to be returned from 1 
 
 ## Metadata
 
-Updateable {APP_NAME} objects—including Shipment and Order—have a metadata parameter.
+Updateable {APP_NAME} objects—including Shipment and Order have a metadata parameter.
 You can use this parameter to attach key-value data to these {APP_NAME} objects.
 
 Metadata is useful for storing additional, structured information on an object.
@@ -201,14 +201,14 @@ def render_tags(request, APP_NAME):
             },
             {
                 "name": "Carriers",
-                "description": f"""This is an object representing your a {APP_NAME} carrier account connectsions.
+                "description": f"""This is an object representing your {APP_NAME} carrier account connectsions.
                 You can retrieve all configured connections available to your {APP_NAME} account.
                 The `carrier_id` is a nickname you assign to your connection.
                 """,
             },
             {
                 "name": "Addresses",
-                "description": f"""This is an object representing your a {APP_NAME} shipping address.
+                "description": f"""This is an object representing your {APP_NAME} shipping address.
                 You can retrieve all addresses related to your {APP_NAME} account.
                 Address objects are linked to your shipment history, and can be used for recurring shipping
                 to / from the same locations.
@@ -216,20 +216,20 @@ def render_tags(request, APP_NAME):
             },
             {
                 "name": "Parcels",
-                "description": f"""This is an object representing your a {APP_NAME} shipping parcel.
+                "description": f"""This is an object representing your {APP_NAME} shipping parcel.
                 Parcel objects are linked to your shipment history, and can be used for recurring shipping
                 using the same packaging.
                 """,
             },
             {
                 "name": "Customs",
-                "description": f"""This is an object representing your a {APP_NAME} shipping customs declaration.
+                "description": f"""This is an object representing your {APP_NAME} shipping customs declaration.
                 You can retrieve all customs declarations used historically with your {APP_NAME} account shipments.
                 """,
             },
             {
                 "name": "Shipments",
-                "description": f"""This is an object representing your a {APP_NAME} shipment.
+                "description": f"""This is an object representing your {APP_NAME} shipment.
                 A Shipment guides you through process of preparing and purchasing a label for an order.
                 A Shipment transitions through multiple statuses throughout its lifetime as the package
                 shipped makes its journey to it's destination.
@@ -237,21 +237,21 @@ def render_tags(request, APP_NAME):
             },
             {
                 "name": "Documents",
-                "description": f"""This is an object representing your a {APP_NAME} document upload record.
+                "description": f"""This is an object representing your {APP_NAME} document upload record.
                 A Document upload record keep traces of shipping trade documents uploaded to carriers
-                to fast track customs processing.
+                to fast track customs and border processing.
                 """,
             },
             {
                 "name": "Trackers",
-                "description": f"""This is an object representing your a {APP_NAME} shipment tracker.
+                "description": f"""This is an object representing your {APP_NAME} shipment tracker.
                 A shipment tracker is an object attached to a shipment by it's tracking number.
                 The tracker provide the latest tracking status and events associated with a shipment
                 """,
             },
             {
                 "name": "Pickups",
-                "description": f"""This is an object representing your a {APP_NAME} pickup booking.
+                "description": f"""This is an object representing your {APP_NAME} pickup booking.
                 You can retrieve all pickup booked historically for your {APP_NAME} account shipments.
                 """,
             },
@@ -262,24 +262,25 @@ def render_tags(request, APP_NAME):
                 validate your request and simply forward it to the shipping carrier server.<br/>
                 **Note:**<br/>
                     When using the proxy API, no objects are created in the {APP_NAME} system.
+                    excpet API logs and tracing records for debugging purposes.
                 """,
             },
             {
                 "name": "Orders",
-                "description": f"""This is an object representing your a {APP_NAME} order.
+                "description": f"""This is an object representing your {APP_NAME} order.
                 You can create {APP_NAME} orders to organize your shipments and ship line items separately.
                 """,
             },
             {
                 "name": "Webhooks",
-                "description": f"""This is an object representing your a {APP_NAME} webhook.
-                You can configure webhook endpoints via the API to be notified about events that happen in your
+                "description": f"""This is an object representing your {APP_NAME} webhook.
+                You can configure webhook endpoints via the API to be notified about events happen in your
                 {APP_NAME} account.
                 """,
             },
             {
                 "name": "Batches",
-                "description": f"""This is an object representing your a {APP_NAME} batch operation.
+                "description": f"""This is an object representing your {APP_NAME} batch operation.
                 You can retrieve all batch operations historically for your {APP_NAME} account.
                 """,
             },
