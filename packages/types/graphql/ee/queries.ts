@@ -130,7 +130,6 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
     slug
     description
     trigger {
-      object_type
       id
       slug
       trigger_type
@@ -143,7 +142,6 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
       slug
     }
     actions {
-      object_type
       id
       slug
       name
@@ -158,7 +156,6 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
       parameters_type
       parameters_template
       connection {
-        object_type
         id
         name
         slug
@@ -172,18 +169,12 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
         credentials
         metadata
         template_slug
-        created_at
-        updated_at
       }
       metadata
       template_slug
-      created_at
-      updated_at
     }
     metadata
     template_slug
-    created_at
-    updated_at
   }
 }
 `;
@@ -281,8 +272,6 @@ export const GET_WORKFLOW_CONNECTION = gql`query GetWorkflowConnection($id: Stri
     credentials
     metadata
     template_slug
-    created_at
-    updated_at
   }
 }
 `;
@@ -320,7 +309,6 @@ export const GET_WORKFLOW_CONNECTIONS = gql`query GetWorkflowConnections($filter
 
 export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
   workflow_action(id: $id) {
-    object_type
     id
     slug
     name
@@ -335,7 +323,6 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
     parameters_type
     parameters_template
     connection {
-      object_type
       id
       name
       slug
@@ -349,13 +336,9 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
       credentials
       metadata
       template_slug
-      created_at
-      updated_at
     }
     metadata
     template_slug
-    created_at
-    updated_at
   }
 }
 `;
@@ -506,19 +489,15 @@ export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: Wo
         slug
         description
         trigger {
-          object_type
           slug
           trigger_type
           schedule
-          created_at
-          updated_at
         }
         action_nodes {
           order
           slug
         }
         actions {
-          object_type
           slug
           name
           action_type
@@ -532,7 +511,6 @@ export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: Wo
           parameters_type
           parameters_template
           connection {
-            object_type
             name
             slug
             auth_type
@@ -543,12 +521,8 @@ export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: Wo
             parameters_template
             auth_template
             template_slug
-            created_at
-            updated_at
           }
           template_slug
-          created_at
-          updated_at
         }
       }
     }
@@ -566,7 +540,6 @@ export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplate
     }
     edges {
       node {
-        object_type
         slug
         name
         action_type
@@ -580,7 +553,6 @@ export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplate
         parameters_type
         parameters_template
         connection {
-          object_type
           name
           slug
           auth_type
@@ -591,12 +563,8 @@ export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplate
           parameters_template
           auth_template
           template_slug
-          created_at
-          updated_at
         }
         template_slug
-        created_at
-        updated_at
       }
     }
   }
@@ -623,8 +591,6 @@ export const GET_WORKFLOW_CONNECTION_TEMPLATES = gql`query GetWorkflowConnection
         parameters_template
         auth_template
         template_slug
-        created_at
-        updated_at
       }
     }
   }

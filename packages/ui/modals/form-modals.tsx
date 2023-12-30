@@ -211,6 +211,9 @@ export const ConfirmModalWrapper: React.FC<ModalFormProps<ConfirmModalWrapperPro
   };
 
   return React.cloneElement(trigger, {
-    onClick: () => modal.open(<FormComponent {...args} />)
+    onClick: (e: React.MouseEvent) => {
+      e.stopPropagation();
+      modal.open(<FormComponent {...args} />)
+    }
   });
 };

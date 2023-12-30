@@ -1,15 +1,19 @@
 import { ActionNodeInput, AutomationActionType, AutomationHTTPContentType, AutomationHTTPMethod, AutomationParametersType, AutomationTriggerType, UpdateWorkflowMutationInput } from '@karrio/types/graphql/ee';
 import { WorkflowTriggerType, WorkflowType, useWorkflow, useWorkflowMutation } from '@karrio/hooks/workflows';
+import { ActionModalEditor } from '@karrio/ui/modals/workflow-action-edit-modal';
 import { isEqual, isNone, isNoneOrEmpty, useLocation } from '@karrio/lib';
 import { TextAreaField } from '@karrio/ui/components/textarea-field';
 import { WorkflowActionType } from '@karrio/hooks/workflow-actions';
+import { ConfirmModalWrapper } from '@karrio/ui/modals/form-modals';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
 import React, { useEffect, useReducer, useState } from 'react';
 import { InputField } from '@karrio/ui/components/input-field';
 import { useNotifier } from '@karrio/ui/components/notifier';
 import { useLoader } from '@karrio/ui/components/loader';
 import { AppLink } from '@karrio/ui/components/app-link';
+import { ModalProvider } from '@karrio/ui/modals/modal';
 import django from 'highlight.js/lib/languages/django';
+import { bundleContexts } from '@karrio/hooks/utils';
 import { SelectField } from '@karrio/ui/components';
 import { NotificationType } from '@karrio/types';
 import { Disclosure } from '@headlessui/react';
@@ -17,6 +21,7 @@ import hljs from "highlight.js";
 import Head from 'next/head';
 
 export { getServerSideProps } from "@/context/main";
+const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage('django', django);
 
 type StateType = WorkflowType | UpdateWorkflowMutationInput;
@@ -33,11 +38,11 @@ const DEFAULT_STATE = {
     content_type: AutomationHTTPContentType.json,
     parameters_type: AutomationParametersType.data,
     parameters_template: `{
-        "order_id": "{{ order_id }}",
-    }`,
+    "order_id": "{{ order_id }}",
+}`,
     header_template: `{
-        "Content-Type": "application/json",
-    }`,
+    "Content-Type": "application/json",
+}`,
   }],
 } as Partial<StateType>;
 
@@ -88,9 +93,18 @@ export default function Page(pageProps: any) {
 
       dispatch({ name, value });
     };
-    const nestedChange = (name: string, index: number = -1) => (
-      (event: React.ChangeEvent<any>) => handleChange(event)
-    );
+    const handleTriggerChange = (event: React.ChangeEvent<any>) => {
+      const target = event.target;
+      const name: string = target.name;
+      let value = target.type === 'checkbox' ? target.checked : target.value;
+
+      if (target.multiple === true) {
+        value = Array.from(target.selectedOptions).map((o: any) => o.value) as any
+      }
+
+      const trigger = { ...workflow.trigger, [name]: value === 'none' ? null : value };
+      dispatch({ name: "trigger", value: trigger });
+    };
     const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
       evt.preventDefault();
       loader.setLoading(true);
@@ -203,10 +217,10 @@ export default function Page(pageProps: any) {
                     className="is-fullwidth"
                     fieldClass="column mb-0 px-0 py-2"
                     value={workflow.trigger?.trigger_type || ''}
-                    onChange={nestedChange('trigger')}
+                    onChange={handleTriggerChange}
                   >
                     {Array.from(new Set(Object.values(AutomationTriggerType))).map(
-                      unit => <option key={unit} value={unit}>{unit}</option>
+                      unit => <option key={unit} value={unit} disabled={unit != AutomationTriggerType.manual}>{unit}</option>
                     )}
                   </SelectField>
 
@@ -220,7 +234,7 @@ export default function Page(pageProps: any) {
                       fieldClass="column mb-0 px-1 py-2"
                       defaultValue={workflow.trigger?.schedule || ''}
                       required={workflow.trigger?.trigger_type == AutomationTriggerType.scheduled}
-                      onChange={nestedChange('trigger')}
+                      onChange={handleTriggerChange}
                     />
 
                   </div>
@@ -234,7 +248,7 @@ export default function Page(pageProps: any) {
                       label="Webhook secret"
                       fieldClass="column mb-0 px-1 py-2"
                       defaultValue={workflow.trigger?.secret || ''}
-                      onChange={nestedChange('trigger')}
+                      onChange={handleTriggerChange}
                     />
 
                     <InputField name="secret_key"
@@ -242,7 +256,7 @@ export default function Page(pageProps: any) {
                       fieldClass="column mb-0 px-1 py-0"
                       defaultValue={workflow.trigger?.secret_key || ''}
                       required={!isNoneOrEmpty(workflow.trigger?.secret_key)}
-                      onChange={nestedChange('trigger')}
+                      onChange={handleTriggerChange}
                     />
 
                   </div>
@@ -265,12 +279,23 @@ export default function Page(pageProps: any) {
                       </p>
                     </div>
                     <div>
-                      <button type="button" className="button is-white" onClick={e => { e.stopPropagation(); }}>
-                        <span className="icon"><i className="fas fa-pen"></i></span>
-                      </button>
-                      <button type="button" className="button is-white" onClick={e => { e.stopPropagation(); }}>
-                        <span className="icon"><i className="fas fa-trash"></i></span>
-                      </button>
+                      <ActionModalEditor
+                        action={action}
+                        onSubmit={_ => Promise.resolve().then(() => { console.log('update', _) })}
+                        trigger={
+                          <button type="button" className="button is-white">
+                            <span className="icon"><i className="fas fa-pen"></i></span>
+                          </button>
+                        }
+                      />
+                      <ConfirmModalWrapper
+                        onSubmit={() => Promise.resolve().then(() => { console.log('delete') })}
+                        trigger={
+                          <button type="button" className="button is-white">
+                            <span className="icon"><i className="fas fa-trash"></i></span>
+                          </button>
+                        }
+                      />
                     </div>
                   </Disclosure.Button>
                   <Disclosure.Panel>
@@ -408,9 +433,16 @@ export default function Page(pageProps: any) {
               </React.Fragment>
             ))}
 
-            <div className="is-flex is-justify-content-space-around p-2">
-              <button className="button is-small is-default">Add action</button>
-            </div>
+
+            <ActionModalEditor
+              action={(DEFAULT_STATE.actions || [])[0] as any}
+              onSubmit={_ => Promise.resolve().then(() => { console.log('create new action', _) })}
+              trigger={
+                <div className="is-flex is-justify-content-space-around p-2">
+                  <button type="button" className="button is-small is-default">Add action</button>
+                </div>
+              }
+            />
 
           </div>
 
@@ -424,7 +456,10 @@ export default function Page(pageProps: any) {
     <>
       <Head><title>{`Workflow - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
 
-      <Component />
+      <ContextProviders>
+        <Component />
+      </ContextProviders>
+
     </>
   ), pageProps);
 }
