@@ -298,12 +298,12 @@ export default function Page(pageProps: any) {
                         </div>
 
                         {/* action parameters template */}
-                        <div className="columns my-0 px-3">
-                          <div className="column is-4 py-1">
+                        <div className="columns is-multiline my-0 px-3">
+                          <div className="column py-1">
                             <span className="has-text-weight-bold has-text-grey">Template</span>
                           </div>
-                          <div className="column is-8 py-1">
-                            <pre className="code p-1" style={{ maxHeight: '20vh', height: '20vh', overflowY: 'auto' }}>
+                          <div className="column is-12 py-1">
+                            <pre className="code p-1" style={{ maxHeight: '15vh', height: '15vh', overflowY: 'auto' }}>
                               <code
                                 dangerouslySetInnerHTML={{
                                   __html: hljs.highlight(action.parameters_template as string, { language: 'django' }).value,
@@ -359,11 +359,11 @@ export default function Page(pageProps: any) {
                         </div>
 
                         {/* action header template */}
-                        <div className="columns my-0 px-3">
-                          <div className="column is-4 py-1">
+                        <div className="columns is-multiline my-0 px-3">
+                          <div className="column py-1">
                             <span className="has-text-weight-bold has-text-grey">Header Template</span>
                           </div>
-                          <div className="column is-8 py-1">
+                          <div className="column is-12 py-1">
                             <pre className="code p-1" style={{ maxHeight: '5vh', height: '5vh', overflowY: 'auto' }}>
                               <code
                                 dangerouslySetInnerHTML={{
@@ -383,12 +383,12 @@ export default function Page(pageProps: any) {
                         </div>
 
                         {/* action parameters template */}
-                        <div className="columns my-0 px-3">
-                          <div className="column is-4 py-1">
+                        <div className="columns is-multiline my-0 px-3">
+                          <div className="column py-1">
                             <span className="has-text-weight-bold has-text-grey">Parameters Template</span>
                           </div>
-                          <div className="column is-8 py-1">
-                            <pre className="code p-1" style={{ maxHeight: '20vh', height: '20vh', overflowY: 'auto' }}>
+                          <div className="column is-12 py-1">
+                            <pre className="code p-1" style={{ maxHeight: '15vh', height: '15vh', overflowY: 'auto' }}>
                               <code
                                 dangerouslySetInnerHTML={{
                                   __html: hljs.highlight(action.parameters_template as string, { language: 'django' }).value,
