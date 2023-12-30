@@ -60,12 +60,12 @@ export default function Page(pageProps: any) {
 
               <label key={workflow.id} className="columns is-mobile m-0 panel-block">
 
-                <div className="column is-11 is-size-7 has-text-grey p-0">
+                <AppLink href={`/workflows/${workflow.id}`} className="column is-11 is-size-7 has-text-grey p-0">
                   <div className="has-text-weight-bold is-size-6 text-ellipsis">{workflow.name}</div>
                   <div className="has-text-weight-semibold mt-2">
                     <span className="tag is-light">{`${workflow.action_nodes.length} actions`}</span>
                   </div>
-                </div>
+                </AppLink>
 
                 <div className="column p-0 is-vcentered">
                   <div className="buttons has-addons is-right">

@@ -11,7 +11,7 @@ const Wrapper: React.FC<MenuProps> = ({ trigger, children }) => {
     <>
       <Menu>
         {({ open }) => (
-          <div className={`dropdown is-right ${open ? "is-active" : ""}`}>
+          <div className={`dropdown is-right ${open ? "is-active" : ""}`} onClick={e => e.stopPropagation()}>
 
             <Menu.Button as='div' className={`dropdown-trigger`}>
               {trigger}
@@ -23,13 +23,6 @@ const Wrapper: React.FC<MenuProps> = ({ trigger, children }) => {
             >
               <Menu.Items className={'dropdown-content is-menu'}>
                 {children}
-                {/* {React.Children.map(children, (item: any, index) => {
-                  return (
-                    <Menu.Item key={index} as='a' className={'dropdown-item'}>
-                      {item}
-                    </Menu.Item>
-                  );
-                })} */}
               </Menu.Items>
             </div>
 
