@@ -179,7 +179,6 @@ export interface get_organizations {
 
 export interface GetWorkflow_workflow_trigger {
   id: string;
-  slug: string;
   trigger_type: AutomationTriggerType;
   schedule: string | null;
   secret: string | null;
@@ -194,7 +193,6 @@ export interface GetWorkflow_workflow_action_nodes {
 export interface GetWorkflow_workflow_actions_connection {
   id: string;
   name: string;
-  slug: string;
   auth_type: AutomationAuthType;
   port: number | null;
   host: string | null;
@@ -229,7 +227,6 @@ export interface GetWorkflow_workflow_actions {
 export interface GetWorkflow_workflow {
   id: string;
   name: string;
-  slug: string;
   description: string | null;
   trigger: GetWorkflow_workflow_trigger | null;
   action_nodes: GetWorkflow_workflow_action_nodes[];
@@ -443,7 +440,6 @@ export interface GetWorkflowConnectionsVariables {
 export interface GetWorkflowAction_workflow_action_connection {
   id: string;
   name: string;
-  slug: string;
   auth_type: AutomationAuthType;
   port: number | null;
   host: string | null;
@@ -1714,6 +1710,24 @@ export interface PartialWorkflowActionMutationInput {
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   connection_id?: string | null;
+  template_slug?: string | null;
+  id?: string | null;
+  slug?: string | null;
+  connection?: PartialWorkflowConnectionMutationInput | null;
+}
+
+// null
+export interface PartialWorkflowConnectionMutationInput {
+  name?: string | null;
+  auth_type?: AutomationAuthType | null;
+  port?: number | null;
+  host?: string | null;
+  endpoint?: string | null;
+  description?: string | null;
+  credentials?: any | null;
+  auth_template?: string | null;
+  metadata?: any | null;
+  parameters_template?: string | null;
   template_slug?: string | null;
   id?: string | null;
 }

@@ -127,11 +127,9 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
   workflow(id: $id) {
     id
     name
-    slug
     description
     trigger {
       id
-      slug
       trigger_type
       schedule
       secret
@@ -158,7 +156,6 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
       connection {
         id
         name
-        slug
         auth_type
         port
         host
@@ -325,7 +322,6 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
     connection {
       id
       name
-      slug
       auth_type
       port
       host

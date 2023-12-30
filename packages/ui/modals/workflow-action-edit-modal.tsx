@@ -1,4 +1,4 @@
-import { AutomationActionType, AutomationHTTPContentType, AutomationHTTPMethod, AutomationParametersType, CreateWorkflowActionMutationInput, UpdateWorkflowActionMutationInput } from '@karrio/types/graphql/ee';
+import { AutomationActionType, AutomationHTTPContentType, AutomationHTTPMethod, AutomationParametersType, PartialWorkflowActionMutationInput } from '@karrio/types/graphql/ee';
 import { SelectField, TextAreaField } from '../components';
 import { InputField } from '../components/input-field';
 import { useNotifier } from '../components/notifier';
@@ -10,14 +10,13 @@ import CodeMirror from '@uiw/react-codemirror';
 import { deepEqual, formatRef } from '@karrio/lib';
 import React from 'react';
 
-type ActionDataType = CreateWorkflowActionMutationInput & UpdateWorkflowActionMutationInput;
 type ActionModalEditorProps = {
   header?: string;
-  action?: ActionDataType;
-  onSubmit: (action: ActionDataType) => Promise<any>;
+  action: PartialWorkflowActionMutationInput;
+  onSubmit: (action: PartialWorkflowActionMutationInput) => Promise<any>;
 };
 
-function reducer(state: any, { name, value }: { name: string, value: string | boolean | object | string[] }) {
+function reducer(state: Partial<PartialWorkflowActionMutationInput>, { name, value }: { name: string, value: string | boolean | Partial<PartialWorkflowActionMutationInput> | string[] }): PartialWorkflowActionMutationInput {
   switch (name) {
     case "full":
       return { ...(value as object) };
@@ -32,11 +31,11 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
   const modal = useModal();
 
   const Component: React.FC<ActionModalEditorProps> = props => {
-    const { action: defaultValue = { is_active: true }, header, onSubmit } = props;
+    const { action: defaultValue = {}, header, onSubmit } = props;
     const loader = useLoader();
     const { close } = useModal();
     const notifier = useNotifier();
-    const [action, dispatch] = React.useReducer(reducer, defaultValue);
+    const [action, dispatch] = React.useReducer(reducer, defaultValue, () => defaultValue);
     const [key, setKey] = React.useState<string>(`action-${Date.now()}`);
 
     const handleChange = (event: React.ChangeEvent<any>) => {
@@ -52,9 +51,9 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
     };
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
-      const { created_at, updated_at, object_type, ...payload } = action;
+      const { ...payload } = action;
       try {
-        loader.setLoading(true);
+        loader.setLoading(!!payload.id);
         onSubmit && onSubmit(payload);
         setTimeout(() => close(), 1000);
       } catch (message: any) {
@@ -77,7 +76,7 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
             label="Trigger type"
             className="is-small is-fullwidth"
             fieldClass="column is-3 mb-0 px-1 py-2"
-            value={action?.action_type}
+            value={action?.action_type || ''}
             required={true}
             onChange={handleChange}
           >
@@ -90,7 +89,7 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
           <InputField name="name"
             label="Name"
             fieldClass="column mb-0 px-1 py-2"
-            defaultValue={action.name}
+            defaultValue={action.name || ''}
             required={true}
             onChange={handleChange}
             className="is-small"
@@ -107,14 +106,14 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
           />
 
           {/* http request options */}
-          <div className="column mb-0 p-0" style={{ display: `${action.trigger_type == AutomationActionType.http_request ? 'block' : 'none'}` }}>
+          {(action.action_type == AutomationActionType.http_request) && <div className="column mb-0 p-0">
 
             <InputField name="host"
               label="Host"
               className="is-fullwidth is-small"
               fieldClass="column mb-0 px-1 py-2"
-              defaultValue={action.host}
-              required={action.trigger_type == AutomationActionType.http_request}
+              defaultValue={action.host || ''}
+              required={action.action_type == AutomationActionType.http_request}
               onChange={handleChange}
             />
 
@@ -122,7 +121,7 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
               label="Endpoint"
               className="is-fullwidth is-small"
               fieldClass="column mb-0 px-1 py-2"
-              defaultValue={action.host}
+              defaultValue={action.endpoint || ''}
               onChange={handleChange}
             />
 
@@ -131,7 +130,7 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
               type='number'
               className="is-fullwidth is-small"
               fieldClass="column mb-0 px-1 py-2"
-              defaultValue={action.port}
+              defaultValue={action.port || ''}
               onChange={handleChange}
             />
 
@@ -140,7 +139,7 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
               label="HTTP method"
               className="is-small is-fullwidth"
               fieldClass="column is-3 mb-0 px-0 py-2"
-              value={action?.method}
+              value={action?.method || ''}
               required={true}
               onChange={handleChange}
             >
@@ -149,61 +148,93 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
               )}
             </SelectField>
 
-          </div>
+            {/* content_type */}
+            <SelectField name="content_type"
+              label="Content type"
+              className="is-small is-fullwidth"
+              fieldClass="column is-3 mb-0 px-0 py-2"
+              value={action?.content_type || ''}
+              required={true}
+              onChange={handleChange}
+            >
+              {Array.from(new Set(Object.values(AutomationHTTPContentType))).map(
+                unit => <option key={unit} value={unit}>{formatRef(unit)}</option>
+              )}
+            </SelectField>
 
-          {/* content_type */}
-          <SelectField name="content_type"
-            label="Content type"
-            className="is-small is-fullwidth"
-            fieldClass="column is-3 mb-0 px-0 py-2"
-            value={action?.content_type}
-            required={true}
-            onChange={handleChange}
-          >
-            {Array.from(new Set(Object.values(AutomationHTTPContentType))).map(
-              unit => <option key={unit} value={unit}>{formatRef(unit)}</option>
-            )}
-          </SelectField>
-
-          {/* header_template */}
-          <div className="column mb-0 p-0 control">
-            <label className="label is-size-7">Header template</label>
-            <div className="card is-radiusless">
-              <CodeMirror
-                height="20vh"
-                extensions={[htmlLanguage]}
-                value={action.header_template as string}
-                onChange={value => dispatch({ name: 'header_template', value })}
-              />
+            {/* header_template */}
+            <div className="column mb-0 p-0 control">
+              <label className="label is-size-7">Header template</label>
+              <div className="card is-radiusless">
+                <CodeMirror
+                  height="20vh"
+                  extensions={[htmlLanguage]}
+                  value={action.header_template || "" as string}
+                  onChange={value => dispatch({ name: 'header_template', value })}
+                />
+              </div>
             </div>
-          </div>
 
-          {/* parameters_type */}
-          <SelectField name="parameters_type"
-            label="Parameters type"
-            className="is-small is-fullwidth"
-            fieldClass="column is-3 mb-0 px-0 py-2"
-            value={action?.parameters_type}
-            required={true}
-            onChange={handleChange}
-          >
-            {Array.from(new Set(Object.values(AutomationParametersType))).map(
-              unit => <option key={unit} value={unit}>{formatRef(unit)}</option>
-            )}
-          </SelectField>
+            {/* parameters_type */}
+            <SelectField name="parameters_type"
+              label="Parameters type"
+              className="is-small is-fullwidth"
+              fieldClass="column is-3 mb-0 px-0 py-2"
+              value={action?.parameters_type || ''}
+              required={true}
+              onChange={handleChange}
+            >
+              {Array.from(new Set(Object.values(AutomationParametersType))).map(
+                unit => <option key={unit} value={unit}>{formatRef(unit)}</option>
+              )}
+            </SelectField>
 
-          {/* parameters_template */}
-          <div className="column mb-0 p-0 control">
-            <label className="label is-size-7">Parameters template</label>
-            <div className="card is-radiusless">
-              <CodeMirror
-                height="40vh"
-                extensions={[htmlLanguage]}
-                value={action.parameters_template as string}
-                onChange={value => dispatch({ name: 'parameters_template', value })}
-              />
+            {/* parameters_template */}
+            <div className="column mb-0 p-0 control">
+              <label className="label is-size-7">Parameters template</label>
+              <div className="card is-radiusless">
+                <CodeMirror
+                  height="40vh"
+                  extensions={[htmlLanguage]}
+                  value={action.parameters_template || "" as string}
+                  onChange={value => dispatch({ name: 'parameters_template', value })}
+                />
+              </div>
             </div>
-          </div>
+
+          </div>}
+
+          {/* function call options */}
+          {(action.action_type == AutomationActionType.data_mapping) && <div className="column mb-0 p-0">
+
+            {/* content_type */}
+            <SelectField name="content_type"
+              label="Content type"
+              className="is-small is-fullwidth"
+              fieldClass="column is-3 mb-0 px-0 py-2"
+              value={action?.content_type || ''}
+              required={true}
+              onChange={handleChange}
+            >
+              {Array.from(new Set(Object.values(AutomationHTTPContentType))).map(
+                unit => <option key={unit} value={unit}>{formatRef(unit)}</option>
+              )}
+            </SelectField>
+
+            {/* parameters_template */}
+            <div className="column mb-0 p-0 control">
+              <label className="label is-size-7">Parameters template</label>
+              <div className="card is-radiusless">
+                <CodeMirror
+                  height="40vh"
+                  extensions={[htmlLanguage]}
+                  value={action.parameters_template || "" as string}
+                  onChange={value => dispatch({ name: 'parameters_template', value })}
+                />
+              </div>
+            </div>
+
+          </div>}
 
           <div className="p-3 my-5"></div>
 

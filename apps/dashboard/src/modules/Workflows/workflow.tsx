@@ -1,22 +1,20 @@
-import { ActionNodeInput, AutomationActionType, AutomationHTTPContentType, AutomationHTTPMethod, AutomationParametersType, AutomationTriggerType, UpdateWorkflowMutationInput } from '@karrio/types/graphql/ee';
-import { WorkflowTriggerType, WorkflowType, useWorkflow, useWorkflowMutation } from '@karrio/hooks/workflows';
+import { ActionNodeInput, AutomationActionType, AutomationTriggerType } from '@karrio/types/graphql/ee';
 import { ActionModalEditor } from '@karrio/ui/modals/workflow-action-edit-modal';
 import { isEqual, isNone, isNoneOrEmpty, useLocation } from '@karrio/lib';
 import { TextAreaField } from '@karrio/ui/components/textarea-field';
 import { WorkflowActionType } from '@karrio/hooks/workflow-actions';
 import { ConfirmModalWrapper } from '@karrio/ui/modals/form-modals';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
-import React, { useEffect, useReducer, useState } from 'react';
 import { InputField } from '@karrio/ui/components/input-field';
-import { useNotifier } from '@karrio/ui/components/notifier';
+import { useWorkflowForm } from '@karrio/hooks/workflows';
 import { useLoader } from '@karrio/ui/components/loader';
 import { AppLink } from '@karrio/ui/components/app-link';
 import { ModalProvider } from '@karrio/ui/modals/modal';
 import django from 'highlight.js/lib/languages/django';
 import { bundleContexts } from '@karrio/hooks/utils';
 import { SelectField } from '@karrio/ui/components';
-import { NotificationType } from '@karrio/types';
 import { Disclosure } from '@headlessui/react';
+import React, { useState } from 'react';
 import hljs from "highlight.js";
 import Head from 'next/head';
 
@@ -24,50 +22,13 @@ export { getServerSideProps } from "@/context/main";
 const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage('django', django);
 
-type StateType = WorkflowType | UpdateWorkflowMutationInput;
-type StateValueType = string | boolean | string[] | Partial<WorkflowType> | Partial<WorkflowActionType> | Partial<WorkflowTriggerType>;
-const DEFAULT_STATE = {
-  name: '',
-  description: '',
-  trigger: { trigger_type: "manual" },
-  action_nodes: [{ order: 1, index: 0 }],
-  actions: [{
-    name: '',
-    action_type: AutomationActionType.http_request,
-    method: AutomationHTTPMethod.post,
-    content_type: AutomationHTTPContentType.json,
-    parameters_type: AutomationParametersType.data,
-    parameters_template: `{
-    "order_id": "{{ order_id }}",
-}`,
-    header_template: `{
-    "Content-Type": "application/json",
-}`,
-  }],
-} as Partial<StateType>;
-
-function reducer(state: Partial<StateType>, { name, value }: { name: string, value: StateValueType }): Partial<StateType> {
-  switch (name) {
-    case 'partial':
-      return { ...(value as StateType) };
-    default:
-      return { ...state, [name]: value }
-  }
-}
-
 export default function Page(pageProps: any) {
   const Component: React.FC = () => {
     const loader = useLoader();
     const router = useLocation();
     const { id } = router.query;
-    const notifier = useNotifier();
-    const mutation = useWorkflowMutation();
-    const [isNew, setIsNew] = useState<boolean>();
-    const [workflow, dispatch] = useReducer(reducer, DEFAULT_STATE, () => DEFAULT_STATE);
-    const { query: { data: { workflow: current } = {}, ...query }, workflowId, setWorkflowId } = useWorkflow({
-      setVariablesToURL: true,
-      id: id as string,
-    });
+    const [key, setKey] = useState<string>(`workflow-${Date.now()}`);
+    const { workflow, current, isNew, DEFAULT_STATE, query, ...mutation } = useWorkflowForm({ id: id as string });
 
     const zipActionWithNode = (actions: WorkflowActionType[], action_nodes: ActionNodeInput[]) => {
       const _tuple: [WorkflowActionType, ActionNodeInput][] = Array.from(Array(actions.length).keys()).map(index => {
@@ -82,52 +43,12 @@ export default function Page(pageProps: any) {
 
       return _tuple.sort((a, b) => a[1].order - b[1].order);
     };
-    const handleChange = (event: React.ChangeEvent<any>) => {
-      const target = event.target;
-      let value = target.type === 'checkbox' ? target.checked : target.value;
-      let name: string = target.name;
-
-      if (target.multiple === true) {
-        value = Array.from(target.selectedOptions).map((o: any) => o.value)
-      }
-
-      dispatch({ name, value });
+    const handleChange = async (changes?: Partial<typeof workflow>) => {
+      if (changes === undefined) { return; }
+      await mutation.updateWorkflow({ id, ...changes });
+      setKey(`${id}-${Date.now()}`);
     };
-    const handleTriggerChange = (event: React.ChangeEvent<any>) => {
-      const target = event.target;
-      const name: string = target.name;
-      let value = target.type === 'checkbox' ? target.checked : target.value;
 
-      if (target.multiple === true) {
-        value = Array.from(target.selectedOptions).map((o: any) => o.value) as any
-      }
-
-      const trigger = { ...workflow.trigger, [name]: value === 'none' ? null : value };
-      dispatch({ name: "trigger", value: trigger });
-    };
-    const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
-      evt.preventDefault();
-      loader.setLoading(true);
-      const { ...data } = workflow;
-
-      try {
-        if (isNew) {
-          const { create_workflow } = await mutation.createWorkflow.mutateAsync(data as any);
-          notifier.notify({ type: NotificationType.success, message: `Document workflow created successfully` });
-          loader.setLoading(false);
-
-          setWorkflowId(create_workflow.workflow?.id as string);
-        } else {
-          await mutation.updateWorkflow.mutateAsync(data as any);
-          query.refetch();
-          notifier.notify({ type: NotificationType.success, message: `Document workflow updated successfully` });
-          loader.setLoading(false);
-        }
-      } catch (message: any) {
-        notifier.notify({ type: NotificationType.error, message });
-        loader.setLoading(false);
-      }
-    };
     const NextIndicator = () => (
       <div className="is-flex is-justify-content-space-around p-2 my-3">
         <span className="icon is-size-6">
@@ -136,15 +57,8 @@ export default function Page(pageProps: any) {
       </div>
     );
 
-    useEffect(() => { setIsNew(workflowId === 'new'); }, [workflowId]);
-    useEffect(() => {
-      if (query.isFetched && workflowId !== 'new') {
-        dispatch({ name: 'partial', value: current as any });
-      }
-    }, [current, query.isFetched]);
-
     return (
-      <form onSubmit={handleSubmit} className="p-4">
+      <div className="p-4">
 
         <header className="columns has-background-white"
           style={{ position: 'sticky', zIndex: 1, top: 0, left: 0, right: 0, borderBottom: '1px solid #ddd' }}
@@ -159,16 +73,17 @@ export default function Page(pageProps: any) {
           </div>
           <div className="column is-flex is-justify-content-end">
             <button
-              type="submit"
+              type="button"
+              onClick={() => mutation.save()}
               className="button is-small is-success"
-              disabled={loader.loading || isEqual(workflow, workflow || DEFAULT_STATE)}
+              disabled={loader.loading || isEqual(workflow, current || DEFAULT_STATE)}
             >
               Save
             </button>
           </div>
         </header>
 
-        <div className="columns m-0">
+        {(query.isFetched && !!workflow.actions) && <div className="columns m-0">
 
           {/* Workflow fields section */}
           <div className="column px-0 pb-4 is-relative">
@@ -176,7 +91,7 @@ export default function Page(pageProps: any) {
             <InputField label="name"
               name="name"
               value={workflow.name as string}
-              onChange={handleChange}
+              onChange={e => handleChange({ name: e.target.value })}
               placeholder="ERP orders sync"
               className="is-small"
               required
@@ -185,7 +100,7 @@ export default function Page(pageProps: any) {
             <TextAreaField label="description"
               name="description"
               value={workflow.description as string}
-              onChange={handleChange}
+              onChange={e => handleChange({ description: e.target.value })}
               placeholder="Automate ERP orders syncing for fulfillment"
               className="is-small"
             />
@@ -217,7 +132,7 @@ export default function Page(pageProps: any) {
                     className="is-fullwidth"
                     fieldClass="column mb-0 px-0 py-2"
                     value={workflow.trigger?.trigger_type || ''}
-                    onChange={handleTriggerChange}
+                    onChange={e => handleChange({ trigger: { ...workflow.trigger, trigger_type: e.target.value } })}
                   >
                     {Array.from(new Set(Object.values(AutomationTriggerType))).map(
                       unit => <option key={unit} value={unit} disabled={unit != AutomationTriggerType.manual}>{unit}</option>
@@ -234,7 +149,7 @@ export default function Page(pageProps: any) {
                       fieldClass="column mb-0 px-1 py-2"
                       defaultValue={workflow.trigger?.schedule || ''}
                       required={workflow.trigger?.trigger_type == AutomationTriggerType.scheduled}
-                      onChange={handleTriggerChange}
+                      onChange={e => handleChange({ trigger: { ...workflow.trigger, schedule: e.target.value } })}
                     />
 
                   </div>
@@ -248,7 +163,7 @@ export default function Page(pageProps: any) {
                       label="Webhook secret"
                       fieldClass="column mb-0 px-1 py-2"
                       defaultValue={workflow.trigger?.secret || ''}
-                      onChange={handleTriggerChange}
+                      onChange={e => handleChange({ trigger: { ...workflow.trigger, secret: e.target.value } })}
                     />
 
                     <InputField name="secret_key"
@@ -256,7 +171,7 @@ export default function Page(pageProps: any) {
                       fieldClass="column mb-0 px-1 py-0"
                       defaultValue={workflow.trigger?.secret_key || ''}
                       required={!isNoneOrEmpty(workflow.trigger?.secret_key)}
-                      onChange={handleTriggerChange}
+                      onChange={e => handleChange({ trigger: { ...workflow.trigger, secret_key: e.target.value } })}
                     />
 
                   </div>
@@ -281,7 +196,7 @@ export default function Page(pageProps: any) {
                     <div>
                       <ActionModalEditor
                         action={action}
-                        onSubmit={_ => Promise.resolve().then(() => { console.log('update', _) })}
+                        onSubmit={mutation.updateAction(index, action.id)}
                         trigger={
                           <button type="button" className="button is-white">
                             <span className="icon"><i className="fas fa-pen"></i></span>
@@ -289,7 +204,7 @@ export default function Page(pageProps: any) {
                         }
                       />
                       <ConfirmModalWrapper
-                        onSubmit={() => Promise.resolve().then(() => { console.log('delete') })}
+                        onSubmit={mutation.deleteAction(index, action.id)}
                         trigger={
                           <button type="button" className="button is-white">
                             <span className="icon"><i className="fas fa-trash"></i></span>
@@ -311,6 +226,14 @@ export default function Page(pageProps: any) {
                         <div className="column is-8 py-1"><code>{action.action_type}</code></div>
                       </div>
 
+                      {/* action description */}
+                      {!!action.description && <div className="columns my-0 px-3">
+                        <div className="column is-4 py-1">
+                          <span className="has-text-weight-bold has-text-grey">description</span>
+                        </div>
+                        <div className="column is-8 py-1"><code>{action.description}</code></div>
+                      </div>}
+
                       {/* http request options */}
                       {action.action_type == AutomationActionType.data_mapping && <>
 
@@ -319,7 +242,7 @@ export default function Page(pageProps: any) {
                           <div className="column is-4 py-1">
                             <span className="has-text-weight-bold has-text-grey">format</span>
                           </div>
-                          <div className="column is-8 py-1"><code>{action.parameters_type}</code></div>
+                          <div className="column is-8 py-1"><code>{action.content_type}</code></div>
                         </div>
 
                         {/* action parameters template */}
@@ -328,10 +251,10 @@ export default function Page(pageProps: any) {
                             <span className="has-text-weight-bold has-text-grey">Template</span>
                           </div>
                           <div className="column is-12 py-1">
-                            <pre className="code p-1" style={{ maxHeight: '15vh', height: '15vh', overflowY: 'auto' }}>
+                            <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
                               <code
                                 dangerouslySetInnerHTML={{
-                                  __html: hljs.highlight(action.parameters_template as string, { language: 'django' }).value,
+                                  __html: hljs.highlight((action.parameters_template || '') as string, { language: 'django' }).value,
                                 }}
                               />
                             </pre>
@@ -389,10 +312,10 @@ export default function Page(pageProps: any) {
                             <span className="has-text-weight-bold has-text-grey">Header Template</span>
                           </div>
                           <div className="column is-12 py-1">
-                            <pre className="code p-1" style={{ maxHeight: '5vh', height: '5vh', overflowY: 'auto' }}>
+                            <pre className="code p-1" style={{ maxHeight: '5vh', overflowY: 'auto' }}>
                               <code
                                 dangerouslySetInnerHTML={{
-                                  __html: hljs.highlight(action.header_template as string, { language: 'django' }).value,
+                                  __html: hljs.highlight((action.header_template || '') as string, { language: 'django' }).value,
                                 }}
                               />
                             </pre>
@@ -413,10 +336,10 @@ export default function Page(pageProps: any) {
                             <span className="has-text-weight-bold has-text-grey">Parameters Template</span>
                           </div>
                           <div className="column is-12 py-1">
-                            <pre className="code p-1" style={{ maxHeight: '15vh', height: '15vh', overflowY: 'auto' }}>
+                            <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
                               <code
                                 dangerouslySetInnerHTML={{
-                                  __html: hljs.highlight(action.parameters_template as string, { language: 'django' }).value,
+                                  __html: hljs.highlight((action.parameters_template || "") as string, { language: 'django' }).value,
                                 }}
                               />
                             </pre>
@@ -436,7 +359,7 @@ export default function Page(pageProps: any) {
 
             <ActionModalEditor
               action={(DEFAULT_STATE.actions || [])[0] as any}
-              onSubmit={_ => Promise.resolve().then(() => { console.log('create new action', _) })}
+              onSubmit={mutation.addAction}
               trigger={
                 <div className="is-flex is-justify-content-space-around p-2">
                   <button type="button" className="button is-small is-default">Add action</button>
@@ -446,9 +369,9 @@ export default function Page(pageProps: any) {
 
           </div>
 
-        </div>
+        </div>}
 
-      </form>
+      </div>
     )
   };
 
