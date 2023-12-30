@@ -3,11 +3,11 @@ import { SelectField, TextAreaField } from '../components';
 import { InputField } from '../components/input-field';
 import { useNotifier } from '../components/notifier';
 import { htmlLanguage } from '@codemirror/lang-html';
+import { deepEqual, formatRef } from '@karrio/lib';
 import { ModalFormProps, useModal } from './modal';
 import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
 import CodeMirror from '@uiw/react-codemirror';
-import { deepEqual, formatRef } from '@karrio/lib';
 import React from 'react';
 
 type ActionModalEditorProps = {

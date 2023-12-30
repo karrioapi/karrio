@@ -43205,7 +43205,7 @@
             "defaultValue": null
           },
           {
-            "name": "connection_id",
+            "name": "template_slug",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -43215,11 +43215,11 @@
             "defaultValue": null
           },
           {
-            "name": "template_slug",
+            "name": "connection",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "INPUT_OBJECT",
+              "name": "PartialWorkflowConnectionMutationInput",
               "ofType": null
             },
             "defaultValue": null
@@ -43240,16 +43240,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "connection",
-            "description": null,
-            "type": {
-              "kind": "INPUT_OBJECT",
-              "name": "PartialWorkflowConnectionMutationInput",
               "ofType": null
             },
             "defaultValue": null
@@ -43722,7 +43712,7 @@
             "defaultValue": null
           },
           {
-            "name": "connection_id",
+            "name": "template_slug",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -43732,11 +43722,11 @@
             "defaultValue": null
           },
           {
-            "name": "template_slug",
+            "name": "connection",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "INPUT_OBJECT",
+              "name": "PartialWorkflowConnectionMutationInput",
               "ofType": null
             },
             "defaultValue": null
@@ -43916,7 +43906,7 @@
             "defaultValue": null
           },
           {
-            "name": "connection_id",
+            "name": "template_slug",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -43926,11 +43916,11 @@
             "defaultValue": null
           },
           {
-            "name": "template_slug",
+            "name": "connection",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "String",
+              "kind": "INPUT_OBJECT",
+              "name": "PartialWorkflowConnectionMutationInput",
               "ofType": null
             },
             "defaultValue": null

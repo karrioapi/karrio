@@ -1709,11 +1709,10 @@ export interface PartialWorkflowActionMutationInput {
   header_template?: string | null;
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
-  connection_id?: string | null;
   template_slug?: string | null;
+  connection?: PartialWorkflowConnectionMutationInput | null;
   id?: string | null;
   slug?: string | null;
-  connection?: PartialWorkflowConnectionMutationInput | null;
 }
 
 // null
@@ -1789,8 +1788,8 @@ export interface CreateWorkflowActionMutationInput {
   header_template?: string | null;
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
-  connection_id?: string | null;
   template_slug?: string | null;
+  connection?: PartialWorkflowConnectionMutationInput | null;
 }
 
 // null
@@ -1807,8 +1806,8 @@ export interface UpdateWorkflowActionMutationInput {
   header_template?: string | null;
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
-  connection_id?: string | null;
   template_slug?: string | null;
+  connection?: PartialWorkflowConnectionMutationInput | null;
   id: string;
 }
 

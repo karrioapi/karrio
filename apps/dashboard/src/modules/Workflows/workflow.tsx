@@ -1,4 +1,5 @@
-import { ActionNodeInput, AutomationActionType, AutomationTriggerType } from '@karrio/types/graphql/ee';
+import { ActionNodeInput, AutomationActionType, AutomationAuthType, AutomationTriggerType } from '@karrio/types/graphql/ee';
+import { ConnectionModalEditor } from '@karrio/ui/modals/workflow-connection-edit-modal';
 import { ActionModalEditor } from '@karrio/ui/modals/workflow-action-edit-modal';
 import { isEqual, isNone, isNoneOrEmpty, useLocation } from '@karrio/lib';
 import { TextAreaField } from '@karrio/ui/components/textarea-field';
@@ -206,7 +207,7 @@ export default function Page(pageProps: any) {
                       <ConfirmModalWrapper
                         onSubmit={mutation.deleteAction(index, action.id)}
                         trigger={
-                          <button type="button" className="button is-white">
+                          <button type="button" className="button is-white" disabled={index == 0}>
                             <span className="icon"><i className="fas fa-trash"></i></span>
                           </button>
                         }
@@ -216,7 +217,7 @@ export default function Page(pageProps: any) {
                   <Disclosure.Panel>
                     <hr className='my-1' style={{ height: '1px' }} />
 
-                    <div className="p-3 is-size-7">
+                    <div className="p-2 is-size-7">
 
                       {/* action type */}
                       <div className="columns my-0 px-3">
@@ -234,7 +235,7 @@ export default function Page(pageProps: any) {
                         <div className="column is-8 py-1"><code>{action.description}</code></div>
                       </div>}
 
-                      {/* http request options */}
+                      {/* data mapping options */}
                       {action.action_type == AutomationActionType.data_mapping && <>
 
                         {/* action parameters type */}
@@ -349,6 +350,134 @@ export default function Page(pageProps: any) {
                       </>}
 
                     </div>
+
+
+                    <Disclosure as='div' className="card px-0 m-2" style={{ maxWidth: '500px', margin: 'auto' }}>
+                      <Disclosure.Button as='header' className="p-3 is-flex is-justify-content-space-between is-clickable">
+                        <div className="is-title is-size-6 is-vcentered my-2">
+                          <span className="has-text-weight-bold">Connection</span>
+                          <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
+                            {action.connection?.name || 'A connection for the action'}
+                          </p>
+                        </div>
+                        <div>
+                          <ConnectionModalEditor
+                            connection={action.connection || { auth_type: 'basic' } as any}
+                            onSubmit={mutation.updateActionConnection(index, action.id)}
+                            trigger={
+                              <button type="button" className="button is-white">
+                                <span className="icon">
+                                  <i className={`fas fa-${!!action.connection ? 'pen' : 'plus'}`}></i>
+                                </span>
+                              </button>
+                            }
+                          />
+                          <ConfirmModalWrapper
+                            onSubmit={mutation.deleteActionConnection(index, action.id, action.connection?.id)}
+                            trigger={
+                              <button type="button" className="button is-white" disabled={!action.connection}>
+                                <span className="icon"><i className="fas fa-trash"></i></span>
+                              </button>
+                            }
+                          />
+                        </div>
+                      </Disclosure.Button>
+                      <Disclosure.Panel>
+                        <hr className='my-1' style={{ height: '1px' }} />
+
+                        {!action.connection && <div className="p-3 is-size-7">
+                          <div className="message p-2 is-size-7 has-text-weight-bold">
+                            <span>No connection defined!</span>
+                          </div>
+                        </div>}
+
+                        {!!action.connection && <div className="p-3 is-size-7">
+
+                          {/* auth type */}
+                          <div className="columns my-0 px-3">
+                            <div className="column is-4 py-1">
+                              <span className="has-text-weight-bold has-text-grey">Auth type</span>
+                            </div>
+                            <div className="column is-8 py-1"><code>{action.connection.auth_type}</code></div>
+                          </div>
+
+                          {/* connection description */}
+                          {!!action.connection.description && <div className="columns my-0 px-3">
+                            <div className="column is-4 py-1">
+                              <span className="has-text-weight-bold has-text-grey">description</span>
+                            </div>
+                            <div className="column is-8 py-1"><code>{action.connection.description}</code></div>
+                          </div>}
+
+                          {/* http request options */}
+                          {[AutomationAuthType.oauth2, AutomationAuthType.jwt].includes(action.connection.auth_type as any) && <>
+
+                            {/* connection host */}
+                            <div className="columns my-0 px-3">
+                              <div className="column is-4 py-1">
+                                <span className="has-text-weight-bold has-text-grey">Host</span>
+                              </div>
+                              <div className="column is-8 py-1"><code>{action.connection.host}</code></div>
+                            </div>
+
+                            {/* host port */}
+                            {!isNone(action.connection.port) && <div className="columns my-0 px-3">
+                              <div className="column is-4 py-1">
+                                <span className="has-text-weight-bold has-text-grey">Port</span>
+                              </div>
+                              <div className="column is-8 py-1"><code>{action.connection.port}</code></div>
+                            </div>}
+
+                            {/* endpoint */}
+                            {!isNoneOrEmpty(action.connection.endpoint) && <div className="columns my-0 px-3">
+                              <div className="column is-4 py-1">
+                                <span className="has-text-weight-bold has-text-grey">Endpoint</span>
+                              </div>
+                              <div className="column is-8 py-1"><code>{action.connection.endpoint}</code></div>
+                            </div>}
+
+                          </>}
+
+                          {/* connection auth template */}
+                          <div className="columns is-multiline my-0 px-3">
+                            <div className="column py-1">
+                              <span className="has-text-weight-bold has-text-grey">Auth template</span>
+                            </div>
+                            <div className="column is-12 py-1">
+                              <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
+                                <code
+                                  dangerouslySetInnerHTML={{
+                                    __html: hljs.highlight((action.connection.auth_template || '') as string, { language: 'django' }).value,
+                                  }}
+                                />
+                              </pre>
+                            </div>
+                          </div>
+
+                          {[AutomationAuthType.oauth2, AutomationAuthType.jwt].includes(action.connection.auth_type as any) && <>
+
+                            {/* parameters template */}
+                            <div className="columns is-multiline my-0 px-3">
+                              <div className="column py-1">
+                                <span className="has-text-weight-bold has-text-grey">Template</span>
+                              </div>
+                              <div className="column is-12 py-1">
+                                <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
+                                  <code
+                                    dangerouslySetInnerHTML={{
+                                      __html: hljs.highlight((action.connection.parameters_template || '{}') as string, { language: 'django' }).value,
+                                    }}
+                                  />
+                                </pre>
+                              </div>
+                            </div>
+
+                          </>}
+
+                        </div>}
+                      </Disclosure.Panel>
+                    </Disclosure>
+
                   </Disclosure.Panel>
                 </Disclosure>
 
