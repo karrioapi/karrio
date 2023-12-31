@@ -490,7 +490,7 @@ export default function Page(pageProps: any) {
                 </div>
 
                 <div className="column has-text-centered p-3">
-                  <button className={`button is-default ${[AutomationEventStatus.running, AutomationEventStatus.pending].includes(mutation.debug_event?.status) ? 'is-loading' : ''}`} type="button"
+                  <button className={`button is-default ${[AutomationEventStatus.running, AutomationEventStatus.pending].includes(mutation.debug_event?.status as any) ? 'is-loading' : ''}`} type="button"
                     onClick={() => mutation.runWorkflow()}>
                     <span className="icon">
                       <i className="fas fa-play"></i>
