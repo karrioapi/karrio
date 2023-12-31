@@ -8,7 +8,7 @@ import React from 'react';
 interface MetadataEditorProps {
   id?: string;
   metadata?: {};
-  object_type: MetadataObjectTypeEnum;
+  object_type?: MetadataObjectTypeEnum;
   onChange?: (metadata: any) => void;
   children?: React.ReactNode;
 }

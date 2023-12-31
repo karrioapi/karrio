@@ -29,21 +29,8 @@ export default function Page(pageProps: any) {
     const router = useLocation();
     const { id } = router.query;
     const [key, setKey] = useState<string>(`workflow-${Date.now()}`);
-    const { workflow, current, isNew, DEFAULT_STATE, query, ...mutation } = useWorkflowForm({ id: id as string });
+    const { workflow, current, isNew, DEFAULT_STATE, query, zipActionWithNode, ...mutation } = useWorkflowForm({ id: id as string });
 
-    const zipActionWithNode = (actions: WorkflowActionType[], action_nodes: ActionNodeInput[]) => {
-      const _tuple: [WorkflowActionType, ActionNodeInput][] = Array.from(Array(actions.length).keys()).map(index => {
-        const action = actions[index];
-        const node = (
-          action_nodes.find((n) => ((!!n.slug && n.slug === action.slug) || (!!n.index && n.index === index)))
-          || { order: index, slug: action.slug, index }
-        );
-
-        return [action, node]
-      })
-
-      return _tuple.sort((a, b) => a[1].order - b[1].order);
-    };
     const handleChange = async (changes?: Partial<typeof workflow>) => {
       if (changes === undefined) { return; }
       await mutation.updateWorkflow({ id, ...changes });
@@ -197,7 +184,7 @@ export default function Page(pageProps: any) {
                     <div>
                       <ActionModalEditor
                         action={action}
-                        onSubmit={mutation.updateAction(index, action.id)}
+                        onSubmit={mutation.updateAction(index, action?.id)}
                         trigger={
                           <button type="button" className="button is-white">
                             <span className="icon"><i className="fas fa-pen"></i></span>
@@ -205,7 +192,7 @@ export default function Page(pageProps: any) {
                         }
                       />
                       <ConfirmModalWrapper
-                        onSubmit={mutation.deleteAction(index, action.id)}
+                        onSubmit={mutation.deleteAction(index, action?.id)}
                         trigger={
                           <button type="button" className="button is-white" disabled={index == 0}>
                             <span className="icon"><i className="fas fa-trash"></i></span>
@@ -363,7 +350,7 @@ export default function Page(pageProps: any) {
                         <div>
                           <ConnectionModalEditor
                             connection={action.connection || { auth_type: 'basic' } as any}
-                            onSubmit={mutation.updateActionConnection(index, action.id)}
+                            onSubmit={mutation.updateActionConnection(index, action?.id)}
                             trigger={
                               <button type="button" className="button is-white">
                                 <span className="icon">
@@ -373,7 +360,7 @@ export default function Page(pageProps: any) {
                             }
                           />
                           <ConfirmModalWrapper
-                            onSubmit={mutation.deleteActionConnection(index, action.id, action.connection?.id)}
+                            onSubmit={mutation.deleteActionConnection(index, action?.id, action.connection?.id)}
                             trigger={
                               <button type="button" className="button is-white" disabled={!action.connection}>
                                 <span className="icon"><i className="fas fa-trash"></i></span>

@@ -4,11 +4,12 @@ import { InputField } from '../components/input-field';
 import { useNotifier } from '../components/notifier';
 import { htmlLanguage } from '@codemirror/lang-html';
 import { ModalFormProps, useModal } from './modal';
-import { deepEqual, formatRef } from '@karrio/lib';
+import { deepEqual, formatRef, isEqual } from '@karrio/lib';
 import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
 import CodeMirror from '@uiw/react-codemirror';
 import React from 'react';
+import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 
 type ConnectionModalEditorProps = {
   header?: string;
@@ -17,6 +18,7 @@ type ConnectionModalEditorProps = {
 };
 
 function reducer(state: Partial<PartialWorkflowConnectionMutationInput>, { name, value }: { name: string, value: string | boolean | Partial<PartialWorkflowConnectionMutationInput> | string[] }): PartialWorkflowConnectionMutationInput {
+  console.log("touch reducer", name, value)
   switch (name) {
     case "full":
       return { ...(value as object) };
@@ -35,8 +37,8 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
     const loader = useLoader();
     const { close } = useModal();
     const notifier = useNotifier();
-    const [connection, dispatch] = React.useReducer(reducer, defaultValue, () => defaultValue);
     const [key, setKey] = React.useState<string>(`connection-${Date.now()}`);
+    const [connection, dispatch] = React.useReducer(reducer, defaultValue, () => defaultValue);
 
     const handleChange = (event: React.ChangeEvent<any>) => {
       const target = event.target;
@@ -61,7 +63,7 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
       }
       loader.setLoading(false);
     };
-
+    console.log(connection)
     return (
       <form className="modal-card-body modal-form" onSubmit={handleSubmit} key={key}>
         <div className="form-floating-header p-4">
@@ -136,6 +138,33 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
 
           </div>}
 
+          {/* credentials */}
+          <div className="column mb-0 px-0 control">
+            <div className="card p-2">
+              <MetadataEditor
+                metadata={connection.credentials}
+                onChange={value => dispatch({ name: 'credentials', value })}
+              >
+                <MetadataEditorContext.Consumer>{({ isEditing, editMetadata }) => (<>
+
+                  <header className="is-flex is-justify-content-space-between px-2">
+                    <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">Credentials</span>
+                    <div className="is-vcentered">
+                      <button
+                        type="button"
+                        className="button is-small is-info is-text is-inverted p-1"
+                        disabled={isEditing}
+                        onClick={() => editMetadata()}>
+                        <span>Edit credentials</span>
+                      </button>
+                    </div>
+                  </header>
+
+                </>)}</MetadataEditorContext.Consumer>
+              </MetadataEditor>
+            </div>
+          </div>
+
           {/* auth_template */}
           <div className="column mb-0 p-0 control">
             <label className="label is-size-7">Auth template</label>
@@ -173,7 +202,7 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
               <span>Cancel</span>
             </button>
             <button className="button is-primary m-1 is-small"
-              disabled={deepEqual(defaultValue, connection)}
+              disabled={isEqual(connection, defaultValue)}
               type="submit">
               <span>Save</span>
             </button>
