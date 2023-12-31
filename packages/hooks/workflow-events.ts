@@ -7,6 +7,7 @@ import React from "react";
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = WorkflowEventFilter & { setVariablesToURL?: boolean };
+export type WorkflowEventType = GetWorkflowEvents["workflow_events"]["edges"][0]["node"];
 
 export function useWorkflowEvents({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
@@ -62,6 +63,7 @@ export function useWorkflowEvents({ setVariablesToURL = false, ...initialData }:
     get filter() { return filter; },
     setFilter,
     setInterval,
+    refetchInterval,
   };
 }
 

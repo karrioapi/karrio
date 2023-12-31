@@ -30,9 +30,9 @@ export default function Page(pageProps: any) {
             <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">BETA</span>
           </div>
           <div>
-            <button className="button is-small">
+            <AppLink href={`/workflows/new`} className="button is-small">
               <span>Create Workflow</span>
-            </button>
+            </AppLink>
           </div>
         </header>
 
