@@ -4,7 +4,7 @@ info:
 
     ## API Reference
 
-    Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.
+    Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.
 
     The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded
     request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
@@ -16,9 +16,9 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2023.9.11`.
+    The current version is `2023.9.12`.
 
-    Read our API changelog and to learn more about backwards compatibility.
+    Read our API changelog to learn more about backwards compatibility.
 
     As a precaution, use API versioning to check a new API version before committing to an upgrade.
 
@@ -55,7 +55,7 @@ info:
 
     ## Metadata
 
-    Updateable Karrio objects—including Shipment and Order—have a metadata parameter.
+    Updateable Karrio objects—including Shipment and Order have a metadata parameter.
     You can use this parameter to attach key-value data to these Karrio objects.
 
     Metadata is useful for storing additional, structured information on an object.
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2023.9.11
+  version: 2023.9.12
 paths:
   /:
     get:
@@ -126,6 +126,7 @@ paths:
                     TRACKER_DATA_RETENTION: true
                     SHIPMENT_DATA_RETENTION: true
                     API_LOGS_DATA_RETENTION: true
+                    WORKFLOW_MANAGEMENT: true
           description: ''
   /api/token:
     post:
@@ -2342,6 +2343,7 @@ paths:
                     TRACKER_DATA_RETENTION: true
                     SHIPMENT_DATA_RETENTION: true
                     API_LOGS_DATA_RETENTION: true
+                    WORKFLOW_MANAGEMENT: true
                     ADDRESS_AUTO_COMPLETE: {}
                     countries: {}
                     currencies: {}
@@ -11552,63 +11554,64 @@ tags:
   description: "API instance metadata and authentication resources.\n            \
     \    "
 - name: Carriers
-  description: "This is an object representing your a Karrio carrier account connectsions.\n\
+  description: "This is an object representing your Karrio carrier account connectsions.\n\
     \                You can retrieve all configured connections available to your\
     \ Karrio account.\n                The `carrier_id` is a nickname you assign to\
     \ your connection.\n                "
 - name: Addresses
-  description: "This is an object representing your a Karrio shipping address.\n \
-    \               You can retrieve all addresses related to your Karrio account.\n\
+  description: "This is an object representing your Karrio shipping address.\n   \
+    \             You can retrieve all addresses related to your Karrio account.\n\
     \                Address objects are linked to your shipment history, and can\
     \ be used for recurring shipping\n                to / from the same locations.\n\
     \                "
 - name: Parcels
-  description: "This is an object representing your a Karrio shipping parcel.\n  \
-    \              Parcel objects are linked to your shipment history, and can be\
-    \ used for recurring shipping\n                using the same packaging.\n   \
-    \             "
+  description: "This is an object representing your Karrio shipping parcel.\n    \
+    \            Parcel objects are linked to your shipment history, and can be used\
+    \ for recurring shipping\n                using the same packaging.\n        \
+    \        "
 - name: Customs
-  description: "This is an object representing your a Karrio shipping customs declaration.\n\
+  description: "This is an object representing your Karrio shipping customs declaration.\n\
     \                You can retrieve all customs declarations used historically with\
     \ your Karrio account shipments.\n                "
 - name: Shipments
-  description: "This is an object representing your a Karrio shipment.\n         \
-    \       A Shipment guides you through process of preparing and purchasing a label\
+  description: "This is an object representing your Karrio shipment.\n           \
+    \     A Shipment guides you through process of preparing and purchasing a label\
     \ for an order.\n                A Shipment transitions through multiple statuses\
     \ throughout its lifetime as the package\n                shipped makes its journey\
     \ to it's destination.\n                "
 - name: Documents
-  description: "This is an object representing your a Karrio document upload record.\n\
+  description: "This is an object representing your Karrio document upload record.\n\
     \                A Document upload record keep traces of shipping trade documents\
-    \ uploaded to carriers\n                to fast track customs processing.\n  \
-    \              "
+    \ uploaded to carriers\n                to fast track customs and border processing.\n\
+    \                "
 - name: Trackers
-  description: "This is an object representing your a Karrio shipment tracker.\n \
-    \               A shipment tracker is an object attached to a shipment by it's\
-    \ tracking number.\n                The tracker provide the latest tracking status\
-    \ and events associated with a shipment\n                "
+  description: "This is an object representing your Karrio shipment tracker.\n   \
+    \             A shipment tracker is an object attached to a shipment by it's tracking\
+    \ number.\n                The tracker provide the latest tracking status and\
+    \ events associated with a shipment\n                "
 - name: Pickups
-  description: "This is an object representing your a Karrio pickup booking.\n   \
-    \             You can retrieve all pickup booked historically for your Karrio\
-    \ account shipments.\n                "
+  description: "This is an object representing your Karrio pickup booking.\n     \
+    \           You can retrieve all pickup booked historically for your Karrio account\
+    \ shipments.\n                "
 - name: Proxy
   description: "In some scenarios, all we need is to send request to a carrier using\
     \ the Karrio unified API.\n                The Proxy API comes handy for that\
     \ as it turn Karrio into a simple middleware that converts and\n             \
     \   validate your request and simply forward it to the shipping carrier server.<br/>\n\
     \                **Note:**<br/>\n                    When using the proxy API,\
-    \ no objects are created in the Karrio system.\n                "
+    \ no objects are created in the Karrio system.\n                    excpet API\
+    \ logs and tracing records for debugging purposes.\n                "
 - name: Orders
-  description: "This is an object representing your a Karrio order.\n            \
-    \    You can create Karrio orders to organize your shipments and ship line items\
+  description: "This is an object representing your Karrio order.\n              \
+    \  You can create Karrio orders to organize your shipments and ship line items\
     \ separately.\n                "
 - name: Webhooks
-  description: "This is an object representing your a Karrio webhook.\n          \
-    \      You can configure webhook endpoints via the API to be notified about events\
-    \ that happen in your\n                Karrio account.\n                "
+  description: "This is an object representing your Karrio webhook.\n            \
+    \    You can configure webhook endpoints via the API to be notified about events\
+    \ happen in your\n                Karrio account.\n                "
 - name: Batches
-  description: "This is an object representing your a Karrio batch operation.\n  \
-    \              You can retrieve all batch operations historically for your Karrio\
+  description: "This is an object representing your Karrio batch operation.\n    \
+    \            You can retrieve all batch operations historically for your Karrio\
     \ account.\n                "
 - name: Reference & Enums
   description: |+

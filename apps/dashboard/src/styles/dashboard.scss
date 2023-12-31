@@ -666,6 +666,7 @@ pre.code {
 
   .admin-sidebar-menu {
     height: calc(100%);
+    margin: 0 !important;
   }
 
   .sidebar-menu-button.is-mobile-active {
@@ -677,6 +678,7 @@ pre.code {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 /* Track */

@@ -7,10 +7,12 @@ import React from "react";
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = WorkflowEventFilter & { setVariablesToURL?: boolean };
+export type WorkflowEventType = GetWorkflowEvents["workflow_events"]["edges"][0]["node"];
 
 export function useWorkflowEvents({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
+  const [refetchInterval, setInterval] = React.useState<number>(120000);
   const [filter, _setFilter] = React.useState<WorkflowEventFilter>({ ...PAGINATION, ...initialData });
   const fetch = (variables: { filter: WorkflowEventFilter }) => karrio.graphql.request<GetWorkflowEvents>(
     gqlstr(GET_WORKFLOW_EVENTS), { variables }
@@ -20,17 +22,22 @@ export function useWorkflowEvents({ setVariablesToURL = false, ...initialData }:
   const query = useQuery(
     ['workflow-events', filter],
     () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, refetchInterval: 120000, onError },
+    { keepPreviousData: true, staleTime: 5000, refetchInterval, onError },
   );
 
   function setFilter(options: WorkflowEventFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
-      if (["modal"].includes(key)) return acc;
+      if (["modal", "tab"].includes(key)) return acc;
       return isNoneOrEmpty(options[key as keyof WorkflowEventFilter]) ? acc : {
         ...acc,
-        [key]: (["offset", "first"].includes(key)
-          ? parseInt((options as any)[key])
-          : options[key as keyof WorkflowEventFilter]
+        [key]: (["parameters_key"].includes(key)
+          ? ([].concat((options as any)[key as keyof WorkflowEventFilter]).reduce(
+            (acc, item: string) => [].concat(acc, item.split(',') as any), []
+          ))
+          : (["offset", "first"].includes(key)
+            ? parseInt((options as any)[key as keyof WorkflowEventFilter])
+            : options[key as keyof WorkflowEventFilter]
+          )
         )
       };
     }, PAGINATION);
@@ -55,6 +62,8 @@ export function useWorkflowEvents({ setVariablesToURL = false, ...initialData }:
     query,
     get filter() { return filter; },
     setFilter,
+    setInterval,
+    refetchInterval,
   };
 }
 

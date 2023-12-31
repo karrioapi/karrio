@@ -117,3 +117,9 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
 This project uses the [Apache v2 license](LICENSE). The core Karrio platform will always remain open and free.
 
 Any other questions, mail us at hello@karrio.io We’d love to meet you!
+
+## Sponsors
+
+We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using and building on top of open source software. Thanks to these sponsors who are backing this initiative.
+
+<a href="https://github.com/sponsors/karrio" target="_blank"><img alt="New Sponsor" src="screenshots/become-a-sponsor.png" /></a>

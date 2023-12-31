@@ -384,7 +384,11 @@ class ShipmentCancelSerializer(Shipment):
             gateway.Shipments.cancel(
                 payload={
                     **ShipmentCancelRequest(instance).data,
-                    "options": {**instance.options, **instance.meta}
+                    "options": {
+                        **instance.options,
+                        **instance.meta,
+                        **(validated_data.get("options") or {}),
+                    },
                 },
                 carrier=instance.selected_rate_carrier,
             )

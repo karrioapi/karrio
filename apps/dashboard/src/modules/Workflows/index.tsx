@@ -30,9 +30,9 @@ export default function Page(pageProps: any) {
             <span className="tag is-warning is-size-7 has-text-weight-bold mx-2">BETA</span>
           </div>
           <div>
-            <button className="button is-small">
+            <AppLink href={`/workflows/new`} className="button is-small">
               <span>Create Workflow</span>
-            </button>
+            </AppLink>
           </div>
         </header>
 
@@ -58,14 +58,14 @@ export default function Page(pageProps: any) {
           <nav key={Date()} className="panel is-shadowless" style={{ border: '1px solid #e5e5e5', boxShadow: '0.5px 0.5px 2.5px #efefef' }}>
             {(workflows?.edges || []).map(({ node: workflow }) => (
 
-              <label key={workflow.id} className="columns m-0 panel-block">
+              <label key={workflow.id} className="columns is-mobile m-0 panel-block">
 
-                <div className="column is-11 is-size-7 has-text-grey p-0">
-                  <div className="has-text-weight-bold is-size-6">{workflow.name}</div>
+                <AppLink href={`/workflows/${workflow.id}`} className="column is-11 is-size-7 has-text-grey p-0">
+                  <div className="has-text-weight-bold is-size-6 text-ellipsis">{workflow.name}</div>
                   <div className="has-text-weight-semibold mt-2">
                     <span className="tag is-light">{`${workflow.action_nodes.length} actions`}</span>
                   </div>
-                </div>
+                </AppLink>
 
                 <div className="column p-0 is-vcentered">
                   <div className="buttons has-addons is-right">

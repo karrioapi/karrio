@@ -13,7 +13,7 @@ type MetadataProviderComponent = {
   id?: string;
   value?: {}
   children?: React.ReactNode;
-  object_type: MetadataObjectTypeEnum;
+  object_type?: MetadataObjectTypeEnum;
 }
 interface MetadataStateInterface {
   state: MetaRecord;
@@ -28,7 +28,7 @@ interface MetadataStateInterface {
 export const MetadataStateContext = React.createContext<MetadataStateInterface>({} as MetadataStateInterface);
 
 const MetadataStateProvider: React.FC<MetadataProviderComponent> = ({ children, id, object_type, value }) => {
-  const mutation = useMetadataMutation([`${object_type}s`, id || '']);
+  const mutation = useMetadataMutation([`${object_type || 'generic'}s`, id || '']);
   const [state, setState] = React.useState<MetaRecord>(to_object_record(value));
   const [error, setError] = React.useState<any | Error>(null);
 
@@ -60,7 +60,7 @@ const MetadataStateProvider: React.FC<MetadataProviderComponent> = ({ children, 
         .keys(value || {})
         .filter(key => !Object.keys(added_values).includes(key));
 
-      id && await mutation.updateMetadata.mutateAsync({
+      (id && object_type) && await mutation.updateMetadata.mutateAsync({
         id,
         object_type,
         discarded_keys,
