@@ -122,4 +122,4 @@ Any other questions, mail us at hello@karrio.io We’d love to meet you!
 
 We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using and building on top of open source software. Thanks to these sponsors who are backing this initiative.
 
-<a href="https://github.com/sponsors/karrio" target="_blank"><img alt="New Sponsor" src="screenshots/become-a-sponsor.png" /></a>
+<a href="https://github.com/sponsors/karrioapi" target="_blank"><img alt="New Sponsor" src="screenshots/become-a-sponsor.png" /></a>
