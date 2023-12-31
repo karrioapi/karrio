@@ -25,7 +25,7 @@ export function useWorkflowEvents({ setVariablesToURL = false, ...initialData }:
 
   function setFilter(options: WorkflowEventFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
-      if (["modal"].includes(key)) return acc;
+      if (["modal", "tab"].includes(key)) return acc;
       return isNoneOrEmpty(options[key as keyof WorkflowEventFilter]) ? acc : {
         ...acc,
         [key]: (["offset", "first"].includes(key)
