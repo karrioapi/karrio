@@ -1615,6 +1615,7 @@ export interface WorkflowEventFilter {
   offset?: number | null;
   first?: number | null;
   keyword?: string | null;
+  parameters_key?: string | null;
   status?: AutomationEventStatus | null;
   event_type?: AutomationEventType | null;
 }

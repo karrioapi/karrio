@@ -1,19 +1,22 @@
-import { WorkflowFilter, GetWorkflows, GET_WORKFLOWS, GetWorkflow, GET_WORKFLOW, CreateWorkflow, UpdateWorkflow, UpdateWorkflowMutationInput, CreateWorkflowMutationInput, DELETE_WORKFLOW, UPDATE_WORKFLOW, CREATE_WORKFLOW, DeleteMutationInput, GetWorkflows_workflows_edges_node, CreateWorkflowTriggerMutationInput, CREATE_WORKFLOW_TRIGGER, CreateWorkflowTrigger, UpdateWorkflowTriggerMutationInput, UPDATE_WORKFLOW_TRIGGER, UpdateWorkflowTrigger, DELETE_WORKFLOW_TRIGGER, AutomationActionType, AutomationHTTPMethod, AutomationHTTPContentType, AutomationParametersType, PartialWorkflowActionMutationInput, PartialWorkflowTriggerMutationInput, ActionNodeInput, PartialWorkflowConnectionMutationInput } from "@karrio/types/graphql/ee";
+import { WorkflowFilter, GetWorkflows, GET_WORKFLOWS, GetWorkflow, GET_WORKFLOW, CreateWorkflow, UpdateWorkflow, UpdateWorkflowMutationInput, CreateWorkflowMutationInput, DELETE_WORKFLOW, UPDATE_WORKFLOW, CREATE_WORKFLOW, DeleteMutationInput, GetWorkflows_workflows_edges_node, CreateWorkflowTriggerMutationInput, CREATE_WORKFLOW_TRIGGER, CreateWorkflowTrigger, UpdateWorkflowTriggerMutationInput, UPDATE_WORKFLOW_TRIGGER, UpdateWorkflowTrigger, DELETE_WORKFLOW_TRIGGER, AutomationActionType, AutomationHTTPMethod, AutomationHTTPContentType, AutomationParametersType, PartialWorkflowActionMutationInput, PartialWorkflowTriggerMutationInput, ActionNodeInput, PartialWorkflowConnectionMutationInput, AutomationEventType, AutomationEventStatus } from "@karrio/types/graphql/ee";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
+import { gqlstr, insertUrlParam, isEqual, isNoneOrEmpty, onError } from "@karrio/lib";
+import { useWorkflowEventMutation, useWorkflowEvents } from "./workflow-events";
+import { useWorkflowConnectionMutation } from "./workflow-connections";
 import { useWorkflowActionMutation } from "./workflow-actions";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { useLoader } from "@karrio/ui/components/loader";
 import { useRouter } from "next/dist/client/router";
 import { NotificationType } from '@karrio/types';
+import { debounceTime, Subject } from "rxjs";
 import { useAppMode } from "./app-mode";
 import { useKarrio } from "./karrio";
 import React from "react";
-import { useWorkflowConnectionMutation } from "./workflow-connections";
 
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
 type FilterType = WorkflowFilter & { setVariablesToURL?: boolean };
+const observable$ = new Subject<any>();
 
 export type WorkflowType = GetWorkflows_workflows_edges_node;
 export type WorkflowTriggerType = GetWorkflows_workflows_edges_node["trigger"];
@@ -199,12 +202,23 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   const notifier = useNotifier();
   const { basePath } = useAppMode();
   const mutation = useWorkflowMutation();
+  const eventMutation = useWorkflowEventMutation();
   const actionMutation = useWorkflowActionMutation();
   const connectionMutation = useWorkflowConnectionMutation();
   const [isNew, setIsNew] = React.useState<boolean>();
   const [errors, setErrors] = React.useState<{ messages: string[] }>({ messages: [] });
   const [workflow, dispatch] = React.useReducer(reducer, DEFAULT_STATE, () => DEFAULT_STATE);
   const { query: { data: { workflow: current } = {}, ...workflowQuery } } = useWorkflow({ id });
+  const { query: { data: { workflow_events: { edges: [{ node: debug_event }] = [{} as any] } = {} } = {} }, setInterval } = useWorkflowEvents({
+    keyword: id, parameters_key: "debug", first: 1,
+  });
+  observable$.pipe(debounceTime(5000)).subscribe(_ => {
+    if ([AutomationEventStatus.pending, AutomationEventStatus.running].includes(debug_event?.status)) {
+      setInterval(4000);
+    } else {
+      setInterval(120000);
+    }
+  })
 
   // state checks
   const isLocalDraft = (id?: string) => isNoneOrEmpty(id) || id === 'new';
@@ -330,6 +344,24 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
       loader.setLoading(false);
     }
   };
+  const runWorkflow = async () => {
+    try {
+      if (!isEqual(workflow, current || DEFAULT_STATE)) {
+        await save();
+      }
+      loader.setLoading(true);
+      await eventMutation.createWorkflowEvent.mutateAsync({
+        event_type: AutomationEventType.manual,
+        workflow_id: workflow.id as string,
+        parameters: { debug: true },
+      });
+      setInterval(4000);
+      notifier.notify({ type: NotificationType.success, message: 'Workflow started!' });
+    } catch (error: any) {
+      setErrors({ messages: error });
+      loader.setLoading(false);
+    }
+  }
 
   React.useEffect(() => { setIsNew(id === 'new'); }, [id]);
   React.useEffect(() => {
@@ -345,8 +377,12 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
       });
     }
   }, [current, query.isFetched]);
+  React.useEffect(() => {
+    observable$.next(debug_event);
+  }, [debug_event?.status]);
 
   return {
+    debug_event,
     isNew,
     query,
     errors,
@@ -357,6 +393,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
     addAction,
     updateAction,
     deleteAction,
+    runWorkflow,
     updateWorkflow,
     createActionConnection,
     updateActionConnection,
