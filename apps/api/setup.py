@@ -38,6 +38,7 @@ setup(
         "jsonfield",
         "more-itertools",
         "requests",
+        "posthog",
         "python-decouple",
         "karrio.server.core",
         "sentry-sdk",

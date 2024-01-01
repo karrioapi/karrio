@@ -4,6 +4,7 @@ import '@/styles/theme.scss';
 import '@/styles/dashboard.scss';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import APIMetadataProvider from '@karrio/hooks/api-metadata';
+import { NextPostHogProvider } from '@karrio/hooks/posthog';
 import { ClientProvider } from '@karrio/hooks/karrio';
 import { SessionProvider } from "next-auth/react";
 import MainLayout from '@/layouts/main-layout';
@@ -14,15 +15,17 @@ const queryClient = new QueryClient();
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <SessionProvider session={pageProps.session} refetchInterval={5 * 60}>
-      <QueryClientProvider client={queryClient}>
-        <APIMetadataProvider metadata={pageProps?.metadata}>
-          <ClientProvider>
-            <MainLayout error={pageProps?.error}>
-              <Component {...pageProps} />
-            </MainLayout>
-          </ClientProvider>
-        </APIMetadataProvider>
-      </QueryClientProvider>
+      <NextPostHogProvider>
+        <QueryClientProvider client={queryClient}>
+          <APIMetadataProvider metadata={pageProps?.metadata}>
+            <ClientProvider>
+              <MainLayout error={pageProps?.error}>
+                <Component {...pageProps} />
+              </MainLayout>
+            </ClientProvider>
+          </APIMetadataProvider>
+        </QueryClientProvider>
+      </NextPostHogProvider>
     </SessionProvider>
   );
 }

@@ -6,6 +6,17 @@
 
 import { themes as prismThemes } from 'prism-react-renderer';
 
+const posthogPlugins = (
+  process.env.POSTHOG_KEY ? [[
+    "posthog-docusaurus",
+    {
+      apiKey: process.env.POSTHOG_KEY, // required
+      appUrl: process.env.POSTHOG_HOST || "https://app.posthog.com", // optional
+      enableInDevelopment: false, // optional
+    },
+  ]] : []
+)
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Karrio',
@@ -28,6 +39,7 @@ const config = {
 
   plugins: [
     'tailwind-loader',
+    ...posthogPlugins,
   ],
 
   presets: [
