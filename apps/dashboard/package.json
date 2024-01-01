@@ -43,6 +43,7 @@
     "next": "^13.4.20-canary.13",
     "next-auth": "^4.24.5",
     "pino": "^7.0.3",
+    "posthog-js": "^1.96.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "redoc": "^2.1.3",
