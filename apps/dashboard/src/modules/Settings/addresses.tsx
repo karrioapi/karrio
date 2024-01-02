@@ -98,7 +98,7 @@ export default function AddressPage(pageProps: any) {
           </ul>
         </div>
 
-        {((address_templates?.edges || []).length > 0) &&
+        {((address_templates?.edges || []).length > 0) && <>
           <div className="table-container">
             <table className="table is-fullwidth">
               <tbody className="address-templates-table">
@@ -160,27 +160,27 @@ export default function AddressPage(pageProps: any) {
 
               </tbody>
             </table>
+          </div>
 
-            <footer className="px-2 py-2 is-vcentered">
-              <span className="is-size-7 has-text-weight-semibold">
-                {(address_templates?.edges || []).length} results
-              </span>
+          <footer className="px-2 py-2 is-vcentered">
+            <span className="is-size-7 has-text-weight-semibold">
+              {(address_templates?.edges || []).length} results
+            </span>
 
-              <div className="buttons has-addons is-centered is-pulled-right">
-                <button className="button is-small"
-                  onClick={() => updateFilter({ offset: (filter.offset as number - 25) })}
-                  disabled={filter.offset == 0}>
-                  Previous
-                </button>
-                <button className="button is-small"
-                  onClick={() => updateFilter({ offset: (filter.offset as number + 25) })}
-                  disabled={!address_templates?.page_info.has_next_page}>
-                  Next
-                </button>
-              </div>
-            </footer>
-
-          </div>}
+            <div className="buttons has-addons is-centered is-pulled-right">
+              <button className="button is-small"
+                onClick={() => updateFilter({ offset: (filter.offset as number - 25) })}
+                disabled={filter.offset == 0}>
+                Previous
+              </button>
+              <button className="button is-small"
+                onClick={() => updateFilter({ offset: (filter.offset as number + 25) })}
+                disabled={!address_templates?.page_info.has_next_page}>
+                Next
+              </button>
+            </div>
+          </footer>
+        </>}
 
         {(query.isFetched && (address_templates?.edges || []).length == 0) &&
           <div className="card my-6">

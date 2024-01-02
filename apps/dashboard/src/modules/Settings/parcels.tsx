@@ -99,58 +99,60 @@ export default function ParcelsPage(pageProps: any) {
           </ul>
         </div>
 
-        {((parcel_templates?.edges || []).length > 0) && <div className="table-container">
-          <table className="table is-fullwidth">
+        {((parcel_templates?.edges || []).length > 0) && <>
+          <div className="table-container">
+            <table className="table is-fullwidth">
 
-            <tbody className="parcel-templates-table">
+              <tbody className="parcel-templates-table">
 
-              <tr>
-                <td className="template is-size-7">LABEL</td>
-                <td className="parcel is-size-7">PARCEL</td>
-                <td className="default is-size-7"></td>
-                <td className="action pr-0"></td>
-              </tr>
-
-              {(parcel_templates?.edges || []).map(({ node: template }) => (
-
-                <tr key={`${template.id}-${Date.now()}`}>
-                  <td className="template is-vcentered is-size-7 has-text-weight-bold text-ellipsis">
-                    <span className="text-ellipsis" title={template.label}>{template.label}</span>
-                  </td>
-                  <td className="parcel is-vcentered text-ellipsis">
-                    <ParcelDescription parcel={template.parcel as any} />
-                  </td>
-                  <td className="default is-vcentered has-text-right">
-                    {template.is_default && <span className="is-size-7 has-text-weight-semibold">
-                      <span className="icon has-text-success"><i className="fas fa-check"></i></span> default
-                    </span>}
-                  </td>
-                  <td className="action is-vcentered pr-0">
-                    <div className="buttons is-justify-content-end">
-                      <button className="button is-white" onClick={() => editParcel({
-                        parcelTemplate: template as any
-                      })}>
-                        <span className="icon is-small">
-                          <i className="fas fa-pen"></i>
-                        </span>
-                      </button>
-                      <button className="button is-white" onClick={() => confirmDeletion({
-                        label: "Delete Parcel template",
-                        identifier: template.id,
-                        onConfirm: remove(template.id),
-                      })}>
-                        <span className="icon is-small">
-                          <i className="fas fa-trash"></i>
-                        </span>
-                      </button>
-                    </div>
-                  </td>
+                <tr>
+                  <td className="template is-size-7">LABEL</td>
+                  <td className="parcel is-size-7">PARCEL</td>
+                  <td className="default is-size-7"></td>
+                  <td className="action pr-0"></td>
                 </tr>
 
-              ))}
-            </tbody>
+                {(parcel_templates?.edges || []).map(({ node: template }) => (
 
-          </table>
+                  <tr key={`${template.id}-${Date.now()}`}>
+                    <td className="template is-vcentered is-size-7 has-text-weight-bold text-ellipsis">
+                      <span className="text-ellipsis" title={template.label}>{template.label}</span>
+                    </td>
+                    <td className="parcel is-vcentered text-ellipsis">
+                      <ParcelDescription parcel={template.parcel as any} />
+                    </td>
+                    <td className="default is-vcentered has-text-right">
+                      {template.is_default && <span className="is-size-7 has-text-weight-semibold">
+                        <span className="icon has-text-success"><i className="fas fa-check"></i></span> default
+                      </span>}
+                    </td>
+                    <td className="action is-vcentered pr-0">
+                      <div className="buttons is-justify-content-end">
+                        <button className="button is-white" onClick={() => editParcel({
+                          parcelTemplate: template as any
+                        })}>
+                          <span className="icon is-small">
+                            <i className="fas fa-pen"></i>
+                          </span>
+                        </button>
+                        <button className="button is-white" onClick={() => confirmDeletion({
+                          label: "Delete Parcel template",
+                          identifier: template.id,
+                          onConfirm: remove(template.id),
+                        })}>
+                          <span className="icon is-small">
+                            <i className="fas fa-trash"></i>
+                          </span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                ))}
+              </tbody>
+
+            </table>
+          </div>
 
           <footer className="px-2 py-2 is-vcentered">
             <span className="is-size-7 has-text-weight-semibold">{(parcel_templates?.edges || []).length} results</span>
@@ -168,8 +170,7 @@ export default function ParcelsPage(pageProps: any) {
               </button>
             </div>
           </footer>
-
-        </div>}
+        </>}
 
         {(query.isFetched && (parcel_templates?.edges || [])?.length == 0) &&
           <div className="card my-6">
