@@ -40,6 +40,7 @@ export const GET_ORGANIZATION = gql`query get_organization($id: String!) {
       total_requests
       total_shipments
       unfulfilled_orders
+      total_shipping_spend
       api_requests {
         date
         label
@@ -98,6 +99,7 @@ export const GET_ORGANIZATIONS = gql`query get_organizations {
       total_requests
       total_shipments
       unfulfilled_orders
+      total_shipping_spend
       api_requests {
         date
         label

@@ -209,7 +209,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   const [workflow, dispatch] = React.useReducer(reducer, DEFAULT_STATE, () => DEFAULT_STATE);
   const { query: { data: { workflow: current } = {}, ...workflowQuery } } = useWorkflow({ id });
   const { query: { data: { workflow_events } = {}, ...eventsQuery }, refetchInterval, setInterval } = useWorkflowEvents({
-    first: 1, ...(id !== 'new' ? { keyword: id, parameters_key: "debug" } : {}) as any,
+    first: 1, ...(id !== 'new' ? { keyword: id, parameters_key: ["debug"] } : {}),
   });
 
   // state checks

@@ -62,6 +62,7 @@ export interface get_organization_organization_usage {
   total_requests: number | null;
   total_shipments: number | null;
   unfulfilled_orders: number | null;
+  total_shipping_spend: number | null;
   api_requests: get_organization_organization_usage_api_requests[] | null;
   order_volumes: get_organization_organization_usage_order_volumes[] | null;
   shipment_count: get_organization_organization_usage_shipment_count[] | null;
@@ -149,6 +150,7 @@ export interface get_organizations_organizations_usage {
   total_requests: number | null;
   total_shipments: number | null;
   unfulfilled_orders: number | null;
+  total_shipping_spend: number | null;
   api_requests: get_organizations_organizations_usage_api_requests[] | null;
   order_volumes: get_organizations_organizations_usage_order_volumes[] | null;
   shipment_count: get_organizations_organizations_usage_shipment_count[] | null;

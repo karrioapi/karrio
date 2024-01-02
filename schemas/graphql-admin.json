@@ -1132,6 +1132,18 @@
             "deprecationReason": null
           },
           {
+            "name": "total_shipping_spend",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "api_errors",
             "description": null,
             "args": [],
@@ -1228,7 +1240,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shipment_spend",
+            "name": "shipping_spend",
             "description": null,
             "args": [],
             "type": {
@@ -14522,6 +14534,18 @@
             "deprecationReason": null
           },
           {
+            "name": "total_shipping_spend",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "api_requests",
             "description": null,
             "args": [],
@@ -14582,7 +14606,7 @@
             "deprecationReason": null
           },
           {
-            "name": "shipment_spend",
+            "name": "shipping_spend",
             "description": null,
             "args": [],
             "type": {
