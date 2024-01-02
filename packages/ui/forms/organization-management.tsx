@@ -93,7 +93,7 @@ export const OrganizationManagement: React.FC<OrganizationManagementComponent> =
                   {member.invitation && <span className="tag is-light is-size-7">Invitation-sent</span>}
                 </td>
                 <td className="action is-vcentered">
-                  {member.invitation && organization?.current_user.is_admin && <div className="is-pulled-right">
+                  {(organization?.current_user.is_admin && member.invitation) && <div className="is-pulled-right">
                     <Dropdown >
                       {/* Trigger */}
                       <button className="button is-small is-white">
@@ -122,22 +122,22 @@ export const OrganizationManagement: React.FC<OrganizationManagementComponent> =
           </tbody>
 
         </table>
-
-        <hr style={{ height: '1px' }} className="m-0 mb-3" />
-
-        <footer className="py-2 is-vcentered">
-          <span className="is-size-7 has-text-weight-semibold">{(organization?.members || []).length} results</span>
-
-          <div className="buttons has-addons is-centered is-pulled-right pr-0">
-            <button className="button is-small" disabled>
-              <span>Previous</span>
-            </button>
-            <button className="button is-small" disabled>
-              <span>Next</span>
-            </button>
-          </div>
-        </footer>
       </div>
+
+      <hr style={{ height: '1px' }} className="m-0 mb-3" />
+
+      <footer className="py-2 is-vcentered">
+        <span className="is-size-7 has-text-weight-semibold">{(organization?.members || []).length} results</span>
+
+        <div className="buttons has-addons is-centered is-pulled-right pr-0">
+          <button className="button is-small" disabled>
+            <span>Previous</span>
+          </button>
+          <button className="button is-small" disabled>
+            <span>Next</span>
+          </button>
+        </div>
+      </footer>
     </>
   )
 };

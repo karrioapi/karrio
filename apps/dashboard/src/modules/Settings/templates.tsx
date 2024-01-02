@@ -79,50 +79,52 @@ export default function TemplatesPage(pageProps: any) {
           </ul>
         </div>
 
-        {((document_templates?.edges || [])?.length > 0) && <div className="table-container">
-          <table className="table is-fullwidth">
+        {((document_templates?.edges || [])?.length > 0) && <>
+          <div className="table-container">
+            <table className="table is-fullwidth">
 
-            <tbody className="templates-table">
-              <tr>
-                <td className="is-size-7">DOCUMENT TEMPLATES</td>
-                <td className="action pr-0"></td>
-              </tr>
-
-              {(document_templates?.edges || []).map(({ node: template }) => (
-
-                <tr key={`${template.id}-${Date.now()}`}>
-                  <td className="template">
-                    <TemplateDescription template={template} />
-                  </td>
-                  <td className="action is-vcentered pr-0">
-                    <div className="buttons is-justify-content-end">
-                      <button className="button is-white" onClick={toggle(template)}>
-                        <span className={`icon is-medium ${template.active ? 'has-text-success' : 'has-text-grey'}`}>
-                          <i className={`fas fa-${template.active ? 'toggle-on' : 'toggle-off'} fa-lg`}></i>
-                        </span>
-                      </button>
-                      <AppLink className="button is-white" href={`/settings/template?id=${template.id}`}>
-                        <span className="icon is-small">
-                          <i className="fas fa-pen"></i>
-                        </span>
-                      </AppLink>
-                      <button className="button is-white" onClick={() => confirmDeletion({
-                        label: "Delete Document template",
-                        identifier: template.id,
-                        onConfirm: remove(template.id),
-                      })}>
-                        <span className="icon is-small">
-                          <i className="fas fa-trash"></i>
-                        </span>
-                      </button>
-                    </div>
-                  </td>
+              <tbody className="templates-table">
+                <tr>
+                  <td className="is-size-7">DOCUMENT TEMPLATES</td>
+                  <td className="action pr-0"></td>
                 </tr>
 
-              ))}
-            </tbody>
+                {(document_templates?.edges || []).map(({ node: template }) => (
 
-          </table>
+                  <tr key={`${template.id}-${Date.now()}`}>
+                    <td className="template">
+                      <TemplateDescription template={template} />
+                    </td>
+                    <td className="action is-vcentered pr-0">
+                      <div className="buttons is-justify-content-end">
+                        <button className="button is-white" onClick={toggle(template)}>
+                          <span className={`icon is-medium ${template.active ? 'has-text-success' : 'has-text-grey'}`}>
+                            <i className={`fas fa-${template.active ? 'toggle-on' : 'toggle-off'} fa-lg`}></i>
+                          </span>
+                        </button>
+                        <AppLink className="button is-white" href={`/settings/template?id=${template.id}`}>
+                          <span className="icon is-small">
+                            <i className="fas fa-pen"></i>
+                          </span>
+                        </AppLink>
+                        <button className="button is-white" onClick={() => confirmDeletion({
+                          label: "Delete Document template",
+                          identifier: template.id,
+                          onConfirm: remove(template.id),
+                        })}>
+                          <span className="icon is-small">
+                            <i className="fas fa-trash"></i>
+                          </span>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+
+                ))}
+              </tbody>
+
+            </table>
+          </div>
 
           <footer className="px-2 py-2 is-vcentered">
             <span className="is-size-7 has-text-weight-semibold">
@@ -142,8 +144,7 @@ export default function TemplatesPage(pageProps: any) {
               </button>
             </div>
           </footer>
-
-        </div>}
+        </>}
 
         {(query.isFetched && (document_templates?.edges || [])?.length == 0) && <div className="card my-6">
 
