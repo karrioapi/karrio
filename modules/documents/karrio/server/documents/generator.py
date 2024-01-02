@@ -16,7 +16,6 @@ from karrio.server.orders.serializers import (
 )
 from karrio.server.core.serializers import (
     Shipment as ShipmentSerializer,
-    CarrierSettings,
 )
 from karrio.server.documents import models
 from karrio.server.documents import utils
@@ -119,23 +118,7 @@ def get_carrier_context(carrier=None):
     if carrier is None:
         return {}
 
-    carrier_name = getattr(
-        carrier,
-        "custom_carrier_name",
-        getattr(carrier, "carrier_name", ""),
-    )
-    display_name = getattr(
-        carrier,
-        "display_name",
-        REFERENCE_MODELS.get("carriers", {}).get(carrier.carrier_name),
-    )
-
-    return {
-        **CarrierSettings(carrier).data,
-        "carrier_name": carrier_name,
-        "display_name": display_name,
-        "metadata": carrier.metadata or {},
-    }
+    return carrier.data.to_dict()
 
 
 def get_orders_context(order_ids: str) -> typing.List[dict]:
