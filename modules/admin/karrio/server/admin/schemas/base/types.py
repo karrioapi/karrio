@@ -173,11 +173,12 @@ class SystemUsageType:
     order_volume: typing.Optional[float] = None
     total_shipments: typing.Optional[int] = None
     organization_count: typing.Optional[int] = None
+    total_shipping_spend: typing.Optional[float] = None
     api_errors: typing.List[utils.UsageStatType] = None
     api_requests: typing.List[utils.UsageStatType] = None
     order_volumes: typing.List[utils.UsageStatType] = None
     shipment_count: typing.List[utils.UsageStatType] = None
-    shipment_spend: typing.List[utils.UsageStatType] = None
+    shipping_spend: typing.List[utils.UsageStatType] = None
 
     @staticmethod
     @utils.authentication_required
@@ -218,7 +219,7 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                orders.Order.objects.filter(),
+                orders.Order.objects.exclude(status__in=["cancelled"]),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
@@ -243,20 +244,19 @@ class SystemUsageType:
             .annotate(count=models.Count("id"))
             .order_by("-date")
         )
-        shipment_spend = (
+        shipping_spend = (
             filters.ShipmentFilters(
                 dict(
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
-                    status=["cancelled", "draft"],
                 ),
-                manager.Shipment.objects.filter(),
+                manager.Shipment.objects.exclude(status__in=["cancelled", "draft"]),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
             .annotate(
-                count=functions.Cast(
-                    models.Sum("selected_rate__total_charge"), models.FloatField()
+                count=models.Sum(
+                    functions.Cast("selected_rate__total_charge", models.FloatField())
                 )
             )
             .order_by("-date")
@@ -266,6 +266,9 @@ class SystemUsageType:
         total_requests = sum([item["count"] for item in api_requests], 0)
         total_shipments = sum([item["count"] for item in shipment_count], 0)
         order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
+        total_shipping_spend = lib.to_money(
+            sum([item["count"] for item in shipping_spend], 0.0)
+        )
         organization_count = 0
 
         if conf.settings.MULTI_ORGANIZATIONS:
@@ -279,11 +282,12 @@ class SystemUsageType:
             total_requests=total_requests,
             total_shipments=total_shipments,
             organization_count=organization_count,
+            total_shipping_spend=total_shipping_spend,
             api_errors=[utils.UsageStatType.parse(item) for item in api_errors],
             api_requests=[utils.UsageStatType.parse(item) for item in api_requests],
             order_volumes=[utils.UsageStatType.parse(item) for item in order_volumes],
             shipment_count=[utils.UsageStatType.parse(item) for item in shipment_count],
-            shipment_spend=[utils.UsageStatType.parse(item) for item in shipment_spend],
+            shipping_spend=[utils.UsageStatType.parse(item) for item in shipping_spend],
         )
 
 
