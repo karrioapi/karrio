@@ -1,13 +1,18 @@
+import io
 import sys
+import base64
 import logging
 from django.urls import re_path
+from django.utils import timezone
 from django.http import JsonResponse
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
 from rest_framework import status
 
-from karrio.server.documents import models
-from karrio.server.documents.generator import Documents
+import karrio.lib as lib
+import karrio.server.openapi as openapi
+import karrio.server.documents.models as models
+import karrio.server.documents.generator as generator
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +30,9 @@ class DocumentGenerator(VirtualDownloadView):
             template = models.DocumentTemplate.objects.get(pk=pk, slug=slug)
             query_params = request.GET.dict()
 
-            self.document = Documents.generate(template, query_params, context=request)
+            self.document = generator.Documents.generate(
+                template, query_params, context=request
+            )
             self.name = f"{slug}.pdf"
             self.attachment = "download" in query_params
 
@@ -50,10 +57,124 @@ class DocumentGenerator(VirtualDownloadView):
         return ContentFile(self.document.getvalue(), name=self.name)
 
 
+class ShipmentDocsPrinter(VirtualDownloadView):
+    @openapi.extend_schema(exclude=True)
+    def get(
+        self,
+        request,
+        doc: str = "label",
+        format: str = "pdf",
+        **kwargs,
+    ):
+        """Retrieve a shipment label."""
+        from karrio.server.manager.models import Shipment
+
+        if doc not in ["label", "invoice"]:
+            return JsonResponse(
+                dict(error=f"Invalid document type: {doc}"),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        query_params = request.GET.dict()
+        self.attachment = "download" in query_params
+        ids = query_params.get("shipments", "").split(",")
+
+        self.format = format
+        self.name = f"{doc}s - {timezone.now()}.{format}"
+        _queryset = Shipment.objects.filter(id__in=ids)
+
+        if doc == "label":
+            _queryset = _queryset.filter(
+                label__isnull=False,
+                label_type__contains=format.upper(),
+            )
+        if doc == "invoice":
+            _queryset = _queryset.filter(invoice__isnull=False)
+
+        self.documents = _queryset.values_list(doc, "label_type")
+
+        response = super(ShipmentDocsPrinter, self).get(request, doc, format, **kwargs)
+        response["X-Frame-Options"] = "ALLOWALL"
+        return response
+
+    def get_file(self):
+        content = base64.b64decode(
+            lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper())
+        )
+        buffer = io.BytesIO()
+        buffer.write(content)
+
+        return ContentFile(buffer.getvalue(), name=self.name)
+
+
+class OrderDocsPrinter(VirtualDownloadView):
+    @openapi.extend_schema(exclude=True)
+    def get(
+        self,
+        request,
+        doc: str = "label",
+        format: str = "pdf",
+        **kwargs,
+    ):
+        """Retrieve a shipment label."""
+        from karrio.server.orders.models import Order
+
+        if doc not in ["label", "invoice"]:
+            return JsonResponse(
+                dict(error=f"Invalid document type: {doc}"),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        query_params = request.GET.dict()
+        self.attachment = "download" in query_params
+        ids = query_params.get("orders", "").split(",")
+
+        self.format = format
+        self.name = f"{doc}s - {timezone.now()}.{format}"
+        _queryset = Order.objects.filter(
+            id__in=ids, shipments__id__isnull=False
+        ).distinct()
+
+        if doc == "label":
+            _queryset = _queryset.filter(
+                shipments__label__isnull=False,
+                shipments__label_type__contains=format.upper(),
+            )
+        if doc == "invoice":
+            _queryset = _queryset.filter(shipments__invoice__isnull=False)
+
+        self.documents = list(
+            set(_queryset.values_list(f"shipments__{doc}", "shipments__label_type"))
+        )
+
+        response = super(OrderDocsPrinter, self).get(request, doc, format, **kwargs)
+        response["X-Frame-Options"] = "ALLOWALL"
+        return response
+
+    def get_file(self):
+        content = base64.b64decode(
+            lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper())
+        )
+        buffer = io.BytesIO()
+        buffer.write(content)
+
+        return ContentFile(buffer.getvalue(), name=self.name)
+
+
 urlpatterns = [
     re_path(
         r"^documents/(?P<pk>\w+).(?P<slug>\w+)",
         DocumentGenerator.as_view(),
         name="documents-generator",
-    )
+    ),
+    re_path(
+        r"^docs/shipments/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        ShipmentDocsPrinter.as_view(),
+        name="shipments-docs-print",
+    ),
+    re_path(
+        r"^docs/orders/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        OrderDocsPrinter.as_view(),
+        name="orders-docs-print",
+    ),
 ]

@@ -1,5 +1,5 @@
-import { GET_SYSTEM_USAGE, GetSystemUsage, UsageFilter } from "@karrio/types/graphql/admin";
-import { GET_ORGANIZATION, get_organization } from "@karrio/types/graphql/ee";
+import { GET_SYSTEM_USAGE, GetSystemUsage, GetSystemUsage_system_usage, UsageFilter } from "@karrio/types/graphql/admin";
+import { GET_ORGANIZATION, get_organization, get_organization_organization_usage } from "@karrio/types/graphql/ee";
 import { gqlstr, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useQuery } from "@tanstack/react-query";
 import { useAPIMetadata } from "./api-metadata";
@@ -8,6 +8,7 @@ import { useKarrio } from "./karrio";
 import moment from "moment";
 import React from "react";
 
+type UsageType = get_organization_organization_usage & GetSystemUsage_system_usage;
 type FilterType = UsageFilter & { setVariablesToURL?: boolean };
 const USAGE_FILTERS: Record<string, UsageFilter> = {
   "7 days": {
@@ -43,20 +44,19 @@ export function useAPIUsage({ setVariablesToURL = false, ...initialData }: Filte
   const [filter, _setFilter] = React.useState<UsageFilter>({ ...USAGE_FILTERS["15 days"], ...initialData });
   const systemUsage = (
     () => karrio.admin.request<GetSystemUsage>(gqlstr(GET_SYSTEM_USAGE), { variables: { filter } })
-      .then(({ system_usage }) => ({ usage: system_usage }))
+      .then(({ system_usage }) => ({ usage: system_usage as UsageType }))
   );
   const orgUsage = (
     () => karrio.graphql.request<get_organization>(gqlstr(GET_ORGANIZATION), { variables: { id: session.orgId, usage: filter } })
-      .then(({ organization }) => ({ usage: organization?.usage }))
+      .then(({ organization }) => ({ usage: organization?.usage as UsageType }))
   );
 
   // Queries
-  const query = useQuery({
-    queryKey: ['usage', filter],
-    queryFn: (metadata.MULTI_ORGANIZATIONS == true ? orgUsage : systemUsage),
-    staleTime: 1500000,
-    onError
-  });
+  const query = useQuery(
+    ['usage', filter],
+    (metadata.MULTI_ORGANIZATIONS == true ? orgUsage : systemUsage),
+    { staleTime: 1500000, onError }
+  );
 
   function setFilter(options: UsageFilter) {
     const params = Object.keys(options).reduce((acc, key) => {

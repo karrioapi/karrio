@@ -1,56 +1,18 @@
+import { Bar, BarChart, Tooltip, ResponsiveContainer, XAxis } from "recharts";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { SelectField } from "@karrio/ui/components";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import { Bar, BarChart, Tooltip, ResponsiveContainer, XAxis } from "recharts";
 import { useAPIUsage } from "@karrio/hooks/usage";
 import { useUser } from "@karrio/hooks/user";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import React from "react";
 import moment from "moment";
+import React from "react";
 
 export { getServerSideProps } from "@/context/main";
-
-const data = [
-  {
-    "name": "Page A",
-    "uv": 4000,
-    "pv": 2400
-  },
-  {
-    "name": "Page B",
-    "uv": 3000,
-    "pv": 1398
-  },
-  {
-    "name": "Page C",
-    "uv": 2000,
-    "pv": 9800
-  },
-  {
-    "name": "Page D",
-    "uv": 2780,
-    "pv": 3908
-  },
-  {
-    "name": "Page E",
-    "uv": 1890,
-    "pv": 4800
-  },
-  {
-    "name": "Page F",
-    "uv": 2390,
-    "pv": 3800
-  },
-  {
-    "name": "Page G",
-    "uv": 3490,
-    "pv": 4300
-  }
-]
 
 
 export default function ApiPage(pageProps: any) {
