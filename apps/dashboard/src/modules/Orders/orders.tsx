@@ -14,7 +14,7 @@ import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
-import { AddressType } from "@karrio/types";
+import { AddressType, OrderType } from "@karrio/types";
 import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
@@ -53,6 +53,19 @@ export default function OrdersPage(pageProps: any) {
       };
 
       setFilter(query);
+    };
+    const computeOrderTotal = (order: any) => {
+      return order.line_items.reduce((acc: number, item: any) => {
+        const quantity = !!item.quantity ? item.quantity : 1;
+        const price = item.value_amount || 0;
+        return acc + (quantity * price);
+      }, 0);
+    };
+    const computeOrderCurrency = (order: any) => {
+      return order.line_items.reduce((acc: string, item: any) => {
+        const currency = item.value_currency;
+        return acc || currency;
+      }, "");
     };
     const handleSelection = (e: ChangeEvent) => {
       const { checked, name } = e.target as HTMLInputElement;
@@ -172,6 +185,7 @@ export default function OrdersPage(pageProps: any) {
                     <td className="items is-size-7">ITEMS</td>
                     <td className="customer is-size-7">SHIP TO</td>
                     <td className="date is-size-7">DATE</td>
+                    <td className="date is-size-7">TOTAL</td>
                     <td className="action"></td>
                   </>}
                 </tr>
@@ -217,9 +231,15 @@ export default function OrdersPage(pageProps: any) {
                       <br />
                       <span className="has-text-weight-medium">{formatAddressLocationShort(order.shipping_to as AddressType)}</span>
                     </td>
-                    <td className="date is-vcentered px-1" onClick={() => previewOrder(order.id)}>
+                    <td className="date px-1" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">
                         {formatDateTime(order.created_at)}
+                      </p>
+                    </td>
+                    <td className="total px-2" onClick={() => previewOrder(order.id)}>
+                      <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                        {computeOrderTotal(order)}
+                        <span className="mx-2">{computeOrderCurrency(order)}</span>
                       </p>
                     </td>
                     <td className="action is-vcentered px-0">
