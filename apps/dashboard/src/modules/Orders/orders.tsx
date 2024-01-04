@@ -68,6 +68,17 @@ export default function OrdersPage(pageProps: any) {
         !["cancelled", "fulfilled"].includes(order.status)
       )).length === selection.length;
     };
+    const computeDocFormat = (selection: string[]): string | null => {
+      const _order = (orders?.edges || []).find(({ node: order }) => (order.id == selection[0]));
+      return (_order?.node?.shipments || [])[0].label_type;
+    };
+    const compatibleTypeSelection = (selection: string[]) => {
+      const format = computeDocFormat(selection);
+      return (orders?.edges || []).filter(({ node: order }) => (
+        selection.includes(order.id) &&
+        !!order.shipments.find(({ label_type }) => label_type === format)
+      )).length === selection.length;
+    };
 
     useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
@@ -126,21 +137,33 @@ export default function OrdersPage(pageProps: any) {
                   </td>
 
                   {selection.length > 0 && <td className="p-1" colSpan={5}>
-                    <AppLink
-                      href={`/orders/create_shipment?shipment_id=new&order_id=${selection.join(',')}`}
-                      className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
-                      <span className="has-text-weight-semibold">Create shipment</span>
-                    </AppLink>
-                    {(document_templates?.edges || []).map(({ node: template }) =>
+                    <div className="buttons">
+                      <AppLink
+                        href={`/orders/create_shipment?shipment_id=new&order_id=${selection.join(',')}`}
+                        className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
+                        <span className="has-text-weight-semibold">Create shipment</span>
+                      </AppLink>
                       <a
-                        key={template.id}
-                        href={url$`${references.HOST}/documents/${template.id}.${template.slug}?orders=${selection.join(',')}`}
-                        className="button is-small is-default px-3 mx-2"
-                        target="_blank"
-                        rel="noreferrer">
-                        <span className="has-text-weight-semibold">Print {template.name}</span>
+                        href={url$`${references.HOST}/docs/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(',')}`}
+                        className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">
+                        <span className="has-text-weight-semibold">Print Labels</span>
                       </a>
-                    )}
+                      <a
+                        href={url$`${references.HOST}/docs/orders/invoice.pdf?orders=${selection.join(',')}`}
+                        className={`button is-small is-default px-3`} target="_blank" rel="noreferrer">
+                        <span className="has-text-weight-semibold">Print Invoices</span>
+                      </a>
+                      {(document_templates?.edges || []).map(({ node: template }) =>
+                        <a
+                          key={template.id}
+                          href={url$`${references.HOST}/documents/${template.id}.${template.slug}?orders=${selection.join(',')}`}
+                          className="button is-small is-default px-3"
+                          target="_blank"
+                          rel="noreferrer">
+                          <span className="has-text-weight-semibold">Print {template.name}</span>
+                        </a>
+                      )}
+                    </div>
                   </td>}
 
                   {selection.length === 0 && <>
