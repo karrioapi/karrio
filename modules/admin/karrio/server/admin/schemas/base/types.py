@@ -169,20 +169,21 @@ SystemCarrierConnectionType: typing.Any = strawberry.union(
 @strawberry.type
 class SystemUsageType:
     total_errors: typing.Optional[int] = None
-    total_requests: typing.Optional[int] = None
     order_volume: typing.Optional[float] = None
+    total_requests: typing.Optional[int] = None
+    total_trackers: typing.Optional[int] = None
     total_shipments: typing.Optional[int] = None
     organization_count: typing.Optional[int] = None
     total_shipping_spend: typing.Optional[float] = None
-    api_errors: typing.List[utils.UsageStatType] = None
-    api_requests: typing.List[utils.UsageStatType] = None
-    order_volumes: typing.List[utils.UsageStatType] = None
-    shipment_count: typing.List[utils.UsageStatType] = None
-    shipping_spend: typing.List[utils.UsageStatType] = None
+    api_errors: typing.Optional[typing.List[utils.UsageStatType]] = None
+    api_requests: typing.Optional[typing.List[utils.UsageStatType]] = None
+    order_volumes: typing.Optional[typing.List[utils.UsageStatType]] = None
+    shipment_count: typing.Optional[typing.List[utils.UsageStatType]] = None
+    shipping_spend: typing.Optional[typing.List[utils.UsageStatType]] = None
+    tracker_count: typing.Optional[typing.List[utils.UsageStatType]] = None
 
     @staticmethod
     @utils.authentication_required
-    @admin.staff_required
     def resolve(
         info,
         filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
@@ -261,9 +262,23 @@ class SystemUsageType:
             )
             .order_by("-date")
         )
+        tracker_count = (
+            filters.TrackerFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Tracking.objects.filter(),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
+            .order_by("-date")
+        )
 
         total_errors = sum([item["count"] for item in api_errors], 0)
         total_requests = sum([item["count"] for item in api_requests], 0)
+        total_trackers = sum([item["count"] for item in tracker_count], 0)
         total_shipments = sum([item["count"] for item in shipment_count], 0)
         order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
         total_shipping_spend = lib.to_money(
@@ -280,6 +295,7 @@ class SystemUsageType:
             order_volume=order_volume,
             total_errors=total_errors,
             total_requests=total_requests,
+            total_trackers=total_trackers,
             total_shipments=total_shipments,
             organization_count=organization_count,
             total_shipping_spend=total_shipping_spend,
@@ -288,6 +304,7 @@ class SystemUsageType:
             order_volumes=[utils.UsageStatType.parse(item) for item in order_volumes],
             shipment_count=[utils.UsageStatType.parse(item) for item in shipment_count],
             shipping_spend=[utils.UsageStatType.parse(item) for item in shipping_spend],
+            tracker_count=[utils.UsageStatType.parse(item) for item in tracker_count],
         )
 
 

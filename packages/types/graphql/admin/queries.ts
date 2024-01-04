@@ -11,6 +11,7 @@ export const GET_SYSTEM_USAGE = gql`query GetSystemUsage($filter: UsageFilter) {
     total_errors
     order_volume
     total_requests
+    total_trackers
     total_shipments
     organization_count
     total_shipping_spend
@@ -30,6 +31,11 @@ export const GET_SYSTEM_USAGE = gql`query GetSystemUsage($filter: UsageFilter) {
       date
     }
     shipment_count {
+      label
+      count
+      date
+    }
+    tracker_count {
       label
       count
       date
@@ -63,6 +69,7 @@ export const GET_ACCOUNTS = gql`query GetAccounts($filter: AccountFilter) {
           members
           order_volume
           total_requests
+          total_trackers
           total_shipments
           total_shipping_spend
           api_requests {
@@ -76,6 +83,11 @@ export const GET_ACCOUNTS = gql`query GetAccounts($filter: AccountFilter) {
             date
           }
           shipment_count {
+            label
+            count
+            date
+          }
+          tracker_count {
             label
             count
             date

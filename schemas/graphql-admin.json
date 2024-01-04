@@ -1028,7 +1028,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "DateTime",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null
@@ -1038,7 +1038,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "DateTime",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null
@@ -1084,6 +1084,18 @@
             "deprecationReason": null
           },
           {
+            "name": "order_volume",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "total_requests",
             "description": null,
             "args": [],
@@ -1096,12 +1108,12 @@
             "deprecationReason": null
           },
           {
-            "name": "order_volume",
+            "name": "total_trackers",
             "description": null,
             "args": [],
             "type": {
               "kind": "SCALAR",
-              "name": "Float",
+              "name": "Int",
               "ofType": null
             },
             "isDeprecated": false,
@@ -1148,19 +1160,15 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UsageStatType",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
                 }
               }
             },
@@ -1172,19 +1180,15 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UsageStatType",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
                 }
               }
             },
@@ -1196,19 +1200,15 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UsageStatType",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
                 }
               }
             },
@@ -1220,19 +1220,15 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UsageStatType",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
                 }
               }
             },
@@ -1244,19 +1240,35 @@
             "description": null,
             "args": [],
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "OBJECT",
-                    "name": "UsageStatType",
-                    "ofType": null
-                  }
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "tracker_count",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
                 }
               }
             },
@@ -14510,6 +14522,18 @@
             "deprecationReason": null
           },
           {
+            "name": "total_trackers",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "total_shipments",
             "description": null,
             "args": [],
@@ -14607,6 +14631,26 @@
           },
           {
             "name": "shipping_spend",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "tracker_count",
             "description": null,
             "args": [],
             "type": {

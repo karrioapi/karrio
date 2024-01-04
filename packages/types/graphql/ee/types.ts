@@ -50,6 +50,12 @@ export interface get_organization_organization_usage_shipment_count {
   count: number | null;
 }
 
+export interface get_organization_organization_usage_tracker_count {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
 export interface get_organization_organization_usage_shipping_spend {
   date: string | null;
   label: string | null;
@@ -60,12 +66,14 @@ export interface get_organization_organization_usage {
   members: number | null;
   order_volume: number | null;
   total_requests: number | null;
+  total_trackers: number | null;
   total_shipments: number | null;
   unfulfilled_orders: number | null;
   total_shipping_spend: number | null;
   api_requests: get_organization_organization_usage_api_requests[] | null;
   order_volumes: get_organization_organization_usage_order_volumes[] | null;
   shipment_count: get_organization_organization_usage_shipment_count[] | null;
+  tracker_count: get_organization_organization_usage_tracker_count[] | null;
   shipping_spend: get_organization_organization_usage_shipping_spend[] | null;
 }
 
@@ -85,6 +93,7 @@ export interface get_organization {
 
 export interface get_organizationVariables {
   id: string;
+  usage?: UsageFilter | null;
 }
 
 
@@ -138,6 +147,12 @@ export interface get_organizations_organizations_usage_shipment_count {
   count: number | null;
 }
 
+export interface get_organizations_organizations_usage_tracker_count {
+  date: string | null;
+  label: string | null;
+  count: number | null;
+}
+
 export interface get_organizations_organizations_usage_shipping_spend {
   date: string | null;
   label: string | null;
@@ -148,12 +163,14 @@ export interface get_organizations_organizations_usage {
   members: number | null;
   order_volume: number | null;
   total_requests: number | null;
+  total_trackers: number | null;
   total_shipments: number | null;
   unfulfilled_orders: number | null;
   total_shipping_spend: number | null;
   api_requests: get_organizations_organizations_usage_api_requests[] | null;
   order_volumes: get_organizations_organizations_usage_order_volumes[] | null;
   shipment_count: get_organizations_organizations_usage_shipment_count[] | null;
+  tracker_count: get_organizations_organizations_usage_tracker_count[] | null;
   shipping_spend: get_organizations_organizations_usage_shipping_spend[] | null;
 }
 
@@ -1730,6 +1747,13 @@ export enum UserRole {
   admin = "admin",
   developer = "developer",
   member = "member",
+}
+
+// null
+export interface UsageFilter {
+  date_after?: string | null;
+  date_before?: string | null;
+  omit?: string[] | null;
 }
 
 // null
