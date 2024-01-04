@@ -1,5 +1,6 @@
-import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, formatCarrierSlug } from "@karrio/lib";
+import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, formatCarrierSlug, url$ } from "@karrio/lib";
 import { ShipmentPreview, ShipmentPreviewContext } from "@/components/shipment-preview";
+import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
@@ -25,14 +26,20 @@ export default function ShipmentsPage(pageProps: any) {
     const router = useRouter();
     const { setLoading } = useLoader();
     const { metadata } = useAPIMetadata();
+    const [allChecked, setAllChecked] = React.useState(false);
     const [initialized, setInitialized] = React.useState(false);
+    const [selection, setSelection] = React.useState<string[]>([]);
     const { previewShipment } = useContext(ShipmentPreviewContext);
     const context = useShipments({
       status: ['purchased', 'delivered', 'in_transit', 'cancelled', 'needs_attention', 'out_for_delivery', 'delivery_failed'] as any,
       setVariablesToURL: true,
-    });
+    })
     const { query: { data: { shipments } = {}, ...query }, filter, setFilter } = context;
+    const { query: { data: { document_templates } = {} } } = useDocumentTemplates({
+      related_object: "shipment" as any
+    });
 
+    const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
     const updateFilter = (extra: Partial<any> = {}) => {
       const query = {
         ...filter,
@@ -41,10 +48,38 @@ export default function ShipmentsPage(pageProps: any) {
       };
 
       setFilter(query);
-    }
+    };
+    const updatedSelection = (selectedShipments: string[], current: typeof shipments) => {
+      const shipment_ids = (current?.edges || []).map(({ node: shipment }) => shipment.id);
+      const selection = selectedShipments.filter(id => shipment_ids.includes(id));
+      const selected = selection.length > 0 && selection.length === (shipment_ids || []).length;
+      setAllChecked(selected);
+      if (selectedShipments.filter(id => !shipment_ids.includes(id)).length > 0) {
+        setSelection(selection);
+      }
+    };
+    const handleSelection = (e: React.ChangeEvent) => {
+      const { checked, name } = e.target as HTMLInputElement;
+      if (name === "all") {
+        setSelection(!checked ? [] : (shipments?.edges || []).map(({ node: { id } }) => id));
+      } else {
+        setSelection(checked ? [...selection, name] : selection.filter(id => id !== name));
+      }
+    };
+    const computeDocFormat = (selection: string[]) => {
+      const _shipment = (shipments?.edges || []).find(({ node: shipment }) => (shipment.id == selection[0]));
+      return (_shipment?.node || {}).label_type;
+    };
+    const compatibleTypeSelection = (selection: string[]) => {
+      const format = computeDocFormat(selection);
+      return (shipments?.edges || []).filter(({ node: shipment }) => (
+        selection.includes(shipment.id) && shipment.label_type == format
+      )).length === selection.length;
+    };
 
     useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
+    useEffect(() => { updatedSelection(selection, shipments); }, [selection, shipments]);
     useEffect(() => {
       if (query.isFetched && !initialized && !isNoneOrEmpty(router.query.modal)) {
         previewShipment(router.query.modal as string);
@@ -95,19 +130,66 @@ export default function ShipmentsPage(pageProps: any) {
             <table className="shipments-table table is-fullwidth">
 
               <tbody>
-
                 <tr>
-                  <td className="carrier is-size-7">CARRIER</td>
-                  <td className="service is-size-7">SERVICE</td>
-                  <td className="status"></td>
-                  <td className="recipient is-size-7">RECIPIENT</td>
-                  <td className="reference is-size-7">REFERENCE</td>
-                  <td className="date is-size-7">DATE</td>
-                  <td className="action"></td>
+                  <td className="selector has-text-centered p-0" onClick={preventPropagation}>
+                    <label className="checkbox p-2">
+                      <input
+                        name="all"
+                        type="checkbox"
+                        onChange={handleSelection}
+                        checked={allChecked}
+                      />
+                    </label>
+                  </td>
+
+                  {selection.length > 0 && <td className="p-1" colSpan={7}>
+                    <div className="buttons">
+                      <a
+                        href={url$`${metadata.HOST}/docs/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(',')}`}
+                        className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">
+                        <span className="has-text-weight-semibold">Print Labels</span>
+                      </a>
+                      <a
+                        href={url$`${metadata.HOST}/docs/shipments/invoice.pdf?shipments=${selection.join(',')}`}
+                        className={`button is-small is-default px-3`} target="_blank" rel="noreferrer">
+                        <span className="has-text-weight-semibold">Print Invoices</span>
+                      </a>
+                      {(document_templates?.edges || []).map(({ node: template }) =>
+                        <a
+                          key={template.id}
+                          href={url$`${metadata.HOST}/documents/${template.id}.${template.slug}?shipment_ids=${selection.join(',')}`}
+                          className="button is-small is-default px-3"
+                          target="_blank"
+                          rel="noreferrer">
+                          <span className="has-text-weight-semibold">Print {template.name}</span>
+                        </a>
+                      )}
+                    </div>
+                  </td>}
+
+                  {selection.length === 0 && <>
+                    <td className="carrier is-size-7">CARRIER</td>
+                    <td className="service is-size-7">SERVICE</td>
+                    <td className="status"></td>
+                    <td className="recipient is-size-7">RECIPIENT</td>
+                    <td className="reference is-size-7">REFERENCE</td>
+                    <td className="date is-size-7">DATE</td>
+                    <td className="action"></td>
+                  </>}
                 </tr>
 
                 {(shipments?.edges || []).map(({ node: shipment }) => (
                   <tr key={shipment.id} className="items is-clickable">
+                    <td className="selector has-text-centered is-vcentered p-0">
+                      <label className="checkbox py-3 px-2">
+                        <input
+                          type="checkbox"
+                          name={shipment.id}
+                          onChange={handleSelection}
+                          checked={selection.includes(shipment.id)}
+                        />
+                      </label>
+                    </td>
                     <td className="carrier is-vcentered p-2" onClick={() => previewShipment(shipment.id)}>
                       <CarrierBadge
                         className="has-background-primary has-text-weight-bold has-text-white-bis"
