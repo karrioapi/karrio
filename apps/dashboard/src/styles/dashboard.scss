@@ -378,17 +378,28 @@ Karrio custom styling
   }
 
   .date {
-    width: 15%;
+    width: 120px;
     min-width: 120px;
   }
 
   .total {
-    width: 50px;
-    min-width: 50px;
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .rate {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .service {
+    min-width: 10vw;
+    max-width: 200px;
   }
 
   .action {
-    width: 2%;
+    width: 45px;
+    min-width: 45px;
   }
 
   tbody>tr.items {

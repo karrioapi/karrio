@@ -3606,6 +3606,13 @@ export interface get_order_order_shipments_messages {
   details: any | null;
 }
 
+export interface get_order_order_shipments_tracker {
+  id: string;
+  tracking_number: string;
+  carrier_id: string;
+  carrier_name: string;
+}
+
 export interface get_order_order_shipments {
   id: string;
   carrier_id: string | null;
@@ -3636,6 +3643,8 @@ export interface get_order_order_shipments {
   metadata: any;
   meta: any | null;
   messages: get_order_order_shipments_messages[];
+  tracker_id: string | null;
+  tracker: get_order_order_shipments_tracker | null;
 }
 
 export interface get_order_order {
@@ -3969,6 +3978,13 @@ export interface get_orders_orders_edges_node_shipments_messages {
   details: any | null;
 }
 
+export interface get_orders_orders_edges_node_shipments_tracker {
+  id: string;
+  tracking_number: string;
+  carrier_id: string;
+  carrier_name: string;
+}
+
 export interface get_orders_orders_edges_node_shipments {
   id: string;
   carrier_id: string | null;
@@ -3999,6 +4015,8 @@ export interface get_orders_orders_edges_node_shipments {
   metadata: any;
   meta: any | null;
   messages: get_orders_orders_edges_node_shipments_messages[];
+  tracker_id: string | null;
+  tracker: get_orders_orders_edges_node_shipments_tracker | null;
 }
 
 export interface get_orders_orders_edges_node {

@@ -2650,6 +2650,13 @@ export const GET_ORDER = gql`query get_order($id: String!) {
         code
         details
       }
+      tracker_id
+      tracker {
+        id
+        tracking_number
+        carrier_id
+        carrier_name
+      }
     }
   }
 }
@@ -2956,6 +2963,13 @@ export const GET_ORDERS = gql`query get_orders($filter: OrderFilter) {
             message
             code
             details
+          }
+          tracker_id
+          tracker {
+            id
+            tracking_number
+            carrier_id
+            carrier_name
           }
         }
       }

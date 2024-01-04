@@ -19,6 +19,7 @@ import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
@@ -29,7 +30,6 @@ import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import Head from "next/head";
 import React from "react";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 export { getServerSideProps } from "@/context/main";
 

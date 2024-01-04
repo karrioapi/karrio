@@ -1,4 +1,4 @@
-import { formatAddressLocationShort, formatAddressShort, formatDateTime, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
+import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
 import { OrderPreview, OrderPreviewContext } from "@/components/order-preview";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import React, { ChangeEvent, useContext, useEffect } from "react";
@@ -14,7 +14,8 @@ import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
-import { AddressType, OrderType } from "@karrio/types";
+import { AddressType } from "@karrio/types";
+import Image from "next/image";
 import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
@@ -91,6 +92,76 @@ export default function OrdersPage(pageProps: any) {
         selection.includes(order.id) &&
         !!order.shipments.find(({ label_type }) => label_type === format)
       )).length === selection.length;
+    };
+    const computeOrderRate = (order: any) => {
+      const shipment = (
+        order.shipments.find(({ status }) => !["cancelled", "draft"].includes(status)) ||
+        order.shipments.find(({ status }) => !["cancelled"].includes(status))
+      );
+      const _service = order.options.preferred_service;
+      const rate = (
+        shipment?.selected_rate ||
+        (shipment?.rates || []).find(({ service }) => service === _service) ||
+        (shipment?.rates || [])[0]
+      );
+      const currency = rate?.currency;
+      const price = rate?.total_charge;
+
+      return `${price || ''} ${currency || ''}`;
+    };
+    const computeOrderService = (order: any) => {
+      const shipment = (
+        order.shipments.find(({ status, tracking_number }) => !!tracking_number && !["cancelled", "draft"].includes(status))
+      );
+
+      if (!shipment) {
+        const _shipment = (
+          order.shipments.find(({ status }) => !["cancelled", "draft"].includes(status)) ||
+          order.shipments.find(({ status }) => !["cancelled"].includes(status))
+        );
+        const _service = order.options?.preferred_service
+        const _rate = (
+          _shipment?.selected_rate ||
+          (_shipment?.rates || []).find(({ service }) => service === _service) ||
+          (_shipment?.rates || [])[0]
+        );
+
+        if (!_rate) return <></>;
+
+        return <>
+          <p>
+            <Image
+              src={p`/carriers/${_rate.meta?.carrier || _rate.carrier_name || formatCarrierSlug(references.APP_NAME)}_logo.svg`}
+              height={10}
+              width={40}
+              alt="carrier logo"
+            />
+            <span className="is-size-7">{` - `}</span>
+          </p>
+          <span className="is-size-7">{_rate.meta?.service_name || _rate.service}</span>
+        </>
+      }
+
+      return (
+        <p className="has-text-weight-semibold has-text-grey">
+          <Image
+            src={p`/carriers/${shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(references.APP_NAME)}_logo.svg`}
+            height={10}
+            width={40}
+            alt="carrier logo"
+          />
+          <span className="is-size-7 has-text-weight-bold">{` `}{!shipment.tracker_id && <>{shipment.tracking_number}</>}</span>
+          {!!shipment.tracker_id && <a className="p-0 mx-2 my-0 is-size-7 has-text-weight-bold"
+            href={`/tracking/${shipment.tracker_id}`} target="_blank" rel="noreferrer">
+            <span>
+              {shipment.tracking_number}
+              <i className="fas fa-external-link-alt mx-2"></i>
+            </span>
+          </a>}
+          <br />
+          <span className="is-size-7">{shipment.meta?.service_name || shipment.selected_rate?.service}</span>
+        </p>
+      )
     };
 
     useEffect(() => { updateFilter(); }, [router.query]);
@@ -185,7 +256,9 @@ export default function OrdersPage(pageProps: any) {
                     <td className="items is-size-7">ITEMS</td>
                     <td className="customer is-size-7">SHIP TO</td>
                     <td className="date is-size-7">DATE</td>
-                    <td className="date is-size-7">TOTAL</td>
+                    <td className="total is-size-7">TOTAL</td>
+                    <td className="rate is-size-7">RATE</td>
+                    <td className="service is-size-7">SERVICE</td>
                     <td className="action"></td>
                   </>}
                 </tr>
@@ -241,6 +314,14 @@ export default function OrdersPage(pageProps: any) {
                         {computeOrderTotal(order)}
                         <span className="mx-2">{computeOrderCurrency(order)}</span>
                       </p>
+                    </td>
+                    <td className="rate px-2" onClick={() => previewOrder(order.id)}>
+                      <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                        {computeOrderRate(order)}
+                      </p>
+                    </td>
+                    <td className="service text-ellipsis">
+                      {computeOrderService(order)}
                     </td>
                     <td className="action is-vcentered px-0">
                       <OrderMenu order={order as any} className="is-fullwidth" />
