@@ -70,7 +70,7 @@ export default function ApiPage(pageProps: any) {
 
           <div className="columns">
             <div className="column is-5 pr-2">
-              <p className="subtitle is-6 py-1">Public Key</p>
+              <p className="subtitle is-6 py-1">Private Key</p>
               <p className="is-size-7 has-text-weight-semibold pr-6">
                 <span>Use this key to authenticate your API calls. </span>
                 <a
