@@ -127,7 +127,7 @@ export default function ApiPage(pageProps: any) {
                       <span className="has-text-weight-bold m-1">Order</span>
                     </div>
 
-                    <p className="has-text-grey-light my-2 has-text-weight-semibold">Order volumes</p>
+                    <p className="has-text-grey-light my-2 has-text-weight-semibold">Fullfilled orders volume</p>
                     <p className="has-text-grey-dark my-1 has-text-weight-bold is-size-5">
                       <span className="icon-text">
                         <span className="icon">
@@ -224,7 +224,7 @@ export default function ApiPage(pageProps: any) {
                 <span className="tag is-primary icon has-text-white is-medium mt-1">
                   <i className="fas fa-location-dot"></i>
                 </span>
-                <div className="column py-0 px-1">
+                <div className="column py-0 px-1" style={{ lineHeight: '16px' }}>
                   <p className="has-text-weight-bold mb-1">Add shipping location address</p>
                   <p className="has-text-grey m-0 is-size-7">Add one or multiple warehouse locations.</p>
                 </div>
@@ -241,7 +241,7 @@ export default function ApiPage(pageProps: any) {
                 <span className="tag is-primary icon has-text-white is-medium mt-1">
                   <i className="fas fa-truck-fast"></i>
                 </span>
-                <div className="column py-0 px-1">
+                <div className="column py-0 px-1" style={{ lineHeight: '16px' }}>
                   <p className="has-text-weight-bold mb-1">Set up carrier accounts</p>
                   <p className="has-text-grey m-0 is-size-7">Connect your carrier accounts to start</p>
                 </div>
@@ -258,7 +258,7 @@ export default function ApiPage(pageProps: any) {
                 <span className="tag is-primary icon has-text-white is-medium mt-1">
                   <i className="fas fa-file-lines"></i>
                 </span>
-                <div className="column py-0 px-1">
+                <div className="column py-0 px-1" style={{ lineHeight: '16px' }}>
                   <p className="has-text-weight-bold mb-1">Print a test label</p>
                   <p className="has-text-grey m-0 is-size-7">Generate a test label for a sample shipment.</p>
                 </div>
@@ -275,7 +275,7 @@ export default function ApiPage(pageProps: any) {
                 <span className="tag is-primary icon has-text-white is-medium mt-1">
                   <i className="fas fa-location-arrow"></i>
                 </span>
-                <div className="column py-0 px-1">
+                <div className="column py-0 px-1" style={{ lineHeight: '16px' }}>
                   <p className="has-text-weight-bold mb-1">Add a tracking number</p>
                   <p className="has-text-grey m-0 is-size-7">Add one or multiple shipments to track.</p>
                 </div>
@@ -292,7 +292,7 @@ export default function ApiPage(pageProps: any) {
                 <span className="tag is-primary icon has-text-white is-medium mt-1">
                   <i className="fas fa-plug"></i>
                 </span>
-                <div className="column py-0 px-1">
+                <div className="column py-0 px-1" style={{ lineHeight: '16px' }}>
                   <p className="has-text-weight-bold mb-1">Set up an API connection</p>
                   <p className="has-text-grey m-0 is-size-7">Retrieve your API key to connect via API.</p>
                 </div>
@@ -309,7 +309,7 @@ export default function ApiPage(pageProps: any) {
                 <span className="tag is-primary icon has-text-white is-medium mt-1">
                   <i className="fas fa-list-check"></i>
                 </span>
-                <div className="column py-0 px-1">
+                <div className="column py-0 px-1" style={{ lineHeight: '16px' }}>
                   <p className="has-text-weight-bold mb-1">Review your API request</p>
                   <p className="has-text-grey m-0 is-size-7">Audit your API requests logs and system health.</p>
                 </div>

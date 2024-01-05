@@ -188,6 +188,8 @@ class SystemUsageType:
         info,
         filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
     ) -> "SystemUsageType":
+        _test_mode = info.context.request.test_mode
+        _test_filter = dict(test_mode=_test_mode)
         _filter = {
             "date_before": datetime.datetime.now(),
             "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
@@ -197,7 +199,7 @@ class SystemUsageType:
         api_requests = (
             filters.LogFilter(
                 _filter,
-                core.APILogIndex.objects.filter(),
+                core.APILogIndex.objects.filter(**_test_filter),
             )
             .qs.annotate(date=functions.TruncDay("requested_at"))
             .values("date")
@@ -207,7 +209,7 @@ class SystemUsageType:
         api_errors = (
             filters.LogFilter(
                 {**_filter, "status": "failed"},
-                core.APILogIndex.objects.filter(),
+                core.APILogIndex.objects.filter(**_test_filter),
             )
             .qs.annotate(date=functions.TruncDay("requested_at"))
             .values("date")
@@ -220,7 +222,9 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                orders.Order.objects.exclude(status__in=["cancelled", "unfulfilled"]),
+                orders.Order.objects.filter(**_test_filter).exclude(
+                    status__in=["cancelled", "unfulfilled"]
+                ),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
@@ -238,7 +242,7 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                manager.Shipment.objects.filter(),
+                manager.Shipment.objects.filter(**_test_filter),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
@@ -251,7 +255,9 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                manager.Shipment.objects.exclude(status__in=["cancelled", "draft"]),
+                manager.Shipment.objects.filter(**_test_filter).exclude(
+                    status__in=["cancelled", "draft"]
+                ),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
@@ -268,7 +274,7 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                manager.Tracking.objects.filter(),
+                manager.Tracking.objects.filter(**_test_filter),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")

@@ -13,6 +13,10 @@ Karrio custom styling
     box-shadow: none;
     border: 1px solid #e5e5e5;
   }
+
+  &.is-clickable:hover {
+    background-color: #fafafa;
+  }
 }
 
 .options-item,
