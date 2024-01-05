@@ -17,6 +17,7 @@ import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import { AddressType } from "@karrio/types";
 import Head from "next/head";
+import { CarrierImage } from "@karrio/ui/components/carrier-image";
 
 export { getServerSideProps } from "@/context/main";
 
@@ -131,7 +132,7 @@ export default function ShipmentsPage(pageProps: any) {
 
               <tbody>
                 <tr>
-                  <td className="selector has-text-centered p-0" onClick={preventPropagation}>
+                  <td className="selector has-text-centered p-0 control" onClick={preventPropagation}>
                     <label className="checkbox p-2">
                       <input
                         name="all"
@@ -142,8 +143,8 @@ export default function ShipmentsPage(pageProps: any) {
                     </label>
                   </td>
 
-                  {selection.length > 0 && <td className="p-1" colSpan={7}>
-                    <div className="buttons">
+                  {selection.length > 0 && <td className="p-1" colSpan={6}>
+                    <div className="buttons has-addons">
                       <a
                         href={url$`${metadata.HOST}/docs/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">
@@ -157,7 +158,7 @@ export default function ShipmentsPage(pageProps: any) {
                       {(document_templates?.edges || []).map(({ node: template }) =>
                         <a
                           key={template.id}
-                          href={url$`${metadata.HOST}/documents/${template.id}.${template.slug}?shipment_ids=${selection.join(',')}`}
+                          href={url$`${metadata.HOST}/documents/${template.id}.${template.slug}?shipments=${selection.join(',')}`}
                           className="button is-small is-default px-3"
                           target="_blank"
                           rel="noreferrer">
@@ -168,8 +169,7 @@ export default function ShipmentsPage(pageProps: any) {
                   </td>}
 
                   {selection.length === 0 && <>
-                    <td className="carrier is-size-7">CARRIER</td>
-                    <td className="service is-size-7">SERVICE</td>
+                    <td className="service is-size-7">SHIPPING SERVICE</td>
                     <td className="status"></td>
                     <td className="recipient is-size-7">RECIPIENT</td>
                     <td className="reference is-size-7">REFERENCE</td>
@@ -190,25 +190,26 @@ export default function ShipmentsPage(pageProps: any) {
                         />
                       </label>
                     </td>
-                    <td className="carrier is-vcentered p-2" onClick={() => previewShipment(shipment.id)}>
-                      <CarrierBadge
-                        className="has-background-primary has-text-weight-bold has-text-white-bis"
-                        style={{ fontSize: '0.6rem' }}
-                        carrier_name={shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(metadata.APP_NAME)}
-                      />
-                    </td>
-                    <td className="service is-vcentered p-1 pl-2 is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
+                    <td className="service is-vcentered p-1 pl-2 is-size-7 has-text-weight-bold has-text-grey"
                       onClick={() => previewShipment(shipment.id)}
-                      title={
-                        isNone(shipment.carrier_name) ? "NOT COMPLETED"
-                          : formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)
-                      }>
-                      <span className="text-ellipsis">
-                        {!isNone(shipment.carrier_name) && formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)}
-                        {isNone(shipment.carrier_name) && "NOT COMPLETED"}
-                      </span>
-                      <br />
-                      <span className="has-text-weight-medium has-text-info">{shipment.tracking_number}</span>
+                      title={isNone(shipment.carrier_name) ? "UNFULFILLED" : formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)}
+                    >
+                      <div className="icon-text">
+                        <CarrierImage
+                          carrier_name={shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(metadata.APP_NAME)}
+                          containerClassName="mt-1 mx-2" height={28} width={28}
+                        />
+                        <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
+                          <span className="has-text-info has-text-weight-bold">
+                            {!isNone(shipment.carrier_name) && <span>{shipment.tracking_number}</span>}
+                            {isNone(shipment.carrier_name) && <span> - </span>}
+                          </span><br />
+                          <span className="text-ellipsis">
+                            {!isNone(shipment.carrier_name) && formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)}
+                            {isNone(shipment.carrier_name) && "UNFULFILLED"}
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     <td className="status is-vcentered" onClick={() => previewShipment(shipment.id)}>
                       <StatusBadge status={shipment.status as string} style={{ width: '100%' }} />

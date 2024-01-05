@@ -45,38 +45,34 @@ Karrio custom styling
     width: 3%;
   }
 
-  .carrier {
-    width: 8%;
-    min-width: 90px;
-  }
-
   .service {
-    min-width: 10vw;
-    max-width: 160px;
+    width: 15%;
+    min-width: 250px;
   }
 
   .status {
-    width: 10%;
+    width: 100px;
+    min-width: 100px;
+    max-width: 120px;
   }
 
   .recipient {
-    min-width: 10vw;
-    max-width: 200px;
+    min-width: 200px;
   }
 
   .reference {
-    min-width: 10vw;
-    max-width: 150px;
+    min-width: 150px;
   }
 
   .date {
-    width: 15%;
+    width: 120px;
     min-width: 120px;
     max-width: 120px;
   }
 
   .action {
-    width: 2%;
+    width: 35px;
+    min-width: 35px;
   }
 
   tbody>tr.items {
@@ -361,19 +357,21 @@ Karrio custom styling
 
   .order {
     width: 15%;
+    min-width: 160px;
   }
 
   .items {
-    min-width: 10vw;
-    max-width: 150px;
+    min-width: 150px;
   }
 
   .status {
-    width: 10%;
+    width: 100px;
+    min-width: 100px;
+    max-width: 120px;
   }
 
   .customer {
-    min-width: 10vw;
+    min-width: 200px;
     max-width: 200px;
   }
 
@@ -387,19 +385,14 @@ Karrio custom styling
     min-width: 100px;
   }
 
-  .rate {
-    width: 100px;
-    min-width: 100px;
-  }
-
   .service {
-    min-width: 10vw;
-    max-width: 200px;
+    width: 15%;
+    min-width: 250px;
   }
 
   .action {
-    width: 45px;
-    min-width: 45px;
+    width: 35px;
+    min-width: 35px;
   }
 
   tbody>tr.items {

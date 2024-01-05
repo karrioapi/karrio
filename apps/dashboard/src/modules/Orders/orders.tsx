@@ -1,6 +1,7 @@
-import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
+import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
 import { OrderPreview, OrderPreviewContext } from "@/components/order-preview";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
+import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
@@ -15,7 +16,6 @@ import { Spinner } from "@karrio/ui/components/spinner";
 import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
 import { AddressType } from "@karrio/types";
-import Image from "next/image";
 import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
@@ -126,41 +126,38 @@ export default function OrdersPage(pageProps: any) {
           (_shipment?.rates || [])[0]
         );
 
-        if (!_rate) return <></>;
-
         return <>
-          <p>
-            <Image
-              src={p`/carriers/${_rate.meta?.carrier || _rate.carrier_name || formatCarrierSlug(references.APP_NAME)}_logo.svg`}
-              height={10}
-              width={40}
-              alt="carrier logo"
-            />
-            <span className="is-size-7">{` - `}</span>
-          </p>
-          <span className="is-size-7">{_rate.meta?.service_name || _rate.service}</span>
+          <CarrierImage
+            carrier_name={_rate?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            containerClassName="mt-1 mx-2" height={28} width={28}
+          />
+          <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
+            <span className="has-text-info has-text-weight-bold"><span> - </span></span><br />
+            <span className="text-ellipsis">
+              {!isNone(_rate?.carrier_name) && formatRef((_rate.meta?.service_name || _rate.service) as string)}
+              {isNone(_rate?.carrier_name) && "UNFULFILLED"}
+            </span>
+          </div>
         </>
       }
 
       return (
-        <p className="has-text-weight-semibold has-text-grey">
-          <Image
-            src={p`/carriers/${shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(references.APP_NAME)}_logo.svg`}
-            height={10}
-            width={40}
-            alt="carrier logo"
+        <>
+          <CarrierImage
+            carrier_name={shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            containerClassName="mt-1 mx-2" height={28} width={28}
           />
-          <span className="is-size-7 has-text-weight-bold">{` `}{!shipment.tracker_id && <>{shipment.tracking_number}</>}</span>
-          {!!shipment.tracker_id && <a className="p-0 mx-2 my-0 is-size-7 has-text-weight-bold"
-            href={`/tracking/${shipment.tracker_id}`} target="_blank" rel="noreferrer">
-            <span>
-              {shipment.tracking_number}
-              <i className="fas fa-external-link-alt mx-2"></i>
+          <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
+            <span className="has-text-info has-text-weight-bold">
+              {!isNone(shipment.carrier_name) && <span>{shipment.tracking_number}</span>}
+              {isNone(shipment.carrier_name) && <span> - </span>}
+            </span><br />
+            <span className="text-ellipsis">
+              {!isNone(shipment.carrier_name) && formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)}
+              {isNone(shipment.carrier_name) && "UNFULFILLED"}
             </span>
-          </a>}
-          <br />
-          <span className="is-size-7">{shipment.meta?.service_name || shipment.selected_rate?.service}</span>
-        </p>
+          </div>
+        </>
       )
     };
 
@@ -221,7 +218,7 @@ export default function OrdersPage(pageProps: any) {
                   </td>
 
                   {selection.length > 0 && <td className="p-1" colSpan={5}>
-                    <div className="buttons">
+                    <div className="buttons has-addons">
                       <AppLink
                         href={`/orders/create_shipment?shipment_id=new&order_id=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
@@ -257,8 +254,7 @@ export default function OrdersPage(pageProps: any) {
                     <td className="customer is-size-7">SHIP TO</td>
                     <td className="date is-size-7">DATE</td>
                     <td className="total is-size-7">TOTAL</td>
-                    <td className="rate is-size-7">RATE</td>
-                    <td className="service is-size-7">SERVICE</td>
+                    <td className="service is-size-7">SHIPPING SERVICE</td>
                     <td className="action"></td>
                   </>}
                 </tr>
@@ -315,13 +311,8 @@ export default function OrdersPage(pageProps: any) {
                         <span className="mx-2">{computeOrderCurrency(order)}</span>
                       </p>
                     </td>
-                    <td className="rate px-2" onClick={() => previewOrder(order.id)}>
-                      <p className="is-size-7 has-text-weight-semibold has-text-grey">
-                        {computeOrderRate(order)}
-                      </p>
-                    </td>
-                    <td className="service text-ellipsis">
-                      {computeOrderService(order)}
+                    <td className="service is-vcentered p-1 is-size-7 has-text-weight-bold has-text-grey">
+                      <div className="icon-text">{computeOrderService(order)}</div>
                     </td>
                     <td className="action is-vcentered px-0">
                       <OrderMenu order={order as any} className="is-fullwidth" />
