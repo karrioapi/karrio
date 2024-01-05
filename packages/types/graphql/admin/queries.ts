@@ -68,10 +68,16 @@ export const GET_ACCOUNTS = gql`query GetAccounts($filter: AccountFilter) {
         usage {
           members
           order_volume
+          total_errors
           total_requests
           total_trackers
           total_shipments
           total_shipping_spend
+          api_errors {
+            label
+            count
+            date
+          }
           api_requests {
             label
             count

@@ -220,7 +220,7 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                orders.Order.objects.exclude(status__in=["cancelled"]),
+                orders.Order.objects.exclude(status__in=["cancelled", "unfulfilled"]),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")

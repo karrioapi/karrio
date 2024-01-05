@@ -32,6 +32,12 @@ export interface get_organization_organization_members {
   last_login: any | null;
 }
 
+export interface get_organization_organization_usage_api_errors {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
 export interface get_organization_organization_usage_api_requests {
   date: string | null;
   label: string | null;
@@ -65,11 +71,13 @@ export interface get_organization_organization_usage_shipping_spend {
 export interface get_organization_organization_usage {
   members: number | null;
   order_volume: number | null;
+  total_errors: number | null;
   total_requests: number | null;
   total_trackers: number | null;
   total_shipments: number | null;
   unfulfilled_orders: number | null;
   total_shipping_spend: number | null;
+  api_errors: get_organization_organization_usage_api_errors[] | null;
   api_requests: get_organization_organization_usage_api_requests[] | null;
   order_volumes: get_organization_organization_usage_order_volumes[] | null;
   shipment_count: get_organization_organization_usage_shipment_count[] | null;
@@ -129,6 +137,12 @@ export interface get_organizations_organizations_members {
   last_login: any | null;
 }
 
+export interface get_organizations_organizations_usage_api_errors {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
 export interface get_organizations_organizations_usage_api_requests {
   date: string | null;
   label: string | null;
@@ -162,11 +176,13 @@ export interface get_organizations_organizations_usage_shipping_spend {
 export interface get_organizations_organizations_usage {
   members: number | null;
   order_volume: number | null;
+  total_errors: number | null;
   total_requests: number | null;
   total_trackers: number | null;
   total_shipments: number | null;
   unfulfilled_orders: number | null;
   total_shipping_spend: number | null;
+  api_errors: get_organizations_organizations_usage_api_errors[] | null;
   api_requests: get_organizations_organizations_usage_api_requests[] | null;
   order_volumes: get_organizations_organizations_usage_order_volumes[] | null;
   shipment_count: get_organizations_organizations_usage_shipment_count[] | null;

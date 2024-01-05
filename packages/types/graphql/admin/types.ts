@@ -82,6 +82,12 @@ export interface GetAccounts_accounts_page_info {
   end_cursor: string | null;
 }
 
+export interface GetAccounts_accounts_edges_node_usage_api_errors {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
 export interface GetAccounts_accounts_edges_node_usage_api_requests {
   label: string | null;
   count: number | null;
@@ -115,10 +121,12 @@ export interface GetAccounts_accounts_edges_node_usage_shipping_spend {
 export interface GetAccounts_accounts_edges_node_usage {
   members: number | null;
   order_volume: number | null;
+  total_errors: number | null;
   total_requests: number | null;
   total_trackers: number | null;
   total_shipments: number | null;
   total_shipping_spend: number | null;
+  api_errors: GetAccounts_accounts_edges_node_usage_api_errors[] | null;
   api_requests: GetAccounts_accounts_edges_node_usage_api_requests[] | null;
   order_volumes: GetAccounts_accounts_edges_node_usage_order_volumes[] | null;
   shipment_count: GetAccounts_accounts_edges_node_usage_shipment_count[] | null;
