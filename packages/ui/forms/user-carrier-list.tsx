@@ -8,6 +8,7 @@ import { ConfirmModalContext } from '../modals/confirm-modal';
 import { CopiableLink } from '../components/copiable-link';
 import React, { useContext, useEffect } from 'react';
 import { isNone, isNoneOrEmpty } from '@karrio/lib';
+import { useAppMode } from '@karrio/hooks/app-mode';
 import { useRouter } from 'next/dist/client/router';
 import { Notify } from '../components/notifier';
 import { Spinner } from '../components/spinner';
@@ -18,6 +19,7 @@ interface UserConnectionListView { }
 
 export const UserConnectionList: React.FC<UserConnectionListView> = () => {
   const router = useRouter();
+  const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
   const ratesModal = useRateSheetModal();
   const labelModal = useLabelTemplateModal();
@@ -79,23 +81,23 @@ export const UserConnectionList: React.FC<UserConnectionListView> = () => {
 
             <tbody className="connections-table">
               <tr>
-                <td className="is-size-7" colSpan={4}>ACCOUNTS</td>
+                <td className="is-size-7" colSpan={testMode ? 4 : 3}>ACCOUNTS</td>
                 <td className="action"></td>
               </tr>
 
               {query.data!.user_connections.map((connection) => (
 
                 <tr key={`${connection.id}-${Date.now()}`}>
-                  <td className="carrier pl-0">
+                  <td className="carrier is-vcentered pl-1">
                     <CarrierNameBadge
                       carrier_name={connection.carrier_name}
                       display_name={connection.display_name}
-                      className="box has-text-weight-bold"
+                      className="box p-3 has-text-weight-bold"
                     />
                   </td>
-                  <td className="mode is-vcentered">
-                    {connection.test_mode && <span className="tag is-warning is-centered">Test</span>}
-                  </td>
+                  {testMode && <td className="mode is-vcentered">
+                    <span className="tag is-warning is-centered">Test</span>
+                  </td>}
                   <td className="active is-vcentered">
                     <button className="button is-white is-large" onClick={update({
                       id: connection.id,
