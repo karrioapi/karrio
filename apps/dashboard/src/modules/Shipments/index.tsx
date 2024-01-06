@@ -77,6 +77,7 @@ export default function ShipmentsPage(pageProps: any) {
         selection.includes(shipment.id) && shipment.label_type == format
       )).length === selection.length;
     };
+    const getRate = (shipment: any) => (shipment.selected_rate || (shipment.rates || [])[0] || shipment);
 
     useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
@@ -192,21 +193,25 @@ export default function ShipmentsPage(pageProps: any) {
                     </td>
                     <td className="service is-vcentered p-1 pl-2 is-size-7 has-text-weight-bold has-text-grey"
                       onClick={() => previewShipment(shipment.id)}
-                      title={isNone(shipment.carrier_name) ? "UNFULFILLED" : formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)}
+                      title={(
+                        isNone(getRate(shipment))
+                          ? "UNFULFILLED"
+                          : formatRef(((shipment.meta as any)?.service_name || getRate(shipment).service) as string)
+                      )}
                     >
                       <div className="icon-text">
                         <CarrierImage
-                          carrier_name={shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(metadata.APP_NAME)}
+                          carrier_name={shipment.meta?.carrier || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
                           containerClassName="mt-1 mx-2" height={28} width={28}
                         />
                         <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
                           <span className="has-text-info has-text-weight-bold">
-                            {!isNone(shipment.carrier_name) && <span>{shipment.tracking_number}</span>}
-                            {isNone(shipment.carrier_name) && <span> - </span>}
+                            {!isNone(shipment.tracking_number) && <span>{shipment.tracking_number}</span>}
+                            {isNone(shipment.tracking_number) && <span> - </span>}
                           </span><br />
                           <span className="text-ellipsis">
-                            {!isNone(shipment.carrier_name) && formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)}
-                            {isNone(shipment.carrier_name) && "UNFULFILLED"}
+                            {!isNone(getRate(shipment).carrier_name) && formatRef(((getRate(shipment).meta as any)?.service_name || getRate(shipment).service) as string)}
+                            {isNone(getRate(shipment).carrier_name) && "UNFULFILLED"}
                           </span>
                         </div>
                       </div>

@@ -37,6 +37,9 @@ export default function OrdersPage(pageProps: any) {
     });
 
     const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
+    const getRate = (shipment: any, default_rate?: any) => (
+      default_rate || shipment?.selected_rate || (shipment?.rates || [])[0] || shipment
+    );
     const updatedSelection = (selectedOrders: string[], current: typeof orders) => {
       const order_ids = (current?.edges || []).map(({ node: order }) => order.id);
       const selection = selectedOrders.filter(id => order_ids.includes(id));
@@ -93,26 +96,11 @@ export default function OrdersPage(pageProps: any) {
         !!order.shipments.find(({ label_type }) => label_type === format)
       )).length === selection.length;
     };
-    const computeOrderRate = (order: any) => {
-      const shipment = (
-        order.shipments.find(({ status }) => !["cancelled", "draft"].includes(status)) ||
-        order.shipments.find(({ status }) => !["cancelled"].includes(status))
-      );
-      const _service = order.options.preferred_service;
-      const rate = (
-        shipment?.selected_rate ||
-        (shipment?.rates || []).find(({ service }) => service === _service) ||
-        (shipment?.rates || [])[0]
-      );
-      const currency = rate?.currency;
-      const price = rate?.total_charge;
-
-      return `${price || ''} ${currency || ''}`;
-    };
     const computeOrderService = (order: any) => {
       const shipment = (
         order.shipments.find(({ status, tracking_number }) => !!tracking_number && !["cancelled", "draft"].includes(status))
       );
+      const rate = getRate(shipment);
 
       if (!shipment) {
         const _shipment = (
@@ -120,19 +108,20 @@ export default function OrdersPage(pageProps: any) {
           order.shipments.find(({ status }) => !["cancelled"].includes(status))
         );
         const _service = order.options?.preferred_service
-        const _rate = (
+        const _selected_rate = (
           _shipment?.selected_rate ||
           (_shipment?.rates || []).find(({ service }) => service === _service) ||
           (_shipment?.rates || [])[0]
         );
+        const _rate = getRate(_shipment, _selected_rate);
 
         return <>
           <CarrierImage
-            carrier_name={_rate?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            carrier_name={_shipment?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 mx-2" height={28} width={28}
           />
           <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
-            <span className="has-text-info has-text-weight-bold"><span> - </span></span><br />
+            <span className="has-text-info has-text-weight-bold"><span>{` - `}</span></span><br />
             <span className="text-ellipsis">
               {!isNone(_rate?.carrier_name) && formatRef((_rate.meta?.service_name || _rate.service) as string)}
               {isNone(_rate?.carrier_name) && "UNFULFILLED"}
@@ -144,17 +133,17 @@ export default function OrdersPage(pageProps: any) {
       return (
         <>
           <CarrierImage
-            carrier_name={shipment.meta?.carrier || shipment.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            carrier_name={shipment.meta?.carrier || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 mx-2" height={28} width={28}
           />
           <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
             <span className="has-text-info has-text-weight-bold">
               {!isNone(shipment.carrier_name) && <span>{shipment.tracking_number}</span>}
-              {isNone(shipment.carrier_name) && <span> - </span>}
+              {isNone(shipment.carrier_name) && <span>{` - `}</span>}
             </span><br />
             <span className="text-ellipsis">
-              {!isNone(shipment.carrier_name) && formatRef(((shipment.meta as any)?.service_name || shipment.service) as string)}
-              {isNone(shipment.carrier_name) && "UNFULFILLED"}
+              {!isNone(rate.carrier_name) && formatRef((rate.meta?.service_name || rate.service) as string)}
+              {isNone(rate.carrier_name) && "UNFULFILLED"}
             </span>
           </div>
         </>
