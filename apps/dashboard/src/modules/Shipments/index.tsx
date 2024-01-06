@@ -3,7 +3,7 @@ import { ShipmentPreview, ShipmentPreviewContext } from "@/components/shipment-p
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
-import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
+import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
@@ -17,7 +17,6 @@ import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import { AddressType } from "@karrio/types";
 import Head from "next/head";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
 
 export { getServerSideProps } from "@/context/main";
 
