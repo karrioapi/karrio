@@ -118,7 +118,7 @@ export default function OrdersPage(pageProps: any) {
         return <>
           <CarrierImage
             carrier_name={_shipment?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
-            containerClassName="mt-1 mx-2" height={28} width={28}
+            containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
           />
           <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
             <span className="has-text-info has-text-weight-bold"><span>{` - `}</span></span><br />
@@ -134,7 +134,7 @@ export default function OrdersPage(pageProps: any) {
         <>
           <CarrierImage
             carrier_name={shipment.meta?.carrier || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
-            containerClassName="mt-1 mx-2" height={28} width={28}
+            containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
           />
           <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
             <span className="has-text-info has-text-weight-bold">
@@ -249,7 +249,7 @@ export default function OrdersPage(pageProps: any) {
                 </tr>
 
                 {(orders?.edges || []).map(({ node: order }) => (
-                  <tr key={order.id} className="items is-clickable">
+                  <tr key={order.id} className="items">
                     <td className="selector has-text-centered is-vcentered p-0">
                       <label className="checkbox py-3 px-2">
                         <input
@@ -260,7 +260,7 @@ export default function OrdersPage(pageProps: any) {
                         />
                       </label>
                     </td>
-                    <td className="order is-vcentered" onClick={() => previewOrder(order.id)}>
+                    <td className="order is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-bold has-text-grey-dark">
                         {order.order_id}
                       </p>
@@ -268,10 +268,10 @@ export default function OrdersPage(pageProps: any) {
                         {order.source}
                       </p>
                     </td>
-                    <td className="status is-vcentered" onClick={() => previewOrder(order.id)}>
+                    <td className="status is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
                       <StatusBadge status={order.status as string} style={{ width: '100%' }} />
                     </td>
-                    <td className="items is-vcentered" onClick={() => previewOrder(order.id)}>
+                    <td className="items is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-bold has-text-grey">
                         {((items: number): any => `${items} item${items === 1 ? '' : 's'}`)(
                           order.line_items.reduce((acc, item) => acc + (item.quantity as number) || 1, 0)
@@ -281,7 +281,7 @@ export default function OrdersPage(pageProps: any) {
                         {order.line_items.length > 1 ? "(Multiple)" : order.line_items[0].title || order.line_items[0].description || order.line_items[0].sku}
                       </p>
                     </td>
-                    <td className="customer is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
+                    <td className="customer is-vcentered is-clickable is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
                       onClick={() => previewOrder(order.id)}>
                       <span className="text-ellipsis" title={formatAddressShort(order.shipping_to as AddressType)}>
                         {formatAddressShort(order.shipping_to as AddressType)}
@@ -289,12 +289,12 @@ export default function OrdersPage(pageProps: any) {
                       <br />
                       <span className="has-text-weight-medium">{formatAddressLocationShort(order.shipping_to as AddressType)}</span>
                     </td>
-                    <td className="date px-1" onClick={() => previewOrder(order.id)}>
+                    <td className="date px-1 is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">
                         {formatDateTime(order.created_at)}
                       </p>
                     </td>
-                    <td className="total px-2" onClick={() => previewOrder(order.id)}>
+                    <td className="total px-2 is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">
                         {computeOrderTotal(order)}
                         <span className="mx-2">{computeOrderCurrency(order)}</span>

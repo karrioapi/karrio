@@ -158,7 +158,7 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({ children }
               <div className="columns my-0">
                 <div className="column is-3 is-size-7 py-1">Service</div>
                 <div className="column is-size-7 has-text-weight-semibold py-1">
-                  {(tracker?.shipment?.meta as any)?.service_name || tracker?.shipment?.service}
+                  {formatRef(tracker?.info?.shipment_service || tracker?.shipment?.meta?.service_name || tracker?.shipment?.service)}
                 </div>
               </div>
 

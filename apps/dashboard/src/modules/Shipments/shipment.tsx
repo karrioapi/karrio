@@ -480,23 +480,23 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
         {logs.isFetched && (logs.data?.logs.edges || []).length == 0 && <div>No logs</div>}
 
         {logs.isFetched && (logs.data?.logs.edges || []).length > 0 &&
-          <div className="table-container py-2" style={{ maxHeight: '20em', overflow: 'auto' }}>
+          <div className="table-container py-1" style={{ maxHeight: '20em', overflow: 'auto' }}>
             <table className="related-item-table table is-hoverable is-fullwidth">
               <tbody>
                 {(logs.data?.logs.edges || []).map(({ node: log }) => (
                   <tr key={log.id} className="items is-clickable">
-                    <td className="status is-vcentered p-0">
+                    <td className="status is-vcentered p-0 px-2">
                       <AppLink href={`/developers/logs/${log.id}`} className="mr-4">
                         <StatusCode code={log.status_code as number} />
                       </AppLink>
                     </td>
-                    <td className="description is-vcentered p-0">
-                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3 text-ellipsis">
+                    <td className="description is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2 text-ellipsis">
                         {`${log.method} ${log.path}`}
                       </AppLink>
                     </td>
-                    <td className="date is-vcentered p-0">
-                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-3">
+                    <td className="date is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2">
                         <span>{formatDateTime(log.requested_at)}</span>
                       </AppLink>
                     </td>
@@ -516,18 +516,18 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
         {events.isFetched && (events.data?.events.edges || []).length == 0 && <div>No events</div>}
 
         {events.isFetched && (events.data?.events.edges || []).length > 0 &&
-          <div className="table-container py-2" style={{ maxHeight: '20em', overflow: 'auto' }}>
+          <div className="table-container py-1" style={{ maxHeight: '20em', overflow: 'auto' }}>
             <table className="related-item-table table is-hoverable is-fullwidth">
               <tbody>
                 {(events.data?.events.edges || []).map(({ node: event }) => (
                   <tr key={event.id} className="items is-clickable">
-                    <td className="description is-vcentered p-0">
-                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3  text-ellipsis">
+                    <td className="description is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2 text-ellipsis">
                         {`${event.type}`}
                       </AppLink>
                     </td>
-                    <td className="date is-vcentered p-0">
-                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-3">
+                    <td className="date is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2">
                         <span>{formatDateTime(event.created_at)}</span>
                       </AppLink>
                     </td>
@@ -536,7 +536,6 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
               </tbody>
             </table>
           </div>}
-
       </>}
 
       {query.isFetched && isNone(shipment) && <div className="card my-6">

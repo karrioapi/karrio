@@ -191,7 +191,7 @@ export default function ShipmentsPage(pageProps: any) {
                         />
                       </label>
                     </td>
-                    <td className="service is-vcentered p-1 pl-2 is-size-7 has-text-weight-bold has-text-grey"
+                    <td className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey"
                       onClick={() => previewShipment(shipment.id)}
                       title={(
                         isNone(getRate(shipment))
@@ -202,7 +202,7 @@ export default function ShipmentsPage(pageProps: any) {
                       <div className="icon-text">
                         <CarrierImage
                           carrier_name={shipment.meta?.carrier || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
-                          containerClassName="mt-1 mx-2" height={28} width={28}
+                          containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
                         />
                         <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
                           <span className="has-text-info has-text-weight-bold">

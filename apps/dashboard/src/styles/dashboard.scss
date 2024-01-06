@@ -293,14 +293,9 @@ Karrio custom styling
 }
 
 .trackers-table {
-  .carrier {
-    width: 8%;
-    min-width: 90px;
-  }
-
-  .tracking-number {
-    min-width: 10vw;
-    max-width: 160px;
+  .service {
+    width: 15%;
+    min-width: 250px;
   }
 
   .status {
@@ -413,7 +408,7 @@ Karrio custom styling
   border-bottom: 2px solid #eee;
 
   .status {
-    width: 8%;
+    width: 3%;
   }
 
   .description {
