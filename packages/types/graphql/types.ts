@@ -4551,25 +4551,85 @@ export interface get_rate_sheetsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: deleteMetafield
+// GraphQL mutation operation: CreateOrder
 // ====================================================
 
-export interface deleteMetafield_delete_metafield_errors {
+export interface CreateOrder_create_order_order {
+  id: string;
+}
+
+export interface CreateOrder_create_order_errors {
   field: string;
   messages: string[];
 }
 
-export interface deleteMetafield_delete_metafield {
+export interface CreateOrder_create_order {
+  order: CreateOrder_create_order_order | null;
+  errors: CreateOrder_create_order_errors[] | null;
+}
+
+export interface CreateOrder {
+  create_order: CreateOrder_create_order;
+}
+
+export interface CreateOrderVariables {
+  data: CreateOrderMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateOrder
+// ====================================================
+
+export interface UpdateOrder_update_order_order {
   id: string;
-  errors: deleteMetafield_delete_metafield_errors[] | null;
 }
 
-export interface deleteMetafield {
-  delete_metafield: deleteMetafield_delete_metafield;
+export interface UpdateOrder_update_order_errors {
+  field: string;
+  messages: string[];
 }
 
-export interface deleteMetafieldVariables {
-  data: DeleteMutationInput;
+export interface UpdateOrder_update_order {
+  order: UpdateOrder_update_order_order | null;
+  errors: UpdateOrder_update_order_errors[] | null;
+}
+
+export interface UpdateOrder {
+  update_order: UpdateOrder_update_order;
+}
+
+export interface UpdateOrderVariables {
+  data: UpdateOrderMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteOrder
+// ====================================================
+
+export interface DeleteOrder_delete_order_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteOrder_delete_order {
+  id: string | null;
+  errors: DeleteOrder_delete_order_errors[] | null;
+}
+
+export interface DeleteOrder {
+  delete_order: DeleteOrder_delete_order;
+}
+
+export interface DeleteOrderVariables {
+  data: DeleteOrderMutationInput;
 }
 
 /* tslint:disable */
@@ -6597,6 +6657,36 @@ export interface RateSheetFilter {
   offset?: number | null;
   first?: number | null;
   keyword?: string | null;
+}
+
+// null
+export interface CreateOrderMutationInput {
+  shipping_to: AddressInput;
+  line_items: CommodityInput[];
+  order_id?: string | null;
+  order_date?: string | null;
+  shipping_from?: AddressInput | null;
+  billing_address?: AddressInput | null;
+  metadata?: any | null;
+  options?: any | null;
+}
+
+// null
+export interface UpdateOrderMutationInput {
+  id: string;
+  order_id?: string | null;
+  order_date?: string | null;
+  shipping_to?: UpdateAddressInput | null;
+  shipping_from?: UpdateAddressInput | null;
+  billing_address?: UpdateAddressInput | null;
+  metadata?: any | null;
+  options?: any | null;
+  line_items?: UpdateCommodityInput[] | null;
+}
+
+// null
+export interface DeleteOrderMutationInput {
+  id: string;
 }
 
 //==============================================================

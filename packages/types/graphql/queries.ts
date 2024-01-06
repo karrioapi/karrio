@@ -2662,6 +2662,87 @@ export const GET_ORDER = gql`query get_order($id: String!) {
 }
 `;
 
+export const GET_ORDER_DATA = gql`query get_order($id: String!) {
+  order(id: $id) {
+    id
+    shipping_to {
+      id
+      postal_code
+      city
+      person_name
+      company_name
+      country_code
+      email
+      phone_number
+      state_code
+      suburb
+      residential
+      street_number
+      address_line1
+      address_line2
+      federal_tax_id
+      state_tax_id
+      validate_location
+    }
+    shipping_from {
+      id
+      postal_code
+      city
+      person_name
+      company_name
+      country_code
+      email
+      phone_number
+      state_code
+      suburb
+      residential
+      street_number
+      address_line1
+      address_line2
+      federal_tax_id
+      state_tax_id
+      validate_location
+    }
+    billing_address {
+      id
+      postal_code
+      city
+      person_name
+      company_name
+      country_code
+      email
+      phone_number
+      state_code
+      suburb
+      residential
+      street_number
+      address_line1
+      address_line2
+      federal_tax_id
+      state_tax_id
+      validate_location
+    }
+    line_items {
+      id
+      weight
+      title
+      description
+      quantity
+      sku
+      hs_code
+      value_amount
+      weight_unit
+      value_currency
+      origin_country
+      metadata
+      parent_id
+    }
+    options
+    metadata
+  }
+}
+`;
+
 export const GET_ORDERS = gql`query get_orders($filter: OrderFilter) {
   orders(filter: $filter) {
     page_info {
@@ -3247,6 +3328,43 @@ export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilte
     }
   }
 }`;
+
+export const CREATE_ORDER = gql`mutation CreateOrder($data: CreateOrderMutationInput!) {
+  create_order(input: $data) {
+    order {
+      id
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const UPDATE_ORDER = gql`mutation UpdateOrder($data: UpdateOrderMutationInput!) {
+  update_order(input: $data) {
+    order {
+      id
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_ORDER = gql`mutation DeleteOrder($data: DeleteOrderMutationInput!) {
+  delete_order(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
 
 export const DELETE_METAFIELD = gql`mutation deleteMetafield($data: DeleteMutationInput!) {
   delete_metafield(input: $data) {

@@ -87,7 +87,7 @@ export default function OrdersPage(pageProps: any) {
     };
     const computeDocFormat = (selection: string[]): string | null => {
       const _order = (orders?.edges || []).find(({ node: order }) => (order.id == selection[0]));
-      return (_order?.node?.shipments || [])[0].label_type;
+      return (_order?.node?.shipments || [])[0]?.label_type;
     };
     const compatibleTypeSelection = (selection: string[]) => {
       const format = computeDocFormat(selection);
@@ -167,6 +167,9 @@ export default function OrdersPage(pageProps: any) {
           <span className="title is-4">Orders</span>
           <div>
             <OrdersFilter context={context} />
+            <AppLink href="/draft_orders/new" className="button is-primary is-small is-pulled-right ml-1">
+              <span>Create Order</span>
+            </AppLink>
           </div>
         </header>
 

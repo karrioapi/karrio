@@ -30,6 +30,11 @@ export const ShortcutDropdown: React.FC<ShortcutDropdownComponent> = ({ ...props
               <span>Carrier account</span>
             </AppLink>
 
+            <AppLink href="/draft_orders/new" className="options-item px-2 py-2 has-text-info has-text-weight-bold is-size-7">
+              <i className="fas fa-inbox pr-2"></i>
+              <span>Create order</span>
+            </AppLink>
+
             <AppLink href="/create_label?shipment_id=new" className="options-item px-2 py-2 has-text-info has-text-weight-bold is-size-7">
               <i className="fas fa-file-invoice pr-2"></i>
               <span>Shipping label</span>
