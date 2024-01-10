@@ -99,7 +99,7 @@ export default function ApiPage(pageProps: any) {
                         } margin={{ top: 5, right: 15, left: 15, bottom: 5 }}>
                           <CartesianGrid horizontal={false} vertical={true} />
                           <Tooltip />
-                          <Line dataKey="total" stroke="#79e5dd" />
+                          <Line type="monotone" dataKey="total" stroke="#79e5dd" />
                           <XAxis
                             height={10} dataKey="name" interval={0} stroke={'#ddd'}
                             tick={{ fill: '#000000' }} style={{ fontSize: '0.6rem' }}
@@ -129,7 +129,7 @@ export default function ApiPage(pageProps: any) {
                         } margin={{ top: 5, right: 15, left: 15, bottom: 5 }}>
                           <CartesianGrid horizontal={false} vertical={true} />
                           <Tooltip />
-                          <Line dataKey="total" stroke="#79e5dd" />
+                          <Line type="monotone" dataKey="total" stroke="#79e5dd" />
                           <XAxis
                             height={10} dataKey="name" interval={0} stroke={'#ddd'}
                             tick={{ fill: '#000000' }} style={{ fontSize: '0.6rem' }}
