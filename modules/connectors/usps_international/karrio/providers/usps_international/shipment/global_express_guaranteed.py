@@ -20,7 +20,14 @@ def parse_shipment_response(
     response: lib.Element, settings: provider_utils.Settings
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     errors = provider_error.parse_error_response(response, settings)
-    details = _extract_details(response, settings)
+    details = (
+        _extract_details(response, settings)
+        if (
+            len(lib.find_element("USPSBarcodeNumber", response)) > 0
+            or len(lib.find_element("FedExBarcodeNumber", response)) > 0
+        )
+        else None
+    )
 
     return details, errors
 
@@ -73,7 +80,7 @@ def shipment_request(
         FromLastName=shipper.person_name,
         FromFirm=shipper.company_name or "N/A",
         FromAddress1=shipper.street,
-        FromAddress2=shipper.address_line2,
+        FromAddress2=shipper.address_line2 or "",
         FromUrbanization=None,
         FromCity=shipper.city,
         FromState=lib.to_state_name(shipper.state_code, country="US"),
@@ -85,7 +92,7 @@ def shipment_request(
         ToLastName=recipient.person_name,
         ToFirm=recipient.company_name or "N/A",
         ToAddress1=recipient.street,
-        ToAddress2=recipient.address_line2,
+        ToAddress2=recipient.address_line2 or "",
         ToAddress3=None,
         ToPostalCode=recipient.postal_code,
         ToPhone=recipient.phone_number,

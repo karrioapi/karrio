@@ -121,6 +121,7 @@ ShipmentRequestXML = """<eVSGXGGetLabelRequest USERID="username" PASSWORD="passw
     <ToLastName>John</ToLastName>
     <ToFirm>Coffee Five</ToFirm>
     <ToAddress1>01 R. da Quitanda, 86 - quiosque</ToAddress1>
+    <ToAddress2></ToAddress2>
     <ToPostalCode>29440</ToPostalCode>
     <ToPhone>8005554526</ToPhone>
     <ToDPID>000</ToDPID>
