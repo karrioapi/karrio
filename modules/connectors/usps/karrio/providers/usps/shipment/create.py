@@ -1,12 +1,5 @@
-from karrio.schemas.usps.evs_response import eVSResponse
-from karrio.schemas.usps.evs_request import (
-    eVSRequest,
-    ImageParametersType,
-    LabelSequenceType,
-    ShippingContentsType,
-    ItemDetailType,
-    ExtraServicesType,
-)
+import karrio.schemas.usps.evs_request as usps
+import karrio.schemas.usps.evs_response as shipping
 
 import typing
 import karrio.lib as lib
@@ -23,7 +16,11 @@ def parse_shipment_response(
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
-    details = _extract_details(response, settings)
+    details = (
+        _extract_details(response, settings)
+        if len(lib.find_element("BarcodeNumber", response)) > 0
+        else None
+    )
 
     return details, errors
 
@@ -31,7 +28,7 @@ def parse_shipment_response(
 def _extract_details(
     response: lib.Element, settings: provider_utils.Settings
 ) -> models.ShipmentDetails:
-    shipment = lib.to_object(eVSResponse, response)
+    shipment = lib.to_object(shipping.eVSResponse, response)
 
     return models.ShipmentDetails(
         carrier_name=settings.carrier_name,
@@ -82,13 +79,13 @@ def shipment_request(
         **(options.usps_option_redirect_non_delivery.state or {})
     )
 
-    request = eVSRequest(
+    request = usps.eVSRequest(
         USERID=settings.username,
         Option=None,
         Revision="1",
-        ImageParameters=ImageParametersType(
+        ImageParameters=usps.ImageParametersType(
             ImageParameter=label_format,
-            LabelSequence=LabelSequenceType(PackageNumber=1, TotalPackages=1),
+            LabelSequence=usps.LabelSequenceType(PackageNumber=1, TotalPackages=1),
         ),
         FromName=shipper.person_name,
         FromFirm=shipper.company_name or "N/A",
@@ -103,7 +100,7 @@ def shipment_request(
         AllowNonCleansedOriginAddr=False,
         ToName=recipient.person_name,
         ToFirm=recipient.company_name or "N/A",
-        ToAddress1=recipient.address_line2,
+        ToAddress1=recipient.address_line2 or "",
         ToAddress2=recipient.street,
         ToCity=recipient.city,
         ToState=recipient.state_code,
@@ -133,7 +130,7 @@ def shipment_request(
         ShipDate=options.shipment_date.state,
         CustomerRefNo=None,
         ExtraServices=(
-            ExtraServicesType(
+            usps.ExtraServicesType(
                 ExtraService=[option.code for _, option in options.items()]
             )
             if any(options.items())
@@ -159,9 +156,9 @@ def shipment_request(
         PrintCustomerRefNo=None,
         Content=None,
         ShippingContents=(
-            ShippingContentsType(
+            usps.ShippingContentsType(
                 ItemDetail=[
-                    ItemDetailType(
+                    usps.ItemDetailType(
                         Description=lib.text(item.description or item.title or "N/A"),
                         Quantity=item.quantity,
                         Value=item.value_amount,
