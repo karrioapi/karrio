@@ -1,5 +1,4 @@
-import { CreateParcelTemplateInput, UpdateParcelTemplateInput } from '@karrio/types';
-import { ParcelForm, DEFAULT_PARCEL_CONTENT } from '../forms/parcel-form';
+import { CreateParcelTemplateInput, DEFAULT_PARCEL_CONTENT, UpdateParcelTemplateInput } from '@karrio/types';
 import { NotificationType, ParcelTemplateType } from '@karrio/types';
 import { useParcelTemplateMutation } from '@karrio/hooks/parcel';
 import { isEqual, isNone, useLocation } from '@karrio/lib';
@@ -7,6 +6,7 @@ import { CheckBoxField } from '../components/checkbox-field';
 import { Notifier, Notify } from '../components/notifier';
 import { InputField } from '../components/input-field';
 import React, { useContext, useState } from 'react';
+import { ParcelForm } from '../forms/parcel-form';
 import { Loading } from '../components/loader';
 
 const DEFAULT_TEMPLATE_CONTENT = {

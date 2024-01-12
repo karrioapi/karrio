@@ -462,3 +462,36 @@ export const IMAGES = (
         .filter(([_, val]) => val !== 'generic')
         .map(([key, _]) => key)
 );
+
+export const DEFAULT_ADDRESS_CONTENT = {
+    address_line1: '',
+    address_line2: '',
+    residential: false
+} as Partial<AddressType>;
+
+export const DEFAULT_PARCEL_CONTENT: Partial<ParcelType> = {
+    weight: 1.0,
+    width: 33.7,
+    height: 18.2,
+    length: 10.0,
+    is_document: false,
+    packaging_type: "your_packaging",
+    weight_unit: graph.WeightUnitEnum.KG,
+    dimension_unit: graph.DimensionUnitEnum.CM,
+    items: [],
+};
+
+export const DEFAULT_COMMODITY_CONTENT: Partial<CommodityType> = {
+    weight: 1,
+    quantity: 1,
+    weight_unit: graph.WeightUnitEnum.KG,
+};
+
+export const DEFAULT_CUSTOMS_CONTENT: Partial<CustomsType> = {
+    duty: { paid_by: graph.PaidByEnum.recipient } as any,
+    certify: true,
+    commodities: [DEFAULT_COMMODITY_CONTENT as CommodityType],
+    incoterm: graph.IncotermCodeEnum.DDU,
+    content_type: graph.CustomsContentTypeEnum.merchandise,
+    options: {}
+};

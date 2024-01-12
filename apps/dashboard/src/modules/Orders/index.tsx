@@ -1,6 +1,9 @@
-import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, p, url$ } from "@karrio/lib";
+import { createShipmentFromOrders, formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, toSingleItem, url$ } from "@karrio/lib";
+import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
+import { BulkShipmentModalEditor } from "@karrio/ui/modals/bulk-shipment-modal";
 import { OrderPreview, OrderPreviewContext } from "@/components/order-preview";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
+import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
@@ -12,20 +15,30 @@ import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
+import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Spinner } from "@karrio/ui/components/spinner";
+import { AddressType, OrderType } from "@karrio/types";
+import { ShipmentData } from "@karrio/types/rest/api";
+import { bundleContexts } from "@karrio/hooks/utils";
 import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
-import { AddressType } from "@karrio/types";
 import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
+
+const ContextProviders = bundleContexts([
+  OrderPreview,
+  ConfirmModal,
+  ModalProvider,
+]);
 
 
 export default function OrdersPage(pageProps: any) {
   const Component: React.FC = () => {
     const router = useRouter();
-    const { references } = useAPIMetadata();
     const { setLoading } = useLoader();
+    const { references } = useAPIMetadata();
+    const { query: defaults } = useDefaultTemplates();
     const context = useOrders({ setVariablesToURL: true });
     const { previewOrder } = useContext(OrderPreviewContext);
     const [allChecked, setAllChecked] = React.useState(false);
@@ -149,6 +162,18 @@ export default function OrdersPage(pageProps: any) {
         </>
       )
     };
+    const collectShipments = (selection: string[], current: typeof orders) => {
+      return (current?.edges || [])
+        .filter(({ node: order }) => selection.includes(order.id))
+        .map(({ node: order }) => {
+          const shipment = (
+            order.shipments.find(({ status }) => status === "draft") ||
+            createShipmentFromOrders([order] as OrderType[], defaults)
+          );
+
+          return shipment as ShipmentData;
+        });
+    }
 
     useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
@@ -176,16 +201,19 @@ export default function OrdersPage(pageProps: any) {
         <div className="tabs">
           <ul>
             <li className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) ? 'is-active' : ''}`}>
-              <a onClick={() => !isNone(filter?.status) && updateFilter({ status: null, offset: 0 })}>all</a>
+              <a onClick={() => (!isNone(filter?.status) && isNone(filter?.source)) && updateFilter({ status: null, source: null, offset: 0 })}>all</a>
             </li>
             <li className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ['unfulfilled', 'partial']) ? 'is-active' : ''}`}>
-              <a onClick={() => !filter?.status?.includes('unfulfilled' as any) && updateFilter({ status: ['unfulfilled', 'partial'], offset: 0 })}>unfulfilled</a>
+              <a onClick={() => !filter?.status?.includes('unfulfilled' as any) && updateFilter({ status: ['unfulfilled', 'partial'], source: null, offset: 0 })}>unfulfilled</a>
             </li>
             <li className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ['fulfilled', 'delivered']) ? 'is-active' : ''}`}>
-              <a onClick={() => !filter?.status?.includes('fulfilled' as any) && updateFilter({ status: ['fulfilled', 'delivered'], offset: 0 })}>fulfilled</a>
+              <a onClick={() => !filter?.status?.includes('fulfilled' as any) && updateFilter({ status: ['fulfilled', 'delivered'], source: null, offset: 0 })}>fulfilled</a>
             </li>
             <li className={`is-capitalized has-text-weight-semibold ${filter?.status?.includes('cancelled' as any) && filter?.status?.length === 1 ? 'is-active' : ''}`}>
-              <a onClick={() => !filter?.status?.includes('cancelled' as any) && updateFilter({ status: ['cancelled'], offset: 0 })}>cancelled</a>
+              <a onClick={() => !filter?.status?.includes('cancelled' as any) && updateFilter({ status: ['cancelled'], source: null, offset: 0 })}>cancelled</a>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold ${(filter?.source as any === "draft") ? 'is-active' : ''}`}>
+              <a onClick={() => !(filter?.source as any === "draft") && updateFilter({ status: null, source: "draft", offset: 0 })}>drafts</a>
             </li>
           </ul>
         </div>
@@ -209,13 +237,16 @@ export default function OrdersPage(pageProps: any) {
                     </label>
                   </td>
 
-                  {selection.length > 0 && <td className="p-1" colSpan={5}>
-                    <div className="buttons has-addons">
-                      <AppLink
-                        href={`/orders/create_shipment?shipment_id=new&order_id=${selection.join(',')}`}
-                        className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
-                        <span className="has-text-weight-semibold">Create shipment</span>
-                      </AppLink>
+                  {selection.length > 0 && <td className="p-1" colSpan={8}>
+                    <div className="buttons has-addons ">
+                      <BulkShipmentModalEditor
+                        shipments={collectShipments(selection, orders)}
+                        trigger={
+                          <button className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
+                            <span className="has-text-weight-semibold">Create labels</span>
+                          </button>
+                        }
+                      />
                       <a
                         href={url$`${references.HOST}/docs/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">
@@ -351,14 +382,13 @@ export default function OrdersPage(pageProps: any) {
 
   return AuthenticatedPage((
     <DashboardLayout showModeIndicator={true}>
+      <GoogleGeocodingScript />
       <Head><title>{`Orders - ${(pageProps as any).metadata?.APP_NAME}`}</title></Head>
-      <OrderPreview>
-        <ConfirmModal>
 
-          <Component />
+      <ContextProviders>
+        <Component />
+      </ContextProviders>
 
-        </ConfirmModal>
-      </OrderPreview>
     </DashboardLayout>
   ), pageProps)
 };

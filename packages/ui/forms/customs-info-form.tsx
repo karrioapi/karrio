@@ -1,6 +1,5 @@
-import { CommodityType, CURRENCY_OPTIONS, CustomsType, CUSTOMS_CONTENT_TYPES, DutyType, INCOTERMS, NotificationType, PAYOR_OPTIONS, ShipmentType, CurrencyCodeEnum, CustomsContentTypeEnum, IncotermCodeEnum, PaidByEnum } from '@karrio/types';
+import { CURRENCY_OPTIONS, CustomsType, CUSTOMS_CONTENT_TYPES, DutyType, INCOTERMS, NotificationType, PAYOR_OPTIONS, ShipmentType, CurrencyCodeEnum, PaidByEnum, DEFAULT_CUSTOMS_CONTENT } from '@karrio/types';
 import React, { FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
-import { DEFAULT_COMMODITY_CONTENT } from '../modals/commodity-edit-modal';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
 import { TextAreaField } from '../components/textarea-field';
 import { CheckBoxField } from '../components/checkbox-field';
@@ -14,14 +13,6 @@ import { useUser } from '@karrio/hooks/user';
 import moment from 'moment';
 
 
-export const DEFAULT_CUSTOMS_CONTENT: Partial<CustomsType> = {
-  duty: { paid_by: PaidByEnum.recipient } as any,
-  certify: true,
-  commodities: [DEFAULT_COMMODITY_CONTENT as CommodityType],
-  incoterm: IncotermCodeEnum.DDU,
-  content_type: CustomsContentTypeEnum.merchandise,
-  options: {}
-};
 const DEFAULT_DUTY: Partial<DutyType> = {
   paid_by: PaidByEnum.recipient,
   currency: CurrencyCodeEnum.USD,

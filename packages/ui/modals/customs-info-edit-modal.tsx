@@ -1,7 +1,7 @@
-import { CreateCustomsTemplateInput, UpdateCustomsTemplateInput } from '@karrio/types';
-import { CustomsInfoForm, DEFAULT_CUSTOMS_CONTENT } from '../forms/customs-info-form';
+import { CreateCustomsTemplateInput, DEFAULT_CUSTOMS_CONTENT, UpdateCustomsTemplateInput } from '@karrio/types';
 import { CustomsTemplateType, CustomsType, NotificationType } from '@karrio/types';
 import { useCustomsTemplateMutation } from '@karrio/hooks/customs';
+import { CustomsInfoForm } from '../forms/customs-info-form';
 import { CheckBoxField } from '../components/checkbox-field';
 import { Notifier, Notify } from '../components/notifier';
 import { InputField } from '../components/input-field';

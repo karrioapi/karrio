@@ -1,10 +1,10 @@
-import { AddressType, CustomsType, NotificationType, ParcelType, ShipmentType } from '@karrio/types';
-import { ParcelForm, DEFAULT_PARCEL_CONTENT } from '../forms/parcel-form';
+import { AddressType, CustomsType, DEFAULT_PARCEL_CONTENT, NotificationType, ParcelType, ShipmentType } from '@karrio/types';
 import { CustomsInfoForm } from '../forms/customs-info-form';
 import { useNotifier } from '../components/notifier';
 import { AddressForm } from '../forms/address-form';
 import React, { FormEvent, useEffect } from 'react';
 import { ModalFormProps, useModal } from './modal';
+import { ParcelForm } from '../forms/parcel-form';
 import { useLoader } from '../components/loader';
 import { isEqual } from '@karrio/lib';
 

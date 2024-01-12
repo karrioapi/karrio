@@ -1,7 +1,6 @@
+import { AddressType, Collection, CommodityType, CustomsType, DEFAULT_CUSTOMS_CONTENT, NotificationType, ParcelType, ShipmentType } from "@karrio/types";
 import { commodityMatch, errorToMessages, getShipmentCommodities, gqlstr, isEqual, isNone, isNoneOrEmpty, toNumber, useLocation } from "@karrio/lib";
-import { AddressType, Collection, CommodityType, CustomsType, NotificationType, ParcelType, ShipmentType } from "@karrio/types";
 import { get_shipment_data, GET_SHIPMENT_DATA, LabelTypeEnum, PaidByEnum } from "@karrio/types";
-import { DEFAULT_CUSTOMS_CONTENT } from "@karrio/ui/forms/customs-info-form";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { useLoader } from "@karrio/ui/components/loader";
 import { useShipmentMutation } from "./shipment";
@@ -42,10 +41,10 @@ function reducer(state: any, { name, value }: { name: string, value: Partial<Shi
 }
 
 
-export function useLabelData(id: string) {
+export function useLabelData(id: string, initialData?: ShipmentType) {
   const karrio = useKarrio();
   const mutation = useShipmentMutation();
-  const [shipment, dispatch] = React.useReducer(reducer, DEFAULT_SHIPMENT_DATA);
+  const [shipment, dispatch] = React.useReducer(reducer, (initialData || DEFAULT_SHIPMENT_DATA), () => (initialData || DEFAULT_SHIPMENT_DATA));
 
   // Queries
   const query = useQuery({
@@ -77,12 +76,12 @@ export function useLabelData(id: string) {
 }
 
 
-export function useLabelDataMutation(id: string) {
+export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   const loader = useLoader();
   const router = useLocation();
   const notifier = useNotifier();
   const { basePath } = useAppMode();
-  const { mutation, ...state } = useLabelData(id);
+  const { mutation, ...state } = useLabelData(id, initialData);
   const [updateRate, setUpdateRate] = React.useState<boolean>(false);
 
   // state checks

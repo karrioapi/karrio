@@ -14,8 +14,8 @@ export const ParcelDescription: React.FC<ParcelDescriptionComponent> = ({ parcel
 
   return (
     <>
-      <p className="is-size-7 has-text-weight-semibold">{prefix} {formatParcelLabel(parcel)} {suffix}</p>
-      <p className="is-size-7 has-text-weight-semibold has-text-grey">
+      <p className="is-size-7 has-text-weight-semibold text-ellipsis">{prefix} {formatParcelLabel(parcel)} {suffix}</p>
+      <p className="is-size-7 has-text-weight-semibold has-text-grey text-ellipsis">
         {dimensionDescription}
         {isNoneOrEmpty(dimensionDescription) || isNoneOrEmpty(weightDescription) ? '' : ', '}
         {weightDescription}

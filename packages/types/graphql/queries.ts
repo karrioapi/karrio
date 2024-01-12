@@ -2662,7 +2662,7 @@ export const GET_ORDER = gql`query get_order($id: String!) {
 }
 `;
 
-export const GET_ORDER_DATA = gql`query get_order($id: String!) {
+export const GET_ORDER_DATA = gql`query get_order_data($id: String!) {
   order(id: $id) {
     id
     shipping_to {
@@ -3361,6 +3361,44 @@ export const DELETE_ORDER = gql`mutation DeleteOrder($data: DeleteOrderMutationI
     errors {
       field
       messages
+    }
+  }
+}
+`;
+
+export const GET_BATCH_OPERATION = gql`query get_batch_operation($id: String!) {
+  batch_operation(id: $id) {
+    id
+    resource_type
+    status
+    test_mode
+    resources {
+      id
+      status
+    }
+  }
+}
+`;
+
+export const GET_BATCH_OPERATIONS = gql`query get_batch_operations($filter: BatchOperationFilter) {
+  batch_operations(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        resource_type
+        status
+        test_mode
+        resources {
+          id
+          status
+        }
+      }
     }
   }
 }

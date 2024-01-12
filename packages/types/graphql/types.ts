@@ -3678,6 +3678,108 @@ export interface get_orderVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: get_order_data
+// ====================================================
+
+export interface get_order_data_order_shipping_to {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_order_data_order_shipping_from {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_order_data_order_billing_address {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_order_data_order_line_items {
+  id: string;
+  weight: number;
+  title: string | null;
+  description: string | null;
+  quantity: number;
+  sku: string | null;
+  hs_code: string | null;
+  value_amount: number | null;
+  weight_unit: WeightUnitEnum | null;
+  value_currency: CurrencyCodeEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any;
+  parent_id: string | null;
+}
+
+export interface get_order_data_order {
+  id: string;
+  shipping_to: get_order_data_order_shipping_to;
+  shipping_from: get_order_data_order_shipping_from | null;
+  billing_address: get_order_data_order_billing_address | null;
+  line_items: get_order_data_order_line_items[];
+  options: any;
+  metadata: any;
+}
+
+export interface get_order_data {
+  order: get_order_data_order;
+}
+
+export interface get_order_dataVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: get_orders
 // ====================================================
 
@@ -4632,6 +4734,80 @@ export interface DeleteOrderVariables {
   data: DeleteOrderMutationInput;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_batch_operation
+// ====================================================
+
+export interface get_batch_operation_batch_operation_resources {
+  id: number;
+  status: ResourceStatus | null;
+}
+
+export interface get_batch_operation_batch_operation {
+  id: number;
+  resource_type: ResourceStatus;
+  status: BatchOperationStatus;
+  test_mode: boolean;
+  resources: get_batch_operation_batch_operation_resources[];
+}
+
+export interface get_batch_operation {
+  batch_operation: get_batch_operation_batch_operation;
+}
+
+export interface get_batch_operationVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_batch_operations
+// ====================================================
+
+export interface get_batch_operations_batch_operations_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_batch_operations_batch_operations_edges_node_resources {
+  id: number;
+  status: ResourceStatus | null;
+}
+
+export interface get_batch_operations_batch_operations_edges_node {
+  id: number;
+  resource_type: ResourceStatus;
+  status: BatchOperationStatus;
+  test_mode: boolean;
+  resources: get_batch_operations_batch_operations_edges_node_resources[];
+}
+
+export interface get_batch_operations_batch_operations_edges {
+  node: get_batch_operations_batch_operations_edges_node;
+}
+
+export interface get_batch_operations_batch_operations {
+  page_info: get_batch_operations_batch_operations_page_info;
+  edges: get_batch_operations_batch_operations_edges[];
+}
+
+export interface get_batch_operations {
+  batch_operations: get_batch_operations_batch_operations;
+}
+
+export interface get_batch_operationsVariables {
+  filter?: BatchOperationFilter | null;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -5184,6 +5360,22 @@ export enum MetadataObjectTypeEnum {
 export enum TemplateRelatedObject {
   order = "order",
   shipment = "shipment",
+}
+
+export enum ResourceStatus {
+  created = "created",
+  has_errors = "has_errors",
+  incomplete = "incomplete",
+  processed = "processed",
+  queued = "queued",
+}
+
+export enum BatchOperationStatus {
+  completed = "completed",
+  completed_with_errors = "completed_with_errors",
+  failed = "failed",
+  queued = "queued",
+  running = "running",
 }
 
 // null
@@ -6687,6 +6879,14 @@ export interface UpdateOrderMutationInput {
 // null
 export interface DeleteOrderMutationInput {
   id: string;
+}
+
+// null
+export interface BatchOperationFilter {
+  offset?: number | null;
+  first?: number | null;
+  resource_type?: ResourceStatus[] | null;
+  status?: BatchOperationStatus[] | null;
 }
 
 //==============================================================

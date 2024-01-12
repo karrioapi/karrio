@@ -21106,19 +21106,15 @@
             "name": "resource_type",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "ResourceStatus",
-                    "ofType": null
-                  }
+                  "kind": "ENUM",
+                  "name": "ResourceStatus",
+                  "ofType": null
                 }
               }
             },
@@ -21128,19 +21124,15 @@
             "name": "status",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "BatchOperationStatus",
-                    "ofType": null
-                  }
+                  "kind": "ENUM",
+                  "name": "BatchOperationStatus",
+                  "ofType": null
                 }
               }
             },

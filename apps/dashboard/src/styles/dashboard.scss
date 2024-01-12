@@ -403,6 +403,38 @@ Karrio custom styling
   }
 }
 
+.batch-labels-table {
+  .selector {
+    width: 3%;
+  }
+
+  .order {
+    width: 20%;
+    min-width: 160px;
+  }
+
+  .items {
+    min-width: 150px;
+    max-width: 150px;
+  }
+
+  .package {
+    min-width: 150px;
+    max-width: 150px;
+  }
+
+  .total {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
+
+  .service {
+    width: 20%;
+    min-width: 250px;
+  }
+}
+
 .related-item-table {
   border-top: 2px solid #eee;
   border-bottom: 2px solid #eee;

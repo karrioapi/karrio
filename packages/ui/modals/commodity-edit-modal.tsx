@@ -1,4 +1,4 @@
-import { CurrencyCodeEnum, MetadataObjectTypeEnum, WeightUnitEnum } from '@karrio/types';
+import { CurrencyCodeEnum, DEFAULT_COMMODITY_CONTENT, MetadataObjectTypeEnum, WeightUnitEnum } from '@karrio/types';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 import { isEqual, isNone, validationMessage, validityCheck } from '@karrio/lib';
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from '@karrio/types';
@@ -10,12 +10,6 @@ import { InputField } from '../components/input-field';
 import { CountryInput } from '../forms/country-input';
 import { Notifier } from '../components/notifier';
 import { Loading } from '../components/loader';
-
-export const DEFAULT_COMMODITY_CONTENT: Partial<CommodityType> = {
-  weight: 1,
-  quantity: 1,
-  weight_unit: WeightUnitEnum.KG,
-};
 
 type OperationType = {
   commodity?: CommodityType;
