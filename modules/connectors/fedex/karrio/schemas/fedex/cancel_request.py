@@ -9,7 +9,7 @@ class AccountNumberType:
 
 
 @s(auto_attribs=True)
-class ShippingCancelRequestType:
+class CancelRequestType:
     accountNumber: Optional[AccountNumberType] = JStruct[AccountNumberType]
     emailShipment: Optional[bool] = None
     senderCountryCode: Optional[str] = None

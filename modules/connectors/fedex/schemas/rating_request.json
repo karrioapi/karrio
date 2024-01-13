@@ -84,12 +84,12 @@
         },
         "weight": {
           "units": "LB",
-          "value": 22
+          "value": 22.0
         },
         "dimensions": {
-          "length": 10,
-          "width": 8,
-          "height": 2,
+          "length": 10.0,
+          "width": 8.0,
+          "height": 2.0,
           "units": "IN"
         },
         "variableHandlingChargeDetail": {
@@ -127,14 +127,14 @@
                   {
                     "quantity": {
                       "quantityType": "GROSS",
-                      "amount": 0,
+                      "amount": 0.0,
                       "units": "LB"
                     },
                     "innerReceptacles": [
                       {
                         "quantity": {
                           "quantityType": "GROSS",
-                          "amount": 0,
+                          "amount": 0.0,
                           "units": "LB"
                         }
                       }
@@ -204,7 +204,7 @@
           ],
           "dryIceWeight": {
             "units": "LB",
-            "value": 10
+            "value": 10.0
           }
         }
       }
@@ -292,7 +292,7 @@
         "shipmentDryIceDetail": {
           "totalWeight": {
             "units": "LB",
-            "value": 10
+            "value": 10.0
           },
           "packageCount": 12
         }
@@ -362,7 +362,7 @@
       "shipmentDryIceDetail": {
         "totalWeight": {
           "units": "LB",
-          "value": 10
+          "value": 10.0
         },
         "packageCount": 12
       },
@@ -423,7 +423,7 @@
           "description": "DOCUMENTS",
           "weight": {
             "units": "LB",
-            "value": 22
+            "value": 22.0
           },
           "quantity": 1,
           "customsValue": {

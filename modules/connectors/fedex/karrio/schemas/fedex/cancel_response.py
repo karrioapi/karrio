@@ -19,7 +19,7 @@ class OutputType:
 
 
 @s(auto_attribs=True)
-class ShippingCancelResponseType:
+class CancelResponseType:
     transactionId: Optional[str] = None
     customerTransactionId: Optional[str] = None
     output: Optional[OutputType] = JStruct[OutputType]

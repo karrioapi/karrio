@@ -110,8 +110,6 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    options = lib.units.Options(payload.options or {})
-
     request = fedex.TrackingRequestType(
         includeDetailedScans=True,
         trackingInfo=[

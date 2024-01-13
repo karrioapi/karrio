@@ -15,6 +15,11 @@ def parse_error_response(
             [
                 *(result["errors"] if "errors" in result else []),
                 *(
+                    result["output"]["alerts"]
+                    if "alerts" in result.get("output", {})
+                    else []
+                ),
+                *(
                     [
                         {
                             **result["error"],

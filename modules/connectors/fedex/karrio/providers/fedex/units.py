@@ -190,7 +190,7 @@ class ConnectionConfig(utils.Enum):
     shipping_services = utils.OptionEnum("shipping_services", list)
 
 
-class ServiceType(utils.Enum):
+class ShippingService(utils.Enum):
     fedex_international_priority_express = "FEDEX_INTERNATIONAL_PRIORITY_EXPRESS"
     fedex_international_first = "INTERNATIONAL_FIRST"
     fedex_international_priority = "FEDEX_INTERNATIONAL_PRIORITY"

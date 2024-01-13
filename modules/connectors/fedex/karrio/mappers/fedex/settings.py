@@ -3,11 +3,11 @@
 import attr
 import jstruct
 import karrio.lib as lib
-from karrio.providers.fedex.utils import Settings as BaseSettings
+import karrio.providers.fedex.utils as provider_utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
+class Settings(provider_utils.Settings):
     """FedEx connection settings."""
 
     api_key: str  # type:ignore

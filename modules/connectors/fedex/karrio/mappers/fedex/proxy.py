@@ -39,39 +39,38 @@ class Proxy(proxy.Proxy):
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         requests = request.serialize()
-        response = self._send_request("/ship", lib.Serializable(requests[0]))
+        responses = [self._send_request("/ship", lib.Serializable(requests[0]))]
         master_id = (
-            lib.to_dict(response)
+            lib.to_dict(responses[0])
             .get("output", {})
             .get("transactionShipments", [{}])[0]
             .get("masterTrackingNumber")
         )
 
         if len(requests) > 1 and master_id is not None:
-            responses = [
-                self._send_request(
+            responses += lib.run_asynchronously(
+                lambda _: self._send_request(
                     "/ship",
                     lib.Serializable(
                         request.replace(
                             "[MASTER_ID_TYPE]", master_id.TrackingIdType
                         ).replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber),
                     ),
-                )
-                for request in requests[1:]
-            ]
-            return lib.Deserializable([response, *responses], lib.to_dict)
+                ),
+                requests[1:],
+            )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            responses,
+            lambda __: [lib.to_dict(_) for _ in __],
+        )
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/ship", request)
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def upload_document(
-        self,
-        requests: lib.Serializable,
-    ) -> lib.Deserializable:
+    def upload_document(self, requests: lib.Serializable) -> lib.Deserializable:
         response = lib.run_asynchronously(
             lambda _: self._send_request(
                 url=(
@@ -80,6 +79,9 @@ class Proxy(proxy.Proxy):
                     else "https://documentapi.prod.fedex.com/documents/v1/etds/upload"
                 ),
                 request=lib.Serializable(_),
+                headers={
+                    "content-Type": "multipart/form-data",
+                },
             ),
             requests.serialize(),
         )

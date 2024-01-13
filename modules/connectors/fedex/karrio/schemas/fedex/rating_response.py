@@ -63,54 +63,35 @@ class OperationalDetailType:
 @s(auto_attribs=True)
 class BillingWeightType:
     units: Optional[str] = None
-    value: Optional[int] = None
+    value: Optional[float] = None
 
 
 @s(auto_attribs=True)
 class SurchargeType:
     type: Optional[str] = None
     description: Optional[str] = None
-    level: Optional[str] = None
     amount: Optional[float] = None
-    surchargeamount: Optional[float] = None
-
-
-@s(auto_attribs=True)
-class PackageRateDetailType:
-    rateType: Optional[str] = None
-    ratedWeightMethod: Optional[str] = None
-    baseCharge: Optional[float] = None
-    netFreight: Optional[float] = None
-    totalSurcharges: Optional[float] = None
-    netFedExCharge: Optional[float] = None
-    totalTaxes: Optional[int] = None
-    netCharge: Optional[float] = None
-    totalRebates: Optional[int] = None
-    billingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
-    totalFreightDiscounts: Optional[int] = None
-    surcharges: List[SurchargeType] = JList[SurchargeType]
-    currency: Optional[str] = None
+    level: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class RatedPackageType:
     groupNumber: Optional[int] = None
     effectiveNetDiscount: Optional[float] = None
-    packageRateDetail: Optional[PackageRateDetailType] = JStruct[PackageRateDetailType]
+    packageRateDetail: Optional['RatedPackageType'] = JStruct['RatedPackageType']
     rateType: Optional[str] = None
     ratedWeightMethod: Optional[str] = None
     baseCharge: Optional[float] = None
     netFreight: Optional[float] = None
     totalSurcharges: Optional[float] = None
     netFedExCharge: Optional[float] = None
-    totalTaxes: Optional[int] = None
+    totalTaxes: Optional[float] = None
     netCharge: Optional[float] = None
-    totalRebates: Optional[int] = None
-    ratedPackagebillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
+    totalRebates: Optional[float] = None
+    billingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
     totalFreightDiscounts: Optional[int] = None
     surcharges: List[SurchargeType] = JList[SurchargeType]
     currency: Optional[str] = None
-    billingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
 
 
 @s(auto_attribs=True)
@@ -118,18 +99,18 @@ class NameType:
     type: Optional[str] = None
     encoding: Optional[str] = None
     value: Optional[str] = None
-    namevalue: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class RatedShipmentDetailServiceDescriptionType:
+class ServiceDescriptionType:
     serviceId: Optional[str] = None
     serviceType: Optional[str] = None
-    code: Optional[int] = None
+    code: Optional[str] = None
     names: List[NameType] = JList[NameType]
     operatingOrgCodes: List[str] = []
     description: Optional[str] = None
     astraDescription: Optional[str] = None
+    serviceCategory: Optional[str] = None
 
 
 @s(auto_attribs=True)
@@ -142,17 +123,17 @@ class CurrencyExchangeRateType:
 @s(auto_attribs=True)
 class TotalBillingWeightType:
     units: Optional[str] = None
-    valu: Optional[int] = None
-    value: Optional[int] = None
+    valu: Optional[float] = None
+    value: Optional[float] = None
 
 
 @s(auto_attribs=True)
 class ShipmentRateDetailType:
     rateZone: Optional[str] = None
-    dimDivisor: Optional[int] = None
+    dimDivisor: Optional[float] = None
     fuelSurchargePercent: Optional[float] = None
     totalSurcharges: Optional[float] = None
-    totalFreightDiscount: Optional[int] = None
+    totalFreightDiscount: Optional[float] = None
     surCharges: List[SurchargeType] = JList[SurchargeType]
     pricingCode: Optional[str] = None
     currencyExchangeRate: Optional[CurrencyExchangeRateType] = JStruct[CurrencyExchangeRateType]
@@ -168,31 +149,19 @@ class RatedShipmentDetailType:
     totalDiscounts: Optional[float] = None
     totalBaseCharge: Optional[float] = None
     totalNetCharge: Optional[float] = None
-    totalVatCharge: Optional[int] = None
+    totalVatCharge: Optional[float] = None
     totalNetFedExCharge: Optional[float] = None
-    totalDutiesAndTaxes: Optional[int] = None
+    totalDutiesAndTaxes: Optional[float] = None
     totalNetChargeWithDutiesAndTaxes: Optional[float] = None
-    totalDutiesTaxesAndFees: Optional[int] = None
-    totalAncillaryFeesAndTaxes: Optional[int] = None
+    totalDutiesTaxesAndFees: Optional[float] = None
+    totalAncillaryFeesAndTaxes: Optional[float] = None
     shipmentRateDetail: Optional[ShipmentRateDetailType] = JStruct[ShipmentRateDetailType]
     currency: Optional[str] = None
     ratedPackages: List[RatedPackageType] = JList[RatedPackageType]
     anonymouslyAllowable: Optional[bool] = None
     operationalDetail: Optional[OperationalDetailType] = JStruct[OperationalDetailType]
     signatureOptionType: Optional[str] = None
-    serviceDescription: Optional[RatedShipmentDetailServiceDescriptionType] = JStruct[RatedShipmentDetailServiceDescriptionType]
-
-
-@s(auto_attribs=True)
-class RateReplyDetailServiceDescriptionType:
-    serviceId: Optional[str] = None
-    serviceType: Optional[str] = None
-    code: Optional[str] = None
-    names: List[NameType] = JList[NameType]
-    operatingOrgCodes: List[str] = []
-    serviceCategory: Optional[str] = None
-    description: Optional[str] = None
-    astraDescription: Optional[str] = None
+    serviceDescription: Optional[ServiceDescriptionType] = JStruct[ServiceDescriptionType]
 
 
 @s(auto_attribs=True)
@@ -205,7 +174,7 @@ class RateReplyDetailType:
     anonymouslyAllowable: Optional[bool] = None
     operationalDetail: Optional[OperationalDetailType] = JStruct[OperationalDetailType]
     signatureOptionType: Optional[str] = None
-    serviceDescription: Optional[RateReplyDetailServiceDescriptionType] = JStruct[RateReplyDetailServiceDescriptionType]
+    serviceDescription: Optional[ServiceDescriptionType] = JStruct[ServiceDescriptionType]
     commit: Optional[CommitType] = JStruct[CommitType]
 
 

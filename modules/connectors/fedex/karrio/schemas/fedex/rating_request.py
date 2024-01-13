@@ -30,7 +30,7 @@ class FixedValueType:
 @s(auto_attribs=True)
 class WeightType:
     units: Optional[str] = None
-    value: Optional[int] = None
+    value: Optional[float] = None
 
 
 @s(auto_attribs=True)
@@ -145,9 +145,9 @@ class ContentRecordType:
 
 @s(auto_attribs=True)
 class DimensionsType:
-    length: Optional[int] = None
-    width: Optional[int] = None
-    height: Optional[int] = None
+    length: Optional[float] = None
+    width: Optional[float] = None
+    height: Optional[float] = None
     units: Optional[str] = None
 
 
@@ -199,7 +199,7 @@ class DescriptionType:
 @s(auto_attribs=True)
 class QuantityType:
     quantityType: Optional[str] = None
-    amount: Optional[int] = None
+    amount: Optional[float] = None
     units: Optional[str] = None
 
 
