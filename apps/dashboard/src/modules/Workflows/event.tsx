@@ -142,7 +142,7 @@ export const Component: React.FC<{ eventId?: string }> = ({ eventId }) => {
                         <code style={{ whiteSpace: 'pre-wrap' }}
                           dangerouslySetInnerHTML={{
                             __html: hljs.highlight(
-                              parseRecordData(trace.record) || trace.record.url || "",
+                              parseWorkflowEventRecordData(trace.record) || trace.record.url || "",
                               { language: trace.record?.format || 'json' }
                             ).value,
                           }}
@@ -173,7 +173,7 @@ export default function Page(pageProps: any) {
   ), pageProps);
 }
 
-function parseRecordData(record: any) {
+export function parseWorkflowEventRecordData(record: any) {
   if (!record) return null;
   if (record?.format === 'xml') {
     return (record.data || record.response || record.error);

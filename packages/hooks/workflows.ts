@@ -281,7 +281,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   const updateAction = (index: number, action_id?: string | null) => async (data: PartialWorkflowActionMutationInput, change?: ChangeType) => {
     const update = {
       actions: workflow.actions.map(({ ...action }, idx) => (
-        (action.id === action_id || idx === index) ? data : action
+        (action.id === action_id || idx === index) ? { ...action, ...data } : action
       ))
     };
     updateWorkflow(update as any, change);
@@ -305,7 +305,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   }
   const updateActionConnection = (index: number, action_id?: string | null) => async (data: PartialWorkflowConnectionMutationInput, change?: ChangeType) => {
     const action = workflow.actions.find((_, idx) => idx === index || _.id === action_id);
-    updateAction(index, action_id)({ ...action, connection: data }, change);
+    updateAction(index, action_id)({ ...action, connection: { ...(action?.connection || {}), ...data } }, change);
   }
   const deleteActionConnection = (index: number, action_id?: string | null, connection_id?: string | null) => async () => {
     if (!isLocalDraft(workflow.id) && !!connection_id) {
@@ -379,7 +379,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
       eventsQuery.refetch();
     }
     setDebugEvent(event);
-  }, workflow_events?.edges || [workflow_events]);
+  }, [workflow_events?.edges]);
 
   return {
     debug_event,

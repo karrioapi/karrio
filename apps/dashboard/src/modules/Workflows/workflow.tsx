@@ -6,25 +6,33 @@ import { TextAreaField } from '@karrio/ui/components/textarea-field';
 import { TabStateProvider, Tabs } from '@karrio/ui/components/tabs';
 import { WorkflowActionType } from '@karrio/hooks/workflow-actions';
 import { ConfirmModalWrapper } from '@karrio/ui/modals/form-modals';
+import { CopiableLink } from '@karrio/ui/components/copiable-link';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
 import { InputField } from '@karrio/ui/components/input-field';
+import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useWorkflowForm } from '@karrio/hooks/workflows';
 import { useLoader } from '@karrio/ui/components/loader';
 import { AppLink } from '@karrio/ui/components/app-link';
 import { ModalProvider } from '@karrio/ui/modals/modal';
 import django from 'highlight.js/lib/languages/django';
+import { parseWorkflowEventRecordData } from './event';
 import { bundleContexts } from '@karrio/hooks/utils';
+import { jsonLanguage } from '@codemirror/lang-json';
+import { htmlLanguage } from '@codemirror/lang-html';
 import { SelectField } from '@karrio/ui/components';
+import json from 'highlight.js/lib/languages/json';
 import { Disclosure } from '@headlessui/react';
+import CodeMirror from '@uiw/react-codemirror';
 import { WorkflowEventList } from './events';
 import React, { useState } from 'react';
 import hljs from "highlight.js";
 import Head from 'next/head';
-import { useAPIMetadata } from '@karrio/hooks/api-metadata';
+import moment from 'moment';
 
 export { getServerSideProps } from "@/context/main";
 const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage('django', django);
+hljs.registerLanguage('json', json);
 
 export default function Page(pageProps: any) {
   const Component: React.FC = () => {
@@ -33,7 +41,7 @@ export default function Page(pageProps: any) {
     const { id } = router.query;
     const { metadata } = useAPIMetadata()
     const [key, setKey] = useState<string>(`workflow-${Date.now()}`);
-    const { workflow, current, isNew, DEFAULT_STATE, query, zipActionWithNode, ...mutation } = useWorkflowForm({ id: id as string });
+    const { workflow, current, isNew, DEFAULT_STATE, query, zipActionWithNode, debug_event, ...mutation } = useWorkflowForm({ id: id as string });
 
     const handleChange = async (changes?: Partial<typeof workflow>) => {
       if (changes === undefined) { return; }
@@ -105,7 +113,7 @@ export default function Page(pageProps: any) {
                 <div className="column p-3" style={{ height: '80vh', maxHeight: '80vh', overflowY: 'auto' }}>
 
                   {/* Trigger section */}
-                  <Disclosure as='div' className="card px-0" defaultOpen={true} style={{ maxWidth: '500px', margin: 'auto' }}>
+                  <Disclosure as='div' className="card px-0" defaultOpen={true} style={{ maxWidth: '600px', margin: 'auto' }}>
                     <Disclosure.Button as='header' className="p-3 is-flex is-justify-content-space-between is-clickable">
                       <div className="is-title is-size-6 is-vcentered my-2">
                         <span className="has-text-weight-bold">Trigger</span>
@@ -194,7 +202,7 @@ export default function Page(pageProps: any) {
                   {/* Actions section */}
                   {zipActionWithNode(workflow.actions as WorkflowActionType[], workflow.action_nodes as ActionNodeInput[]).map(([action, node], index) => (
                     <React.Fragment key={index}>
-                      <Disclosure as='div' className="card px-0" style={{ maxWidth: '500px', margin: 'auto' }}>
+                      <Disclosure as='div' className="card px-0" style={{ maxWidth: '600px', margin: 'auto' }}>
                         <Disclosure.Button as='header' className="p-3 is-flex is-justify-content-space-between is-clickable">
                           <div className="is-title is-size-6 is-vcentered my-2">
                             <span className="has-text-weight-bold">Action</span>
@@ -225,266 +233,339 @@ export default function Page(pageProps: any) {
                         <Disclosure.Panel>
                           <hr className='my-1' style={{ height: '1px' }} />
 
-                          <div className="p-2 is-size-7">
+                          <TabStateProvider tabs={['Template', 'Inputs', 'Outputs', 'Logs', 'Details']} setSelectedToURL={false}>
+                            <Tabs tabClass="is-size-7 has-text-weight-bold"
+                              tabContainerClass="mb-0" className="p-0"
+                              style={{ position: 'relative', height: '300px', maxHeight: '300px', overflowY: 'auto' }}>
 
-                            {/* action type */}
-                            <div className="columns my-0 px-3">
-                              <div className="column is-4 py-1">
-                                <span className="has-text-weight-bold has-text-grey">Action type</span>
-                              </div>
-                              <div className="column is-8 py-1"><code>{action.action_type}</code></div>
-                            </div>
-
-                            {/* action description */}
-                            {!!action.description && <div className="columns my-0 px-3">
-                              <div className="column is-4 py-1">
-                                <span className="has-text-weight-bold has-text-grey">description</span>
-                              </div>
-                              <div className="column is-8 py-1"><code>{action.description}</code></div>
-                            </div>}
-
-                            {/* data mapping options */}
-                            {action.action_type == AutomationActionType.data_mapping && <>
-
-                              {/* action parameters type */}
-                              <div className="columns my-0 px-3">
-                                <div className="column is-4 py-1">
-                                  <span className="has-text-weight-bold has-text-grey">format</span>
-                                </div>
-                                <div className="column is-8 py-1"><code>{action.content_type}</code></div>
-                              </div>
-
-                              {/* action parameters template */}
-                              <div className="columns is-multiline my-0 px-3">
-                                <div className="column py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Template</span>
-                                </div>
-                                <div className="column is-12 py-1">
-                                  <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
-                                    <code
-                                      dangerouslySetInnerHTML={{
-                                        __html: hljs.highlight((action.parameters_template || '') as string, { language: 'django' }).value,
-                                      }}
-                                    />
-                                  </pre>
+                              <div className="control">
+                                <div className="card is-radiusless">
+                                  <CodeMirror
+                                    height="297px"
+                                    extensions={[htmlLanguage]}
+                                    value={action.parameters_template || "" as string}
+                                    onChange={value => mutation.updateAction(index, action?.id)({ parameters_template: value })}
+                                  />
                                 </div>
                               </div>
 
-                            </>}
+                              <div>
 
-                            {/* http request options */}
-                            {action.action_type == AutomationActionType.http_request && <>
+                                {(debug_event?.records || []).filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-input")).length == 0 &&
+                                  <div className="notification is-default p-2 is-size-6">
+                                    No input data sample...
+                                  </div>}
 
-                              {/* action method */}
-                              <div className="columns my-0 px-3">
-                                <div className="column is-4 py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Method</span>
-                                </div>
-                                <div className="column is-8 py-1"><code>{action.method?.toLocaleUpperCase()}</code></div>
-                              </div>
+                                {(debug_event?.records || []).length > 0 && <>
 
-                              {/* action host */}
-                              <div className="columns my-0 px-3">
-                                <div className="column is-4 py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Host</span>
-                                </div>
-                                <div className="column is-8 py-1"><code>{action.host}</code></div>
-                              </div>
+                                  {debug_event!.records.filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-input"))
+                                    .map((trace) => {
+                                      return (
+                                        <div className="card is-radiusless" key={trace.id}>
+                                          <CodeMirror
+                                            height="297px"
+                                            extensions={[jsonLanguage]}
+                                            value={parseWorkflowEventRecordData(trace.record) || "{}" as string}
+                                            readOnly={true}
+                                          />
+                                        </div>
+                                      );
+                                    })}
 
-                              {/* host port */}
-                              {!isNone(action.port) && <div className="columns my-0 px-3">
-                                <div className="column is-4 py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Port</span>
-                                </div>
-                                <div className="column is-8 py-1"><code>{action.port}</code></div>
-                              </div>}
+                                </>}
 
-                              {/* action endpoint */}
-                              {!isNoneOrEmpty(action.endpoint) && <div className="columns my-0 px-3">
-                                <div className="column is-4 py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Endpoint</span>
-                                </div>
-                                <div className="column is-8 py-1"><code>{action.endpoint}</code></div>
-                              </div>}
-
-                              {/* action content type */}
-                              <div className="columns my-0 px-3">
-                                <div className="column is-4 py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Content Type</span>
-                                </div>
-                                <div className="column is-8 py-1"><code>{action.content_type}</code></div>
-                              </div>
-
-                              {/* action header template */}
-                              <div className="columns is-multiline my-0 px-3">
-                                <div className="column py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Header Template</span>
-                                </div>
-                                <div className="column is-12 py-1">
-                                  <pre className="code p-1" style={{ maxHeight: '5vh', overflowY: 'auto' }}>
-                                    <code
-                                      dangerouslySetInnerHTML={{
-                                        __html: hljs.highlight((action.header_template || '') as string, { language: 'django' }).value,
-                                      }}
-                                    />
-                                  </pre>
-                                </div>
-                              </div>
-
-                              {/* action parameters type */}
-                              <div className="columns my-0 px-3">
-                                <div className="column is-4 py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Parameters Type</span>
-                                </div>
-                                <div className="column is-8 py-1"><code>{action.parameters_type}</code></div>
-                              </div>
-
-                              {/* action parameters template */}
-                              <div className="columns is-multiline my-0 px-3">
-                                <div className="column py-1">
-                                  <span className="has-text-weight-bold has-text-grey">Parameters Template</span>
-                                </div>
-                                <div className="column is-12 py-1">
-                                  <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
-                                    <code
-                                      dangerouslySetInnerHTML={{
-                                        __html: hljs.highlight((action.parameters_template || "") as string, { language: 'django' }).value,
-                                      }}
-                                    />
-                                  </pre>
-                                </div>
-                              </div>
-
-                            </>}
-
-                          </div>
-
-
-                          <Disclosure as='div' className="card px-0 m-2" style={{ maxWidth: '500px', margin: 'auto' }}>
-                            <Disclosure.Button as='header' className="p-3 is-flex is-justify-content-space-between is-clickable">
-                              <div className="is-title is-size-6 is-vcentered my-2">
-                                <span className="has-text-weight-bold">Connection</span>
-                                <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
-                                  {action.connection?.name || 'A connection for the action'}
-                                </p>
                               </div>
                               <div>
-                                <ConnectionModalEditor
-                                  connection={action.connection || { auth_type: 'basic' } as any}
-                                  onSubmit={mutation.updateActionConnection(index, action?.id)}
-                                  trigger={
-                                    <button type="button" className="button is-white">
-                                      <span className="icon">
-                                        <i className={`fas fa-${!!action.connection ? 'pen' : 'plus'}`}></i>
-                                      </span>
-                                    </button>
-                                  }
-                                />
-                                <ConfirmModalWrapper
-                                  onSubmit={mutation.deleteActionConnection(index, action?.id, action.connection?.id)}
-                                  trigger={
-                                    <button type="button" className="button is-white" disabled={!action.connection}>
-                                      <span className="icon"><i className="fas fa-trash"></i></span>
-                                    </button>
-                                  }
-                                />
+
+                                {(debug_event?.records || []).filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-output")).length == 0 &&
+                                  <div className="notification is-default p-2 is-size-6">
+                                    No input data sample...
+                                  </div>}
+
+                                {(debug_event?.records || []).length > 0 && <>
+
+                                  {debug_event!.records.filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-output"))
+                                    .map((trace) => {
+                                      return (
+                                        <div className="card is-radiusless" key={trace.id}>
+                                          <CodeMirror
+                                            height="297px"
+                                            extensions={[jsonLanguage]}
+                                            value={parseWorkflowEventRecordData(trace.record) || "{}" as string}
+                                            readOnly={true}
+                                          />
+                                        </div>
+                                      );
+                                    })}
+
+                                </>}
+
                               </div>
-                            </Disclosure.Button>
-                            <Disclosure.Panel>
-                              <hr className='my-1' style={{ height: '1px' }} />
+                              <div>
 
-                              {!action.connection && <div className="p-3 is-size-7">
-                                <div className="message p-2 is-size-7 has-text-weight-bold">
-                                  <span>No connection defined!</span>
-                                </div>
-                              </div>}
-
-                              {!!action.connection && <div className="p-3 is-size-7">
-
-                                {/* auth type */}
-                                <div className="columns my-0 px-3">
-                                  <div className="column is-4 py-1">
-                                    <span className="has-text-weight-bold has-text-grey">Auth type</span>
-                                  </div>
-                                  <div className="column is-8 py-1"><code>{action.connection.auth_type}</code></div>
-                                </div>
-
-                                {/* connection description */}
-                                {!!action.connection.description && <div className="columns my-0 px-3">
-                                  <div className="column is-4 py-1">
-                                    <span className="has-text-weight-bold has-text-grey">description</span>
-                                  </div>
-                                  <div className="column is-8 py-1"><code>{action.connection.description}</code></div>
+                                {(debug_event?.records || []).length == 0 && <div className="notification is-default p-2 is-size-6">
+                                  No tracing records...
                                 </div>}
 
-                                {/* http request options */}
-                                {[AutomationAuthType.oauth2, AutomationAuthType.jwt].includes(action.connection.auth_type as any) && <>
+                                {(debug_event?.records || []).length > 0 && <>
 
-                                  {/* connection host */}
+                                  {debug_event!.records.filter(_ => _.meta.workflow_action_id == action.id).map((trace) => {
+                                    return (<div className={"card m-4"} key={trace.id}>
+                                      <div className="p-3 is-size-7 has-text-weight-semibold has-text-grey">
+                                        <p className="my-1">
+                                          <span>Record type: <strong>{trace.key}</strong></span>
+                                        </p>
+                                        {!!trace.record.url && <p className="my-1">
+                                          <span>URL: <strong>{trace.record.url}</strong></span>
+                                        </p>}
+                                        {!!trace.record.request_id && <p className="my-1">
+                                          <span>Request ID: <strong>{trace.record.request_id}</strong></span>
+                                        </p>}
+                                        {trace?.timestamp && <p className="my-1">
+                                          <span>Request Timestamp: <strong>{moment(trace.timestamp * 1000).format('LTS')}</strong></span>
+                                        </p>}
+                                      </div>
+
+                                      <div className="p-0 is-relative">
+                                        <CopiableLink text="COPY"
+                                          value={trace.record || trace.record?.url || ""}
+                                          style={{ position: 'absolute', right: 4 }}
+                                          className="button is-primary is-small m-1"
+                                        />
+                                        <pre className="code p-1" style={{ overflow: 'auto', minHeight: '40px', maxHeight: '30vh' }}>
+                                          <code style={{ whiteSpace: 'pre-wrap' }}
+                                            dangerouslySetInnerHTML={{
+                                              __html: hljs.highlight(
+                                                parseWorkflowEventRecordData(trace.record) || trace.record.url || "",
+                                                { language: trace.record?.format || 'json' }
+                                              ).value,
+                                            }}
+                                          />
+                                        </pre>
+                                      </div>
+
+                                    </div>);
+                                  })}
+
+                                </>}
+
+                              </div>
+                              <div>
+                                <div className="is-size-7">
+
+                                  {/* action type */}
                                   <div className="columns my-0 px-3">
                                     <div className="column is-4 py-1">
-                                      <span className="has-text-weight-bold has-text-grey">Host</span>
+                                      <span className="has-text-weight-bold has-text-grey">Action type</span>
                                     </div>
-                                    <div className="column is-8 py-1"><code>{action.connection.host}</code></div>
+                                    <div className="column is-8 py-1"><code>{action.action_type}</code></div>
                                   </div>
 
-                                  {/* host port */}
-                                  {!isNone(action.connection.port) && <div className="columns my-0 px-3">
+                                  {/* action description */}
+                                  {!!action.description && <div className="columns my-0 px-3">
                                     <div className="column is-4 py-1">
-                                      <span className="has-text-weight-bold has-text-grey">Port</span>
+                                      <span className="has-text-weight-bold has-text-grey">description</span>
                                     </div>
-                                    <div className="column is-8 py-1"><code>{action.connection.port}</code></div>
+                                    <div className="column is-8 py-1"><code>{action.description}</code></div>
                                   </div>}
 
-                                  {/* endpoint */}
-                                  {!isNoneOrEmpty(action.connection.endpoint) && <div className="columns my-0 px-3">
-                                    <div className="column is-4 py-1">
-                                      <span className="has-text-weight-bold has-text-grey">Endpoint</span>
+                                  {/* data mapping options */}
+                                  {action.action_type == AutomationActionType.data_mapping && <>
+
+                                    {/* action parameters type */}
+                                    <div className="columns my-0 px-3">
+                                      <div className="column is-4 py-1">
+                                        <span className="has-text-weight-bold has-text-grey">format</span>
+                                      </div>
+                                      <div className="column is-8 py-1"><code>{action.content_type}</code></div>
                                     </div>
-                                    <div className="column is-8 py-1"><code>{action.connection.endpoint}</code></div>
-                                  </div>}
 
-                                </>}
+                                  </>}
 
-                                {/* connection auth template */}
-                                <div className="columns is-multiline my-0 px-3">
-                                  <div className="column py-1">
-                                    <span className="has-text-weight-bold has-text-grey">Auth template</span>
-                                  </div>
-                                  <div className="column is-12 py-1">
-                                    <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
-                                      <code
-                                        dangerouslySetInnerHTML={{
-                                          __html: hljs.highlight((action.connection.auth_template || '') as string, { language: 'django' }).value,
-                                        }}
-                                      />
-                                    </pre>
-                                  </div>
+                                  {/* http request options */}
+                                  {action.action_type == AutomationActionType.http_request && <>
+
+                                    {/* action method */}
+                                    <div className="columns my-0 px-3">
+                                      <div className="column is-4 py-1">
+                                        <span className="has-text-weight-bold has-text-grey">Method</span>
+                                      </div>
+                                      <div className="column is-8 py-1"><code>{action.method?.toLocaleUpperCase()}</code></div>
+                                    </div>
+
+                                    {/* action host */}
+                                    <div className="columns my-0 px-3">
+                                      <div className="column is-4 py-1">
+                                        <span className="has-text-weight-bold has-text-grey">Host</span>
+                                      </div>
+                                      <div className="column is-8 py-1"><code>{action.host}</code></div>
+                                    </div>
+
+                                    {/* host port */}
+                                    {!isNone(action.port) && <div className="columns my-0 px-3">
+                                      <div className="column is-4 py-1">
+                                        <span className="has-text-weight-bold has-text-grey">Port</span>
+                                      </div>
+                                      <div className="column is-8 py-1"><code>{action.port}</code></div>
+                                    </div>}
+
+                                    {/* action endpoint */}
+                                    {!isNoneOrEmpty(action.endpoint) && <div className="columns my-0 px-3">
+                                      <div className="column is-4 py-1">
+                                        <span className="has-text-weight-bold has-text-grey">Endpoint</span>
+                                      </div>
+                                      <div className="column is-8 py-1"><code>{action.endpoint}</code></div>
+                                    </div>}
+
+                                    {/* action content type */}
+                                    <div className="columns my-0 px-3">
+                                      <div className="column is-4 py-1">
+                                        <span className="has-text-weight-bold has-text-grey">Content Type</span>
+                                      </div>
+                                      <div className="column is-8 py-1"><code>{action.content_type}</code></div>
+                                    </div>
+
+                                    {/* action parameters type */}
+                                    <div className="columns my-0 px-3">
+                                      <div className="column is-4 py-1">
+                                        <span className="has-text-weight-bold has-text-grey">Parameters Type</span>
+                                      </div>
+                                      <div className="column is-8 py-1"><code>{action.parameters_type}</code></div>
+                                    </div>
+
+                                  </>}
+
                                 </div>
 
-                                {[AutomationAuthType.oauth2, AutomationAuthType.jwt].includes(action.connection.auth_type as any) && <>
-
-                                  {/* parameters template */}
-                                  <div className="columns is-multiline my-0 px-3">
-                                    <div className="column py-1">
-                                      <span className="has-text-weight-bold has-text-grey">Template</span>
+                                <Disclosure as='div' className="card px-0 m-2" style={{ maxWidth: '600px', margin: 'auto' }}>
+                                  <Disclosure.Button as='header' className="p-3 is-flex is-justify-content-space-between is-clickable">
+                                    <div className="is-title is-size-6 is-vcentered my-2">
+                                      <span className="has-text-weight-bold">Connection</span>
+                                      <p className="is-size-7 has-text-weight-semibold has-text-grey my-1">
+                                        {action.connection?.name || 'A connection for the action'}
+                                      </p>
                                     </div>
-                                    <div className="column is-12 py-1">
-                                      <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
-                                        <code
-                                          dangerouslySetInnerHTML={{
-                                            __html: hljs.highlight((action.connection.parameters_template || '{}') as string, { language: 'django' }).value,
-                                          }}
-                                        />
-                                      </pre>
+                                    <div>
+                                      <ConnectionModalEditor
+                                        connection={action.connection || { auth_type: 'basic' } as any}
+                                        onSubmit={mutation.updateActionConnection(index, action?.id)}
+                                        trigger={
+                                          <button type="button" className="button is-white">
+                                            <span className="icon">
+                                              <i className={`fas fa-${!!action.connection ? 'pen' : 'plus'}`}></i>
+                                            </span>
+                                          </button>
+                                        }
+                                      />
+                                      <ConfirmModalWrapper
+                                        onSubmit={mutation.deleteActionConnection(index, action?.id, action.connection?.id)}
+                                        trigger={
+                                          <button type="button" className="button is-white" disabled={!action.connection}>
+                                            <span className="icon"><i className="fas fa-trash"></i></span>
+                                          </button>
+                                        }
+                                      />
                                     </div>
-                                  </div>
+                                  </Disclosure.Button>
+                                  <Disclosure.Panel>
+                                    <hr className='my-1' style={{ height: '1px' }} />
 
-                                </>}
+                                    {!action.connection && <div className="p-3 is-size-7">
+                                      <div className="message p-2 is-size-7 has-text-weight-bold">
+                                        <span>No connection defined!</span>
+                                      </div>
+                                    </div>}
 
-                              </div>}
-                            </Disclosure.Panel>
-                          </Disclosure>
+                                    {!!action.connection && <div className="p-3 is-size-7">
+
+                                      {/* auth type */}
+                                      <div className="columns my-0 px-3">
+                                        <div className="column is-4 py-1">
+                                          <span className="has-text-weight-bold has-text-grey">Auth type</span>
+                                        </div>
+                                        <div className="column is-8 py-1"><code>{action.connection.auth_type}</code></div>
+                                      </div>
+
+                                      {/* connection description */}
+                                      {!!action.connection.description && <div className="columns my-0 px-3">
+                                        <div className="column is-4 py-1">
+                                          <span className="has-text-weight-bold has-text-grey">description</span>
+                                        </div>
+                                        <div className="column is-8 py-1"><code>{action.connection.description}</code></div>
+                                      </div>}
+
+                                      {/* http request options */}
+                                      {[AutomationAuthType.oauth2, AutomationAuthType.jwt].includes(action.connection.auth_type as any) && <>
+
+                                        {/* connection host */}
+                                        <div className="columns my-0 px-3">
+                                          <div className="column is-4 py-1">
+                                            <span className="has-text-weight-bold has-text-grey">Host</span>
+                                          </div>
+                                          <div className="column is-8 py-1"><code>{action.connection.host}</code></div>
+                                        </div>
+
+                                        {/* host port */}
+                                        {!isNone(action.connection.port) && <div className="columns my-0 px-3">
+                                          <div className="column is-4 py-1">
+                                            <span className="has-text-weight-bold has-text-grey">Port</span>
+                                          </div>
+                                          <div className="column is-8 py-1"><code>{action.connection.port}</code></div>
+                                        </div>}
+
+                                        {/* endpoint */}
+                                        {!isNoneOrEmpty(action.connection.endpoint) && <div className="columns my-0 px-3">
+                                          <div className="column is-4 py-1">
+                                            <span className="has-text-weight-bold has-text-grey">Endpoint</span>
+                                          </div>
+                                          <div className="column is-8 py-1"><code>{action.connection.endpoint}</code></div>
+                                        </div>}
+
+                                      </>}
+
+                                      {/* connection auth template */}
+                                      <div className="columns is-multiline my-0 px-3">
+                                        <div className="column py-1">
+                                          <span className="has-text-weight-bold has-text-grey">Auth template</span>
+                                        </div>
+                                        <div className="column is-12 py-1">
+                                          <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
+                                            <code
+                                              dangerouslySetInnerHTML={{
+                                                __html: hljs.highlight((action.connection.auth_template || '') as string, { language: 'django' }).value,
+                                              }}
+                                            />
+                                          </pre>
+                                        </div>
+                                      </div>
+
+                                      {[AutomationAuthType.oauth2, AutomationAuthType.jwt].includes(action.connection.auth_type as any) && <>
+
+                                        {/* parameters template */}
+                                        <div className="columns is-multiline my-0 px-3">
+                                          <div className="column py-1">
+                                            <span className="has-text-weight-bold has-text-grey">Template</span>
+                                          </div>
+                                          <div className="column is-12 py-1">
+                                            <pre className="code p-1" style={{ maxHeight: '15vh', overflowY: 'auto' }}>
+                                              <code
+                                                dangerouslySetInnerHTML={{
+                                                  __html: hljs.highlight((action.connection.parameters_template || '{}') as string, { language: 'django' }).value,
+                                                }}
+                                              />
+                                            </pre>
+                                          </div>
+                                        </div>
+
+                                      </>}
+
+                                    </div>}
+                                  </Disclosure.Panel>
+                                </Disclosure>
+                              </div>
+
+                            </Tabs>
+                          </TabStateProvider>
 
                         </Disclosure.Panel>
                       </Disclosure>
@@ -509,7 +590,7 @@ export default function Page(pageProps: any) {
                 </div>
 
                 <div className="column has-text-centered p-3">
-                  <button className={`button is-default ${[AutomationEventStatus.running, AutomationEventStatus.pending].includes(mutation.debug_event?.status as any) ? 'is-loading' : ''}`} type="button"
+                  <button className={`button is-default ${[AutomationEventStatus.running, AutomationEventStatus.pending].includes(debug_event?.status as any) ? 'is-loading' : ''}`} type="button"
                     onClick={() => mutation.runWorkflow()}>
                     <span className="icon">
                       <i className="fas fa-play"></i>
