@@ -6,10 +6,15 @@ from karrio.server.core.models.base import (
     get_access_filter,
     register_model,
     uuid,
+    MetafieldType,
+    METAFIELD_TYPE,
 )
 from karrio.server.core.models.third_party import (
     APILog,
     APILogIndex,
+)
+from karrio.server.core.models.metafield import (
+    Metafield,
 )
 from karrio.server.core.models.entity import Entity, OwnedEntity
 

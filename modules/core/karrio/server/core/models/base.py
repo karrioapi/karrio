@@ -5,6 +5,8 @@ from uuid import uuid4
 from django.db import models
 from django.conf import settings
 
+import karrio.lib as lib
+
 T = typing.TypeVar("T")
 MODEL_TRANSFORMERS = getattr(settings, "MODEL_TRANSFORMERS", [])
 ACCESS_METHOD = getattr(
@@ -53,3 +55,12 @@ def register_model(model: T) -> T:
     )
 
     return functools.reduce(transform, MODEL_TRANSFORMERS, model)
+
+
+class MetafieldType(lib.StrEnum):
+    text = "text"
+    number = "number"
+    boolean = "boolean"
+
+
+METAFIELD_TYPE = [(c.name, c.name) for c in list(MetafieldType)]

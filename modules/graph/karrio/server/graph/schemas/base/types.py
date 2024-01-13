@@ -51,6 +51,16 @@ class UserType:
         return User.objects.get(id=info.context.request.user.id)
 
 
+@strawberry_django.type(core.Metafield)
+class MetafieldType:
+    object_type: str
+    id: str
+    key: str
+    is_required: bool
+    type: utils.MetafieldTypeEnum
+    value: typing.Optional[str] = None
+
+
 @strawberry_django.type(core.APILog)
 class LogType:
     object_type: str

@@ -50,7 +50,7 @@ export interface get_organization_organization_usage_shipment_count {
   count: number | null;
 }
 
-export interface get_organization_organization_usage_shipment_spend {
+export interface get_organization_organization_usage_shipping_spend {
   date: string | null;
   label: string | null;
   count: number | null;
@@ -65,7 +65,7 @@ export interface get_organization_organization_usage {
   api_requests: get_organization_organization_usage_api_requests[] | null;
   order_volumes: get_organization_organization_usage_order_volumes[] | null;
   shipment_count: get_organization_organization_usage_shipment_count[] | null;
-  shipment_spend: get_organization_organization_usage_shipment_spend[] | null;
+  shipping_spend: get_organization_organization_usage_shipping_spend[] | null;
 }
 
 export interface get_organization_organization {
@@ -137,7 +137,7 @@ export interface get_organizations_organizations_usage_shipment_count {
   count: number | null;
 }
 
-export interface get_organizations_organizations_usage_shipment_spend {
+export interface get_organizations_organizations_usage_shipping_spend {
   date: string | null;
   label: string | null;
   count: number | null;
@@ -152,7 +152,7 @@ export interface get_organizations_organizations_usage {
   api_requests: get_organizations_organizations_usage_api_requests[] | null;
   order_volumes: get_organizations_organizations_usage_order_volumes[] | null;
   shipment_count: get_organizations_organizations_usage_shipment_count[] | null;
-  shipment_spend: get_organizations_organizations_usage_shipment_spend[] | null;
+  shipping_spend: get_organizations_organizations_usage_shipping_spend[] | null;
 }
 
 export interface get_organizations_organizations {
@@ -190,6 +190,14 @@ export interface GetWorkflow_workflow_action_nodes {
   slug: string;
 }
 
+export interface GetWorkflow_workflow_actions_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflow_workflow_actions_connection {
   id: string;
   name: string;
@@ -201,8 +209,17 @@ export interface GetWorkflow_workflow_actions_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
-  metadata: any | null;
   template_slug: string | null;
+  metadata: any | null;
+  metafields: GetWorkflow_workflow_actions_connection_metafields[];
+}
+
+export interface GetWorkflow_workflow_actions_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
 }
 
 export interface GetWorkflow_workflow_actions {
@@ -220,8 +237,9 @@ export interface GetWorkflow_workflow_actions {
   parameters_type: AutomationParametersType | null;
   parameters_template: string | null;
   connection: GetWorkflow_workflow_actions_connection | null;
-  metadata: any | null;
   template_slug: string | null;
+  metadata: any | null;
+  metafields: GetWorkflow_workflow_actions_metafields[];
 }
 
 export interface GetWorkflow_workflow {
@@ -275,6 +293,14 @@ export interface GetWorkflows_workflows_edges_node_action_nodes {
   slug: string;
 }
 
+export interface GetWorkflows_workflows_edges_node_actions_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflows_workflows_edges_node_actions_connection {
   object_type: string;
   id: string;
@@ -290,8 +316,17 @@ export interface GetWorkflows_workflows_edges_node_actions_connection {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  metafields: GetWorkflows_workflows_edges_node_actions_connection_metafields[];
   created_at: any;
   updated_at: any;
+}
+
+export interface GetWorkflows_workflows_edges_node_actions_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
 }
 
 export interface GetWorkflows_workflows_edges_node_actions {
@@ -310,8 +345,9 @@ export interface GetWorkflows_workflows_edges_node_actions {
   parameters_type: AutomationParametersType | null;
   parameters_template: string | null;
   connection: GetWorkflows_workflows_edges_node_actions_connection | null;
-  metadata: any | null;
   template_slug: string | null;
+  metadata: any | null;
+  metafields: GetWorkflows_workflows_edges_node_actions_metafields[];
   created_at: any;
   updated_at: any;
 }
@@ -355,6 +391,14 @@ export interface GetWorkflowsVariables {
 // GraphQL query operation: GetWorkflowConnection
 // ====================================================
 
+export interface GetWorkflowConnection_workflow_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflowConnection_workflow_connection {
   id: string;
   name: string;
@@ -367,8 +411,9 @@ export interface GetWorkflowConnection_workflow_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
-  metadata: any | null;
   template_slug: string | null;
+  metadata: any | null;
+  metafields: GetWorkflowConnection_workflow_connection_metafields[];
 }
 
 export interface GetWorkflowConnection {
@@ -394,6 +439,14 @@ export interface GetWorkflowConnections_workflow_connections_page_info {
   end_cursor: string | null;
 }
 
+export interface GetWorkflowConnections_workflow_connections_edges_node_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflowConnections_workflow_connections_edges_node {
   id: string;
   name: string;
@@ -408,6 +461,7 @@ export interface GetWorkflowConnections_workflow_connections_edges_node {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  metafields: GetWorkflowConnections_workflow_connections_edges_node_metafields[];
   created_at: any;
   updated_at: any;
 }
@@ -437,6 +491,14 @@ export interface GetWorkflowConnectionsVariables {
 // GraphQL query operation: GetWorkflowAction
 // ====================================================
 
+export interface GetWorkflowAction_workflow_action_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflowAction_workflow_action_connection {
   id: string;
   name: string;
@@ -450,6 +512,15 @@ export interface GetWorkflowAction_workflow_action_connection {
   credentials: any | null;
   metadata: any | null;
   template_slug: string | null;
+  metafields: GetWorkflowAction_workflow_action_connection_metafields[];
+}
+
+export interface GetWorkflowAction_workflow_action_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
 }
 
 export interface GetWorkflowAction_workflow_action {
@@ -469,6 +540,7 @@ export interface GetWorkflowAction_workflow_action {
   connection: GetWorkflowAction_workflow_action_connection | null;
   metadata: any | null;
   template_slug: string | null;
+  metafields: GetWorkflowAction_workflow_action_metafields[];
 }
 
 export interface GetWorkflowAction {
@@ -494,6 +566,14 @@ export interface GetWorkflowActions_workflow_actions_page_info {
   end_cursor: string | null;
 }
 
+export interface GetWorkflowActions_workflow_actions_edges_node_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflowActions_workflow_actions_edges_node_connection {
   object_type: string;
   id: string;
@@ -507,10 +587,19 @@ export interface GetWorkflowActions_workflow_actions_edges_node_connection {
   parameters_template: string | null;
   auth_template: string | null;
   credentials: any | null;
-  metadata: any | null;
   template_slug: string | null;
+  metadata: any | null;
+  metafields: GetWorkflowActions_workflow_actions_edges_node_connection_metafields[];
   created_at: any;
   updated_at: any;
+}
+
+export interface GetWorkflowActions_workflow_actions_edges_node_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
 }
 
 export interface GetWorkflowActions_workflow_actions_edges_node {
@@ -530,6 +619,7 @@ export interface GetWorkflowActions_workflow_actions_edges_node {
   parameters_template: string | null;
   connection: GetWorkflowActions_workflow_actions_edges_node_connection | null;
   metadata: any | null;
+  metafields: GetWorkflowActions_workflow_actions_edges_node_metafields[];
   template_slug: string | null;
   created_at: any;
   updated_at: any;
@@ -702,6 +792,14 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_action_nodes
   slug: string;
 }
 
+export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_connection {
   name: string;
   slug: string;
@@ -713,6 +811,15 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_conn
   parameters_template: string | null;
   auth_template: string | null;
   template_slug: string | null;
+  metafields: GetWorkflowTemplates_workflow_templates_edges_node_actions_connection_metafields[];
+}
+
+export interface GetWorkflowTemplates_workflow_templates_edges_node_actions_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node_actions {
@@ -730,6 +837,7 @@ export interface GetWorkflowTemplates_workflow_templates_edges_node_actions {
   parameters_template: string | null;
   connection: GetWorkflowTemplates_workflow_templates_edges_node_actions_connection | null;
   template_slug: string | null;
+  metafields: GetWorkflowTemplates_workflow_templates_edges_node_actions_metafields[];
 }
 
 export interface GetWorkflowTemplates_workflow_templates_edges_node {
@@ -773,6 +881,14 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_page_info 
   end_cursor: string | null;
 }
 
+export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection {
   name: string;
   slug: string;
@@ -784,6 +900,15 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   parameters_template: string | null;
   auth_template: string | null;
   template_slug: string | null;
+  metafields: GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection_metafields[];
+}
+
+export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node {
@@ -801,6 +926,7 @@ export interface GetWorkflowActionTemplates_workflow_action_templates_edges_node
   parameters_template: string | null;
   connection: GetWorkflowActionTemplates_workflow_action_templates_edges_node_connection | null;
   template_slug: string | null;
+  metafields: GetWorkflowActionTemplates_workflow_action_templates_edges_node_metafields[];
 }
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_edges {
@@ -835,6 +961,14 @@ export interface GetWorkflowConnectionTemplates_workflow_connection_templates_pa
   end_cursor: string | null;
 }
 
+export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges_node_metafields {
+  id: string;
+  key: string;
+  is_required: boolean;
+  type: MetafieldTypeEnum;
+  value: string | null;
+}
+
 export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges_node {
   name: string;
   slug: string;
@@ -846,6 +980,7 @@ export interface GetWorkflowConnectionTemplates_workflow_connection_templates_ed
   parameters_template: string | null;
   auth_template: string | null;
   template_slug: string | null;
+  metafields: GetWorkflowConnectionTemplates_workflow_connection_templates_edges_node_metafields[];
 }
 
 export interface GetWorkflowConnectionTemplates_workflow_connection_templates_edges {
@@ -1566,6 +1701,12 @@ export enum AutomationAuthType {
   oauth2 = "oauth2",
 }
 
+export enum MetafieldTypeEnum {
+  boolean = "boolean",
+  number = "number",
+  text = "text",
+}
+
 export enum AutomationEventStatus {
   cancelled = "cancelled",
   failed = "failed",
@@ -1615,7 +1756,7 @@ export interface WorkflowEventFilter {
   offset?: number | null;
   first?: number | null;
   keyword?: string | null;
-  parameters_key?: string | null;
+  parameters_key?: string[] | null;
   status?: AutomationEventStatus | null;
   event_type?: AutomationEventType | null;
 }
@@ -1711,9 +1852,20 @@ export interface PartialWorkflowActionMutationInput {
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   template_slug?: string | null;
+  metafields?: MetafieldInput[] | null;
   connection?: PartialWorkflowConnectionMutationInput | null;
   id?: string | null;
   slug?: string | null;
+}
+
+// null
+export interface MetafieldInput {
+  key: string;
+  type: MetafieldTypeEnum;
+  value?: string | null;
+  namespace?: string | null;
+  is_required?: boolean | null;
+  id?: string | null;
 }
 
 // null
@@ -1729,6 +1881,7 @@ export interface PartialWorkflowConnectionMutationInput {
   metadata?: any | null;
   parameters_template?: string | null;
   template_slug?: string | null;
+  metafields?: MetafieldInput[] | null;
   id?: string | null;
 }
 
@@ -1757,6 +1910,16 @@ export interface CreateWorkflowConnectionMutationInput {
   metadata?: any | null;
   parameters_template?: string | null;
   template_slug?: string | null;
+  metafields?: CreateMetafieldInput[] | null;
+}
+
+// null
+export interface CreateMetafieldInput {
+  key: string;
+  type: MetafieldTypeEnum;
+  value?: string | null;
+  namespace?: string | null;
+  is_required?: boolean | null;
 }
 
 // null
@@ -1772,6 +1935,7 @@ export interface UpdateWorkflowConnectionMutationInput {
   metadata?: any | null;
   parameters_template?: string | null;
   template_slug?: string | null;
+  metafields?: MetafieldInput[] | null;
   id: string;
 }
 
@@ -1790,6 +1954,7 @@ export interface CreateWorkflowActionMutationInput {
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   template_slug?: string | null;
+  metafields?: CreateMetafieldInput[] | null;
   connection?: PartialWorkflowConnectionMutationInput | null;
 }
 
@@ -1808,6 +1973,7 @@ export interface UpdateWorkflowActionMutationInput {
   content_type?: AutomationHTTPContentType | null;
   metadata?: any | null;
   template_slug?: string | null;
+  metafields?: MetafieldInput[] | null;
   connection?: PartialWorkflowConnectionMutationInput | null;
   id: string;
 }
