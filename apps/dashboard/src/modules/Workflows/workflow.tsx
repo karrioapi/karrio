@@ -1,7 +1,7 @@
 import { ActionNodeInput, AutomationActionType, AutomationAuthType, AutomationEventStatus, AutomationTriggerType } from '@karrio/types/graphql/ee';
 import { ConnectionModalEditor } from '@karrio/ui/modals/workflow-connection-edit-modal';
 import { ActionModalEditor } from '@karrio/ui/modals/workflow-action-edit-modal';
-import { isEqual, isNone, isNoneOrEmpty, useLocation } from '@karrio/lib';
+import { isEqual, isNone, isNoneOrEmpty, url$, useLocation } from '@karrio/lib';
 import { TextAreaField } from '@karrio/ui/components/textarea-field';
 import { TabStateProvider, Tabs } from '@karrio/ui/components/tabs';
 import { WorkflowActionType } from '@karrio/hooks/workflow-actions';
@@ -20,6 +20,7 @@ import { WorkflowEventList } from './events';
 import React, { useState } from 'react';
 import hljs from "highlight.js";
 import Head from 'next/head';
+import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 
 export { getServerSideProps } from "@/context/main";
 const ContextProviders = bundleContexts([ModalProvider]);
@@ -30,6 +31,7 @@ export default function Page(pageProps: any) {
     const loader = useLoader();
     const router = useLocation();
     const { id } = router.query;
+    const { metadata } = useAPIMetadata()
     const [key, setKey] = useState<string>(`workflow-${Date.now()}`);
     const { workflow, current, isNew, DEFAULT_STATE, query, zipActionWithNode, ...mutation } = useWorkflowForm({ id: id as string });
 
@@ -167,6 +169,23 @@ export default function Page(pageProps: any) {
                         </div>
 
                       </div>
+
+                      <hr className='my-1' style={{ height: '1px' }} />
+
+                      {/* trigger webhook */}
+                      <InputField
+                        label="Webhook URL"
+                        className="is-small"
+                        controlClass="has-icons-right"
+                        fieldClass="column mb-0 p-2"
+                        value={!!workflow.id ? url$`${metadata.HOST}/v1/workflows/${workflow.id}/trigger` : ''}
+                        readOnly
+                        addonRight={
+                          <span className="icon is-small is-right">
+                            <i className="fas fa-copy"></i>
+                          </span>
+                        }
+                      />
                     </Disclosure.Panel>
                   </Disclosure>
 
