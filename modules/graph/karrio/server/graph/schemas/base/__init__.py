@@ -2,6 +2,7 @@ import typing
 import strawberry
 from strawberry.types import Info
 
+import karrio.server.core.models as core
 import karrio.server.graph.models as graph
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -300,4 +301,12 @@ class Mutation:
     ) -> mutations.DeleteMutation:
         return mutations.DeleteMutation.mutate(
             info, model=providers.RateSheet, **input.to_dict()
+        )
+
+    @strawberry.mutation
+    def delete_metafield(
+        self, info: Info, input: inputs.DeleteMutationInput
+    ) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(
+            info, model=core.Metafield, **input.to_dict()
         )

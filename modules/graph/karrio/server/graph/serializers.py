@@ -7,6 +7,7 @@ import karrio.server.core.validators as validators
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
 import karrio.server.graph.models as graph
+import karrio.server.core.models as core
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -35,6 +36,14 @@ class UserModelSerializer(serializers.ModelSerializer):
             user.save(update_fields=["is_active"])
 
         return user
+
+
+@serializers.owned_model_serializer
+class MetafieldModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = core.Metafield
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
+        exclude = ["created_at", "updated_at", "created_by"]
 
 
 @serializers.owned_model_serializer

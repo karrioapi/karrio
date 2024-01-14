@@ -3233,3 +3233,14 @@ export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilte
     }
   }
 }`;
+
+export const DELETE_METAFIELD = gql`mutation deleteMetafield($data: DeleteMutationInput!) {
+  delete_metafield(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;

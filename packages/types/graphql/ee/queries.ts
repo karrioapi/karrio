@@ -55,7 +55,7 @@ export const GET_ORGANIZATION = gql`query get_organization($id: String!) {
         label
         count
       }
-      shipment_spend {
+      shipping_spend {
         date
         label
         count
@@ -113,7 +113,7 @@ export const GET_ORGANIZATIONS = gql`query get_organizations {
         label
         count
       }
-      shipment_spend {
+      shipping_spend {
         date
         label
         count
@@ -164,11 +164,25 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
         parameters_template
         auth_template
         credentials
-        metadata
         template_slug
+        metadata
+        metafields {
+          id
+          key
+          is_required
+          type
+          value
+        }
       }
-      metadata
       template_slug
+      metadata
+      metafields {
+        id
+        key
+        is_required
+        type
+        value
+      }
     }
     metadata
     template_slug
@@ -236,11 +250,25 @@ export const GET_WORKFLOWS = gql`query GetWorkflows($filter: WorkflowFilter) {
             credentials
             metadata
             template_slug
+            metafields {
+              id
+              key
+              is_required
+              type
+              value
+            }
             created_at
             updated_at
           }
-          metadata
           template_slug
+          metadata
+          metafields {
+            id
+            key
+            is_required
+            type
+            value
+          }
           created_at
           updated_at
         }
@@ -267,8 +295,15 @@ export const GET_WORKFLOW_CONNECTION = gql`query GetWorkflowConnection($id: Stri
     parameters_template
     auth_template
     credentials
-    metadata
     template_slug
+    metadata
+    metafields {
+      id
+      key
+      is_required
+      type
+      value
+    }
   }
 }
 `;
@@ -296,6 +331,13 @@ export const GET_WORKFLOW_CONNECTIONS = gql`query GetWorkflowConnections($filter
         credentials
         metadata
         template_slug
+        metafields {
+          id
+          key
+          is_required
+          type
+          value
+        }
         created_at
         updated_at
       }
@@ -332,9 +374,23 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
       credentials
       metadata
       template_slug
+      metafields {
+        id
+        key
+        is_required
+        type
+        value
+      }
     }
     metadata
     template_slug
+    metafields {
+      id
+      key
+      is_required
+      type
+      value
+    }
   }
 }
 `;
@@ -376,20 +432,33 @@ export const GET_WORKFLOW_ACTIONS = gql`query GetWorkflowActions($filter: Workfl
           parameters_template
           auth_template
           credentials
-          metadata
           template_slug
+          metadata
+          metafields {
+            id
+            key
+            is_required
+            type
+            value
+          }
           created_at
           updated_at
         }
         metadata
+        metafields {
+          id
+          key
+          is_required
+          type
+          value
+        }
         template_slug
         created_at
         updated_at
       }
     }
   }
-}
-`;
+}`;
 
 export const GET_WORKFLOW_EVENT = gql`query GetWorkflowEvent($id: String!) {
   workflow_event(id: $id) {
@@ -517,8 +586,22 @@ export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: Wo
             parameters_template
             auth_template
             template_slug
+            metafields {
+              id
+              key
+              is_required
+              type
+              value
+            }
           }
           template_slug
+          metafields {
+            id
+            key
+            is_required
+            type
+            value
+          }
         }
       }
     }
@@ -559,8 +642,22 @@ export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplate
           parameters_template
           auth_template
           template_slug
+          metafields {
+            id
+            key
+            is_required
+            type
+            value
+          }
         }
         template_slug
+        metafields {
+          id
+          key
+          is_required
+          type
+          value
+        }
       }
     }
   }
@@ -587,6 +684,13 @@ export const GET_WORKFLOW_CONNECTION_TEMPLATES = gql`query GetWorkflowConnection
         parameters_template
         auth_template
         template_slug
+        metafields {
+          id
+          key
+          is_required
+          type
+          value
+        }
       }
     }
   }

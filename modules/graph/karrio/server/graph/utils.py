@@ -9,8 +9,9 @@ from rest_framework import exceptions
 from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
-import karrio.server.apps.models as apps
 import karrio.server.core.utils as utils
+import karrio.server.apps.models as apps
+import karrio.server.core.models as core
 import karrio.server.orders.models as orders
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -75,6 +76,9 @@ TrackerStatusEnum: typing.Any = strawberry.enum(  # type: ignore
 )
 CarrierNameEnum: typing.Any = strawberry.enum(  # type: ignore
     lib.Enum("CarrierNameEnum", serializers.CARRIERS)
+)
+MetafieldTypeEnum: typing.Any = strawberry.enum(  # type: ignore
+    lib.Enum("MetafieldTypeEnum", core.METAFIELD_TYPE)
 )
 
 

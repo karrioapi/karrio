@@ -209,7 +209,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   const [workflow, dispatch] = React.useReducer(reducer, DEFAULT_STATE, () => DEFAULT_STATE);
   const { query: { data: { workflow: current } = {}, ...workflowQuery } } = useWorkflow({ id });
   const { query: { data: { workflow_events } = {}, ...eventsQuery }, refetchInterval, setInterval } = useWorkflowEvents({
-    first: 1, ...(id !== 'new' ? { keyword: id, parameters_key: "debug" } : {}),
+    first: 1, ...(id !== 'new' ? { keyword: id, parameters_key: "debug" } : {}) as any,
   });
 
   // state checks
@@ -281,7 +281,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   const updateAction = (index: number, action_id?: string | null) => async (data: PartialWorkflowActionMutationInput, change?: ChangeType) => {
     const update = {
       actions: workflow.actions.map(({ ...action }, idx) => (
-        (action.id === action_id || idx === index) ? data : action
+        (action.id === action_id || idx === index) ? { ...action, ...data } : action
       ))
     };
     updateWorkflow(update as any, change);
@@ -305,7 +305,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   }
   const updateActionConnection = (index: number, action_id?: string | null) => async (data: PartialWorkflowConnectionMutationInput, change?: ChangeType) => {
     const action = workflow.actions.find((_, idx) => idx === index || _.id === action_id);
-    updateAction(index, action_id)({ ...action, connection: data }, change);
+    updateAction(index, action_id)({ ...action, connection: { ...(action?.connection || {}), ...data } }, change);
   }
   const deleteActionConnection = (index: number, action_id?: string | null, connection_id?: string | null) => async () => {
     if (!isLocalDraft(workflow.id) && !!connection_id) {
@@ -317,18 +317,16 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
 
   // requests
   const save = async () => {
-    const { ...data } = workflow;
+    const { id, ...data } = workflow;
 
     try {
       loader.setLoading(true);
-      let id = (data as any).id;
-      if (isLocalDraft((workflow as any)?.id)) {
+      if (isLocalDraft(id)) {
         const { create_workflow: { workflow } } = await mutation.createWorkflow.mutateAsync(data as CreateWorkflowMutationInput)
-        id = workflow?.id;
         notifier.notify({ type: NotificationType.success, message: 'Workflow saved!' });
-        router.push(`${basePath}/workflows/${id}`.replace('//', '/'));
+        router.push(`${basePath}/workflows/${workflow?.id}`.replace('//', '/'));
       } else {
-        await mutation.updateWorkflow.mutateAsync(data as UpdateWorkflowMutationInput)
+        await mutation.updateWorkflow.mutateAsync({ id, ...data } as UpdateWorkflowMutationInput)
         notifier.notify({ type: NotificationType.success, message: 'Workflow saved!' });
       }
     } catch (error: any) {
@@ -379,7 +377,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
       eventsQuery.refetch();
     }
     setDebugEvent(event);
-  }, workflow_events?.edges || [workflow_events]);
+  }, [workflow_events, workflow_events?.edges]);
 
   return {
     debug_event,

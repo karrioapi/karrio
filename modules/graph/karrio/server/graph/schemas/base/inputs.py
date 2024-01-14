@@ -548,3 +548,29 @@ class SystemCarrierMutationInput(utils.BaseInput):
     id: str
     enable: typing.Optional[bool] = strawberry.UNSET
     config: typing.Optional[utils.JSON] = strawberry.UNSET
+
+
+@strawberry.input
+class CreateMetafieldInput(utils.BaseInput):
+    key: str
+    type: utils.MetafieldTypeEnum
+    value: typing.Optional[str] = strawberry.UNSET
+    namespace: typing.Optional[str] = strawberry.UNSET
+    is_required: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateMetafieldInput(CreateMetafieldInput):
+    id: str
+    key: typing.Optional[str] = strawberry.UNSET
+    type: typing.Optional[utils.MetafieldTypeEnum] = strawberry.UNSET
+
+
+@strawberry.input
+class MetafieldInput(utils.BaseInput):
+    key: str
+    type: utils.MetafieldTypeEnum
+    value: typing.Optional[str] = strawberry.UNSET
+    namespace: typing.Optional[str] = strawberry.UNSET
+    is_required: typing.Optional[bool] = strawberry.UNSET
+    id: typing.Optional[str] = strawberry.UNSET

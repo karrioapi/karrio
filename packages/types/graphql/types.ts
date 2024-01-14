@@ -4528,6 +4528,32 @@ export interface get_rate_sheetsVariables {
   filter?: RateSheetFilter | null;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: deleteMetafield
+// ====================================================
+
+export interface deleteMetafield_delete_metafield_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface deleteMetafield_delete_metafield {
+  id: string;
+  errors: deleteMetafield_delete_metafield_errors[] | null;
+}
+
+export interface deleteMetafield {
+  delete_metafield: deleteMetafield_delete_metafield;
+}
+
+export interface deleteMetafieldVariables {
+  data: DeleteMutationInput;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
