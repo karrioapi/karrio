@@ -254,21 +254,21 @@ export default function Page(pageProps: any) {
 
                                 <div>
 
-                                  {(debug_event?.records || []).filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-input")).length == 0 &&
+                                  {(debug_event?.records || []).filter(_ => (_.meta.workflow_action_slug === action.slug && _.key === "action-input")).length == 0 &&
                                     <div className="notification is-default p-2 is-size-6">
                                       No input data sample...
                                     </div>}
 
                                   {(debug_event?.records || []).length > 0 && <>
 
-                                    {debug_event!.records.filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-input"))
+                                    {debug_event!.records.filter(_ => (_.meta.workflow_action_slug === action.slug && _.key === "action-input"))
                                       .map((trace) => {
                                         return (
                                           <div className="card is-radiusless" key={trace.id}>
                                             <CodeMirror
                                               height="297px"
                                               extensions={[jsonLanguage]}
-                                              value={parseWorkflowEventRecordData(trace.record) || "{}" as string}
+                                              value={parseWorkflowEventRecordData(trace.record.output || trace.record) || "{}" as string}
                                               readOnly={true}
                                             />
                                           </div>
@@ -280,21 +280,21 @@ export default function Page(pageProps: any) {
                                 </div>
                                 <div>
 
-                                  {(debug_event?.records || []).filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-output")).length == 0 &&
+                                  {(debug_event?.records || []).filter(_ => (_.meta.workflow_action_slug === action.slug && _.key === "action-output")).length == 0 &&
                                     <div className="notification is-default p-2 is-size-6">
-                                      No input data sample...
+                                      No output data sample...
                                     </div>}
 
                                   {(debug_event?.records || []).length > 0 && <>
 
-                                    {debug_event!.records.filter(_ => (_.meta.workflow_action_id === action.id && _.key === "action-output"))
+                                    {debug_event!.records.filter(_ => (_.meta.workflow_action_slug === action.slug && _.key === "action-output"))
                                       .map((trace) => {
                                         return (
                                           <div className="card is-radiusless" key={trace.id}>
                                             <CodeMirror
                                               height="297px"
                                               extensions={[jsonLanguage]}
-                                              value={parseWorkflowEventRecordData(trace.record) || "{}" as string}
+                                              value={parseWorkflowEventRecordData(trace.record.output || trace.record) || "{}" as string}
                                               readOnly={true}
                                             />
                                           </div>
@@ -339,7 +339,7 @@ export default function Page(pageProps: any) {
                                             <code style={{ whiteSpace: 'pre-wrap' }}
                                               dangerouslySetInnerHTML={{
                                                 __html: hljs.highlight(
-                                                  parseWorkflowEventRecordData(trace.record) || trace.record.url || "",
+                                                  parseWorkflowEventRecordData(trace.record.output || trace.record) || trace.record.url || "",
                                                   { language: trace.record?.format || 'json' }
                                                 ).value,
                                               }}
@@ -588,8 +588,6 @@ export default function Page(pageProps: any) {
                         </div>
                       }
                     />
-
-                    <div className="p-3 my-5"></div>
                   </div>
 
                   <div className="column is-full has-text-centered p-3">

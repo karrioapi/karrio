@@ -1,6 +1,9 @@
+import ast
+import yaml
 import typing
 import functools
 
+import karrio.lib as lib
 from karrio.server.core.models.base import (
     ControlledAccessModel,
     get_access_filter,
@@ -25,3 +28,17 @@ def _identity(value: typing.Any):
 
 def field_default(value: typing.Any) -> typing.Callable:
     return functools.partial(_identity, value=value)
+
+
+def metafields_to_dict(metafields: typing.List[Metafield]) -> dict:
+    _values = {}
+
+    for _ in metafields:
+        if _.type == "number":
+            _values.update({_.key: lib.failsafe(lambda: ast.literal_eval(_.value))})
+        elif _.type == "boolean":
+            _values.update({_.key: lib.failsafe(lambda: bool(yaml.safe_load(_.value)))})
+        else:
+            _values.update({_.key: _.value})
+
+    return _values

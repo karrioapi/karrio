@@ -142,7 +142,7 @@ export const Component: React.FC<{ eventId?: string }> = ({ eventId }) => {
                         <code style={{ whiteSpace: 'pre-wrap' }}
                           dangerouslySetInnerHTML={{
                             __html: hljs.highlight(
-                              parseWorkflowEventRecordData(trace.record) || trace.record.url || "",
+                              parseWorkflowEventRecordData(trace.record.output || trace.record) || trace.record.url || "",
                               { language: trace.record?.format || 'json' }
                             ).value,
                           }}

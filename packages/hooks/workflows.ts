@@ -379,7 +379,7 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
       eventsQuery.refetch();
     }
     setDebugEvent(event);
-  }, [workflow_events?.edges]);
+  }, [workflow_events, workflow_events?.edges]);
 
   return {
     debug_event,
