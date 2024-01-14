@@ -23367,6 +23367,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "conditional",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -24514,6 +24520,12 @@
           },
           {
             "name": "success",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "aborted",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null

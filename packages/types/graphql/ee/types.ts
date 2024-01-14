@@ -1669,6 +1669,7 @@ export enum AutomationTriggerType {
 }
 
 export enum AutomationActionType {
+  conditional = "conditional",
   data_mapping = "data_mapping",
   function_call = "function_call",
   http_request = "http_request",
@@ -1708,6 +1709,7 @@ export enum MetafieldTypeEnum {
 }
 
 export enum AutomationEventStatus {
+  aborted = "aborted",
   cancelled = "cancelled",
   failed = "failed",
   pending = "pending",

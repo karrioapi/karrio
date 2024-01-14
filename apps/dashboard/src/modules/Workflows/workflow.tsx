@@ -189,7 +189,7 @@ export default function Page(pageProps: any) {
                           className="is-small"
                           controlClass="has-icons-right"
                           fieldClass="column mb-0 p-2"
-                          value={!!workflow.id ? url$`${metadata.HOST}/v1/workflows/${workflow.id}/trigger` : ''}
+                          value={(!!workflow.id && workflow.id !== 'new') ? url$`${metadata.HOST}/v1/workflows/${workflow.id}/trigger` : ''}
                           readOnly
                           addonRight={
                             <span className="icon is-small is-right">
@@ -278,6 +278,7 @@ export default function Page(pageProps: any) {
                                   </>}
 
                                 </div>
+
                                 <div>
 
                                   {(debug_event?.records || []).filter(_ => (_.meta.workflow_action_slug === action.slug && _.key === "action-output")).length == 0 &&
@@ -304,6 +305,7 @@ export default function Page(pageProps: any) {
                                   </>}
 
                                 </div>
+
                                 <div>
 
                                   {(debug_event?.records || []).length == 0 && <div className="notification is-default p-2 is-size-6">
@@ -322,10 +324,13 @@ export default function Page(pageProps: any) {
                                             <span>URL: <strong>{trace.record.url}</strong></span>
                                           </p>}
                                           {!!trace.record.request_id && <p className="my-1">
-                                            <span>Request ID: <strong>{trace.record.request_id}</strong></span>
+                                            <span>Request id: <strong>{trace.record.request_id}</strong></span>
                                           </p>}
                                           {trace?.timestamp && <p className="my-1">
-                                            <span>Request Timestamp: <strong>{moment(trace.timestamp * 1000).format('LTS')}</strong></span>
+                                            <span>Request timestamp: <strong>{moment(trace.timestamp * 1000).format('LTS')}</strong></span>
+                                          </p>}
+                                          {!!trace.record.status && <p className="my-1">
+                                            <span>Step status: <strong>{trace.record.status}</strong></span>
                                           </p>}
                                         </div>
 
@@ -353,6 +358,7 @@ export default function Page(pageProps: any) {
                                   </>}
 
                                 </div>
+
                                 <div>
                                   <div className="is-size-7">
 

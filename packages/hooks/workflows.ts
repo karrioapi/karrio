@@ -317,18 +317,16 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
 
   // requests
   const save = async () => {
-    const { ...data } = workflow;
+    const { id, ...data } = workflow;
 
     try {
       loader.setLoading(true);
-      let id = (data as any).id;
-      if (isLocalDraft((workflow as any)?.id)) {
+      if (isLocalDraft(id)) {
         const { create_workflow: { workflow } } = await mutation.createWorkflow.mutateAsync(data as CreateWorkflowMutationInput)
-        id = workflow?.id;
         notifier.notify({ type: NotificationType.success, message: 'Workflow saved!' });
-        router.push(`${basePath}/workflows/${id}`.replace('//', '/'));
+        router.push(`${basePath}/workflows/${workflow?.id}`.replace('//', '/'));
       } else {
-        await mutation.updateWorkflow.mutateAsync(data as UpdateWorkflowMutationInput)
+        await mutation.updateWorkflow.mutateAsync({ id, ...data } as UpdateWorkflowMutationInput)
         notifier.notify({ type: NotificationType.success, message: 'Workflow saved!' });
       }
     } catch (error: any) {

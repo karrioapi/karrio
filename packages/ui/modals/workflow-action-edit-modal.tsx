@@ -236,6 +236,24 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
 
           </div>}
 
+          {/* conditional options */}
+          {(action.action_type == AutomationActionType.conditional) && <div className="column mb-0 p-0">
+
+            {/* parameters_template */}
+            <div className="column mb-0 p-0 control">
+              <label className="label is-size-7">Data template</label>
+              <div className="card is-radiusless">
+                <CodeMirror
+                  height="40vh"
+                  extensions={[htmlLanguage]}
+                  value={action.parameters_template || "" as string}
+                  onChange={value => dispatch({ name: 'parameters_template', value })}
+                />
+              </div>
+            </div>
+
+          </div>}
+
           <div className="p-3 my-5"></div>
 
           <div className="form-floating-footer has-text-centered p-1">
