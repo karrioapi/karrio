@@ -1,15 +1,15 @@
 import { AutomationAuthType, PartialWorkflowConnectionMutationInput } from '@karrio/types/graphql/ee';
+import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 import { SelectField, TextAreaField } from '../components';
 import { InputField } from '../components/input-field';
 import { useNotifier } from '../components/notifier';
 import { htmlLanguage } from '@codemirror/lang-html';
 import { ModalFormProps, useModal } from './modal';
-import { isEqual, formatRef, isEqual } from '@karrio/lib';
+import { isEqual, formatRef } from '@karrio/lib';
 import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
 import CodeMirror from '@uiw/react-codemirror';
 import React from 'react';
-import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 
 type ConnectionModalEditorProps = {
   header?: string;
