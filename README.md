@@ -1,8 +1,8 @@
 # Karrio
 
 -   Website: <https://karrio.io>
--   Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
 -   Documentation: [https://docs.karrio.io/](https://docs.karrio.io/)
+-   Forums: [Github Discussions](https://github.com/orgs/karrioapi/discussions)
 -   Discord: [Karrio Discord server](https://discord.gg/gS88uE7sEx)
 -   Issues: [Issue Tracker](https://github.com/karrioapi/karrio/issues)
 -   Blog: [Blog](https://karrio.io/blog)
@@ -18,6 +18,10 @@
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
+[![Discord](https://img.shields.io/static/v1?label=Discord&message=chat&color=738adb&logo=discord)](https://discord.gg/gS88uE7sEx)
+[![YouTube](https://img.shields.io/static/v1?label=YouTube&message=karrio&color=ff0000&logo=youtube)](https://www.youtube.com/@karrioapi)
+[![Docker pulls](https://img.shields.io/docker/pulls/karrio/server)](https://hub.docker.com/r/karrio/server)
+
 
 Karrio is an open-source shipping infrastructure for platforms. With Karrio, you can
 build shipping experiences into your platform, access a network of shipping carriers
@@ -34,7 +38,7 @@ docker compose up
 -   Karrio server accessible at <http://localhost:5002>
 -   Karrio dashboard accessible at <http://localhost:3000>
 
-Default Login: <admin@example.com> | `demo`
+Default Login: `admin@example.com` | `demo`
 
 ## Features
 
@@ -55,9 +59,9 @@ Default Login: <admin@example.com> | `demo`
 
 [A short video (less than 4 minutes)](https://youtu.be/dFHZosJPaLI) that goes over creating your first label and tracking your first package.
 
-### Deploy karrio on your server
+### Open-source hobby deploy (Advanced)
 
-This deployment requires Docker to run karrio API and dashboard. 
+You can deploy a hobby instance in one line on Linux with Docker (recommended 4GB memory):
 
 ```bash
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
@@ -112,6 +116,12 @@ We <3 contributions big or small, check out our [guide on how to get started](ht
 
 Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairing%20session&body=I'd%20like%20to%20do%20a%20pairing%20session!) to chat with a member of our team.
 
+### Contributors
+
+<a href="https://github.com/karrioapi/karrio/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=karrioapi/karrio" />
+</a>
+
 ## License
 
 This project uses the [Apache v2 license](LICENSE). The core Karrio platform will always remain open and free.
@@ -120,6 +130,17 @@ Any other questions, mail us at hello@karrio.io We’d love to meet you!
 
 ## Sponsors
 
-We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using and building on top of open source software. Thanks to these sponsors who are backing this initiative.
+We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using and building on top of open source software. Thanks for sponsoring and backing us.
+
+### Old sponsors
+
+<a href="https://www.chequesplus.com/" target="_blank"><img alt="Cheques Plus" src="screenshots/chequesplus.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://www.truckhardware.ca/" target="_blank"><img alt="Truck Hardware" src="screenshots/truckhardware.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://www.shipto.me/" target="_blank"><img alt="Shiptome" src="screenshots/shipto.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://en.platana.fr/" target="_blank"><img alt="Platana.fr" src="screenshots/platana.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+
+
+
+### Become a sponsor
 
 <a href="https://github.com/sponsors/karrioapi" target="_blank"><img alt="New Sponsor" src="screenshots/become-a-sponsor.png" /></a>
