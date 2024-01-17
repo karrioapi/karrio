@@ -162,7 +162,7 @@ def shipment_request(
         Commodity=(
             [
                 dhl.Commodity(
-                    CommodityCode=c.hs_code,
+                    CommodityCode=c.hs_code or c.sku or "N/A",
                     CommodityName=lib.text(c.title or c.description, max=35),
                 )
                 for c in customs.commodities
