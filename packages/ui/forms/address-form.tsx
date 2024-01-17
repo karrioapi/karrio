@@ -1,6 +1,6 @@
 import React, { FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { AddressType, NotificationType, ShipmentType } from '@karrio/types';
-import { COUNTRY_WITH_POSTAL_CODE, deepEqual, isNone } from '@karrio/lib';
+import { COUNTRY_WITH_POSTAL_CODE, isEqual, isNone } from '@karrio/lib';
 import { AddressAutocompleteInput } from './address-autocomplete-input';
 import { CheckBoxField } from '../components/checkbox-field';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
@@ -53,7 +53,7 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
 
   const computeDisableState = (state: AddressType): boolean => {
     const isUnchanged = (
-      deepEqual(value || DEFAULT_ADDRESS_CONTENT, state)
+      isEqual(value || DEFAULT_ADDRESS_CONTENT, state)
     );
 
     return onTemplateChange ? onTemplateChange(isUnchanged) : isUnchanged;
@@ -85,7 +85,7 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
     }
   }, [default_value, value]);
   useEffect(() => {
-    if (shipment && ["shipper", "recipient"].includes(name || '') && !deepEqual(shipment[name as "shipper" | "recipient"], address)) {
+    if (shipment && ["shipper", "recipient"].includes(name || '') && !isEqual(shipment[name as "shipper" | "recipient"], address)) {
       dispatch({ name: "full", value: shipment[name as "shipper" | "recipient"] });
     }
   }, [shipment]);

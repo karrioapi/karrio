@@ -79,7 +79,7 @@ export const CustomsInfoForm: React.FC<CustomsInfoFormComponent> = ({ children, 
       const payload = { ...customs };
       await onSubmit(payload);
 
-      if (customs.id === undefined && shipment?.id !== undefined) {
+      if (customs.id === undefined && !!shipment?.id && shipment.id !== 'new') {
         notify({ type: NotificationType.success, message: 'Customs Declaration successfully added!' });
       } else if (customs.id !== undefined) {
         notify({ type: NotificationType.success, message: 'Customs Declaration successfully updated!' });

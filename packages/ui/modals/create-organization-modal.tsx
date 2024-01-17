@@ -5,7 +5,7 @@ import { Notifier, useNotifier } from '../components/notifier';
 import { InputField } from '../components/input-field';
 import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
-import { deepEqual, isNone } from '@karrio/lib';
+import { isEqual, isNone } from '@karrio/lib';
 
 type OperationType = {
   onChange: (orgId: string) => Promise<any>;
@@ -110,7 +110,7 @@ export const CreateOrganizationModalProvider: React.FC<{ children?: React.ReactN
                   <span>Cancel</span>
                 </button>
                 <button className={`button is-primary ${loading ? 'is-loading' : ''} m-1 is-small`}
-                  disabled={loading || deepEqual(organization, DEFAULT_ORGANIZATION)}
+                  disabled={loading || isEqual(organization, DEFAULT_ORGANIZATION)}
                   onClick={handleSubmit}
                   type="button">
                   <span>Create organization</span>

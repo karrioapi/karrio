@@ -7,7 +7,7 @@ import { useNotifier } from '../components/notifier';
 import { ModalFormProps, useModal } from './modal';
 import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
-import { deepEqual } from '@karrio/lib';
+import { isEqual } from '@karrio/lib';
 import React from 'react';
 
 type UserDataType = StaffUserType & CreateUserMutationInput;
@@ -182,7 +182,7 @@ export const UserModalEditor: React.FC<ModalFormProps<UserModalEditorProps>> = (
               <span>Cancel</span>
             </button>
             <button className="button is-primary m-1 is-small"
-              disabled={deepEqual(defaultValue, user)}
+              disabled={isEqual(defaultValue, user)}
               type="submit">
               <span>Save</span>
             </button>

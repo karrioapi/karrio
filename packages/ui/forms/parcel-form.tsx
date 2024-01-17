@@ -1,4 +1,4 @@
-import { deepEqual, findPreset, formatDimension, formatRef, isNone, validationMessage, validityCheck } from '@karrio/lib';
+import { isEqual, findPreset, formatDimension, formatRef, isNone, validationMessage, validityCheck } from '@karrio/lib';
 import { DIMENSION_UNITS, ParcelType, PresetCollection, ShipmentType, WEIGHT_UNITS } from '@karrio/types';
 import { DimensionUnitEnum, WeightUnitEnum } from '@karrio/types';
 import React, { useEffect, useReducer, useState } from 'react';
@@ -96,7 +96,7 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
   };
 
   useEffect(() => {
-    if (onChange && !deepEqual(value, parcel)) {
+    if (onChange && !isEqual(value, parcel)) {
       const { validation, ...changes } = parcel;
       onChange(changes);
     }

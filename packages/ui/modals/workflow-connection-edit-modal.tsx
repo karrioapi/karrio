@@ -4,7 +4,7 @@ import { InputField } from '../components/input-field';
 import { useNotifier } from '../components/notifier';
 import { htmlLanguage } from '@codemirror/lang-html';
 import { ModalFormProps, useModal } from './modal';
-import { deepEqual, formatRef, isEqual } from '@karrio/lib';
+import { isEqual, formatRef, isEqual } from '@karrio/lib';
 import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
 import CodeMirror from '@uiw/react-codemirror';

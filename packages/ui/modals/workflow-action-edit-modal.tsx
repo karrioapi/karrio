@@ -3,7 +3,7 @@ import { SelectField, TextAreaField } from '../components';
 import { InputField } from '../components/input-field';
 import { useNotifier } from '../components/notifier';
 import { htmlLanguage } from '@codemirror/lang-html';
-import { deepEqual, formatRef } from '@karrio/lib';
+import { isEqual, formatRef } from '@karrio/lib';
 import { ModalFormProps, useModal } from './modal';
 import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
@@ -261,7 +261,7 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
               <span>Cancel</span>
             </button>
             <button className="button is-primary m-1 is-small"
-              disabled={deepEqual(defaultValue, action)}
+              disabled={isEqual(defaultValue, action)}
               type="submit">
               <span>Save</span>
             </button>

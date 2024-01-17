@@ -59,6 +59,7 @@ export function useLabelData(id: string) {
   });
   const updateLabelData = (data: Partial<ShipmentType> = {}) => {
     dispatch({ name: "partial", value: data });
+    if (id === 'new') query.refetch();
   };
 
   React.useEffect(() => {
@@ -465,11 +466,12 @@ export function useLabelDataMutation(id: string) {
   };
 
   React.useEffect(() => {
-    if (updateRate && hasRateRequirements(state.shipment)) {
+    console.log('updateRate', updateRate, state.query.isFetching);
+    if (!state.query.isFetching && updateRate && hasRateRequirements(state.shipment)) {
       setUpdateRate(false);
       fetchRates();
     }
-  }, [state.shipment]);
+  }, [state.query]);
 
   return {
     state,

@@ -2,7 +2,7 @@ import { CURRENCY_OPTIONS, NotificationType, ShipmentType } from '@karrio/types'
 import { MetadataEditor, MetadataEditorContext } from './metadata-editor';
 import React, { FormEvent, useContext, useReducer, useState } from 'react';
 import { CheckBoxField } from '../components/checkbox-field';
-import { cleanDict, deepEqual, isNone } from '@karrio/lib';
+import { cleanDict, isEqual, isNone } from '@karrio/lib';
 import { ButtonField } from '../components/button-field';
 import { SelectField } from '../components/select-field';
 import { MetadataObjectTypeEnum } from '@karrio/types';
@@ -37,8 +37,8 @@ export const ShipmentOptions: React.FC<ShipmentOptionsComponent> = ({ shipment, 
 
   const computeDisable = (shipment: ShipmentType, options: any, metadata: any, reference?: string | null) => {
     return (
-      (deepEqual(shipment.options, options) || (options === ({} as any) && shipment.options === ({} as any)))
-      && (deepEqual(shipment.metadata, metadata) || (metadata === ({} as any) && shipment.metadata === ({} as any)))
+      (isEqual(shipment.options, options) || (options === ({} as any) && shipment.options === ({} as any)))
+      && (isEqual(shipment.metadata, metadata) || (metadata === ({} as any) && shipment.metadata === ({} as any)))
       && shipment.reference === reference
     )
   }
