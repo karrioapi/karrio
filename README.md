@@ -134,10 +134,10 @@ We are building an open and global shipping platform that makes shipping integra
 
 ### Old sponsors
 
-<a href="https://www.chequesplus.com/" target="_blank"><img alt="Cheques Plus" src="screenshots/chequesplus.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-<a href="https://www.truckhardware.ca/" target="_blank"><img alt="Truck Hardware" src="screenshots/truckhardware.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-<a href="https://www.shipto.me/" target="_blank"><img alt="Shiptome" src="screenshots/shipto.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-<a href="https://en.platana.fr/" target="_blank"><img alt="Platana.fr" src="screenshots/platana.png" style="width: 150px; height: 30px; background: rgba(242, 242, 242, 40%); border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://www.chequesplus.com/" target="_blank"><img alt="Cheques Plus" src="screenshots/cheques-plus.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://www.truckhardware.ca/" target="_blank"><img alt="Truck Hardware" src="screenshots/truckhardware.png" style="width: 150px; height: 30px; border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://www.shipto.me/" target="_blank"><img alt="Shiptome" src="screenshots/shipto.svg" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://en.platana.fr/" target="_blank"><img alt="Platana.fr" src="screenshots/platana.svg" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
 
 
 
