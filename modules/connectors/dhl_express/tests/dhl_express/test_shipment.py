@@ -133,7 +133,7 @@ shipment_data = {
         "incoterm": "DAP",
         "invoice": "N/A",
         "invoice_date": "2021-05-03",
-        "commodities": [{"description": "cn", "weight": 4.0, "sku": "cc"}],
+        "commodities": [{"description": "cn", "weight": 4.0, "sku": "sku", "hs_code": "hs_code"}],
         "duty": {
             "account_number": "123456789",
             "paid_by": "sender",
@@ -149,7 +149,7 @@ non_paperless_intl_shipment_data = {
         "commodities": [
             {
                 "description": "description",
-                "hs_code": "12345",
+                "hs_code": "hs_code",
                 "metadata": {},
                 "quantity": 1,
                 "sku": "sku",
@@ -353,7 +353,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
         <StreetNumber>9</StreetNumber>
     </Consignee>
     <Commodity>
-        <CommodityCode>cc</CommodityCode>
+        <CommodityCode>hs_code</CommodityCode>
         <CommodityName>cn</CommodityName>
     </Commodity>
     <Dutiable>
@@ -372,7 +372,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
             <QuantityUnit>PCS</QuantityUnit>
             <Description>cn</Description>
             <Value>0</Value>
-            <CommodityCode>cc</CommodityCode>
+            <CommodityCode>hs_code</CommodityCode>
             <Weight>
                 <Weight>4</Weight>
                 <WeightUnit>K</WeightUnit>
@@ -383,6 +383,7 @@ ShipmentRequestXml = f"""<req:ShipmentRequest xsi:schemaLocation="http://www.dhl
             </GrossWeight>
             <ManufactureCountryCode>US</ManufactureCountryCode>
             <ManufactureCountryName>United States</ManufactureCountryName>
+            <ImportCommodityCode>hs_code</ImportCommodityCode>
         </ExportLineItem>
         <PlaceOfIncoterm>N/A</PlaceOfIncoterm>
         <ShipmentPurpose>PERSONAL</ShipmentPurpose>
@@ -483,7 +484,7 @@ NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http
         <StreetNumber>34</StreetNumber>
     </Consignee>
     <Commodity>
-        <CommodityCode>sku</CommodityCode>
+        <CommodityCode>hs_code</CommodityCode>
         <CommodityName>title</CommodityName>
     </Commodity>
     <Dutiable>
@@ -503,7 +504,7 @@ NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http
             <QuantityUnit>PCS</QuantityUnit>
             <Description>title</Description>
             <Value>928.1</Value>
-            <CommodityCode>sku</CommodityCode>
+            <CommodityCode>hs_code</CommodityCode>
             <Weight>
                 <Weight>0.85</Weight>
                 <WeightUnit>K</WeightUnit>
@@ -514,7 +515,7 @@ NonParelessShipmentRequestXml = """<req:ShipmentRequest xsi:schemaLocation="http
             </GrossWeight>
             <ManufactureCountryCode>CZ</ManufactureCountryCode>
             <ManufactureCountryName>Czech Republic</ManufactureCountryName>
-            <ImportCommodityCode>12345</ImportCommodityCode>
+            <ImportCommodityCode>hs_code</ImportCommodityCode>
         </ExportLineItem>
         <PlaceOfIncoterm>N/A</PlaceOfIncoterm>
         <ShipmentPurpose>COMMERCIAL</ShipmentPurpose>

@@ -1,5 +1,5 @@
 import { CurrencyCodeEnum, MetadataObjectTypeEnum, WeightUnitEnum } from '@karrio/types';
-import { deepEqual, isNone, validationMessage, validityCheck } from '@karrio/lib';
+import { isEqual, isNone, validationMessage, validityCheck } from '@karrio/lib';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from '@karrio/types';
 import React, { useContext, useReducer, useState } from 'react';
@@ -336,7 +336,7 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                   <span>Cancel</span>
                 </button>
                 <button className={`button is-primary ${loading ? 'is-loading' : ''} m-1 is-small`}
-                  disabled={loading || isInvalid || deepEqual(operation?.commodity, commodity)}
+                  disabled={loading || isInvalid || isEqual(operation?.commodity, commodity)}
                   onClick={handleSubmit}>
                   <span>{isNew ? 'Add' : 'Save'}</span>
                 </button>

@@ -6,7 +6,7 @@ import { AddressForm } from '../forms/address-form';
 import React, { FormEvent, useEffect } from 'react';
 import { ModalFormProps, useModal } from './modal';
 import { useLoader } from '../components/loader';
-import { deepEqual } from '@karrio/lib';
+import { isEqual } from '@karrio/lib';
 
 
 type AddressModalEditorProps = {
@@ -101,7 +101,7 @@ export const ParcelModalEditor: React.FC<ModalFormProps<ParcelModalEditorProps>>
                 <span>Cancel</span>
               </button>
               <button className="button is-primary m-1 is-small"
-                disabled={deepEqual(value, parcel)}
+                disabled={isEqual(value, parcel)}
                 type="submit">
                 <span>Save</span>
               </button>
