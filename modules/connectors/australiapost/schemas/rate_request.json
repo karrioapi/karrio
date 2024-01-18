@@ -1,0 +1,25 @@
+{
+    "shipments": [
+        {
+            "from": {
+                "suburb": "MELBOURNE",
+                "state": "VIC",
+                "postcode": "3000"
+            },
+            "to": {
+                "suburb": "SYDNEY",
+                "state": "NSW",
+                "postcode": "2000"
+            },
+            "items": [
+                {
+                    "product_id": "7D55",
+                    "length": "5",
+                    "height": "1",
+                    "width": "10",
+                    "weight": "2"
+                }
+            ]
+        }
+    ]
+}

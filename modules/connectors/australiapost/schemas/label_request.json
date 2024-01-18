@@ -1,0 +1,127 @@
+{
+    "shipments": [
+        {
+            "shipment_reference": "XYZ-001-01",
+            "customer_reference_1": "Order 001",
+            "customer_reference_2": "SKU-1, SKU-2, SKU-3",
+            "email_tracking_enabled": true,
+            "from": {
+                "name": "John Citizen",
+                "lines": [
+                    "1 Main Street"
+                ],
+                "suburb": "MELBOURNE",
+                "state": "VIC",
+                "postcode": "3000",
+                "phone": "0401234567",
+                "email": "john.citizen@citizen.com"
+            },
+            "to": {
+                "name": "Jane Smith",
+                "business_name": "Smith Pty Ltd",
+                "lines": [
+                    "123 Centre Road"
+                ],
+                "suburb": "Sydney",
+                "state": "NSW",
+                "postcode": "2000",
+                "phone": "0412345678",
+                "email": "jane.smith@smith.com"
+            },
+            "items": [
+                {
+                    "item_reference": "SKU-1",
+                    "product_id": "T28S",
+                    "length": "10",
+                    "height": "10",
+                    "width": "10",
+                    "weight": "1",
+                    "authority_to_leave": false,
+                    "allow_partial_delivery": true,
+                    "features": {
+                        "TRANSIT_COVER": {
+                            "attributes": {
+                                "cover_amount": 1000
+                            }
+                        }
+                    }
+                },
+                {
+                    "item_reference": "SKU-2",
+                    "product_id": "T28S",
+                    "length": "10",
+                    "height": "10",
+                    "width": "10",
+                    "weight": "1",
+                    "authority_to_leave": false,
+                    "allow_partial_delivery": true
+                },
+                {
+                    "item_reference": "SKU-3",
+                    "product_id": "T28S",
+                    "length": "10",
+                    "height": "10",
+                    "width": "10",
+                    "weight": "1",
+                    "authority_to_leave": false,
+                    "allow_partial_delivery": true
+                }
+            ]
+        },
+        {
+            "shipment_reference": "shipment reference 1",
+            "from": {
+                "country": "AU",
+                "email": "larry.citizen@citizen.com",
+                "lines": [
+                    "123 Main Street"
+                ],
+                "name": "Larry Smith",
+                "phone": "0412345678",
+                "postcode": "3000",
+                "state": "VIC",
+                "suburb": "Melbourne"
+            },
+            "to": {
+                "email": "jane.buyer@citizen.com",
+                "lines": [
+                    "5 Main Street"
+                ],
+                "name": "Jane Buyer",
+                "phone": "1234567890",
+                "postcode": "6012",
+                "state": "WLG",
+                "suburb": "Karori",
+                "country": "NZ"
+            },
+            "items": [
+                {
+                    "classification_type": "OTHER",
+                    "commercial_value": true,
+                    "description_of_other": "This is a classification description",
+                    "export_declaration_number": "1234567890",
+                    "import_reference_number": "111222333",
+                    "item_contents": [
+                        {
+                            "country_of_origin": "AU",
+                            "description": "description",
+                            "sku": "ABC1243567",
+                            "quantity": 1,
+                            "tariff_code": "123456",
+                            "value": 55.55,
+                            "weight": 0.5,
+                            "item_contents_reference": "IC123456"
+                        }
+                    ],
+                    "item_description": "This is a description of the item",
+                    "item_reference": "TD1234567",
+                    "length": 10,
+                    "height": 10,
+                    "weight": 2,
+                    "product_id": "PTI8",
+                    "width": 10
+                }
+            ]
+        }
+    ]
+}

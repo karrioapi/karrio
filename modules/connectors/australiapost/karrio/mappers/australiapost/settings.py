@@ -1,19 +1,19 @@
-"""Karrio Australia Post settings."""
+"""Karrio Australia Post client settings."""
 
 import attr
-from karrio.providers.australiapost.utils import Settings as BaseSettings
+import karrio.providers.australiapost.utils as provider_utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
+class Settings(provider_utils.Settings):
     """Australia Post connection settings."""
 
-    # Carrier specific properties
+    # required carrier specific properties
     api_key: str
     password: str
     account_number: str
 
-    # Base properties
+    # generic properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "australiapost"
