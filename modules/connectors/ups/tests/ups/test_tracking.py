@@ -89,7 +89,7 @@ ParsedTrackingResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "delivered": False,
-            "docs": {
+            "images": {
                 "delivery_image": "encoding Base64",
                 "signature_image": "encoding Base64",
             },

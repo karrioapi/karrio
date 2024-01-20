@@ -303,14 +303,8 @@ class TrackingInfo:
 
 
 @attr.s(auto_attribs=True)
-class Documents:
-    """Karrio unified shipment details data type."""
-
-    label: str = ""
-
-    invoice: str = None
-    zpl_label: str = None
-    pdf_label: str = None
+class Images:
+    """Karrio unified tracker images data type."""
 
     delivery_image: str = None
     signature_image: str = None
@@ -324,12 +318,23 @@ class TrackingDetails:
     carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
-    docs: Documents = JStruct[Documents]
+    images: Images = JStruct[Images]
     estimated_delivery: str = None
     info: TrackingInfo = None
     delivered: bool = None
     status: str = None
     meta: dict = None
+
+
+@attr.s(auto_attribs=True)
+class Documents:
+    """Karrio unified shipment details data type."""
+
+    label: str
+
+    invoice: str = None
+    zpl_label: str = None
+    pdf_label: str = None
 
 
 @attr.s(auto_attribs=True)

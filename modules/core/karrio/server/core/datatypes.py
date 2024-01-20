@@ -5,6 +5,7 @@ import karrio.core.units as units
 from karrio.core.models import (
     DocumentDetails,
     Documents,
+    Images,
     Parcel,
     Message,
     Address as BaseAddress,
@@ -273,7 +274,7 @@ class Tracking:
 
     status: str = "unknown"
     info: TrackingInfo = jstruct.JStruct[TrackingInfo]
-    docs: Documents = jstruct.JStruct[Documents]
+    images: Images = jstruct.JStruct[Images]
     estimated_delivery: str = None
     delivered: bool = None
     test_mode: bool = None

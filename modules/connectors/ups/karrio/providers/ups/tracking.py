@@ -109,7 +109,7 @@ def _extract_details(
                 destination.attentionName or destination.name if destination else None
             ),
         ),
-        docs=models.Documents(
+        images=models.Images(
             delivery_image=delivery_image,
             signature_image=signature_image,
         ),

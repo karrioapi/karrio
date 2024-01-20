@@ -1,8 +1,8 @@
 import json
 from time import sleep
-from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
+from unittest.mock import patch, ANY
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
 import karrio.server.manager.models as models

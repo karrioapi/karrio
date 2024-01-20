@@ -84,8 +84,8 @@ class TrackingSerializer(TrackingDetails):
             options=response.tracking.options,
             reference=reference,
             metadata=metadata,
-            delivery_image=getattr(response.tracking.docs, "delivery_image", None),
-            signature_image=getattr(response.tracking.docs, "signature_image", None),
+            delivery_image=getattr(response.tracking.images, "delivery_image", None),
+            signature_image=getattr(response.tracking.images, "signature_image", None),
         )
 
     def update(
@@ -163,17 +163,17 @@ class TrackingSerializer(TrackingDetails):
                 instance.carrier = carrier
                 changes.append("tracking_carrier")
 
-            if details.docs is not None and (
-                details.docs.delivery_image != instance.delivery_image
-                or details.docs.signature_image != instance.signature_image
+            if details.images is not None and (
+                details.images.delivery_image != instance.delivery_image
+                or details.images.signature_image != instance.signature_image
             ):
                 changes.append("delivery_image")
                 changes.append("signature_image")
                 instance.delivery_image = (
-                    details.docs.delivery_image or instance.delivery_image
+                    details.images.delivery_image or instance.delivery_image
                 )
                 instance.signature_image = (
-                    details.docs.signature_image or instance.signature_image
+                    details.images.signature_image or instance.signature_image
                 )
 
             if any(changes):
