@@ -272,7 +272,8 @@ class Tracking:
     events: typing.List[TrackingEvent] = jstruct.JList[TrackingEvent]
 
     status: str = "unknown"
-    info: TrackingInfo = None
+    info: TrackingInfo = jstruct.JStruct[TrackingInfo]
+    docs: Documents = jstruct.JStruct[Documents]
     estimated_delivery: str = None
     delivered: bool = None
     test_mode: bool = None

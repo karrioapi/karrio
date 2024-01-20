@@ -43,6 +43,12 @@ def _extract_details(
     estimated_delivery = next(
         iter([d.date for d in package.deliveryDate if d.type == "DEL"]), None
     )
+    signature_image = lib.failsafe(
+        lambda: getattr(package.deliveryInformation.signature, "image", None)
+    )
+    delivery_image = lib.failsafe(
+        lambda: getattr(package.deliveryInformation.deliveryPhoto, "photo", None)
+    )
     last_event = package.activity[0]
     status = next(
         (
@@ -102,6 +108,10 @@ def _extract_details(
             customer_name=(
                 destination.attentionName or destination.name if destination else None
             ),
+        ),
+        docs=models.Documents(
+            delivery=delivery_image,
+            signature=signature_image,
         ),
     )
 

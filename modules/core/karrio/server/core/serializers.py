@@ -663,7 +663,7 @@ class RateRequest(validators.OptionDefaultSerializer):
     )
 
 
-class TrackingInfo(serializers.Serializer):
+class TrackingInfoData(serializers.Serializer):
     carrier_tracking_link = serializers.CharField(
         required=False, allow_null=True, help_text="The carrier tracking link"
     )
@@ -727,6 +727,15 @@ class TrackingInfo(serializers.Serializer):
     )
 
 
+class TrackingInfo(serializers.Serializer, TrackingInfoData):
+    delivery_image_url = serializers.CharField(
+        required=False, allow_null=True, help_text="The carrier tracking link"
+    )
+    signature_image_url = serializers.CharField(
+        required=False, allow_null=True, help_text="The carrier tracking link"
+    )
+
+
 class TrackingData(serializers.Serializer):
     tracking_number = serializers.CharField(
         required=True,
@@ -749,7 +758,7 @@ class TrackingData(serializers.Serializer):
         allow_null=True,
         help_text="The shipment reference",
     )
-    info = TrackingInfo(
+    info = TrackingInfoData(
         required=False,
         allow_null=True,
         help_text="The package and shipment tracking details",
@@ -780,7 +789,7 @@ class TrackingRequest(serializers.Serializer):
         default={},
         help_text="additional tracking options",
     )
-    info = TrackingInfo(
+    info = TrackingInfoData(
         required=False,
         allow_null=True,
         help_text="The package and shipment tracking details",
