@@ -1,8 +1,12 @@
+import logging
+from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 
 from karrio.server.providers.models import MODELS
 from karrio.server.user.models import Token
+
+logger = logging.getLogger(__name__)
 
 
 class APITestCase(BaseAPITestCase):
@@ -51,3 +55,12 @@ class APITestCase(BaseAPITestCase):
             consumer_key="test",
             consumer_secret="password",
         )
+
+    def assertResponseNoErrors(self, response):
+        is_ok = f"{response.status_code}".startswith("2")
+
+        if is_ok is False or response.data.get("errors") is not None:
+            print(response.data)
+
+        self.assertTrue(is_ok)
+        assert response.data.get("errors") is None

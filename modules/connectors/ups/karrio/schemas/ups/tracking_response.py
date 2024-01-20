@@ -56,10 +56,24 @@ class DeliveryDateType:
 
 
 @s(auto_attribs=True)
+class DeliveryPhotoType:
+    isNonPostalCodeCountry: Optional[bool] = None
+    photo: Optional[str] = None
+    photoCaptureInd: Optional[str] = None
+    photoDispositionCode: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class SignatureType:
+    image: Optional[str] = None
+
+
+@s(auto_attribs=True)
 class DeliveryInformationType:
     location: Optional[str] = None
     receivedBy: Optional[int] = None
-    signature: Optional[str] = None
+    signature: Optional[SignatureType] = JStruct[SignatureType]
+    deliveryPhoto: Optional[DeliveryPhotoType] = JStruct[DeliveryPhotoType]
 
 
 @s(auto_attribs=True)

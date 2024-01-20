@@ -47,6 +47,7 @@ TRACKING_RESPONSE = {
         "carrier_name": "ups",
         "carrier_id": "ups_package",
         "tracking_number": "1Z12345E6205277936",
+        "images": None,
         "info": {
             "carrier_tracking_link": "https://www.ups.com/track?loc=en_US&requester=QUIC&tracknum=1Z12345E6205277936/trackdetails",
             "customer_name": None,

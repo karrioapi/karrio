@@ -171,10 +171,23 @@ def save_updated_trackers(
                         tracker.estimated_delivery = details.estimated_delivery
                         changes.append("estimated_delivery")
 
+                    if details.images is not None and (
+                        details.images.delivery_image != tracker.delivery_image
+                        or details.images.signature_image != tracker.signature_image
+                    ):
+                        changes.append("delivery_image")
+                        changes.append("signature_image")
+                        tracker.delivery_image = (
+                            details.images.delivery_image or tracker.delivery_image
+                        )
+                        tracker.signature_image = (
+                            details.images.signature_image or tracker.signature_image
+                        )
+
                     if any(info.keys()) and info != tracker.info:
                         tracker.info = serializers.process_dictionaries_mutations(
                             ["info"], dict(info=info), tracker
-                        )['info']
+                        )["info"]
                         changes.append("info")
 
                     if any(changes):

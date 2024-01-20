@@ -79,7 +79,15 @@
             "deliveryInformation": {
               "location": "DEL",
               "receivedBy": "163000",
-              "signature": "xxxxxxx"
+              "signature": {
+                "image": "encoding Base64"
+              },
+              "deliveryPhoto": {
+                "isNonPostalCodeCountry": false,
+                "photo": "encoding Base64",
+                "photoCaptureInd": "string",
+                "photoDispositionCode": "string"
+              }
             },
             "deliveryTime": {
               "type": "DEL",

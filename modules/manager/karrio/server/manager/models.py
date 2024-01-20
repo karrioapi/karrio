@@ -529,12 +529,19 @@ class Tracking(OwnedEntity):
         blank=True, null=True, default=functools.partial(identity, value={})
     )
 
+    delivery_image = models.TextField(max_length=None, null=True, blank=True)
+    signature_image = models.TextField(max_length=None, null=True, blank=True)
+
     # System Reference fields
 
     tracking_carrier = models.ForeignKey(Carrier, on_delete=models.CASCADE)
     shipment = models.OneToOneField(
         "Shipment", on_delete=models.CASCADE, related_name="shipment_tracker", null=True
     )
+
+    @property
+    def object_type(self):
+        return "tracker"
 
     # Computed properties
 
@@ -553,8 +560,24 @@ class Tracking(OwnedEntity):
         )
 
     @property
-    def object_type(self):
-        return "tracker"
+    def delivery_image_url(self) -> str:
+        if self.delivery_image is None:
+            return None
+
+        return reverse(
+            "karrio.server.manager:tracker-docs",
+            kwargs=dict(pk=self.pk, doc="delivery_image"),
+        )
+
+    @property
+    def signature_image_url(self) -> str:
+        if self.signature_image is None:
+            return None
+
+        return reverse(
+            "karrio.server.manager:tracker-docs",
+            kwargs=dict(pk=self.pk, doc="signature_image"),
+        )
 
 
 class ShipmentManager(models.Manager):
