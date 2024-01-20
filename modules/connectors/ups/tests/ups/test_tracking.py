@@ -89,7 +89,10 @@ ParsedTrackingResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "delivered": False,
-            "docs": {"delivery": "encoding Base64", "signature": "encoding Base64"},
+            "docs": {
+                "delivery_image": "encoding Base64",
+                "signature_image": "encoding Base64",
+            },
             "events": [
                 {
                     "code": "SR",

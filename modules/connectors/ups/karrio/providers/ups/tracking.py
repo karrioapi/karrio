@@ -110,8 +110,8 @@ def _extract_details(
             ),
         ),
         docs=models.Documents(
-            delivery=delivery_image,
-            signature=signature_image,
+            delivery_image=delivery_image,
+            signature_image=signature_image,
         ),
     )
 

@@ -663,7 +663,7 @@ class RateRequest(validators.OptionDefaultSerializer):
     )
 
 
-class TrackingInfoData(serializers.Serializer):
+class TrackingInfo(serializers.Serializer):
     carrier_tracking_link = serializers.CharField(
         required=False, allow_null=True, help_text="The carrier tracking link"
     )
@@ -727,15 +727,6 @@ class TrackingInfoData(serializers.Serializer):
     )
 
 
-class TrackingInfo(serializers.Serializer, TrackingInfoData):
-    delivery_image_url = serializers.CharField(
-        required=False, allow_null=True, help_text="The carrier tracking link"
-    )
-    signature_image_url = serializers.CharField(
-        required=False, allow_null=True, help_text="The carrier tracking link"
-    )
-
-
 class TrackingData(serializers.Serializer):
     tracking_number = serializers.CharField(
         required=True,
@@ -758,7 +749,7 @@ class TrackingData(serializers.Serializer):
         allow_null=True,
         help_text="The shipment reference",
     )
-    info = TrackingInfoData(
+    info = TrackingInfo(
         required=False,
         allow_null=True,
         help_text="The package and shipment tracking details",
@@ -789,7 +780,7 @@ class TrackingRequest(serializers.Serializer):
         default={},
         help_text="additional tracking options",
     )
-    info = TrackingInfoData(
+    info = TrackingInfo(
         required=False,
         allow_null=True,
         help_text="The package and shipment tracking details",
@@ -983,6 +974,33 @@ class PickupCancelRequest(serializers.Serializer):
     )
 
 
+class Documents(serializers.Serializer):
+    label = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A shipping label in base64 string",
+    )
+    invoice = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A shipping invoice in base64 string",
+    )
+    delivery_image = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A delivery image in base64 string",
+    )
+    signature_image = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A signature image in base64 string",
+    )
+
+
 class TrackingEvent(serializers.Serializer):
     date = serializers.CharField(required=False, help_text="The tracking event's date")
     description = serializers.CharField(
@@ -1058,11 +1076,29 @@ class TrackingDetails(serializers.Serializer):
     meta = serializers.PlainDictField(
         required=False, allow_null=True, help_text="provider specific metadata"
     )
+    docs = Documents(
+        required=False,
+        allow_null=True,
+        help_text="The tracker documents",
+    )
 
 
 class TrackingStatus(serializers.EntitySerializer, TrackingDetails):
+    docs = None
     object_type = serializers.CharField(
         default="tracker", help_text="Specifies the object type"
+    )
+    delivery_image_url = serializers.URLField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment invoice URL",
+    )
+    signature_image_url = serializers.URLField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The shipment invoice URL",
     )
     metadata = serializers.PlainDictField(
         required=False, default={}, help_text="User metadata for the tracker"
@@ -1248,21 +1284,6 @@ class ShipmentData(ShippingData):
         required=False,
         default={},
         help_text="User metadata for the shipment",
-    )
-
-
-class Documents(serializers.Serializer):
-    label = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The shipment label in base64 string",
-    )
-    invoice = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        help_text="The shipment invoice in base64 string",
     )
 
 
@@ -1543,7 +1564,7 @@ class TrackingResponse(serializers.Serializer):
     messages = Message(
         required=False, many=True, help_text="The list of note or warning messages"
     )
-    tracking = TrackingStatus(
+    tracking = TrackingDetails(
         required=False, help_text="The tracking details retrieved"
     )
 

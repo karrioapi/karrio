@@ -607,6 +607,8 @@ class TrackerType:
     status: utils.TrackerStatusEnum
     delivered: typing.Optional[bool]
     estimated_delivery: typing.Optional[datetime.date]
+    document_image_url: typing.Optional[str]
+    signature_image_url: typing.Optional[str]
     options: typing.Optional[utils.JSON]
     meta: typing.Optional[utils.JSON]
     shipment: typing.Optional["ShipmentType"]

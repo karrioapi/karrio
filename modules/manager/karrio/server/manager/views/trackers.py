@@ -1,10 +1,14 @@
+import io
+import base64
 import logging
+import django_downloadview
 
-from django.urls import path
 from django.db.models import Q
+from django.urls import path, re_path
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.pagination import LimitOffsetPagination
+from django.core.files.base import ContentFile
 from rest_framework.response import Response
 from rest_framework.request import Request
 from rest_framework import status
@@ -311,6 +315,36 @@ class TrackersDetails(APIView):
         return Response(serializers.TrackingStatus(tracker).data)
 
 
+class TrackerDocs(django_downloadview.VirtualDownloadView):
+    @openapi.extend_schema(exclude=True)
+    def get(
+        self,
+        request: Request,
+        pk: str,
+        doc: str = "delivery_image",
+        **kwargs,
+    ):
+        """Retrieve a tracker image."""
+        self.tracker = models.Tracker.objects.get(pk=pk)
+        self.image = getattr(self.tracker, doc)
+        self.name = f"{doc}_{self.tracker.tracking_number}"
+
+        query_params = request.GET.dict()
+        self.preview = "preview" in query_params
+        self.attachment = "download" in query_params
+
+        response = super(TrackerDocs, self).get(request, pk, doc, format, **kwargs)
+        response["X-Frame-Options"] = "ALLOWALL"
+        return response
+
+    def get_file(self):
+        content = base64.b64decode(self.image or "")
+        buffer = io.BytesIO()
+        buffer.write(content)
+
+        return ContentFile(buffer.getvalue(), name=self.name)
+
+
 router.urls.append(path("trackers", TrackerList.as_view(), name="trackers-list"))
 router.urls.append(
     path(
@@ -324,5 +358,12 @@ router.urls.append(
         "trackers/<str:carrier_name>/<str:tracking_number>",
         TrackersCreate.as_view(),
         name="shipment-tracker",
+    )
+)
+router.urls.append(
+    re_path(
+        r"^trackers/(?P<pk>\w+)/(?P<doc>[a-z0-9]+)",
+        TrackerDocs.as_view(),
+        name="shipment-docs",
     )
 )

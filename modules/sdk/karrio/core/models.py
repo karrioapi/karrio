@@ -312,8 +312,8 @@ class Documents:
     zpl_label: str = None
     pdf_label: str = None
 
-    delivery: str = None
-    signature: str = None
+    delivery_image: str = None
+    signature_image: str = None
 
 
 @attr.s(auto_attribs=True)
