@@ -129,7 +129,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
     evt.preventDefault();
     setLoading(true);
     try {
-      const { carrier_name: _, __typename, capabilities, display_name, test_mode, ...content } = payload;
+      const { carrier_name: _, __typename, capabilities, display_name, rate_sheet, test_mode, ...content } = payload;
       const data = { [carrier_name]: carrier_name.includes('generic') ? { ...content, display_name } : content };
       if (isNew) {
         operation.create && await operation.create(data);

@@ -146,19 +146,19 @@ export default function ShipmentsPage(pageProps: any) {
                   {selection.length > 0 && <td className="p-1" colSpan={6}>
                     <div className="buttons has-addons">
                       <a
-                        href={url$`${metadata.HOST}/docs/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(',')}`}
+                        href={url$`${metadata.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">
                         <span className="has-text-weight-semibold">Print Labels</span>
                       </a>
                       <a
-                        href={url$`${metadata.HOST}/docs/shipments/invoice.pdf?shipments=${selection.join(',')}`}
+                        href={url$`${metadata.HOST}/documents/shipments/invoice.pdf?shipments=${selection.join(',')}`}
                         className={`button is-small is-default px-3`} target="_blank" rel="noreferrer">
                         <span className="has-text-weight-semibold">Print Invoices</span>
                       </a>
                       {(document_templates?.edges || []).map(({ node: template }) =>
                         <a
                           key={template.id}
-                          href={url$`${metadata.HOST}/documents/${template.id}.${template.slug}?shipments=${selection.join(',')}`}
+                          href={url$`${metadata.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${selection.join(',')}`}
                           className="button is-small is-default px-3"
                           target="_blank"
                           rel="noreferrer">

@@ -95,7 +95,7 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
           </>}
 
           {(document_templates?.edges || []).map(({ node: template }) =>
-            <a href={url$`${references.HOST}/documents/${template.id}.${template.slug}?orders=${order.id}`}
+            <a href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${order.id}`}
               className="dropdown-item" target="_blank" rel="noreferrer" key={template.id}>
               <span>Download {template.name}</span>
             </a>

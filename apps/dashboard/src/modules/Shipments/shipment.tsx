@@ -101,7 +101,7 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
           <div className="column is-6">
             <span className="subtitle is-size-7 has-text-weight-semibold">SHIPMENT</span>
             <br />
-            <span className="title is-4 mr-2">{shipment.tracking_number || "NOT COMPLETED"}</span>
+            <span className="title is-4 mr-2">{shipment.tracking_number || "UNFULFILLED"}</span>
             <StatusBadge status={shipment.status} />
           </div>
 

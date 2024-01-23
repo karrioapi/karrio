@@ -7,10 +7,11 @@ interface LineItemSelectorComponent {
   title?: string;
   shipment?: ShipmentType;
   onChange?: (value: Partial<CommodityType>[]) => void;
+  order_ids?: string[];
 }
 
-export const LineItemSelector: React.FC<LineItemSelectorComponent> = ({ title, shipment, onChange }) => {
-  const { query } = useOrders({ first: 10, status: ["partial", "unfulfilled"] as any });
+export const LineItemSelector: React.FC<LineItemSelectorComponent> = ({ title, shipment, order_ids, onChange }) => {
+  const { query } = useOrders({ first: 10, status: ["partial", "unfulfilled"] as any, id: order_ids });
   const [search, setSearch] = useState<string>("");
   const [orders, setOrders] = useState<OrderType[]>([]);
   const [isActive, setIsActive] = useState<boolean>(false);

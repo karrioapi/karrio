@@ -190,7 +190,7 @@ export function useOrderForm({ id = 'new' }: { id?: string }) {
   // Queries
   const query = useQuery({
     queryKey: ['orders', id],
-    queryFn: () => (id === 'new' ? { order } : current),
+    queryFn: () => (id === 'new' ? { order } : { order: current }),
     enabled: (
       !!id && (id === 'new' || orderQuery.isFetched)
     ),
@@ -291,10 +291,10 @@ export function useOrderForm({ id = 'new' }: { id?: string }) {
 
   React.useEffect(() => { setIsNew(id === 'new'); }, [id]);
   React.useEffect(() => {
-    if (query.isFetched && id !== 'new') {
+    if (orderQuery.isFetched && id !== 'new') {
       dispatch({ name: 'full', value: current as OrderDataType });
     }
-  }, [current, query.isFetched]);
+  }, [current, orderQuery.isFetched, id]);
 
   return {
     isNew,

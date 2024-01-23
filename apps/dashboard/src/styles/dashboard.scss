@@ -356,10 +356,10 @@ Karrio custom styling
 
   .order {
     width: 15%;
-    min-width: 160px;
+    min-width: 150px;
   }
 
-  .items {
+  .line-items {
     min-width: 150px;
   }
 
@@ -371,21 +371,16 @@ Karrio custom styling
 
   .customer {
     min-width: 200px;
-    max-width: 200px;
   }
 
   .date {
     width: 120px;
     min-width: 120px;
-  }
-
-  .total {
-    width: 100px;
-    min-width: 100px;
+    max-width: 120px;
   }
 
   .service {
-    width: 15%;
+    width: 20%;
     min-width: 250px;
   }
 

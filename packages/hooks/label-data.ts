@@ -420,13 +420,11 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
     const { messages, rates, ...data } = state.shipment;
 
     try {
-      loader.setLoading(true);
       const { rates, messages } = await mutation.fetchRates.mutateAsync(data as ShipmentType);
       updateShipment({ rates, messages } as Partial<ShipmentType>);
     } catch (error: any) {
       updateShipment({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
     }
-    setTimeout(() => loader.setLoading(false), 100);
   };
   const buyLabel = async (rate: ShipmentType['rates'][0]) => {
     const { messages, rates, ...data } = state.shipment;
@@ -465,7 +463,6 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   };
 
   React.useEffect(() => {
-    console.log('updateRate', updateRate, state.query.isFetching);
     if (!state.query.isFetching && updateRate && hasRateRequirements(state.shipment)) {
       setUpdateRate(false);
       fetchRates();
