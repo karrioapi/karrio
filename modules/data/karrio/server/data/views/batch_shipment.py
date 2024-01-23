@@ -11,11 +11,10 @@ ENDPOINT_ID = "&&&&$"  # This endpoint id is used to make operation ids unique m
 
 
 class BatchList(api.APIView):
-
     @openapi.extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}create_shipments",
-        summary="Create shipments",
+        summary="Create shipment batch",
         responses={
             200: serializers.BatchOperation(),
             404: serializers.ErrorResponse(),
@@ -24,15 +23,16 @@ class BatchList(api.APIView):
         request=serializers.BatchShipmentData(),
     )
     def post(self, request: Request):
-        """Create multiple shipments in a single batch. `Beta`"""
+        """Create shipment batch. `Beta`"""
         operation = (
-            serializers.BatchShipmentData
-            .map(data=request.data, context=request)
+            serializers.BatchShipmentData.map(data=request.data, context=request)
             .save()
             .instance
         )
 
-        return Response(serializers.BatchOperation(operation).data, status=status.HTTP_201_CREATED)
+        return Response(
+            serializers.BatchOperation(operation).data, status=status.HTTP_201_CREATED
+        )
 
 
 urlpatterns = [
