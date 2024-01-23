@@ -7,7 +7,7 @@ import { CarrierNameBadge } from '../components/carrier-name-badge';
 import { ConfirmModalContext } from '../modals/confirm-modal';
 import { CopiableLink } from '../components/copiable-link';
 import React, { useContext, useEffect } from 'react';
-import { isNone, isNoneOrEmpty } from '@karrio/lib';
+import { isNone, isNoneOrEmpty, jsonify } from '@karrio/lib';
 import { useAppMode } from '@karrio/hooks/app-mode';
 import { useRouter } from 'next/dist/client/router';
 import { Notify } from '../components/notifier';
@@ -93,6 +93,11 @@ export const UserConnectionList: React.FC<UserConnectionListView> = () => {
                       carrier_name={connection.carrier_name}
                       display_name={connection.display_name}
                       className="box p-3 has-text-weight-bold"
+                      customTheme={!!connection.config?.brand_color ? 'plain' : undefined}
+                      style={JSON.parse(jsonify({
+                        backgroundColor: connection.config?.brand_color,
+                        color: connection.config?.text_color
+                      }))}
                     />
                   </td>
                   {testMode && <td className="mode is-vcentered">

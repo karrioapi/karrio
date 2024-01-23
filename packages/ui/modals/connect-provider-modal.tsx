@@ -655,6 +655,26 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               className="is-small is-fullwidth"
                             />}
 
+                          {"brand_color" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.brand_color || ""}
+                              type='color'
+                              name="brand_color"
+                              label="Brand color"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"text_color" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.text_color || ""}
+                              type='color'
+                              name="text_color"
+                              label="Text color"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
                           {"account_service_type" in connection_configs[carrier_name.toString()] &&
                             <SelectField value={payload.config?.account_service_type}
                               name="account_service_type"

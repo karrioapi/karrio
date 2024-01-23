@@ -5,6 +5,7 @@ import { useAppMode } from '@karrio/hooks/app-mode';
 import { NotificationType } from '@karrio/types';
 import { Notify } from '../components/notifier';
 import React, { useContext } from 'react';
+import { jsonify } from '@karrio/lib';
 
 
 export const SystemConnectionList: React.FC = () => {
@@ -45,6 +46,11 @@ export const SystemConnectionList: React.FC = () => {
                       carrier_name={connection.carrier_name}
                       display_name={connection.display_name}
                       className="box p-3 has-text-weight-bold"
+                      customTheme={!!connection.config?.brand_color ? '' : undefined}
+                      style={JSON.parse(jsonify({
+                        background: connection.config?.brand_color,
+                        color: connection.config?.text_color
+                      }))}
                     />
                   </td>
                   {testMode && <td className="mode is-vcentered">

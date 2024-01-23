@@ -4,7 +4,7 @@ import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-mod
 import { formatRef, getURLSearchParams, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/filters/trackers-filter";
-import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
+import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -14,7 +14,6 @@ import { TrackingEvent } from "@karrio/types/rest/api";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
 import Head from "next/head";
-import { CarrierImage } from "@karrio/ui/components/carrier-image";
 
 export { getServerSideProps } from "@/context/main";
 
