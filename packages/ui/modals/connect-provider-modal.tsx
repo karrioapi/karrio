@@ -690,6 +690,17 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               <option value={`PT2`}>{`Oversized pallet service - PT2`}</option>
                             </SelectField>}
 
+
+                          {"server_url" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.server_url || ""}
+                              name="server_url"
+                              label="Custom server URL"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-12 mb-0"
+                              className="is-small is-fullwidth"
+                              placeholder='https://your-instance.alliedexpress.com.au'
+                            />}
+
                           {"shipping_services" in connection_configs[carrier_name.toString()] &&
                             <SelectField defaultValue={payload.config?.shipping_services}
                               name="shipping_services"
