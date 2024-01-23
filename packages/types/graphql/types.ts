@@ -588,6 +588,12 @@ export interface get_shipment_shipment_messages {
   details: any | null;
 }
 
+export interface get_shipment_shipment_selected_rate_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_shipment_shipment_tracker_events {
   description: string | null;
   location: string | null;
@@ -676,6 +682,7 @@ export interface get_shipment_shipment {
   metadata: any;
   meta: any | null;
   messages: get_shipment_shipment_messages[];
+  selected_rate_carrier: get_shipment_shipment_selected_rate_carrier | null;
   tracker: get_shipment_shipment_tracker | null;
 }
 
@@ -910,6 +917,12 @@ export interface get_shipments_shipments_edges_node_messages {
   details: any | null;
 }
 
+export interface get_shipments_shipments_edges_node_selected_rate_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_shipments_shipments_edges_node {
   id: string;
   carrier_id: string | null;
@@ -942,6 +955,7 @@ export interface get_shipments_shipments_edges_node {
   metadata: any;
   meta: any | null;
   messages: get_shipments_shipments_edges_node_messages[];
+  selected_rate_carrier: get_shipments_shipments_edges_node_selected_rate_carrier | null;
 }
 
 export interface get_shipments_shipments_edges {
@@ -1492,6 +1506,12 @@ export interface get_tracker_tracker_created_by {
   full_name: string;
 }
 
+export interface get_tracker_tracker_tracking_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_tracker_tracker_shipment_shipper {
   city: string | null;
   country_code: CountryCodeEnum;
@@ -1528,6 +1548,7 @@ export interface get_tracker_tracker {
   updated_at: any;
   created_by: get_tracker_tracker_created_by;
   test_mode: boolean;
+  tracking_carrier: get_tracker_tracker_tracking_carrier | null;
   shipment: get_tracker_tracker_shipment | null;
 }
 
@@ -1599,6 +1620,12 @@ export interface get_trackers_trackers_edges_node_messages {
   details: any | null;
 }
 
+export interface get_trackers_trackers_edges_node_tracking_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_trackers_trackers_edges_node_shipment_shipper {
   city: string | null;
   country_code: CountryCodeEnum;
@@ -1635,6 +1662,7 @@ export interface get_trackers_trackers_edges_node {
   carrier_name: string;
   meta: any | null;
   metadata: any;
+  tracking_carrier: get_trackers_trackers_edges_node_tracking_carrier | null;
   shipment: get_trackers_trackers_edges_node_shipment | null;
 }
 
@@ -1807,6 +1835,7 @@ export interface get_system_connections_system_connections {
   carrier_name: string;
   display_name: string;
   enabled: boolean;
+  config: any | null;
 }
 
 export interface get_system_connections {
@@ -5575,6 +5604,7 @@ export interface ServiceZoneInput {
   latitude?: number | null;
   longitude?: number | null;
   cities?: string[] | null;
+  postal_codes?: string[] | null;
   country_codes?: string[] | null;
 }
 
@@ -6073,6 +6103,7 @@ export interface UpdateServiceZoneInput {
   latitude?: number | null;
   longitude?: number | null;
   cities?: string[] | null;
+  postal_codes?: string[] | null;
   country_codes?: string[] | null;
 }
 

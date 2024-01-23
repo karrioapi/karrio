@@ -437,6 +437,11 @@ export const GET_SHIPMENT = gql`query get_shipment($id: String!) {
       code
       details
     }
+    selected_rate_carrier {
+      carrier_id
+      carrier_name
+      config
+    }
     tracker {
       id
       tracking_number
@@ -706,6 +711,11 @@ export const GET_SHIPMENTS = gql`query get_shipments($filter: ShipmentFilter) {
           message
           code
           details
+        }
+        selected_rate_carrier {
+          carrier_id
+          carrier_name
+          config
         }
       }
     }
@@ -1147,6 +1157,11 @@ export const GET_TRACKER = gql`query get_tracker($id: String!) {
       full_name
     }
     test_mode
+    tracking_carrier {
+      carrier_id
+      carrier_name
+      config
+    }
     shipment {
       id
       service
@@ -1227,6 +1242,11 @@ export const GET_TRACKERS = gql`query get_trackers($filter: TrackerFilter) {
         carrier_name
         meta
         metadata
+        tracking_carrier {
+          carrier_id
+          carrier_name
+          config
+        }
         shipment {
           id
           service
@@ -1335,6 +1355,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query get_system_connections {
     carrier_name
     display_name
     enabled
+    config
   }
 }
 `;

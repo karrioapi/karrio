@@ -554,8 +554,8 @@ paths:
   /v1/batches/orders:
     post:
       operationId: '&&&&$create_orders'
-      description: Create multiple orders in a single batch. `Beta`
-      summary: Create orders
+      description: Create order batch. `Beta`
+      summary: Create order batch
       tags:
       - Batches
       requestBody:
@@ -591,8 +591,8 @@ paths:
   /v1/batches/shipments:
     post:
       operationId: '&&&&$create_shipments'
-      description: Create multiple shipments in a single batch. `Beta`
-      summary: Create shipments
+      description: Create shipment batch. `Beta`
+      summary: Create shipment batch
       tags:
       - Batches
       requestBody:
@@ -628,8 +628,8 @@ paths:
   /v1/batches/trackers:
     post:
       operationId: '&&&&$create_trackers'
-      description: Create multiple trackers in a single batch. `Beta`
-      summary: Create trackers
+      description: Create tracker batch. `Beta`
+      summary: Create tracker batch
       tags:
       - Batches
       requestBody:
@@ -4637,7 +4637,7 @@ components:
         shipments:
           type: array
           items:
-            $ref: '#/components/schemas/ShipmentData'
+            $ref: '#/components/schemas/ShipmentDataReference'
           description: The list of shipments to process.
       required:
       - shipments
@@ -6862,14 +6862,6 @@ components:
           type: string
           nullable: true
           description: A shipping invoice in base64 string
-        delivery_image:
-          type: string
-          nullable: true
-          description: A delivery image in base64 string
-        signature_image:
-          type: string
-          nullable: true
-          description: A signature image in base64 string
     Duty:
       type: object
       properties:
@@ -7210,6 +7202,17 @@ components:
           items:
             $ref: '#/components/schemas/APIError'
           description: The list of API errors
+    Images:
+      type: object
+      properties:
+        delivery_image:
+          type: string
+          nullable: true
+          description: A delivery image in base64 string
+        signature_image:
+          type: string
+          nullable: true
+          description: A signature image in base64 string
     LineItem:
       type: object
       properties:
@@ -10112,6 +10115,7 @@ components:
           items:
             type: string
           nullable: true
+          default: []
           description: "The requested carrier service for the shipment.<br/>\n   \
             \     Please consult the reference for specific carriers services.<br/>\n\
             \        Note that this is a list because on a Multi-carrier rate request\
@@ -10147,6 +10151,7 @@ components:
           items:
             type: string
           nullable: true
+          default: []
           description: The list of configured carriers you wish to get rates from.
       required:
       - parcels
@@ -10507,6 +10512,120 @@ components:
           additionalProperties: {}
           default: {}
           description: User metadata for the shipment
+      required:
+      - parcels
+      - recipient
+      - shipper
+    ShipmentDataReference:
+      type: object
+      properties:
+        shipper:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
+        recipient:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
+        parcels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParcelData'
+          description: The shipment's parcels
+        options:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        "
+        payment:
+          allOf:
+          - $ref: '#/components/schemas/Payment'
+          default:
+            paid_by: sender
+            currency: null
+            account_number: null
+          description: The payment details
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
+        customs:
+          allOf:
+          - $ref: '#/components/schemas/CustomsData'
+          nullable: true
+          description: "The customs details.<br/>\n        **Note that this is required\
+            \ for the shipment of an international Dutiable parcel.**\n        "
+        reference:
+          type: string
+          nullable: true
+          description: The shipment reference
+          maxLength: 35
+        label_type:
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
+          default: PDF
+          description: |-
+            The shipment label file type.
+
+            * `PDF` - PDF
+            * `ZPL` - ZPL
+            * `PNG` - PNG
+        service:
+          type: string
+          description: '**Specify a service to Buy a label in one call without rating.**'
+        services:
+          type: array
+          items:
+            type: string
+          nullable: true
+          default: []
+          description: "The requested carrier service for the shipment.<br/>\n   \
+            \     Please consult the reference for specific carriers services.<br/>\n\
+            \        **Note that this is a list because on a Multi-carrier rate request\n\
+            \        you could specify a service per carrier.**\n        "
+        carrier_ids:
+          type: array
+          items:
+            type: string
+          nullable: true
+          default: []
+          description: "The list of configured carriers you wish to get rates from.<br/>\n\
+            \        **Note that the request will be sent to all carriers in nothing\
+            \ is specified**\n        "
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the shipment
+        id:
+          type: string
+          description: The shipment id.
       required:
       - parcels
       - recipient
@@ -10980,6 +11099,118 @@ components:
           writeOnly: true
       required:
       - token
+    TrackerDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier
+        carrier_name:
+          type: string
+          description: The tracking carrier
+        carrier_id:
+          type: string
+          description: The tracking carrier configured identifier
+        tracking_number:
+          type: string
+          description: The shipment tracking number
+        info:
+          allOf:
+          - $ref: '#/components/schemas/TrackingInfo'
+          nullable: true
+          default:
+            carrier_tracking_link: null
+            customer_name: null
+            expected_delivery: null
+            note: null
+            order_date: null
+            order_id: null
+            package_weight: null
+            package_weight_unit: null
+            shipment_package_count: null
+            shipment_pickup_date: null
+            shipment_delivery_date: null
+            shipment_service: null
+            shipment_origin_country: null
+            shipment_origin_postal_code: null
+            shipment_destination_country: null
+            shipment_destination_postal_code: null
+            shipping_date: null
+            signed_by: null
+            source: null
+          description: The package and shipment tracking details
+        events:
+          type: array
+          items:
+            $ref: '#/components/schemas/TrackingEvent'
+          nullable: true
+          description: The tracking details events
+        delivered:
+          type: boolean
+          description: Specified whether the related shipment was delivered
+        test_mode:
+          type: boolean
+          description: Specified whether the object was created with a carrier in
+            test mode
+        status:
+          enum:
+          - pending
+          - unknown
+          - on_hold
+          - delivered
+          - in_transit
+          - delivery_delayed
+          - out_for_delivery
+          - ready_for_pickup
+          - delivery_failed
+          type: string
+          x-spec-enum-id: 979a07e5fd2a5042
+          default: pending
+          description: |-
+            The current tracking status
+
+            * `pending` - pending
+            * `unknown` - unknown
+            * `on_hold` - on_hold
+            * `delivered` - delivered
+            * `in_transit` - in_transit
+            * `delivery_delayed` - delivery_delayed
+            * `out_for_delivery` - out_for_delivery
+            * `ready_for_pickup` - ready_for_pickup
+            * `delivery_failed` - delivery_failed
+        estimated_delivery:
+          type: string
+          description: The delivery estimated date
+        meta:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: provider specific metadata
+        images:
+          allOf:
+          - $ref: '#/components/schemas/Images'
+          nullable: true
+          description: The tracker documents
+        object_type:
+          type: string
+          default: tracker
+          description: Specifies the object type
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the tracker
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          default: []
+          description: The list of note or warning messages
+      required:
+      - carrier_id
+      - carrier_name
+      - test_mode
+      - tracking_number
     TrackerList:
       type: object
       properties:
@@ -11110,100 +11341,6 @@ components:
       required:
       - carrier_name
       - tracking_number
-    TrackingDetails:
-      type: object
-      properties:
-        carrier_name:
-          type: string
-          description: The tracking carrier
-        carrier_id:
-          type: string
-          description: The tracking carrier configured identifier
-        tracking_number:
-          type: string
-          description: The shipment tracking number
-        info:
-          allOf:
-          - $ref: '#/components/schemas/TrackingInfo'
-          nullable: true
-          default:
-            carrier_tracking_link: null
-            customer_name: null
-            expected_delivery: null
-            note: null
-            order_date: null
-            order_id: null
-            package_weight: null
-            package_weight_unit: null
-            shipment_package_count: null
-            shipment_pickup_date: null
-            shipment_delivery_date: null
-            shipment_service: null
-            shipment_origin_country: null
-            shipment_origin_postal_code: null
-            shipment_destination_country: null
-            shipment_destination_postal_code: null
-            shipping_date: null
-            signed_by: null
-            source: null
-          description: The package and shipment tracking details
-        events:
-          type: array
-          items:
-            $ref: '#/components/schemas/TrackingEvent'
-          nullable: true
-          description: The tracking details events
-        delivered:
-          type: boolean
-          description: Specified whether the related shipment was delivered
-        test_mode:
-          type: boolean
-          description: Specified whether the object was created with a carrier in
-            test mode
-        status:
-          enum:
-          - pending
-          - unknown
-          - on_hold
-          - delivered
-          - in_transit
-          - delivery_delayed
-          - out_for_delivery
-          - ready_for_pickup
-          - delivery_failed
-          type: string
-          x-spec-enum-id: 979a07e5fd2a5042
-          default: pending
-          description: |-
-            The current tracking status
-
-            * `pending` - pending
-            * `unknown` - unknown
-            * `on_hold` - on_hold
-            * `delivered` - delivered
-            * `in_transit` - in_transit
-            * `delivery_delayed` - delivery_delayed
-            * `out_for_delivery` - out_for_delivery
-            * `ready_for_pickup` - ready_for_pickup
-            * `delivery_failed` - delivery_failed
-        estimated_delivery:
-          type: string
-          description: The delivery estimated date
-        meta:
-          type: object
-          additionalProperties: {}
-          nullable: true
-          description: provider specific metadata
-        docs:
-          allOf:
-          - $ref: '#/components/schemas/Documents'
-          nullable: true
-          description: The tracker documents
-      required:
-      - carrier_id
-      - carrier_name
-      - test_mode
-      - tracking_number
     TrackingEvent:
       type: object
       properties:
@@ -11323,7 +11460,7 @@ components:
           description: The list of note or warning messages
         tracking:
           allOf:
-          - $ref: '#/components/schemas/TrackingDetails'
+          - $ref: '#/components/schemas/TrackerDetails'
           description: The tracking details retrieved
     TrackingStatus:
       type: object
@@ -11416,16 +11553,6 @@ components:
           type: string
           default: tracker
           description: Specifies the object type
-        delivery_image_url:
-          type: string
-          format: uri
-          nullable: true
-          description: The shipment invoice URL
-        signature_image_url:
-          type: string
-          format: uri
-          nullable: true
-          description: The shipment invoice URL
         metadata:
           type: object
           additionalProperties: {}
@@ -11437,6 +11564,16 @@ components:
             $ref: '#/components/schemas/Message'
           default: []
           description: The list of note or warning messages
+        delivery_image_url:
+          type: string
+          format: uri
+          nullable: true
+          description: The shipment invoice URL
+        signature_image_url:
+          type: string
+          format: uri
+          nullable: true
+          description: The shipment invoice URL
       required:
       - carrier_id
       - carrier_name
@@ -11730,10 +11867,10 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    | ups | UPS |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
+    | ups | UPS |
     | tnt | TNT |
     | sendle | Sendle |
     | royalmail | Royal Mail |
@@ -11771,69 +11908,6 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
-    ### UPS
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | ups_standard | UPS Standard |
-    | ups_worldwide_express | UPS Worldwide Express |
-    | ups_worldwide_expedited | UPS Worldwide Expedited |
-    | ups_worldwide_express_plus | UPS Worldwide Express Plus |
-    | ups_worldwide_saver | UPS Worldwide Saver |
-    | ups_2nd_day_air | UPS 2nd Day Air |
-    | ups_2nd_day_air_am | UPS 2nd Day Air A.M. |
-    | ups_3_day_select | UPS 3 Day Select |
-    | ups_ground | UPS Ground |
-    | ups_next_day_air | UPS Next Day Air |
-    | ups_next_day_air_early | UPS Next Day Air Early |
-    | ups_next_day_air_saver | UPS Next Day Air Saver |
-    | ups_expedited_ca | UPS Expedited CA |
-    | ups_express_saver_ca | UPS Express Saver CA |
-    | ups_3_day_select_ca_us | UPS 3 Day Select CA US |
-    | ups_access_point_economy_ca | UPS Access Point Economy CA |
-    | ups_express_ca | UPS Express CA |
-    | ups_express_early_ca | UPS Express Early CA |
-    | ups_express_saver_intl_ca | UPS Express Saver Intl CA |
-    | ups_standard_ca | UPS Standard CA |
-    | ups_worldwide_expedited_ca | UPS Worldwide Expedited CA |
-    | ups_worldwide_express_ca | UPS Worldwide Express CA |
-    | ups_worldwide_express_plus_ca | UPS Worldwide Express Plus CA |
-    | ups_express_early_ca_us | UPS Express Early CA US |
-    | ups_access_point_economy_eu | UPS Access Point Economy EU |
-    | ups_expedited_eu | UPS Expedited EU |
-    | ups_express_eu | UPS Express EU |
-    | ups_standard_eu | UPS Standard EU |
-    | ups_worldwide_express_plus_eu | UPS Worldwide Express Plus EU |
-    | ups_worldwide_saver_eu | UPS Worldwide Saver EU |
-    | ups_access_point_economy_mx | UPS Access Point Economy MX |
-    | ups_expedited_mx | UPS Expedited MX |
-    | ups_express_mx | UPS Express MX |
-    | ups_standard_mx | UPS Standard MX |
-    | ups_worldwide_express_plus_mx | UPS Worldwide Express Plus MX |
-    | ups_worldwide_saver_mx | UPS Worldwide Saver MX |
-    | ups_access_point_economy_pl | UPS Access Point Economy PL |
-    | ups_today_dedicated_courrier_pl | UPS Today Dedicated Courrier PL |
-    | ups_today_express_pl | UPS Today Express PL |
-    | ups_today_express_saver_pl | UPS Today Express Saver PL |
-    | ups_today_standard_pl | UPS Today Standard PL |
-    | ups_expedited_pl | UPS Expedited PL |
-    | ups_express_pl | UPS Express PL |
-    | ups_express_plus_pl | UPS Express Plus PL |
-    | ups_express_saver_pl | UPS Express Saver PL |
-    | ups_standard_pl | UPS Standard PL |
-    | ups_2nd_day_air_pr | UPS 2nd Day Air PR |
-    | ups_ground_pr | UPS Ground PR |
-    | ups_next_day_air_pr | UPS Next Day Air PR |
-    | ups_next_day_air_early_pr | UPS Next Day Air Early PR |
-    | ups_worldwide_expedited_pr | UPS Worldwide Expedited PR |
-    | ups_worldwide_express_pr | UPS Worldwide Express PR |
-    | ups_worldwide_express_plus_pr | UPS Worldwide Express Plus PR |
-    | ups_worldwide_saver_pr | UPS Worldwide Saver PR |
-    | ups_express_12_00_de | UPS Express 12:00 DE |
-    | ups_worldwide_express_freight | UPS Worldwide Express Freight |
-    | ups_worldwide_express_freight_midday | UPS Worldwide Express Freight Midday |
-    | ups_worldwide_economy_ddu | UPS Worldwide Economy DDU |
-    | ups_worldwide_economy_ddp | UPS Worldwide Economy DDP |
-
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -11901,6 +11975,69 @@ tags:
     | usps_ground_advantage_hfp | Ground Advantage HFP |
     | usps_ground_advantage_hfp_commercial | Ground Advantage HFP Commercial |
     | usps_ground_advantage_cubic | Ground Advantage Cubic |
+
+    ### UPS
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | ups_standard | UPS Standard |
+    | ups_worldwide_express | UPS Worldwide Express |
+    | ups_worldwide_expedited | UPS Worldwide Expedited |
+    | ups_worldwide_express_plus | UPS Worldwide Express Plus |
+    | ups_worldwide_saver | UPS Worldwide Saver |
+    | ups_2nd_day_air | UPS 2nd Day Air |
+    | ups_2nd_day_air_am | UPS 2nd Day Air A.M. |
+    | ups_3_day_select | UPS 3 Day Select |
+    | ups_ground | UPS Ground |
+    | ups_next_day_air | UPS Next Day Air |
+    | ups_next_day_air_early | UPS Next Day Air Early |
+    | ups_next_day_air_saver | UPS Next Day Air Saver |
+    | ups_expedited_ca | UPS Expedited CA |
+    | ups_express_saver_ca | UPS Express Saver CA |
+    | ups_3_day_select_ca_us | UPS 3 Day Select CA US |
+    | ups_access_point_economy_ca | UPS Access Point Economy CA |
+    | ups_express_ca | UPS Express CA |
+    | ups_express_early_ca | UPS Express Early CA |
+    | ups_express_saver_intl_ca | UPS Express Saver Intl CA |
+    | ups_standard_ca | UPS Standard CA |
+    | ups_worldwide_expedited_ca | UPS Worldwide Expedited CA |
+    | ups_worldwide_express_ca | UPS Worldwide Express CA |
+    | ups_worldwide_express_plus_ca | UPS Worldwide Express Plus CA |
+    | ups_express_early_ca_us | UPS Express Early CA US |
+    | ups_access_point_economy_eu | UPS Access Point Economy EU |
+    | ups_expedited_eu | UPS Expedited EU |
+    | ups_express_eu | UPS Express EU |
+    | ups_standard_eu | UPS Standard EU |
+    | ups_worldwide_express_plus_eu | UPS Worldwide Express Plus EU |
+    | ups_worldwide_saver_eu | UPS Worldwide Saver EU |
+    | ups_access_point_economy_mx | UPS Access Point Economy MX |
+    | ups_expedited_mx | UPS Expedited MX |
+    | ups_express_mx | UPS Express MX |
+    | ups_standard_mx | UPS Standard MX |
+    | ups_worldwide_express_plus_mx | UPS Worldwide Express Plus MX |
+    | ups_worldwide_saver_mx | UPS Worldwide Saver MX |
+    | ups_access_point_economy_pl | UPS Access Point Economy PL |
+    | ups_today_dedicated_courrier_pl | UPS Today Dedicated Courrier PL |
+    | ups_today_express_pl | UPS Today Express PL |
+    | ups_today_express_saver_pl | UPS Today Express Saver PL |
+    | ups_today_standard_pl | UPS Today Standard PL |
+    | ups_expedited_pl | UPS Expedited PL |
+    | ups_express_pl | UPS Express PL |
+    | ups_express_plus_pl | UPS Express Plus PL |
+    | ups_express_saver_pl | UPS Express Saver PL |
+    | ups_standard_pl | UPS Standard PL |
+    | ups_2nd_day_air_pr | UPS 2nd Day Air PR |
+    | ups_ground_pr | UPS Ground PR |
+    | ups_next_day_air_pr | UPS Next Day Air PR |
+    | ups_next_day_air_early_pr | UPS Next Day Air Early PR |
+    | ups_worldwide_expedited_pr | UPS Worldwide Expedited PR |
+    | ups_worldwide_express_pr | UPS Worldwide Express PR |
+    | ups_worldwide_express_plus_pr | UPS Worldwide Express Plus PR |
+    | ups_worldwide_saver_pr | UPS Worldwide Saver PR |
+    | ups_express_12_00_de | UPS Express 12:00 DE |
+    | ups_worldwide_express_freight | UPS Worldwide Express Freight |
+    | ups_worldwide_express_freight_midday | UPS Worldwide Express Freight Midday |
+    | ups_worldwide_economy_ddu | UPS Worldwide Economy DDU |
+    | ups_worldwide_economy_ddp | UPS Worldwide Economy DDP |
 
     ### TNT
     | Code         | Service Name |

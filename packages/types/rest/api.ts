@@ -958,10 +958,10 @@ export interface BatchOrderData {
 export interface BatchShipmentData {
     /**
      * The list of shipments to process.
-     * @type {Array<ShipmentData>}
+     * @type {Array<ShipmentDataReference>}
      * @memberof BatchShipmentData
      */
-    'shipments': Array<ShipmentData>;
+    'shipments': Array<ShipmentDataReference>;
 }
 /**
  * 
@@ -3437,18 +3437,6 @@ export interface Documents {
      * @memberof Documents
      */
     'invoice'?: string | null;
-    /**
-     * A delivery image in base64 string
-     * @type {string}
-     * @memberof Documents
-     */
-    'delivery_image'?: string | null;
-    /**
-     * A signature image in base64 string
-     * @type {string}
-     * @memberof Documents
-     */
-    'signature_image'?: string | null;
 }
 /**
  * 
@@ -3666,6 +3654,25 @@ export interface ErrorResponse {
      * @memberof ErrorResponse
      */
     'errors'?: Array<APIError>;
+}
+/**
+ * 
+ * @export
+ * @interface Images
+ */
+export interface Images {
+    /**
+     * A delivery image in base64 string
+     * @type {string}
+     * @memberof Images
+     */
+    'delivery_image'?: string | null;
+    /**
+     * A signature image in base64 string
+     * @type {string}
+     * @memberof Images
+     */
+    'signature_image'?: string | null;
 }
 /**
  * 
@@ -8506,6 +8513,106 @@ export type ShipmentDataCustomsIncotermEnum = typeof ShipmentDataCustomsIncoterm
 /**
  * 
  * @export
+ * @interface ShipmentDataReference
+ */
+export interface ShipmentDataReference {
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ShipmentDataReference
+     */
+    'shipper': AddressData;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ShipmentDataReference
+     */
+    'recipient': AddressData;
+    /**
+     * The shipment\'s parcels
+     * @type {Array<ParcelData>}
+     * @memberof ShipmentDataReference
+     */
+    'parcels': Array<ParcelData>;
+    /**
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentDataReference
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * 
+     * @type {Payment}
+     * @memberof ShipmentDataReference
+     */
+    'payment'?: Payment;
+    /**
+     * 
+     * @type {ShipmentDataBillingAddress}
+     * @memberof ShipmentDataReference
+     */
+    'billing_address'?: ShipmentDataBillingAddress | null;
+    /**
+     * 
+     * @type {ShipmentDataCustoms}
+     * @memberof ShipmentDataReference
+     */
+    'customs'?: ShipmentDataCustoms | null;
+    /**
+     * The shipment reference
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'reference'?: string | null;
+    /**
+     * The shipment label file type.  * `PDF` - PDF * `ZPL` - ZPL * `PNG` - PNG
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'label_type'?: ShipmentDataReferenceLabelTypeEnum;
+    /**
+     * **Specify a service to Buy a label in one call without rating.**
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'service'?: string;
+    /**
+     * The requested carrier service for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request         you could specify a service per carrier.**         
+     * @type {Array<string>}
+     * @memberof ShipmentDataReference
+     */
+    'services'?: Array<string> | null;
+    /**
+     * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
+     * @type {Array<string>}
+     * @memberof ShipmentDataReference
+     */
+    'carrier_ids'?: Array<string> | null;
+    /**
+     * User metadata for the shipment
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentDataReference
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * The shipment id.
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'id'?: string;
+}
+
+export const ShipmentDataReferenceLabelTypeEnum = {
+    Pdf: 'PDF',
+    Zpl: 'ZPL',
+    Png: 'PNG'
+} as const;
+
+export type ShipmentDataReferenceLabelTypeEnum = typeof ShipmentDataReferenceLabelTypeEnum[keyof typeof ShipmentDataReferenceLabelTypeEnum];
+
+/**
+ * 
+ * @export
  * @interface ShipmentList
  */
 export interface ShipmentList {
@@ -9047,18 +9154,6 @@ export interface ShippingResponseDocs {
      * @memberof ShippingResponseDocs
      */
     'invoice'?: string | null;
-    /**
-     * A delivery image in base64 string
-     * @type {string}
-     * @memberof ShippingResponseDocs
-     */
-    'delivery_image'?: string | null;
-    /**
-     * A signature image in base64 string
-     * @type {string}
-     * @memberof ShippingResponseDocs
-     */
-    'signature_image'?: string | null;
 }
 /**
  * 
@@ -9129,6 +9224,258 @@ export interface TokenVerify {
      * @memberof TokenVerify
      */
     'token': string;
+}
+/**
+ * 
+ * @export
+ * @interface TrackerDetails
+ */
+export interface TrackerDetails {
+    /**
+     * A unique identifier
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'id'?: string;
+    /**
+     * The tracking carrier
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'carrier_name': string;
+    /**
+     * The tracking carrier configured identifier
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'carrier_id': string;
+    /**
+     * The shipment tracking number
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'tracking_number': string;
+    /**
+     * 
+     * @type {TrackerDetailsInfo}
+     * @memberof TrackerDetails
+     */
+    'info'?: TrackerDetailsInfo | null;
+    /**
+     * The tracking details events
+     * @type {Array<TrackingEvent>}
+     * @memberof TrackerDetails
+     */
+    'events'?: Array<TrackingEvent> | null;
+    /**
+     * Specified whether the related shipment was delivered
+     * @type {boolean}
+     * @memberof TrackerDetails
+     */
+    'delivered'?: boolean;
+    /**
+     * Specified whether the object was created with a carrier in test mode
+     * @type {boolean}
+     * @memberof TrackerDetails
+     */
+    'test_mode': boolean;
+    /**
+     * The current tracking status  * `pending` - pending * `unknown` - unknown * `on_hold` - on_hold * `delivered` - delivered * `in_transit` - in_transit * `delivery_delayed` - delivery_delayed * `out_for_delivery` - out_for_delivery * `ready_for_pickup` - ready_for_pickup * `delivery_failed` - delivery_failed
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'status'?: TrackerDetailsStatusEnum;
+    /**
+     * The delivery estimated date
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'estimated_delivery'?: string;
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof TrackerDetails
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
+     * 
+     * @type {TrackerDetailsImages}
+     * @memberof TrackerDetails
+     */
+    'images'?: TrackerDetailsImages | null;
+    /**
+     * Specifies the object type
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'object_type'?: string;
+    /**
+     * User metadata for the tracker
+     * @type {{ [key: string]: any; }}
+     * @memberof TrackerDetails
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * The list of note or warning messages
+     * @type {Array<Message>}
+     * @memberof TrackerDetails
+     */
+    'messages'?: Array<Message>;
+}
+
+export const TrackerDetailsStatusEnum = {
+    Pending: 'pending',
+    Unknown: 'unknown',
+    OnHold: 'on_hold',
+    Delivered: 'delivered',
+    InTransit: 'in_transit',
+    DeliveryDelayed: 'delivery_delayed',
+    OutForDelivery: 'out_for_delivery',
+    ReadyForPickup: 'ready_for_pickup',
+    DeliveryFailed: 'delivery_failed'
+} as const;
+
+export type TrackerDetailsStatusEnum = typeof TrackerDetailsStatusEnum[keyof typeof TrackerDetailsStatusEnum];
+
+/**
+ * The tracker documents
+ * @export
+ * @interface TrackerDetailsImages
+ */
+export interface TrackerDetailsImages {
+    /**
+     * A delivery image in base64 string
+     * @type {string}
+     * @memberof TrackerDetailsImages
+     */
+    'delivery_image'?: string | null;
+    /**
+     * A signature image in base64 string
+     * @type {string}
+     * @memberof TrackerDetailsImages
+     */
+    'signature_image'?: string | null;
+}
+/**
+ * The package and shipment tracking details
+ * @export
+ * @interface TrackerDetailsInfo
+ */
+export interface TrackerDetailsInfo {
+    /**
+     * The carrier tracking link
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'carrier_tracking_link'?: string | null;
+    /**
+     * The customer name
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'customer_name'?: string | null;
+    /**
+     * The expected delivery date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'expected_delivery'?: string | null;
+    /**
+     * A tracking note
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'note'?: string | null;
+    /**
+     * The package order date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'order_date'?: string | null;
+    /**
+     * The package order id or number
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'order_id'?: string | null;
+    /**
+     * The package weight
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'package_weight'?: string | null;
+    /**
+     * The package weight unit
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'package_weight_unit'?: string | null;
+    /**
+     * The package count
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_package_count'?: string | null;
+    /**
+     * The shipment pickup date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_pickup_date'?: string | null;
+    /**
+     * The shipment delivery date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_delivery_date'?: string | null;
+    /**
+     * The shipment service
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_service'?: string | null;
+    /**
+     * The shipment origin country
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_origin_country'?: string | null;
+    /**
+     * The shipment origin postal code
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_origin_postal_code'?: string | null;
+    /**
+     * The shipment destination country
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_destination_country'?: string | null;
+    /**
+     * The shipment destination postal code
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_destination_postal_code'?: string | null;
+    /**
+     * The shipping date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipping_date'?: string | null;
+    /**
+     * The person who signed for the package
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'signed_by'?: string | null;
+    /**
+     * The tracker source
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'source'?: string | null;
 }
 /**
  * 
@@ -9385,246 +9732,6 @@ export type TrackingDataCarrierNameEnum = typeof TrackingDataCarrierNameEnum[key
 /**
  * 
  * @export
- * @interface TrackingDetails
- */
-export interface TrackingDetails {
-    /**
-     * The tracking carrier
-     * @type {string}
-     * @memberof TrackingDetails
-     */
-    'carrier_name': string;
-    /**
-     * The tracking carrier configured identifier
-     * @type {string}
-     * @memberof TrackingDetails
-     */
-    'carrier_id': string;
-    /**
-     * The shipment tracking number
-     * @type {string}
-     * @memberof TrackingDetails
-     */
-    'tracking_number': string;
-    /**
-     * 
-     * @type {TrackingDetailsInfo}
-     * @memberof TrackingDetails
-     */
-    'info'?: TrackingDetailsInfo | null;
-    /**
-     * The tracking details events
-     * @type {Array<TrackingEvent>}
-     * @memberof TrackingDetails
-     */
-    'events'?: Array<TrackingEvent> | null;
-    /**
-     * Specified whether the related shipment was delivered
-     * @type {boolean}
-     * @memberof TrackingDetails
-     */
-    'delivered'?: boolean;
-    /**
-     * Specified whether the object was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof TrackingDetails
-     */
-    'test_mode': boolean;
-    /**
-     * The current tracking status  * `pending` - pending * `unknown` - unknown * `on_hold` - on_hold * `delivered` - delivered * `in_transit` - in_transit * `delivery_delayed` - delivery_delayed * `out_for_delivery` - out_for_delivery * `ready_for_pickup` - ready_for_pickup * `delivery_failed` - delivery_failed
-     * @type {string}
-     * @memberof TrackingDetails
-     */
-    'status'?: TrackingDetailsStatusEnum;
-    /**
-     * The delivery estimated date
-     * @type {string}
-     * @memberof TrackingDetails
-     */
-    'estimated_delivery'?: string;
-    /**
-     * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof TrackingDetails
-     */
-    'meta'?: { [key: string]: any; } | null;
-    /**
-     * 
-     * @type {TrackingDetailsDocs}
-     * @memberof TrackingDetails
-     */
-    'docs'?: TrackingDetailsDocs | null;
-}
-
-export const TrackingDetailsStatusEnum = {
-    Pending: 'pending',
-    Unknown: 'unknown',
-    OnHold: 'on_hold',
-    Delivered: 'delivered',
-    InTransit: 'in_transit',
-    DeliveryDelayed: 'delivery_delayed',
-    OutForDelivery: 'out_for_delivery',
-    ReadyForPickup: 'ready_for_pickup',
-    DeliveryFailed: 'delivery_failed'
-} as const;
-
-export type TrackingDetailsStatusEnum = typeof TrackingDetailsStatusEnum[keyof typeof TrackingDetailsStatusEnum];
-
-/**
- * The tracker documents
- * @export
- * @interface TrackingDetailsDocs
- */
-export interface TrackingDetailsDocs {
-    /**
-     * A shipping label in base64 string
-     * @type {string}
-     * @memberof TrackingDetailsDocs
-     */
-    'label'?: string | null;
-    /**
-     * A shipping invoice in base64 string
-     * @type {string}
-     * @memberof TrackingDetailsDocs
-     */
-    'invoice'?: string | null;
-    /**
-     * A delivery image in base64 string
-     * @type {string}
-     * @memberof TrackingDetailsDocs
-     */
-    'delivery_image'?: string | null;
-    /**
-     * A signature image in base64 string
-     * @type {string}
-     * @memberof TrackingDetailsDocs
-     */
-    'signature_image'?: string | null;
-}
-/**
- * The package and shipment tracking details
- * @export
- * @interface TrackingDetailsInfo
- */
-export interface TrackingDetailsInfo {
-    /**
-     * The carrier tracking link
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'carrier_tracking_link'?: string | null;
-    /**
-     * The customer name
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'customer_name'?: string | null;
-    /**
-     * The expected delivery date
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'expected_delivery'?: string | null;
-    /**
-     * A tracking note
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'note'?: string | null;
-    /**
-     * The package order date
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'order_date'?: string | null;
-    /**
-     * The package order id or number
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'order_id'?: string | null;
-    /**
-     * The package weight
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'package_weight'?: string | null;
-    /**
-     * The package weight unit
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'package_weight_unit'?: string | null;
-    /**
-     * The package count
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_package_count'?: string | null;
-    /**
-     * The shipment pickup date
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_pickup_date'?: string | null;
-    /**
-     * The shipment delivery date
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_delivery_date'?: string | null;
-    /**
-     * The shipment service
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_service'?: string | null;
-    /**
-     * The shipment origin country
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_origin_country'?: string | null;
-    /**
-     * The shipment origin postal code
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_origin_postal_code'?: string | null;
-    /**
-     * The shipment destination country
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_destination_country'?: string | null;
-    /**
-     * The shipment destination postal code
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipment_destination_postal_code'?: string | null;
-    /**
-     * The shipping date
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'shipping_date'?: string | null;
-    /**
-     * The person who signed for the package
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'signed_by'?: string | null;
-    /**
-     * The tracker source
-     * @type {string}
-     * @memberof TrackingDetailsInfo
-     */
-    'source'?: string | null;
-}
-/**
- * 
- * @export
  * @interface TrackingEvent
  */
 export interface TrackingEvent {
@@ -9806,10 +9913,10 @@ export interface TrackingResponse {
     'messages'?: Array<Message>;
     /**
      * 
-     * @type {TrackingDetails}
+     * @type {TrackerDetails}
      * @memberof TrackingResponse
      */
-    'tracking'?: TrackingDetails;
+    'tracking'?: TrackerDetails;
 }
 /**
  * 
@@ -9843,10 +9950,10 @@ export interface TrackingStatus {
     'tracking_number': string;
     /**
      * 
-     * @type {TrackingDetailsInfo}
+     * @type {TrackerDetailsInfo}
      * @memberof TrackingStatus
      */
-    'info'?: TrackingDetailsInfo | null;
+    'info'?: TrackerDetailsInfo | null;
     /**
      * The tracking details events
      * @type {Array<TrackingEvent>}
@@ -9890,18 +9997,6 @@ export interface TrackingStatus {
      */
     'object_type'?: string;
     /**
-     * The shipment invoice URL
-     * @type {string}
-     * @memberof TrackingStatus
-     */
-    'delivery_image_url'?: string | null;
-    /**
-     * The shipment invoice URL
-     * @type {string}
-     * @memberof TrackingStatus
-     */
-    'signature_image_url'?: string | null;
-    /**
      * User metadata for the tracker
      * @type {{ [key: string]: any; }}
      * @memberof TrackingStatus
@@ -9913,6 +10008,18 @@ export interface TrackingStatus {
      * @memberof TrackingStatus
      */
     'messages'?: Array<Message>;
+    /**
+     * The shipment invoice URL
+     * @type {string}
+     * @memberof TrackingStatus
+     */
+    'delivery_image_url'?: string | null;
+    /**
+     * The shipment invoice URL
+     * @type {string}
+     * @memberof TrackingStatus
+     */
+    'signature_image_url'?: string | null;
 }
 
 export const TrackingStatusStatusEnum = {
@@ -11166,8 +11273,8 @@ export class AddressesApi extends BaseAPI {
 export const BatchesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * @summary Create orders
+         * Create order batch. `Beta`
+         * @summary Create order batch
          * @param {BatchOrderData} batchOrderData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11216,8 +11323,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * @summary Create shipments
+         * Create shipment batch. `Beta`
+         * @summary Create shipment batch
          * @param {BatchShipmentData} batchShipmentData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11266,8 +11373,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * @summary Create trackers
+         * Create tracker batch. `Beta`
+         * @summary Create tracker batch
          * @param {BatchTrackerData} batchTrackerData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11496,8 +11603,8 @@ export const BatchesApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = BatchesApiAxiosParamCreator(configuration)
     return {
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * @summary Create orders
+         * Create order batch. `Beta`
+         * @summary Create order batch
          * @param {BatchOrderData} batchOrderData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11509,8 +11616,8 @@ export const BatchesApiFp = function (configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * @summary Create shipments
+         * Create shipment batch. `Beta`
+         * @summary Create shipment batch
          * @param {BatchShipmentData} batchShipmentData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11522,8 +11629,8 @@ export const BatchesApiFp = function (configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * @summary Create trackers
+         * Create tracker batch. `Beta`
+         * @summary Create tracker batch
          * @param {BatchTrackerData} batchTrackerData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11588,8 +11695,8 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = BatchesApiFp(configuration)
     return {
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * @summary Create orders
+         * Create order batch. `Beta`
+         * @summary Create order batch
          * @param {BatchesApiCreateOrdersRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11598,8 +11705,8 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.createOrders(requestParameters.batchOrderData, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * @summary Create shipments
+         * Create shipment batch. `Beta`
+         * @summary Create shipment batch
          * @param {BatchesApiCreateShipmentsRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11608,8 +11715,8 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.createShipments(requestParameters.batchShipmentData, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * @summary Create trackers
+         * Create tracker batch. `Beta`
+         * @summary Create tracker batch
          * @param {BatchesApiCreateTrackersRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11762,8 +11869,8 @@ export interface BatchesApiRetrieveRequest {
  */
 export class BatchesApi extends BaseAPI {
     /**
-     * Create multiple orders in a single batch. `Beta`
-     * @summary Create orders
+     * Create order batch. `Beta`
+     * @summary Create order batch
      * @param {BatchesApiCreateOrdersRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11774,8 +11881,8 @@ export class BatchesApi extends BaseAPI {
     }
 
     /**
-     * Create multiple shipments in a single batch. `Beta`
-     * @summary Create shipments
+     * Create shipment batch. `Beta`
+     * @summary Create shipment batch
      * @param {BatchesApiCreateShipmentsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11786,8 +11893,8 @@ export class BatchesApi extends BaseAPI {
     }
 
     /**
-     * Create multiple trackers in a single batch. `Beta`
-     * @summary Create trackers
+     * Create tracker batch. `Beta`
+     * @summary Create tracker batch
      * @param {BatchesApiCreateTrackersRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
