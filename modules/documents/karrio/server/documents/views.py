@@ -163,18 +163,18 @@ class OrderDocsPrinter(VirtualDownloadView):
 
 urlpatterns = [
     re_path(
-        r"^documents/(?P<pk>\w+).(?P<slug>\w+)",
+        r"^documents/templates/(?P<pk>\w+).(?P<slug>\w+)",
         DocumentGenerator.as_view(),
         name="documents-generator",
     ),
     re_path(
-        r"^docs/shipments/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        r"^documents/shipments/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
         ShipmentDocsPrinter.as_view(),
-        name="shipments-docs-print",
+        name="shipments-documents-print",
     ),
     re_path(
-        r"^docs/orders/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        r"^documents/orders/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
         OrderDocsPrinter.as_view(),
-        name="orders-docs-print",
+        name="orders-documents-print",
     ),
 ]
