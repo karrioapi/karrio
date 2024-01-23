@@ -3,7 +3,7 @@ import { MetadataEditor, MetadataEditorContext } from '@karrio/ui/forms/metadata
 import { GoogleGeocodingScript } from '@karrio/ui/components/google-geocoding-script';
 import { CommodityDescription } from '@karrio/ui/components/commodity-description';
 import { AddressDescription } from '@karrio/ui/components/address-description';
-import { formatRef, isEqual, isNone, useLocation } from '@karrio/lib';
+import { formatRef, isEqual, isNone, isNoneOrEmpty, useLocation } from '@karrio/lib';
 import { MetadataObjectTypeEnum, PaidByEnum } from '@karrio/types';
 import { AddressModalEditor } from '@karrio/ui/modals/form-modals';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
@@ -16,6 +16,7 @@ import { useOrderForm } from '@karrio/hooks/order';
 import React, { useEffect, useState } from 'react';
 import { AddressType } from '@karrio/types';
 import Head from 'next/head';
+import { Spinner } from '@karrio/ui/components';
 
 export { getServerSideProps } from "@/context/main";
 
@@ -29,8 +30,9 @@ export default function Page(pageProps: any) {
     const loader = useLoader();
     const router = useLocation();
     const { id } = router.query;
+    const [ready, setReady] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
-    const [key, setKey] = useState<string>(`oreder-${Date.now()}`);
+    const [key, setKey] = useState<string>(`order-${Date.now()}`);
     const { order, current, isNew, DEFAULT_STATE, query, ...mutation } = useOrderForm({ id });
 
     const handleChange = async (changes?: Partial<typeof order>) => {
@@ -38,8 +40,30 @@ export default function Page(pageProps: any) {
       await mutation.updateOrder({ id, ...changes });
       setKey(`${id}-${Date.now()}`);
     };
+    useEffect(() => {
+      // console.log('order', order, current, query.isFetched, ready, id);
+      if (
+        !ready && query.isFetched &&
+        id === 'new' &&
+        !isNone(order.line_items)
+      ) {
+        setTimeout(() => setReady(true), 1000);
+      }
+      if (
+        !ready && query.isFetched &&
+        !isNoneOrEmpty(id) &&
+        id !== 'new' &&
+        !isNone(order.line_items)
+      ) {
+        setReady(true);
+      }
+    }, [query.isFetched, id]);
+    useEffect(() => {
+      if (ready) {
+        setKey(`order-${id}-${Date.now()}`);
+      }
+    }, [ready]);
 
-    useEffect(() => { setLoading(query.isFetching || loader.loading); }, [query.isFetching, loader.loading]);
 
     return (
       <>
@@ -47,13 +71,15 @@ export default function Page(pageProps: any) {
           <span className="title is-4 my-2">{`${id === 'new' ? 'Create' : 'Edit'} order`}</span>
           <div>
             <button type="button" className="button is-small is-success" onClick={() => mutation.save()}
-              disabled={loader.loading || isEqual(order, current || DEFAULT_STATE)}>
+              disabled={loader.loading || isEqual(order, current || DEFAULT_STATE) || !order?.shipping_to?.country_code}>
               Save
             </button>
           </div>
         </header>
 
-        {!!order.line_items && <div className="columns pb-6 m-0">
+        {!ready && <Spinner />}
+
+        {ready && <div className="columns pb-6 m-0">
           <div className="column px-0" style={{ minHeight: '850px' }}>
 
             {/* Line Items */}
@@ -138,7 +164,7 @@ export default function Page(pageProps: any) {
                   className="is-small"
                   autoComplete="off"
                   fieldClass="column mb-0 is-4 p-0 mb-2"
-                  defaultValue={order.options.invoice_number || ''}
+                  defaultValue={order.options?.invoice_number || ''}
                   onChange={e => handleChange({ options: { ...order.options, invoice_number: e.target.value } })}
                 />
 
@@ -149,7 +175,7 @@ export default function Page(pageProps: any) {
                   type="date"
                   className="is-small"
                   fieldClass="column mb-0 is-4 p-0 mb-2"
-                  defaultValue={order.options.invoice_date || ''}
+                  defaultValue={order.options?.invoice_date || ''}
                   onChange={e => handleChange({ options: { ...order.options, invoice_date: e.target.value } })}
                 />
 
@@ -215,13 +241,14 @@ export default function Page(pageProps: any) {
           <div className="column is-5 px-0 pb-6 is-relative">
             <div style={{ position: 'sticky', top: '8.5%', right: 0, left: 0 }}>
 
-              <div className="card px-0 mb-5">
+              {/* Summary section */}
+              {!isNone(order.line_items) && <div className="card px-0 mb-5">
 
                 <header className="px-3 py-2 is-flex is-justify-content-space-between">
                   <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">SUMMARY</span>
                 </header>
 
-                {(order.line_items.length > 0) && <div className="p-0 pb-1">
+                <div className="p-0 pb-1">
                   <p className="is-title is-size-7 px-3 has-text-weight-semibold">
                     {`ITEMS (${order.line_items.reduce((_, { quantity }) => _ + (isNone(quantity) ? 1 : quantity as any), 0)})`}
                   </p>
@@ -234,7 +261,7 @@ export default function Page(pageProps: any) {
                     </React.Fragment>)}
 
                   </div>
-                </div>}
+                </div>
 
                 <footer className="px-3 py-1">
                   <p className="has-text-weight-semibold is-size-7">
@@ -245,7 +272,7 @@ export default function Page(pageProps: any) {
                   </p>
                 </footer>
 
-              </div>
+              </div>}
 
               {/* Address section */}
               <div className="card p-0">
