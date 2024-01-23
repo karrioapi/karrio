@@ -171,7 +171,7 @@ export default function CreateShipmentPage(pageProps: any) {
         {!ready && <Spinner />}
 
         {(ready && Object.keys(shipment.recipient).length > 0) && <div className="columns pb-6 m-0">
-          <div className="column px-0" style={{ minHeight: '850px' }}>
+          <div className="column px-0" style={{ minHeight: '850px', minWidth: '260px' }}>
 
             {/* Address section */}
             <div className="card p-0">
@@ -343,6 +343,7 @@ export default function CreateShipmentPage(pageProps: any) {
                         title='Edit items'
                         shipment={shipment}
                         onChange={_ => mutation.addItems(pkg_index, pkg.id)(_ as any)}
+                        order_ids={order_id.split(',').map(s => s.trim())}
                       />
                     </div>
                   </div>
@@ -812,7 +813,7 @@ export default function CreateShipmentPage(pageProps: any) {
 
           <div className="p-2"></div>
 
-          <div className="column is-5 px-0 pb-6 is-relative">
+          <div className="column is-5 px-0 pb-6 is-relative" style={{ minWidth: '260px' }}>
             <div style={{ position: 'sticky', top: '8.5%', right: 0, left: 0 }}>
 
               <CommoditySummary
@@ -847,15 +848,20 @@ export default function CreateShipmentPage(pageProps: any) {
                   </div>}
 
                   {(!loading && (shipment.rates || []).length > 0) &&
-                    <div className="menu-list px-3 rates-list-box" style={{ maxHeight: '16.8em' }}>
+                    <div className="menu-list px-2 rates-list-box" style={{ maxHeight: '16.8em' }}>
                       {(shipment.rates || []).map(rate => (
                         <a key={rate.id} {...(rate.test_mode ? { title: "Test Mode" } : {})}
-                          className={`columns card m-0 mb-1 is-vcentered p-1 ${rate.service === shipment.options.preferred_service ? 'has-text-grey-dark has-background-success-light' : 'has-text-grey'} ${rate.id === selected_rate?.id ? 'has-text-grey-dark has-background-grey-lighter' : 'has-text-grey'}`}
-                          onClick={() => setSelectedRate(rate)}>
+                          className={`card m-0 mb-1 is-vcentered p-1 ${rate.service === shipment.options.preferred_service ? 'has-text-grey-dark has-background-success-light' : 'has-text-grey'} ${rate.id === selected_rate?.id ? 'has-text-grey-dark has-background-grey-lighter' : 'has-text-grey'}`}
+                          onClick={() => {
+                            setSelectedRate(rate);
+                            onChange({ options: { ...shipment.options, preferred_service: rate.service } });
+                          }}>
 
-                          <CarrierImage carrier_name={(rate.meta as any)?.carrier || rate.carrier_name} width={30} height={30} />
+                          <div className="icon-text">
+                            <CarrierImage carrier_name={(rate.meta as any)?.carrier || rate.carrier_name} width={30} height={30} />
+                            <RateDescription rate={rate} />
+                          </div>
 
-                          <RateDescription rate={rate} />
                         </a>
                       ))}
                     </div>}
