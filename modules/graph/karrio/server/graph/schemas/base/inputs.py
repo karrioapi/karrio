@@ -449,7 +449,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
     def carrier_settings_input(name: str, model):
         _name = f"{'Update' if is_update else ''}{model.__name__}Input"
         _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-        _excluded = ["services", "id", "cache", "test_mode"]
+        _excluded = ["services", "id", "cache", "test_mode", "rate_sheet"]
         _optionals = ["account_country_code", "label_template"]
         _template_type: typing.Any = "LabelTemplateInput"
         _service_type: typing.Any = typing.List[  # type: ignore

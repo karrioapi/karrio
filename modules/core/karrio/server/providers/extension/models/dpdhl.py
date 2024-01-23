@@ -2,7 +2,7 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("bpost")
+@providers.has_rate_sheet("dpdhl")
 class DPDHLSettings(providers.Carrier):
     class Meta:
         db_table = "dpdhl-settings"
