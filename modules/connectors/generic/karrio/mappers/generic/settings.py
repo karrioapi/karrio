@@ -17,13 +17,13 @@ class Settings(BaseSettings, RatingMixinSettings, ShippingMixinSettings):
     display_name: str
     custom_carrier_name: str
 
-    id: str = None
     test_mode: bool = False
     carrier_id: str = "custom-carrier"
-    account_number: str = None
     account_country_code: str = None
+    account_number: str = None
     metadata: dict = {}
     config: dict = {}
+    id: str = None
 
     label_template: LabelTemplate = JStruct[LabelTemplate]
     services: List[ServiceLevel] = JList[ServiceLevel, False, dict(default=DEFAULT_SERVICES)]  # type: ignore
