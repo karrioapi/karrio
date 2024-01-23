@@ -149,6 +149,10 @@ def get_available_rates(
             _cover_supported_countries = (
                 zone.cities is not None and recipient.country_code in zone.country_codes
             ) or not any(zone.country_codes or [])
+            _cover_supported_postal_codes = (
+                zone.postal_codes is not None
+                and recipient.postal_code in zone.postal_codes
+            ) or not any(zone.postal_codes or [])
 
             # Check if weight and dimensions fit restrictions
             _match_zone_min_weight_requirements = (
@@ -175,6 +179,7 @@ def get_available_rates(
             if (
                 _cover_supported_cities
                 and _cover_supported_countries
+                and _cover_supported_postal_codes
                 and _match_zone_min_weight_requirements
                 and _match_zone_max_weight_requirements
                 and _best_fit_zone_selected is False

@@ -380,6 +380,7 @@ class ServiceZoneInput(utils.BaseInput):
     longitude: typing.Optional[float] = strawberry.UNSET
 
     cities: typing.Optional[typing.List[str]] = strawberry.UNSET
+    postal_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
     country_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 

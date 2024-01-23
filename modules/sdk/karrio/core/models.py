@@ -399,6 +399,7 @@ class ServiceZone:
 
     # Location
     cities: List[str] = []
+    postal_codes: List[str] = []
     country_codes: List[str] = []
 
 
