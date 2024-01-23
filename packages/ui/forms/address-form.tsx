@@ -1,5 +1,5 @@
+import { AddressType, DEFAULT_ADDRESS_CONTENT, NotificationType, ShipmentType } from '@karrio/types';
 import React, { FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
-import { AddressType, NotificationType, ShipmentType } from '@karrio/types';
 import { COUNTRY_WITH_POSTAL_CODE, isEqual, isNone } from '@karrio/lib';
 import { AddressAutocompleteInput } from './address-autocomplete-input';
 import { CheckBoxField } from '../components/checkbox-field';
@@ -13,12 +13,6 @@ import { Notify } from '../components/notifier';
 import { CountryInput } from './country-input';
 import { Loading } from '../components/loader';
 import { StateInput } from './state-input';
-
-export const DEFAULT_ADDRESS_CONTENT = {
-  address_line1: '',
-  address_line2: '',
-  residential: false
-} as Partial<AddressType>;
 
 interface AddressFormComponent {
   value?: AddressType;

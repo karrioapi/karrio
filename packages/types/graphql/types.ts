@@ -588,6 +588,12 @@ export interface get_shipment_shipment_messages {
   details: any | null;
 }
 
+export interface get_shipment_shipment_selected_rate_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_shipment_shipment_tracker_events {
   description: string | null;
   location: string | null;
@@ -676,6 +682,7 @@ export interface get_shipment_shipment {
   metadata: any;
   meta: any | null;
   messages: get_shipment_shipment_messages[];
+  selected_rate_carrier: get_shipment_shipment_selected_rate_carrier | null;
   tracker: get_shipment_shipment_tracker | null;
 }
 
@@ -910,6 +917,12 @@ export interface get_shipments_shipments_edges_node_messages {
   details: any | null;
 }
 
+export interface get_shipments_shipments_edges_node_selected_rate_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_shipments_shipments_edges_node {
   id: string;
   carrier_id: string | null;
@@ -942,6 +955,7 @@ export interface get_shipments_shipments_edges_node {
   metadata: any;
   meta: any | null;
   messages: get_shipments_shipments_edges_node_messages[];
+  selected_rate_carrier: get_shipments_shipments_edges_node_selected_rate_carrier | null;
 }
 
 export interface get_shipments_shipments_edges {
@@ -1492,6 +1506,12 @@ export interface get_tracker_tracker_created_by {
   full_name: string;
 }
 
+export interface get_tracker_tracker_tracking_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_tracker_tracker_shipment_shipper {
   city: string | null;
   country_code: CountryCodeEnum;
@@ -1528,6 +1548,7 @@ export interface get_tracker_tracker {
   updated_at: any;
   created_by: get_tracker_tracker_created_by;
   test_mode: boolean;
+  tracking_carrier: get_tracker_tracker_tracking_carrier | null;
   shipment: get_tracker_tracker_shipment | null;
 }
 
@@ -1599,6 +1620,12 @@ export interface get_trackers_trackers_edges_node_messages {
   details: any | null;
 }
 
+export interface get_trackers_trackers_edges_node_tracking_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
 export interface get_trackers_trackers_edges_node_shipment_shipper {
   city: string | null;
   country_code: CountryCodeEnum;
@@ -1635,6 +1662,7 @@ export interface get_trackers_trackers_edges_node {
   carrier_name: string;
   meta: any | null;
   metadata: any;
+  tracking_carrier: get_trackers_trackers_edges_node_tracking_carrier | null;
   shipment: get_trackers_trackers_edges_node_shipment | null;
 }
 
@@ -1807,6 +1835,7 @@ export interface get_system_connections_system_connections {
   carrier_name: string;
   display_name: string;
   enabled: boolean;
+  config: any | null;
 }
 
 export interface get_system_connections {
@@ -3606,6 +3635,13 @@ export interface get_order_order_shipments_messages {
   details: any | null;
 }
 
+export interface get_order_order_shipments_tracker {
+  id: string;
+  tracking_number: string;
+  carrier_id: string;
+  carrier_name: string;
+}
+
 export interface get_order_order_shipments {
   id: string;
   carrier_id: string | null;
@@ -3636,6 +3672,8 @@ export interface get_order_order_shipments {
   metadata: any;
   meta: any | null;
   messages: get_order_order_shipments_messages[];
+  tracker_id: string | null;
+  tracker: get_order_order_shipments_tracker | null;
 }
 
 export interface get_order_order {
@@ -3661,6 +3699,108 @@ export interface get_order {
 }
 
 export interface get_orderVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_order_data
+// ====================================================
+
+export interface get_order_data_order_shipping_to {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_order_data_order_shipping_from {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_order_data_order_billing_address {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_order_data_order_line_items {
+  id: string;
+  weight: number;
+  title: string | null;
+  description: string | null;
+  quantity: number;
+  sku: string | null;
+  hs_code: string | null;
+  value_amount: number | null;
+  weight_unit: WeightUnitEnum | null;
+  value_currency: CurrencyCodeEnum | null;
+  origin_country: CountryCodeEnum | null;
+  metadata: any;
+  parent_id: string | null;
+}
+
+export interface get_order_data_order {
+  id: string;
+  shipping_to: get_order_data_order_shipping_to;
+  shipping_from: get_order_data_order_shipping_from | null;
+  billing_address: get_order_data_order_billing_address | null;
+  line_items: get_order_data_order_line_items[];
+  options: any;
+  metadata: any;
+}
+
+export interface get_order_data {
+  order: get_order_data_order;
+}
+
+export interface get_order_dataVariables {
   id: string;
 }
 
@@ -3969,6 +4109,13 @@ export interface get_orders_orders_edges_node_shipments_messages {
   details: any | null;
 }
 
+export interface get_orders_orders_edges_node_shipments_tracker {
+  id: string;
+  tracking_number: string;
+  carrier_id: string;
+  carrier_name: string;
+}
+
 export interface get_orders_orders_edges_node_shipments {
   id: string;
   carrier_id: string | null;
@@ -3999,6 +4146,8 @@ export interface get_orders_orders_edges_node_shipments {
   metadata: any;
   meta: any | null;
   messages: get_orders_orders_edges_node_shipments_messages[];
+  tracker_id: string | null;
+  tracker: get_orders_orders_edges_node_shipments_tracker | null;
 }
 
 export interface get_orders_orders_edges_node {
@@ -4526,6 +4675,166 @@ export interface get_rate_sheets {
 
 export interface get_rate_sheetsVariables {
   filter?: RateSheetFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateOrder
+// ====================================================
+
+export interface CreateOrder_create_order_order {
+  id: string;
+}
+
+export interface CreateOrder_create_order_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateOrder_create_order {
+  order: CreateOrder_create_order_order | null;
+  errors: CreateOrder_create_order_errors[] | null;
+}
+
+export interface CreateOrder {
+  create_order: CreateOrder_create_order;
+}
+
+export interface CreateOrderVariables {
+  data: CreateOrderMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateOrder
+// ====================================================
+
+export interface UpdateOrder_update_order_order {
+  id: string;
+}
+
+export interface UpdateOrder_update_order_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateOrder_update_order {
+  order: UpdateOrder_update_order_order | null;
+  errors: UpdateOrder_update_order_errors[] | null;
+}
+
+export interface UpdateOrder {
+  update_order: UpdateOrder_update_order;
+}
+
+export interface UpdateOrderVariables {
+  data: UpdateOrderMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteOrder
+// ====================================================
+
+export interface DeleteOrder_delete_order_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteOrder_delete_order {
+  id: string | null;
+  errors: DeleteOrder_delete_order_errors[] | null;
+}
+
+export interface DeleteOrder {
+  delete_order: DeleteOrder_delete_order;
+}
+
+export interface DeleteOrderVariables {
+  data: DeleteOrderMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_batch_operation
+// ====================================================
+
+export interface get_batch_operation_batch_operation_resources {
+  id: number;
+  status: ResourceStatus | null;
+}
+
+export interface get_batch_operation_batch_operation {
+  id: number;
+  resource_type: ResourceStatus;
+  status: BatchOperationStatus;
+  test_mode: boolean;
+  resources: get_batch_operation_batch_operation_resources[];
+}
+
+export interface get_batch_operation {
+  batch_operation: get_batch_operation_batch_operation;
+}
+
+export interface get_batch_operationVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_batch_operations
+// ====================================================
+
+export interface get_batch_operations_batch_operations_page_info {
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_batch_operations_batch_operations_edges_node_resources {
+  id: number;
+  status: ResourceStatus | null;
+}
+
+export interface get_batch_operations_batch_operations_edges_node {
+  id: number;
+  resource_type: ResourceStatus;
+  status: BatchOperationStatus;
+  test_mode: boolean;
+  resources: get_batch_operations_batch_operations_edges_node_resources[];
+}
+
+export interface get_batch_operations_batch_operations_edges {
+  node: get_batch_operations_batch_operations_edges_node;
+}
+
+export interface get_batch_operations_batch_operations {
+  page_info: get_batch_operations_batch_operations_page_info;
+  edges: get_batch_operations_batch_operations_edges[];
+}
+
+export interface get_batch_operations {
+  batch_operations: get_batch_operations_batch_operations;
+}
+
+export interface get_batch_operationsVariables {
+  filter?: BatchOperationFilter | null;
 }
 
 
@@ -5108,6 +5417,22 @@ export enum TemplateRelatedObject {
   shipment = "shipment",
 }
 
+export enum ResourceStatus {
+  created = "created",
+  has_errors = "has_errors",
+  incomplete = "incomplete",
+  processed = "processed",
+  queued = "queued",
+}
+
+export enum BatchOperationStatus {
+  completed = "completed",
+  completed_with_errors = "completed_with_errors",
+  failed = "failed",
+  queued = "queued",
+  running = "running",
+}
+
 // null
 export interface AddressFilter {
   offset?: number | null;
@@ -5279,6 +5604,7 @@ export interface ServiceZoneInput {
   latitude?: number | null;
   longitude?: number | null;
   cities?: string[] | null;
+  postal_codes?: string[] | null;
   country_codes?: string[] | null;
 }
 
@@ -5777,6 +6103,7 @@ export interface UpdateServiceZoneInput {
   latitude?: number | null;
   longitude?: number | null;
   cities?: string[] | null;
+  postal_codes?: string[] | null;
   country_codes?: string[] | null;
 }
 
@@ -6579,6 +6906,44 @@ export interface RateSheetFilter {
   offset?: number | null;
   first?: number | null;
   keyword?: string | null;
+}
+
+// null
+export interface CreateOrderMutationInput {
+  shipping_to: AddressInput;
+  line_items: CommodityInput[];
+  order_id?: string | null;
+  order_date?: string | null;
+  shipping_from?: AddressInput | null;
+  billing_address?: AddressInput | null;
+  metadata?: any | null;
+  options?: any | null;
+}
+
+// null
+export interface UpdateOrderMutationInput {
+  id: string;
+  order_id?: string | null;
+  order_date?: string | null;
+  shipping_to?: UpdateAddressInput | null;
+  shipping_from?: UpdateAddressInput | null;
+  billing_address?: UpdateAddressInput | null;
+  metadata?: any | null;
+  options?: any | null;
+  line_items?: UpdateCommodityInput[] | null;
+}
+
+// null
+export interface DeleteOrderMutationInput {
+  id: string;
+}
+
+// null
+export interface BatchOperationFilter {
+  offset?: number | null;
+  first?: number | null;
+  resource_type?: ResourceStatus[] | null;
+  status?: BatchOperationStatus[] | null;
 }
 
 //==============================================================

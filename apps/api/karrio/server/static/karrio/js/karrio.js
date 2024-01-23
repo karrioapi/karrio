@@ -985,7 +985,7 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentDataToJSON(value) {
+    function ShipmentDataReferenceToJSON(value) {
         if (value === undefined) {
             return undefined;
         }
@@ -1006,6 +1006,7 @@ var Karrio = (function () {
             'services': value.services,
             'carrier_ids': value.carrier_ids,
             'metadata': value.metadata,
+            'id': value.id,
         };
     }
 
@@ -1018,7 +1019,7 @@ var Karrio = (function () {
             return null;
         }
         return {
-            'shipments': (value.shipments.map(ShipmentDataToJSON)),
+            'shipments': (value.shipments.map(ShipmentDataReferenceToJSON)),
         };
     }
 
@@ -2126,6 +2127,31 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function ShipmentDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'shipper': AddressDataToJSON(value.shipper),
+            'recipient': AddressDataToJSON(value.recipient),
+            'parcels': (value.parcels.map(ParcelDataToJSON)),
+            'options': value.options,
+            'payment': PaymentToJSON(value.payment),
+            'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
+            'customs': ShipmentDataCustomsToJSON(value.customs),
+            'reference': value.reference,
+            'label_type': value.label_type,
+            'service': value.service,
+            'services': value.services,
+            'carrier_ids': value.carrier_ids,
+            'metadata': value.metadata,
+        };
+    }
+
+    /* tslint:disable */
     function ShipmentListFromJSON(json) {
         return ShipmentListFromJSONTyped(json);
     }
@@ -2325,29 +2351,24 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function TrackingEventFromJSON(json) {
-        return TrackingEventFromJSONTyped(json);
+    function TrackerDetailsImagesFromJSON(json) {
+        return TrackerDetailsImagesFromJSONTyped(json);
     }
-    function TrackingEventFromJSONTyped(json, ignoreDiscriminator) {
+    function TrackerDetailsImagesFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
         return {
-            'date': !exists(json, 'date') ? undefined : json['date'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'location': !exists(json, 'location') ? undefined : json['location'],
-            'code': !exists(json, 'code') ? undefined : json['code'],
-            'time': !exists(json, 'time') ? undefined : json['time'],
-            'latitude': !exists(json, 'latitude') ? undefined : json['latitude'],
-            'longitude': !exists(json, 'longitude') ? undefined : json['longitude'],
+            'delivery_image': !exists(json, 'delivery_image') ? undefined : json['delivery_image'],
+            'signature_image': !exists(json, 'signature_image') ? undefined : json['signature_image'],
         };
     }
 
     /* tslint:disable */
-    function TrackingStatusInfoFromJSON(json) {
-        return TrackingStatusInfoFromJSONTyped(json);
+    function TrackerDetailsInfoFromJSON(json) {
+        return TrackerDetailsInfoFromJSONTyped(json);
     }
-    function TrackingStatusInfoFromJSONTyped(json, ignoreDiscriminator) {
+    function TrackerDetailsInfoFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
@@ -2375,6 +2396,52 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function TrackingEventFromJSON(json) {
+        return TrackingEventFromJSONTyped(json);
+    }
+    function TrackingEventFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'date': !exists(json, 'date') ? undefined : json['date'],
+            'description': !exists(json, 'description') ? undefined : json['description'],
+            'location': !exists(json, 'location') ? undefined : json['location'],
+            'code': !exists(json, 'code') ? undefined : json['code'],
+            'time': !exists(json, 'time') ? undefined : json['time'],
+            'latitude': !exists(json, 'latitude') ? undefined : json['latitude'],
+            'longitude': !exists(json, 'longitude') ? undefined : json['longitude'],
+        };
+    }
+
+    /* tslint:disable */
+    function TrackerDetailsFromJSON(json) {
+        return TrackerDetailsFromJSONTyped(json);
+    }
+    function TrackerDetailsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'carrier_name': json['carrier_name'],
+            'carrier_id': json['carrier_id'],
+            'tracking_number': json['tracking_number'],
+            'info': !exists(json, 'info') ? undefined : TrackerDetailsInfoFromJSON(json['info']),
+            'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
+            'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
+            'test_mode': json['test_mode'],
+            'status': !exists(json, 'status') ? undefined : json['status'],
+            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'images': !exists(json, 'images') ? undefined : TrackerDetailsImagesFromJSON(json['images']),
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
     function TrackingStatusFromJSON(json) {
         return TrackingStatusFromJSONTyped(json);
     }
@@ -2387,7 +2454,7 @@ var Karrio = (function () {
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
-            'info': !exists(json, 'info') ? undefined : TrackingStatusInfoFromJSON(json['info']),
+            'info': !exists(json, 'info') ? undefined : TrackerDetailsInfoFromJSON(json['info']),
             'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
             'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
@@ -2397,6 +2464,8 @@ var Karrio = (function () {
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'delivery_image_url': !exists(json, 'delivery_image_url') ? undefined : json['delivery_image_url'],
+            'signature_image_url': !exists(json, 'signature_image_url') ? undefined : json['signature_image_url'],
         };
     }
 
@@ -2440,7 +2509,7 @@ var Karrio = (function () {
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'tracking': !exists(json, 'tracking') ? undefined : TrackingStatusFromJSON(json['tracking']),
+            'tracking': !exists(json, 'tracking') ? undefined : TrackerDetailsFromJSON(json['tracking']),
         };
     }
 
@@ -6665,8 +6734,8 @@ var Karrio = (function () {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * Create orders
+         * Create order batch. `Beta`
+         * Create order batch
          */
         BatchesApi.prototype.createOrdersRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6714,8 +6783,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * Create orders
+         * Create order batch. `Beta`
+         * Create order batch
          */
         BatchesApi.prototype.createOrders = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6732,8 +6801,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * Create shipments
+         * Create shipment batch. `Beta`
+         * Create shipment batch
          */
         BatchesApi.prototype.createShipmentsRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6781,8 +6850,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * Create shipments
+         * Create shipment batch. `Beta`
+         * Create shipment batch
          */
         BatchesApi.prototype.createShipments = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6799,8 +6868,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * Create trackers
+         * Create tracker batch. `Beta`
+         * Create tracker batch
          */
         BatchesApi.prototype.createTrackersRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6848,8 +6917,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * Create trackers
+         * Create tracker batch. `Beta`
+         * Create tracker batch
          */
         BatchesApi.prototype.createTrackers = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {

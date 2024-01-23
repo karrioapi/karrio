@@ -35,5 +35,5 @@ class UpdateDataTemplateMutationInput(utils.BaseInput):
 
 @strawberry.input
 class BatchOperationFilter(utils.Paginated):
-    resource_type: typing.List[ResourceTypeEnum] = strawberry.UNSET
-    status: typing.List[BatchOperationStatusEnum] = strawberry.UNSET
+    resource_type: typing.Optional[typing.List[ResourceTypeEnum]] = strawberry.UNSET
+    status: typing.Optional[typing.List[BatchOperationStatusEnum]] = strawberry.UNSET

@@ -59,30 +59,45 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
       <div className="dropdown-menu" id={`order-menu-${order.id}`} role="menu">
         <div className="dropdown-content">
 
-          {["unfulfilled", "partial"].includes(order?.status) &&
-            <AppLink className="dropdown-item"
-              href={`/orders/create_shipment?shipment_id=new&order_id=${order?.id}`}>
+          {["unfulfilled", "partial"].includes(order?.status) && <>
+            <AppLink className="dropdown-item" href={`/orders/create_shipment?shipment_id=new&order_id=${order?.id}`}>
               <span>Create shipment</span>
-            </AppLink>}
+            </AppLink>
+          </>}
 
-          {!isViewing &&
-            <a className="dropdown-item" onClick={displayDetails}>View Order</a>}
+          {!isViewing && <a className="dropdown-item" onClick={displayDetails}>
+            <span>View order</span>
+          </a>}
 
-          {order.status === OrderStatusEnum.Unfulfilled &&
+          {(order.source === "draft" && order.shipments.length === 0) && <>
+            <AppLink className="dropdown-item" href={`/draft_orders/${order?.id}`}>
+              <span>Edit order</span>
+            </AppLink>
             <a className="dropdown-item" onClick={() => confirmCancellation({
-              identifier: order.id as string,
-              label: `Cancel Order`,
-              action: 'Submit',
-              onConfirm: cancelOrder(order),
-            })}>Cancel Order</a>}
+              identifier: order.id as string, label: `Delete order`, action: 'Submit',
+              onConfirm: () => mutation.deleteOrder.mutateAsync({ id: order.id }),
+            })}>
+              <span>Delete order</span>
+            </a>
+          </>}
 
-          {((document_templates?.edges || []).length > 0 && !["fulfilled", "delivered", "cancelled"].includes(order?.status)) &&
-            <hr className="my-1" style={{ height: '1px' }} />}
+          {order.status === OrderStatusEnum.Unfulfilled && <>
+            <a className="dropdown-item" onClick={() => confirmCancellation({
+              identifier: order.id as string, label: `Cancel order`, action: 'Submit',
+              onConfirm: cancelOrder(order),
+            })}>
+              <span>Cancel order</span>
+            </a>
+          </>}
+
+          {((document_templates?.edges || []).length > 0 && !["fulfilled", "delivered", "cancelled"].includes(order?.status)) && <>
+            <hr className="my-1" style={{ height: '1px' }} />
+          </>}
 
           {(document_templates?.edges || []).map(({ node: template }) =>
-            <a href={url$`${references.HOST}/documents/${template.id}.${template.slug}?orders=${order.id}`}
+            <a href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${order.id}`}
               className="dropdown-item" target="_blank" rel="noreferrer" key={template.id}>
-              Download {template.name}
+              <span>Download {template.name}</span>
             </a>
           )}
         </div>

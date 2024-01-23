@@ -542,11 +542,13 @@ class Rates:
         carrier_ids = payload.get("carrier_ids", [])
         shipper_country_code = payload["shipper"].get("country_code")
         carriers = carriers or Carriers.list(
-            active=True,
-            capability="rating",
-            carrier_ids=carrier_ids,
-            services=services,
-            **carrier_filters,
+            **{
+                "active": True,
+                "capability": "rating",
+                "carrier_ids": carrier_ids,
+                "services": services,
+                **carrier_filters,
+            }
         )
 
         gateways = utils.filter_rate_carrier_compatible_gateways(

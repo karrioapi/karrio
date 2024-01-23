@@ -129,7 +129,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
     evt.preventDefault();
     setLoading(true);
     try {
-      const { carrier_name: _, __typename, capabilities, display_name, test_mode, ...content } = payload;
+      const { carrier_name: _, __typename, capabilities, display_name, rate_sheet, test_mode, ...content } = payload;
       const data = { [carrier_name]: carrier_name.includes('generic') ? { ...content, display_name } : content };
       if (isNew) {
         operation.create && await operation.create(data);
@@ -655,6 +655,26 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               className="is-small is-fullwidth"
                             />}
 
+                          {"brand_color" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.brand_color || ""}
+                              type='color'
+                              name="brand_color"
+                              label="Brand color"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"text_color" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.text_color || ""}
+                              type='color'
+                              name="text_color"
+                              label="Text color"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
                           {"account_service_type" in connection_configs[carrier_name.toString()] &&
                             <SelectField value={payload.config?.account_service_type}
                               name="account_service_type"
@@ -669,6 +689,17 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               <option value={`PT`}>{`Standard pallet service - PT`}</option>
                               <option value={`PT2`}>{`Oversized pallet service - PT2`}</option>
                             </SelectField>}
+
+
+                          {"server_url" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.server_url || ""}
+                              name="server_url"
+                              label="Custom server URL"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-12 mb-0"
+                              className="is-small is-fullwidth"
+                              placeholder='https://your-instance.alliedexpress.com.au'
+                            />}
 
                           {"shipping_services" in connection_configs[carrier_name.toString()] &&
                             <SelectField defaultValue={payload.config?.shipping_services}

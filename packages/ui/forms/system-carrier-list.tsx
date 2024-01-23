@@ -1,12 +1,15 @@
 import { useSystemConnectionMutation, useSystemConnections } from '@karrio/hooks/system-connection';
 import { ConnectionDescription } from '../components/connection-description';
 import { CarrierNameBadge } from '../components/carrier-name-badge';
+import { useAppMode } from '@karrio/hooks/app-mode';
 import { NotificationType } from '@karrio/types';
 import { Notify } from '../components/notifier';
 import React, { useContext } from 'react';
+import { jsonify } from '@karrio/lib';
 
 
 export const SystemConnectionList: React.FC = () => {
+  const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
   const { query } = useSystemConnections();
   const { updateSystemConnection } = useSystemConnectionMutation();
@@ -32,22 +35,27 @@ export const SystemConnectionList: React.FC = () => {
 
             <tbody className="system-connections-table">
               <tr>
-                <td className="is-size-7" colSpan={4}>ACCOUNTS</td>
+                <td className="is-size-7" colSpan={testMode ? 4 : 3}>ACCOUNTS</td>
               </tr>
 
               {(query.data?.system_connections || []).map((connection) => (
 
                 <tr key={`connection-${connection.id}-${Date.now()}`}>
-                  <td className="carrier is-vcentered pl-0">
+                  <td className="carrier is-vcentered pl-1">
                     <CarrierNameBadge
                       carrier_name={connection.carrier_name}
                       display_name={connection.display_name}
-                      className="box has-text-weight-bold"
+                      className="box p-3 has-text-weight-bold"
+                      customTheme={!!connection.config?.brand_color ? '' : undefined}
+                      style={JSON.parse(jsonify({
+                        background: connection.config?.brand_color,
+                        color: connection.config?.text_color
+                      }))}
                     />
                   </td>
-                  <td className="mode is-vcentered">
-                    {connection.test_mode ? <span className="tag is-warning is-centered">Test</span> : <></>}
-                  </td>
+                  {testMode && <td className="mode is-vcentered">
+                    <span className="tag is-warning is-centered">Test</span>
+                  </td>}
                   <td className="details">
                     <ConnectionDescription connection={connection} />
                   </td>

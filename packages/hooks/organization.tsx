@@ -1,5 +1,5 @@
 import { accept_organization_invitation, ACCEPT_ORGANIZATION_INVITATION, ChangeOrganizationOwnerMutationInput, change_organization_owner, CHANGE_ORGANIZATION_OWNER, CreateOrganizationMutationInput, create_organization, CREATE_ORGANIZATION, delete_organization, DELETE_ORGANIZATION, delete_organization_invitation, DELETE_ORGANIZATION_INVITES, get_organizations, GET_ORGANIZATIONS, get_organizations_organizations, get_organization_invitation, GET_ORGANIZATION_INVITATION, SendOrganizationInvitesMutationInput, send_organization_invites, SEND_ORGANIZATION_INVITES, SetOrganizationUserRolesMutationInput, set_organization_user_roles, SET_ORGANIZATION_USER_ROLES, UpdateOrganizationMutationInput, update_organization, UPDATE_ORGANIZATION } from "@karrio/types/graphql/ee";
-import { DefinedUseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, insertUrlParam, onError, setCookie } from "@karrio/lib";
 import { useSession } from "next-auth/react";
 import { useKarrio } from "./karrio";
@@ -7,14 +7,14 @@ import React from "react";
 
 export type OrganizationType = get_organizations_organizations;
 type OrganizationContextType = {
-  query?: DefinedUseQueryResult<any, any>;
+  query?: UseQueryResult<get_organizations, any>;
   organization?: OrganizationType,
   organizations?: OrganizationType[],
 };
 export const OrganizationContext = React.createContext<OrganizationContextType>({} as any);
 
 const extractCurrent = (orgs?: OrganizationType[], orgId?: string): OrganizationType | undefined => {
-  const current = (orgs || []).find(org => org?.id === orgId)
+  const current = (orgs || []).find(org => org?.id === orgId);
   return current
 };
 
@@ -44,12 +44,19 @@ export const OrganizationProvider: React.FC<OrganizationProviderProps> = ({ chil
       }
     ),
     enabled: props.metadata?.MULTI_ORGANIZATIONS === true,
-    initialData: props.organizations,
     staleTime: 1500000,
     onError
   });
 
   if (!props.metadata?.MULTI_ORGANIZATIONS) return <>{children}</>;
+
+  React.useEffect(() => {
+    if (!query.data || !query.isFetched) return;
+    setOrganizations(query.data?.organizations)
+    const current = extractCurrent(query.data?.organizations, props.orgId);
+    setOrganization(current);
+  }, [props.orgId, query.data]);
+
   return (
     <OrganizationContext.Provider value={{ organization, organizations, query }}>
       {children}

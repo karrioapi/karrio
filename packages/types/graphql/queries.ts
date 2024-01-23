@@ -437,6 +437,11 @@ export const GET_SHIPMENT = gql`query get_shipment($id: String!) {
       code
       details
     }
+    selected_rate_carrier {
+      carrier_id
+      carrier_name
+      config
+    }
     tracker {
       id
       tracking_number
@@ -706,6 +711,11 @@ export const GET_SHIPMENTS = gql`query get_shipments($filter: ShipmentFilter) {
           message
           code
           details
+        }
+        selected_rate_carrier {
+          carrier_id
+          carrier_name
+          config
         }
       }
     }
@@ -1147,6 +1157,11 @@ export const GET_TRACKER = gql`query get_tracker($id: String!) {
       full_name
     }
     test_mode
+    tracking_carrier {
+      carrier_id
+      carrier_name
+      config
+    }
     shipment {
       id
       service
@@ -1227,6 +1242,11 @@ export const GET_TRACKERS = gql`query get_trackers($filter: TrackerFilter) {
         carrier_name
         meta
         metadata
+        tracking_carrier {
+          carrier_id
+          carrier_name
+          config
+        }
         shipment {
           id
           service
@@ -1335,6 +1355,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query get_system_connections {
     carrier_name
     display_name
     enabled
+    config
   }
 }
 `;
@@ -2650,7 +2671,95 @@ export const GET_ORDER = gql`query get_order($id: String!) {
         code
         details
       }
+      tracker_id
+      tracker {
+        id
+        tracking_number
+        carrier_id
+        carrier_name
+      }
     }
+  }
+}
+`;
+
+export const GET_ORDER_DATA = gql`query get_order_data($id: String!) {
+  order(id: $id) {
+    id
+    shipping_to {
+      id
+      postal_code
+      city
+      person_name
+      company_name
+      country_code
+      email
+      phone_number
+      state_code
+      suburb
+      residential
+      street_number
+      address_line1
+      address_line2
+      federal_tax_id
+      state_tax_id
+      validate_location
+    }
+    shipping_from {
+      id
+      postal_code
+      city
+      person_name
+      company_name
+      country_code
+      email
+      phone_number
+      state_code
+      suburb
+      residential
+      street_number
+      address_line1
+      address_line2
+      federal_tax_id
+      state_tax_id
+      validate_location
+    }
+    billing_address {
+      id
+      postal_code
+      city
+      person_name
+      company_name
+      country_code
+      email
+      phone_number
+      state_code
+      suburb
+      residential
+      street_number
+      address_line1
+      address_line2
+      federal_tax_id
+      state_tax_id
+      validate_location
+    }
+    line_items {
+      id
+      weight
+      title
+      description
+      quantity
+      sku
+      hs_code
+      value_amount
+      weight_unit
+      value_currency
+      origin_country
+      metadata
+      parent_id
+    }
+    options
+    metadata
   }
 }
 `;
@@ -2957,6 +3066,13 @@ export const GET_ORDERS = gql`query get_orders($filter: OrderFilter) {
             code
             details
           }
+          tracker_id
+          tracker {
+            id
+            tracking_number
+            carrier_id
+            carrier_name
+          }
         }
       }
     }
@@ -3233,6 +3349,81 @@ export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilte
     }
   }
 }`;
+
+export const CREATE_ORDER = gql`mutation CreateOrder($data: CreateOrderMutationInput!) {
+  create_order(input: $data) {
+    order {
+      id
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const UPDATE_ORDER = gql`mutation UpdateOrder($data: UpdateOrderMutationInput!) {
+  update_order(input: $data) {
+    order {
+      id
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_ORDER = gql`mutation DeleteOrder($data: DeleteOrderMutationInput!) {
+  delete_order(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const GET_BATCH_OPERATION = gql`query get_batch_operation($id: String!) {
+  batch_operation(id: $id) {
+    id
+    resource_type
+    status
+    test_mode
+    resources {
+      id
+      status
+    }
+  }
+}
+`;
+
+export const GET_BATCH_OPERATIONS = gql`query get_batch_operations($filter: BatchOperationFilter) {
+  batch_operations(filter: $filter) {
+    page_info {
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        resource_type
+        status
+        test_mode
+        resources {
+          id
+          status
+        }
+      }
+    }
+  }
+}
+`;
 
 export const DELETE_METAFIELD = gql`mutation deleteMetafield($data: DeleteMutationInput!) {
   delete_metafield(input: $data) {

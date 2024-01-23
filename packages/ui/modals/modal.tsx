@@ -14,6 +14,7 @@ export type ModalFormProps<T> = T & {
 };
 export type CustomProps = {
   backgroundDismiss?: boolean;
+  addCloseButton?: boolean;
   className?: string;
 };
 
@@ -23,11 +24,11 @@ export const ModalProvider: React.FC<ModalComponent> = ({ children }) => {
   const [isActive, setIsActive] = useState(false);
   const [key, setKey] = useState<string>(`modal-${Date.now()}`);
   const [modal, setModal] = useState<JSX.Element | undefined>();
-  const [props, setProps] = useState<CustomProps>({});
+  const [props, setProps] = useState<CustomProps>({ addCloseButton: true });
 
   const open = (modal: JSX.Element, props: CustomProps = {}) => {
     setModal(modal);
-    setProps(props);
+    setProps({ addCloseButton: true, ...props });
     setIsActive(true);
     setKey(`modal-${Date.now()}`);
   };
@@ -50,7 +51,7 @@ export const ModalProvider: React.FC<ModalComponent> = ({ children }) => {
 
           </div>
 
-          <button className="modal-close is-large has-background-dark" aria-label="close" onClick={close}></button>
+          {props.addCloseButton && <button className="modal-close is-large has-background-dark" aria-label="close" onClick={close}></button>}
         </div>
 
       </ModalContext.Provider>

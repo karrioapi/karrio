@@ -1,4 +1,4 @@
-import { AddressType, Collection, CommodityType, CustomsType, ErrorType, OrderType, ParcelType, PresetCollection, RequestError, ShipmentType } from "@karrio/types";
+import { AddressType, Collection, CommodityType, CustomsType, DEFAULT_CUSTOMS_CONTENT, DEFAULT_PARCEL_CONTENT, ErrorType, LabelTypeEnum, OrderType, PaidByEnum, ParcelType, PresetCollection, RequestError, ShipmentType } from "@karrio/types";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
 import getConfig from 'next/config';
@@ -399,6 +399,87 @@ export function toSingleItem(collection: CommodityType[]) {
 
       return acc.concat(clones);
     }, [] as typeof collection[]);
+}
+
+export function createShipmentFromOrders(orderList: OrderType[], templates: any): Partial<ShipmentType> {
+
+  const default_parcel = templates.data?.default_templates.default_parcel?.parcel;
+  const default_address = templates.data?.default_templates.default_address?.address;
+
+  const order_ids = orderList.map(({ order_id }) => order_id).join(',');
+  const { id: _, ...recipient } = orderList[0].shipping_to || {};
+  const { id: __, ...shipper } = (orderList[0]!.shipping_from || default_address || {} as any);
+  const billing_address = orderList[0].billing_address ? orderList[0].billing_address : undefined;
+
+  // Collect orders merged options
+  const order_options: any = orderList.reduce((acc, { options }) => ({ ...acc, ...options }), {});
+  const order_metadatas: any = orderList.reduce((acc, { metadata }) => ({ ...acc, ...(metadata || {}) }), {});
+
+  // Collect unfulfilled line items
+  const line_items = (
+    orderList
+      .map(({ line_items }) => line_items).flat()
+      .map(({ id: parent_id, unfulfilled_quantity: quantity, ...item }) => ({ ...item, quantity, parent_id }))
+      .filter(({ quantity }) => quantity || 0 > 0)
+  );
+  const parcel = default_parcel || DEFAULT_PARCEL_CONTENT;
+  const parcel_items = order_options.single_item_per_parcel ? toSingleItem(line_items as any) : [line_items];
+  const parcels: any[] = (parcel_items as typeof line_items[]).map(items => {
+    const weight = items.reduce((acc, { weight, quantity }) => (weight || 0) * (quantity || 1) + acc, 0.0);
+    const weight_unit = items[0]?.weight_unit || parcel.weight_unit;
+    return { ...parcel, items, weight, weight_unit };
+  });
+  const declared_value = line_items.reduce(
+    (acc, { value_amount, quantity }) => (acc + (value_amount || 0) * (quantity || 1)), 0
+  );
+  const options = {
+    ...(order_options.service ? { service: order_options.service } : {}),
+    ...(order_options.currency ? { currency: order_options.currency } : {}),
+    ...(order_options.dangerous_good ? { dangerous_good: order_options.dangerous_good } : {}),
+    ...(order_options.paperless_trade ? { paperless_trade: order_options.paperless_trade } : {}),
+    ...(order_options.invoice_template ? { invoice_template: order_options.invoice_template } : {}),
+    declared_value: parseFloat(`${declared_value}`).toFixed(2),
+  };
+  const metadata = {
+    order_ids,
+    ...order_metadatas,
+  };
+  const payment = {
+    paid_by: order_options.paid_by as any || PaidByEnum.sender,
+    ...(order_options.currency ? { currency: order_options.currency } : {}),
+    ...(order_options.payment_account_number ? { account_number: order_options.payment_account_number } : {}),
+  } as any;
+  const isIntl = shipper && (shipper.country_code !== recipient.country_code);
+  const isDocument = parcels.every(p => p.is_document);
+  const customs = (isDocument ? null : {
+    ...DEFAULT_CUSTOMS_CONTENT,
+    commercial_invoice: true,
+    invoice: orderList[0].order_id,
+    invoice_date: order_options.invoice_date || moment().format('YYYY-MM-DD'),
+    incoterm: payment?.paid_by == 'sender' ? 'DDP' : 'DDU',
+    commodities: getShipmentCommodities({ parcels } as any),
+    duty: {
+      ...DEFAULT_CUSTOMS_CONTENT.duty,
+      currency: order_options?.currency,
+      paid_by: order_options.duty_paid_by || payment?.paid_by,
+      account_number: order_options.duty_account_number || payment?.account_number,
+      declared_value,
+    },
+    duty_billing_address: billing_address,
+  });
+
+  return {
+    ...(shipper ? { shipper: (shipper as any) } : {}),
+    ...(recipient ? { recipient: (recipient as any) } : {}),
+    options,
+    payment,
+    parcels,
+    metadata,
+    label_type: LabelTypeEnum.PDF,
+    carrier_ids: order_options.carrier_ids || [],
+    billing_address,
+    customs: (isIntl ? customs : undefined) as any,
+  };
 }
 
 export function commodityMatch(item: Partial<CommodityType>, items?: CommodityType[]) {

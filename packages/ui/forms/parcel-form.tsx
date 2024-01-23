@@ -1,25 +1,14 @@
+import { DEFAULT_PARCEL_CONTENT, DIMENSION_UNITS, ParcelType, PresetCollection, ShipmentType, WEIGHT_UNITS } from '@karrio/types';
 import { isEqual, findPreset, formatDimension, formatRef, isNone, validationMessage, validityCheck } from '@karrio/lib';
-import { DIMENSION_UNITS, ParcelType, PresetCollection, ShipmentType, WEIGHT_UNITS } from '@karrio/types';
-import { DimensionUnitEnum, WeightUnitEnum } from '@karrio/types';
 import React, { useEffect, useReducer, useState } from 'react';
+import { CheckBoxField } from '../components/checkbox-field';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useParcelTemplates } from '@karrio/hooks/parcel';
-import { CheckBoxField } from '../components/checkbox-field';
 import { SelectField } from '../components/select-field';
 import { InputField } from '../components/input-field';
+import { WeightUnitEnum } from '@karrio/types';
 
 type stateValue = string | number | boolean | Partial<ParcelType>;
-export const DEFAULT_PARCEL_CONTENT: Partial<ParcelType> = {
-  weight: 1.0,
-  width: 33.7,
-  height: 18.2,
-  length: 10.0,
-  is_document: false,
-  packaging_type: "your_packaging",
-  weight_unit: WeightUnitEnum.KG,
-  dimension_unit: DimensionUnitEnum.CM,
-  items: [],
-};
 
 interface ParcelFormComponent {
   value?: ParcelType;

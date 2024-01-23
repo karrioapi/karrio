@@ -13,6 +13,10 @@ Karrio custom styling
     box-shadow: none;
     border: 1px solid #e5e5e5;
   }
+
+  &.is-clickable:hover {
+    background-color: #fafafa;
+  }
 }
 
 .options-item,
@@ -41,38 +45,38 @@ Karrio custom styling
 }
 
 .shipments-table {
-  .carrier {
-    width: 8%;
-    min-width: 90px;
+  .selector {
+    width: 3%;
   }
 
   .service {
-    min-width: 10vw;
-    max-width: 160px;
+    width: 15%;
+    min-width: 250px;
   }
 
   .status {
-    width: 10%;
+    width: 100px;
+    min-width: 100px;
+    max-width: 120px;
   }
 
   .recipient {
-    min-width: 10vw;
-    max-width: 200px;
+    min-width: 200px;
   }
 
   .reference {
-    min-width: 10vw;
-    max-width: 150px;
+    min-width: 150px;
   }
 
   .date {
-    width: 15%;
+    width: 120px;
     min-width: 120px;
     max-width: 120px;
   }
 
   .action {
-    width: 2%;
+    width: 35px;
+    min-width: 35px;
   }
 
   tbody>tr.items {
@@ -86,12 +90,12 @@ Karrio custom styling
 
 .connections-table {
   .carrier {
-    width: 24%;
+    width: 15%;
     text-align: center !important;
   }
 
   .mode {
-    width: 6%;
+    width: 5%;
   }
 
   .active {
@@ -117,7 +121,7 @@ Karrio custom styling
   }
 
   .active {
-    width: 6%;
+    width: 5%;
   }
 
   .details {}
@@ -130,7 +134,7 @@ Karrio custom styling
 
 .system-connections-table {
   .carrier {
-    width: 24%;
+    width: 15%;
     text-align: center !important;
   }
 
@@ -289,14 +293,9 @@ Karrio custom styling
 }
 
 .trackers-table {
-  .carrier {
-    width: 8%;
-    min-width: 90px;
-  }
-
-  .tracking-number {
-    min-width: 10vw;
-    max-width: 160px;
+  .service {
+    width: 15%;
+    min-width: 250px;
   }
 
   .status {
@@ -357,29 +356,37 @@ Karrio custom styling
 
   .order {
     width: 15%;
+    min-width: 150px;
   }
 
-  .items {
-    min-width: 10vw;
-    max-width: 150px;
+  .line-items {
+    min-width: 150px;
   }
 
   .status {
-    width: 10%;
+    width: 100px;
+    min-width: 100px;
+    max-width: 120px;
   }
 
   .customer {
-    min-width: 10vw;
-    max-width: 200px;
+    min-width: 200px;
   }
 
   .date {
-    width: 15%;
+    width: 120px;
     min-width: 120px;
+    max-width: 120px;
+  }
+
+  .service {
+    width: 20%;
+    min-width: 250px;
   }
 
   .action {
-    width: 2%;
+    width: 35px;
+    min-width: 35px;
   }
 
   tbody>tr.items {
@@ -391,12 +398,44 @@ Karrio custom styling
   }
 }
 
+.batch-labels-table {
+  .selector {
+    width: 3%;
+  }
+
+  .order {
+    width: 20%;
+    min-width: 160px;
+  }
+
+  .items {
+    min-width: 150px;
+    max-width: 150px;
+  }
+
+  .package {
+    min-width: 150px;
+    max-width: 150px;
+  }
+
+  .total {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
+
+  .service {
+    width: 20%;
+    min-width: 250px;
+  }
+}
+
 .related-item-table {
   border-top: 2px solid #eee;
   border-bottom: 2px solid #eee;
 
   .status {
-    width: 8%;
+    width: 3%;
   }
 
   .description {

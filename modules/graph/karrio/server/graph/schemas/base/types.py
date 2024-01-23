@@ -636,6 +636,14 @@ class TrackerType:
     def messages(self: manager.Tracking) -> typing.List[MessageType]:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
+    @strawberry.field
+    def tracking_carrier(self: manager.Tracking) -> typing.Optional["ConnectionType"]:
+        return (
+            ConnectionType.parse(self.tracking_carrier)
+            if self.tracking_carrier
+            else None
+        )
+
     @staticmethod
     @utils.authentication_required
     def resolve(info, id: str) -> typing.Optional["TrackerType"]:
@@ -712,11 +720,21 @@ class ShipmentType:
         return RateType.parse(self.selected_rate) if self.selected_rate else None
 
     @strawberry.field
+    def selected_rate_carrier(
+        self: manager.Shipment,
+    ) -> typing.Optional["ConnectionType"]:
+        return (
+            ConnectionType.parse(self.selected_rate_carrier)
+            if self.selected_rate_carrier
+            else None
+        )
+
+    @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
         return PaymentType(**self.payment) if self.payment else None
 
     @strawberry.field
-    def messages(self: manager.Tracking) -> typing.List[MessageType]:
+    def messages(self: manager.Shipment) -> typing.List[MessageType]:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
     @staticmethod
@@ -901,6 +919,14 @@ class ConnectionType:
     display_name: str
     capabilities: typing.List[str]
     test_mode: bool
+
+    @strawberry.field
+    def metadata(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+        return getattr(self.metadata, "metadata", None)
+
+    @strawberry.field
+    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+        return getattr(self.config, "config", None)
 
     @staticmethod
     @utils.authentication_required

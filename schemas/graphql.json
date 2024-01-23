@@ -2341,6 +2341,30 @@
             },
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "metadata",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "config",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "inputFields": null,
@@ -16598,6 +16622,18 @@
             "deprecationReason": null
           },
           {
+            "name": "selected_rate_carrier",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "INTERFACE",
+              "name": "ConnectionType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "payment",
             "description": null,
             "args": [],
@@ -17054,6 +17090,18 @@
                   }
                 }
               }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "tracking_carrier",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "INTERFACE",
+              "name": "ConnectionType",
+              "ofType": null
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -21106,19 +21154,15 @@
             "name": "resource_type",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "ResourceStatus",
-                    "ofType": null
-                  }
+                  "kind": "ENUM",
+                  "name": "ResourceStatus",
+                  "ofType": null
                 }
               }
             },
@@ -21128,19 +21172,15 @@
             "name": "status",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
+              "kind": "LIST",
               "name": null,
               "ofType": {
-                "kind": "LIST",
+                "kind": "NON_NULL",
                 "name": null,
                 "ofType": {
-                  "kind": "NON_NULL",
-                  "name": null,
-                  "ofType": {
-                    "kind": "ENUM",
-                    "name": "BatchOperationStatus",
-                    "ofType": null
-                  }
+                  "kind": "ENUM",
+                  "name": "BatchOperationStatus",
+                  "ofType": null
                 }
               }
             },
@@ -26347,7 +26387,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "DateTime",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null
@@ -26357,7 +26397,7 @@
             "description": null,
             "type": {
               "kind": "SCALAR",
-              "name": "DateTime",
+              "name": "String",
               "ofType": null
             },
             "defaultValue": null
@@ -26403,6 +26443,18 @@
             "deprecationReason": null
           },
           {
+            "name": "total_errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "order_volume",
             "description": null,
             "args": [],
@@ -26416,6 +26468,18 @@
           },
           {
             "name": "total_requests",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "total_trackers",
             "description": null,
             "args": [],
             "type": {
@@ -26458,6 +26522,26 @@
               "kind": "SCALAR",
               "name": "Float",
               "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "api_errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
+                }
+              }
             },
             "isDeprecated": false,
             "deprecationReason": null
@@ -26524,6 +26608,26 @@
           },
           {
             "name": "shipping_spend",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "UsageStatType",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "tracker_count",
             "description": null,
             "args": [],
             "type": {
@@ -27810,7 +27914,7 @@
             "deprecationReason": null
           },
           {
-            "name": "partial_order_update",
+            "name": "update_order",
             "description": null,
             "args": [
               {
@@ -27821,7 +27925,7 @@
                   "name": null,
                   "ofType": {
                     "kind": "INPUT_OBJECT",
-                    "name": "PartialOrderUpdateMutationInput",
+                    "name": "UpdateOrderMutationInput",
                     "ofType": null
                   }
                 },
@@ -27833,7 +27937,38 @@
               "name": null,
               "ofType": {
                 "kind": "OBJECT",
-                "name": "PartialOrderUpdateMutation",
+                "name": "UpdateOrderMutation",
+                "ofType": null
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "delete_order",
+            "description": null,
+            "args": [
+              {
+                "name": "input",
+                "description": null,
+                "type": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "INPUT_OBJECT",
+                    "name": "DeleteOrderMutationInput",
+                    "ofType": null
+                  }
+                },
+                "defaultValue": null
+              }
+            ],
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "OBJECT",
+                "name": "DeleteOrderMutation",
                 "ofType": null
               }
             },
@@ -33514,6 +33649,24 @@
             "defaultValue": null
           },
           {
+            "name": "postal_codes",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "country_codes",
             "description": null,
             "type": {
@@ -37882,6 +38035,24 @@
             "defaultValue": null
           },
           {
+            "name": "postal_codes",
+            "description": null,
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            "defaultValue": null
+          },
+          {
             "name": "country_codes",
             "description": null,
             "type": {
@@ -41919,20 +42090,6 @@
         "fields": null,
         "inputFields": [
           {
-            "name": "order_date",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Date",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
             "name": "shipping_to",
             "description": null,
             "type": {
@@ -41965,6 +42122,26 @@
                   }
                 }
               }
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "order_id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "order_date",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null
           },
@@ -42004,16 +42181,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "JSON",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "test_mode",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
               "ofType": null
             },
             "defaultValue": null
@@ -42068,7 +42235,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "PartialOrderUpdateMutationInput",
+        "name": "UpdateOrderMutationInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -42087,16 +42254,22 @@
             "defaultValue": null
           },
           {
+            "name": "order_id",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
             "name": "order_date",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Date",
-                "ofType": null
-              }
+              "kind": "SCALAR",
+              "name": "String",
+              "ofType": null
             },
             "defaultValue": null
           },
@@ -42104,22 +42277,8 @@
             "name": "shipping_to",
             "description": null,
             "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "INPUT_OBJECT",
-                "name": "AddressInput",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "line_items",
-            "description": null,
-            "type": {
               "kind": "INPUT_OBJECT",
-              "name": "UpdateCommodityInput",
+              "name": "UpdateAddressInput",
               "ofType": null
             },
             "defaultValue": null
@@ -42129,7 +42288,7 @@
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "AddressInput",
+              "name": "UpdateAddressInput",
               "ofType": null
             },
             "defaultValue": null
@@ -42139,7 +42298,7 @@
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "AddressInput",
+              "name": "UpdateAddressInput",
               "ofType": null
             },
             "defaultValue": null
@@ -42165,12 +42324,20 @@
             "defaultValue": null
           },
           {
-            "name": "test_mode",
+            "name": "line_items",
             "description": null,
             "type": {
-              "kind": "SCALAR",
-              "name": "Boolean",
-              "ofType": null
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "UpdateCommodityInput",
+                  "ofType": null
+                }
+              }
             },
             "defaultValue": null
           }
@@ -42181,7 +42348,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "PartialOrderUpdateMutation",
+        "name": "UpdateOrderMutation",
         "description": null,
         "fields": [
           {
@@ -42211,6 +42378,74 @@
             "type": {
               "kind": "OBJECT",
               "name": "OrderType",
+              "ofType": null
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          }
+        ],
+        "inputFields": null,
+        "interfaces": [],
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "INPUT_OBJECT",
+        "name": "DeleteOrderMutationInput",
+        "description": null,
+        "fields": null,
+        "inputFields": [
+          {
+            "name": "id",
+            "description": null,
+            "type": {
+              "kind": "NON_NULL",
+              "name": null,
+              "ofType": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            "defaultValue": null
+          }
+        ],
+        "interfaces": null,
+        "enumValues": null,
+        "possibleTypes": null
+      },
+      {
+        "kind": "OBJECT",
+        "name": "DeleteOrderMutation",
+        "description": null,
+        "fields": [
+          {
+            "name": "errors",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "LIST",
+              "name": null,
+              "ofType": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "OBJECT",
+                  "name": "ErrorType",
+                  "ofType": null
+                }
+              }
+            },
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "id",
+            "description": null,
+            "args": [],
+            "type": {
+              "kind": "SCALAR",
+              "name": "String",
               "ofType": null
             },
             "isDeprecated": false,

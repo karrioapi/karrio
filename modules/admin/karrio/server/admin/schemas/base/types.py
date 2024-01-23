@@ -169,23 +169,27 @@ SystemCarrierConnectionType: typing.Any = strawberry.union(
 @strawberry.type
 class SystemUsageType:
     total_errors: typing.Optional[int] = None
-    total_requests: typing.Optional[int] = None
     order_volume: typing.Optional[float] = None
+    total_requests: typing.Optional[int] = None
+    total_trackers: typing.Optional[int] = None
     total_shipments: typing.Optional[int] = None
     organization_count: typing.Optional[int] = None
-    api_errors: typing.List[utils.UsageStatType] = None
-    api_requests: typing.List[utils.UsageStatType] = None
-    order_volumes: typing.List[utils.UsageStatType] = None
-    shipment_count: typing.List[utils.UsageStatType] = None
-    shipment_spend: typing.List[utils.UsageStatType] = None
+    total_shipping_spend: typing.Optional[float] = None
+    api_errors: typing.Optional[typing.List[utils.UsageStatType]] = None
+    api_requests: typing.Optional[typing.List[utils.UsageStatType]] = None
+    order_volumes: typing.Optional[typing.List[utils.UsageStatType]] = None
+    shipment_count: typing.Optional[typing.List[utils.UsageStatType]] = None
+    shipping_spend: typing.Optional[typing.List[utils.UsageStatType]] = None
+    tracker_count: typing.Optional[typing.List[utils.UsageStatType]] = None
 
     @staticmethod
     @utils.authentication_required
-    @admin.staff_required
     def resolve(
         info,
         filter: typing.Optional[utils.UsageFilter] = strawberry.UNSET,
     ) -> "SystemUsageType":
+        _test_mode = info.context.request.test_mode
+        _test_filter = dict(test_mode=_test_mode)
         _filter = {
             "date_before": datetime.datetime.now(),
             "date_after": (datetime.datetime.now() - datetime.timedelta(days=30)),
@@ -195,7 +199,7 @@ class SystemUsageType:
         api_requests = (
             filters.LogFilter(
                 _filter,
-                core.APILogIndex.objects.filter(),
+                core.APILogIndex.objects.filter(**_test_filter),
             )
             .qs.annotate(date=functions.TruncDay("requested_at"))
             .values("date")
@@ -205,7 +209,7 @@ class SystemUsageType:
         api_errors = (
             filters.LogFilter(
                 {**_filter, "status": "failed"},
-                core.APILogIndex.objects.filter(),
+                core.APILogIndex.objects.filter(**_test_filter),
             )
             .qs.annotate(date=functions.TruncDay("requested_at"))
             .values("date")
@@ -218,7 +222,9 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                orders.Order.objects.filter(),
+                orders.Order.objects.filter(**_test_filter).exclude(
+                    status__in=["cancelled", "unfulfilled"]
+                ),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
@@ -236,36 +242,54 @@ class SystemUsageType:
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
                 ),
-                manager.Shipment.objects.filter(),
+                manager.Shipment.objects.filter(**_test_filter),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
             .annotate(count=models.Count("id"))
             .order_by("-date")
         )
-        shipment_spend = (
+        shipping_spend = (
             filters.ShipmentFilters(
                 dict(
                     created_before=_filter["date_before"],
                     created_after=_filter["date_after"],
-                    status=["cancelled", "draft"],
                 ),
-                manager.Shipment.objects.filter(),
+                manager.Shipment.objects.filter(**_test_filter).exclude(
+                    status__in=["cancelled", "draft"]
+                ),
             )
             .qs.annotate(date=functions.TruncDay("created_at"))
             .values("date")
             .annotate(
-                count=functions.Cast(
-                    models.Sum("selected_rate__total_charge"), models.FloatField()
+                count=models.Sum(
+                    functions.Cast("selected_rate__total_charge", models.FloatField())
                 )
             )
+            .order_by("-date")
+        )
+        tracker_count = (
+            filters.TrackerFilters(
+                dict(
+                    created_before=_filter["date_before"],
+                    created_after=_filter["date_after"],
+                ),
+                manager.Tracking.objects.filter(**_test_filter),
+            )
+            .qs.annotate(date=functions.TruncDay("created_at"))
+            .values("date")
+            .annotate(count=models.Count("id"))
             .order_by("-date")
         )
 
         total_errors = sum([item["count"] for item in api_errors], 0)
         total_requests = sum([item["count"] for item in api_requests], 0)
+        total_trackers = sum([item["count"] for item in tracker_count], 0)
         total_shipments = sum([item["count"] for item in shipment_count], 0)
         order_volume = lib.to_money(sum([item["count"] for item in order_volumes], 0.0))
+        total_shipping_spend = lib.to_money(
+            sum([item["count"] for item in shipping_spend], 0.0)
+        )
         organization_count = 0
 
         if conf.settings.MULTI_ORGANIZATIONS:
@@ -277,13 +301,16 @@ class SystemUsageType:
             order_volume=order_volume,
             total_errors=total_errors,
             total_requests=total_requests,
+            total_trackers=total_trackers,
             total_shipments=total_shipments,
             organization_count=organization_count,
+            total_shipping_spend=total_shipping_spend,
             api_errors=[utils.UsageStatType.parse(item) for item in api_errors],
             api_requests=[utils.UsageStatType.parse(item) for item in api_requests],
             order_volumes=[utils.UsageStatType.parse(item) for item in order_volumes],
             shipment_count=[utils.UsageStatType.parse(item) for item in shipment_count],
-            shipment_spend=[utils.UsageStatType.parse(item) for item in shipment_spend],
+            shipping_spend=[utils.UsageStatType.parse(item) for item in shipping_spend],
+            tracker_count=[utils.UsageStatType.parse(item) for item in tracker_count],
         )
 
 

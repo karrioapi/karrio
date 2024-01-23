@@ -1,5 +1,5 @@
-import { AddressType, CommodityType, CURRENCY_OPTIONS, CustomsType, NotificationType, OrderType, ShipmentType } from '@karrio/types';
-import { formatRef, formatWeight, getShipmentCommodities, isNone, isNoneOrEmpty, toSingleItem, useLocation } from '@karrio/lib';
+import { AddressType, CommodityType, CURRENCY_OPTIONS, CustomsType, DEFAULT_CUSTOMS_CONTENT, NotificationType, OrderType, ShipmentType } from '@karrio/types';
+import { createShipmentFromOrders, formatRef, formatWeight, getShipmentCommodities, isNone, isNoneOrEmpty, useLocation } from '@karrio/lib';
 import { CommodityEditModalProvider, CommodityStateContext } from '@karrio/ui/modals/commodity-edit-modal';
 import { AddressModalEditor, CustomsModalEditor, ParcelModalEditor } from '@karrio/ui/modals/form-modals';
 import { MetadataEditor, MetadataEditorContext } from '@karrio/ui/forms/metadata-editor';
@@ -10,11 +10,9 @@ import { LabelTypeEnum, MetadataObjectTypeEnum, PaidByEnum } from '@karrio/types
 import { MessagesDescription } from '@karrio/ui/components/messages-description';
 import { AddressDescription } from '@karrio/ui/components/address-description';
 import { ParcelDescription } from '@karrio/ui/components/parcel-description';
-import { DEFAULT_CUSTOMS_CONTENT } from '@karrio/ui/forms/customs-info-form';
 import { CommoditySummary } from '@karrio/ui/components/commodity-summary';
 import { RateDescription } from '@karrio/ui/components/rate-description';
 import { LineItemSelector } from '@karrio/ui/forms/line-item-selector';
-import { DEFAULT_PARCEL_CONTENT } from '@karrio/ui/forms/parcel-form';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
 import { CheckBoxField } from '@karrio/ui/components/checkbox-field';
 import { TextAreaField } from '@karrio/ui/components/textarea-field';
@@ -123,84 +121,9 @@ export default function CreateShipmentPage(pageProps: any) {
       return !!item;
     };
     const setInitialData = () => {
-      const orderList = orders.data!.orders!.edges;
-      const default_parcel = templates.data?.default_templates.default_parcel?.parcel;
-      const default_address = templates.data?.default_templates.default_address?.address;
+      const orderList = orders.data!.orders!.edges.map(({ node }) => node);
 
-      const order_ids = orderList.map(({ node: { order_id } }) => order_id).join(',');
-      const { id: _, ...recipient } = orderList[0].node.shipping_to || {};
-      const { id: __, ...shipper } = (orderList[0].node!.shipping_from || default_address || {} as any);
-      const billing_address = orderList[0].node.billing_address ? orderList[0].node.billing_address : undefined;
-
-      // Collect orders merged options
-      const order_options = getOptions();
-      const order_metadatas = getMetadatas();
-
-      // Collect unfulfilled line items
-      const line_items = (
-        getItems()
-          .map(({ id: parent_id, unfulfilled_quantity: quantity, ...item }) => ({ ...item, quantity, parent_id }))
-          .filter(({ quantity }) => quantity || 0 > 0)
-      );
-      const parcel = default_parcel || DEFAULT_PARCEL_CONTENT;
-      const parcel_items = order_options.single_item_per_parcel ? toSingleItem(line_items as any) : [line_items];
-      const parcels: any[] = (parcel_items as typeof line_items[]).map(items => {
-        const weight = items.reduce((acc, { weight, quantity }) => (weight || 0) * (quantity || 1) + acc, 0.0);
-        const weight_unit = items[0].weight_unit || parcel.weight_unit;
-        return { ...parcel, items, weight, weight_unit };
-      });
-      const declared_value = line_items.reduce(
-        (acc, { value_amount, quantity }) => (acc + (value_amount || 0) * (quantity || 1)), 0
-      );
-      const options = {
-        ...shipment.options,
-        ...(order_options.service ? { service: order_options.service } : {}),
-        ...(order_options.currency ? { currency: order_options.currency } : {}),
-        ...(order_options.dangerous_good ? { dangerous_good: order_options.dangerous_good } : {}),
-        ...(order_options.paperless_trade ? { paperless_trade: order_options.paperless_trade } : {}),
-        ...(order_options.invoice_template ? { invoice_template: order_options.invoice_template } : {}),
-        declared_value: parseFloat(`${declared_value}`).toFixed(2),
-      };
-      const metadata = {
-        order_ids,
-        ...order_metadatas,
-      };
-      const payment = {
-        paid_by: order_options.paid_by as any || PaidByEnum.sender,
-        ...(order_options.currency ? { currency: order_options.currency } : {}),
-        ...(order_options.payment_account_number ? { account_number: order_options.payment_account_number } : {}),
-      } as any;
-      const isIntl = shipper && (shipper.country_code !== recipient.country_code);
-      const isDocument = parcels.every(p => p.is_document);
-      const customs = (isDocument ? null : {
-        ...DEFAULT_CUSTOMS_CONTENT,
-        commercial_invoice: true,
-        invoice: orderList[0].node.order_id,
-        invoice_date: order_options.invoice_date || moment().format('YYYY-MM-DD'),
-        incoterm: payment?.paid_by == 'sender' ? 'DDP' : 'DDU',
-        commodities: getShipmentCommodities({ parcels } as any),
-        duty: {
-          ...DEFAULT_CUSTOMS_CONTENT.duty,
-          currency: order_options?.currency,
-          paid_by: order_options.duty_paid_by || payment?.paid_by,
-          account_number: order_options.duty_account_number || payment?.account_number,
-          declared_value,
-        },
-        duty_billing_address: billing_address,
-      });
-
-      onChange({
-        ...(shipper ? { shipper: (shipper as typeof shipment['shipper']) } : {}),
-        ...(recipient ? { recipient: (recipient as typeof shipment['recipient']) } : {}),
-        options,
-        payment,
-        parcels,
-        metadata,
-        label_type: LabelTypeEnum.PDF,
-        carrier_ids: order_options.carrier_ids || [],
-        billing_address,
-        customs: (isIntl ? customs : undefined) as typeof shipment['customs'],
-      });
+      onChange(createShipmentFromOrders(orderList as OrderType[], templates));
 
       setReady(true);
     };
@@ -248,7 +171,7 @@ export default function CreateShipmentPage(pageProps: any) {
         {!ready && <Spinner />}
 
         {(ready && Object.keys(shipment.recipient).length > 0) && <div className="columns pb-6 m-0">
-          <div className="column px-0" style={{ minHeight: '850px' }}>
+          <div className="column px-0" style={{ minHeight: '850px', minWidth: '260px' }}>
 
             {/* Address section */}
             <div className="card p-0">
@@ -420,6 +343,7 @@ export default function CreateShipmentPage(pageProps: any) {
                         title='Edit items'
                         shipment={shipment}
                         onChange={_ => mutation.addItems(pkg_index, pkg.id)(_ as any)}
+                        order_ids={order_id.split(',').map(s => s.trim())}
                       />
                     </div>
                   </div>
@@ -889,7 +813,7 @@ export default function CreateShipmentPage(pageProps: any) {
 
           <div className="p-2"></div>
 
-          <div className="column is-5 px-0 pb-6 is-relative">
+          <div className="column is-5 px-0 pb-6 is-relative" style={{ minWidth: '260px' }}>
             <div style={{ position: 'sticky', top: '8.5%', right: 0, left: 0 }}>
 
               <CommoditySummary
@@ -924,15 +848,20 @@ export default function CreateShipmentPage(pageProps: any) {
                   </div>}
 
                   {(!loading && (shipment.rates || []).length > 0) &&
-                    <div className="menu-list px-3 rates-list-box" style={{ maxHeight: '16.8em' }}>
+                    <div className="menu-list px-2 rates-list-box" style={{ maxHeight: '16.8em' }}>
                       {(shipment.rates || []).map(rate => (
                         <a key={rate.id} {...(rate.test_mode ? { title: "Test Mode" } : {})}
-                          className={`columns card m-0 mb-1 is-vcentered p-1 ${rate.service === shipment.options.preferred_service ? 'has-text-grey-dark has-background-success-light' : 'has-text-grey'} ${rate.id === selected_rate?.id ? 'has-text-grey-dark has-background-grey-lighter' : 'has-text-grey'}`}
-                          onClick={() => setSelectedRate(rate)}>
+                          className={`card m-0 mb-1 is-vcentered p-1 ${rate.service === shipment.options.preferred_service ? 'has-text-grey-dark has-background-success-light' : 'has-text-grey'} ${rate.id === selected_rate?.id ? 'has-text-grey-dark has-background-grey-lighter' : 'has-text-grey'}`}
+                          onClick={() => {
+                            setSelectedRate(rate);
+                            onChange({ options: { ...shipment.options, preferred_service: rate.service } });
+                          }}>
 
-                          <CarrierImage carrier_name={(rate.meta as any)?.carrier || rate.carrier_name} width={30} height={30} />
+                          <div className="icon-text">
+                            <CarrierImage carrier_name={(rate.meta as any)?.carrier || rate.carrier_name} width={30} height={30} />
+                            <RateDescription rate={rate} />
+                          </div>
 
-                          <RateDescription rate={rate} />
                         </a>
                       ))}
                     </div>}

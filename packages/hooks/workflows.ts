@@ -205,11 +205,10 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
   const connectionMutation = useWorkflowConnectionMutation();
   const [isNew, setIsNew] = React.useState<boolean>();
   const [debug_event, setDebugEvent] = React.useState<WorkflowEventType>();
-  const [errors, setErrors] = React.useState<{ messages: string[] }>({ messages: [] });
   const [workflow, dispatch] = React.useReducer(reducer, DEFAULT_STATE, () => DEFAULT_STATE);
   const { query: { data: { workflow: current } = {}, ...workflowQuery } } = useWorkflow({ id });
   const { query: { data: { workflow_events } = {}, ...eventsQuery }, refetchInterval, setInterval } = useWorkflowEvents({
-    first: 1, ...(id !== 'new' ? { keyword: id, parameters_key: "debug" } : {}) as any,
+    first: 1, ...(id !== 'new' ? { keyword: id, parameters_key: ["debug"] } : {}),
   });
 
   // state checks
@@ -383,7 +382,6 @@ export function useWorkflowForm({ id }: { id?: string } = {}) {
     debug_event,
     isNew,
     query,
-    errors,
     current,
     workflow,
     DEFAULT_STATE,

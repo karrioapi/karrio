@@ -64,7 +64,8 @@ def _process_shipments(resources: typing.List[dict]):
 
     resource_ids = [res["id"] for res in resources]
     shipment_ids = [
-        res["id"] for res in resources
+        res["id"]
+        for res in resources
         if res["status"] != serializers.ResourceStatus.processed.value
     ]
     shipments.process_shipments(shipment_ids=shipment_ids)
@@ -73,7 +74,10 @@ def _process_shipments(resources: typing.List[dict]):
 
     def _compute_state(shipment=None):
         # shipment with service not purchased
-        if any(shipment.meta.get("service") or '') and shipment.status != 'purchased':
+        if (
+            any(shipment.options.get("perferred_service") or "")
+            and shipment.status == "draft"
+        ):
             return serializers.ResourceStatus.incomplete
         # shipment has errors and no rates
         if len(shipment.rates) == 0 and any(shipment.messages):
@@ -93,10 +97,7 @@ def _process_shipments(resources: typing.List[dict]):
 def _process_orders(resources: typing.List[dict]):
     resource_ids = [res["id"] for res in resources]
 
-    return [
-        dict(id=id, status="processed")
-        for id in resource_ids
-    ]
+    return [dict(id=id, status="processed") for id in resource_ids]
 
 
 def _process_trackers(resources: typing.List[dict]):
@@ -105,7 +106,8 @@ def _process_trackers(resources: typing.List[dict]):
 
     resource_ids = [res["id"] for res in resources]
     tracker_ids = [
-        res["id"] for res in resources
+        res["id"]
+        for res in resources
         if res["status"] != serializers.ResourceStatus.processed.value
     ]
     tracking.update_trackers(tracker_ids=tracker_ids)

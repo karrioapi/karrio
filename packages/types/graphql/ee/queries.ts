@@ -7,7 +7,7 @@ import gql from 'graphql-tag';
 //#region
 
 
-export const GET_ORGANIZATION = gql`query get_organization($id: String!) {
+export const GET_ORGANIZATION = gql`query get_organization($id: String!, $usage: UsageFilter) {
   organization(id: $id) {
     id
     name
@@ -34,12 +34,20 @@ export const GET_ORGANIZATION = gql`query get_organization($id: String!) {
       }
       last_login
     }
-    usage {
+    usage(filter: $usage) {
       members
       order_volume
+      total_errors
       total_requests
+      total_trackers
       total_shipments
       unfulfilled_orders
+      total_shipping_spend
+      api_errors {
+        label
+        count
+        date
+      }
       api_requests {
         date
         label
@@ -51,6 +59,11 @@ export const GET_ORGANIZATION = gql`query get_organization($id: String!) {
         count
       }
       shipment_count {
+        date
+        label
+        count
+      }
+      tracker_count {
         date
         label
         count
@@ -95,9 +108,17 @@ export const GET_ORGANIZATIONS = gql`query get_organizations {
     usage {
       members
       order_volume
+      total_errors
       total_requests
+      total_trackers
       total_shipments
       unfulfilled_orders
+      total_shipping_spend
+      api_errors {
+        label
+        count
+        date
+      }
       api_requests {
         date
         label
@@ -109,6 +130,11 @@ export const GET_ORGANIZATIONS = gql`query get_organizations {
         count
       }
       shipment_count {
+        date
+        label
+        count
+      }
+      tracker_count {
         date
         label
         count

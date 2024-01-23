@@ -19,6 +19,7 @@ import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
@@ -29,7 +30,6 @@ import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
 import Head from "next/head";
 import React from "react";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 export { getServerSideProps } from "@/context/main";
 
@@ -101,7 +101,7 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
           <div className="column is-6">
             <span className="subtitle is-size-7 has-text-weight-semibold">SHIPMENT</span>
             <br />
-            <span className="title is-4 mr-2">{shipment.tracking_number || "NOT COMPLETED"}</span>
+            <span className="title is-4 mr-2">{shipment.tracking_number || "UNFULFILLED"}</span>
             <StatusBadge status={shipment.status} />
           </div>
 
@@ -480,23 +480,23 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
         {logs.isFetched && (logs.data?.logs.edges || []).length == 0 && <div>No logs</div>}
 
         {logs.isFetched && (logs.data?.logs.edges || []).length > 0 &&
-          <div className="table-container py-2" style={{ maxHeight: '20em', overflow: 'auto' }}>
+          <div className="table-container py-1" style={{ maxHeight: '20em', overflow: 'auto' }}>
             <table className="related-item-table table is-hoverable is-fullwidth">
               <tbody>
                 {(logs.data?.logs.edges || []).map(({ node: log }) => (
                   <tr key={log.id} className="items is-clickable">
-                    <td className="status is-vcentered p-0">
+                    <td className="status is-vcentered p-0 px-2">
                       <AppLink href={`/developers/logs/${log.id}`} className="mr-4">
                         <StatusCode code={log.status_code as number} />
                       </AppLink>
                     </td>
-                    <td className="description is-vcentered p-0">
-                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3 text-ellipsis">
+                    <td className="description is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2 text-ellipsis">
                         {`${log.method} ${log.path}`}
                       </AppLink>
                     </td>
-                    <td className="date is-vcentered p-0">
-                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-3">
+                    <td className="date is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/logs/${log.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2">
                         <span>{formatDateTime(log.requested_at)}</span>
                       </AppLink>
                     </td>
@@ -516,18 +516,18 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
         {events.isFetched && (events.data?.events.edges || []).length == 0 && <div>No events</div>}
 
         {events.isFetched && (events.data?.events.edges || []).length > 0 &&
-          <div className="table-container py-2" style={{ maxHeight: '20em', overflow: 'auto' }}>
+          <div className="table-container py-1" style={{ maxHeight: '20em', overflow: 'auto' }}>
             <table className="related-item-table table is-hoverable is-fullwidth">
               <tbody>
                 {(events.data?.events.edges || []).map(({ node: event }) => (
                   <tr key={event.id} className="items is-clickable">
-                    <td className="description is-vcentered p-0">
-                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-3  text-ellipsis">
+                    <td className="description is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex py-2 text-ellipsis">
                         {`${event.type}`}
                       </AppLink>
                     </td>
-                    <td className="date is-vcentered p-0">
-                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-3">
+                    <td className="date is-vcentered p-0 px-2">
+                      <AppLink href={`/developers/events/${event.id}`} className="is-size-7 has-text-weight-semibold has-text-grey is-flex is-justify-content-right py-2">
                         <span>{formatDateTime(event.created_at)}</span>
                       </AppLink>
                     </td>
@@ -536,7 +536,6 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
               </tbody>
             </table>
           </div>}
-
       </>}
 
       {query.isFetched && isNone(shipment) && <div className="card my-6">

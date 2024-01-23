@@ -31,7 +31,13 @@ export interface GetSystemUsage_system_usage_shipment_count {
   date: string | null;
 }
 
-export interface GetSystemUsage_system_usage_shipment_spend {
+export interface GetSystemUsage_system_usage_tracker_count {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetSystemUsage_system_usage_shipping_spend {
   label: string | null;
   count: number | null;
   date: string | null;
@@ -41,13 +47,16 @@ export interface GetSystemUsage_system_usage {
   total_errors: number | null;
   order_volume: number | null;
   total_requests: number | null;
+  total_trackers: number | null;
   total_shipments: number | null;
   organization_count: number | null;
-  api_errors: GetSystemUsage_system_usage_api_errors[];
-  api_requests: GetSystemUsage_system_usage_api_requests[];
-  order_volumes: GetSystemUsage_system_usage_order_volumes[];
-  shipment_count: GetSystemUsage_system_usage_shipment_count[];
-  shipment_spend: GetSystemUsage_system_usage_shipment_spend[];
+  total_shipping_spend: number | null;
+  api_errors: GetSystemUsage_system_usage_api_errors[] | null;
+  api_requests: GetSystemUsage_system_usage_api_requests[] | null;
+  order_volumes: GetSystemUsage_system_usage_order_volumes[] | null;
+  shipment_count: GetSystemUsage_system_usage_shipment_count[] | null;
+  tracker_count: GetSystemUsage_system_usage_tracker_count[] | null;
+  shipping_spend: GetSystemUsage_system_usage_shipping_spend[] | null;
 }
 
 export interface GetSystemUsage {
@@ -73,6 +82,12 @@ export interface GetAccounts_accounts_page_info {
   end_cursor: string | null;
 }
 
+export interface GetAccounts_accounts_edges_node_usage_api_errors {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
 export interface GetAccounts_accounts_edges_node_usage_api_requests {
   label: string | null;
   count: number | null;
@@ -91,7 +106,13 @@ export interface GetAccounts_accounts_edges_node_usage_shipment_count {
   date: string | null;
 }
 
-export interface GetAccounts_accounts_edges_node_usage_shipment_spend {
+export interface GetAccounts_accounts_edges_node_usage_tracker_count {
+  label: string | null;
+  count: number | null;
+  date: string | null;
+}
+
+export interface GetAccounts_accounts_edges_node_usage_shipping_spend {
   label: string | null;
   count: number | null;
   date: string | null;
@@ -100,12 +121,17 @@ export interface GetAccounts_accounts_edges_node_usage_shipment_spend {
 export interface GetAccounts_accounts_edges_node_usage {
   members: number | null;
   order_volume: number | null;
+  total_errors: number | null;
   total_requests: number | null;
+  total_trackers: number | null;
   total_shipments: number | null;
+  total_shipping_spend: number | null;
+  api_errors: GetAccounts_accounts_edges_node_usage_api_errors[] | null;
   api_requests: GetAccounts_accounts_edges_node_usage_api_requests[] | null;
   order_volumes: GetAccounts_accounts_edges_node_usage_order_volumes[] | null;
   shipment_count: GetAccounts_accounts_edges_node_usage_shipment_count[] | null;
-  shipment_spend: GetAccounts_accounts_edges_node_usage_shipment_spend[] | null;
+  tracker_count: GetAccounts_accounts_edges_node_usage_tracker_count[] | null;
+  shipping_spend: GetAccounts_accounts_edges_node_usage_shipping_spend[] | null;
 }
 
 export interface GetAccounts_accounts_edges_node {
@@ -2886,8 +2912,8 @@ export enum LabelTemplateTypeEnum {
 
 // null
 export interface UsageFilter {
-  date_after?: any | null;
-  date_before?: any | null;
+  date_after?: string | null;
+  date_before?: string | null;
   omit?: string[] | null;
 }
 

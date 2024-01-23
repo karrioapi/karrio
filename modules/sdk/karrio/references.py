@@ -74,12 +74,12 @@ def collect_references() -> dict:
         if mapper.get("services") is not None
     }
     options = {
-        key: {c.name: dict(code=c.value.code) for c in list(mapper["options"])}  # type: ignore
+        key: {c.name: dict(code=c.value.code, type=parse_type(c.value.type)) for c in list(mapper["options"])}  # type: ignore
         for key, mapper in PROVIDERS_DATA.items()
         if mapper.get("options") is not None
     }
     connection_configs = {
-        key: {c.name: dict(code=c.value.code) for c in list(mapper["connection_configs"])}  # type: ignore
+        key: {c.name: dict(code=c.value.code, type=parse_type(c.value.type)) for c in list(mapper["connection_configs"])}  # type: ignore
         for key, mapper in PROVIDERS_DATA.items()
         if mapper.get("connection_configs") is not None
     }
@@ -146,3 +146,28 @@ def get_carrier_capabilities(carrier_name) -> typing.List[str]:
     proxy_class = pydoc.locate(f"karrio.mappers.{carrier_name}.Proxy")
     proxy_methods = detect_proxy_methods(proxy_class)
     return detect_capabilities(proxy_methods)
+
+
+def parse_type(_type: type) -> str:
+    _name = getattr(_type, "__name__", None)
+
+    if _name is not None and _name == "bool":
+        return "boolean"
+    if _name is not None and _name == "str":
+        return "string"
+    if _name is not None and (_name == "int" or "to_int" in _name):
+        return "integer"
+    if _name is not None and _name == "float":
+        return "float"
+    if _name is not None and "money" in _name:
+        return "float"
+    if "Address" in str(_type):
+        return "Address"
+    if _name is not None and "Enum" in _name:
+        return "string"
+    if _name is not None and "list" in _name:
+        return "list"
+    if _name is not None and "dict" in _name:
+        return "object"
+
+    return str(_type)

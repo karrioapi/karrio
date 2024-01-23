@@ -4,6 +4,7 @@ interface SelectFieldComponent extends React.SelectHTMLAttributes<any> {
   label?: string;
   fieldClass?: string;
   controlClass?: string;
+
 }
 
 export const SelectField: React.FC<SelectFieldComponent> = ({ label, className, fieldClass, controlClass, required, children, ...props }) => {

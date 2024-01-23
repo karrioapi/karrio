@@ -119,7 +119,7 @@ export const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, isView
             <hr className="my-1" style={{ height: '1px' }} />}
 
           {(document_templates?.edges || []).map(({ node: template }) =>
-            <a href={url$`${references.HOST}/documents/${template.id}.${template.slug}?shipments=${shipment.id}`}
+            <a href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?shipments=${shipment.id}`}
               className="dropdown-item" target="_blank" rel="noreferrer" key={template.id}>
               Download {template.name}
             </a>

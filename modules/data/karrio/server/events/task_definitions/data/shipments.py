@@ -13,10 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 @utils.error_wrapper
-def process_shipments(shipment_ids = []):
+def process_shipments(shipment_ids=[]):
     logger.info("> starting batch shipments processing")
 
-    shipments = models.Shipment.objects.filter(id__in=shipment_ids)
+    shipments = models.Shipment.objects.filter(id__in=shipment_ids, status="draft")
 
     if any(shipments):
         for shipment in shipments:
@@ -29,7 +29,8 @@ def process_shipments(shipment_ids = []):
 
 @utils.error_wrapper
 def process_shipment(shipment):
-    should_purchase = any(shipment.meta.get("service") or "")
+    perferred_service = shipment.options.get("perferred_service")
+    should_purchase = any(perferred_service or "")
     should_update = should_purchase or len(shipment.rates) == 0
     context = serializers.get_object_context(shipment)
 
@@ -43,4 +44,8 @@ def process_shipment(shipment):
         shipment = fetch_shipment_rates(shipment, context=context)
 
     if should_purchase:
-        shipment = buy_shipment_label(shipment, context=context, service=shipment.meta.get("service"))
+        shipment = buy_shipment_label(
+            shipment,
+            context=context,
+            service=perferred_service,
+        )

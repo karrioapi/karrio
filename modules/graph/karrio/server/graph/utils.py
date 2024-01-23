@@ -188,8 +188,8 @@ class UsageStatType:
 
 @strawberry.input
 class UsageFilter(BaseInput):
-    date_after: typing.Optional[datetime.datetime] = strawberry.UNSET
-    date_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    date_after: typing.Optional[str] = strawberry.UNSET
+    date_before: typing.Optional[str] = strawberry.UNSET
     omit: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 

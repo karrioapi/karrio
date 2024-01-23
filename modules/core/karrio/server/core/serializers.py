@@ -603,10 +603,10 @@ class RateRequest(validators.OptionDefaultSerializer):
         allow_empty=False,
         help_text="The shipment's parcels",
     )
-
     services = serializers.StringListField(
         required=False,
         allow_null=True,
+        default=[],
         help_text="""The requested carrier service for the shipment.<br/>
         Please consult the reference for specific carriers services.<br/>
         Note that this is a list because on a Multi-carrier rate request you could specify a service per carrier.
@@ -659,6 +659,7 @@ class RateRequest(validators.OptionDefaultSerializer):
     carrier_ids = serializers.StringListField(
         required=False,
         allow_null=True,
+        default=[],
         help_text="The list of configured carriers you wish to get rates from.",
     )
 
