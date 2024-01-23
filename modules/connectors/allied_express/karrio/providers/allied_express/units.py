@@ -19,6 +19,7 @@ class PackagingType(lib.StrEnum):
 
 class ConnectionConfig(lib.Enum):
     account_service_type = lib.OptionEnum("account_service_type")
+    server_url = lib.OptionEnum("server_url")
 
 
 class ShippingService(lib.StrEnum):

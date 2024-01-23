@@ -21,7 +21,7 @@ class Settings(core.Settings):
 
     @property
     def server_url(self):
-        return (
+        return self.connection_config.server_url.state or (
             "https://test.aet.mskaleem.com" if self.test_mode else "https://3plapi.com"
         )
 
