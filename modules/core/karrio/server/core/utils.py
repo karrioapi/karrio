@@ -235,7 +235,7 @@ def filter_rate_carrier_compatible_gateways(
     and if no explicit carrier list is provided, it will filter out any
     carrier that does not support the shipper's country code.
     """
-    return [
+    _gateways = [
         carrier.gateway
         for carrier in carriers
         if (
@@ -257,6 +257,8 @@ def filter_rate_carrier_compatible_gateways(
             )
         )
     ]
+
+    return ({_.settings.carrier_id: _ for _ in _gateways}).values()
 
 
 def is_system_loading_data() -> bool:

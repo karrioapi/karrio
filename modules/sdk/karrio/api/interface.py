@@ -139,7 +139,7 @@ class IRequestFromMany:
 
     def from_(self, *gateways: gateway.Gateway) -> IDeserialize:
         """Execute the request action(s) from the provided gateway(s)"""
-        return self.action(list(gateways))
+        return self.action({_.settings.carrier_id: _ for _ in gateways}.values())
 
 
 class Address:
