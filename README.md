@@ -19,13 +19,11 @@
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 [![Discord](https://img.shields.io/static/v1?label=Discord&message=chat&color=738adb&logo=discord)](https://discord.gg/gS88uE7sEx)
-[![YouTube](https://img.shields.io/static/v1?label=YouTube&message=karrio&color=ff0000&logo=youtube)](https://www.youtube.com/@karrioapi)
 [![Docker pulls](https://img.shields.io/docker/pulls/karrio/server)](https://hub.docker.com/r/karrio/server)
 
 
-Karrio is an open-source shipping infrastructure for platforms. With Karrio, you can
-build shipping experiences into your platform, access a network of shipping carriers
-with a single API integration, automate fulfilment and improve logistics operations.
+Karrio is a developer-first shipping integration and logistics automation platform
+that helps developers build shipping experiences into their platforms.
 
 **Get up and running in 1 minute with:**
 
@@ -51,7 +49,10 @@ Default Login: `admin@example.com` | `demo`
 -   **Cloud**: Optimized for deployments using Docker.
 -   **Dashboard**: Use the karrio dashboard to orchestrate your logistics operations.
 
-<img alt="Karrio Dashboard" src="screenshots/dashboard.png" />
+<p align="center">
+  <img alt="Karrio Dashboard" src="screenshots/dashboard-home.png" width="400" />
+  <img alt="Karrio Dashboard" src="screenshots/shipments.png" width="400" />
+</p>
 
 ## Get started
 
