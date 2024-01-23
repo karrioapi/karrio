@@ -71,19 +71,6 @@ export default function OrdersPage(pageProps: any) {
 
       setFilter(query);
     };
-    const computeOrderTotal = (order: any) => {
-      return order.line_items.reduce((acc: number, item: any) => {
-        const quantity = !!item.quantity ? item.quantity : 1;
-        const price = item.value_amount || 0;
-        return acc + (quantity * price);
-      }, 0);
-    };
-    const computeOrderCurrency = (order: any) => {
-      return order.line_items.reduce((acc: string, item: any) => {
-        const currency = item.value_currency;
-        return acc || currency;
-      }, "");
-    };
     const handleSelection = (e: ChangeEvent) => {
       const { checked, name } = e.target as HTMLInputElement;
       if (name === "all") {
@@ -200,7 +187,7 @@ export default function OrdersPage(pageProps: any) {
 
         <div className="tabs">
           <ul>
-            <li className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) ? 'is-active' : ''}`}>
+            <li className={`is-capitalized has-text-weight-semibold ${isNone(filter?.status) && isNone(filter?.source) ? 'is-active' : ''}`}>
               <a onClick={() => (!isNone(filter?.status) && isNone(filter?.source)) && updateFilter({ status: null, source: null, offset: 0 })}>all</a>
             </li>
             <li className={`is-capitalized has-text-weight-semibold ${isListEqual(filter?.status || [], ['unfulfilled', 'partial']) ? 'is-active' : ''}`}>
@@ -221,12 +208,12 @@ export default function OrdersPage(pageProps: any) {
         {!query.isFetched && <Spinner />}
 
         {(query.isFetched && (orders?.edges || []).length > 0) && <>
-          <div className="table-container pb-3">
+          <div className="table-container">
             <table className="orders-table table is-fullwidth">
-              <tbody>
+              <tbody className="orders-table">
 
                 <tr>
-                  <td className="selector has-text-centered p-0" onClick={preventPropagation}>
+                  <td className="selector has-text-centered p-0 control" onClick={preventPropagation}>
                     <label className="checkbox p-2">
                       <input
                         name="all"
@@ -237,30 +224,30 @@ export default function OrdersPage(pageProps: any) {
                     </label>
                   </td>
 
-                  {selection.length > 0 && <td className="p-1" colSpan={8}>
+                  {selection.length > 0 && <td className="p-1" colSpan={7}>
                     <div className="buttons has-addons ">
                       <BulkShipmentModalEditor
                         shipments={collectShipments(selection, orders)}
                         trigger={
-                          <button className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
+                          <button className={`button is-small is-default px-3 is-static ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
                             <span className="has-text-weight-semibold">Create labels</span>
                           </button>
                         }
                       />
                       <a
-                        href={url$`${references.HOST}/docs/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(',')}`}
+                        href={url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">
                         <span className="has-text-weight-semibold">Print Labels</span>
                       </a>
                       <a
-                        href={url$`${references.HOST}/docs/orders/invoice.pdf?orders=${selection.join(',')}`}
+                        href={url$`${references.HOST}/documents/orders/invoice.pdf?orders=${selection.join(',')}`}
                         className={`button is-small is-default px-3`} target="_blank" rel="noreferrer">
                         <span className="has-text-weight-semibold">Print Invoices</span>
                       </a>
                       {(document_templates?.edges || []).map(({ node: template }) =>
                         <a
                           key={template.id}
-                          href={url$`${references.HOST}/documents/${template.id}.${template.slug}?orders=${selection.join(',')}`}
+                          href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}?orders=${selection.join(',')}`}
                           className="button is-small is-default px-3"
                           target="_blank"
                           rel="noreferrer">
@@ -273,10 +260,9 @@ export default function OrdersPage(pageProps: any) {
                   {selection.length === 0 && <>
                     <td className="order is-size-7">ORDER #</td>
                     <td className="status"></td>
-                    <td className="items is-size-7">ITEMS</td>
+                    <td className="line-items is-size-7">ITEMS</td>
                     <td className="customer is-size-7">SHIP TO</td>
                     <td className="date is-size-7">DATE</td>
-                    <td className="total is-size-7">TOTAL</td>
                     <td className="service is-size-7">SHIPPING SERVICE</td>
                     <td className="action"></td>
                   </>}
@@ -305,7 +291,7 @@ export default function OrdersPage(pageProps: any) {
                     <td className="status is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
                       <StatusBadge status={order.status as string} style={{ width: '100%' }} />
                     </td>
-                    <td className="items is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
+                    <td className="line-items is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-bold has-text-grey">
                         {((items: number): any => `${items} item${items === 1 ? '' : 's'}`)(
                           order.line_items.reduce((acc, item) => acc + (item.quantity as number) || 1, 0)
@@ -326,12 +312,6 @@ export default function OrdersPage(pageProps: any) {
                     <td className="date px-1 is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">
                         {formatDateTime(order.created_at)}
-                      </p>
-                    </td>
-                    <td className="total px-2 is-clickable" onClick={() => previewOrder(order.id)}>
-                      <p className="is-size-7 has-text-weight-semibold has-text-grey">
-                        {computeOrderTotal(order)}
-                        <span className="mx-2">{computeOrderCurrency(order)}</span>
                       </p>
                     </td>
                     <td className="service is-vcentered p-1 is-size-7 has-text-weight-bold has-text-grey">
