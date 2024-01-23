@@ -106,7 +106,7 @@ export default function DocumentTemplatePage(pageProps: any) {
           </div>
           <div className="column is-flex is-justify-content-end">
             <a className={`button is-small is-primary mx-1 ${isNoneOrEmpty(template.id) ? 'is-static' : ''}`}
-              href={url$`${references.HOST}/documents/${template.id}.${template.slug}${computeParams(template)}`}
+              href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}${computeParams(template)}`}
               target="_blank" rel="noreferrer">
               Preview Template
             </a>
