@@ -903,11 +903,17 @@ class SystemConnectionType:
     @utils.authentication_required
     def resolve_list(
         info,
+        filter: typing.Optional[inputs.RateSheetFilter] = strawberry.UNSET,
     ) -> typing.List["SystemConnectionType"]:
-        return providers.Carrier.system_carriers.filter(
-            active=True,
-            test_mode=getattr(info.context.request, "test_mode", False),
-        )
+        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        connections = filters.CarrierFilters(
+            _filter.to_dict(),
+            providers.Carrier.system_carriers.filter(
+                active=True,
+                test_mode=getattr(info.context.request, "test_mode", False),
+            ),
+        ).qs
+        return connections
 
 
 @strawberry.interface
@@ -930,11 +936,15 @@ class ConnectionType:
 
     @staticmethod
     @utils.authentication_required
-    def resolve_list(info) -> typing.List["CarrierConnectionType"]:
-        connections = providers.Carrier.access_by(info.context.request).filter(
-            is_system=False,
-            test_mode=getattr(info.context.request, "test_mode", False),
-        )
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
+    ) -> typing.List["CarrierConnectionType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        connections = filters.CarrierFilters(
+            _filter.to_dict(),
+            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+        ).qs
 
         return list(map(ConnectionType.parse, connections))
 

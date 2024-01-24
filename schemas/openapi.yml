@@ -683,6 +683,14 @@ paths:
           `generic`, `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
           `royalmail`, `sendle`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
+        name: metadata_key
+        schema:
+          type: string
+      - in: query
+        name: metadata_value
+        schema:
+          type: string
+      - in: query
         name: system_only
         schema:
           type: boolean

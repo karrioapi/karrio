@@ -67,6 +67,14 @@ class AddressFilter(TemplateFilter):
 
 
 @strawberry.input
+class CarrierFilter(utils.BaseInput):
+    active: typing.Optional[bool] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[str] = strawberry.UNSET
+    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
 class UpdateUserInput(utils.BaseInput):
     full_name: typing.Optional[str] = strawberry.UNSET
     is_active: typing.Optional[bool] = strawberry.UNSET

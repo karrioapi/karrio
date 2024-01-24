@@ -53,6 +53,16 @@ class CarrierFilters(filters.FilterSet):
     system_only = filters.BooleanFilter(
         help_text="This flag indicates that only system carriers should be returned",
     )
+    metadata_key = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_key_filter",
+        help_text="connection metadata keys.",
+    )
+    metadata_value = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_value_filter",
+        help_text="connection metadata value.",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -74,6 +84,16 @@ class CarrierFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
+        openapi.OpenApiParameter(
+            "metadata_key",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -81,6 +101,18 @@ class CarrierFilters(filters.FilterSet):
 
         model = providers.Carrier
         fields: typing.List[str] = []
+
+    def metadata_key_filter(self, queryset, name, value):
+        return queryset.filter(metadata__has_keys=value)
+
+    def metadata_value_filter(self, queryset, name, value):
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "metadata")
+                if value in (o.get("metadata") or {}).values()
+            ]
+        )
 
 
 class ShipmentFilters(filters.FilterSet):
@@ -134,7 +166,7 @@ class ShipmentFilters(filters.FilterSet):
         method="option_value_filter",
         help_text="shipment option value",
     )
-    metadata_key = filters.CharInFilter(
+    metadata_key = filters.CharFilter(
         field_name="metadata",
         method="metadata_key_filter",
         help_text="shipment metadata keys.",
@@ -208,11 +240,6 @@ class ShipmentFilters(filters.FilterSet):
         ),
         openapi.OpenApiParameter(
             "metadata_key",
-            type=openapi.OpenApiTypes.STR,
-            location=openapi.OpenApiParameter.QUERY,
-        ),
-        openapi.OpenApiParameter(
-            "metadata_value",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),

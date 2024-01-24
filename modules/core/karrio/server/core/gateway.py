@@ -83,6 +83,21 @@ class Carriers:
                 capabilities__icontains=list_filter["capability"]
             )
 
+        # Check if a metadata key is provided, to add it to the query
+        if "metadata_key" in list_filter:
+            _queryset = _queryset.filter(metadata__has_key=list_filter["metadata_key"])
+
+        # Check if a metadata value is provided, to add it to the query
+        if "metadata_value" in list_filter:
+            _value = list_filter["metadata_value"]
+            _queryset = _queryset.filter(
+                id__in=[
+                    _["id"]
+                    for _ in _queryset.values("id", "metadata")
+                    if _value in (_.get("metadata") or {}).values()
+                ]
+            )
+
         # Check if a list of carrier_ids are provided, to add the list to the query
         if any(list_filter.get("carrier_ids", [])):
             _queryset = _queryset.filter(carrier_id__in=list_filter["carrier_ids"])
