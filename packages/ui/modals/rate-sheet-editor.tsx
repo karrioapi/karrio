@@ -84,13 +84,6 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
       }
       loader.setLoading(false);
     };
-    const updateServices = (key: string) => (e: React.ChangeEvent<any>) => {
-      const newValue = (sheet.services || []).map(service => ({ ...service, [key]: e.target.value }));
-      editor.current!.view?.dispatch({
-        changes: { from: 0, to: editor.current!.view!.state.doc.length, insert: JSON.stringify(newValue, null, 2) }
-      });
-      dispatch({ name: 'services', value: newValue });
-    };
     const computeDefaultCurrency = (defaultValue: ServiceLevelType[]): CurrencyCodeEnum => {
       const svc = (defaultValue || []).find(svc => !isNone(svc.currency))
       return (svc?.currency || CurrencyCodeEnum.USD) as CurrencyCodeEnum
@@ -98,6 +91,13 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
     const computeRates = (services: RateSheetDataType['services']) => {
       const max = Math.max(...(services || []).map(svc => svc.zones.length));
       return [{ max, services: services || [] }];
+    };
+    const updateServices = (key: string) => (e: React.ChangeEvent<any>) => {
+      const newValue = (sheet.services || []).map(service => ({ ...service, [key]: e.target.value }));
+      editor.current!.view?.dispatch({
+        changes: { from: 0, to: editor.current!.view!.state.doc.length, insert: JSON.stringify(newValue, null, 2) }
+      });
+      dispatch({ name: 'services', value: newValue });
     };
     const updateSercice = (idx: number) => (event: React.ChangeEvent<any>) => {
       const target = event.target;
@@ -338,6 +338,7 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
                   </div>
                 </Tabs>
               </TabStateProvider>
+
             </div>
 
           </div>
