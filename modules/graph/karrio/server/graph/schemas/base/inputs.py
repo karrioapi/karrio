@@ -422,6 +422,8 @@ class CreateServiceLevelInput(utils.BaseInput):
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
 
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+
 
 @strawberry.input
 class UpdateServiceLevelInput(CreateServiceLevelInput):

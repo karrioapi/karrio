@@ -436,6 +436,8 @@ class ServiceLevel:
     transit_days: int = None
     transit_time: float = None
 
+    metadata: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class LabelTemplate:

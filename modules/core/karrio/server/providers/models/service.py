@@ -51,6 +51,7 @@ class ServiceLevel(core.OwnedEntity):
     international = models.BooleanField(null=True)
 
     zones = models.JSONField(blank=True, null=True, default=core.field_default([]))
+    metadata = models.JSONField(blank=True, null=True, default=core.field_default({}))
 
     def __str__(self):
         return f"{self.id} | {self.service_name}"

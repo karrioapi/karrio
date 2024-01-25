@@ -816,6 +816,13 @@ class ServiceLevelType:
     def zones(self: providers.ServiceLevel) -> typing.List[ServiceZoneType]:
         return [ServiceZoneType.parse(zone) for zone in self.zones or []]
 
+    @strawberry.field
+    def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+        try:
+            return lib.to_dict(self.metadata)
+        except:
+            return self.metadata
+
 
 @strawberry.type
 class LabelTemplateType:
