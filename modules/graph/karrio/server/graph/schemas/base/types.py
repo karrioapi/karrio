@@ -772,6 +772,7 @@ class ServiceZoneType:
     longitude: typing.Optional[float] = None
 
     cities: typing.Optional[typing.List[str]] = None
+    postal_codes: typing.Optional[typing.List[str]] = None
     country_codes: typing.Optional[typing.List[utils.CountryCodeEnum]] = None
 
     @staticmethod
