@@ -151,6 +151,20 @@ Karrio custom styling
   }
 }
 
+.rate-sheets-table {
+  .carrier {
+    width: 15%;
+    text-align: center !important;
+  }
+
+  .details {}
+
+  .action {
+    width: 20%;
+    min-width: 180px;
+  }
+}
+
 .templates-table {
   .template {}
 

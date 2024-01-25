@@ -1625,6 +1625,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -1719,6 +1720,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -1786,6 +1788,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -1857,6 +1860,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         weight_unit
         zones {
           cities
+          postal_codes
           country_codes
           label
           latitude
@@ -1922,6 +1926,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -2028,6 +2033,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -3223,7 +3229,7 @@ export const SEARCH_DATA = gql`query search_data($keyword: String) {
 }
 `;
 
-export const CREATE_RATE_SHEET = gql`mutation create_rate_sheet($data: CreateRateSheetMutationInput!) {
+export const CREATE_RATE_SHEET = gql`mutation CreateRateSheet($data: CreateRateSheetMutationInput!) {
   create_rate_sheet(input: $data) {
     rate_sheet {
       id
@@ -3236,7 +3242,7 @@ export const CREATE_RATE_SHEET = gql`mutation create_rate_sheet($data: CreateRat
 }
 `;
 
-export const UPDATE_RATE_SHEET = gql`mutation update_rate_sheet($data: UpdateRateSheetMutationInput!) {
+export const UPDATE_RATE_SHEET = gql`mutation UpdateRateSheet($data: UpdateRateSheetMutationInput!) {
   update_rate_sheet(input: $data) {
     rate_sheet {
       id
@@ -3249,7 +3255,7 @@ export const UPDATE_RATE_SHEET = gql`mutation update_rate_sheet($data: UpdateRat
 }
 `;
 
-export const DELETE_RATE_SHEET = gql`mutation delete_rate_sheet($data: DeleteMutationInput!) {
+export const DELETE_RATE_SHEET = gql`mutation DeteRateSheet($data: DeleteMutationInput!) {
   delete_rate_sheet(input: $data) {
     id
     errors {
@@ -3260,11 +3266,10 @@ export const DELETE_RATE_SHEET = gql`mutation delete_rate_sheet($data: DeleteMut
 }
 `;
 
-export const GET_RATE_SHEET = gql`query get_rate_sheet($id: String!) {
+export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
   rate_sheet(id: $id) {
     id
     name
-    slug
     carrier_name
     services {
       id
@@ -3287,6 +3292,9 @@ export const GET_RATE_SHEET = gql`query get_rate_sheet($id: String!) {
         min_weight
         max_weight
         transit_days
+        cities
+        postal_codes
+        country_codes
       }
     }
     carriers {
@@ -3301,7 +3309,7 @@ export const GET_RATE_SHEET = gql`query get_rate_sheet($id: String!) {
   }
 }`;
 
-export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilter) {
+export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter) {
   rate_sheets(filter: $filter) {
     page_info {
       has_next_page
@@ -3313,7 +3321,6 @@ export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilte
       node {
         id
         name
-        slug
         carrier_name
         services {
           id
@@ -3334,6 +3341,9 @@ export const GET_RATE_SHEETS = gql`query get_rate_sheets($filter: RateSheetFilte
             min_weight
             max_weight
             transit_days
+            cities
+            postal_codes
+            country_codes
           }
         }
         carriers {
