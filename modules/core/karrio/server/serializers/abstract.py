@@ -254,6 +254,7 @@ def save_many_to_many_data(
     serializer: ModelSerializer,
     parent: models.Model,
     payload: dict = None,
+    remove_if_missing: bool = False,
     **kwargs,
 ):
     if not any((key in payload for key in [name])):
@@ -265,6 +266,9 @@ def save_many_to_many_data(
     if collection_data is None and any(collection.all()):
         for item in collection.all():
             item.delete()
+
+    if remove_if_missing and collection.exists():
+        collection.exclude(id__in=[item.get("id") for item in collection_data]).delete()
 
     for data in collection_data:
         item_instance = (

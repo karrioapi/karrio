@@ -548,6 +548,7 @@ class UpdateRateSheetMutation(utils.BaseMutation):
                 instance,
                 payload=data,
                 context=info.context.request,
+                remove_if_missing=True,
             )
 
         if carriers is not None:
