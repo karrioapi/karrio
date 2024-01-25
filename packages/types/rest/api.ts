@@ -12011,11 +12011,13 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
          * @summary List all carriers
          * @param {boolean} [active] 
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [metadataKey] 
+         * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (active?: boolean, carrierName?: string, systemOnly?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/carriers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12048,6 +12050,14 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
 
             if (carrierName !== undefined) {
                 localVarQueryParameter['carrier_name'] = carrierName;
+            }
+
+            if (metadataKey !== undefined) {
+                localVarQueryParameter['metadata_key'] = metadataKey;
+            }
+
+            if (metadataValue !== undefined) {
+                localVarQueryParameter['metadata_value'] = metadataValue;
             }
 
             if (systemOnly !== undefined) {
@@ -12093,12 +12103,14 @@ export const CarriersApiFp = function (configuration?: Configuration) {
          * @summary List all carriers
          * @param {boolean} [active] 
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [metadataKey] 
+         * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(active?: boolean, carrierName?: string, systemOnly?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(active, carrierName, systemOnly, options);
+        async list(active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(active, carrierName, metadataKey, metadataValue, systemOnly, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CarriersApi.list']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -12131,7 +12143,7 @@ export const CarriersApiFactory = function (configuration?: Configuration, baseP
          * @throws {RequiredError}
          */
         list(requestParameters: CarriersApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<CarrierList> {
-            return localVarFp.list(requestParameters.active, requestParameters.carrierName, requestParameters.systemOnly, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.active, requestParameters.carrierName, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.systemOnly, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -12172,6 +12184,20 @@ export interface CarriersApiListRequest {
 
     /**
      * 
+     * @type {string}
+     * @memberof CarriersApiList
+     */
+    readonly metadataKey?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof CarriersApiList
+     */
+    readonly metadataValue?: string
+
+    /**
+     * 
      * @type {boolean}
      * @memberof CarriersApiList
      */
@@ -12206,7 +12232,7 @@ export class CarriersApi extends BaseAPI {
      * @memberof CarriersApi
      */
     public list(requestParameters: CarriersApiListRequest = {}, options?: AxiosRequestConfig) {
-        return CarriersApiFp(this.configuration).list(requestParameters.active, requestParameters.carrierName, requestParameters.systemOnly, options).then((request) => request(this.axios, this.basePath));
+        return CarriersApiFp(this.configuration).list(requestParameters.active, requestParameters.carrierName, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.systemOnly, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

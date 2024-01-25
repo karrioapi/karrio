@@ -52,7 +52,7 @@ export const SystemCarrierManagement: React.FC<SystemCarrierManagementComponent>
     if (query.isFetching && !isNoneOrEmpty(router.query.modal)) {
       const connection = system_connections.find(c => c.id === router.query.modal);
       connection && editConnection({
-        connection,
+        connection: connection as any,
         update: mutation.updateSystemCarrierConnection.mutateAsync,
       });
     }
@@ -128,7 +128,7 @@ export const SystemCarrierManagement: React.FC<SystemCarrierManagementComponent>
                           <button
                             title="edit account" className="button is-white"
                             onClick={() => editConnection({
-                              connection,
+                              connection: connection as any,
                               update: mutation.updateSystemCarrierConnection.mutateAsync,
                             })}
                           >

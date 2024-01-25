@@ -49,10 +49,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
     def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         def _track(data):
             return lib.request(
-                url=f"{self.settings.server_url}/rest/sendungsverfolgung",
+                url=f"{self.settings.server_url}/rest/sendungsverfolgung?{urllib.parse.urlencode(dict(xml=data))}",
                 trace=self.trace_as("xml"),
-                data=urllib.parse.urlencode(dict(xml=data)),
-                method="POST",
+                method="GET",
                 headers={
                     "Authorization": f"Basic {self.settings.basic_authentication}",
                     "Content-Type": "application/x-www-form-urlencoded",
