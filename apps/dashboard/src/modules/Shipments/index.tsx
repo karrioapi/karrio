@@ -202,6 +202,8 @@ export default function ShipmentsPage(pageProps: any) {
                         <CarrierImage
                           carrier_name={shipment.meta?.carrier || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
                           containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
+                          text_color={shipment.selected_rate_carrier?.config?.text_color}
+                          background={shipment.selected_rate_carrier?.config?.brand_color}
                         />
                         <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
                           <span className="has-text-info has-text-weight-bold">
@@ -218,13 +220,13 @@ export default function ShipmentsPage(pageProps: any) {
                     <td className="status is-vcentered" onClick={() => previewShipment(shipment.id)}>
                       <StatusBadge status={shipment.status as string} style={{ width: '100%' }} />
                     </td>
-                    <td className="recipient is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
-                      onClick={() => previewShipment(shipment.id)}>
-                      <span className="text-ellipsis" title={formatAddressShort(shipment.recipient as AddressType)}>
-                        {formatAddressShort(shipment.recipient as AddressType)}
-                      </span>
-                      <br />
-                      <span className="has-text-weight-medium">{formatAddressLocationShort(shipment.recipient as AddressType)}</span>
+                    <td className="recipient is-vcentered is-size-7 has-text-weight-bold has-text-grey is-relative" onClick={() => previewShipment(shipment.id)}>
+                      <div className="p-2" style={{ position: 'absolute', maxWidth: '100%', top: 0, left: 0 }}>
+                        <p className="text-ellipsis" title={formatAddressShort(shipment.recipient as AddressType)}>
+                          {formatAddressShort(shipment.recipient as AddressType)}
+                        </p>
+                        <p className="has-text-weight-medium">{formatAddressLocationShort(shipment.recipient as AddressType)}</p>
+                      </div>
                     </td>
                     <td className="reference is-vcentered is-size-7 has-text-weight-bold has-text-grey text-ellipsis" onClick={() => previewShipment(shipment.id)}>
                       <span>{shipment.reference || ''}</span>

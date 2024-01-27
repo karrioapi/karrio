@@ -120,7 +120,7 @@ export default function OrdersPage(pageProps: any) {
             carrier_name={_shipment?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
           />
-          <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
+          <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '15px' }}>
             <span className="has-text-info has-text-weight-bold"><span>{` - `}</span></span><br />
             <span className="text-ellipsis">
               {!isNone(_rate?.carrier_name) && formatRef((_rate.meta?.service_name || _rate.service) as string)}
@@ -136,7 +136,7 @@ export default function OrdersPage(pageProps: any) {
             carrier_name={shipment.meta?.carrier || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
           />
-          <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
+          <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '15px' }}>
             <span className="has-text-info has-text-weight-bold">
               {!isNone(shipment.carrier_name) && <span>{shipment.tracking_number}</span>}
               {isNone(shipment.carrier_name) && <span>{` - `}</span>}
@@ -210,7 +210,7 @@ export default function OrdersPage(pageProps: any) {
         {(query.isFetched && (orders?.edges || []).length > 0) && <>
           <div className="table-container">
             <table className="orders-table table is-fullwidth">
-              <tbody className="orders-table">
+              <tbody>
 
                 <tr>
                   <td className="selector has-text-centered p-0 control" onClick={preventPropagation}>
@@ -280,34 +280,38 @@ export default function OrdersPage(pageProps: any) {
                         />
                       </label>
                     </td>
-                    <td className="order is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
-                      <p className="is-size-7 has-text-weight-bold has-text-grey-dark">
-                        {order.order_id}
-                      </p>
-                      <p className="is-size-7 has-text-grey is-lowercase">
-                        {order.source}
-                      </p>
+                    <td className="order is-vcentered is-clickable is-relative" onClick={() => previewOrder(order.id)}>
+                      <div className="p-2" style={{ position: 'absolute', maxWidth: '100%', top: 0, left: 0 }}>
+                        <p className="is-size-7 has-text-weight-bold has-text-grey-dark text-ellipsis">
+                          {order.order_id}
+                        </p>
+                        <p className="is-size-7 has-text-grey is-lowercase text-ellipsis">
+                          {order.source}
+                        </p>
+                      </div>
                     </td>
                     <td className="status is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
                       <StatusBadge status={order.status as string} style={{ width: '100%' }} />
                     </td>
-                    <td className="line-items is-vcentered is-clickable" onClick={() => previewOrder(order.id)}>
-                      <p className="is-size-7 has-text-weight-bold has-text-grey">
-                        {((items: number): any => `${items} item${items === 1 ? '' : 's'}`)(
-                          order.line_items.reduce((acc, item) => acc + (item.quantity as number) || 1, 0)
-                        )}
-                      </p>
-                      <p className="is-size-7 has-text-grey" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                        {order.line_items.length > 1 ? "(Multiple)" : order.line_items[0].title || order.line_items[0].description || order.line_items[0].sku}
-                      </p>
+                    <td className="line-items is-vcentered is-clickable is-relative" onClick={() => previewOrder(order.id)}>
+                      <div className="p-2" style={{ position: 'absolute', maxWidth: '100%', top: 0, left: 0 }}>
+                        <p className="is-size-7 has-text-weight-bold has-text-grey text-ellipsis">
+                          {((items: number): any => `${items} item${items === 1 ? '' : 's'}`)(
+                            order.line_items.reduce((acc, item) => acc + (item.quantity as number) || 1, 0)
+                          )}
+                        </p>
+                        <p className="is-size-7 has-text-grey text-ellipsis">
+                          {order.line_items.length > 1 ? "(Multiple)" : order.line_items[0].title || order.line_items[0].description || order.line_items[0].sku}
+                        </p>
+                      </div>
                     </td>
-                    <td className="customer is-vcentered is-clickable is-size-7 has-text-weight-bold has-text-grey text-ellipsis"
-                      onClick={() => previewOrder(order.id)}>
-                      <span className="text-ellipsis" title={formatAddressShort(order.shipping_to as AddressType)}>
-                        {formatAddressShort(order.shipping_to as AddressType)}
-                      </span>
-                      <br />
-                      <span className="has-text-weight-medium">{formatAddressLocationShort(order.shipping_to as AddressType)}</span>
+                    <td className="customer is-vcentered is-clickable is-size-7 has-text-weight-bold has-text-grey is-relative" onClick={() => previewOrder(order.id)}>
+                      <div className="p-2" style={{ position: 'absolute', maxWidth: '100%', top: 0, left: 0 }}>
+                        <p className="text-ellipsis" title={formatAddressShort(order.shipping_to as AddressType)}>
+                          {formatAddressShort(order.shipping_to as AddressType)}
+                        </p>
+                        <p className="has-text-weight-medium">{formatAddressLocationShort(order.shipping_to as AddressType)}</p>
+                      </div>
                     </td>
                     <td className="date px-1 is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">

@@ -146,6 +146,8 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({ shipmentI
               <CarrierBadge
                 className="has-background-primary has-text-centered has-text-weight-bold has-text-white-bis is-size-7"
                 carrier_name={shipment.meta.carrier as string}
+                text_color={shipment.selected_rate_carrier?.config?.text_color}
+                background={shipment.selected_rate_carrier?.config?.brand_color}
               />
             </div>
 
