@@ -754,6 +754,7 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
                     instance.settings,
                     payload=settings_data,
                     context=info.context.request,
+                    remove_if_missing=True,
                 )
 
             connection = serializer.save()

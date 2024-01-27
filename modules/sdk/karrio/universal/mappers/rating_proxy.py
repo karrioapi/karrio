@@ -144,14 +144,19 @@ def get_available_rates(
         for zone in service.zones or []:
             # Check Location inclusion
             _cover_supported_cities = (
-                zone.cities is not None and recipient.city in zone.cities
+                zone.cities is not None
+                and recipient.city is not None
+                and recipient.city.lower() in [_.lower() for _ in zone.cities]
             ) or not any(zone.cities or [])
             _cover_supported_countries = (
-                zone.cities is not None and recipient.country_code in zone.country_codes
+                zone.country_codes is not None
+                and recipient.country_code in zone.country_codes
             ) or not any(zone.country_codes or [])
             _cover_supported_postal_codes = (
                 zone.postal_codes is not None
-                and recipient.postal_code in zone.postal_codes
+                and recipient.postal_code is not None
+                and str(recipient.postal_code).lower()
+                in [str(_).lower() for _ in zone.postal_codes]
             ) or not any(zone.postal_codes or [])
 
             # Check if weight and dimensions fit restrictions
@@ -169,10 +174,19 @@ def get_available_rates(
             # Check if best fit zone is selected
             _best_fit_zone_selected = (
                 selected_zone is not None
-                and selected_zone.rate < zone.rate
+                and selected_zone.max_weight is not None
                 and (
-                    selected_zone.max_weight < zone.max_weight
-                    or selected_zone.min_weight < zone.min_weight
+                    selected_zone.rate < zone.rate
+                    or (
+                        selected_zone.max_weight is not None
+                        and zone.max_weight is not None
+                        and selected_zone.max_weight < zone.max_weight
+                    )
+                    or (
+                        selected_zone.min_weight is not None
+                        and zone.min_weight is not None
+                        and selected_zone.min_weight < zone.min_weight
+                    )
                 )
             )
 
