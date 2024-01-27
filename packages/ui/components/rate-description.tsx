@@ -8,7 +8,7 @@ interface RateDescriptionComponent {
 
 export const RateDescription: React.FC<RateDescriptionComponent> = ({ rate }) => {
   return (
-    <div className="column px-2 py-0 is-size-7 has-text-weight-semibold text-ellipsis" style={{ maxWidth: '190px', lineHeight: '12px' }}>
+    <div className="column px-2 py-1 is-size-7 has-text-weight-semibold text-ellipsis" style={{ maxWidth: '190px', lineHeight: '13px' }}>
       <span className="has-text-weight-bold text-ellipsis m-0" style={{ maxWidth: '100%' }}>
         {formatRef(((rate.meta as any)?.service_name || rate.service) as string)}
       </span><br />

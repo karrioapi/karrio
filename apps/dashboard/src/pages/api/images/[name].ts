@@ -9,8 +9,9 @@ async function ImageFallback(req: NextApiRequest, res: NextApiResponse) {
     ? getInitials(_name).substring(0, 2)
     : formatCarrierSlug(_name)
   );
-  const text_color = isNoneOrEmpty(req.query.text_color) ? "#ddd" : req.query.text_color;
-  const background = isNoneOrEmpty(req.query.background) ? "#7e51e1" : req.query.background;
+  console.log(req.query)
+  const text_color = isNoneOrEmpty(req.query.text_color) ? "#ddd" : decodeURIComponent(req.query.text_color as string);
+  const background = isNoneOrEmpty(req.query.background) ? "#7e51e1" : decodeURIComponent(req.query.background as string);
   const props = (isIcon ? 'viewBox="0 0 512 512"' : 'viewBox="0 0 125 25"');
   const path = (isIcon
     ? `<path xmlns="http://www.w3.org/2000/svg" style="fill-rule:evenodd;clip-rule:evenodd;fill:${background};" d="M512,472c0,22.1-17.9,40-40,40H40c-22.1,0-40-17.9-40-40V40C0,17.9,17.9,0,40,0h432c22.1,0,40,17.9,40,40V472z"/>`

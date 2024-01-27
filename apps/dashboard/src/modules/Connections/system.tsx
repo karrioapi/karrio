@@ -29,27 +29,8 @@ const ContextProviders = bundleContexts([
 
 
 export default function ConnectionsPage(pageProps: any) {
-  const tabs = ['Your Accounts', 'System Accounts', 'Rate Sheets'];
-
   const Component: React.FC = () => {
     const router = useRouter();
-    const { modal } = router.query;
-    const { setLoading } = useContext(Loading);
-    const mutation = useCarrierConnectionMutation();
-    const { selectTab } = useContext(TabStateContext);
-    const { query: systemQuery } = useSystemConnections();
-    const { query: carrierQuery } = useCarrierConnections();
-    const { editConnection } = useContext(ConnectProviderModalContext);
-
-    useEffect(() => { setLoading(carrierQuery.isFetching || systemQuery.isFetching); });
-    useEffect(() => {
-      if (modal === 'new') {
-        editConnection({
-          onConfirm: async () => { selectTab(tabs[0]); },
-          create: mutation.updateCarrierConnection.mutateAsync,
-        });
-      }
-    }, [modal]);
 
     return (
       <>
@@ -57,22 +38,17 @@ export default function ConnectionsPage(pageProps: any) {
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Carriers</span>
           <div>
-            <button className="button is-primary is-small is-pulled-right" onClick={() => editConnection({
-              create: mutation.createCarrierConnection.mutateAsync,
-            })}>
-              <span>Register a carrier</span>
-            </button>
           </div>
         </header>
 
         <div className="tabs">
           <ul>
-            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+            <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/connections" shallow={false} prefetch={false}>
                 <span>Your Accounts</span>
               </AppLink>
             </li>
-            <li className={`is-capitalized has-text-weight-semibold`}>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
               <AppLink href="/connections/system" shallow={false} prefetch={false}>
                 <span>System Accounts</span>
               </AppLink>
@@ -85,7 +61,7 @@ export default function ConnectionsPage(pageProps: any) {
           </ul>
         </div>
 
-        <UserConnectionList />
+        <SystemConnectionList />
 
       </>
     );

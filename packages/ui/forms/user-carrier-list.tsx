@@ -196,7 +196,7 @@ export const UserConnectionList: React.FC<UserConnectionListView> = () => {
       {(query.isFetched && (query.data?.user_connections || []).length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
-          <p>No carriers have been connected yet.</p>
+          <p>No carriers connected yet.</p>
           <p>Use the <strong>Register a Carrier</strong> button above to add a new connection</p>
         </div>
 

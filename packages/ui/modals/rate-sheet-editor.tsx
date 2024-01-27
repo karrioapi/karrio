@@ -73,17 +73,6 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
 
       dispatch({ name, value });
     };
-    const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      const { ...payload } = sheet;
-      try {
-        loader.setLoading(true);
-        onSubmit && onSubmit(payload);
-      } catch (message: any) {
-        notifier.notify({ type: NotificationType.error, message });
-      }
-      loader.setLoading(false);
-    };
     const computeDefaultCurrency = (defaultValue: ServiceLevelType[]): CurrencyCodeEnum => {
       const svc = (defaultValue || []).find(svc => !isNone(svc.currency))
       return (svc?.currency || CurrencyCodeEnum.USD) as CurrencyCodeEnum
@@ -114,6 +103,18 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
       dispatch({ name: 'services', value: newValue });
     };
 
+    const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      const { ...payload } = sheet;
+      try {
+        loader.setLoading(true);
+        onSubmit && onSubmit(payload);
+      } catch (message: any) {
+        notifier.notify({ type: NotificationType.error, message });
+      }
+      loader.setLoading(false);
+    };
+
     return (
       <form className="modal-card-body p-4" onSubmit={handleSubmit} key={key}>
         {(sheet !== undefined) && <>
@@ -131,7 +132,7 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
               <button
                 type="submit"
                 className="button is-small is-success"
-                disabled={loading || isEqual(sheet, defaultValue)}
+                disabled={loading || isEqual(sheet, defaultValue || DEFAULT_STATE) || !sheet.name || !sheet.carrier_name}
               >
                 Save
               </button>
