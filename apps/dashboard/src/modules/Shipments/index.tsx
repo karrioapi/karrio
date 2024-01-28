@@ -1,6 +1,8 @@
 import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, formatCarrierSlug, url$ } from "@karrio/lib";
 import { ShipmentPreview, ShipmentPreviewContext } from "@/components/shipment-preview";
+import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
+import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
@@ -9,13 +11,13 @@ import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { AddressType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { useShipments } from "@karrio/hooks/shipment";
 import React, { useContext, useEffect } from "react";
 import { useRouter } from "next/dist/client/router";
-import { AddressType } from "@karrio/types";
 import Head from "next/head";
 
 export { getServerSideProps } from "@/context/main";
@@ -30,6 +32,8 @@ export default function ShipmentsPage(pageProps: any) {
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
     const { previewShipment } = useContext(ShipmentPreviewContext);
+    const { query: { data: { user_connections } = {} } } = useCarrierConnections();
+    const { query: { data: { system_connections } = {} } } = useSystemCarrierConnections();
     const context = useShipments({
       status: ['purchased', 'delivered', 'in_transit', 'cancelled', 'needs_attention', 'out_for_delivery', 'delivery_failed'] as any,
       setVariablesToURL: true,
@@ -77,6 +81,10 @@ export default function ShipmentsPage(pageProps: any) {
       )).length === selection.length;
     };
     const getRate = (shipment: any) => (shipment.selected_rate || (shipment.rates || [])[0] || shipment);
+    const getCarrier = (rate?: ShipmentType['rates'][0]) => (
+      user_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
+      || system_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
+    );
 
     useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
@@ -202,8 +210,8 @@ export default function ShipmentsPage(pageProps: any) {
                         <CarrierImage
                           carrier_name={shipment.meta?.carrier || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
                           containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
-                          text_color={shipment.selected_rate_carrier?.config?.text_color}
-                          background={shipment.selected_rate_carrier?.config?.brand_color}
+                          text_color={(shipment.selected_rate_carrier || getCarrier(getRate(shipment)))?.config?.text_color}
+                          background={(shipment.selected_rate_carrier || getCarrier(getRate(shipment)))?.config?.brand_color}
                         />
                         <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
                           <span className="has-text-info has-text-weight-bold">

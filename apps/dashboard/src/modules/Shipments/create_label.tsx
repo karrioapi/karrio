@@ -8,10 +8,12 @@ import { GoogleGeocodingScript } from '@karrio/ui/components/google-geocoding-sc
 import { CommodityDescription } from '@karrio/ui/components/commodity-description';
 import { MessagesDescription } from '@karrio/ui/components/messages-description';
 import { AddressDescription } from '@karrio/ui/components/address-description';
+import { useSystemCarrierConnections } from '@karrio/hooks/admin/connections';
 import { ParcelDescription } from '@karrio/ui/components/parcel-description';
 import { CommoditySummary } from '@karrio/ui/components/commodity-summary';
 import { RateDescription } from '@karrio/ui/components/rate-description';
 import { LineItemSelector } from '@karrio/ui/forms/line-item-selector';
+import { useCarrierConnections } from '@karrio/hooks/user-connection';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
 import { CheckBoxField } from '@karrio/ui/components/checkbox-field';
 import { TextAreaField } from '@karrio/ui/components/textarea-field';
@@ -49,11 +51,13 @@ export default function CreateLabelPage(pageProps: any) {
     const { carrierOptions } = useConnections();
     const { addUrlParam, ...router } = useLocation();
     const { query: templates } = useDefaultTemplates();
-    const { shipment_id = 'new' } = router.query as { shipment_id: string };
+    const [ready, setReady] = useState<boolean>(false);
+    const { shipment_id = 'new' } = router.query as any;
+    const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
+    const { query: { data: { user_connections } = {} } } = useCarrierConnections();
+    const { query: { data: { system_connections } = {} } } = useSystemCarrierConnections();
     const { state: { shipment, query }, ...mutation } = useLabelDataMutation(shipment_id);
     const { query: orders } = useOrders({ first: 10, status: ['unfulfilled', 'partial'] as any });
-    const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
-    const [ready, setReady] = useState<boolean>(false);
     const [selected_rate, setSelectedRate] = useState<ShipmentType['rates'][0] | undefined>(
       shipment?.selected_rate_id ? { id: shipment?.selected_rate_id } as any : undefined
     );
@@ -73,6 +77,10 @@ export default function CreateLabelPage(pageProps: any) {
         shipment.recipient.country_code !== shipment.shipper.country_code
       );
     };
+    const getCarrier = (rate: ShipmentType['rates'][0]) => (
+      user_connections?.find(_ => _.id === rate.meta.carrier_connection_id || _.carrier_id === rate.carrier_id)
+      || system_connections?.find(_ => _.id === rate.meta.carrier_connection_id || _.carrier_id === rate.carrier_id)
+    );
     const getItems = () => {
       return (orders.data?.orders.edges || [])
         .map(({ node: { line_items } }) => line_items).flat();
@@ -905,7 +913,12 @@ export default function CreateLabelPage(pageProps: any) {
                           }}>
 
                           <div className="icon-text">
-                            <CarrierImage carrier_name={(rate.meta as any)?.carrier || rate.carrier_name} width={30} height={30} />
+                            <CarrierImage
+                              carrier_name={(rate.meta as any)?.carrier || rate.carrier_name}
+                              width={30} height={30}
+                              text_color={getCarrier(rate)?.config?.text_color}
+                              background={getCarrier(rate)?.config?.brand_color}
+                            />
                             <RateDescription rate={rate} />
                           </div>
 

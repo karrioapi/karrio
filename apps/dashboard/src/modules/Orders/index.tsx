@@ -17,12 +17,14 @@ import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Spinner } from "@karrio/ui/components/spinner";
-import { AddressType, OrderType } from "@karrio/types";
+import { AddressType, OrderType, ShipmentType } from "@karrio/types";
 import { ShipmentData } from "@karrio/types/rest/api";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
 import Head from "next/head";
+import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 
 export { getServerSideProps } from "@/context/main";
 
@@ -44,6 +46,8 @@ export default function OrdersPage(pageProps: any) {
     const [allChecked, setAllChecked] = React.useState(false);
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
+    const { query: { data: { user_connections } = {} } } = useCarrierConnections();
+    const { query: { data: { system_connections } = {} } } = useSystemCarrierConnections();
     const { query: { data: { orders } = {}, ...query }, filter, setFilter } = context;
     const { query: { data: { document_templates } = {} } } = useDocumentTemplates({
       related_object: "order" as any
@@ -52,6 +56,10 @@ export default function OrdersPage(pageProps: any) {
     const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
     const getRate = (shipment: any, default_rate?: any) => (
       default_rate || shipment?.selected_rate || (shipment?.rates || [])[0] || shipment
+    );
+    const getCarrier = (rate?: ShipmentType['rates'][0]) => (
+      user_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
+      || system_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
     );
     const updatedSelection = (selectedOrders: string[], current: typeof orders) => {
       const order_ids = (current?.edges || []).map(({ node: order }) => order.id);
@@ -119,6 +127,8 @@ export default function OrdersPage(pageProps: any) {
           <CarrierImage
             carrier_name={_shipment?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
+            text_color={getCarrier(_rate)?.config?.text_color}
+            background={getCarrier(_rate)?.config?.background}
           />
           <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '15px' }}>
             <span className="has-text-info has-text-weight-bold"><span>{` - `}</span></span><br />
@@ -135,6 +145,8 @@ export default function OrdersPage(pageProps: any) {
           <CarrierImage
             carrier_name={shipment.meta?.carrier || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
+            text_color={getCarrier(rate)?.config?.text_color}
+            background={getCarrier(rate)?.config?.background}
           />
           <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '15px' }}>
             <span className="has-text-info has-text-weight-bold">
