@@ -7,10 +7,10 @@
             "name": " CUSTOMER_NOT_FOUND",
             "message": "Customer information for the submitted customer identifier 0000123456 could not be found. For further assistance please contact your Account Manager or call Australia Post on 13 21 31.",
             "field": "",
-            "context": {}
+            "context": []
         },
         {
-            "messages": {},
+            "messages": [],
             "error": "unprocessable_entity",
             "error_description": "The data you supplied is invalid. Error messages are in the messages section. Please fix those fields and try again."
         },
@@ -19,7 +19,7 @@
             "name": "Invalid tracking ID"
         },
         {
-            "messages": "Order can not be cancelled. Get in touch with Sendle support if you need more help with this.",
+            "messages": [],
             "error": "unprocessable_entity",
             "error_description": "The data you supplied is invalid. Error messages are in the messages section. Please fix those fields and try again."
         }

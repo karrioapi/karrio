@@ -13,11 +13,23 @@
             },
             "items": [
                 {
+                    "item_reference": "1",
                     "product_id": "7D55",
-                    "length": "5",
-                    "height": "1",
-                    "width": "10",
-                    "weight": "2"
+                    "length": 5.0,
+                    "height": 1.0,
+                    "width": 10.0,
+                    "weight": 2.0,
+                    "packaging_type": "BOX",
+                    "product_ids": [
+                        "7D55"
+                    ],
+                    "features": {
+                        "feature": {
+                            "attributes": {
+                                "cover_amount": 1000.0
+                            }
+                        }
+                    }
                 }
             ]
         }

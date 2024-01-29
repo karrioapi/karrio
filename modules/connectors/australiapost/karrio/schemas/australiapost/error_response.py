@@ -1,11 +1,6 @@
 from attr import s
-from typing import Optional, Any, Union, List
-from jstruct import JStruct, JList
-
-
-@s(auto_attribs=True)
-class ContextType:
-    pass
+from typing import Optional, Any, List
+from jstruct import JList
 
 
 @s(auto_attribs=True)
@@ -15,11 +10,11 @@ class ErrorType:
     code: Optional[str] = None
     name: Optional[str] = None
     message: Optional[str] = None
-    error_description: Optional[str] = None
     field: Optional[str] = None
-    context: Optional[ContextType] = JStruct[ContextType]
-    messages: Union[ContextType, Any, str]
+    context: List[Any] = []
+    messages: List[Any] = []
     error: Optional[str] = None
+    error_description: Optional[str] = None
 
 
 @s(auto_attribs=True)

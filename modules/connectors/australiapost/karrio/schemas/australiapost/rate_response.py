@@ -4,8 +4,60 @@ from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
+class AttributesType:
+    rate: Optional[float] = None
+    maximum_cover: Optional[int] = None
+    cover_amount: Optional[int] = None
+    included_cover: Optional[int] = None
+
+
+@s(auto_attribs=True)
+class FeaturePriceType:
+    calculated_price: Optional[float] = None
+    calculated_price_ex_gst: Optional[float] = None
+    calculated_gst: Optional[float] = None
+
+
+@s(auto_attribs=True)
+class FeatureType:
+    type: Optional[str] = None
+    attributes: Optional[AttributesType] = JStruct[AttributesType]
+    price: Optional[FeaturePriceType] = JStruct[FeaturePriceType]
+    bundled: Optional[bool] = None
+
+
+@s(auto_attribs=True)
 class FeaturesType:
-    pass
+    feature: Optional[FeatureType] = JStruct[FeatureType]
+
+
+@s(auto_attribs=True)
+class OptionsType:
+    signature_on_delivery_option: Optional[bool] = None
+    authority_to_leave_option: Optional[bool] = None
+
+
+@s(auto_attribs=True)
+class PriceElementType:
+    product_id: Optional[str] = None
+    product_type: Optional[str] = None
+    options: Optional[OptionsType] = JStruct[OptionsType]
+    calculated_price: Optional[float] = None
+    calculated_price_ex_gst: Optional[float] = None
+    calculated_gst: Optional[float] = None
+    bundled_price: Optional[float] = None
+    bundled_price_ex_gst: Optional[float] = None
+    bundled_gst: Optional[float] = None
+    features: Optional[FeaturesType] = JStruct[FeaturesType]
+    calculated_gst_ex_gst: Optional[float] = None
+
+
+@s(auto_attribs=True)
+class WarningType:
+    code: Optional[int] = None
+    name: Optional[str] = None
+    message: Optional[str] = None
+    context: List[Any] = []
 
 
 @s(auto_attribs=True)
@@ -14,42 +66,11 @@ class ItemType:
     height: Optional[int] = None
     length: Optional[int] = None
     width: Optional[int] = None
-    product_id: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class FromType:
-    type: Optional[str] = None
-    lines: List[Any] = []
-    suburb: Optional[str] = None
-    postcode: Optional[int] = None
-    state: Optional[str] = None
-    country: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class ShipmentSummaryType:
-    total_cost: Optional[float] = None
-    total_cost_ex_gst: Optional[float] = None
-    shipping_cost: Optional[float] = None
-    fuel_surcharge: Optional[float] = None
-    total_gst: Optional[float] = None
-    tracking_summary: Optional[FeaturesType] = JStruct[FeaturesType]
-    number_of_items: Optional[int] = None
-
-
-@s(auto_attribs=True)
-class ShipmentType:
-    shipment_from: Optional[FromType] = JStruct[FromType]
-    to: Optional[FromType] = JStruct[FromType]
-    items: List[ItemType] = JList[ItemType]
-    options: Optional[FeaturesType] = JStruct[FeaturesType]
-    features: Optional[FeaturesType] = JStruct[FeaturesType]
-    shipment_summary: Optional[ShipmentSummaryType] = JStruct[ShipmentSummaryType]
-    movement_type: Optional[str] = None
-    charge_to_account: Optional[str] = None
+    prices: List[PriceElementType] = JList[PriceElementType]
+    errors: List[Any] = []
+    warnings: List[WarningType] = JList[WarningType]
 
 
 @s(auto_attribs=True)
 class RateResponseType:
-    shipments: List[ShipmentType] = JList[ShipmentType]
+    items: List[ItemType] = JList[ItemType]
