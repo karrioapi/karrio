@@ -12,7 +12,10 @@ def parse_error_response(
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
     error_list = sum(
-        [error.get("errors", []) for error in responses if "errors" in error],
+        [
+            *[res.get("errors", []) for res in responses if "errors" in res],
+            *[res.get("warnings", []) for res in responses if "warnings" in res],
+        ],
         [],
     )
     errors: typing.List[australiapost.ErrorType] = [

@@ -1,4 +1,3 @@
-
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
@@ -35,8 +34,17 @@ class TestAustraliaPostTracking(unittest.TestCase):
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
+
+    def test_parse_tracking_error_response(self):
+        with patch("karrio.mappers.australiapost.proxy.lib.request") as mock:
+            mock.return_value = TrackingErrorResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
             self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedTrackingResponse
+                lib.to_dict(parsed_response), ParsedTrackingErrorResponse
             )
 
     def test_parse_error_response(self):
@@ -46,9 +54,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
 
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedErrorResponse
-            )
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
@@ -61,13 +67,211 @@ TrackingPayload = {
 
 ParsedTrackingResponse = []
 
+ParsedTrackingErrorResponse = []
+
 ParsedErrorResponse = []
 
 
-TrackingRequest = {}
+TrackingRequest = {"tracking_ids": ""}
 
-TrackingResponse = """{}
+TrackingResponse = """ {
+  "tracking_results": [
+    {
+      "tracking_id": "ET123456789AU",
+      "trackable_items": [
+        {
+          "consignment_id": "ET123456789AU",
+          "number_of_items": 1,
+          "items": [
+            {
+              "article_id": "ET123456789AU",
+              "product_type": "International Express",
+              "events": [
+                {
+                  "description": "Processed by air carrier",
+                  "date": "2021-02-03T08:08:00+11:00"
+                },
+                {
+                  "description": "Processed by air carrier",
+                  "date": "2021-01-29T11:31:00+11:00"
+                },
+                {
+                  "description": "Processed by air carrier",
+                  "date": "2021-01-29T04:54:00+11:00"
+                },
+                {
+                  "location": "BRISBANE QLD",
+                  "description": "Cleared and awaiting international departure",
+                  "date": "2021-01-28T01:59:11+11:00"
+                },
+                {
+                  "location": "BRISBANE QLD",
+                  "description": "Arrived at facility",
+                  "date": "2021-01-27T23:51:48+11:00"
+                },
+                {
+                  "location": "BEENLEIGH QLD",
+                  "description": "Received by Australia Post",
+                  "date": "2021-01-27T11:06:59+11:00"
+                },
+                {
+                  "description": "Shipping information approved by Australia Post",
+                  "date": "2021-01-27T03:04:03+11:00"
+                },
+                {
+                  "description": "Shipping information received by Australia Post",
+                  "date": "2021-01-27T00:22:43+11:00"
+                }
+              ],
+              "status": "Unknown"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "tracking_id": "LX123456789US",
+      "status": "Delivered",
+      "trackable_items": [
+        {
+          "article_id": "LX123456789US",
+          "product_type": "International",
+          "events": [
+            {
+              "location": "KEW VIC",
+              "description": "Delivered - Left in a safe place",
+              "date": "2021-01-21T11:04:27+11:00"
+            },
+            {
+              "location": "OAKLEIGH SOUTH VIC",
+              "description": "Onboard for delivery",
+              "date": "2021-01-21T08:34:14+11:00"
+            },
+            {
+              "description": "In transit to next facility in OAKLEIGH SOUTH VIC",
+              "date": "2021-01-20T11:55:37+11:00"
+            },
+            {
+              "location": "SUNSHINE WEST VIC",
+              "description": "Item processed at facility",
+              "date": "2021-01-20T11:48:23+11:00"
+            },
+            {
+              "description": "In transit to next facility in SUNSHINE WEST VIC",
+              "date": "2021-01-19T22:13:13+11:00"
+            },
+            {
+              "location": "CHULLORA NSW",
+              "description": "Item processed at facility",
+              "date": "2021-01-19T21:17:09+11:00"
+            },
+            {
+              "location": "SYDNEY NSW",
+              "description": "Arrived awaiting clearance (Inbound)",
+              "date": "2021-01-19T16:09:03+11:00"
+            },
+            {
+              "location": "CHICAGO (US)",
+              "description": "Cleared and awaiting international departure",
+              "date": "2021-01-07T08:49:00+11:00"
+            },
+            {
+              "location": "US-60199, UNITED STATES",
+              "description": "Received item from Sender (Outbound)",
+              "date": "2021-01-06T08:27:00+11:00"
+            }
+          ],
+          "status": "Delivered"
+        }
+      ]
+    },
+    {
+      "tracking_id": "00123456789000123400",
+      "status": "Delivered",
+      "trackable_items": [
+        {
+          "article_id": "00123456789000123400",
+          "product_type": "International",
+          "events": [
+            {
+              "location": "NZ",
+              "description": "Delivered",
+              "date": "2021-02-02T07:38:56+11:00"
+            },
+            {
+              "location": "NZ",
+              "description": "Onboard for delivery",
+              "date": "2021-02-02T06:03:04+11:00"
+            },
+            {
+              "location": "Transit Scan",
+              "description": "Onboard for delivery",
+              "date": "2021-02-02T01:55:11+11:00"
+            },
+            {
+              "location": "NZ",
+              "description": "Arrived in New Zealand",
+              "date": "2021-02-02T01:51:00+11:00"
+            },
+            {
+              "location": "Transit Scan",
+              "description": "Item cleared by Customs",
+              "date": "2021-02-02T01:21:00+11:00"
+            },
+            {
+              "location": "Transit Scan",
+              "description": "Item is in Customs",
+              "date": "2021-01-31T07:57:52+11:00"
+            },
+            {
+              "location": "Transit Scan",
+              "description": "Despatch Parcels from Export Facility",
+              "date": "2021-01-28T03:33:43+11:00"
+            },
+            {
+              "location": "Transit Scan",
+              "description": "Processed at Export Facility",
+              "date": "2021-01-27T19:24:41+11:00"
+            },
+            {
+              "description": "Shipping information approved by Australia Post",
+              "date": "2021-01-27T13:31:54+11:00"
+            },
+            {
+              "description": "Shipping information received by Australia Post",
+              "date": "2021-01-27T13:31:07+11:00"
+            }
+          ],
+          "status": "Delivered"
+        }
+      ]
+    }
+  ]
+}
 """
 
-ErrorResponse = """{}
+TrackingErrorResponse = """ {
+  "tracking_results": [
+    {
+      "tracking_id": "7XX1000",
+      "errors": [
+        {
+          "code": "ESB-10001",
+          "name": "Invalid tracking ID"
+        }
+      ]
+    }
+  ]
+}
+"""
+
+ErrorResponse = """ {
+  "errors": [
+    {
+      "code": "51101",
+      "name": "TOO_MANY_AP_TRACKING_IDS",
+      "message": "The request must contain 10 or less AP article ids, consignment ids, or barcode ids."
+    }
+  ]
+}
 """

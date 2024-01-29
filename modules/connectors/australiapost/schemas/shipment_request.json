@@ -39,6 +39,7 @@
                     "cubic_volume": 0.001,
                     "authority_to_leave": false,
                     "allow_partial_delivery": true,
+                    "contains_dangerous_goods": false,
                     "item_description": "This is a description of the item",
                     "features": {
                         "feature": {

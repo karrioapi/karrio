@@ -45,7 +45,7 @@ class ItemType:
     authority_to_leave: Optional[bool] = None
     allow_partial_delivery: Optional[bool] = None
     item_description: Optional[str] = None
-    features: Optional[dict] = {}
+    features: Optional[FeaturesType] = JStruct[FeaturesType]
     classification_type: Optional[str] = None
     commercial_value: Optional[bool] = None
     description_of_other: Optional[str] = None

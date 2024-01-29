@@ -11,6 +11,8 @@ quicktype () {
 }
 
 quicktype --src="${SCHEMAS}/error_response.json" --out="${LIB_MODULES}/error_response.py"
+quicktype --src="${SCHEMAS}/shipment_request.json" --out="${LIB_MODULES}/shipment_request.py"
+quicktype --src="${SCHEMAS}/shipment_response.json" --out="${LIB_MODULES}/shipment_response.py"
 quicktype --src="${SCHEMAS}/label_request.json" --out="${LIB_MODULES}/label_request.py"
 quicktype --src="${SCHEMAS}/label_response.json" --out="${LIB_MODULES}/label_response.py"
 quicktype --src="${SCHEMAS}/rate_request.json" --out="${LIB_MODULES}/rate_request.py"

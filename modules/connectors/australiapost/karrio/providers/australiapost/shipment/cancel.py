@@ -13,7 +13,7 @@ def parse_shipment_cancel_response(
     response = _response.deserialize()
 
     messages = error.parse_error_response(response, settings)
-    success = True  # compute shipment cancel success state
+    success = len(messages) == 0
 
     confirmation = (
         models.ConfirmationDetails(
@@ -33,6 +33,6 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = None  # map data to convert karrio model to australiapost specific type
+    request = dict(shipment_id=payload.shipment_id)
 
     return lib.Serializable(request)

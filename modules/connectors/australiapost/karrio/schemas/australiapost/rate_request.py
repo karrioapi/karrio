@@ -28,7 +28,7 @@ class ItemType:
     weight: Optional[float] = None
     packaging_type: Optional[str] = None
     product_ids: List[str] = []
-    features: Optional[dict] = {}
+    features: Optional[FeaturesType] = JStruct[FeaturesType]
 
 
 @s(auto_attribs=True)
