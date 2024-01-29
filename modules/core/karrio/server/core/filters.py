@@ -103,7 +103,7 @@ class CarrierFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def metadata_key_filter(self, queryset, name, value):
-        return queryset.filter(metadata__has_keys=value)
+        return queryset.filter(metadata__has_key=value)
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
