@@ -76,7 +76,8 @@ export const RateSheetList: React.FC = () => {
       {((rate_sheets?.edges || []).length == 0) && <div className="card my-6">
 
         <div className="card-content has-text-centered">
-          <p>The administrators have not provided any system wide carrier connections.</p>
+          <p>No rate sheets added yet.</p>
+          <p>Use the <strong>Add sheet</strong> button above to add one</p>
         </div>
 
       </div>}

@@ -408,20 +408,12 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("account").required}
                 />}
 
-                {field("service_type").exists &&
-                  <SelectField value={payload.service_type}
-                    name="service_type"
-                    label="Service type"
-                    onChange={handleChange}
-                    className="is-small is-fullwidth"
-                    required={field("service_type").required}
-                  >
-                    {!field("service_type").required && <option value='none'></option>}
-                    <option value={`R`}>{`Road service - R`}</option>
-                    <option value={`P`}>{`Road parcel service - P`}</option>
-                    <option value={`PT`}>{`Standard pallet service - PT`}</option>
-                    <option value={`PT2`}>{`Oversized pallet service - PT2`}</option>
-                  </SelectField>}
+                {field("service_type").exists && <InputField label="Service type" value={payload.service_type}
+                  name="service_type"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("service_type").required}
+                />}
 
                 {field("billing_account").exists && <InputField label="Billing Account" value={payload.billing_account}
                   name="billing_account"
@@ -657,7 +649,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                           {"brand_color" in connection_configs[carrier_name.toString()] &&
                             <InputField value={payload.config?.brand_color || ""}
-                              type='color'
+                              type="color"
                               name="brand_color"
                               label="Brand color"
                               onChange={handleConfigChange}
@@ -667,7 +659,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                           {"text_color" in connection_configs[carrier_name.toString()] &&
                             <InputField value={payload.config?.text_color || ""}
-                              type='color'
+                              type="color"
                               name="text_color"
                               label="Text color"
                               onChange={handleConfigChange}
@@ -676,20 +668,13 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                             />}
 
                           {"account_service_type" in connection_configs[carrier_name.toString()] &&
-                            <SelectField value={payload.config?.account_service_type}
+                            <InputField value={payload.account_service_type}
                               name="account_service_type"
                               label="Account service type"
                               onChange={handleConfigChange}
-                              className="is-small is-fullwidth"
                               fieldClass="column is-6 mb-0"
-                            >
-                              <option value='none'></option>
-                              <option value={`R`}>{`Road service - R`}</option>
-                              <option value={`P`}>{`Road parcel service - P`}</option>
-                              <option value={`PT`}>{`Standard pallet service - PT`}</option>
-                              <option value={`PT2`}>{`Oversized pallet service - PT2`}</option>
-                            </SelectField>}
-
+                              className="is-small is-fullwidth"
+                            />}
 
                           {"server_url" in connection_configs[carrier_name.toString()] &&
                             <InputField value={payload.config?.server_url || ""}
