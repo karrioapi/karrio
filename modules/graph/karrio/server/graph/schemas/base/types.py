@@ -3,7 +3,6 @@ import typing
 import datetime
 import strawberry
 import strawberry_django
-import django.conf as conf
 from django.db import models
 from strawberry.types import Info
 from django.forms.models import model_to_dict
@@ -949,7 +948,6 @@ class ConnectionType:
         filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> typing.List["CarrierConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
-        print(_filter.to_dict(), "<<<<<")
         connections = filters.CarrierFilters(
             _filter.to_dict(),
             providers.Carrier.access_by(info.context.request).filter(is_system=False),
