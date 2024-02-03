@@ -37,6 +37,7 @@ class JobStopsType:
 class RateRequestType:
     bookedBy: Optional[str] = None
     account: Optional[str] = None
+    readyDate: Optional[str] = None
     instructions: Optional[str] = None
     itemCount: Optional[int] = None
     items: List[ItemType] = JList[ItemType]

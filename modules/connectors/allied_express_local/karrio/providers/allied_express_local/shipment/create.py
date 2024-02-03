@@ -1,6 +1,7 @@
 import karrio.schemas.allied_express_local.label_request as allied
 import karrio.schemas.allied_express_local.label_response as shipping
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -69,6 +70,11 @@ def shipment_request(
     request = allied.LabelRequestType(
         bookedBy=shipper.contact,
         account=settings.account,
+        readyDate=lib.fdatetime(
+            options.shipment_date.state or datetime.datetime.now(),
+            current_format="%Y-%m-%d",
+            output_format="%Y-%m-%dT%H:%M:%S.%f",
+        ),
         instructions=options.instructions.state or "N/A",
         itemCount=len(packages),
         items=[

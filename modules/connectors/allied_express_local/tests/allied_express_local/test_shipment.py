@@ -181,6 +181,7 @@ ParsedErrorResponse = [
 ShipmentRequest = {
     "account": "ACCOUNT",
     "bookedBy": "TEST USER",
+    "readyDate": ANY,
     "instructions": "This is just an instruction",
     "itemCount": 2,
     "items": [

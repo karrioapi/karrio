@@ -1,6 +1,7 @@
 {
     "bookedBy": "TEST USER",
     "account": "ACCOUNT",
+    "readyDate": "2024-01-31T05:06:07.000",
     "instructions": "This is just an instruction",
     "itemCount": 2,
     "items": [
@@ -55,7 +56,7 @@
         "REF-001",
         "REF-001"
     ],
-    "serviceLevel": "R",
+    "serviceLevel": "N",
     "volume": 0.072,
     "weight": 41
 }

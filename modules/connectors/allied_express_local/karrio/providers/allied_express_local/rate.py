@@ -1,6 +1,7 @@
 import karrio.schemas.allied_express_local.rate_request as allied
 import karrio.schemas.allied_express_local.rate_response as rating
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -90,6 +91,11 @@ def rate_request(
     request = allied.RateRequestType(
         bookedBy=shipper.contact,
         account=settings.account,
+        readyDate=lib.fdatetime(
+            options.shipment_date.state or datetime.datetime.now(),
+            current_format="%Y-%m-%d",
+            output_format="%Y-%m-%dT%H:%M:%S.%f",
+        ),
         instructions=options.instructions.state or "N/A",
         itemCount=len(packages),
         items=[
