@@ -2,7 +2,10 @@ import { createShipmentFromOrders, formatAddressLocationShort, formatAddressShor
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
 import { BulkShipmentModalEditor } from "@karrio/ui/modals/bulk-shipment-modal";
 import { OrderPreview, OrderPreviewContext } from "@/components/order-preview";
+import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
+import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { AddressType, OrderType, ShipmentType } from "@karrio/types";
 import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
@@ -17,14 +20,11 @@ import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Spinner } from "@karrio/ui/components/spinner";
-import { AddressType, OrderType, ShipmentType } from "@karrio/types";
 import { ShipmentData } from "@karrio/types/rest/api";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
 import Head from "next/head";
-import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 
 export { getServerSideProps } from "@/context/main";
 
@@ -55,7 +55,11 @@ export default function OrdersPage(pageProps: any) {
 
     const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
     const getRate = (shipment: any, default_rate?: any) => (
-      default_rate || shipment?.selected_rate || (shipment?.rates || [])[0] || shipment
+      default_rate
+      || shipment?.selected_rate
+      || (shipment?.rates || []).find(_ => _.service === shipment?.options?.preferred_service)
+      || (shipment?.rates || [])[0]
+      || shipment
     );
     const getCarrier = (rate?: ShipmentType['rates'][0]) => (
       user_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
@@ -113,15 +117,9 @@ export default function OrdersPage(pageProps: any) {
       if (!shipment) {
         const _shipment = (
           order.shipments.find(({ status }) => !["cancelled", "draft"].includes(status)) ||
-          order.shipments.find(({ status }) => !["cancelled"].includes(status))
+          order.shipments.find(({ status }) => !["draft"].includes(status))
         );
-        const _service = order.options?.preferred_service
-        const _selected_rate = (
-          _shipment?.selected_rate ||
-          (_shipment?.rates || []).find(({ service }) => service === _service) ||
-          (_shipment?.rates || [])[0]
-        );
-        const _rate = getRate(_shipment, _selected_rate);
+        const _rate = getRate(_shipment);
 
         return <>
           <CarrierImage

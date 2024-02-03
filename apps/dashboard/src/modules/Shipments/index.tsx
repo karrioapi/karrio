@@ -80,7 +80,12 @@ export default function ShipmentsPage(pageProps: any) {
         selection.includes(shipment.id) && shipment.label_type == format
       )).length === selection.length;
     };
-    const getRate = (shipment: any) => (shipment.selected_rate || (shipment.rates || [])[0] || shipment);
+    const getRate = (shipment: any) => (
+      shipment.selected_rate
+      || (shipment?.rates || []).find(_ => _.service === shipment?.options?.preferred_service)
+      || (shipment?.rates || [])[0]
+      || shipment
+    );
     const getCarrier = (rate?: ShipmentType['rates'][0]) => (
       user_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
       || system_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
