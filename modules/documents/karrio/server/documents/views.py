@@ -79,21 +79,23 @@ class ShipmentDocsPrinter(VirtualDownloadView):
         self.attachment = "download" in query_params
         ids = query_params.get("shipments", "").split(",")
 
-        self.format = format
-        self.name = f"{doc}s - {timezone.now()}.{format}"
+        self.format = (format or "").lower()
+        self.name = f"{doc}s - {timezone.now()}.{self.format}"
         _queryset = Shipment.objects.filter(id__in=ids)
 
         if doc == "label":
             _queryset = _queryset.filter(
                 label__isnull=False,
-                label_type__contains=format.upper(),
+                label_type__contains=self.format.upper(),
             )
         if doc == "invoice":
             _queryset = _queryset.filter(invoice__isnull=False)
 
         self.documents = _queryset.values_list(doc, "label_type")
 
-        response = super(ShipmentDocsPrinter, self).get(request, doc, format, **kwargs)
+        response = super(ShipmentDocsPrinter, self).get(
+            request, doc, self.format, **kwargs
+        )
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -129,8 +131,8 @@ class OrderDocsPrinter(VirtualDownloadView):
         self.attachment = "download" in query_params
         ids = query_params.get("orders", "").split(",")
 
-        self.format = format
-        self.name = f"{doc}s - {timezone.now()}.{format}"
+        self.format = (format or "").lower()
+        self.name = f"{doc}s - {timezone.now()}.{self.format}"
         _queryset = Order.objects.filter(
             id__in=ids, shipments__id__isnull=False
         ).distinct()
@@ -138,7 +140,7 @@ class OrderDocsPrinter(VirtualDownloadView):
         if doc == "label":
             _queryset = _queryset.filter(
                 shipments__label__isnull=False,
-                shipments__label_type__contains=format.upper(),
+                shipments__label_type__contains=self.format.upper(),
             )
         if doc == "invoice":
             _queryset = _queryset.filter(shipments__invoice__isnull=False)
@@ -147,7 +149,9 @@ class OrderDocsPrinter(VirtualDownloadView):
             set(_queryset.values_list(f"shipments__{doc}", "shipments__label_type"))
         )
 
-        response = super(OrderDocsPrinter, self).get(request, doc, format, **kwargs)
+        response = super(OrderDocsPrinter, self).get(
+            request, doc, self.format, **kwargs
+        )
         response["X-Frame-Options"] = "ALLOWALL"
         return response
 
@@ -168,12 +172,12 @@ urlpatterns = [
         name="documents-generator",
     ),
     re_path(
-        r"^documents/shipments/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        r"^documents/shipments/(?P<doc>[a-z0-9]+).(?P<format>[a-zA-Z0-9]+)",
         ShipmentDocsPrinter.as_view(),
         name="shipments-documents-print",
     ),
     re_path(
-        r"^documents/orders/(?P<doc>[a-z0-9]+).(?P<format>[a-z0-9]+)",
+        r"^documents/orders/(?P<doc>[a-z0-9]+).(?P<format>[a-zA-Z0-9]+)",
         OrderDocsPrinter.as_view(),
         name="orders-documents-print",
     ),
