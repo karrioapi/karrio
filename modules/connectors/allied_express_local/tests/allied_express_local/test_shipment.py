@@ -127,7 +127,7 @@ ShipmentPayload = {
             "options": {"dangerous_good": True},
         },
     ],
-    "service": "allied_road_service",
+    "service": "allied_local_vip_service",
     "options": {
         "instructions": "This is just an instruction",
     },
@@ -233,7 +233,7 @@ ShipmentRequest = {
         "phoneNumber": "(07) 3114 1499",
     },
     "referenceNumbers": ["REF-001"],
-    "serviceLevel": "R",
+    "serviceLevel": "V",
     "volume": 0.06,
     "weight": 40.0,
 }

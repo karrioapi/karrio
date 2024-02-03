@@ -93,7 +93,7 @@ RatePayload = {
             "options": {"dangerous_good": True},
         },
     ],
-    "services": ["allied_road_service"],
+    "services": ["allied_local_normal_service"],
     "options": {
         "instructions": "This is just an instruction",
     },
@@ -109,8 +109,8 @@ ParsedRateResponse = [
             "extra_charges": [
                 {"amount": 14.18, "currency": "AUD", "name": "Job charge"}
             ],
-            "meta": {"service_name": "allied_road_service"},
-            "service": "allied_road_service",
+            "meta": {"service_name": "allied_local_normal_service"},
+            "service": "allied_local_normal_service",
             "total_charge": 40.66,
         }
     ],
@@ -188,7 +188,7 @@ RateRequest = {
         "phoneNumber": "(07) 3114 1499",
     },
     "referenceNumbers": ["REF-001"],
-    "serviceLevel": "R",
+    "serviceLevel": "N",
     "volume": 0.06,
     "weight": 40.0,
 }

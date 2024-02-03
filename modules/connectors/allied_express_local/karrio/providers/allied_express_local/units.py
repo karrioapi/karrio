@@ -27,10 +27,10 @@ class ConnectionConfig(lib.Enum):
 class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
-    allied_road_service = "R"
-    allied_parcel_service = "P"
-    allied_standard_pallet_service = "PT"
-    allied_oversized_pallet_service = "PT2"
+    allied_local_normal_service = "N"
+    allied_local_vip_service = "V"
+    allied_local_executive_service = "E"
+    allied_local_gold_service = "G"
 
 
 class ShippingOption(lib.Enum):

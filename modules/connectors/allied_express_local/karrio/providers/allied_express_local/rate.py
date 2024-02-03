@@ -85,7 +85,7 @@ def rate_request(
         getattr(services.first, "value", None)
         or settings.connection_config.account_service_type.state
         or settings.service_type
-        or "R"
+        or "N"
     )
 
     request = allied.RateRequestType(
