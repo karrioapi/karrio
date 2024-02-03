@@ -52,6 +52,7 @@ export const GET_SYSTEM_USAGE = gql`query GetSystemUsage($filter: UsageFilter) {
 export const GET_ACCOUNTS = gql`query GetAccounts($filter: AccountFilter) {
   accounts(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -113,6 +114,7 @@ export const GET_ACCOUNTS = gql`query GetAccounts($filter: AccountFilter) {
 export const GET_USERS = gql`query GetUsers($filter: UserFilter) {
   users(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -1655,6 +1657,7 @@ export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
 export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter) {
   rate_sheets(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -1704,6 +1707,7 @@ export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter)
 export const GET_GROUP_PERMISSIONS = gql`query GetPermissionGroups($filter: PermissionGroupFilter) {
   permission_groups(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor

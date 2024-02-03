@@ -942,20 +942,6 @@ class ConnectionType:
         return getattr(self.config, "config", None)
 
     @staticmethod
-    @utils.authentication_required
-    def resolve_list(
-        info,
-        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
-    ) -> typing.List["CarrierConnectionType"]:
-        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
-        connections = filters.CarrierFilters(
-            _filter.to_dict(),
-            providers.Carrier.access_by(info.context.request).filter(is_system=False),
-        ).qs
-
-        return list(map(ConnectionType.parse, connections))
-
-    @staticmethod
     def parse(
         carrier: providers.Carrier,
         settings_types: dict = None,
@@ -990,6 +976,55 @@ class ConnectionType:
             capabilities=carrier.capabilities,
             config=getattr(carrier.config, "config", None),
             **{**settings, **services, **display_name, **rate_sheet},
+        )
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list_legacy(
+        info,
+        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
+    ) -> typing.List["CarrierConnectionType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        connections = filters.CarrierFilters(
+            _filter.to_dict(),
+            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+        ).qs
+
+        return list(map(ConnectionType.parse, connections))
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(
+        info,
+        id: str,
+    ) -> typing.Optional["CarrierConnectionType"]:
+        connection = (
+            providers.Carrier.access_by(info.context.request).filter(id=id).first()
+        )
+        return ConnectionType.parse(connection) if connection else None
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
+    ) -> utils.Connection["CarrierConnectionType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        queryset = filters.CarrierFilters(
+            _filter.to_dict(),
+            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+        ).qs
+        connections = utils.paginated_connection(queryset, **_filter.pagination())
+
+        return utils.Connection(
+            page_info=connections.page_info,
+            edges=[
+                utils.Edge(
+                    node=ConnectionType.parse(edge.node),
+                    cursor=edge.cursor,
+                )
+                for edge in connections.edges
+            ],
         )
 
 

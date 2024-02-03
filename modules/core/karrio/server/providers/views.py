@@ -12,8 +12,8 @@ from django_downloadview import VirtualDownloadView
 from rest_framework.pagination import LimitOffsetPagination
 
 import karrio.server.openapi as openapi
-from karrio.server.providers import models
 import karrio.server.core.filters as filters
+import karrio.server.providers.models as models
 from karrio.server.core.gateway import Carriers
 from karrio.server.providers.router import router
 from karrio.server.core import datatypes, dataunits
@@ -50,6 +50,24 @@ class CarrierList(GenericAPIView):
         carriers = [carrier.data for carrier in Carriers.list(**filter)]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
         return self.get_paginated_response(response)
+
+
+class CarrierDetails(APIView):
+    @openapi.extend_schema(
+        tags=["Carriers"],
+        operation_id=f"{ENDPOINT_ID}retrieve",
+        summary="Retrieve a carrier account",
+        responses={
+            200: CarrierSettings(),
+            404: ErrorResponse(),
+        },
+    )
+    def get(self, request: Request, pk: str):
+        """
+        Retrieve a carrier account.
+        """
+        carrier = Carriers.list(request).get(pk=pk)
+        return Response(CarrierSettings(carrier.data).data)
 
 
 class CarrierServices(APIView):
@@ -155,7 +173,10 @@ class CarrierLabelPreview(VirtualDownloadView):
         return shipment.docs.label
 
 
-router.urls.append(path("carriers", CarrierList.as_view()))
+router.urls.append(path("carriers", CarrierList.as_view(), name="carrier-list"))
+router.urls.append(
+    path("carriers/<str:pk>", CarrierDetails.as_view(), name="carrier-details")
+)
 router.urls.append(
     path(
         "carriers/<str:carrier_name>/services",
@@ -168,6 +189,6 @@ if settings.CUSTOM_CARRIER_DEFINITION:
         re_path(
             r"^carriers/(?P<pk>\w+)/label.(?P<format>[a-z0-9]+)",
             CarrierLabelPreview.as_view(),
-            name="carrier-label-preview",
+            name="carrier-label",
         )
     )

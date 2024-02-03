@@ -305,6 +305,7 @@ export interface GetWorkflowVariables {
 // ====================================================
 
 export interface GetWorkflows_workflows_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -468,6 +469,7 @@ export interface GetWorkflowConnectionVariables {
 // ====================================================
 
 export interface GetWorkflowConnections_workflow_connections_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -595,6 +597,7 @@ export interface GetWorkflowActionVariables {
 // ====================================================
 
 export interface GetWorkflowActions_workflow_actions_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -740,6 +743,7 @@ export interface GetWorkflowEventVariables {
 // ====================================================
 
 export interface GetWorkflowEvents_workflow_events_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -810,6 +814,7 @@ export interface GetWorkflowEventsVariables {
 // ====================================================
 
 export interface GetWorkflowTemplates_workflow_templates_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -910,6 +915,7 @@ export interface GetWorkflowTemplatesVariables {
 // ====================================================
 
 export interface GetWorkflowActionTemplates_workflow_action_templates_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -990,6 +996,7 @@ export interface GetWorkflowActionTemplatesVariables {
 // ====================================================
 
 export interface GetWorkflowConnectionTemplates_workflow_connection_templates_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;

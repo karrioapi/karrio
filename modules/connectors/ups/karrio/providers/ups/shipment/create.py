@@ -260,7 +260,6 @@ def shipment_request(
                                     AccountNumber=payment.account_number,
                                     CertifiedElectronicMail=None,
                                     InterchangeSystemCode=None,
-                                    FRSPaymentInformation=None,
                                 )
                                 if payment.paid_by == "third_party"
                                 else None

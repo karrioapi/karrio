@@ -76,6 +76,7 @@ export interface GetSystemUsageVariables {
 // ====================================================
 
 export interface GetAccounts_accounts_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -170,6 +171,7 @@ export interface GetAccountsVariables {
 // ====================================================
 
 export interface GetUsers_users_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -2006,6 +2008,7 @@ export interface GetRateSheetVariables {
 // ====================================================
 
 export interface GetRateSheets_rate_sheets_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -2081,6 +2084,7 @@ export interface GetRateSheetsVariables {
 // ====================================================
 
 export interface GetPermissionGroups_permission_groups_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -3161,6 +3165,7 @@ export interface CreateServiceLevelInput {
   weight_unit?: WeightUnitEnum | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  metadata?: any | null;
 }
 
 // null
@@ -3175,6 +3180,7 @@ export interface ServiceZoneInput {
   latitude?: number | null;
   longitude?: number | null;
   cities?: string[] | null;
+  postal_codes?: string[] | null;
   country_codes?: string[] | null;
 }
 
@@ -3658,6 +3664,7 @@ export interface UpdateServiceLevelInput {
   weight_unit?: WeightUnitEnum | null;
   domicile?: boolean | null;
   international?: boolean | null;
+  metadata?: any | null;
   id?: string | null;
 }
 
@@ -3673,6 +3680,7 @@ export interface UpdateServiceZoneInput {
   latitude?: number | null;
   longitude?: number | null;
   cities?: string[] | null;
+  postal_codes?: string[] | null;
   country_codes?: string[] | null;
 }
 

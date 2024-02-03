@@ -219,6 +219,7 @@ export const GET_WORKFLOW = gql`query GetWorkflow($id: String!) {
 export const GET_WORKFLOWS = gql`query GetWorkflows($filter: WorkflowFilter) {
   workflows(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -337,6 +338,7 @@ export const GET_WORKFLOW_CONNECTION = gql`query GetWorkflowConnection($id: Stri
 export const GET_WORKFLOW_CONNECTIONS = gql`query GetWorkflowConnections($filter: WorkflowConnectionFilter) {
   workflow_connections(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -424,6 +426,7 @@ export const GET_WORKFLOW_ACTION = gql`query GetWorkflowAction($id: String!) {
 export const GET_WORKFLOW_ACTIONS = gql`query GetWorkflowActions($filter: WorkflowActionFilter) {
   workflow_actions(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -524,6 +527,7 @@ export const GET_WORKFLOW_EVENT = gql`query GetWorkflowEvent($id: String!) {
 export const GET_WORKFLOW_EVENTS = gql`query GetWorkflowEvents($filter: WorkflowEventFilter) {
   workflow_events(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -569,6 +573,7 @@ export const GET_WORKFLOW_EVENTS = gql`query GetWorkflowEvents($filter: Workflow
 export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: WorkflowFilter) {
   workflow_templates(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -638,6 +643,7 @@ export const GET_WORKFLOW_TEMPLATES = gql`query GetWorkflowTemplates($filter: Wo
 export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplates($filter: WorkflowActionFilter) {
   workflow_action_templates(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -693,6 +699,7 @@ export const GET_WORKFLOW_ACTION_TEMPLATES = gql`query GetWorkflowActionTemplate
 export const GET_WORKFLOW_CONNECTION_TEMPLATES = gql`query GetWorkflowConnectionTemplates($filter: WorkflowConnectionFilter) {
   workflow_connection_templates(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor

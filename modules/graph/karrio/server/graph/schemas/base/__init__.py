@@ -24,7 +24,7 @@ class Query:
     )
 
     user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
-        resolver=types.ConnectionType.resolve_list
+        resolver=types.ConnectionType.resolve_list_legacy
     )
     system_connections: typing.List[types.SystemConnectionType] = strawberry.field(
         resolver=types.SystemConnectionType.resolve_list
@@ -49,18 +49,21 @@ class Query:
     logs: utils.Connection[types.LogType] = strawberry.field(
         resolver=types.LogType.resolve_list
     )
+
     tracing_record: typing.Optional[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve
     )
     tracing_records: utils.Connection[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve_list
     )
+
     shipment: typing.Optional[types.ShipmentType] = strawberry.field(
         resolver=types.ShipmentType.resolve
     )
     shipments: utils.Connection[types.ShipmentType] = strawberry.field(
         resolver=types.ShipmentType.resolve_list
     )
+
     tracker: typing.Optional[types.TrackerType] = strawberry.field(
         resolver=types.TrackerType.resolve
     )
@@ -74,6 +77,13 @@ class Query:
     rate_sheets: utils.Connection[types.RateSheetType] = strawberry.field(
         resolver=types.RateSheetType.resolve_list
     )
+
+    carrier_connection: typing.Optional[types.CarrierConnectionType] = strawberry.field(
+        resolver=types.ConnectionType.resolve
+    )
+    carrier_connections: utils.Connection[
+        types.CarrierConnectionType
+    ] = strawberry.field(resolver=types.ConnectionType.resolve_list)
 
 
 @strawberry.type

@@ -41,7 +41,12 @@ export const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, isView
     }
   };
   const createLabel = (_: React.MouseEvent) => {
-    router.push(basePath + '/create_label?shipment_id=' + shipment.id);
+    if (!!shipment.meta?.orders) {
+      router.push(`${basePath}/orders/create_label?shipment_id=${shipment.id}&order_id=${shipment.meta.orders}`)
+    }
+    else {
+      router.push(`${basePath}/create_label?shipment_id=${shipment.id}`)
+    }
   };
   const displayDetails = (_: React.MouseEvent) => {
     router.push(basePath + '/shipments/' + shipment.id);

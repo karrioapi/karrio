@@ -74,7 +74,7 @@ def _extract_details(
             carrier=provider_units.CarrierId.map(tracker.carrier).name_or_key,
             shipment_id=tracker.shipment_id,
             tracker_id=tracker.id,
-            fees=tracker.fees,
+            fees=lib.to_dict(tracker.fees),
         ),
     )
 

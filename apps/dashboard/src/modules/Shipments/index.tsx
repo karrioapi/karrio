@@ -80,7 +80,12 @@ export default function ShipmentsPage(pageProps: any) {
         selection.includes(shipment.id) && shipment.label_type == format
       )).length === selection.length;
     };
-    const getRate = (shipment: any) => (shipment.selected_rate || (shipment.rates || [])[0] || shipment);
+    const getRate = (shipment: any) => (
+      shipment.selected_rate
+      || (shipment?.rates || []).find(_ => _.service === shipment?.options?.preferred_service)
+      || (shipment?.rates || [])[0]
+      || shipment
+    );
     const getCarrier = (rate?: ShipmentType['rates'][0]) => (
       user_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
       || system_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
@@ -140,7 +145,7 @@ export default function ShipmentsPage(pageProps: any) {
 
               <tbody>
                 <tr>
-                  <td className="selector has-text-centered p-0 control" onClick={preventPropagation}>
+                  <td className="selector has-text-centered p-0 control is-vcentered" onClick={preventPropagation}>
                     <label className="checkbox p-2">
                       <input
                         name="all"
@@ -151,7 +156,7 @@ export default function ShipmentsPage(pageProps: any) {
                     </label>
                   </td>
 
-                  {selection.length > 0 && <td className="p-1" colSpan={6}>
+                  {selection.length > 0 && <td className="p-1 is-vcentered" colSpan={6}>
                     <div className="buttons has-addons">
                       <a
                         href={url$`${metadata.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(',')}`}
@@ -177,11 +182,11 @@ export default function ShipmentsPage(pageProps: any) {
                   </td>}
 
                   {selection.length === 0 && <>
-                    <td className="service is-size-7">SHIPPING SERVICE</td>
-                    <td className="status"></td>
-                    <td className="recipient is-size-7">RECIPIENT</td>
-                    <td className="reference is-size-7">REFERENCE</td>
-                    <td className="date is-size-7">DATE</td>
+                    <td className="service is-size-7 is-vcentered">SHIPPING SERVICE</td>
+                    <td className="status is-vcentered"></td>
+                    <td className="recipient is-size-7 is-vcentered">RECIPIENT</td>
+                    <td className="reference is-size-7 is-vcentered">REFERENCE</td>
+                    <td className="date is-size-7 is-vcentered">DATE</td>
                     <td className="action"></td>
                   </>}
                 </tr>

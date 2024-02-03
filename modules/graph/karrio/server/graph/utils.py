@@ -217,6 +217,7 @@ class PageInfo:
         - https://relay.dev/graphql/connections.htm
     """
 
+    count: int
     has_next_page: bool
     has_previous_page: bool
     start_cursor: typing.Optional[str]
@@ -265,6 +266,7 @@ def paginated_connection(
     ]
     return Connection(
         page_info=PageInfo(
+            count=queryset.count(),
             has_previous_page=False,
             has_next_page=len(results) > first,
             start_cursor=edges[0].cursor if edges else None,

@@ -46,6 +46,9 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
   const cancelOrder = (order: OrderType) => async () => {
     await mutation.cancelOrder.mutateAsync(order);
   };
+  const computeShipmentId = (order: OrderType) => {
+    return order.shipments.find(s => s.status === "draft")?.id || 'new';
+  };
 
   return (
     <div className={`dropdown is-right ${isActive ? 'is-active' : ''}`} key={`menu-${order.id}`}>
@@ -60,9 +63,17 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
         <div className="dropdown-content">
 
           {["unfulfilled", "partial"].includes(order?.status) && <>
-            <AppLink className="dropdown-item" href={`/orders/create_shipment?shipment_id=new&order_id=${order?.id}`}>
-              <span>Create shipment</span>
+            <AppLink className="dropdown-item" href={`/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`}>
+              <span>Create label</span>
             </AppLink>
+          </>}
+
+          {(order.shipments.filter(s => !["cancelled", "draft"].includes(s.status)).length > 0) && <>
+            <a
+              href={url$`${references.HOST}/documents/orders/label.${order.shipments.filter(s => !["cancelled", "draft"].includes(s.status))[0].label_type}?orders=${order.id}`}
+              className={`dropdown-item`} target="_blank" rel="noreferrer">
+              <span className="has-text-weight-semibold">{`Print Label${(order.shipments.filter(s => !["cancelled", "draft"].includes(s.status)).length > 1) ? 's' : ''}`}</span>
+            </a>
           </>}
 
           {!isViewing && <a className="dropdown-item" onClick={displayDetails}>
@@ -90,7 +101,7 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
             </a>
           </>}
 
-          {((document_templates?.edges || []).length > 0 && !["fulfilled", "delivered", "cancelled"].includes(order?.status)) && <>
+          {((document_templates?.edges || []).length > 0 && !["fulfilled", "partial", "delivered", "cancelled"].includes(order?.status)) && <>
             <hr className="my-1" style={{ height: '1px' }} />
           </>}
 
