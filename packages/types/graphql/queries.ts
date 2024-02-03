@@ -4,6 +4,7 @@ import gql from 'graphql-tag';
 export const GET_ADDRESS_TEMPLATES = gql`query get_address_templates($filter: AddressFilter) {
   address_templates(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -40,6 +41,7 @@ export const GET_ADDRESS_TEMPLATES = gql`query get_address_templates($filter: Ad
 export const GET_CUSTOMS_TEMPLATES = gql`query get_customs_info_templates($filter: TemplateFilter) {
   customs_templates(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -195,6 +197,7 @@ export const GET_LOG = gql`query get_log($id: Int!) {
 export const GET_LOGS = gql`query get_logs($filter: LogFilter) {
   logs(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -498,6 +501,7 @@ export const GET_SHIPMENT = gql`query get_shipment($id: String!) {
 export const GET_SHIPMENTS = gql`query get_shipments($filter: ShipmentFilter) {
   shipments(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -1182,6 +1186,7 @@ export const GET_TRACKER = gql`query get_tracker($id: String!) {
 export const GET_TRACKERS = gql`query get_trackers($filter: TrackerFilter) {
   trackers(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -1288,6 +1293,7 @@ export const GET_WEBHOOK = gql`query get_webhook($id: String!) {
 export const GET_WEBHOOKS = gql`query get_webhooks($filter: WebhookFilter) {
   webhooks(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -1318,6 +1324,7 @@ export const GET_WEBHOOKS = gql`query get_webhooks($filter: WebhookFilter) {
 export const GET_PARCEL_TEMPLATES = gql`query get_parcel_templates($filter: TemplateFilter) {
   parcel_templates(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -2364,6 +2371,7 @@ export const GET_EVENT = gql`query get_event($id: String!) {
 export const GET_EVENTS = gql`query get_events($filter: EventFilter) {
   events(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -2668,6 +2676,7 @@ export const GET_ORDER = gql`query get_order($id: String!) {
         test_mode
         meta
       }
+      options
       metadata
       meta
       messages {
@@ -2773,6 +2782,7 @@ export const GET_ORDER_DATA = gql`query get_order_data($id: String!) {
 export const GET_ORDERS = gql`query get_orders($filter: OrderFilter) {
   orders(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -3063,6 +3073,7 @@ export const GET_ORDERS = gql`query get_orders($filter: OrderFilter) {
             test_mode
             meta
           }
+          options
           metadata
           meta
           messages {
@@ -3115,6 +3126,7 @@ export const GET_DOCUMENT_TEMPLATE = gql`query get_document_template($id: String
 export const GET_DOCUMENT_TEMPLATES = gql`query get_document_templates($filter: DocumentTemplateFilter) {
   document_templates(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -3312,6 +3324,7 @@ export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
 export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter) {
   rate_sheets(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor
@@ -3414,6 +3427,7 @@ export const GET_BATCH_OPERATION = gql`query get_batch_operation($id: String!) {
 export const GET_BATCH_OPERATIONS = gql`query get_batch_operations($filter: BatchOperationFilter) {
   batch_operations(filter: $filter) {
     page_info {
+      count
       has_next_page
       has_previous_page
       start_cursor

@@ -8,6 +8,7 @@
 // ====================================================
 
 export interface get_address_templates_address_templates_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -65,6 +66,7 @@ export interface get_address_templatesVariables {
 // ====================================================
 
 export interface get_customs_info_templates_customs_templates_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -324,6 +326,7 @@ export interface get_logVariables {
 // ====================================================
 
 export interface get_logs_logs_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -703,6 +706,7 @@ export interface get_shipmentVariables {
 // ====================================================
 
 export interface get_shipments_shipments_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -1569,6 +1573,7 @@ export interface get_trackerVariables {
 // ====================================================
 
 export interface get_trackers_trackers_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -1725,6 +1730,7 @@ export interface get_webhookVariables {
 // ====================================================
 
 export interface get_webhooks_webhooks_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -1776,6 +1782,7 @@ export interface get_webhooksVariables {
 // ====================================================
 
 export interface get_parcel_templates_parcel_templates_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -3311,6 +3318,7 @@ export interface get_eventVariables {
 // ====================================================
 
 export interface get_events_events_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -3675,6 +3683,7 @@ export interface get_order_order_shipments {
   selected_rate: get_order_order_shipments_selected_rate | null;
   carrier_ids: string[];
   rates: get_order_order_shipments_rates[];
+  options: any;
   metadata: any;
   meta: any | null;
   messages: get_order_order_shipments_messages[];
@@ -3819,6 +3828,7 @@ export interface get_order_dataVariables {
 // ====================================================
 
 export interface get_orders_orders_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -4149,6 +4159,7 @@ export interface get_orders_orders_edges_node_shipments {
   selected_rate: get_orders_orders_edges_node_shipments_selected_rate | null;
   carrier_ids: string[];
   rates: get_orders_orders_edges_node_shipments_rates[];
+  options: any;
   metadata: any;
   meta: any | null;
   messages: get_orders_orders_edges_node_shipments_messages[];
@@ -4254,6 +4265,7 @@ export interface get_document_templateVariables {
 // ====================================================
 
 export interface get_document_templates_document_templates_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -4619,6 +4631,7 @@ export interface GetRateSheetVariables {
 // ====================================================
 
 export interface GetRateSheets_rate_sheets_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
@@ -4811,6 +4824,7 @@ export interface get_batch_operationVariables {
 // ====================================================
 
 export interface get_batch_operations_batch_operations_page_info {
+  count: number;
   has_next_page: boolean;
   has_previous_page: boolean;
   start_cursor: string | null;
