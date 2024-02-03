@@ -81,7 +81,7 @@ def shipment_updated(
 
         if instance.status != serializers.ShipmentStatus.draft.value:
             status = compute_order_status(order)
-            if status != order.status:
+            if order.status != "cancelled" and status != order.status:
                 order.status = status
                 order.save(update_fields=["status"])
                 logger.info("shipment related order successfully updated")
