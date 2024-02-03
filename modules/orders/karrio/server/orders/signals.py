@@ -57,6 +57,7 @@ def shipment_updated(
     - shipment purchased (label purchased)
     - shipment fulfilled (shipped)
     """
+
     if not instance.parcels.filter(
         items__parent__order_link__order__isnull=False
     ).exists():
@@ -68,10 +69,11 @@ def shipment_updated(
     ).distinct()
 
     if related_orders.exists():
-        instance.meta = {
+        meta = {
             **(instance.meta or {}),
-            "orders": [_.id for _ in related_orders],
+            "orders": ",".join([_.id for _ in related_orders]),
         }
+        manager.Shipment.objects.filter(id=instance.id).update(meta=meta)
 
     for order in related_orders:
         if order.shipments.filter(id=instance.id).exists() == False:
