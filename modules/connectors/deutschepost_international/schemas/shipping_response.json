@@ -1,0 +1,38 @@
+{
+  "customerEkp": "9012345678",
+  "orderId": 1234,
+  "orderStatus": "FINALIZE",
+  "shipments": {
+    "awb": 9980000123456,
+    "items": {
+      "id": 123456,
+      "barcode": "RX12345678DE",
+      "product": "GPP",
+      "serviceLevel": "PRIORITY",
+      "custRef": "REF-2361890-AB",
+      "recipient": "Alfred J. Quack",
+      "recipientPhone": "+4935120681234",
+      "addressLine1": "Mustergasse 12",
+      "addressLine2": "Hinterhaus",
+      "addressLine3": "1. Etage",
+      "city": "Dresden",
+      "state": "Sachsen",
+      "postalCode": "01432",
+      "destinationCountry": "DE",
+      "shipmentGrossWeight": 1500,
+      "senderTaxID": "IOSS number",
+      "importerTaxId": "IOSS number",
+      "returnItemWanted": false,
+      "contents": [
+        {
+          "contentPieceHsCode": 1234567890,
+          "contentPieceDescription": "Trousers",
+          "contentPieceValue": "120.50",
+          "contentPieceNetweight": 1200,
+          "contentPieceOrigin": "DE",
+          "contentPieceAmount": 2
+        }
+      ]
+    }
+  }
+}
