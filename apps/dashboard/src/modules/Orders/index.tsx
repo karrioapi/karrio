@@ -234,7 +234,7 @@ export default function OrdersPage(pageProps: any) {
                     </label>
                   </td>
 
-                  {selection.length > 0 && <td className="p-1" colSpan={7}>
+                  {selection.length > 0 && <td className="p-1 is-vcentered" colSpan={8}>
                     <div className="buttons has-addons ">
                       <BulkShipmentModalEditor
                         shipments={collectShipments(selection, orders)}
@@ -268,12 +268,13 @@ export default function OrdersPage(pageProps: any) {
                   </td>}
 
                   {selection.length === 0 && <>
-                    <td className="order is-size-7">ORDER #</td>
+                    <td className="order is-size-7 is-vcentered">ORDER #</td>
                     <td className="status"></td>
-                    <td className="line-items is-size-7">ITEMS</td>
-                    <td className="customer is-size-7">SHIP TO</td>
-                    <td className="date is-size-7">DATE</td>
-                    <td className="service is-size-7">SHIPPING SERVICE</td>
+                    <td className="line-items is-size-7 is-vcentered">ITEMS</td>
+                    <td className="customer is-size-7 is-vcentered">SHIP TO</td>
+                    <td className="total is-size-7 is-vcentered">TOTAL</td>
+                    <td className="date is-size-7 is-vcentered">DATE</td>
+                    <td className="service is-size-7 is-vcentered">SHIPPING SERVICE</td>
                     <td className="action"></td>
                   </>}
                 </tr>
@@ -322,6 +323,13 @@ export default function OrdersPage(pageProps: any) {
                         </p>
                         <p className="has-text-weight-medium">{formatAddressLocationShort(order.shipping_to as AddressType)}</p>
                       </div>
+                    </td>
+                    <td className="total px-1 is-clickable" onClick={() => previewOrder(order.id)}>
+                      <p className="is-size-7 has-text-weight-semibold has-text-grey">
+                        {order.line_items.reduce((acc, item) => acc + ((item.quantity as number) * (item.value_amount as number)), 0)}
+                        {` `}
+                        {order.options.currency || order.line_items[0].value_currency}
+                      </p>
                     </td>
                     <td className="date px-1 is-clickable" onClick={() => previewOrder(order.id)}>
                       <p className="is-size-7 has-text-weight-semibold has-text-grey">
