@@ -1,0 +1,62 @@
+{
+    "bookedBy": "TEST USER",
+    "account": "ACCOUNT",
+    "readyDate": "2024-01-31T05:06:07.000",
+    "instructions": "This is just an instruction",
+    "itemCount": 2,
+    "items": [
+        {
+            "dangerous": false,
+            "height": 50,
+            "itemCount": 1,
+            "length": 50,
+            "volume": 0.036,
+            "weight": 20,
+            "width": 12
+        },
+        {
+            "dangerous": true,
+            "height": 50,
+            "itemCount": 1,
+            "length": 50,
+            "volume": 0.036,
+            "weight": 20,
+            "width": 12
+        }
+    ],
+    "jobStops_P": {
+        "companyName": "TESTING COMPANY",
+        "contact": "TEST USER",
+        "emailAddress": "test@gmail.com",
+        "geographicAddress": {
+            "address1": "17 VULCAN RD",
+            "address2": "test",
+            "country": "AU",
+            "postCode": "6155",
+            "state": "WA",
+            "suburb": "CANNING VALE"
+        },
+        "phoneNumber": "(07) 3114 1499"
+    },
+    "jobStops_D": {
+        "companyName": "TESTING COMPANY",
+        "contact": "TEST USER",
+        "emailAddress": "test@gmail.com",
+        "geographicAddress": {
+            "address1": "17 VULCAN RD",
+            "address2": "test",
+            "country": "AU",
+            "postCode": "6155",
+            "state": "WA",
+            "suburb": "CANNING VALE"
+        },
+        "phoneNumber": "(07) 3114 1499"
+    },
+    "referenceNumbers": [
+        "REF-001",
+        "REF-001"
+    ],
+    "serviceLevel": "N",
+    "volume": 0.072,
+    "weight": 41
+}
