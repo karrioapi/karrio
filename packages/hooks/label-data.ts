@@ -1,5 +1,5 @@
 import { AddressType, Collection, CommodityType, CustomsType, DEFAULT_CUSTOMS_CONTENT, NotificationType, ParcelType, ShipmentType } from "@karrio/types";
-import { commodityMatch, errorToMessages, getShipmentCommodities, gqlstr, isEqual, isNone, isNoneOrEmpty, toNumber, useLocation } from "@karrio/lib";
+import { commodityMatch, errorToMessages, getShipmentCommodities, getURLSearchParams, gqlstr, isEqual, isNone, isNoneOrEmpty, toNumber, useLocation } from "@karrio/lib";
 import { get_shipment_data, GET_SHIPMENT_DATA, LabelTypeEnum, PaidByEnum } from "@karrio/types";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { useLoader } from "@karrio/ui/components/loader";
@@ -455,7 +455,8 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
           : state.shipment
       );
       notifier.notify({ type: NotificationType.success, message: 'Draft successfully saved!' });
-      router.push(`${basePath}/create_label?shipment_id=${id}`);
+      const query = (new URLSearchParams({ ...getURLSearchParams(), shipment_id: id })).toString();
+      router.push(`${location.pathname}?${query}`);
     } catch (error: any) {
       updateShipment({ messages: errorToMessages(error) } as Partial<ShipmentType>);
       loader.setLoading(false);

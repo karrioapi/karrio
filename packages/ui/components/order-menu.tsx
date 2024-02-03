@@ -46,6 +46,9 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
   const cancelOrder = (order: OrderType) => async () => {
     await mutation.cancelOrder.mutateAsync(order);
   };
+  const computeShipmentId = (order: OrderType) => {
+    return order.shipments.find(s => s.status === "draft")?.id || 'new';
+  };
 
   return (
     <div className={`dropdown is-right ${isActive ? 'is-active' : ''}`} key={`menu-${order.id}`}>
@@ -60,8 +63,8 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
         <div className="dropdown-content">
 
           {["unfulfilled", "partial"].includes(order?.status) && <>
-            <AppLink className="dropdown-item" href={`/orders/create_shipment?shipment_id=new&order_id=${order?.id}`}>
-              <span>Create shipment</span>
+            <AppLink className="dropdown-item" href={`/orders/create_label?shipment_id=${computeShipmentId(order)}&order_id=${order?.id}`}>
+              <span>Create label</span>
             </AppLink>
           </>}
 
