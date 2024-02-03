@@ -9,7 +9,6 @@ async function ImageFallback(req: NextApiRequest, res: NextApiResponse) {
     ? getInitials(_name).substring(0, 2)
     : formatCarrierSlug(_name)
   );
-  console.log(req.query)
   const text_color = isNoneOrEmpty(req.query.text_color) ? "#ddd" : decodeURIComponent(req.query.text_color as string);
   const background = isNoneOrEmpty(req.query.background) ? "#7e51e1" : decodeURIComponent(req.query.background as string);
   const props = (isIcon ? 'viewBox="0 0 512 512"' : 'viewBox="0 0 125 25"');

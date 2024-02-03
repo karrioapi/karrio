@@ -46,6 +46,8 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function CreateShipmentPage(pageProps: any) {
+  const { ORDERS_MANAGEMENT } = pageProps?.metadata || {};
+
   const Component: React.FC = () => {
     const loader = useLoader();
     const notifier = useNotifier();
@@ -145,14 +147,23 @@ export default function CreateShipmentPage(pageProps: any) {
       }
     }, [order_id]);
     useEffect(() => {
+      const orders_called = (ORDERS_MANAGEMENT && orders.isFetched) || true;
       if (
         !ready && query.isFetched &&
         templates.isFetched &&
-        orders.isFetched &&
         shipment_id === 'new' &&
+        orders_called &&
         (orders.data?.orders.edges || []).length > 0
       ) {
         setTimeout(() => setInitialData(), 1000);
+      }
+      if (
+        !ready && query.isFetched &&
+        !isNoneOrEmpty(shipment_id) &&
+        shipment_id !== 'new' &&
+        orders_called
+      ) {
+        setReady(true);
       }
     }, [query.isFetched, orders.isFetched, templates.isFetched]);
 
@@ -160,7 +171,7 @@ export default function CreateShipmentPage(pageProps: any) {
       <>
         <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
           <div>
-            <span className="title is-4 my-2">Create shipment</span>
+            <span className="title is-4 my-2">Create label</span>
             <br />
             {ready && <span className="has-text-weight-semibold is-size-7">
               {(orders.data?.orders.edges || [{}]).length > 1 ? `Multiple Orders` : `Order #${(orders.data?.orders.edges || [{}])[0]?.node?.order_id}`}
