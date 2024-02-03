@@ -1,0 +1,48 @@
+{
+    "soapenv:Envelope": {
+        "@xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
+        "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+        "soapenv:Body": {
+            "ns1:calculatePriceResponse": {
+                "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
+                "result": {
+                    "jobCharge": "14.18",
+                    "surcharges": [
+                        {
+                            "chargeCode": "ON FWD PICKUP",
+                            "description": "ON FORWARD PICKUP",
+                            "netValue": "0.0",
+                            "quantity": "1"
+                        },
+                        {
+                            "chargeCode": "ON FWD DELIVERY",
+                            "description": "ON FORWARD DELIVERY",
+                            "netValue": "0.0",
+                            "quantity": "1"
+                        },
+                        {
+                            "chargeCode": "HD",
+                            "description": "FREIGHT OVERSIZED HOME DELIVERY",
+                            "netValue": "0.0",
+                            "quantity": "1"
+                        },
+                        {
+                            "chargeCode": "LSC",
+                            "description": "LENGTH SURCHARGE",
+                            "netValue": "0.0",
+                            "quantity": "1"
+                        },
+                        {
+                            "chargeCode": "MHF",
+                            "description": "HANDLING FEE",
+                            "netValue": "0.0",
+                            "quantity": "1"
+                        }
+                    ],
+                    "totalCharge": "40.66"
+                }
+            }
+        }
+    }
+}
