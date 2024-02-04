@@ -62,7 +62,7 @@ if __name__ == "__main__":
 
 
 TrackingPayload = {
-    "tracking_numbers": ["89108749065090"],
+    "tracking_numbers": ["7XX1000634011427"],
 }
 
 ParsedTrackingResponse = []
@@ -72,9 +72,9 @@ ParsedTrackingErrorResponse = []
 ParsedErrorResponse = []
 
 
-TrackingRequest = {"tracking_ids": ""}
+TrackingRequest = {"tracking_ids": ["7XX1000634011427"]}
 
-TrackingResponse = """ {
+TrackingResponse = """{
   "tracking_results": [
     {
       "tracking_id": "ET123456789AU",
@@ -250,7 +250,7 @@ TrackingResponse = """ {
 }
 """
 
-TrackingErrorResponse = """ {
+TrackingErrorResponse = """{
   "tracking_results": [
     {
       "tracking_id": "7XX1000",
@@ -265,7 +265,7 @@ TrackingErrorResponse = """ {
 }
 """
 
-ErrorResponse = """ {
+ErrorResponse = """{
   "errors": [
     {
       "code": "51101",

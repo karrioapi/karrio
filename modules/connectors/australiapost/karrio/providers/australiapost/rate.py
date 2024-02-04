@@ -79,7 +79,6 @@ def rate_request(
     packages = lib.to_packages(
         payload.parcels,
         options=options,
-        package_option_type=provider_units.PackagingType,
     )
     services = lib.to_services(payload.services, provider_units.ShippingService)
 
@@ -103,7 +102,9 @@ def rate_request(
                         width=package.width.CM,
                         height=package.height.CM,
                         weight=package.weight.KG,
-                        packaging_type=package.packaging_type,
+                        packaging_type=provider_units.PackagingType.map(
+                            package.packaging_type
+                        ).value,
                         product_ids=[_.value for _ in services],
                         features=(
                             {

@@ -41,7 +41,32 @@ if __name__ == "__main__":
     unittest.main()
 
 
-RatePayload = {}
+RatePayload = {
+    "shipper": {
+        "city": "MELBOURNE",
+        "state_code": "VIC",
+        "postal_code": "3000",
+        "country_code": "AU",
+    },
+    "recipient": {
+        "city": "SYDNEY",
+        "state_code": "NSW",
+        "postal_code": "2000",
+        "country_code": "AU",
+    },
+    "parcels": [
+        {
+            "length": 5,
+            "height": 1,
+            "width": 10,
+            "weight": 2,
+            "packaging_type": "BOX",
+            "options": {
+                "insurance": 1000,
+            },
+        }
+    ],
+}
 
 ParsedRateResponse = []
 
@@ -70,7 +95,7 @@ RateRequest = {
                     "packaging_type": "BOX",
                     "product_ids": ["7D55"],
                     "features": {
-                        "feature": {
+                        "TRANSIT_COVER": {
                             "attributes": {
                                 "cover_amount": 1000,
                             },

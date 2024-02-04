@@ -1,4 +1,5 @@
 """Karrio Australia Post client proxy."""
+
 import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
@@ -15,8 +16,8 @@ class Proxy(proxy.Proxy):
             trace=self.trace_as("json"),
             method="POST",
             headers={
-                "Content-Type": "application/json",
                 "Accept": "application/json",
+                "Content-Type": "application/json",
                 "Account-Number": self.settings.account_number,
                 "Authorization": f"Basic {self.settings.authorization}",
             },

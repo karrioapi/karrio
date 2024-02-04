@@ -74,7 +74,52 @@ if __name__ == "__main__":
     unittest.main()
 
 
-ShipmentPayload = {}
+ShipmentPayload = {
+    "shipper": {
+        "person_name": "John Citizen",
+        "address_line1": "1 Main Street",
+        "postal_code": "3000",
+        "city": "MELBOURNE",
+        "country": "AU",
+        "email": "john.citizen@citizen.com",
+        "phone_number": "0401234567",
+    },
+    "recipient": {
+        "person_name": "Jane Smith",
+        "company_name": "Smith Pty Ltd",
+        "address_line1": "123 Centre Road",
+        "postal_code": "2000",
+        "city": "Sydney",
+        "country": "AU",
+        "state_code": "NSW",
+        "email": "jane.smith@smith.com",
+        "phone_number": "0412345678",
+    },
+    "parcels": [
+        {
+            "length": 10,
+            "height": 10,
+            "width": 10,
+            "weight": 1,
+            "description": "This is a description of the item",
+            "options": {
+                "insurance": 1000.0,
+            },
+        },
+        {
+            "length": 10,
+            "height": 10,
+            "width": 10,
+            "weight": 1,
+        },
+        {
+            "length": 10,
+            "height": 10,
+            "width": 10,
+            "weight": 1,
+        },
+    ],
+}
 
 ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
@@ -128,9 +173,6 @@ ShipmentRequest = {
                         "feature": {
                             "attributes": {
                                 "cover_amount": 1000.0,
-                                "rate": 0.0,
-                                "included_cover": 0.0,
-                                "maximum_cover": 1000.0,
                             }
                         }
                     },

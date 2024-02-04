@@ -115,9 +115,9 @@ def shipment_request(
                             height=package.height.CM,
                             weight=package.weight.KG,
                             cubic_volume=package.volume.m3,
-                            authority_to_leave=package.options.authority_to_leave.state,
-                            allow_partial_delivery=package.options.allow_partial_delivery.state,
-                            contains_dangerous_goods=package.options.contains_dangerous_goods.state,
+                            authority_to_leave=package.options.australiapost_authority_to_leave.state,
+                            allow_partial_delivery=package.options.australiapost_allow_partial_delivery.state,
+                            contains_dangerous_goods=package.options.australiapost_contains_dangerous_goods.state,
                             item_description=package.parcel.description,
                             features=(
                                 {
