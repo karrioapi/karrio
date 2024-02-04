@@ -112,6 +112,8 @@ export default function TrackersPage(pageProps: any) {
                         <CarrierImage
                           carrier_name={tracker.meta?.carrier || tracker.carrier_name}
                           containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
+                          text_color={tracker.tracking_carrier?.config?.text_color}
+                          background={tracker.tracking_carrier?.config?.brand_color}
                         />
                         <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
                           <span className="has-text-info has-text-weight-bold">{tracker.tracking_number}</span>
