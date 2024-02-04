@@ -12,9 +12,9 @@ class DeutschePostSettings(providers.Carrier):
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
     dhl_api_key = models.CharField(max_length=200)
+    customer_number = models.CharField(max_length=50)
     tracking_consumer_key = models.CharField(max_length=200, blank=True, null=True)
     tracking_consumer_secret = models.CharField(max_length=200, blank=True, null=True)
-    customer_number = models.CharField(max_length=50, blank=True, null=True, default="")
     services = models.ManyToManyField("ServiceLevel", blank=True)
 
     @property
