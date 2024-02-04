@@ -1,10 +1,10 @@
-"""Karrio Deutsche Post Germany client proxy."""
+"""Karrio DHL Parcel DE client proxy."""
 
 import typing
 import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
-import karrio.mappers.deutschepost.settings as provider_settings
+import karrio.mappers.dhl_parcel_de.settings as provider_settings
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 

@@ -4,7 +4,7 @@ import karrio.core as core
 
 
 class Settings(core.Settings):
-    """Deutsche Post Germany connection settings."""
+    """DHL Parcel DE connection settings."""
 
     username: str
     password: str
@@ -17,7 +17,7 @@ class Settings(core.Settings):
 
     @property
     def carrier_name(self):
-        return "deutschepost"
+        return "dhl_parcel_de"
 
     @property
     def server_url(self):
@@ -44,7 +44,7 @@ class Settings(core.Settings):
 
     @property
     def connection_config(self) -> lib.units.Options:
-        from karrio.providers.deutschepost.units import ConnectionConfig
+        from karrio.providers.dhl_parcel_de.units import ConnectionConfig
 
         return lib.to_connection_config(
             self.config or {},

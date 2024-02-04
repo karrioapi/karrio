@@ -790,7 +790,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Colissimo]: [["carrier_id", true], ["contract_number", true], ["password", true], ["laposte_api_key"]],
       [CarrierSettingsCarrierNameEnum.Dicom]: [["carrier_id", true], ["username", true], ["password", true], ["billing_account"]],
       [CarrierSettingsCarrierNameEnum.Dpd]: [["carrier_id", true], ["delis_id", true], ["password", true], ["depot"], ["account_country_code"]],
-      [CarrierSettingsCarrierNameEnum.Deutschepost]: [["carrier_id", true], ["username", true], ["password", true], ["dhl_api_key", true], ["customer_number", true], ["consumer_key"], ["consumer_secret"]],
+      [CarrierSettingsCarrierNameEnum.DhlParcelDe]: [["carrier_id", true], ["username", true], ["password", true], ["dhl_api_key", true], ["customer_number", true], ["consumer_key"], ["consumer_secret"]],
       [CarrierSettingsCarrierNameEnum.Dpdhl]: [["carrier_id", true], ["username", true], ["password", true], ["app_id"], ["app_token"], ["zt_id"], ["zt_password"], ["account_number"]],
       [CarrierSettingsCarrierNameEnum.DhlExpress]: [["carrier_id", true], ["site_id", true], ["password", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.DhlPoland]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true]],

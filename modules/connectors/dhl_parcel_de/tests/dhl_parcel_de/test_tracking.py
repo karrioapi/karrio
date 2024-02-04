@@ -17,7 +17,7 @@ class TestCarrierTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TrackingRequestJSON)
 
     def test_get_tracking(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = "{}"
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -27,7 +27,7 @@ class TestCarrierTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = TrackingResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -35,7 +35,7 @@ class TestCarrierTracking(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_tracking_error_response(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = TrackingErrorResponseJSON
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -54,8 +54,8 @@ TRACKING_PAYLOAD = ["00340434292135100124"]
 ParsedTrackingResponse = [
     [
         {
-            "carrier_id": "deutschepost",
-            "carrier_name": "deutschepost",
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
             "delivered": False,
             "estimated_delivery": "2018-08-03",
             "events": [
@@ -91,8 +91,8 @@ ParsedTrackingErrorResponse = [
     [],
     [
         {
-            "carrier_id": "deutschepost",
-            "carrier_name": "deutschepost",
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
             "code": "404",
             "details": {"instance": "/shipment/8264715546", "title": "No result found"},
             "message": "No shipment with given tracking number found.",

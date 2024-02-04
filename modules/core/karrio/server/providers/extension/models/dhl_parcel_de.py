@@ -2,12 +2,12 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("deutschepost")
-class DeutschePostSettings(providers.Carrier):
+@providers.has_rate_sheet("dhl_parcel_de")
+class DHLParcelDESettings(providers.Carrier):
     class Meta:
-        db_table = "deutschepost-settings"
-        verbose_name = "Deutsche Post Settings"
-        verbose_name_plural = "Deutsche Post Settings"
+        db_table = "dhl-parcel-de-settings"
+        verbose_name = "DHL Parcel DE Settings"
+        verbose_name_plural = "DHL Parcel DE Settings"
 
     username = models.CharField(max_length=100)
     password = models.CharField(max_length=100)
@@ -19,7 +19,7 @@ class DeutschePostSettings(providers.Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return "deutschepost"
+        return "dhl_parcel_de"
 
 
-SETTINGS = DeutschePostSettings
+SETTINGS = DHLParcelDESettings

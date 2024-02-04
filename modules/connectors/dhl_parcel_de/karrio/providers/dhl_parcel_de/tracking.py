@@ -1,10 +1,10 @@
-import karrio.schemas.deutschepost.tracking_response as dhl
+import karrio.schemas.dhl_parcel_de.tracking_response as dhl
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.deutschepost.error as error
-import karrio.providers.deutschepost.utils as provider_utils
-import karrio.providers.deutschepost.units as provider_units
+import karrio.providers.dhl_parcel_de.error as error
+import karrio.providers.dhl_parcel_de.utils as provider_utils
+import karrio.providers.dhl_parcel_de.units as provider_units
 
 date_formats = [
     "%Y-%m-%d",

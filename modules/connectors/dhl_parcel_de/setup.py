@@ -6,9 +6,9 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="karrio.deutschepost",
+    name="karrio.dhl_parcel_de",
     version="2024.2rc5",
-    description="Karrio - Deutsche Post Germany Shipping Extension",
+    description="Karrio - DHL Parcel DE Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/karrioapi/karrio",

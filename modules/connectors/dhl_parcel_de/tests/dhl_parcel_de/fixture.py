@@ -1,6 +1,6 @@
 import karrio
 
-gateway = karrio.gateway["deutschepost"].create(
+gateway = karrio.gateway["dhl_parcel_de"].create(
     dict(
         username="username",
         password="password",
