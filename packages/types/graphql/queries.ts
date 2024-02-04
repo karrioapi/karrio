@@ -1609,6 +1609,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1704,6 +1705,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1772,6 +1774,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1862,6 +1865,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         max_width
         service_code
         service_name
+        carrier_service_code
         transit_days
         transit_time
         weight_unit
@@ -1910,6 +1914,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -2017,6 +2022,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -3288,6 +3294,7 @@ export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
       object_type
       service_name
       service_code
+      carrier_service_code
       description
       active
       currency
@@ -3339,6 +3346,7 @@ export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter)
           id
           service_name
           service_code
+          carrier_service_code
           description
           active
           currency

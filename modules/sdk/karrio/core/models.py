@@ -1,4 +1,5 @@
 """Karrio Unified model definitions module."""
+
 import attr
 from typing import List, Dict, Any, Union
 from jstruct import JList, JStruct, REQUIRED
@@ -409,6 +410,7 @@ class ServiceLevel:
 
     service_name: str
     service_code: str
+    carrier_service_code: str = None
     description: str = ""
     active: bool = True
     id: str = None

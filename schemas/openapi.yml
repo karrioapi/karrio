@@ -676,12 +676,13 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `allied_express`, `amazon_shipping`,
-          `aramex`, `asendia_us`, `australiapost`, `boxknight`, `bpost`, `canadapost`,
-          `canpar`, `chronopost`, `colissimo`, `dhl_express`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
-          `royalmail`, `sendle`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
+          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
+          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
+          `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -724,12 +725,13 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `allied_express`, `amazon_shipping`,
-          `aramex`, `asendia_us`, `australiapost`, `boxknight`, `bpost`, `canadapost`,
-          `canpar`, `chronopost`, `colissimo`, `dhl_express`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
-          `royalmail`, `sendle`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
+          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
+          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
+          `usps`, `usps_international`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1795,6 +1797,7 @@ paths:
           type: string
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -1805,6 +1808,7 @@ paths:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -1880,6 +1884,7 @@ paths:
           type: string
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -1890,6 +1895,7 @@ paths:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -1965,6 +1971,7 @@ paths:
           type: string
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -1975,6 +1982,7 @@ paths:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -2141,6 +2149,7 @@ paths:
           type: string
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -2151,6 +2160,7 @@ paths:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -2270,6 +2280,7 @@ paths:
           type: string
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -2280,6 +2291,7 @@ paths:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -2415,12 +2427,13 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `allied_express`, `amazon_shipping`,
-          `aramex`, `asendia_us`, `australiapost`, `boxknight`, `bpost`, `canadapost`,
-          `canpar`, `chronopost`, `colissimo`, `dhl_express`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
-          `royalmail`, `sendle`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
+          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
+          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
+          `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2822,12 +2835,13 @@ paths:
         name: carrier_name
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `allied_express`, `amazon_shipping`,
-          `aramex`, `asendia_us`, `australiapost`, `boxknight`, `bpost`, `canadapost`,
-          `canpar`, `chronopost`, `colissimo`, `dhl_express`, `dhl_poland`, `dhl_universal`,
-          `dicom`, `dpd`, `dpdhl`, `easypost`, `eshipper`, `fedex`, `freightcom`,
-          `generic`, `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`,
-          `royalmail`, `sendle`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
+          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
+          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
+          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
+          `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2950,6 +2964,7 @@ paths:
           type: string
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -2960,6 +2975,7 @@ paths:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -4726,6 +4742,7 @@ components:
         carrier_name:
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -4736,6 +4753,7 @@ components:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -4761,11 +4779,12 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 11741c7bba89cdf4
+          x-spec-enum-id: de6b841113186d8a
           description: |-
             Indicates a carrier (type)
 
             * `allied_express` - allied_express
+            * `allied_express_local` - allied_express_local
             * `amazon_shipping` - amazon_shipping
             * `aramex` - aramex
             * `asendia_us` - asendia_us
@@ -4776,6 +4795,7 @@ components:
             * `canpar` - canpar
             * `chronopost` - chronopost
             * `colissimo` - colissimo
+            * `deutschepost` - deutschepost
             * `dhl_express` - dhl_express
             * `dhl_poland` - dhl_poland
             * `dhl_universal` - dhl_universal
@@ -11291,6 +11311,7 @@ components:
         carrier_name:
           enum:
           - allied_express
+          - allied_express_local
           - amazon_shipping
           - aramex
           - asendia_us
@@ -11301,6 +11322,7 @@ components:
           - canpar
           - chronopost
           - colissimo
+          - deutschepost
           - dhl_express
           - dhl_poland
           - dhl_universal
@@ -11323,11 +11345,12 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 2170c1395ad4071a
+          x-spec-enum-id: 368cc14cdc140543
           description: |-
             The tracking carrier
 
             * `allied_express` - allied_express
+            * `allied_express_local` - allied_express_local
             * `amazon_shipping` - amazon_shipping
             * `aramex` - aramex
             * `asendia_us` - asendia_us
@@ -11338,6 +11361,7 @@ components:
             * `canpar` - canpar
             * `chronopost` - chronopost
             * `colissimo` - colissimo
+            * `deutschepost` - deutschepost
             * `dhl_express` - dhl_express
             * `dhl_poland` - dhl_poland
             * `dhl_universal` - dhl_universal
@@ -11906,6 +11930,7 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
+    | deutschepost | Deutsche Post Germany |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
@@ -11939,6 +11964,7 @@ tags:
     | asendia_us | Asendia US |
     | aramex | Aramex |
     | amazon_shipping | AmazonShipping |
+    | allied_express_local | Allied Express Local |
     | allied_express | Allied Express |
 
     ---
@@ -11947,6 +11973,15 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
+    ### Deutsche Post Germany
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | deutschepost_paket | V01PAK |
+    | deutschepost_warenpost | V62WP |
+    | deutschepost_europaket | V54EPAK |
+    | deutschepost_paket_international | V53WPAK |
+    | deutschepost_warenpost_international | V66WPI |
+
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13170,6 +13205,14 @@ tags:
     | amazon_shipping_ground | Amazon Shipping Ground |
     | amazon_shipping_standard | Amazon Shipping Standard |
     | amazon_shipping_premium | Amazon Shipping Premium |
+
+    ### Allied Express Local
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | allied_local_normal_service | N |
+    | allied_local_vip_service | V |
+    | allied_local_executive_service | E |
+    | allied_local_gold_service | G |
 
     ### Allied Express
     | Code         | Service Name |
