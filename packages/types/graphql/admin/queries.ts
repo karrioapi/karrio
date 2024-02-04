@@ -435,7 +435,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
         metadata
       }
     }
-    ... on DeutschePostSettingsType {
+    ... on DHLParcelDESettingsType {
       id
       carrier_id
       carrier_name

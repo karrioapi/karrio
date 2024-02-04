@@ -1756,7 +1756,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         metadata
       }
     }
-    ... on DeutschePostSettingsType {
+    ... on DHLParcelDESettingsType {
       id
       carrier_id
       carrier_name

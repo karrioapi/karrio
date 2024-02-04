@@ -3,7 +3,7 @@ import karrio.server.providers.models as providers
 
 
 @providers.has_rate_sheet("dhl_parcel_de")
-class DeutschePostSettings(providers.Carrier):
+class DHLParcelDESettings(providers.Carrier):
     class Meta:
         db_table = "dhl-parcel-de-settings"
         verbose_name = "DHL Parcel DE Settings"
@@ -22,4 +22,4 @@ class DeutschePostSettings(providers.Carrier):
         return "dhl_parcel_de"
 
 
-SETTINGS = DeutschePostSettings
+SETTINGS = DHLParcelDESettings

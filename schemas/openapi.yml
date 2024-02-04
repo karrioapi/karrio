@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.2.rc4`.
+    The current version is `2024.2.rc5`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.2.rc4
+  version: 2024.2.rc5
 paths:
   /:
     get:
@@ -678,11 +678,11 @@ paths:
           type: string
         description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
-          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
-          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
-          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
+          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
+          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
+          `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -727,11 +727,11 @@ paths:
           type: string
         description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
-          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
-          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
-          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
+          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
+          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
+          `ups`, `usps`, `usps_international`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1808,8 +1808,8 @@ paths:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -1895,8 +1895,8 @@ paths:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -1982,8 +1982,8 @@ paths:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -2160,8 +2160,8 @@ paths:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -2291,8 +2291,8 @@ paths:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -2429,11 +2429,11 @@ paths:
           type: string
         description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
-          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
-          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
-          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
+          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
+          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
+          `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2837,11 +2837,11 @@ paths:
           type: string
         description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
-          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `deutschepost`,
-          `dhl_express`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`, `easypost`,
-          `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`, `locate2u`,
-          `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`, `ups`,
-          `usps`, `usps_international`, `zoom2u`'
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
+          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
+          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
+          `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2975,8 +2975,8 @@ paths:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -4753,8 +4753,8 @@ components:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -4779,7 +4779,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: de6b841113186d8a
+          x-spec-enum-id: be48b0138e0e7bed
           description: |-
             Indicates a carrier (type)
 
@@ -4795,8 +4795,8 @@ components:
             * `canpar` - canpar
             * `chronopost` - chronopost
             * `colissimo` - colissimo
-            * `deutschepost` - deutschepost
             * `dhl_express` - dhl_express
+            * `dhl_parcel_de` - dhl_parcel_de
             * `dhl_poland` - dhl_poland
             * `dhl_universal` - dhl_universal
             * `dicom` - dicom
@@ -11322,8 +11322,8 @@ components:
           - canpar
           - chronopost
           - colissimo
-          - deutschepost
           - dhl_express
+          - dhl_parcel_de
           - dhl_poland
           - dhl_universal
           - dicom
@@ -11345,7 +11345,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 368cc14cdc140543
+          x-spec-enum-id: 8da975469a034792
           description: |-
             The tracking carrier
 
@@ -11361,8 +11361,8 @@ components:
             * `canpar` - canpar
             * `chronopost` - chronopost
             * `colissimo` - colissimo
-            * `deutschepost` - deutschepost
             * `dhl_express` - dhl_express
+            * `dhl_parcel_de` - dhl_parcel_de
             * `dhl_poland` - dhl_poland
             * `dhl_universal` - dhl_universal
             * `dicom` - dicom
@@ -11930,7 +11930,6 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    | deutschepost | Deutsche Post Germany |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
@@ -11953,6 +11952,7 @@ tags:
     | dicom | Dicom |
     | dhl_universal | DHL Universal |
     | dhl_poland | DHL Parcel Poland |
+    | dhl_parcel_de | DHL Parcel DE |
     | dhl_express | DHL Express |
     | colissimo | Colissimo |
     | chronopost | Chronopost |
@@ -11973,15 +11973,6 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
-    ### Deutsche Post Germany
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | deutschepost_paket | V01PAK |
-    | deutschepost_warenpost | V62WP |
-    | deutschepost_europaket | V54EPAK |
-    | deutschepost_paket_international | V53WPAK |
-    | deutschepost_warenpost_international | V66WPI |
-
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13068,6 +13059,15 @@ tags:
     | dhl_poland_12 | 12 |
     | dhl_poland_connect | EK |
     | dhl_poland_international | PI |
+
+    ### DHL Parcel DE
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | deutschepost_paket | V01PAK |
+    | deutschepost_warenpost | V62WP |
+    | deutschepost_europaket | V54EPAK |
+    | deutschepost_paket_international | V53WPAK |
+    | deutschepost_warenpost_international | V66WPI |
 
     ### DHL Express
     | Code         | Service Name |
