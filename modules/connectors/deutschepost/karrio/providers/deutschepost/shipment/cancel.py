@@ -12,7 +12,7 @@ def parse_shipment_cancel_response(
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = True  # compute shipment cancel success state
+    success = (response.get("status") or {}).get("title", "").lower() == "ok"
 
     confirmation = (
         models.ConfirmationDetails(
@@ -32,6 +32,18 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = None  # map data to convert karrio model to deutschepost specific type
+    request = dict(
+        shipment=",".join(
+            list(
+                set(
+                    [
+                        payload.shipment_identifier,
+                        *((payload.options or {}).get("shipment_identifiers") or []),
+                    ]
+                )
+            )
+        ),
+        profile=settings.profile,
+    )
 
     return lib.Serializable(request)

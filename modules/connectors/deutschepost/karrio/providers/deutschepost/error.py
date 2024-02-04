@@ -5,19 +5,35 @@ import karrio.providers.deutschepost.utils as provider_utils
 
 
 def parse_error_response(
-    response: dict,
+    response: typing.Union[typing.List[dict], dict],
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors = []  # compute the carrier error object list
+    responses = response if isinstance(response, list) else [response]
+    errors = [
+        response.get("status") if isinstance(response.get("status"), dict) else response
+        for response in responses
+        if (
+            ("title" in response and (response.get("title") or "") != "ok")
+            or (
+                isinstance(response.get("status"), dict)
+                and "title" in response.get("status", {})
+                and (response.get("status", {}).get("title") or "") != "ok"
+            )
+        )
+    ]
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="",  # set the carrier error code
-            message="",  # set the carrier error message
-            details={**kwargs},
+            code=str(error.get("status") or error.get("statusCode")),
+            message=error.get("detail") or error.get("title"),
+            details={
+                "title": error.get("title"),
+                "instance": error.get("instance"),
+                **kwargs,
+            },
         )
         for error in errors
     ]

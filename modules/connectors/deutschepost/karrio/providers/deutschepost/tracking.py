@@ -19,20 +19,25 @@ def parse_tracking_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
-    errors = [e for e in response if "shipments" not in e]
+
+    messages = error.parse_error_response(
+        [e for e in response if "shipments" not in e],
+        settings,
+    )
     details = [
-        _extract_detail(lib.to_object(dhl.Shipment, d["shipments"][0]), settings)
+        _extract_detail(d["shipments"][0], settings)
         for d in response
         if "shipments" in d
     ]
 
-    return details, error.parse_error_response(errors, settings)
+    return details, messages
 
 
 def _extract_detail(
-    shipment: dhl.Shipment,
+    data: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
+    shipment = lib.to_object(dhl.ShipmentType, data)
     latest_status = lib.failsafe(
         lambda: (
             shipment.status.statusCode
@@ -118,7 +123,7 @@ def _extract_detail(
 
 def tracking_request(payload: models.TrackingRequest, _) -> lib.Serializable:
     request = [
-        dhl.TrackingRequest(
+        dhl.TrackingRequestType(
             trackingNumber=number,
             language="en",
         )

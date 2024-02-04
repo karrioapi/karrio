@@ -13,7 +13,6 @@
 -e ./modules/connectors/chronopost
 -e ./modules/connectors/colissimo
 -e ./modules/connectors/deutschepost
--e ./modules/connectors/deutschepost_international
 -e ./modules/connectors/dhl_express
 -e ./modules/connectors/dhl_poland
 -e ./modules/connectors/dhl_universal

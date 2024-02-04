@@ -9,7 +9,7 @@ class Settings(core.Settings):
     username: str
     password: str
     dhl_api_key: str
-    customer_ekp: str = None
+    customer_number: str = None
 
     tracking_consumer_key: str = None
     tracking_consumer_secret: str = None
@@ -34,7 +34,7 @@ class Settings(core.Settings):
     @property
     def tracking_url(self):
         country = self.account_country_code or "DE"
-        language = self.connection_config.language or "en"
+        language = self.connection_config.language.state or "en"
         locale = f"{country}-{language}".lower()
         return (
             "https://www.dhl.com/"
@@ -50,6 +50,16 @@ class Settings(core.Settings):
             self.config or {},
             option_type=ConnectionConfig,
         )
+
+    @property
+    def profile(self):
+        return self.connection_config.profile.state or "STANDARD_GRUPPENPROFIL"
+
+    @property
+    def language(self):
+        country = self.account_country_code or "DE"
+        language = self.connection_config.language.state or "en"
+        return f"{language.lower()}-{country.upper()}"
 
     @property
     def authorization(self):

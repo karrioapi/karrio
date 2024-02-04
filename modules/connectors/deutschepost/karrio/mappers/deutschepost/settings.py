@@ -1,7 +1,8 @@
 """Karrio Deutsche Post Germany client settings."""
 
-import typing
 import attr
+import typing
+import jstruct
 import karrio.core.models as models
 import karrio.providers.deutschepost.units as provider_units
 import karrio.providers.deutschepost.utils as provider_utils
@@ -16,7 +17,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     username: str
     password: str
     dhl_api_key: str
-    customer_ekp: str = None
+    customer_number: str = None
 
     tracking_consumer_key: str = None
     tracking_consumer_secret: str = None

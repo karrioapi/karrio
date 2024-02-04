@@ -33,9 +33,7 @@ class Mapper(mapper.Mapper):
     def parse_cancel_shipment_response(
         self, response: lib.Deserializable
     ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
-        return provider.parse_shipment_cancel_response(
-            response.deserialize(), self.settings
-        )
+        return provider.parse_shipment_cancel_response(response, self.settings)
 
     def parse_rate_response(
         self, response: lib.Deserializable[str]
