@@ -34,7 +34,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_create_shipment(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
@@ -44,7 +44,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
             )
 
     def test_cancel_shipment(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = "{}"
             karrio.Shipment.cancel(self.ShipmentCancelRequest).from_(gateway)
 
@@ -54,7 +54,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentResponse
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -63,7 +63,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ShipmentCancelResponse
             parsed_response = (
                 karrio.Shipment.cancel(self.ShipmentCancelRequest)
@@ -76,7 +76,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
             )
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.deutschepost.proxy.lib.request") as mock:
+        with patch("karrio.mappers.dhl_parcel_de.proxy.lib.request") as mock:
             mock.return_value = ErrorResponse
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
@@ -183,8 +183,8 @@ ShipmentCancelPayload = {
 
 ParsedShipmentResponse = [
     {
-        "carrier_id": "deutschepost",
-        "carrier_name": "deutschepost",
+        "carrier_id": "dhl_parcel_de",
+        "carrier_name": "dhl_parcel_de",
         "docs": {"invoice": "string", "label": "string"},
         "label_type": "PDF",
         "meta": {
@@ -203,8 +203,8 @@ ParsedShipmentResponse = [
 
 ParsedCancelShipmentResponse = [
     {
-        "carrier_id": "deutschepost",
-        "carrier_name": "deutschepost",
+        "carrier_id": "dhl_parcel_de",
+        "carrier_name": "dhl_parcel_de",
         "operation": "Cancel Shipment",
         "success": True,
     },
@@ -215,8 +215,8 @@ ParsedErrorResponse = [
     None,
     [
         {
-            "carrier_id": "deutschepost",
-            "carrier_name": "deutschepost",
+            "carrier_id": "dhl_parcel_de",
+            "carrier_name": "dhl_parcel_de",
             "code": "401",
             "details": {"title": "Unauthorized"},
             "message": "Unauthorized for given resource.",

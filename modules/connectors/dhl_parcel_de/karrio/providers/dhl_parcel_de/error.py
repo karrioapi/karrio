@@ -1,7 +1,7 @@
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
-import karrio.providers.deutschepost.utils as provider_utils
+import karrio.providers.dhl_parcel_de.utils as provider_utils
 
 
 def parse_error_response(

@@ -1,13 +1,13 @@
-import karrio.schemas.deutschepost.shipping_request as deutschepost
-import karrio.schemas.deutschepost.shipping_response as shipping
+import karrio.schemas.dhl_parcel_de.shipping_request as dhl_parcel_de
+import karrio.schemas.dhl_parcel_de.shipping_response as shipping
 import typing
 import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
-import karrio.providers.deutschepost.error as error
-import karrio.providers.deutschepost.utils as provider_utils
-import karrio.providers.deutschepost.units as provider_units
+import karrio.providers.dhl_parcel_de.error as error
+import karrio.providers.dhl_parcel_de.utils as provider_utils
+import karrio.providers.dhl_parcel_de.units as provider_units
 
 
 def parse_shipment_response(
@@ -86,10 +86,10 @@ def shipment_request(
         payload.label_type or "PDF"
     ).value
 
-    request = deutschepost.ShippingRequestType(
+    request = dhl_parcel_de.ShippingRequestType(
         profile=settings.profile,
         shipments=[
-            deutschepost.ShipmentType(
+            dhl_parcel_de.ShipmentType(
                 product=service,
                 billingNumber=settings.customer_number,
                 refNo=payload.reference,
@@ -98,7 +98,7 @@ def shipment_request(
                 shipDate=lib.fdate(
                     package.options.shipment_date.state or datetime.datetime.now()
                 ),
-                shipper=deutschepost.ShipperType(
+                shipper=dhl_parcel_de.ShipperType(
                     name1=shipper.company_name or shipper.person_name or "N/A",
                     name2=shipper.person_name,
                     name3=None,
@@ -110,7 +110,7 @@ def shipment_request(
                     contactName=shipper.person_name,
                     email=shipper.email,
                 ),
-                consignee=deutschepost.ConsigneeType(
+                consignee=dhl_parcel_de.ConsigneeType(
                     name1=recipient.company_name or recipient.person_name or "N/A",
                     name2=recipient.person_name,
                     name3=None,
@@ -132,20 +132,20 @@ def shipment_request(
                     retailID=options.retail_id.state,
                     poBoxID=options.po_box_id.state,
                 ),
-                details=deutschepost.DetailsType(
-                    dim=deutschepost.DimType(
+                details=dhl_parcel_de.DetailsType(
+                    dim=dhl_parcel_de.DimType(
                         uom=units.DimensionUnit.CM.name.lower(),
                         height=package.height.CM,
                         length=package.length.CM,
                         width=package.width.CM,
                     ),
-                    weight=deutschepost.WeightType(
+                    weight=dhl_parcel_de.WeightType(
                         uom=units.WeightUnit.KG.name.lower(),
                         value=package.weight.KG,
                     ),
                 ),
                 services=(
-                    deutschepost.ServicesType(
+                    dhl_parcel_de.ServicesType(
                         preferredNeighbour=package.options.deutschepost_preferred_neighbour.state,
                         preferredLocation=package.options.deutschepost_preferred_location.state,
                         visualCheckOfAge=package.options.deutschepost_visual_check_of_age.state,
@@ -156,7 +156,7 @@ def shipment_request(
                         preferredDay=package.options.deutschepost_preferred_day.state,
                         noNeighbourDelivery=package.options.deutschepost_no_neighbour_delivery.state,
                         additionalInsurance=(
-                            deutschepost.PostalChargesType(
+                            dhl_parcel_de.PostalChargesType(
                                 currency=package.options.currency.state,
                                 value=package.options.deutschepost_additional_insurance.state,
                             )
@@ -166,7 +166,7 @@ def shipment_request(
                         ),
                         bulkyGoods=package.options.deutschepost_bulky_goods.state,
                         cashOnDelivery=(
-                            deutschepost.CashOnDeliveryType(
+                            dhl_parcel_de.CashOnDeliveryType(
                                 currency=package.options.currency.state,
                                 value=package.options.deutschepost_cash_on_delivery.state,
                             )
@@ -185,7 +185,7 @@ def shipment_request(
                     else None
                 ),
                 customs=(
-                    deutschepost.CustomsType(
+                    dhl_parcel_de.CustomsType(
                         invoiceNo=customs.invoice,
                         exportType=provider_units.CustomsContentType.map(
                             customs.content_type
@@ -199,7 +199,7 @@ def shipment_request(
                         hasElectronicExportNotification=customs.options.electronic_export_notification.state,
                         MRN=customs.options.mrn.state,
                         postalCharges=(
-                            deutschepost.PostalChargesType(
+                            dhl_parcel_de.PostalChargesType(
                                 currency=(
                                     package.options.currency.state
                                     or customs.duty.currency
@@ -221,13 +221,13 @@ def shipment_request(
                         shipperCustomsRef=customs.options.shipper_customs_ref.state,
                         consigneeCustomsRef=customs.options.consignee_customs_ref.state,
                         items=[
-                            deutschepost.ItemType(
+                            dhl_parcel_de.ItemType(
                                 itemDescription=item.description,
                                 countryOfOrigin=item.origin_country,
                                 hsCode=item.hs_code,
                                 packagedQuantity=item.quantity,
                                 itemValue=(
-                                    deutschepost.PostalChargesType(
+                                    dhl_parcel_de.PostalChargesType(
                                         currency=(
                                             item.value_currency
                                             or package.options.currency.state
@@ -238,7 +238,7 @@ def shipment_request(
                                     if item.value_amount is not None
                                     else None
                                 ),
-                                itemWeight=deutschepost.WeightType(
+                                itemWeight=dhl_parcel_de.WeightType(
                                     uom=units.WeightUnit.KG.name.lower(),
                                     value=item.weight,
                                 ),

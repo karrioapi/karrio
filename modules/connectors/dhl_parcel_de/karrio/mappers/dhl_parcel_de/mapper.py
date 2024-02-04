@@ -1,11 +1,11 @@
-"""Karrio Deutsche Post Germany client mapper."""
+"""Karrio DHL Parcel DE client mapper."""
 
 import typing
 import karrio.lib as lib
 import karrio.api.mapper as mapper
 import karrio.core.models as models
-import karrio.providers.deutschepost as provider
-import karrio.mappers.deutschepost.settings as provider_settings
+import karrio.providers.dhl_parcel_de as provider
+import karrio.mappers.dhl_parcel_de.settings as provider_settings
 import karrio.universal.providers.rating as universal_provider
 
 

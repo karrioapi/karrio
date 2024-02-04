@@ -1,14 +1,14 @@
 from karrio.core.metadata import Metadata
 
-from karrio.mappers.deutschepost.mapper import Mapper
-from karrio.mappers.deutschepost.proxy import Proxy
-from karrio.mappers.deutschepost.settings import Settings
-import karrio.providers.deutschepost.units as units
+from karrio.mappers.dhl_parcel_de.mapper import Mapper
+from karrio.mappers.dhl_parcel_de.proxy import Proxy
+from karrio.mappers.dhl_parcel_de.settings import Settings
+import karrio.providers.dhl_parcel_de.units as units
 
 
 METADATA = Metadata(
-    id="deutschepost",
-    label="Deutsche Post Germany",
+    id="dhl_parcel_de",
+    label="DHL Parcel DE",
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,

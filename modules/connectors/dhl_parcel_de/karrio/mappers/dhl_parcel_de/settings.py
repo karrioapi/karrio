@@ -1,17 +1,17 @@
-"""Karrio Deutsche Post Germany client settings."""
+"""Karrio DHL Parcel DE client settings."""
 
 import attr
 import typing
 import jstruct
 import karrio.core.models as models
-import karrio.providers.deutschepost.units as provider_units
-import karrio.providers.deutschepost.utils as provider_utils
+import karrio.providers.dhl_parcel_de.units as provider_units
+import karrio.providers.dhl_parcel_de.utils as provider_utils
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
 
 @attr.s(auto_attribs=True)
 class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
-    """Deutsche Post Germany connection settings."""
+    """DHL Parcel DE connection settings."""
 
     # required carrier specific properties
     username: str
@@ -25,7 +25,7 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     # generic properties
     id: str = None
     test_mode: bool = False
-    carrier_id: str = "deutschepost"
+    carrier_id: str = "dhl_parcel_de"
     services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel, False, dict(default=provider_units.DEFAULT_SERVICES)]  # type: ignore
     account_country_code: str = "DE"
     metadata: dict = {}
