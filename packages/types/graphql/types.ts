@@ -2204,6 +2204,23 @@ export interface get_user_connections_user_connections_AlliedExpressSettingsType
   service_type: string | null;
 }
 
+export interface get_user_connections_user_connections_AlliedExpressLocalSettingsType {
+  __typename: "AlliedExpressLocalSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string;
+  password: string;
+  account: string | null;
+  service_type: string | null;
+}
+
 export interface get_user_connections_user_connections_AmazonShippingSettingsType {
   __typename: "AmazonShippingSettingsType";
   id: string;
@@ -2308,6 +2325,7 @@ export interface get_user_connections_user_connections_BelgianPostSettingsType_s
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -2416,6 +2434,7 @@ export interface get_user_connections_user_connections_ColissimoSettingsType_ser
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -2457,6 +2476,71 @@ export interface get_user_connections_user_connections_ColissimoSettingsType {
   rate_sheet: get_user_connections_user_connections_ColissimoSettingsType_rate_sheet | null;
 }
 
+export interface get_user_connections_user_connections_DeutschePostSettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface get_user_connections_user_connections_DeutschePostSettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: get_user_connections_user_connections_DeutschePostSettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_DeutschePostSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_DeutschePostSettingsType {
+  __typename: "DeutschePostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string;
+  password: string;
+  customer_number: string;
+  dhl_api_key: string;
+  tracking_consumer_key: string | null;
+  tracking_consumer_secret: string | null;
+  config: any | null;
+  services: get_user_connections_user_connections_DeutschePostSettingsType_services[] | null;
+  rate_sheet: get_user_connections_user_connections_DeutschePostSettingsType_rate_sheet | null;
+}
+
 export interface get_user_connections_user_connections_DHLExpressSettingsType {
   __typename: "DHLExpressSettingsType";
   id: string;
@@ -2494,6 +2578,7 @@ export interface get_user_connections_user_connections_DHLPolandSettingsType_ser
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -2595,6 +2680,7 @@ export interface get_user_connections_user_connections_DPDSettingsType_services 
   max_width: number | null;
   service_code: string | null;
   service_name: string | null;
+  carrier_service_code: string | null;
   transit_days: number | null;
   transit_time: number | null;
   weight_unit: WeightUnitEnum | null;
@@ -2648,6 +2734,7 @@ export interface get_user_connections_user_connections_DPDHLSettingsType_service
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -2775,6 +2862,7 @@ export interface get_user_connections_user_connections_GenericSettingsType_servi
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -3038,7 +3126,7 @@ export interface get_user_connections_user_connections_Zoom2uSettingsType {
   api_key: string;
 }
 
-export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
+export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DeutschePostSettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
 
 export interface get_user_connections {
   user_connections: get_user_connections_user_connections[];
@@ -4584,6 +4672,7 @@ export interface GetRateSheet_rate_sheet_services {
   object_type: string;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   active: boolean | null;
   currency: CurrencyCodeEnum | null;
@@ -4653,6 +4742,7 @@ export interface GetRateSheets_rate_sheets_edges_node_services {
   id: string;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   active: boolean | null;
   currency: CurrencyCodeEnum | null;
@@ -5383,6 +5473,7 @@ export enum EventTypes {
 
 export enum CarrierNameEnum {
   allied_express = "allied_express",
+  allied_express_local = "allied_express_local",
   amazon_shipping = "amazon_shipping",
   aramex = "aramex",
   asendia_us = "asendia_us",
@@ -5393,6 +5484,7 @@ export enum CarrierNameEnum {
   canpar = "canpar",
   chronopost = "chronopost",
   colissimo = "colissimo",
+  deutschepost = "deutschepost",
   dhl_express = "dhl_express",
   dhl_poland = "dhl_poland",
   dhl_universal = "dhl_universal",
@@ -5477,6 +5569,7 @@ export interface TemplateFilter {
 // null
 export interface CreateCarrierConnectionMutationInput {
   allied_express?: AlliedExpressSettingsInput | null;
+  allied_express_local?: AlliedExpressLocalSettingsInput | null;
   amazon_shipping?: AmazonShippingSettingsInput | null;
   aramex?: AramexSettingsInput | null;
   asendia_us?: AsendiaUSSettingsInput | null;
@@ -5487,6 +5580,7 @@ export interface CreateCarrierConnectionMutationInput {
   canpar?: CanparSettingsInput | null;
   chronopost?: ChronopostSettingsInput | null;
   colissimo?: ColissimoSettingsInput | null;
+  deutschepost?: DeutschePostSettingsInput | null;
   dhl_express?: DHLExpressSettingsInput | null;
   dhl_poland?: DHLPolandSettingsInput | null;
   dhl_universal?: DHLUniversalSettingsInput | null;
@@ -5515,6 +5609,18 @@ export interface CreateCarrierConnectionMutationInput {
 
 // null
 export interface AlliedExpressSettingsInput {
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username: string;
+  password: string;
+  account?: string | null;
+  service_type?: string | null;
+  carrier_id: string;
+}
+
+// null
+export interface AlliedExpressLocalSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
@@ -5601,6 +5707,7 @@ export interface CreateServiceLevelInput {
   service_code: string;
   currency: CurrencyCodeEnum;
   zones: ServiceZoneInput[];
+  carrier_service_code?: string | null;
   description?: string | null;
   active?: boolean | null;
   transit_days?: number | null;
@@ -5675,6 +5782,21 @@ export interface ColissimoSettingsInput {
   password: string;
   contract_number: string;
   laposte_api_key: string;
+  carrier_id: string;
+}
+
+// null
+export interface DeutschePostSettingsInput {
+  services?: CreateServiceLevelInput[] | null;
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username: string;
+  password: string;
+  dhl_api_key: string;
+  customer_number: string;
+  tracking_consumer_key?: string | null;
+  tracking_consumer_secret?: string | null;
   carrier_id: string;
 }
 
@@ -5969,6 +6091,7 @@ export interface Zoom2uSettingsInput {
 // null
 export interface UpdateCarrierConnectionMutationInput {
   allied_express?: UpdateAlliedExpressSettingsInput | null;
+  allied_express_local?: UpdateAlliedExpressLocalSettingsInput | null;
   amazon_shipping?: UpdateAmazonShippingSettingsInput | null;
   aramex?: UpdateAramexSettingsInput | null;
   asendia_us?: UpdateAsendiaUSSettingsInput | null;
@@ -5979,6 +6102,7 @@ export interface UpdateCarrierConnectionMutationInput {
   canpar?: UpdateCanparSettingsInput | null;
   chronopost?: UpdateChronopostSettingsInput | null;
   colissimo?: UpdateColissimoSettingsInput | null;
+  deutschepost?: UpdateDeutschePostSettingsInput | null;
   dhl_express?: UpdateDHLExpressSettingsInput | null;
   dhl_poland?: UpdateDHLPolandSettingsInput | null;
   dhl_universal?: UpdateDHLUniversalSettingsInput | null;
@@ -6007,6 +6131,19 @@ export interface UpdateCarrierConnectionMutationInput {
 
 // null
 export interface UpdateAlliedExpressSettingsInput {
+  id: string;
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username?: string | null;
+  password?: string | null;
+  account?: string | null;
+  service_type?: string | null;
+  carrier_id?: string | null;
+}
+
+// null
+export interface UpdateAlliedExpressLocalSettingsInput {
   id: string;
   active?: boolean | null;
   config?: any | null;
@@ -6100,6 +6237,7 @@ export interface UpdateServiceLevelInput {
   service_code?: string | null;
   currency?: CurrencyCodeEnum | null;
   zones?: UpdateServiceZoneInput[] | null;
+  carrier_service_code?: string | null;
   description?: string | null;
   active?: boolean | null;
   transit_days?: number | null;
@@ -6179,6 +6317,22 @@ export interface UpdateColissimoSettingsInput {
   password?: string | null;
   contract_number?: string | null;
   laposte_api_key?: string | null;
+  carrier_id?: string | null;
+}
+
+// null
+export interface UpdateDeutschePostSettingsInput {
+  id: string;
+  services?: UpdateServiceLevelInput[] | null;
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username?: string | null;
+  password?: string | null;
+  dhl_api_key?: string | null;
+  customer_number?: string | null;
+  tracking_consumer_key?: string | null;
+  tracking_consumer_secret?: string | null;
   carrier_id?: string | null;
 }
 

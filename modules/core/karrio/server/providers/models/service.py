@@ -24,6 +24,7 @@ class ServiceLevel(core.OwnedEntity):
     service_code = models.CharField(
         max_length=50, validators=[validators.RegexValidator(r"^[a-z0-9_]+$")]
     )
+    carrier_service_code = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=250, null=True, blank=True)
     active = models.BooleanField(null=True, default=True)
 

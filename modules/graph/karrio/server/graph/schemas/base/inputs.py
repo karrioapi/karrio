@@ -404,6 +404,7 @@ class CreateServiceLevelInput(utils.BaseInput):
     currency: utils.CurrencyCodeEnum
     zones: typing.List[ServiceZoneInput]
 
+    carrier_service_code: typing.Optional[str] = strawberry.UNSET
     description: typing.Optional[str] = strawberry.UNSET
     active: typing.Optional[bool] = strawberry.UNSET
 

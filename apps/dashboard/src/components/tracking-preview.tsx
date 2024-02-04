@@ -95,6 +95,8 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({ children }
               <CarrierImage
                 carrier_name={(tracker?.meta as any)?.carrier || tracker?.carrier_name}
                 width={60} height={60}
+                text_color={tracker?.tracking_carrier?.config?.text_color}
+                background={tracker?.tracking_carrier?.config?.brand_color}
               />
             </div>
 

@@ -1518,6 +1518,21 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       account
       service_type
     }
+    ... on AlliedExpressLocalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+      service_type
+    }
     ... on AmazonShippingSettingsType {
       id
       carrier_id
@@ -1609,6 +1624,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1704,6 +1720,64 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DeutschePostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      customer_number
+      dhl_api_key
+      tracking_consumer_key
+      tracking_consumer_secret
+      config
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1772,6 +1846,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1862,6 +1937,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         max_width
         service_code
         service_name
+        carrier_service_code
         transit_days
         transit_time
         weight_unit
@@ -1910,6 +1986,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -2017,6 +2094,7 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -3288,6 +3366,7 @@ export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
       object_type
       service_name
       service_code
+      carrier_service_code
       description
       active
       currency
@@ -3339,6 +3418,7 @@ export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter)
           id
           service_name
           service_code
+          carrier_service_code
           description
           active
           currency

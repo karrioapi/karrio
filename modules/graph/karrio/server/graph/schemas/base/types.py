@@ -794,6 +794,7 @@ class ServiceLevelType:
     object_type: str
     service_name: typing.Optional[str]
     service_code: typing.Optional[str]
+    carrier_service_code: typing.Optional[str]
     description: typing.Optional[str]
     active: typing.Optional[bool]
 
