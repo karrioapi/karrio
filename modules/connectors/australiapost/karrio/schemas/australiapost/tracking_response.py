@@ -23,11 +23,22 @@ class ErrorType:
 
 
 @s(auto_attribs=True)
+class ItemType:
+    article_id: Optional[str] = None
+    product_type: Optional[str] = None
+    events: List[EventType] = JList[EventType]
+    status: Optional[str] = None
+
+
+@s(auto_attribs=True)
 class TrackableItemType:
     article_id: Optional[str] = None
     product_type: Optional[str] = None
     events: List[EventType] = JList[EventType]
     status: Optional[str] = None
+    consignment_id: Optional[str] = None
+    number_of_items: Optional[int] = None
+    items: List[ItemType] = JList[ItemType]
 
 
 @s(auto_attribs=True)
