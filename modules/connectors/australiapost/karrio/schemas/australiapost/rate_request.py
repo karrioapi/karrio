@@ -9,18 +9,18 @@ class AttributesType:
 
 
 @s(auto_attribs=True)
-class FeatureType:
+class TransitCoverType:
     attributes: Optional[AttributesType] = JStruct[AttributesType]
 
 
 @s(auto_attribs=True)
 class FeaturesType:
-    feature: Optional[FeatureType] = JStruct[FeatureType]
+    TRANSIT_COVER: Optional[TransitCoverType] = JStruct[TransitCoverType]
 
 
 @s(auto_attribs=True)
 class ItemType:
-    item_reference: Optional[int] = None
+    item_reference: Optional[str] = None
     product_id: Optional[str] = None
     length: Optional[float] = None
     height: Optional[float] = None

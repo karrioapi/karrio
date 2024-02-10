@@ -27,7 +27,18 @@ def parse_rate_response(
         ],
         start=error.parse_error_response(response, settings),
     )
-    rates = [_extract_details(rate, settings) for rate in response if "prices" in rate]
+    rates = lib.to_multi_piece_rates(
+        [
+            (
+                f"{_}",
+                [
+                    _extract_details(price, settings)
+                    for price in item.get("prices") or []
+                ],
+            )
+            for _, item in enumerate(items, start=1)
+        ]
+    )
 
     return rates, messages
 
@@ -38,12 +49,13 @@ def _extract_details(
 ) -> models.RateDetails:
     rate = lib.to_object(rating.PriceElementType, data)
     service = provider_units.ShippingService.map(rate.product_id)
+    features = data.get("features") or {}
     charges = [
         ("base charge", rate.calculated_price_ex_gst),
         ("GST", rate.calculated_gst),
         *[
             (_.type, _.attributes.price.calculated_price)
-            for _ in rate.features.values()
+            for _ in features.values()
             if lib.failsafe(lambda: _.attributes.price.calculated_price) is not None
         ],
     ]
@@ -61,6 +73,7 @@ def _extract_details(
                 currency=units.Currency.AUD.name,
             )
             for name, value in charges
+            if value
         ],
         meta=dict(
             service_name=rate.product_type,
@@ -74,11 +87,13 @@ def rate_request(
 ) -> lib.Serializable:
     options = lib.to_shipping_options(
         payload.options,
-        option_type=provider_units.ShippingOption,
+        initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
         payload.parcels,
         options=options,
+        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     services = lib.to_services(payload.services, provider_units.ShippingService)
 
@@ -86,18 +101,20 @@ def rate_request(
         shipments=[
             australiapost.ShipmentType(
                 shipment_from=australiapost.FromType(
-                    suburb=payload.origin.suburb,
-                    state=payload.origin.state,
-                    postcode=payload.origin.postcode,
+                    suburb=payload.shipper.city,
+                    state=payload.shipper.state_code,
+                    postcode=payload.shipper.postal_code,
                 ),
                 to=australiapost.FromType(
-                    suburb=payload.destination.suburb,
-                    state=payload.destination.state,
-                    postcode=payload.destination.postcode,
+                    suburb=payload.recipient.city,
+                    state=payload.recipient.state_code,
+                    postcode=payload.recipient.postal_code,
                 ),
                 items=[
                     australiapost.ItemType(
-                        item_reference=None,
+                        item_reference=(
+                            getattr(package.parcel, "id", None) or str(idx)
+                        ),
                         length=package.length.CM,
                         width=package.width.CM,
                         height=package.height.CM,
@@ -107,19 +124,19 @@ def rate_request(
                         ).value,
                         product_ids=[_.value for _ in services],
                         features=(
-                            {
-                                [option.code]: australiapost.FeatureType(
+                            australiapost.FeaturesType(
+                                TRANSIT_COVER=australiapost.TransitCoverType(
                                     attributes=australiapost.AttributesType(
-                                        cover_amount=option.value,
+                                        cover_amount=package.options.australiapost_transit_cover.state,
                                     ),
                                 )
-                                for option in package.options
-                            }
-                            if any(package.options)
+                            )
+                            if package.options.australiapost_transit_cover.state
+                            is not None
                             else None
                         ),
                     )
-                    for package in packages
+                    for idx, package in enumerate(packages, start=1)
                 ],
             )
         ],

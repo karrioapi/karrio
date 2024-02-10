@@ -24,7 +24,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/shipping/v1/track?tracking_ids=%5B%277XX1000634011427%27%5D",
             )
 
     def test_parse_tracking_response(self):
@@ -65,11 +65,186 @@ TrackingPayload = {
     "tracking_numbers": ["7XX1000634011427"],
 }
 
-ParsedTrackingResponse = []
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "delivered": False,
+            "info": {
+                "carrier_tracking_link": "https://auspost.com.au/mypost/beta/track/details/ET123456789AU"
+            },
+            "status": "in_transit",
+            "tracking_number": "ET123456789AU",
+        },
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "delivered": True,
+            "events": [
+                {
+                    "date": "2021-01-21",
+                    "description": "Delivered - Left in a safe place",
+                    "location": "KEW VIC",
+                    "time": "11:04",
+                },
+                {
+                    "date": "2021-01-21",
+                    "description": "Onboard for delivery",
+                    "location": "OAKLEIGH SOUTH VIC",
+                    "time": "08:34",
+                },
+                {
+                    "date": "2021-01-20",
+                    "description": "In transit to next facility in OAKLEIGH SOUTH "
+                    "VIC",
+                    "time": "11:55",
+                },
+                {
+                    "date": "2021-01-20",
+                    "description": "Item processed at facility",
+                    "location": "SUNSHINE WEST VIC",
+                    "time": "11:48",
+                },
+                {
+                    "date": "2021-01-19",
+                    "description": "In transit to next facility in SUNSHINE WEST "
+                    "VIC",
+                    "time": "22:13",
+                },
+                {
+                    "date": "2021-01-19",
+                    "description": "Item processed at facility",
+                    "location": "CHULLORA NSW",
+                    "time": "21:17",
+                },
+                {
+                    "date": "2021-01-19",
+                    "description": "Arrived awaiting clearance (Inbound)",
+                    "location": "SYDNEY NSW",
+                    "time": "16:09",
+                },
+                {
+                    "date": "2021-01-07",
+                    "description": "Cleared and awaiting international departure",
+                    "location": "CHICAGO (US)",
+                    "time": "08:49",
+                },
+                {
+                    "date": "2021-01-06",
+                    "description": "Received item from Sender (Outbound)",
+                    "location": "US-60199, UNITED STATES",
+                    "time": "08:27",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://auspost.com.au/mypost/beta/track/details/LX123456789US",
+                "shipment_service": "International",
+            },
+            "status": "delivered",
+            "tracking_number": "LX123456789US",
+        },
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "delivered": True,
+            "events": [
+                {
+                    "date": "2021-02-02",
+                    "description": "Delivered",
+                    "location": "NZ",
+                    "time": "07:38",
+                },
+                {
+                    "date": "2021-02-02",
+                    "description": "Onboard for delivery",
+                    "location": "NZ",
+                    "time": "06:03",
+                },
+                {
+                    "date": "2021-02-02",
+                    "description": "Onboard for delivery",
+                    "location": "Transit Scan",
+                    "time": "01:55",
+                },
+                {
+                    "date": "2021-02-02",
+                    "description": "Arrived in New Zealand",
+                    "location": "NZ",
+                    "time": "01:51",
+                },
+                {
+                    "date": "2021-02-02",
+                    "description": "Item cleared by Customs",
+                    "location": "Transit Scan",
+                    "time": "01:21",
+                },
+                {
+                    "date": "2021-01-31",
+                    "description": "Item is in Customs",
+                    "location": "Transit Scan",
+                    "time": "07:57",
+                },
+                {
+                    "date": "2021-01-28",
+                    "description": "Despatch Parcels from Export Facility",
+                    "location": "Transit Scan",
+                    "time": "03:33",
+                },
+                {
+                    "date": "2021-01-27",
+                    "description": "Processed at Export Facility",
+                    "location": "Transit Scan",
+                    "time": "19:24",
+                },
+                {
+                    "date": "2021-01-27",
+                    "description": "Shipping information approved by Australia Post",
+                    "time": "13:31",
+                },
+                {
+                    "date": "2021-01-27",
+                    "description": "Shipping information received by Australia Post",
+                    "time": "13:31",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://auspost.com.au/mypost/beta/track/details/00123456789000123400",
+                "shipment_service": "International",
+            },
+            "status": "delivered",
+            "tracking_number": "00123456789000123400",
+        },
+    ],
+    [],
+]
 
-ParsedTrackingErrorResponse = []
+ParsedTrackingErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "code": "ESB-10001",
+            "details": {"tracking_number": "7XX1000"},
+            "message": "Invalid tracking ID",
+        }
+    ],
+]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "code": "51101",
+            "details": {},
+            "message": "The request must contain 10 or less AP article ids, consignment "
+            "ids, or barcode ids.",
+        }
+    ],
+]
 
 
 TrackingRequest = {"tracking_ids": ["7XX1000634011427"]}

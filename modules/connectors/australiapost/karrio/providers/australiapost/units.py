@@ -5,6 +5,7 @@ import karrio.core.units as units
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
+    box = "BOX"
     carton = "CTN"
     pallet = "PAL"
     satchel = "SAT"
@@ -17,10 +18,31 @@ class PackagingType(lib.StrEnum):
     """ Unified Packaging type mapping """
     pak = satchel
     tube = item
-    pallet = pallet
-    small_box = carton
-    medium_box = carton
-    your_packaging = carton
+    small_box = box
+    medium_box = box
+    your_packaging = box
+
+
+class LabelType(lib.Enum):
+    PDF_A4_1pp = ("PDF", "A4-1pp")
+    ZPL_A4_1pp = ("ZPL", "A4-1pp")
+    PDF_A4_3pp = ("PDF", "A4-3pp")
+    ZPL_A4_3pp = ("ZPL", "A4-3pp")
+    PDF_A4_4pp = ("PDF", "A4-4pp")
+    ZPL_A4_4pp = ("ZPL", "A4-4pp")
+    PDF_A6_1pp = ("PDF", "A6-1pp")
+    ZPL_A6_1pp = ("ZPL", "A6-1pp")
+    PDF_A4_2pp = ("PDF", "A4-2pp")
+    ZPL_A4_2pp = ("ZPL", "A4-2pp")
+    PDF_A4_1pp_landscape = ("PDF", "A4-1pp landscape")
+    ZPL_A4_1pp_landscape = ("ZPL", "A4-1pp landscape")
+    PDF_A4_2pp_landscape = ("PDF", "A4-2pp landscape")
+    ZPL_A4_2pp_landscape = ("ZPL", "A4-2pp landscape")
+
+    """ Unified Label type mapping """
+    PDF = PDF_A4_1pp
+    ZPL = PDF_A4_1pp
+    PNG = PDF_A4_1pp
 
 
 class CustomsContentType(lib.StrEnum):
@@ -42,9 +64,27 @@ class CustomsContentType(lib.StrEnum):
 class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 
+    australiapost_parcel_post = "T28"
     australiapost_express_post = "E34"
-    australiapost_express_post_signature = "E34S"
     australiapost_parcel_post_signature = "T28S"
+    australiapost_express_post_signature = "E34S"
+    # australiapost_on_demand = "PTI8"
+    # australiapost_international = "IC10"
+    # australiapost_commercial = "Commercial"
+    # australiapost_startrack = "Startrack"
+    # australiapost_startrack_courier = "Startrack Courier"
+
+
+class ServiceName(lib.StrEnum):
+    """Carrier specific services"""
+
+    australiapost_parcel_post = "Parcel Post"
+    australiapost_express_post = "Express Post"
+    australiapost_startrack_courier = "Startrack Courier"
+    australiapost_startrack = "StarTrack"
+    australiapost_on_demand = "On Demand"
+    australiapost_international = "International"
+    australiapost_commercial = "Commercial"
 
 
 class ShippingOption(lib.Enum):
@@ -52,14 +92,14 @@ class ShippingOption(lib.Enum):
 
     # fmt: off
     australiapost_delivery_date = lib.OptionEnum("DELIVERY_DATE")
-    australiapost_delivery_times = lib.OptionEnum("DELIVERY_TIMES")
+    australiapost_delivery_time_start = lib.OptionEnum("DELIVERY_TIMES")
+    australiapost_delivery_time_end = lib.OptionEnum("DELIVERY_TIMES")
     australiapost_pickup_date = lib.OptionEnum("PICKUP_DATE")
     australiapost_pickup_time = lib.OptionEnum("PICKUP_TIME")
-    australiapost_commercial_clearance = lib.OptionEnum("COMMERCIAL_CLEARANCE")
     australiapost_identity_on_delivery = lib.OptionEnum("IDENTITY_ON_DELIVERY")
-    australiapost_print_at_depot = lib.OptionEnum("PRINT_AT_DEPOT")
-    australiapost_transit_warranty = lib.OptionEnum("TRANSIT_WARRANTY")
+    australiapost_print_at_depot = lib.OptionEnum("PRINT_AT_DEPOT", bool)
     australiapost_transit_cover = lib.OptionEnum("TRANSIT_COVER", float)
+    australiapost_sameday_identity_on_delivery = lib.OptionEnum("SAMEDAY_IDENTITY_ON_DELIVERY")
 
     australiapost_authority_to_leave = lib.OptionEnum("authority_to_leave", bool)
     australiapost_allow_partial_delivery = lib.OptionEnum("allow_partial_delivery", bool)

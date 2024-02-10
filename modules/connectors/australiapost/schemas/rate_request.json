@@ -13,7 +13,7 @@
             },
             "items": [
                 {
-                    "item_reference": "1",
+                    "item_reference": "string",
                     "product_id": "7D55",
                     "length": 5.0,
                     "height": 1.0,
@@ -24,7 +24,7 @@
                         "7D55"
                     ],
                     "features": {
-                        "feature": {
+                        "TRANSIT_COVER": {
                             "attributes": {
                                 "cover_amount": 1000.0
                             }

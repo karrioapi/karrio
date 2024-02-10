@@ -34,7 +34,7 @@ class TestAustraliaPostShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/shipping/v1/shipments",
             )
 
     def test_cancel_shipment(self):
@@ -44,12 +44,12 @@ class TestAustraliaPostShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/shipping/v1/shipments/794947717776",
             )
 
     def test_parse_shipment_response(self):
-        with patch("karrio.mappers.australiapost.proxy.lib.request") as mock:
-            mock.return_value = ShipmentResponse
+        with patch("karrio.mappers.australiapost.proxy.lib.request") as mocks:
+            mocks.side_effect = [ShipmentResponse, LabelResponse, "encoded label..."]
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
@@ -75,12 +75,14 @@ if __name__ == "__main__":
 
 
 ShipmentPayload = {
+    "service": "T28S",
+    "reference": "XYZ-001-01",
     "shipper": {
         "person_name": "John Citizen",
         "address_line1": "1 Main Street",
         "postal_code": "3000",
         "city": "MELBOURNE",
-        "country": "AU",
+        "country_code": "AU",
         "email": "john.citizen@citizen.com",
         "phone_number": "0401234567",
     },
@@ -90,7 +92,7 @@ ShipmentPayload = {
         "address_line1": "123 Centre Road",
         "postal_code": "2000",
         "city": "Sydney",
-        "country": "AU",
+        "country_code": "AU",
         "state_code": "NSW",
         "email": "jane.smith@smith.com",
         "phone_number": "0412345678",
@@ -101,9 +103,12 @@ ShipmentPayload = {
             "height": 10,
             "width": 10,
             "weight": 1,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
             "description": "This is a description of the item",
             "options": {
                 "insurance": 1000.0,
+                "australiapost_allow_partial_delivery": True,
             },
         },
         {
@@ -111,12 +116,19 @@ ShipmentPayload = {
             "height": 10,
             "width": 10,
             "weight": 1,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
         },
         {
             "length": 10,
             "height": 10,
             "width": 10,
             "weight": 1,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
+            "options": {
+                "australiapost_authority_to_leave": True,
+            },
         },
     ],
 }
@@ -125,141 +137,117 @@ ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
 }
 
-ParsedShipmentResponse = []
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "australiapost",
+        "carrier_name": "australiapost",
+        "docs": {"label": "encoded label..."},
+        "label_type": "PDF",
+        "meta": {
+            "article_ids": ["ABC000128B4C5", "ABC000128B4C6", "ABC000128B4C7"],
+            "carrier_tracking_link": "https://auspost.com.au/mypost/beta/track/details/ABC000128",
+            "label_request_id": "c2991876-9596-42ed-aed3-dd11dcfb03ba",
+            "tracking_numbers": ["ABC000128", "ABC000128", "ABC000128"],
+        },
+        "shipment_identifier": "9lesEAOvOm4AAAFI3swaDRYB",
+        "tracking_number": "ABC000128",
+    },
+    [],
+]
 
-ParsedCancelShipmentResponse = []
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "australiapost",
+        "carrier_name": "australiapost",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
 
 
 ShipmentRequest = {
-    "shipments": [
-        {
-            "shipment_reference": "XYZ-001-01",
-            "customer_reference_1": "Order 001",
-            "customer_reference_2": "SKU-1, SKU-2, SKU-3",
-            "email_tracking_enabled": True,
-            "from": {
-                "name": "John Citizen",
-                "lines": ["1 Main Street"],
-                "suburb": "MELBOURNE",
-                "state": "VIC",
-                "postcode": "3000",
-                "phone": "0401234567",
-                "email": "john.citizen@citizen.com",
-            },
-            "to": {
-                "name": "Jane Smith",
-                "business_name": "Smith Pty Ltd",
-                "lines": ["123 Centre Road"],
-                "suburb": "Sydney",
-                "state": "NSW",
-                "postcode": "2000",
-                "phone": "0412345678",
-                "email": "jane.smith@smith.com",
-            },
-            "items": [
-                {
-                    "item_reference": "SKU-1",
-                    "product_id": "T28S",
-                    "length": 10.0,
-                    "height": 10.0,
-                    "width": 10.0,
-                    "weight": 1.0,
-                    "cubic_volume": 0.001,
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
-                    "contains_dangerous_goods": False,
-                    "item_description": "This is a description of the item",
-                    "features": {
-                        "feature": {
-                            "attributes": {
-                                "cover_amount": 1000.0,
-                            }
-                        }
+    "shipment": {
+        "shipments": [
+            {
+                "email_tracking_enabled": True,
+                "items": [
+                    {
+                        "allow_partial_delivery": True,
+                        "height": 10.0,
+                        "item_description": "This is a description of the item",
+                        "item_reference": "1",
+                        "length": 10.0,
+                        "product_id": "T28S",
+                        "weight": 1.0,
+                        "width": 10.0,
                     },
+                    {
+                        "height": 10.0,
+                        "item_reference": "2",
+                        "length": 10.0,
+                        "product_id": "T28S",
+                        "weight": 1.0,
+                        "width": 10.0,
+                    },
+                    {
+                        "authority_to_leave": True,
+                        "height": 10.0,
+                        "item_reference": "3",
+                        "length": 10.0,
+                        "product_id": "T28S",
+                        "weight": 1.0,
+                        "width": 10.0,
+                    },
+                ],
+                "movement_type": "DESPATCH",
+                "from": {
+                    "country": "AU",
+                    "email": "john.citizen@citizen.com",
+                    "lines": ["1 Main Street"],
+                    "name": "John Citizen",
+                    "phone": "0401234567",
+                    "postcode": "3000",
+                    "suburb": "MELBOURNE",
                 },
-                {
-                    "item_reference": "SKU-2",
-                    "product_id": "T28S",
-                    "length": 10.0,
-                    "height": 10.0,
-                    "width": 10.0,
-                    "weight": 1.0,
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
+                "shipment_reference": "XYZ-001-01",
+                "to": {
+                    "country": "AU",
+                    "email": "jane.smith@smith.com",
+                    "lines": ["123 Centre Road"],
+                    "name": "Jane Smith",
+                    "phone": "0412345678",
+                    "postcode": "2000",
+                    "state": "NSW",
+                    "suburb": "Sydney",
                 },
-                {
-                    "item_reference": "SKU-3",
-                    "product_id": "T28S",
-                    "length": 10.0,
-                    "height": 10.0,
-                    "width": 10.0,
-                    "weight": 1.0,
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
-                },
-            ],
-            "movement_type": "DESPATCH",
-        },
-        {
-            "shipment_reference": "shipment reference 1",
-            "from": {
-                "country": "AU",
-                "email": "larry.citizen@citizen.com",
-                "lines": ["123 Main Street"],
-                "name": "Larry Smith",
-                "phone": "0412345678",
-                "postcode": "3000",
-                "state": "VIC",
-                "suburb": "Melbourne",
-            },
-            "to": {
-                "email": "jane.buyer@citizen.com",
-                "lines": ["5 Main Street"],
-                "name": "Jane Buyer",
-                "phone": "1234567890",
-                "postcode": "6012",
-                "state": "WLG",
-                "suburb": "Karori",
-                "country": "NZ",
-            },
-            "items": [
-                {
-                    "classification_type": "OTHER",
-                    "commercial_value": True,
-                    "description_of_other": "This is a classification description",
-                    "export_declaration_number": "1234567890",
-                    "import_reference_number": "111222333",
-                    "item_contents": [
-                        {
-                            "country_of_origin": "AU",
-                            "description": "description",
-                            "sku": "ABC1243567",
-                            "quantity": 1,
-                            "tariff_code": "123456",
-                            "value": 55.55,
-                            "weight": 0.5,
-                            "item_contents_reference": "IC123456",
-                        }
-                    ],
-                    "item_description": "This is a description of the item",
-                    "item_reference": "TD1234567",
-                    "length": 10.0,
-                    "height": 10.0,
-                    "weight": 2.0,
-                    "product_id": "PTI8",
-                    "width": 10.0,
-                    "contains_dangerous_goods": False,
-                    "authority_to_leave": False,
-                    "allow_partial_delivery": True,
-                }
-            ],
-        },
-    ]
+            }
+        ]
+    },
+    "label": {
+        "preferences": [
+            {
+                "format": "PDF",
+                "groups": [
+                    {
+                        "branded": True,
+                        "group": "Parcel Post",
+                        "layout": "A4-1pp",
+                        "left_offset": 0,
+                        "top_offset": 0,
+                    }
+                ],
+                "type": "PRINT",
+            }
+        ],
+        "shipments": [{"shipment_id": "[SHIPMENT_ID]"}],
+        "wait_for_label_url": True,
+    },
 }
 
 ShipmentCancelRequest = {"shipment_id": "794947717776"}
 
-ShipmentResponse = """ {
+ShipmentResponse = """{
     "shipments": [
         {
             "shipment_id": "9lesEAOvOm4AAAFI3swaDRYB",
@@ -269,10 +257,10 @@ ShipmentResponse = """ {
             "customer_reference_1": "Order 001",
             "customer_reference_2": "SKU-1, SKU-2, SKU-3",
             "sender_references": [
-            "Order 001",
-            "SKU-1, SKU-2, SKU-3"
-      	     ],
-            "email_tracking_enabled":True,
+                "Order 001",
+                "SKU-1, SKU-2, SKU-3"
+            ],
+            "email_tracking_enabled": true,
             "items": [
                 {
                     "item_id": "LDCsEAOvU_oAAAFI6MwaDRYB",
@@ -331,11 +319,50 @@ ShipmentResponse = """ {
                 "number_of_items": 3,
                 "tracking_summary": {
                     "Initiated": 3
-                },
+                }
             }
         }
     ]
 }
 """
 
-ShipmentCancelResponse = """"""
+LabelResponse = """{
+    "labels": [
+        {
+            "request_id": "c2991876-9596-42ed-aed3-dd11dcfb03ba",
+            "url": "https://ptest.npe.auspost.com.au/lodgement4/labels/c2991876-9596-42ed-aed3-dd11dcfb03ba.pdf?AWSAccessKeyId=AKIAR4N3J3VDHZFMRVFM&Expires=1568274226&Signature=ATq0MzBdb89gf98%2FE%2FGWOiPZ%2BTw%3D",
+            "status": "AVAILABLE",
+            "request_date": "11-09-2019 17:43:46",
+            "url_creation_date": "11-09-2019 17:43:46",
+            "shipments": [
+                {
+                    "shipment_id": "t4AK0EhQTu4AAAFeVsxGqhLO",
+                    "options": [],
+                    "items": [
+                        {
+                            "item_id": "t4AK0EhQTu4AAAFeVsxGqhLO"
+                        }
+                    ]
+                }
+            ],
+            "shipment_ids": [
+                "t4AK0EhQTu4AAAFeVsxGqhLO"
+            ]
+        }
+    ]
+}
+"""
+
+ShipmentCancelResponse = """{}"""
+
+ShipmentErrorResponse = """{
+    "errors": [
+        {
+            "code": "44003",
+            "name": "DANGEROUS_GOODS_NOT_SUPPORTED_BY_PRODUCT_ERROR",
+            "field": "shipments[0].items[0]",
+            "message": "The product T28S specified in an item has indicated that dangerous goods will be included in the parcel, however, the product does not allow dangerous goods to be sent using the service.  Please choose a product that allows dangerous goods to be included within the parcel to be sent."
+        }
+    ]
+}
+"""

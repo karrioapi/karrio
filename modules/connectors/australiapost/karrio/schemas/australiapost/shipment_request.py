@@ -4,21 +4,128 @@ from jstruct import JStruct, JList
 
 
 @s(auto_attribs=True)
-class AttributesType:
-    cover_amount: Optional[float] = None
-    rate: Optional[float] = None
-    included_cover: Optional[float] = None
-    maximum_cover: Optional[float] = None
+class FromType:
+    name: Optional[str] = None
+    lines: List[str] = []
+    suburb: Optional[str] = None
+    state: Optional[str] = None
+    postcode: Optional[int] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    country: Optional[str] = None
+    business_name: Optional[str] = None
 
 
 @s(auto_attribs=True)
-class FeatureType:
-    attributes: Optional[AttributesType] = JStruct[AttributesType]
+class COMMERCIALCLEARANCEAttributesType:
+    incoterms: Optional[str] = None
+    currency_code: Optional[str] = None
+    declared_shipping_cost: Optional[str] = None
+    buyer_code: Optional[int] = None
+    buyer: Optional[FromType] = JStruct[FromType]
+    offshore_return: Optional[FromType] = JStruct[FromType]
+
+
+@s(auto_attribs=True)
+class CommercialClearanceType:
+    attributes: Optional[COMMERCIALCLEARANCEAttributesType] = JStruct[
+        COMMERCIALCLEARANCEAttributesType
+    ]
+
+
+@s(auto_attribs=True)
+class DELIVERYDATEAttributesType:
+    date: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class DateType:
+    attributes: Optional[DELIVERYDATEAttributesType] = JStruct[
+        DELIVERYDATEAttributesType
+    ]
+
+
+@s(auto_attribs=True)
+class WindowType:
+    start: Optional[str] = None
+    end: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class DELIVERYTIMESAttributesType:
+    windows: List[WindowType] = JList[WindowType]
+
+
+@s(auto_attribs=True)
+class DeliveryTimesType:
+    attributes: Optional[DELIVERYTIMESAttributesType] = JStruct[
+        DELIVERYTIMESAttributesType
+    ]
+
+
+@s(auto_attribs=True)
+class IDENTITYONDELIVERYAttributesType:
+    id_capture_type: Optional[str] = None
+    redirection_enabled: Optional[bool] = None
+
+
+@s(auto_attribs=True)
+class IdentityOnDeliveryType:
+    attributes: Optional[IDENTITYONDELIVERYAttributesType] = JStruct[
+        IDENTITYONDELIVERYAttributesType
+    ]
+
+
+@s(auto_attribs=True)
+class PICKUPTIMEAttributesType:
+    time: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PickupTimeType:
+    attributes: Optional[PICKUPTIMEAttributesType] = JStruct[PICKUPTIMEAttributesType]
+
+
+@s(auto_attribs=True)
+class PRINTATDEPOTAttributesType:
+    enabled: Optional[bool] = None
+
+
+@s(auto_attribs=True)
+class PrintAtDepotType:
+    attributes: Optional[PRINTATDEPOTAttributesType] = JStruct[
+        PRINTATDEPOTAttributesType
+    ]
+
+
+@s(auto_attribs=True)
+class SAMEDAYIDENTITYONDELIVERYAttributesType:
+    id_option: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class SamedayIdentityOnDeliveryType:
+    attributes: Optional[SAMEDAYIDENTITYONDELIVERYAttributesType] = JStruct[
+        SAMEDAYIDENTITYONDELIVERYAttributesType
+    ]
 
 
 @s(auto_attribs=True)
 class FeaturesType:
-    feature: Optional[FeatureType] = JStruct[FeatureType]
+    DELIVERY_DATE: Optional[DateType] = JStruct[DateType]
+    DELIVERY_TIMES: Optional[DeliveryTimesType] = JStruct[DeliveryTimesType]
+    PICKUP_DATE: Optional[DateType] = JStruct[DateType]
+    PICKUP_TIME: Optional[PickupTimeType] = JStruct[PickupTimeType]
+    COMMERCIAL_CLEARANCE: Optional[CommercialClearanceType] = JStruct[
+        CommercialClearanceType
+    ]
+    IDENTITY_ON_DELIVERY: Optional[IdentityOnDeliveryType] = JStruct[
+        IdentityOnDeliveryType
+    ]
+    PRINT_AT_DEPOT: Optional[PrintAtDepotType] = JStruct[PrintAtDepotType]
+    SAMEDAY_IDENTITY_ON_DELIVERY: Optional[SamedayIdentityOnDeliveryType] = JStruct[
+        SamedayIdentityOnDeliveryType
+    ]
 
 
 @s(auto_attribs=True)
@@ -44,6 +151,8 @@ class ItemType:
     cubic_volume: Optional[float] = None
     authority_to_leave: Optional[bool] = None
     allow_partial_delivery: Optional[bool] = None
+    contains_dangerous_goods: Optional[bool] = None
+    transportable_by_air: Optional[bool] = None
     item_description: Optional[str] = None
     features: Optional[FeaturesType] = JStruct[FeaturesType]
     classification_type: Optional[str] = None
@@ -52,20 +161,6 @@ class ItemType:
     export_declaration_number: Optional[int] = None
     import_reference_number: Optional[int] = None
     item_contents: List[ItemContentType] = JList[ItemContentType]
-    contains_dangerous_goods: Optional[bool] = None
-
-
-@s(auto_attribs=True)
-class FromType:
-    name: Optional[str] = None
-    lines: List[str] = []
-    suburb: Optional[str] = None
-    state: Optional[str] = None
-    postcode: Optional[int] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    country: Optional[str] = None
-    business_name: Optional[str] = None
 
 
 @s(auto_attribs=True)

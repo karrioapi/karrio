@@ -24,7 +24,7 @@ class TestAustraliaPostRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/shipping/v1/prices/items",
             )
 
     def test_parse_rate_response(self):
@@ -60,6 +60,8 @@ RatePayload = {
             "height": 1,
             "width": 10,
             "weight": 2,
+            "weight_unit": "KG",
+            "dimension_unit": "CM",
             "packaging_type": "BOX",
             "options": {
                 "insurance": 1000,
@@ -68,39 +70,91 @@ RatePayload = {
     ],
 }
 
-ParsedRateResponse = []
+ParsedRateResponse = [
+    [
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "currency": "AUD",
+            "extra_charges": [
+                {"amount": 38.82, "currency": "AUD", "name": "base charge"},
+                {"amount": 3.88, "currency": "AUD", "name": "GST"},
+            ],
+            "meta": {"service_name": "EXPRESS POST"},
+            "service": "australiapost_express_post",
+            "total_charge": 42.7,
+        },
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "currency": "AUD",
+            "extra_charges": [
+                {"amount": 8.18, "currency": "AUD", "name": "base charge"},
+                {"amount": 0.82, "currency": "AUD", "name": "GST"},
+            ],
+            "meta": {"service_name": "PARCEL POST + SIGNATURE"},
+            "service": "australiapost_parcel_post_signature",
+            "total_charge": 9.0,
+        },
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "currency": "AUD",
+            "extra_charges": [{"amount": 3.18, "currency": "AUD", "name": "GST"}],
+            "meta": {"service_name": "EXPRESS POST + SIGNATURE"},
+            "service": "australiapost_express_post_signature",
+            "total_charge": 34.94,
+        },
+    ],
+    [
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "code": "43003",
+            "details": {},
+            "message": "The service T28V1N0 is not available based upon the submitted "
+            "weight of 5 kg.",
+        },
+        {
+            "carrier_id": "australiapost",
+            "carrier_name": "australiapost",
+            "code": "42002",
+            "details": {},
+            "message": "The service T28V1N0 is not available based upon the information "
+            "submitted.",
+        },
+    ],
+]
 
 
 RateRequest = {
     "shipments": [
         {
             "from": {
-                "suburb": "MELBOURNE",
-                "state": "VIC",
                 "postcode": "3000",
+                "state": "VIC",
+                "suburb": "MELBOURNE",
             },
             "to": {
-                "suburb": "SYDNEY",
-                "state": "NSW",
                 "postcode": "2000",
+                "state": "NSW",
+                "suburb": "SYDNEY",
             },
             "items": [
                 {
-                    "item_reference": "1",
-                    "product_id": "7D55",
-                    "length": "5",
-                    "height": "1",
-                    "width": "10",
-                    "weight": "2",
-                    "packaging_type": "BOX",
-                    "product_ids": ["7D55"],
                     "features": {
                         "TRANSIT_COVER": {
                             "attributes": {
-                                "cover_amount": 1000,
+                                "cover_amount": 1000.0,
                             },
-                        },
+                        }
                     },
+                    "height": 1.0,
+                    "item_reference": "1",
+                    "length": 5.0,
+                    "packaging_type": "BOX",
+                    "weight": 2.0,
+                    "width": 10.0,
                 }
             ],
         }

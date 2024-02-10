@@ -40,14 +40,80 @@
                     "authority_to_leave": false,
                     "allow_partial_delivery": true,
                     "contains_dangerous_goods": false,
+                    "transportable_by_air": true,
                     "item_description": "This is a description of the item",
                     "features": {
-                        "feature": {
+                        "DELIVERY_DATE": {
                             "attributes": {
-                                "cover_amount": 1000.0,
-                                "rate": 0.0,
-                                "included_cover": 0.0,
-                                "maximum_cover": 1000.0
+                                "date": "2017-07-15"
+                            }
+                        },
+                        "DELIVERY_TIMES": {
+                            "attributes": {
+                                "windows": [
+                                    {
+                                        "start": "17:00:00",
+                                        "end": "19:00:00"
+                                    }
+                                ]
+                            }
+                        },
+                        "PICKUP_DATE": {
+                            "attributes": {
+                                "date": "2017-07-15"
+                            }
+                        },
+                        "PICKUP_TIME": {
+                            "attributes": {
+                                "time": "10:00:00"
+                            }
+                        },
+                        "COMMERCIAL_CLEARANCE": {
+                            "attributes": {
+                                "incoterms": "DDP",
+                                "currency_code": "NZD",
+                                "declared_shipping_cost": "10.00",
+                                "buyer_code": "12345",
+                                "buyer": {
+                                    "business_name": "AP",
+                                    "country": "NZ",
+                                    "email": "jane.buyer@citizen.com",
+                                    "lines": [
+                                        "5 Main Street"
+                                    ],
+                                    "name": "Jane Buyer",
+                                    "phone": "1234567890",
+                                    "postcode": "6012",
+                                    "suburb": "KARORI"
+                                },
+                                "offshore_return": {
+                                    "business_name": "AP",
+                                    "country": "NZ",
+                                    "email": "john.citizen@citizen.com",
+                                    "lines": [
+                                        "1 High Street"
+                                    ],
+                                    "name": "John Citizen",
+                                    "phone": "0401234567",
+                                    "postcode": "6012",
+                                    "suburb": "KARORI"
+                                }
+                            }
+                        },
+                        "IDENTITY_ON_DELIVERY": {
+                            "attributes": {
+                                "id_capture_type": "addressee",
+                                "redirection_enabled": false
+                            }
+                        },
+                        "PRINT_AT_DEPOT": {
+                            "attributes": {
+                                "enabled": "true"
+                            }
+                        },
+                        "SAMEDAY_IDENTITY_ON_DELIVERY": {
+                            "attributes": {
+                                "id_option": "OCCUPANT_ID_CAPTURED"
                             }
                         }
                     }

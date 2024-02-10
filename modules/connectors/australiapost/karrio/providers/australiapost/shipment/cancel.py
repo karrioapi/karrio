@@ -33,6 +33,6 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = dict(shipment_id=payload.shipment_id)
+    request = dict(shipment_id=payload.shipment_identifier)
 
     return lib.Serializable(request)
