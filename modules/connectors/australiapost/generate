@@ -7,8 +7,15 @@ quicktype () {
     echo "Generating $1..."
     docker run -it -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/australiapost \
     karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \
-    --all-properties-optional $@
+    --all-properties-optional --type-as-suffix $@
 }
 
-quicktype --src="${SCHEMAS}/errors.json" --out="${LIB_MODULES}/errors.py"
-quicktype --src="${SCHEMAS}/tracking.json" --out="${LIB_MODULES}/tracking.py"
+quicktype --src="${SCHEMAS}/error_response.json" --out="${LIB_MODULES}/error_response.py"
+quicktype --src="${SCHEMAS}/shipment_request.json" --out="${LIB_MODULES}/shipment_request.py"
+quicktype --src="${SCHEMAS}/shipment_response.json" --out="${LIB_MODULES}/shipment_response.py"
+quicktype --src="${SCHEMAS}/label_request.json" --out="${LIB_MODULES}/label_request.py"
+quicktype --src="${SCHEMAS}/label_response.json" --out="${LIB_MODULES}/label_response.py"
+quicktype --src="${SCHEMAS}/rate_request.json" --out="${LIB_MODULES}/rate_request.py"
+quicktype --src="${SCHEMAS}/rate_response.json" --out="${LIB_MODULES}/rate_response.py"
+quicktype --src="${SCHEMAS}/tracking_request.json" --out="${LIB_MODULES}/tracking_request.py"
+quicktype --src="${SCHEMAS}/tracking_response.json" --out="${LIB_MODULES}/tracking_response.py"

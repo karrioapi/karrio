@@ -1,0 +1,203 @@
+{
+    "shipments": [
+        {
+            "shipment_reference": "XYZ-001-01",
+            "customer_reference_1": "Order 001",
+            "customer_reference_2": "SKU-1, SKU-2, SKU-3",
+            "email_tracking_enabled": true,
+            "from": {
+                "name": "John Citizen",
+                "lines": [
+                    "1 Main Street"
+                ],
+                "suburb": "MELBOURNE",
+                "state": "VIC",
+                "postcode": "3000",
+                "phone": "0401234567",
+                "email": "john.citizen@citizen.com"
+            },
+            "to": {
+                "name": "Jane Smith",
+                "business_name": "Smith Pty Ltd",
+                "lines": [
+                    "123 Centre Road"
+                ],
+                "suburb": "Sydney",
+                "state": "NSW",
+                "postcode": "2000",
+                "phone": "0412345678",
+                "email": "jane.smith@smith.com"
+            },
+            "items": [
+                {
+                    "item_reference": "SKU-1",
+                    "product_id": "T28S",
+                    "length": 10.0,
+                    "height": 10.0,
+                    "width": 10.0,
+                    "weight": 1.0,
+                    "cubic_volume": 0.001,
+                    "authority_to_leave": false,
+                    "allow_partial_delivery": true,
+                    "contains_dangerous_goods": false,
+                    "transportable_by_air": true,
+                    "item_description": "This is a description of the item",
+                    "features": {
+                        "DELIVERY_DATE": {
+                            "attributes": {
+                                "date": "2017-07-15"
+                            }
+                        },
+                        "DELIVERY_TIMES": {
+                            "attributes": {
+                                "windows": [
+                                    {
+                                        "start": "17:00:00",
+                                        "end": "19:00:00"
+                                    }
+                                ]
+                            }
+                        },
+                        "PICKUP_DATE": {
+                            "attributes": {
+                                "date": "2017-07-15"
+                            }
+                        },
+                        "PICKUP_TIME": {
+                            "attributes": {
+                                "time": "10:00:00"
+                            }
+                        },
+                        "COMMERCIAL_CLEARANCE": {
+                            "attributes": {
+                                "incoterms": "DDP",
+                                "currency_code": "NZD",
+                                "declared_shipping_cost": "10.00",
+                                "buyer_code": "12345",
+                                "buyer": {
+                                    "business_name": "AP",
+                                    "country": "NZ",
+                                    "email": "jane.buyer@citizen.com",
+                                    "lines": [
+                                        "5 Main Street"
+                                    ],
+                                    "name": "Jane Buyer",
+                                    "phone": "1234567890",
+                                    "postcode": "6012",
+                                    "suburb": "KARORI"
+                                },
+                                "offshore_return": {
+                                    "business_name": "AP",
+                                    "country": "NZ",
+                                    "email": "john.citizen@citizen.com",
+                                    "lines": [
+                                        "1 High Street"
+                                    ],
+                                    "name": "John Citizen",
+                                    "phone": "0401234567",
+                                    "postcode": "6012",
+                                    "suburb": "KARORI"
+                                }
+                            }
+                        },
+                        "IDENTITY_ON_DELIVERY": {
+                            "attributes": {
+                                "id_capture_type": "addressee",
+                                "redirection_enabled": false
+                            }
+                        },
+                        "PRINT_AT_DEPOT": {
+                            "attributes": {
+                                "enabled": "true"
+                            }
+                        },
+                        "SAMEDAY_IDENTITY_ON_DELIVERY": {
+                            "attributes": {
+                                "id_option": "OCCUPANT_ID_CAPTURED"
+                            }
+                        }
+                    }
+                },
+                {
+                    "item_reference": "SKU-2",
+                    "product_id": "T28S",
+                    "length": 10.0,
+                    "height": 10.0,
+                    "width": 10.0,
+                    "weight": 1.0,
+                    "authority_to_leave": false,
+                    "allow_partial_delivery": true
+                },
+                {
+                    "item_reference": "SKU-3",
+                    "product_id": "T28S",
+                    "length": 10.0,
+                    "height": 10.0,
+                    "width": 10.0,
+                    "weight": 1.0,
+                    "authority_to_leave": false,
+                    "allow_partial_delivery": true
+                }
+            ],
+            "movement_type": "DESPATCH"
+        },
+        {
+            "shipment_reference": "shipment reference 1",
+            "from": {
+                "country": "AU",
+                "email": "larry.citizen@citizen.com",
+                "lines": [
+                    "123 Main Street"
+                ],
+                "name": "Larry Smith",
+                "phone": "0412345678",
+                "postcode": "3000",
+                "state": "VIC",
+                "suburb": "Melbourne"
+            },
+            "to": {
+                "email": "jane.buyer@citizen.com",
+                "lines": [
+                    "5 Main Street"
+                ],
+                "name": "Jane Buyer",
+                "phone": "1234567890",
+                "postcode": "6012",
+                "state": "WLG",
+                "suburb": "Karori",
+                "country": "NZ"
+            },
+            "items": [
+                {
+                    "classification_type": "OTHER",
+                    "commercial_value": true,
+                    "description_of_other": "This is a classification description",
+                    "export_declaration_number": "1234567890",
+                    "import_reference_number": "111222333",
+                    "item_contents": [
+                        {
+                            "country_of_origin": "AU",
+                            "description": "description",
+                            "sku": "ABC1243567",
+                            "quantity": 1,
+                            "tariff_code": "123456",
+                            "value": 55.55,
+                            "weight": 0.5,
+                            "item_contents_reference": "IC123456"
+                        }
+                    ],
+                    "item_description": "This is a description of the item",
+                    "item_reference": "TD1234567",
+                    "length": 10.0,
+                    "height": 10.0,
+                    "weight": 2.0,
+                    "product_id": "PTI8",
+                    "width": 10.0,
+                    "contains_dangerous_goods": false,
+                    "authority_to_leave": false,
+                    "allow_partial_delivery": true
+                }
+            ]
+        }
+    ]
+}

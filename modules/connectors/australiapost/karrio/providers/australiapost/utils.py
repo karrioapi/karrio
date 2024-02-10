@@ -1,8 +1,8 @@
-from base64 import b64encode
-from karrio.core import Settings as BaseSettings
+import base64
+import karrio.core as core
 
 
-class Settings(BaseSettings):
+class Settings(core.Settings):
     """Australia Post connection settings."""
 
     # Carrier specific properties
@@ -10,9 +10,7 @@ class Settings(BaseSettings):
     password: str
     account_number: str
 
-    id: str = None
     account_country_code: str = "AU"
-    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -27,9 +25,10 @@ class Settings(BaseSettings):
         )
 
     @property
+    def tracking_url(self):
+        return "https://auspost.com.au/mypost/beta/track/details/{}"
+
+    @property
     def authorization(self):
-        return (
-            b64encode(f"{self.api_key}:{self.password}".encode("utf-8")).decode("ascii")
-            if self.password
-            else None
-        )
+        pair = "%s:%s" % (self.api_key, self.password)
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")

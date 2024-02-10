@@ -1,46 +1,147 @@
-""" Australia Post Native Types """
+import karrio.lib as lib
+import karrio.core.units as units
 
-# import karrio.lib as lib
-# from karrio.core.utils import Enum, Flag
-#
-# PRESET_DEFAULTS = dict(dimension_unit="CM", weight_unit="KG")
-#
-#
-# class PackagePresets(lib.Enum):
-#     # carrier_envelope = PackagePreset(
-#     #     **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="envelope"),
-#     #     **PRESET_DEFAULTS
-#     # )
-#     # carrier_box = PackagePreset(
-#     #     **dict(weight=0.5, width=35.0, height=27.5, length=1.0, packaging_type="medium_box"),
-#     #     **PRESET_DEFAULTS
-#     # )
-#     pass
-#
-#
-# class PackageType(lib.StrEnum):
-#     carrier_envelope = "ENVELOPE CODE"
-#     carrier_box = "BOX CODE"
-#     carrier_your_packaging = "CUSTOM PACKAGING CODE"
-#
-#     """ Unified Packaging type mapping """
-#     envelope = carrier_envelope
-#     pak = carrier_envelope
-#     tube = carrier_your_packaging
-#     pallet = carrier_your_packaging
-#     small_box = carrier_box
-#     medium_box = carrier_box
-#     large_box = carrier_box
-#     your_packaging = carrier_your_packaging
-#
-#
-# class Service(Enum):
-#     carrier_standard = "STANDARD CODE"
-#     carrier_premium = "PREMIUM CODE"
-#     carrier_overnight = "OVERNIGHT CODE"
-#
-#
-# class Option(lib.Enum):
-#     carrier_signature = "SIGNATURE CODE"
-#     carrier_saturday_delivery = "SATURDAY DELIVERY CODE"
-#     carrier_dry_ice = "DRY ICE CODE"
+
+class PackagingType(lib.StrEnum):
+    """Carrier specific packaging type"""
+
+    box = "BOX"
+    carton = "CTN"
+    pallet = "PAL"
+    satchel = "SAT"
+    bag = "BAG"
+    envelope = "ENV"
+    item = "ITM"
+    jiffy_bag = "JIF"
+    skid = "SKI"
+
+    """ Unified Packaging type mapping """
+    pak = satchel
+    tube = item
+    small_box = box
+    medium_box = box
+    your_packaging = box
+
+
+class LabelType(lib.Enum):
+    PDF_A4_1pp = ("PDF", "A4-1pp")
+    ZPL_A4_1pp = ("ZPL", "A4-1pp")
+    PDF_A4_3pp = ("PDF", "A4-3pp")
+    ZPL_A4_3pp = ("ZPL", "A4-3pp")
+    PDF_A4_4pp = ("PDF", "A4-4pp")
+    ZPL_A4_4pp = ("ZPL", "A4-4pp")
+    PDF_A6_1pp = ("PDF", "A6-1pp")
+    ZPL_A6_1pp = ("ZPL", "A6-1pp")
+    PDF_A4_2pp = ("PDF", "A4-2pp")
+    ZPL_A4_2pp = ("ZPL", "A4-2pp")
+    PDF_A4_1pp_landscape = ("PDF", "A4-1pp landscape")
+    ZPL_A4_1pp_landscape = ("ZPL", "A4-1pp landscape")
+    PDF_A4_2pp_landscape = ("PDF", "A4-2pp landscape")
+    ZPL_A4_2pp_landscape = ("ZPL", "A4-2pp landscape")
+
+    """ Unified Label type mapping """
+    PDF = PDF_A4_1pp
+    ZPL = PDF_A4_1pp
+    PNG = PDF_A4_1pp
+
+
+class CustomsContentType(lib.StrEnum):
+    """Carrier specific customs content type"""
+
+    document = "DOCUMENT"
+    gift = "GIFT"
+    sample = "SAMPLE"
+    other = "OTHER"
+    return_of_goods = "RETURN"
+    sale_of_goods = "SALE_OF_GOODS"
+
+    """ Unified Content type mapping """
+    documents = document
+    merchandise = sale_of_goods
+    return_merchandise = return_of_goods
+
+
+class ShippingService(lib.StrEnum):
+    """Carrier specific services"""
+
+    australiapost_parcel_post = "T28"
+    australiapost_express_post = "E34"
+    australiapost_parcel_post_signature = "T28S"
+    australiapost_express_post_signature = "E34S"
+    # australiapost_on_demand = "PTI8"
+    # australiapost_international = "IC10"
+    # australiapost_commercial = "Commercial"
+    # australiapost_startrack = "Startrack"
+    # australiapost_startrack_courier = "Startrack Courier"
+
+
+class ServiceName(lib.StrEnum):
+    """Carrier specific services"""
+
+    australiapost_parcel_post = "Parcel Post"
+    australiapost_express_post = "Express Post"
+    australiapost_startrack_courier = "Startrack Courier"
+    australiapost_startrack = "StarTrack"
+    australiapost_on_demand = "On Demand"
+    australiapost_international = "International"
+    australiapost_commercial = "Commercial"
+
+
+class ShippingOption(lib.Enum):
+    """Carrier specific options"""
+
+    # fmt: off
+    australiapost_delivery_date = lib.OptionEnum("DELIVERY_DATE")
+    australiapost_delivery_time_start = lib.OptionEnum("DELIVERY_TIMES")
+    australiapost_delivery_time_end = lib.OptionEnum("DELIVERY_TIMES")
+    australiapost_pickup_date = lib.OptionEnum("PICKUP_DATE")
+    australiapost_pickup_time = lib.OptionEnum("PICKUP_TIME")
+    australiapost_identity_on_delivery = lib.OptionEnum("IDENTITY_ON_DELIVERY")
+    australiapost_print_at_depot = lib.OptionEnum("PRINT_AT_DEPOT", bool)
+    australiapost_transit_cover = lib.OptionEnum("TRANSIT_COVER", float)
+    australiapost_sameday_identity_on_delivery = lib.OptionEnum("SAMEDAY_IDENTITY_ON_DELIVERY")
+
+    australiapost_authority_to_leave = lib.OptionEnum("authority_to_leave", bool)
+    australiapost_allow_partial_delivery = lib.OptionEnum("allow_partial_delivery", bool)
+    australiapost_contains_dangerous_goods = lib.OptionEnum("contains_dangerous_goods", bool)
+
+    """ Unified Option type mapping """
+
+    insurance = australiapost_transit_cover
+    # fmt: on
+
+
+def shipping_options_initializer(
+    options: dict,
+    package_options: units.ShippingOptions = None,
+) -> units.ShippingOptions:
+    """
+    Apply default values to the given options.
+    """
+
+    if package_options is not None:
+        options.update(package_options.content)
+
+    def items_filter(key: str) -> bool:
+        return key in ShippingOption and key not in [  # type: ignore
+            "australiapost_authority_to_leave",
+            "australiapost_allow_partial_delivery",
+            "australiapost_contains_dangerous_goods",
+        ]
+
+    return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
+
+
+class TrackingStatus(lib.Enum):
+    on_hold = ["Possible delay", "Held by courier"]
+    delivered = ["Delivered", "Delivered in Full"]
+    in_transit = ["In transit"]
+    delivery_failed = [
+        "Article damaged",
+        "Cancelled",
+        "Cannot be delivered",
+        "Unsuccessful Delivery",
+    ]
+    delivery_delayed = ["Possible delay", "To be Re-Delivered"]
+    out_for_delivery = ["On Board for Delivery"]
+    ready_for_pickup = ["Awaiting collection", "Ready for Pickup"]

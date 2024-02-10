@@ -1,4 +1,5 @@
-# karrio.carrier_name
+
+# karrio.australiapost
 
 This package is a Australia Post extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
 
@@ -20,7 +21,7 @@ from karrio.mappers.australiapost.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = karrio.gateway["australiapost"].create(
+australiapost = karrio.gateway["australiapost"].create(
     Settings(
         ...
     )
