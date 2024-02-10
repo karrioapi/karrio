@@ -1,7 +1,7 @@
 ---
-id: connections
-title: Connections
-description: Retrieve the list of carrier connections configured for your account.
+id: carriers
+title: Carriers
+description: Retrieve the list of carrier accounts configured for your account.
 tags:
   - REST API
 ---
@@ -9,9 +9,9 @@ tags:
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-The `Carrier` object allow you to perform get live rates, generate labels,
-track shipments and any other carrier supported operations. The API allow you to
-retrieve the list of carriers configured and accessible from your account.
+Carrier connections allow you to perform live rates fetching, label generation,
+shipment tracking and any other carrier supported operations. The API allow you to
+retrieve the list of carrier accounts configured and accessible from your account.
 
 <div id="tailwind">
   <table className="table-auto">
@@ -35,6 +35,13 @@ retrieve the list of carriers configured and accessible from your account.
     </tbody>
   </table>
 </div>
+
+
+:::info
+This API is read-only and does not allow you to create, update or delete carrier connections.
+To programmatically create, update or delete carrier connections, use the [GraphQL management API](/management/connections).
+:::
+
 
 ## Get carrier connections
 

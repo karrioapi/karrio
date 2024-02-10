@@ -784,406 +784,6 @@ From a technical perspective, the shipping process can visualized as follow
   </svg>
 </div>
 
-## Proxy Request APIs
-
-The proxy APIs allow you to send shipping requests to carriers without creating
-any objects in karrio.
-
-:::info
-In that schenario, karrio is just a proxy that forward requests.
-:::
-
-**Get shipping rates**
-
-> `POST` /v1/proxy/rates
-
-You can use the this endpoint to get shipping rates from a carrier. based off
-the provided shipping details.
-
-<div id="tabs">
-<Tabs>
-<TabItem value="request" label="Request">
-
-```bash
-curl --request POST \
-  --url https://api.karrio.io/v1/proxy/rates \
-  --header 'Authorization: Token [API_KEY]' \
-  --header 'Content-Type: application/json' \
-  --data '{
-  "shipper": {
-    "postal_code": "V6M2V9",
-    "city": "Vancouver",
-    "country_code": "CA",
-    "state_code": "BC",
-    "residential": true,
-    "address_line1": "5840 Oak St"
-  },
-  "recipient": {
-    "postal_code": "E1C4Z8",
-    "city": "Moncton",
-    "country_code": "CA",
-    "state_code": "NB",
-    "residential": false,
-    "address_line1": "125 Church St"
-  },
-  "parcels": [{
-    "weight": 1,
-    "weight_unit": "KG",
-    "package_preset": "canadapost_corrugated_small_box"
-  }],
-  "carrier_ids": ["canadapost"]
-}'
-```
-
-</TabItem>
-<TabItem value="response" label="Response">
-
-```json
-{
-  "messages": [],
-  "rates": [
-    {
-      "id": "rat_baeeebc3fd8c4f0a818bdd83af85100c",
-      "carrier_name": "canadapost",
-      "carrier_id": "canadapost",
-      "currency": "CAD",
-      "service": "canadapost_expedited_parcel",
-      "discount": 3.81,
-      "base_charge": 29.31,
-      "total_charge": 38.09,
-      "duties_and_taxes": 4.97,
-      "transit_days": 8,
-      "extra_charges": [
-        {
-          "name": "Fuel surcharge",
-          "amount": 3.81,
-          "currency": "CAD"
-        }
-      ],
-      "meta": {
-        "service_name": "CANADAPOST EXPEDITED PARCEL",
-        "rate_provider": "canadapost"
-      },
-      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
-      "test_mode": true
-    },
-    {
-      "id": "rat_c557e31a85ee46e6914545f0c4eb60fb",
-      "carrier_name": "canadapost",
-      "carrier_id": "canadapost",
-      "currency": "CAD",
-      "service": "canadapost_xpresspost",
-      "discount": 9.74,
-      "base_charge": 74.96,
-      "total_charge": 97.41,
-      "duties_and_taxes": 12.71,
-      "transit_days": 3,
-      "extra_charges": [
-        {
-          "name": "Fuel surcharge",
-          "amount": 9.74,
-          "currency": "CAD"
-        }
-      ],
-      "meta": {
-        "service_name": "CANADAPOST XPRESSPOST",
-        "rate_provider": "canadapost"
-      },
-      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
-      "test_mode": true
-    }
-  ]
-}
-```
-
-</TabItem>
-</Tabs>
-</div>
-
-**Buy shipping label**
-
-> `POST` /v1/proxy/shipping
-
-You can use this endpoint to buy a shipping service from a carrier and get
-a label in return.
-
-To buy a shipping label, you need to provide the shipping details, the rates
-retrieved previously and the preferred rate' `selected_rate_id`.
-
-<div id="tabs">
-<Tabs>
-<TabItem value="request" label="Request">
-
-```bash
-curl --request POST \
-  --url https://api.karrio.io/v1/proxy/shipping \
-  --header 'Authorization: Token  [API_KEY]' \
-  --header 'Content-Type: application/json' \
-  --data '{
-	"selected_rate_id": "rat_c84e2953599d4757b1d9265a5e36a54b",
-	"label_type": "PDF",
-	"options": {},
-	"recipient": {
-		"address_line1": "125 Church St",
-		"person_name": "John Doe",
-		"company_name": "A corp.",
-		"phone_number": "514 000 0000",
-		"city": "Moncton",
-		"country_code": "CA",
-		"postal_code": "E1C4Z8",
-		"residential": false,
-		"state_code": "NB"
-	},
-	"shipper": {
-		"address_line1": "5840 Oak St",
-		"person_name": "Jane Doe",
-		"company_name": "B corp.",
-		"phone_number": "514-000-0000",
-		"city": "Vancouver",
-		"country_code": "CA",
-		"postal_code": "V6M2V9",
-		"residential": false,
-		"state_code": "BC"
-	},
-	"parcels": [
-		{
-			"weight": 1,
-			"weight_unit": "LB",
-			"package_preset": "canadapost_corrugated_small_box"
-		}
-	],
-  "rates": [
-    {
-      "id": "rat_c84e2953599d4757b1d9265a5e36a54b",
-      "carrier_name": "canadapost",
-      "carrier_id": "canadapost",
-      "currency": "CAD",
-      "service": "canadapost_regular_parcel",
-      "discount": 3.52,
-      "base_charge": 27.06,
-      "total_charge": 35.17,
-      "duties_and_taxes": 4.59,
-      "transit_days": 10,
-      "extra_charges": [
-        {
-          "name": "Fuel surcharge",
-          "amount": 3.52,
-          "currency": "CAD"
-        }
-      ],
-      "meta": {
-        "service_name": "CANADAPOST REGULAR PARCEL",
-        "rate_provider": "canadapost"
-      },
-      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
-      "test_mode": true
-    },
-    {
-      "id": "rat_c557e31a85ee46e6914545f0c4eb60fb",
-      "carrier_name": "canadapost",
-      "carrier_id": "canadapost",
-      "currency": "CAD",
-      "service": "canadapost_xpresspost",
-      "discount": 9.74,
-      "base_charge": 74.96,
-      "total_charge": 97.41,
-      "duties_and_taxes": 12.71,
-      "transit_days": 3,
-      "extra_charges": [
-        {
-          "name": "Fuel surcharge",
-          "amount": 9.74,
-          "currency": "CAD"
-        }
-      ],
-      "meta": {
-        "service_name": "CANADAPOST XPRESSPOST",
-        "rate_provider": "canadapost"
-      },
-      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
-      "test_mode": true
-    }
-  ],
-	"payment": {
-		"currency": "CAD",
-		"paid_by": "sender"
-	},
-	"reference": "Order Id: #1222"
-}'
-```
-
-</TabItem>
-<TabItem value="response" label="Response">
-
-```json
-{
-  "id": "shp_0a92f24cd14e4694bfc2d811c9de6901",
-  "status": "purchased",
-  "carrier_name": "canadapost",
-  "carrier_id": "canadapost",
-  "label": "XlhBDQpeQ0kxMw0KXk1NVA0KXlBXODEyDQpeTEwxMjE4DQpeTFMwDQpeRk8yMiwzMF5HRkEsNDA1\nMCw0MDUwLDQ1LCw6Ojoxak1GLDFqTEZFLDo6OjoxaElGM2hIRkUsMWhHRjhJMDdoRkUsMWhGOEsw\nN2dZRkUsMWdZRkUwM0lGMDFnWUZFLDFnWUY4MUtGMDdnWEZFLDFnWEZFMExGQzFnWEZFLDFnWEZD\nM01GMDdnV0ZFLDFnWEYwTkZDM2dXRkUsMUtGRTdnUEZFMU9GMVFGQ0pGOFFGRTNNRkUsMUtGMDFG\nRkMzRkZDMUYxRkZDM0ZGRTAxSUZDM0xGQzdPRjhMRjAwRkZFMDFGRkUwM0Y4MDBGRTAwRkY4ME1G\nRSwxSkZDMDFGRkMxRkZFMUYzRkZDMUZGRTAwN0ZGQzFMRjhQRkM3S0YwMDdGQzAwRkZDMDNGODAw\nRkUwMEZGMDBNRkUsMUpGODNJRkMxRkZFMEYzRkZDMUZGRTM4M0ZGQzFMRjFQRkUzS0YxODdGODc4\nN0Y4N0lGOEZGRTNGRkUxTkZFLDFKRjg3SUY4OEZGRTBGM0ZGODBGRkUzQzNGRjgwS0ZFM1FGMUtG\nMUMzRjBGQzNGOEpGOEZGRTNGRkUzTkZFLDFKRjhKRjg4RkZFNDczRkY4OEZGRTNFMUZGODhLRkM3\nUUY4S0YxQzNGMUZFM0Y4N0lGOEZGRTNGRkUzTkZFLDFKRjBKRjE4RkZFNDczRkY5OEZGRTNGMUZG\nMDhLRjhSRkM3SkYxQzdGMUZFM0ZDM0lGOEZGRTIxRkUwTkZFLDFKRjFKRjFDN0ZFNjMzRkYxQzdG\nRTNGMUZGMUM3SkY5UkZFM0pGMDA3RjFGRTNGQzA3RkY4RkZFMDFGRjAzTUZFLDFKRjFKRjFDN0ZF\nNjMzRkYxQzdGRTNGMUZGMUM3SkYxU0YzSkYwMEZGMUZFM0ZFMDNGRjhGRkUwMUZGODBNRkUsMUpG\nMElGRTE0M0ZFNzEzRkUwMDNGRTNGMUZFMDQzSUZFM1NGMUpGMDNGRjFGRTNGRkMxRkY4RkZFM0pG\nME1GRSwxSkYwSUZFMDAzRkU3MTNGRTAwM0ZFM0UxRkUwMDNJRkU3RjNRRjlKRjFJRjBGRTNGRkUx\nRkY4RkZFM0pGOE1GRSwxSkY4N0ZGRTAwM0ZFNzgzRkUwMDNGRTNDM0ZFMDAzSUZDN0Y4N1BGOEpG\nMUlGOEZDN0lGMUZGOEZGRTNKRjhNRkUsMUpGODNGRkM3RTFGRTc4M0ZDN0UxRkUzODNGQzdFMUlG\nQ0ZGQzBQRkM3SUYxSUY4Nzg3RkRFMUZGOEZGRTNJRjc4TUZFLDFKRkMwMUZDN0YxRkU3QzNGQzdG\nMUZFMDA3RkM3RjFJRjhGRkUwMU9GQzdJRjFJRkMwMEZGQzAzRkY4RkZFMDBGRTAwTUZFLDFLRjAw\nRjg3RjBGRTdDMUY4N0YwRkUwMUZGODdGMElGOUlGMDAzTkZFN0lGMUlGRTAxRkY4MDdGRjhGRkUw\nMEZFMDFNRkUsMWdVRjlJRjgwMDdNRkUzZ1RGRSwxZ1VGMUlGOEkwTkYzZ1RGRSwxZ1VGM0lGQ0kw\nMU1GM2dURkUsMWdVRjNJRkVKMDNMRjFnVEZFLDFnVEZFM0pGSzA3S0Y5Z1RGRSwxZ1RGRTdKRjhL\nMEtGOWdURkUsMWdURkU3SkZDSzAxSkY5Z1RGRSwxZ1RGRTdKRkVMMDNJRjlnVEZFLDFnVEZFN0pG\nRU0wN0ZGOGdURkUsMWdURkU3S0ZOMEZGOGdURkUsMWdURkU3S0Y4TTAxRjhnVEZFLGdWMDdLRkNO\nMEY4LGdWMDdSRjAxRjgsMWdURkU3TkZLMDNGOGdURkUsMWdURkU3S0ZOMDdGOGdURkUsMWdURkU3\nSkZFTjBGRjhnVEZFLDFnVEZFN0pGRU0wMUZGOWdURkUsMWdURkU3UEZFMDNGRjlnVEZFLDFnVEZF\nN0tGRUwwN0ZGOWdURkUsMWdURkUzSUZFTjBJRjlnVEZFLDFnVUYzSUZDTTAxSUYxZ1RGRSwxZ1VG\nM09GQzAzSUYzZ1RGRSwxZ1VGM09GODA3SUYzZ1RGRSwxZ1VGMUlGQ00wSUZFM2dURkUsMUpGODBJ\nRjAwSUYwMUZDMDA3VEY5RkZDTTAxSUZFN0lGRTAxRkZDM0ZGQzNFM0ZGQzNGRkMwM0lGQzNKRkUs\nMUpGODAzRkUwMDdGRTAxRkMwMDdURjhGRjhNMDNJRkU3SUY4MDNGRjgzRkZDM0UzRkY4M0ZGQzAw\nSUY4M0pGRSwxSkY4QzNGQzNDM0ZDM0lGQzdVRkNGRk4wN0lGQzdJRjg3SUY4M0ZGQzFFM0ZGODNG\nRkM3MDdGRjgzSkZFLDFKRjhFM0Y4N0UzRkM3SUZDN1VGQzdTRkNKRjBKRjAxRkZDMUUzRkYwMUZG\nQzc4N0ZGMDFKRkUsMUpGOEUzRjhGRTFGQzNJRkM3VUZFN1NGOEpGMUpGMTFGRkMwRTNGRjExRkZD\nN0MzRkYxMUpGRSwxSkY4RTNGOEZGMUZDMUlGQzdVRkUzU0YxSUZFMUpGMTBGRkMwRTNGRjExRkZD\nN0UzRkYxMEpGRSwxSkY4ODNGOEZGMUZFMDdGRkM3VkYxU0YzSUZFM0lGRTM4RkZDNDYzRkUzOEZG\nQzdFM0ZFMzhKRkUsMUpGODA3RjhGRjFGRjAxRkZDN1ZGOVJGRTNJRkUzSUZFMzhGRkM0NjNGRTM4\nRkZDN0UzRkUzOEpGRSwxSkY4MEZGOEZGMUZGQzFGRkM3VkY4UkZDN0lGRTFJRkMzODdGQzYyM0ZD\nMzg3RkM3RTNGQzM4N0lGRSwxSkY4SUY4RkUxSUYwRkZDN1ZGQzdRRjhLRjFJRkMwMDdGQzYwM0ZD\nMDA3RkM3QzNGQzAwN0lGRSwxSkY4SUY4N0UzSUYwRkZDN1ZGRTNRRjFLRjBJRkMwMDdGQzcwM0ZD\nMDA3RkM3QzNGQzAwN0lGRSwxSkY4SUZDM0MzSUYxRkZDN1dGMVBGRTNLRjA3RkY4RkMzRkM3MDNG\nOEZFM0ZDNzA3RjhGQzNJRkUsMUpGOElGRTAwN0ZFMDFGRkM3V0Y4UEZDN0tGODAxRjhGRTNGQzc4\nM0Y4RkUzRkMwMEZGOEZFM0lGRSwxSkY4SkYwMEZGQzAzRkZDN1dGQzdPRjhMRkUwMUYwRkUxRkM3\nODNGMEZFMUZDMDNGRjBGRTFJRkUsMU9GQzdJRjBnSEZFMU9GMU1GODdnTkZFLDFnWEYwTkZDM2dX\nRkUsMWdYRkMzTUYwN2dXRkUsMWdYRkUwTEZDMWdYRkUsMWdZRjgzS0YwN2dYRkUsMWdZRkUwM0lG\nMDFnWUZFLDFoRjhLMDdnWUZFLDFoR0ZKMDNoRkUsMWhIRkUxaEhGRSwxakxGRSw6Ojo6MWpNRiws\nOjo6XkZTDQpeRlMNCl5GTzIyLDIzXkdCMzY1LCw5NixXXkZTDQpeRk8zMiw4MV5GVDMyLDgxXkEw\nTiwyMywxOF5GREZvciBUZXN0aW5nIFB1cnBvc2VzIE9ubHleRlMNCl5GTzMyLDEwNF5GVDMyLDEw\nNF5BME4sMjMsMTheRkh8XkZEfEI3IGRlcyBmaW5zIGRlIHRlc3QgdW5pcXVlbWVudF5GUw0KXkZP\nNjc2LDJeR0IxMzcsMTM5LDEzN15GUw0KXkZPNzEyLDEwNl5GVDcxMiwxMDZeQTBOLDk2LDc3XkZS\nXkZEM15GUw0KXkZPNDc5LDYwXkZUNDc5LDYwXkEwTiwyOCwyMl5GRF5GUw0KXkZPNDc5LDEwMV5G\nVDQ3OSwxMDFeQTBOLDI4LDIyXkZEXkZTDQpeRk8yMiwxMzleR0I3OTIsLDNeRlMNCl5GTzIyLDE5\nOF5GVDIyLDE5OF5BME4sNTMsNDJeRkRSZWd1bGFyIFBhcmNlbCAgICAgfCBDb2xpcyBzdGFuZGFy\nZCAgICAgXkZTXkZPMjg2Ljg3NzIsMTU4LjI1XkEwTiwyMSwyMF5GRFRNXkZTXkZPNjI0LjY4NzI2\nLDE1OC4yNV5BME4sMjEsMjBeRkRNQ15GUw0KXkZPNjQxLDE5OF5GVDY0MSwxOTheQTBOLDUzLDQy\nXkZEXkZTDQpeRk8yMiwyMjNeR0I3OTIsLDFeRlMNCl5GTzIyLDIyM15HQjkxLDI2LDI2XkZTDQpe\nRk8yMiwyNDNeRlQyMiwyNDNeQTBOLDIwLDE2XkZSXkZIfF5GRFRPOiAvIHxCNzpeRlMNCl5GTzIz\nNywyNDNeRlQyMzcsMjQzXkEwTiwyMCwxNl5GRF5GUw0KXkZPMjIsMjg0XkZUMjIsMjg0XkEwTiwz\nMCwyNF5GREpPSE4gRE9FXkZTDQpeRk8yMiwzMTReRlQyMiwzMTReQTBOLDMwLDI0XkZEQSBDT1JQ\nLl5GUw0KXkZPMjIsMzQ0XkZUMjIsMzQ0XkEwTiwzMCwyNF5GRDEyNSBDSFVSQ0ggU1ReRlMNCl5G\nTzIyLDM3NF5GVDIyLDM3NF5BME4sMzAsMjReRkRNT05DVE9OIE5CICBFMUMgNFo4XkZTDQpeRk8y\nMiw0MDReRlQyMiw0MDReQTBOLDMwLDI0XkZEXkZTDQpeRk8yMiw0MzReRlQyMiw0MzReQTBOLDMw\nLDI0XkZEXkZTDQpeRk8yMiw0NDZeR0I4MDAsLDFeRlMNCl5GTzIyLDQ3Ml5GVDIyLDQ3Ml5BME4s\nMjUsMjBeRkReRlMNCl5GTzIyLDQ5N15GVDIyLDQ5N15BME4sMjUsMjBeRkReRlMNCl5GTzIyLDU2\nOF5GVDIyLDU2OF5BME4sNzUsNjBeRkRFMUMgNFo4XkZTDQpeRk80MTksNTA3XkdCNDA2LCwxXkZT\nDQpeRk8wLDQ2OF5BME4sMzMsMjZeRkI1MDcuNSwsLFJeRkReRlMNCl5GTzQxOSw1MTheR0ZBLDUw\nLDUwLDIsLDgsRSxGLEY4LEZFLEZGLEZGOCxGRkMsSUYsSUY4SUZDSUZFSUZDSUY4SUYsRkZFLEZG\nOCxGRixGRSxGQyxGLEUsQywsXkZTXkZTDQpeRk80MTksNTE4XkdGQSwyMDEsMjAxLDMsLDgsRSxG\nLEY4LEZFLEZGLEZGOCxGRkUsSUYsSUY4LElGQyxKRiw6SUZFLElGOCxJRixGRkUsRkZDLEZGLEZF\nLEZDLEY4LEUsQyw4LCw6Ojo6Ojo6Ojo6Ojo6OjpDLEUsRixGQyxGRSxGRixGRjgsRkZFLElGLElG\nOCxJRkUsSkYsOklGQyxJRjgsSUYsRkZFLEZGOCxGRixGRSxGQyxGLEUsQywsXkZTDQpeRk80MTks\nNTE4XkdCLDgxLDIzLFdeRlMNCl5GTzQxOSw1NTheR0IsNDEsMjMsV15GUw0KXkZPNDU4LDUyN15G\nVDQ1OCw1MjdeQTBOLDIzLDE4XkZEXkZTDQpeRk80NTgsNTUwXkZUNDU4LDU1MF5BME4sMjMsMThe\nRkReRlMNCl5GTzQ1OCw1NzNeRlQ0NTgsNTczXkEwTiwyMywxOF5GRF5GUw0KXkZPNDU4LDU5Nl5G\nVDQ1OCw1OTZeQTBOLDIzLDE4XkZEXkZTDQpeRk80MTgsNDQ3XkdCMSwxODMsMV5GUw0KXkZPMjIs\nNjE5XkdGQSwxMjAwLDEyMDAsMTAwLFFGQ0owMVJGSzA3UkZLMDdSRkswN1JGSzA3UUZDSzBSRjhK\nMDNRRkVLMFJGQ0swU0ZLMDdRRkVLMDdJRkVRRkswN1FGQ0owMVJGQ0swUkZDSjAxUkZDSjAxUkY4\nSjAzUUZFSzBSRjhKMDNSRjhKMDNSRkNKMDFSRkNKMDFKRkVQRkVLMFJGOEowM1JGOEowM1JGOEow\nM1JGSzAzUUZFSzBSRkNKMDFSRkswN1FGRUswN1JGOEowM1JGSzA3SkZFUEY4SjAzUUZFSzA3UkZL\nMDdRRkVLMDdRRkVLMFJGQ0owMVJGSzA3UUZDSjAxUkZDSjAxUkZFSzBSRkVLMEtGRVBGSzA3UUZD\nSjAxUkZFSzBSRkNKMDFSRkNKMDFSRjhKMDNRRkVLMFJGOEowM1JGOEowM1JGQ0owMVJGQ0owMUtG\nRU9GQ0swUkZLMDNSRjhKMDNSRkswM1JGSzA3UUZFSzBSRjhKMDFRRkVLMDdRRkVLMFNGSzAzUkZL\nMDdLRkVPRjhKMDNRRkVLMFNGSzA3UUZFSzBSRkVLMFJGQ0owMVJGSzA3UUZDSjAxUkZDSjAxUkZF\nSzBSRkVLMExGRU9GSzA3UUZDSjAxUkZDSjAxUkZDSjAxUkY4SjAxUkZLMDNRRkNLMFJGOEowM1JG\nSzAzUkY4SjAxUkY4SjAzTEZFTkZDSjAxUkZLMDNSRjhKMDNSRjhKMDNSRkswN1FGRUswUkY4SjAz\nUUZFSzA3UUZFSzBTRkswN1JGSzA3TEZFTkY4SjAzUUZFSzBSRkVLMFJGRUswUkZFSzBSRkNKMDFS\nRkswN1FGQ0owMVJGOEowMVJGRUswUkZDSzBNRkVNRkVLMDdRRjhKMDFSRkNKMDFSRkNKMDFSRjhK\nMDNSRkswN1FGQ0swUkZLMDNSRkswN1JGOEowM1JGOEowM01GRU1GQ0owMVJGSzA3UkZLMDNSRksw\nN1JGSzA3UUZDSzBSRjhKMDNRRkVLMFJGQ0swU0ZLMDdRRkVLMDdNRkVeRlMNCl5GTzczLDY1OF5C\nQ04sMTU0XkZTDQpeRk8yMiw4NTBeRlQyMiw4NTBeQTBOLDIwLDE2XkZEVFJBQ0tJTkcgTlVNQkVS\nXkZTDQpeRk8yNzYsODUwXkZUMjc2LDg1MF5BME4sMjgsMjJeRkReRlMNCl5GTzYyMSw4NTBeRlQ2\nMjEsODUwXkEwTiwyMCwxNl5GSHxeRkROfEE3IERFIFJFUHw5MFJBR0VeRlMNCl5GTzIyLDg3M15H\nRkEsMTIwMCwxMjAwLDEwMCxRRkNKMDFSRkswN1JGSzA3UkZLMDdSRkswN1FGQ0swUkY4SjAzUUZF\nSzBSRkNLMFNGSzA3UUZFSzA3SUZFUUZLMDdRRkNKMDFSRkNLMFJGQ0owMVJGQ0owMVJGOEowM1FG\nRUswUkY4SjAzUkY4SjAzUkZDSjAxUkZDSjAxSkZFUEZFSzBSRjhKMDNSRjhKMDNSRjhKMDNSRksw\nM1FGRUswUkZDSjAxUkZLMDdRRkVLMDdSRjhKMDNSRkswN0pGRVBGOEowM1FGRUswN1JGSzA3UUZF\nSzA3UUZFSzBSRkNKMDFSRkswN1FGQ0owMVJGQ0owMVJGRUswUkZFSzBLRkVQRkswN1FGQ0owMVJG\nRUswUkZDSjAxUkZDSjAxUkY4SjAzUUZFSzBSRjhKMDNSRjhKMDNSRkNKMDFSRkNKMDFLRkVPRkNL\nMFJGSzAzUkY4SjAzUkZLMDNSRkswN1FGRUswUkY4SjAxUUZFSzA3UUZFSzBTRkswM1JGSzA3S0ZF\nT0Y4SjAzUUZFSzBTRkswN1FGRUswUkZFSzBSRkNKMDFSRkswN1FGQ0owMVJGQ0owMVJGRUswUkZF\nSzBMRkVPRkswN1FGQ0owMVJGQ0owMVJGQ0owMVJGOEowMVJGSzAzUUZDSzBSRjhKMDNSRkswM1JG\nOEowMVJGOEowM0xGRU5GQ0owMVJGSzAzUkY4SjAzUkY4SjAzUkZLMDdRRkVLMFJGOEowM1FGRUsw\nN1FGRUswU0ZLMDdSRkswN0xGRU5GOEowM1FGRUswUkZFSzBSRkVLMFJGRUswUkZDSjAxUkZLMDdR\nRkNKMDFSRjhKMDFSRkVLMFJGQ0swTUZFTUZFSzA3UUY4SjAxUkZDSjAxUkZDSjAxUkY4SjAzUkZL\nMDdRRkNLMFJGSzAzUkZLMDdSRjhKMDNSRjhKMDNNRkVNRkNKMDFSRkswN1JGSzAzUkZLMDdSRksw\nN1FGQ0swUkY4SjAzUUZFSzBSRkNLMFNGSzA3UUZFSzA3TUZFXkZTDQpeRk8yMiw5MDFeRlQyMiw5\nMDFeQTBOLDE4LDE0XkZEU2VuZGVyIHdhcnJhbnRzIHRoYXQgdGhpcyBpdGVtIGRvZXMgbm90IGNv\nbnRhaW4gbm9uLW1haWxhYmxlIG1hdHRlci5eRlMNCl5GTzIyLDkxOV5GVDIyLDkxOV5BME4sMTgs\nMTReRkh8XkZETCdleHB8ODJkaXRldXIgZ2FyYW50aXQgcXVlIGNldCBlbnZvaSBuZSBjb250aWVu\ndCBwYXMgZCdvYmpldCBpbmFkbWlzc2libGUuXkZTDQpeRk8yMiw5MzNeR0I3OTIsLDFeRlMNCl5G\nTzIyLDkzN15HQjEwMiwyMiwyMl5GUw0KXkZPMjIsOTUyXkZUMjIsOTUyXkEwTiwxOCwxNF5GUl5G\nREZST006IC8gREU6IF5GUw0KXkZPMjIsOTg0XkZUMjIsOTg0XkEwTiwxOCwxNF5UQk4sNDg3LDE4\nXkZEQiBjb3JwLl5GUw0KXkZPMjIsMTAwMl5GVDIyLDEwMDJeQTBOLDE4LDE0XlRCTiw0ODcsMThe\nRkQ1ODQwIE9hayBTdF5GUw0KXkZPMjIsMTAyMF5GVDIyLDEwMjBeQTBOLDE4LDE0XlRCTiw0ODcs\nMTheRkRWYW5jb3V2ZXIgQkMgIFY2TSAyVjleRlMNCl5GTzIyLDEwMzheRlQyMiwxMDM4XkEwTiwx\nOCwxNF5UQk4sNDg3LDE4XkZEXkZTDQpeRk8yMiwxMDU2XkZUMjIsMTA1Nl5BME4sMTgsMTReVEJO\nLDQ4NywxOF5GRF5GUw0KXkZPMjIsMTA3NF5GVDIyLDEwNzReQTBOLDE4LDE0XlRCTiw0ODcsMThe\nRkReRlMNCl5GTzUyMCw5MzReR0IsMTUyLDBeRlMNCl5GTzY5MiwxMDU2XkdCLDMwLDBeRlMNCl5G\nTzUyOSw5NTheRlQ1MjksOTU4XkEwTiwyMCwxNl5GRDQyeDMyeDMyY21eRlMNCl5GTzAsOTQzXkEw\nTiwyMywxOF5GQjc5MS43LCwsUl5GRDcuMTcwXkZTDQpeRk8wLDk2Nl5BME4sMTgsMTReRkI3OTEu\nNywsLFJeRkRLRyBWRS9FVl5GUw0KXkZPMCw5ODNeQTBOLDE1LDEyXkZCNzkxLjcsLCxSXkZEKENV\nKV5GUw0KXkZPNjkyLDEwNzleRlQ2OTIsMTA3OV5BME4sMzMsMjZeRkRBL0NeRlMNCl5GTzUyOSwx\nMDEwXkZUNTI5LDEwMTBeQTBOLDIwLDE2XkZETUFOSUZFU1QgTk9UIFJFUV5GUw0KXkZPNTI5LDEw\nMzBeRlQ1MjksMTAzMF5BME4sMjAsMTZeRkRNQU5JRkVTVEUgTk9OIFJFUV5GUw0KXkZPNTI5LDEw\nODFeRlQ1MjksMTA4MV5BME4sMjAsMTZeRkRQL0Y6XkZTDQpeRk81ODAsMTA2MV5GVDU4MCwxMDYx\nXkEwTiwyMCwxNl5GRF5GUw0KXkZPNTgwLDEwODFeRlQ1ODAsMTA4MV5BME4sMjAsMTZeRkQyMDA0\nMzgxXkZTDQpeRk8yMiwxMDg1XkdCODAwLCwzXkZTDQpeRk8yMiwxMDY0XkdCNDk3LCwwXkZTDQpe\nRk8yMiwxMDc5XkZUMjIsMTA3OV5BME4sMTgsMTReRkReRkh8XkZERVNUL098OTBFIFYyMTA3LjAu\nNzAxICAgU1BFQyAzNjk2IFYyXkZTDQpeRk8yMiwxMTg3XkZUMjIsMTE4N15BME4sMjAsMTZeRkh8\nXkZET3JkZXIgTm8uOiAvIE58QTcgZCdjb21tYW5kZTpeRlMNCl5GTzMxNiwxMTg3XkZUMzE2LDEx\nODdeQTBOLDIwLDE2XkZEUDEyMzQ1Njc4OV5GUw0KXkZPMzE2LDEyMDdeRlQzMTYsMTIwN15BME4s\nMjAsMTZeRkReRlMNCl5GTzIzNSwxMTA2XkZUMjM1LDExMDZeQTBOLDIwLDE2XkZEUElOIC8gTklQ\nOl5GUw0KXkZPMjM1LDExMjZeRlQyMzUsMTEyNl5BME4sMjAsMTZeRkh8XkZEUmVmLi9SfDgyZi4g\nMTpeRlMNCl5GTzMzNiwxMTA2XkZUMzM2LDExMDZeQTBOLDIwLDE2XkZEXkZTDQpeRk8zMzYsMTEy\nNl5GVDMzNiwxMTI2XkEwTiwyMCwxNl5GRE9yZGVyIElkOiAjMTIyMl5GUw0KXkZPMzM2LDExNDZe\nRlQzMzYsMTE0Nl5BME4sMjAsMTZeRkReRlMNCl5GTzIyLDExNjdeRlQyMiwxMTY3XkEwTiwyMywx\nOF5GRF5GUw0KXkZPMjIsMTE5MF5GVDIyLDExOTBeQTBOLDIzLDE4XkZEXkZTDQpeRk8yMiwxMjEz\nXkZUMjIsMTIxM15BME4sMjMsMTheRkReRlMNCl5YWg0K\n",
-  "tracking_number": "123456789012",
-  "shipment_identifier": "123456789012",
-  "selected_rate": {
-    "id": "rat_c84e2953599d4757b1d9265a5e36a54b",
-    "carrier_name": "canadapost",
-    "carrier_id": "canadapost",
-    "currency": "CAD",
-    "service": "canadapost_regular_parcel",
-    "discount": 3.52,
-    "base_charge": 27.06,
-    "total_charge": 35.17,
-    "duties_and_taxes": 4.59,
-    "transit_days": 10,
-    "extra_charges": [
-      {
-        "name": "Fuel surcharge",
-        "amount": 3.52,
-        "currency": "CAD"
-      }
-    ],
-    "meta": {
-      "service_name": "CANADAPOST REGULAR PARCEL",
-      "rate_provider": "canadapost"
-    },
-    "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
-    "test_mode": true
-  },
-  "selected_rate_id": "rat_c84e2953599d4757b1d9265a5e36a54b",
-  "rates": [
-    {
-      "id": "rat_c84e2953599d4757b1d9265a5e36a54b",
-      "carrier_name": "canadapost",
-      "carrier_id": "canadapost",
-      "currency": "CAD",
-      "service": "canadapost_regular_parcel",
-      "discount": 3.52,
-      "base_charge": 27.06,
-      "total_charge": 35.17,
-      "duties_and_taxes": 4.59,
-      "transit_days": 10,
-      "extra_charges": [
-        {
-          "name": "Fuel surcharge",
-          "amount": 3.52,
-          "currency": "CAD"
-        }
-      ],
-      "meta": {
-        "service_name": "CANADAPOST REGULAR PARCEL",
-        "rate_provider": "canadapost"
-      },
-      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
-      "test_mode": true
-    },
-    {
-      "id": "rat_c557e31a85ee46e6914545f0c4eb60fb",
-      "carrier_name": "canadapost",
-      "carrier_id": "canadapost",
-      "currency": "CAD",
-      "service": "canadapost_xpresspost",
-      "discount": 9.74,
-      "base_charge": 74.96,
-      "total_charge": 97.41,
-      "duties_and_taxes": 12.71,
-      "transit_days": 3,
-      "extra_charges": [
-        {
-          "name": "Fuel surcharge",
-          "amount": 9.74,
-          "currency": "CAD"
-        }
-      ],
-      "meta": {
-        "service_name": "CANADAPOST XPRESSPOST",
-        "rate_provider": "canadapost"
-      },
-      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
-      "test_mode": true
-    }
-  ],
-  "tracking_url": "/v1/proxy/tracking/canadapost/123456789012",
-  "service": "canadapost_regular_parcel",
-  "shipper": {
-    "id": null,
-    "postal_code": "V6M2V9",
-    "city": "Vancouver",
-    "federal_tax_id": null,
-    "state_tax_id": null,
-    "person_name": "Jane Doe",
-    "company_name": "B corp.",
-    "country_code": "CA",
-    "email": null,
-    "phone_number": "+1 514-000-0000",
-    "state_code": "BC",
-    "suburb": null,
-    "residential": false,
-    "address_line1": "5840 Oak St",
-    "address_line2": null,
-    "validate_location": false,
-    "validation": null
-  },
-  "recipient": {
-    "id": null,
-    "postal_code": "E1C4Z8",
-    "city": "Moncton",
-    "federal_tax_id": null,
-    "state_tax_id": null,
-    "person_name": "John Doe",
-    "company_name": "A corp.",
-    "country_code": "CA",
-    "email": null,
-    "phone_number": "514 000 0000",
-    "state_code": "NB",
-    "suburb": null,
-    "residential": false,
-    "address_line1": "125 Church St",
-    "address_line2": "",
-    "validate_location": false,
-    "validation": null
-  },
-  "parcels": [
-    {
-      "id": null,
-      "weight": 1.0,
-      "width": null,
-      "height": null,
-      "length": null,
-      "packaging_type": null,
-      "package_preset": "canadapost_corrugated_small_box",
-      "description": null,
-      "content": null,
-      "is_document": false,
-      "weight_unit": "LB",
-      "dimension_unit": null
-    }
-  ],
-  "services": [],
-  "options": {},
-  "payment": {
-    "paid_by": "sender",
-    "currency": "CAD",
-    "account_number": null
-  },
-  "customs": null,
-  "reference": "Order Id: #1222",
-  "label_type": "ZPL",
-  "carrier_ids": [],
-  "meta": {
-    "rate_provider": "canadapost",
-    "service_name": "CANADAPOST REGULAR PARCEL"
-  },
-  "created_at": "2021-07-15 13:20:39.645416",
-  "test_mode": true,
-  "messages": [],
-  "tracker_id": null
-}
-```
-
-</TabItem>
-</Tabs>
-</div>
-
 ## Shipments Management APIs
 
 The shipments management APIs offer a set of endpoints around the karrio unified
@@ -1582,6 +1182,407 @@ curl --request POST \
     "created_at": "2020-10-24 07:47:23.871903+00:00",
     "test_mode": true
   }
+}
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+
+## Proxy Request APIs
+
+The proxy APIs allow you to send shipping requests to carriers without creating
+any objects in karrio.
+
+:::info
+In that schenario, karrio is just a proxy that forward requests.
+:::
+
+**Get shipping rates**
+
+> `POST` /v1/proxy/rates
+
+You can use the this endpoint to get shipping rates from a carrier. based off
+the provided shipping details.
+
+<div id="tabs">
+<Tabs>
+<TabItem value="request" label="Request">
+
+```bash
+curl --request POST \
+  --url https://api.karrio.io/v1/proxy/rates \
+  --header 'Authorization: Token [API_KEY]' \
+  --header 'Content-Type: application/json' \
+  --data '{
+  "shipper": {
+    "postal_code": "V6M2V9",
+    "city": "Vancouver",
+    "country_code": "CA",
+    "state_code": "BC",
+    "residential": true,
+    "address_line1": "5840 Oak St"
+  },
+  "recipient": {
+    "postal_code": "E1C4Z8",
+    "city": "Moncton",
+    "country_code": "CA",
+    "state_code": "NB",
+    "residential": false,
+    "address_line1": "125 Church St"
+  },
+  "parcels": [{
+    "weight": 1,
+    "weight_unit": "KG",
+    "package_preset": "canadapost_corrugated_small_box"
+  }],
+  "carrier_ids": ["canadapost"]
+}'
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+  "messages": [],
+  "rates": [
+    {
+      "id": "rat_baeeebc3fd8c4f0a818bdd83af85100c",
+      "carrier_name": "canadapost",
+      "carrier_id": "canadapost",
+      "currency": "CAD",
+      "service": "canadapost_expedited_parcel",
+      "discount": 3.81,
+      "base_charge": 29.31,
+      "total_charge": 38.09,
+      "duties_and_taxes": 4.97,
+      "transit_days": 8,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 3.81,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "service_name": "CANADAPOST EXPEDITED PARCEL",
+        "rate_provider": "canadapost"
+      },
+      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
+      "test_mode": true
+    },
+    {
+      "id": "rat_c557e31a85ee46e6914545f0c4eb60fb",
+      "carrier_name": "canadapost",
+      "carrier_id": "canadapost",
+      "currency": "CAD",
+      "service": "canadapost_xpresspost",
+      "discount": 9.74,
+      "base_charge": 74.96,
+      "total_charge": 97.41,
+      "duties_and_taxes": 12.71,
+      "transit_days": 3,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 9.74,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "service_name": "CANADAPOST XPRESSPOST",
+        "rate_provider": "canadapost"
+      },
+      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
+      "test_mode": true
+    }
+  ]
+}
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+**Buy shipping label**
+
+> `POST` /v1/proxy/shipping
+
+You can use this endpoint to buy a shipping service from a carrier and get
+a label in return.
+
+To buy a shipping label, you need to provide the shipping details, the rates
+retrieved previously and the preferred rate' `selected_rate_id`.
+
+<div id="tabs">
+<Tabs>
+<TabItem value="request" label="Request">
+
+```bash
+curl --request POST \
+  --url https://api.karrio.io/v1/proxy/shipping \
+  --header 'Authorization: Token  [API_KEY]' \
+  --header 'Content-Type: application/json' \
+  --data '{
+	"selected_rate_id": "rat_c84e2953599d4757b1d9265a5e36a54b",
+	"label_type": "PDF",
+	"options": {},
+	"recipient": {
+		"address_line1": "125 Church St",
+		"person_name": "John Doe",
+		"company_name": "A corp.",
+		"phone_number": "514 000 0000",
+		"city": "Moncton",
+		"country_code": "CA",
+		"postal_code": "E1C4Z8",
+		"residential": false,
+		"state_code": "NB"
+	},
+	"shipper": {
+		"address_line1": "5840 Oak St",
+		"person_name": "Jane Doe",
+		"company_name": "B corp.",
+		"phone_number": "514-000-0000",
+		"city": "Vancouver",
+		"country_code": "CA",
+		"postal_code": "V6M2V9",
+		"residential": false,
+		"state_code": "BC"
+	},
+	"parcels": [
+		{
+			"weight": 1,
+			"weight_unit": "LB",
+			"package_preset": "canadapost_corrugated_small_box"
+		}
+	],
+  "rates": [
+    {
+      "id": "rat_c84e2953599d4757b1d9265a5e36a54b",
+      "carrier_name": "canadapost",
+      "carrier_id": "canadapost",
+      "currency": "CAD",
+      "service": "canadapost_regular_parcel",
+      "discount": 3.52,
+      "base_charge": 27.06,
+      "total_charge": 35.17,
+      "duties_and_taxes": 4.59,
+      "transit_days": 10,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 3.52,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "service_name": "CANADAPOST REGULAR PARCEL",
+        "rate_provider": "canadapost"
+      },
+      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
+      "test_mode": true
+    },
+    {
+      "id": "rat_c557e31a85ee46e6914545f0c4eb60fb",
+      "carrier_name": "canadapost",
+      "carrier_id": "canadapost",
+      "currency": "CAD",
+      "service": "canadapost_xpresspost",
+      "discount": 9.74,
+      "base_charge": 74.96,
+      "total_charge": 97.41,
+      "duties_and_taxes": 12.71,
+      "transit_days": 3,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 9.74,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "service_name": "CANADAPOST XPRESSPOST",
+        "rate_provider": "canadapost"
+      },
+      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
+      "test_mode": true
+    }
+  ],
+	"payment": {
+		"currency": "CAD",
+		"paid_by": "sender"
+	},
+	"reference": "Order Id: #1222"
+}'
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+  "id": "shp_0a92f24cd14e4694bfc2d811c9de6901",
+  "status": "purchased",
+  "carrier_name": "canadapost",
+  "carrier_id": "canadapost",
+  "label": "XlhBDQpeQ0kxMw0KXk1NVA0KXlBXODEyDQpeTEwxMjE4DQpeTFMwDQpeRk8yMiwzMF5HRkEsNDA1\nMCw0MDUwLDQ1LCw6Ojoxak1GLDFqTEZFLDo6OjoxaElGM2hIRkUsMWhHRjhJMDdoRkUsMWhGOEsw\nN2dZRkUsMWdZRkUwM0lGMDFnWUZFLDFnWUY4MUtGMDdnWEZFLDFnWEZFMExGQzFnWEZFLDFnWEZD\nM01GMDdnV0ZFLDFnWEYwTkZDM2dXRkUsMUtGRTdnUEZFMU9GMVFGQ0pGOFFGRTNNRkUsMUtGMDFG\nRkMzRkZDMUYxRkZDM0ZGRTAxSUZDM0xGQzdPRjhMRjAwRkZFMDFGRkUwM0Y4MDBGRTAwRkY4ME1G\nRSwxSkZDMDFGRkMxRkZFMUYzRkZDMUZGRTAwN0ZGQzFMRjhQRkM3S0YwMDdGQzAwRkZDMDNGODAw\nRkUwMEZGMDBNRkUsMUpGODNJRkMxRkZFMEYzRkZDMUZGRTM4M0ZGQzFMRjFQRkUzS0YxODdGODc4\nN0Y4N0lGOEZGRTNGRkUxTkZFLDFKRjg3SUY4OEZGRTBGM0ZGODBGRkUzQzNGRjgwS0ZFM1FGMUtG\nMUMzRjBGQzNGOEpGOEZGRTNGRkUzTkZFLDFKRjhKRjg4RkZFNDczRkY4OEZGRTNFMUZGODhLRkM3\nUUY4S0YxQzNGMUZFM0Y4N0lGOEZGRTNGRkUzTkZFLDFKRjBKRjE4RkZFNDczRkY5OEZGRTNGMUZG\nMDhLRjhSRkM3SkYxQzdGMUZFM0ZDM0lGOEZGRTIxRkUwTkZFLDFKRjFKRjFDN0ZFNjMzRkYxQzdG\nRTNGMUZGMUM3SkY5UkZFM0pGMDA3RjFGRTNGQzA3RkY4RkZFMDFGRjAzTUZFLDFKRjFKRjFDN0ZF\nNjMzRkYxQzdGRTNGMUZGMUM3SkYxU0YzSkYwMEZGMUZFM0ZFMDNGRjhGRkUwMUZGODBNRkUsMUpG\nMElGRTE0M0ZFNzEzRkUwMDNGRTNGMUZFMDQzSUZFM1NGMUpGMDNGRjFGRTNGRkMxRkY4RkZFM0pG\nME1GRSwxSkYwSUZFMDAzRkU3MTNGRTAwM0ZFM0UxRkUwMDNJRkU3RjNRRjlKRjFJRjBGRTNGRkUx\nRkY4RkZFM0pGOE1GRSwxSkY4N0ZGRTAwM0ZFNzgzRkUwMDNGRTNDM0ZFMDAzSUZDN0Y4N1BGOEpG\nMUlGOEZDN0lGMUZGOEZGRTNKRjhNRkUsMUpGODNGRkM3RTFGRTc4M0ZDN0UxRkUzODNGQzdFMUlG\nQ0ZGQzBQRkM3SUYxSUY4Nzg3RkRFMUZGOEZGRTNJRjc4TUZFLDFKRkMwMUZDN0YxRkU3QzNGQzdG\nMUZFMDA3RkM3RjFJRjhGRkUwMU9GQzdJRjFJRkMwMEZGQzAzRkY4RkZFMDBGRTAwTUZFLDFLRjAw\nRjg3RjBGRTdDMUY4N0YwRkUwMUZGODdGMElGOUlGMDAzTkZFN0lGMUlGRTAxRkY4MDdGRjhGRkUw\nMEZFMDFNRkUsMWdVRjlJRjgwMDdNRkUzZ1RGRSwxZ1VGMUlGOEkwTkYzZ1RGRSwxZ1VGM0lGQ0kw\nMU1GM2dURkUsMWdVRjNJRkVKMDNMRjFnVEZFLDFnVEZFM0pGSzA3S0Y5Z1RGRSwxZ1RGRTdKRjhL\nMEtGOWdURkUsMWdURkU3SkZDSzAxSkY5Z1RGRSwxZ1RGRTdKRkVMMDNJRjlnVEZFLDFnVEZFN0pG\nRU0wN0ZGOGdURkUsMWdURkU3S0ZOMEZGOGdURkUsMWdURkU3S0Y4TTAxRjhnVEZFLGdWMDdLRkNO\nMEY4LGdWMDdSRjAxRjgsMWdURkU3TkZLMDNGOGdURkUsMWdURkU3S0ZOMDdGOGdURkUsMWdURkU3\nSkZFTjBGRjhnVEZFLDFnVEZFN0pGRU0wMUZGOWdURkUsMWdURkU3UEZFMDNGRjlnVEZFLDFnVEZF\nN0tGRUwwN0ZGOWdURkUsMWdURkUzSUZFTjBJRjlnVEZFLDFnVUYzSUZDTTAxSUYxZ1RGRSwxZ1VG\nM09GQzAzSUYzZ1RGRSwxZ1VGM09GODA3SUYzZ1RGRSwxZ1VGMUlGQ00wSUZFM2dURkUsMUpGODBJ\nRjAwSUYwMUZDMDA3VEY5RkZDTTAxSUZFN0lGRTAxRkZDM0ZGQzNFM0ZGQzNGRkMwM0lGQzNKRkUs\nMUpGODAzRkUwMDdGRTAxRkMwMDdURjhGRjhNMDNJRkU3SUY4MDNGRjgzRkZDM0UzRkY4M0ZGQzAw\nSUY4M0pGRSwxSkY4QzNGQzNDM0ZDM0lGQzdVRkNGRk4wN0lGQzdJRjg3SUY4M0ZGQzFFM0ZGODNG\nRkM3MDdGRjgzSkZFLDFKRjhFM0Y4N0UzRkM3SUZDN1VGQzdTRkNKRjBKRjAxRkZDMUUzRkYwMUZG\nQzc4N0ZGMDFKRkUsMUpGOEUzRjhGRTFGQzNJRkM3VUZFN1NGOEpGMUpGMTFGRkMwRTNGRjExRkZD\nN0MzRkYxMUpGRSwxSkY4RTNGOEZGMUZDMUlGQzdVRkUzU0YxSUZFMUpGMTBGRkMwRTNGRjExRkZD\nN0UzRkYxMEpGRSwxSkY4ODNGOEZGMUZFMDdGRkM3VkYxU0YzSUZFM0lGRTM4RkZDNDYzRkUzOEZG\nQzdFM0ZFMzhKRkUsMUpGODA3RjhGRjFGRjAxRkZDN1ZGOVJGRTNJRkUzSUZFMzhGRkM0NjNGRTM4\nRkZDN0UzRkUzOEpGRSwxSkY4MEZGOEZGMUZGQzFGRkM3VkY4UkZDN0lGRTFJRkMzODdGQzYyM0ZD\nMzg3RkM3RTNGQzM4N0lGRSwxSkY4SUY4RkUxSUYwRkZDN1ZGQzdRRjhLRjFJRkMwMDdGQzYwM0ZD\nMDA3RkM3QzNGQzAwN0lGRSwxSkY4SUY4N0UzSUYwRkZDN1ZGRTNRRjFLRjBJRkMwMDdGQzcwM0ZD\nMDA3RkM3QzNGQzAwN0lGRSwxSkY4SUZDM0MzSUYxRkZDN1dGMVBGRTNLRjA3RkY4RkMzRkM3MDNG\nOEZFM0ZDNzA3RjhGQzNJRkUsMUpGOElGRTAwN0ZFMDFGRkM3V0Y4UEZDN0tGODAxRjhGRTNGQzc4\nM0Y4RkUzRkMwMEZGOEZFM0lGRSwxSkY4SkYwMEZGQzAzRkZDN1dGQzdPRjhMRkUwMUYwRkUxRkM3\nODNGMEZFMUZDMDNGRjBGRTFJRkUsMU9GQzdJRjBnSEZFMU9GMU1GODdnTkZFLDFnWEYwTkZDM2dX\nRkUsMWdYRkMzTUYwN2dXRkUsMWdYRkUwTEZDMWdYRkUsMWdZRjgzS0YwN2dYRkUsMWdZRkUwM0lG\nMDFnWUZFLDFoRjhLMDdnWUZFLDFoR0ZKMDNoRkUsMWhIRkUxaEhGRSwxakxGRSw6Ojo6MWpNRiws\nOjo6XkZTDQpeRlMNCl5GTzIyLDIzXkdCMzY1LCw5NixXXkZTDQpeRk8zMiw4MV5GVDMyLDgxXkEw\nTiwyMywxOF5GREZvciBUZXN0aW5nIFB1cnBvc2VzIE9ubHleRlMNCl5GTzMyLDEwNF5GVDMyLDEw\nNF5BME4sMjMsMTheRkh8XkZEfEI3IGRlcyBmaW5zIGRlIHRlc3QgdW5pcXVlbWVudF5GUw0KXkZP\nNjc2LDJeR0IxMzcsMTM5LDEzN15GUw0KXkZPNzEyLDEwNl5GVDcxMiwxMDZeQTBOLDk2LDc3XkZS\nXkZEM15GUw0KXkZPNDc5LDYwXkZUNDc5LDYwXkEwTiwyOCwyMl5GRF5GUw0KXkZPNDc5LDEwMV5G\nVDQ3OSwxMDFeQTBOLDI4LDIyXkZEXkZTDQpeRk8yMiwxMzleR0I3OTIsLDNeRlMNCl5GTzIyLDE5\nOF5GVDIyLDE5OF5BME4sNTMsNDJeRkRSZWd1bGFyIFBhcmNlbCAgICAgfCBDb2xpcyBzdGFuZGFy\nZCAgICAgXkZTXkZPMjg2Ljg3NzIsMTU4LjI1XkEwTiwyMSwyMF5GRFRNXkZTXkZPNjI0LjY4NzI2\nLDE1OC4yNV5BME4sMjEsMjBeRkRNQ15GUw0KXkZPNjQxLDE5OF5GVDY0MSwxOTheQTBOLDUzLDQy\nXkZEXkZTDQpeRk8yMiwyMjNeR0I3OTIsLDFeRlMNCl5GTzIyLDIyM15HQjkxLDI2LDI2XkZTDQpe\nRk8yMiwyNDNeRlQyMiwyNDNeQTBOLDIwLDE2XkZSXkZIfF5GRFRPOiAvIHxCNzpeRlMNCl5GTzIz\nNywyNDNeRlQyMzcsMjQzXkEwTiwyMCwxNl5GRF5GUw0KXkZPMjIsMjg0XkZUMjIsMjg0XkEwTiwz\nMCwyNF5GREpPSE4gRE9FXkZTDQpeRk8yMiwzMTReRlQyMiwzMTReQTBOLDMwLDI0XkZEQSBDT1JQ\nLl5GUw0KXkZPMjIsMzQ0XkZUMjIsMzQ0XkEwTiwzMCwyNF5GRDEyNSBDSFVSQ0ggU1ReRlMNCl5G\nTzIyLDM3NF5GVDIyLDM3NF5BME4sMzAsMjReRkRNT05DVE9OIE5CICBFMUMgNFo4XkZTDQpeRk8y\nMiw0MDReRlQyMiw0MDReQTBOLDMwLDI0XkZEXkZTDQpeRk8yMiw0MzReRlQyMiw0MzReQTBOLDMw\nLDI0XkZEXkZTDQpeRk8yMiw0NDZeR0I4MDAsLDFeRlMNCl5GTzIyLDQ3Ml5GVDIyLDQ3Ml5BME4s\nMjUsMjBeRkReRlMNCl5GTzIyLDQ5N15GVDIyLDQ5N15BME4sMjUsMjBeRkReRlMNCl5GTzIyLDU2\nOF5GVDIyLDU2OF5BME4sNzUsNjBeRkRFMUMgNFo4XkZTDQpeRk80MTksNTA3XkdCNDA2LCwxXkZT\nDQpeRk8wLDQ2OF5BME4sMzMsMjZeRkI1MDcuNSwsLFJeRkReRlMNCl5GTzQxOSw1MTheR0ZBLDUw\nLDUwLDIsLDgsRSxGLEY4LEZFLEZGLEZGOCxGRkMsSUYsSUY4SUZDSUZFSUZDSUY4SUYsRkZFLEZG\nOCxGRixGRSxGQyxGLEUsQywsXkZTXkZTDQpeRk80MTksNTE4XkdGQSwyMDEsMjAxLDMsLDgsRSxG\nLEY4LEZFLEZGLEZGOCxGRkUsSUYsSUY4LElGQyxKRiw6SUZFLElGOCxJRixGRkUsRkZDLEZGLEZF\nLEZDLEY4LEUsQyw4LCw6Ojo6Ojo6Ojo6Ojo6OjpDLEUsRixGQyxGRSxGRixGRjgsRkZFLElGLElG\nOCxJRkUsSkYsOklGQyxJRjgsSUYsRkZFLEZGOCxGRixGRSxGQyxGLEUsQywsXkZTDQpeRk80MTks\nNTE4XkdCLDgxLDIzLFdeRlMNCl5GTzQxOSw1NTheR0IsNDEsMjMsV15GUw0KXkZPNDU4LDUyN15G\nVDQ1OCw1MjdeQTBOLDIzLDE4XkZEXkZTDQpeRk80NTgsNTUwXkZUNDU4LDU1MF5BME4sMjMsMThe\nRkReRlMNCl5GTzQ1OCw1NzNeRlQ0NTgsNTczXkEwTiwyMywxOF5GRF5GUw0KXkZPNDU4LDU5Nl5G\nVDQ1OCw1OTZeQTBOLDIzLDE4XkZEXkZTDQpeRk80MTgsNDQ3XkdCMSwxODMsMV5GUw0KXkZPMjIs\nNjE5XkdGQSwxMjAwLDEyMDAsMTAwLFFGQ0owMVJGSzA3UkZLMDdSRkswN1JGSzA3UUZDSzBSRjhK\nMDNRRkVLMFJGQ0swU0ZLMDdRRkVLMDdJRkVRRkswN1FGQ0owMVJGQ0swUkZDSjAxUkZDSjAxUkY4\nSjAzUUZFSzBSRjhKMDNSRjhKMDNSRkNKMDFSRkNKMDFKRkVQRkVLMFJGOEowM1JGOEowM1JGOEow\nM1JGSzAzUUZFSzBSRkNKMDFSRkswN1FGRUswN1JGOEowM1JGSzA3SkZFUEY4SjAzUUZFSzA3UkZL\nMDdRRkVLMDdRRkVLMFJGQ0owMVJGSzA3UUZDSjAxUkZDSjAxUkZFSzBSRkVLMEtGRVBGSzA3UUZD\nSjAxUkZFSzBSRkNKMDFSRkNKMDFSRjhKMDNRRkVLMFJGOEowM1JGOEowM1JGQ0owMVJGQ0owMUtG\nRU9GQ0swUkZLMDNSRjhKMDNSRkswM1JGSzA3UUZFSzBSRjhKMDFRRkVLMDdRRkVLMFNGSzAzUkZL\nMDdLRkVPRjhKMDNRRkVLMFNGSzA3UUZFSzBSRkVLMFJGQ0owMVJGSzA3UUZDSjAxUkZDSjAxUkZF\nSzBSRkVLMExGRU9GSzA3UUZDSjAxUkZDSjAxUkZDSjAxUkY4SjAxUkZLMDNRRkNLMFJGOEowM1JG\nSzAzUkY4SjAxUkY4SjAzTEZFTkZDSjAxUkZLMDNSRjhKMDNSRjhKMDNSRkswN1FGRUswUkY4SjAz\nUUZFSzA3UUZFSzBTRkswN1JGSzA3TEZFTkY4SjAzUUZFSzBSRkVLMFJGRUswUkZFSzBSRkNKMDFS\nRkswN1FGQ0owMVJGOEowMVJGRUswUkZDSzBNRkVNRkVLMDdRRjhKMDFSRkNKMDFSRkNKMDFSRjhK\nMDNSRkswN1FGQ0swUkZLMDNSRkswN1JGOEowM1JGOEowM01GRU1GQ0owMVJGSzA3UkZLMDNSRksw\nN1JGSzA3UUZDSzBSRjhKMDNRRkVLMFJGQ0swU0ZLMDdRRkVLMDdNRkVeRlMNCl5GTzczLDY1OF5C\nQ04sMTU0XkZTDQpeRk8yMiw4NTBeRlQyMiw4NTBeQTBOLDIwLDE2XkZEVFJBQ0tJTkcgTlVNQkVS\nXkZTDQpeRk8yNzYsODUwXkZUMjc2LDg1MF5BME4sMjgsMjJeRkReRlMNCl5GTzYyMSw4NTBeRlQ2\nMjEsODUwXkEwTiwyMCwxNl5GSHxeRkROfEE3IERFIFJFUHw5MFJBR0VeRlMNCl5GTzIyLDg3M15H\nRkEsMTIwMCwxMjAwLDEwMCxRRkNKMDFSRkswN1JGSzA3UkZLMDdSRkswN1FGQ0swUkY4SjAzUUZF\nSzBSRkNLMFNGSzA3UUZFSzA3SUZFUUZLMDdRRkNKMDFSRkNLMFJGQ0owMVJGQ0owMVJGOEowM1FG\nRUswUkY4SjAzUkY4SjAzUkZDSjAxUkZDSjAxSkZFUEZFSzBSRjhKMDNSRjhKMDNSRjhKMDNSRksw\nM1FGRUswUkZDSjAxUkZLMDdRRkVLMDdSRjhKMDNSRkswN0pGRVBGOEowM1FGRUswN1JGSzA3UUZF\nSzA3UUZFSzBSRkNKMDFSRkswN1FGQ0owMVJGQ0owMVJGRUswUkZFSzBLRkVQRkswN1FGQ0owMVJG\nRUswUkZDSjAxUkZDSjAxUkY4SjAzUUZFSzBSRjhKMDNSRjhKMDNSRkNKMDFSRkNKMDFLRkVPRkNL\nMFJGSzAzUkY4SjAzUkZLMDNSRkswN1FGRUswUkY4SjAxUUZFSzA3UUZFSzBTRkswM1JGSzA3S0ZF\nT0Y4SjAzUUZFSzBTRkswN1FGRUswUkZFSzBSRkNKMDFSRkswN1FGQ0owMVJGQ0owMVJGRUswUkZF\nSzBMRkVPRkswN1FGQ0owMVJGQ0owMVJGQ0owMVJGOEowMVJGSzAzUUZDSzBSRjhKMDNSRkswM1JG\nOEowMVJGOEowM0xGRU5GQ0owMVJGSzAzUkY4SjAzUkY4SjAzUkZLMDdRRkVLMFJGOEowM1FGRUsw\nN1FGRUswU0ZLMDdSRkswN0xGRU5GOEowM1FGRUswUkZFSzBSRkVLMFJGRUswUkZDSjAxUkZLMDdR\nRkNKMDFSRjhKMDFSRkVLMFJGQ0swTUZFTUZFSzA3UUY4SjAxUkZDSjAxUkZDSjAxUkY4SjAzUkZL\nMDdRRkNLMFJGSzAzUkZLMDdSRjhKMDNSRjhKMDNNRkVNRkNKMDFSRkswN1JGSzAzUkZLMDdSRksw\nN1FGQ0swUkY4SjAzUUZFSzBSRkNLMFNGSzA3UUZFSzA3TUZFXkZTDQpeRk8yMiw5MDFeRlQyMiw5\nMDFeQTBOLDE4LDE0XkZEU2VuZGVyIHdhcnJhbnRzIHRoYXQgdGhpcyBpdGVtIGRvZXMgbm90IGNv\nbnRhaW4gbm9uLW1haWxhYmxlIG1hdHRlci5eRlMNCl5GTzIyLDkxOV5GVDIyLDkxOV5BME4sMTgs\nMTReRkh8XkZETCdleHB8ODJkaXRldXIgZ2FyYW50aXQgcXVlIGNldCBlbnZvaSBuZSBjb250aWVu\ndCBwYXMgZCdvYmpldCBpbmFkbWlzc2libGUuXkZTDQpeRk8yMiw5MzNeR0I3OTIsLDFeRlMNCl5G\nTzIyLDkzN15HQjEwMiwyMiwyMl5GUw0KXkZPMjIsOTUyXkZUMjIsOTUyXkEwTiwxOCwxNF5GUl5G\nREZST006IC8gREU6IF5GUw0KXkZPMjIsOTg0XkZUMjIsOTg0XkEwTiwxOCwxNF5UQk4sNDg3LDE4\nXkZEQiBjb3JwLl5GUw0KXkZPMjIsMTAwMl5GVDIyLDEwMDJeQTBOLDE4LDE0XlRCTiw0ODcsMThe\nRkQ1ODQwIE9hayBTdF5GUw0KXkZPMjIsMTAyMF5GVDIyLDEwMjBeQTBOLDE4LDE0XlRCTiw0ODcs\nMTheRkRWYW5jb3V2ZXIgQkMgIFY2TSAyVjleRlMNCl5GTzIyLDEwMzheRlQyMiwxMDM4XkEwTiwx\nOCwxNF5UQk4sNDg3LDE4XkZEXkZTDQpeRk8yMiwxMDU2XkZUMjIsMTA1Nl5BME4sMTgsMTReVEJO\nLDQ4NywxOF5GRF5GUw0KXkZPMjIsMTA3NF5GVDIyLDEwNzReQTBOLDE4LDE0XlRCTiw0ODcsMThe\nRkReRlMNCl5GTzUyMCw5MzReR0IsMTUyLDBeRlMNCl5GTzY5MiwxMDU2XkdCLDMwLDBeRlMNCl5G\nTzUyOSw5NTheRlQ1MjksOTU4XkEwTiwyMCwxNl5GRDQyeDMyeDMyY21eRlMNCl5GTzAsOTQzXkEw\nTiwyMywxOF5GQjc5MS43LCwsUl5GRDcuMTcwXkZTDQpeRk8wLDk2Nl5BME4sMTgsMTReRkI3OTEu\nNywsLFJeRkRLRyBWRS9FVl5GUw0KXkZPMCw5ODNeQTBOLDE1LDEyXkZCNzkxLjcsLCxSXkZEKENV\nKV5GUw0KXkZPNjkyLDEwNzleRlQ2OTIsMTA3OV5BME4sMzMsMjZeRkRBL0NeRlMNCl5GTzUyOSwx\nMDEwXkZUNTI5LDEwMTBeQTBOLDIwLDE2XkZETUFOSUZFU1QgTk9UIFJFUV5GUw0KXkZPNTI5LDEw\nMzBeRlQ1MjksMTAzMF5BME4sMjAsMTZeRkRNQU5JRkVTVEUgTk9OIFJFUV5GUw0KXkZPNTI5LDEw\nODFeRlQ1MjksMTA4MV5BME4sMjAsMTZeRkRQL0Y6XkZTDQpeRk81ODAsMTA2MV5GVDU4MCwxMDYx\nXkEwTiwyMCwxNl5GRF5GUw0KXkZPNTgwLDEwODFeRlQ1ODAsMTA4MV5BME4sMjAsMTZeRkQyMDA0\nMzgxXkZTDQpeRk8yMiwxMDg1XkdCODAwLCwzXkZTDQpeRk8yMiwxMDY0XkdCNDk3LCwwXkZTDQpe\nRk8yMiwxMDc5XkZUMjIsMTA3OV5BME4sMTgsMTReRkReRkh8XkZERVNUL098OTBFIFYyMTA3LjAu\nNzAxICAgU1BFQyAzNjk2IFYyXkZTDQpeRk8yMiwxMTg3XkZUMjIsMTE4N15BME4sMjAsMTZeRkh8\nXkZET3JkZXIgTm8uOiAvIE58QTcgZCdjb21tYW5kZTpeRlMNCl5GTzMxNiwxMTg3XkZUMzE2LDEx\nODdeQTBOLDIwLDE2XkZEUDEyMzQ1Njc4OV5GUw0KXkZPMzE2LDEyMDdeRlQzMTYsMTIwN15BME4s\nMjAsMTZeRkReRlMNCl5GTzIzNSwxMTA2XkZUMjM1LDExMDZeQTBOLDIwLDE2XkZEUElOIC8gTklQ\nOl5GUw0KXkZPMjM1LDExMjZeRlQyMzUsMTEyNl5BME4sMjAsMTZeRkh8XkZEUmVmLi9SfDgyZi4g\nMTpeRlMNCl5GTzMzNiwxMTA2XkZUMzM2LDExMDZeQTBOLDIwLDE2XkZEXkZTDQpeRk8zMzYsMTEy\nNl5GVDMzNiwxMTI2XkEwTiwyMCwxNl5GRE9yZGVyIElkOiAjMTIyMl5GUw0KXkZPMzM2LDExNDZe\nRlQzMzYsMTE0Nl5BME4sMjAsMTZeRkReRlMNCl5GTzIyLDExNjdeRlQyMiwxMTY3XkEwTiwyMywx\nOF5GRF5GUw0KXkZPMjIsMTE5MF5GVDIyLDExOTBeQTBOLDIzLDE4XkZEXkZTDQpeRk8yMiwxMjEz\nXkZUMjIsMTIxM15BME4sMjMsMTheRkReRlMNCl5YWg0K\n",
+  "tracking_number": "123456789012",
+  "shipment_identifier": "123456789012",
+  "selected_rate": {
+    "id": "rat_c84e2953599d4757b1d9265a5e36a54b",
+    "carrier_name": "canadapost",
+    "carrier_id": "canadapost",
+    "currency": "CAD",
+    "service": "canadapost_regular_parcel",
+    "discount": 3.52,
+    "base_charge": 27.06,
+    "total_charge": 35.17,
+    "duties_and_taxes": 4.59,
+    "transit_days": 10,
+    "extra_charges": [
+      {
+        "name": "Fuel surcharge",
+        "amount": 3.52,
+        "currency": "CAD"
+      }
+    ],
+    "meta": {
+      "service_name": "CANADAPOST REGULAR PARCEL",
+      "rate_provider": "canadapost"
+    },
+    "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
+    "test_mode": true
+  },
+  "selected_rate_id": "rat_c84e2953599d4757b1d9265a5e36a54b",
+  "rates": [
+    {
+      "id": "rat_c84e2953599d4757b1d9265a5e36a54b",
+      "carrier_name": "canadapost",
+      "carrier_id": "canadapost",
+      "currency": "CAD",
+      "service": "canadapost_regular_parcel",
+      "discount": 3.52,
+      "base_charge": 27.06,
+      "total_charge": 35.17,
+      "duties_and_taxes": 4.59,
+      "transit_days": 10,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 3.52,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "service_name": "CANADAPOST REGULAR PARCEL",
+        "rate_provider": "canadapost"
+      },
+      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
+      "test_mode": true
+    },
+    {
+      "id": "rat_c557e31a85ee46e6914545f0c4eb60fb",
+      "carrier_name": "canadapost",
+      "carrier_id": "canadapost",
+      "currency": "CAD",
+      "service": "canadapost_xpresspost",
+      "discount": 9.74,
+      "base_charge": 74.96,
+      "total_charge": 97.41,
+      "duties_and_taxes": 12.71,
+      "transit_days": 3,
+      "extra_charges": [
+        {
+          "name": "Fuel surcharge",
+          "amount": 9.74,
+          "currency": "CAD"
+        }
+      ],
+      "meta": {
+        "service_name": "CANADAPOST XPRESSPOST",
+        "rate_provider": "canadapost"
+      },
+      "carrier_ref": "car_773f4a5577e4471e8918a9a1d47b208b",
+      "test_mode": true
+    }
+  ],
+  "tracking_url": "/v1/proxy/tracking/canadapost/123456789012",
+  "service": "canadapost_regular_parcel",
+  "shipper": {
+    "id": null,
+    "postal_code": "V6M2V9",
+    "city": "Vancouver",
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "person_name": "Jane Doe",
+    "company_name": "B corp.",
+    "country_code": "CA",
+    "email": null,
+    "phone_number": "+1 514-000-0000",
+    "state_code": "BC",
+    "suburb": null,
+    "residential": false,
+    "address_line1": "5840 Oak St",
+    "address_line2": null,
+    "validate_location": false,
+    "validation": null
+  },
+  "recipient": {
+    "id": null,
+    "postal_code": "E1C4Z8",
+    "city": "Moncton",
+    "federal_tax_id": null,
+    "state_tax_id": null,
+    "person_name": "John Doe",
+    "company_name": "A corp.",
+    "country_code": "CA",
+    "email": null,
+    "phone_number": "514 000 0000",
+    "state_code": "NB",
+    "suburb": null,
+    "residential": false,
+    "address_line1": "125 Church St",
+    "address_line2": "",
+    "validate_location": false,
+    "validation": null
+  },
+  "parcels": [
+    {
+      "id": null,
+      "weight": 1.0,
+      "width": null,
+      "height": null,
+      "length": null,
+      "packaging_type": null,
+      "package_preset": "canadapost_corrugated_small_box",
+      "description": null,
+      "content": null,
+      "is_document": false,
+      "weight_unit": "LB",
+      "dimension_unit": null
+    }
+  ],
+  "services": [],
+  "options": {},
+  "payment": {
+    "paid_by": "sender",
+    "currency": "CAD",
+    "account_number": null
+  },
+  "customs": null,
+  "reference": "Order Id: #1222",
+  "label_type": "ZPL",
+  "carrier_ids": [],
+  "meta": {
+    "rate_provider": "canadapost",
+    "service_name": "CANADAPOST REGULAR PARCEL"
+  },
+  "created_at": "2021-07-15 13:20:39.645416",
+  "test_mode": true,
+  "messages": [],
+  "tracker_id": null
 }
 ```
 
