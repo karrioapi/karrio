@@ -108,14 +108,14 @@ export const TrackerModalProvider: React.FC<{ children?: React.ReactNode }> = ({
                   {carrierList
                     .map((carrier, index) => (
                       <option key={index} value={carrier.carrier_id}>
-                        {`${(references.carriers as any)[carrier.carrier_name]} ${carrier.test_mode ? '(Sandbox)' : ''}`}
+                        {`${(references.carriers as any)[carrier.carrier_name]}`}
                       </option>
                     ))}
                 </SelectField>}
 
               {(user.isFetched && system.isFetched && carrierList.length === 0) &&
                 <div className="notification is-warning">
-                  No {testMode ? 'carrier (Sandbox)' : 'carrier'} connections available to process tracking requests.
+                  No carrier connections available to process tracking requests.
                 </div>}
 
               <div className="p-3 my-5"></div>
