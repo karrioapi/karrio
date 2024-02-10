@@ -14,7 +14,6 @@ def parse_shipment_response(
     _response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
-    print(_response.value)
     response = _response.deserialize()
     errors = provider_error.parse_error_response(response, settings)
     shipment = _extract_details(response, settings) if "error" not in response else None
