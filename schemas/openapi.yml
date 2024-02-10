@@ -11930,6 +11930,7 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
+    | australiapost | Australia Post |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
@@ -11960,7 +11961,6 @@ tags:
     | canadapost | Canada Post |
     | bpost | Belgian Post |
     | boxknight | BoxKnight |
-    | australiapost | Australia Post |
     | asendia_us | Asendia US |
     | aramex | Aramex |
     | amazon_shipping | AmazonShipping |
@@ -11973,6 +11973,14 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
+    ### Australia Post
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | australiapost_parcel_post | T28 |
+    | australiapost_express_post | E34 |
+    | australiapost_parcel_post_signature | T28S |
+    | australiapost_express_post_signature | E34S |
+
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
