@@ -72,7 +72,7 @@ export const OrderMenu: React.FC<OrderMenuComponent> = ({ order, isViewing }) =>
             <a
               href={url$`${references.HOST}/documents/orders/label.${order.shipments.filter(s => !["cancelled", "draft"].includes(s.status))[0].label_type}?orders=${order.id}`}
               className={`dropdown-item`} target="_blank" rel="noreferrer">
-              <span className="has-text-weight-semibold">{`Print Label${(order.shipments.filter(s => !["cancelled", "draft"].includes(s.status)).length > 1) ? 's' : ''}`}</span>
+              <span>{`Print Label${(order.shipments.filter(s => !["cancelled", "draft"].includes(s.status)).length > 1) ? 's' : ''}`}</span>
             </a>
           </>}
 
