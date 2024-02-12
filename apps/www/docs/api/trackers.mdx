@@ -9,6 +9,232 @@ import TabItem from "@theme/TabItem";
 
 Karrio exposes API endpoints that forwards tracking requests to the carrier's API.
 
+## Trackers Management APIs
+
+The trackers management APIs offer a set of endpoints around the karrio unified
+tracking details object.
+
+**Create a tracker**
+
+> `POST` /v1/trackers
+
+You can use this endpoint to create a tracker object in the karrio system and
+get the latest tracking details of the shipment.
+
+:::tip
+The karrio tracker is periodically updated by the **karrio worker** to stay
+up to date with the package throughout it's journey.
+:::
+
+<div id="tabs">
+<Tabs>
+<TabItem value="request" label="Request">
+
+```bash
+curl --request POST \
+  --url 'https://api.karrio.io/v1/trackers' \
+  --header 'Authorization: Token [API_KEY]' \
+  --data '{
+	"tracking_number": "397538144353",
+	"carrier_name": "fedex"
+}'
+```
+
+</TabItem>
+<TabItem value="response" label="Response">
+
+```json
+{
+	"id": "trk_26e12fc85d04425e81bbf39622b7b68f",
+	"carrier_name": "fedex",
+	"carrier_id": "FEDX",
+	"tracking_number": "397538144353",
+	"info": {
+		"carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=397538144353",
+		"customer_name": null,
+		"expected_delivery": null,
+		"note": null,
+		"order_date": null,
+		"order_id": null,
+		"package_weight": "0.8",
+		"package_weight_unit": "LB",
+		"shipment_package_count": null,
+		"shipment_pickup_date": null,
+		"shipment_delivery_date": null,
+		"shipment_service": "FedEx Ground",
+		"shipment_origin_country": "US",
+		"shipment_origin_postal_code": null,
+		"shipment_destination_country": "US",
+		"shipment_destination_postal_code": null,
+		"shipping_date": null,
+		"signed_by": null,
+		"source": "api"
+	},
+	"events": [
+		{
+			"date": "2023-05-01",
+			"description": "Delivered",
+			"location": "Logansport, IN, 46947, US",
+			"code": "DL",
+			"time": "10:39",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-05-01",
+			"description": "On FedEx vehicle for delivery",
+			"location": "KOKOMO, IN, 46901, US",
+			"code": "OD",
+			"time": "05:27",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-05-01",
+			"description": "At local FedEx facility",
+			"location": "KOKOMO, IN, 46901, US",
+			"code": "AR",
+			"time": "05:01",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-29",
+			"description": "At local FedEx facility",
+			"location": "KOKOMO, IN, 46901, US",
+			"code": "AR",
+			"time": "05:52",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-29",
+			"description": "Departed FedEx location",
+			"location": "INDEPENDENCE, KY, 41051, US",
+			"code": "DP",
+			"time": "01:03",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-28",
+			"description": "Arrived at FedEx location",
+			"location": "INDEPENDENCE, KY, 41051, US",
+			"code": "AR",
+			"time": "13:49",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-28",
+			"description": "In transit",
+			"location": "INDEPENDENCE, KY, 41051, US",
+			"code": "IT",
+			"time": "10:58",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-27",
+			"description": "In transit",
+			"location": "GOODLETTSVILLE, TN, 37072, US",
+			"code": "IT",
+			"time": "18:32",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-27",
+			"description": "Departed FedEx location",
+			"location": "HUTCHINS, TX, 75141, US",
+			"code": "DP",
+			"time": "06:24",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-27",
+			"description": "Arrived at FedEx location",
+			"location": "HUTCHINS, TX, 75141, US",
+			"code": "AR",
+			"time": "02:23",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-26",
+			"description": "Left FedEx origin facility",
+			"location": "IRVING, TX, 75062, US",
+			"code": "DP",
+			"time": "22:50",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-26",
+			"description": "Shipment arriving On-Time",
+			"location": "IRVING, TX, 75062, US",
+			"code": "AO",
+			"time": "20:33",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-26",
+			"description": "Arrived at FedEx location",
+			"location": "IRVING, TX, 75062, US",
+			"code": "AR",
+			"time": "20:32",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-26",
+			"description": "Picked up",
+			"location": "IRVING, TX, 75062, US",
+			"code": "PU",
+			"time": "17:05",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-26",
+			"description": "In FedEx possession",
+			"location": "DALLAS, TX, 75234, US",
+			"code": "IP",
+			"time": "16:50",
+			"latitude": null,
+			"longitude": null
+		},
+		{
+			"date": "2023-04-26",
+			"description": "Shipment information sent to FedEx",
+			"location": "CUSTOMER",
+			"code": "OC",
+			"time": "16:42",
+			"latitude": null,
+			"longitude": null
+		}
+	],
+	"delivered": true,
+	"test_mode": false,
+	"status": "delivered",
+	"estimated_delivery": "2023-05-01",
+	"meta": {
+		"ext": "fedex",
+		"carrier": "fedex"
+	},
+	"object_type": "tracker",
+	"metadata": {},
+	"messages": []
+}
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+
 ## Proxy Request API
 
 The proxy APIs allow you to send tracking requests to carriers without creating any
@@ -228,231 +454,6 @@ curl --request POST \
 		"metadata": {},
 		"messages": []
 	}
-}
-```
-
-</TabItem>
-</Tabs>
-</div>
-
-## Trackers Management APIs
-
-The trackers management APIs offer a set of endpoints around the karrio unified
-tracking details object.
-
-**Create a tracker**
-
-> `POST` /v1/trackers
-
-You can use this endpoint to create a tracker object in the karrio system and
-get the latest tracking details of the shipment.
-
-:::tip
-The karrio tracker is periodically updated by the **karrio worker** to stay
-up to date with the package throughout it's journey.
-:::
-
-<div id="tabs">
-<Tabs>
-<TabItem value="request" label="Request">
-
-```bash
-curl --request POST \
-  --url 'https://api.karrio.io/v1/trackers' \
-  --header 'Authorization: Token [API_KEY]' \
-  --data '{
-	"tracking_number": "397538144353",
-	"carrier_name": "fedex"
-}'
-```
-
-</TabItem>
-<TabItem value="response" label="Response">
-
-```json
-{
-	"id": "trk_26e12fc85d04425e81bbf39622b7b68f",
-	"carrier_name": "fedex",
-	"carrier_id": "FEDX",
-	"tracking_number": "397538144353",
-	"info": {
-		"carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=397538144353",
-		"customer_name": null,
-		"expected_delivery": null,
-		"note": null,
-		"order_date": null,
-		"order_id": null,
-		"package_weight": "0.8",
-		"package_weight_unit": "LB",
-		"shipment_package_count": null,
-		"shipment_pickup_date": null,
-		"shipment_delivery_date": null,
-		"shipment_service": "FedEx Ground",
-		"shipment_origin_country": "US",
-		"shipment_origin_postal_code": null,
-		"shipment_destination_country": "US",
-		"shipment_destination_postal_code": null,
-		"shipping_date": null,
-		"signed_by": null,
-		"source": "api"
-	},
-	"events": [
-		{
-			"date": "2023-05-01",
-			"description": "Delivered",
-			"location": "Logansport, IN, 46947, US",
-			"code": "DL",
-			"time": "10:39",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-05-01",
-			"description": "On FedEx vehicle for delivery",
-			"location": "KOKOMO, IN, 46901, US",
-			"code": "OD",
-			"time": "05:27",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-05-01",
-			"description": "At local FedEx facility",
-			"location": "KOKOMO, IN, 46901, US",
-			"code": "AR",
-			"time": "05:01",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-29",
-			"description": "At local FedEx facility",
-			"location": "KOKOMO, IN, 46901, US",
-			"code": "AR",
-			"time": "05:52",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-29",
-			"description": "Departed FedEx location",
-			"location": "INDEPENDENCE, KY, 41051, US",
-			"code": "DP",
-			"time": "01:03",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-28",
-			"description": "Arrived at FedEx location",
-			"location": "INDEPENDENCE, KY, 41051, US",
-			"code": "AR",
-			"time": "13:49",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-28",
-			"description": "In transit",
-			"location": "INDEPENDENCE, KY, 41051, US",
-			"code": "IT",
-			"time": "10:58",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-27",
-			"description": "In transit",
-			"location": "GOODLETTSVILLE, TN, 37072, US",
-			"code": "IT",
-			"time": "18:32",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-27",
-			"description": "Departed FedEx location",
-			"location": "HUTCHINS, TX, 75141, US",
-			"code": "DP",
-			"time": "06:24",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-27",
-			"description": "Arrived at FedEx location",
-			"location": "HUTCHINS, TX, 75141, US",
-			"code": "AR",
-			"time": "02:23",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-26",
-			"description": "Left FedEx origin facility",
-			"location": "IRVING, TX, 75062, US",
-			"code": "DP",
-			"time": "22:50",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-26",
-			"description": "Shipment arriving On-Time",
-			"location": "IRVING, TX, 75062, US",
-			"code": "AO",
-			"time": "20:33",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-26",
-			"description": "Arrived at FedEx location",
-			"location": "IRVING, TX, 75062, US",
-			"code": "AR",
-			"time": "20:32",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-26",
-			"description": "Picked up",
-			"location": "IRVING, TX, 75062, US",
-			"code": "PU",
-			"time": "17:05",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-26",
-			"description": "In FedEx possession",
-			"location": "DALLAS, TX, 75234, US",
-			"code": "IP",
-			"time": "16:50",
-			"latitude": null,
-			"longitude": null
-		},
-		{
-			"date": "2023-04-26",
-			"description": "Shipment information sent to FedEx",
-			"location": "CUSTOMER",
-			"code": "OC",
-			"time": "16:42",
-			"latitude": null,
-			"longitude": null
-		}
-	],
-	"delivered": true,
-	"test_mode": false,
-	"status": "delivered",
-	"estimated_delivery": "2023-05-01",
-	"meta": {
-		"ext": "fedex",
-		"carrier": "fedex"
-	},
-	"object_type": "tracker",
-	"metadata": {},
-	"messages": []
 }
 ```
 

@@ -81,7 +81,10 @@ class TestDHLRating(unittest.TestCase):
         Rating.fetch(self.RateRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, gateway.settings.server_url)
+        self.assertEqual(
+            url,
+            f"{gateway.settings.server_url}/XMLShippingServlet",
+        )
 
     def test_parse_rate_response(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:

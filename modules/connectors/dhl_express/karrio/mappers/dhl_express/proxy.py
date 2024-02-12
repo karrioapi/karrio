@@ -8,7 +8,7 @@ class Proxy(BaseProxy):
 
     def _send_request(self, request: lib.Serializable) -> str:
         return lib.request(
-            url=self.settings.server_url,
+            url=f"{self.settings.server_url}/XMLShippingServlet",
             data=request.serialize(),
             headers={"Content-Type": "application/xml"},
             trace=self.trace_as("xml"),

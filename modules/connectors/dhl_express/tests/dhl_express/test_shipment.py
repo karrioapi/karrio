@@ -47,7 +47,10 @@ class TestDHLShipment(unittest.TestCase):
         karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, gateway.settings.server_url)
+        self.assertEqual(
+            url,
+            f"{gateway.settings.server_url}/XMLShippingServlet",
+        )
 
     def test_parse_shipment_error(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:

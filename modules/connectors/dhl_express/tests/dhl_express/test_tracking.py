@@ -32,7 +32,10 @@ class TestDHLTracking(unittest.TestCase):
         Tracking.fetch(self.TrackingRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, gateway.settings.server_url)
+        self.assertEqual(
+            url,
+            f"{gateway.settings.server_url}/XMLShippingServlet",
+        )
 
     def test_tracking_auth_error_parsing(self):
         with patch("karrio.mappers.dhl_express.proxy.lib.request") as mock:
