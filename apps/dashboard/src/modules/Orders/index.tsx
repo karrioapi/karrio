@@ -190,7 +190,7 @@ export default function OrdersPage(pageProps: any) {
           <div>
             <OrdersFilter context={context} />
             <AppLink href="/draft_orders/new" className="button is-primary is-small is-pulled-right ml-1">
-              <span>Create Order</span>
+              <span>Create order</span>
             </AppLink>
           </div>
         </header>
