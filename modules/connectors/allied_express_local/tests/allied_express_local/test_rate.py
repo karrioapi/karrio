@@ -106,12 +106,9 @@ ParsedRateResponse = [
             "carrier_id": "allied_express_local",
             "carrier_name": "allied_express_local",
             "currency": "AUD",
-            "extra_charges": [
-                {"amount": 14.18, "currency": "AUD", "name": "Job charge"}
-            ],
             "meta": {"service_name": "allied_local_normal_service"},
             "service": "allied_local_normal_service",
-            "total_charge": 40.66,
+            "total_charge": 0.0,
         }
     ],
     [],
@@ -123,11 +120,9 @@ ParsedErrorResponse = [
         {
             "carrier_id": "allied_express_local",
             "carrier_name": "allied_express_local",
-            "code": "400",
+            "code": "500",
             "details": {},
-            "message": "Validation failed: java.lang.Exception: Exception thrown in "
-            "SuburbDAO.getSuburb :java.lang.Exception: No valid JNDI name "
-            "found for state UM",
+            "message": "WRONG serviceLevel",
         }
     ],
 ]
@@ -194,70 +189,121 @@ RateRequest = {
 }
 
 RateResponse = """{
-    "soapenv:Envelope": {
-        "@xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
-        "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
-        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "soapenv:Body": {
-            "ns1:calculatePriceResponse": {
-                "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
-                "result": {
-                    "jobCharge": "14.18",
-                    "surcharges": [
-                        {
-                            "chargeCode": "ON FWD PICKUP",
-                            "description": "ON FORWARD PICKUP",
-                            "netValue": "0.0",
-                            "quantity": "1"
-                        },
-                        {
-                            "chargeCode": "ON FWD DELIVERY",
-                            "description": "ON FORWARD DELIVERY",
-                            "netValue": "0.0",
-                            "quantity": "1"
-                        },
-                        {
-                            "chargeCode": "HD",
-                            "description": "FREIGHT OVERSIZED HOME DELIVERY",
-                            "netValue": "0.0",
-                            "quantity": "1"
-                        },
-                        {
-                            "chargeCode": "LSC",
-                            "description": "LENGTH SURCHARGE",
-                            "netValue": "0.0",
-                            "quantity": "1"
-                        },
-                        {
-                            "chargeCode": "MHF",
-                            "description": "HANDLING FEE",
-                            "netValue": "0.0",
-                            "quantity": "1"
-                        }
-                    ],
-                    "totalCharge": "40.66"
-                }
+  "soapenv:Envelope": {
+    "@xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
+    "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
+    "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+    "soapenv:Body": {
+      "ns1:quoteLocalCourierJobResponse": {
+        "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
+        "result": {
+          "account": {
+            "accountCode": "ACCOUNT",
+            "accountHash": "0Rpe7aSFxSt/DFYpqWPWhVp9ZhWZN/Pj3eC4tAqASjI=",
+            "accountKey": "-900000",
+            "accountLedger": "A",
+            "accountName": "NORMA PACIFIC P/L",
+            "accountState": "WA",
+            "defaultAddress": "C/- ALLIED EXPRESS  881 ABERNETHY RD",
+            "defaultContact": "SANDI WRIGHT",
+            "defaultPhoneNo": "1300 252 677",
+            "defaultPostCode": "6058",
+            "defaultState": "WA",
+            "defaultSuburbName": "FORRESTFIELD",
+            "discountLevel": "0",
+            "priceSuppressed": "false",
+            "shippingDivision": "AET"
+          },
+          "bookedBy": "TESTING USER",
+          "cubicWeight": "0.0",
+          "docketNumber": "AET1021113",
+          "instructions": "This is just an instruction",
+          "itemCount": "2",
+          "items": [
+            {
+              "dangerous": "false",
+              "height": "50.0",
+              "itemCount": "1",
+              "length": "50.0",
+              "volume": "0.036",
+              "weight": "20.0",
+              "width": "12.0"
+            },
+            {
+              "dangerous": "true",
+              "height": "50.0",
+              "itemCount": "1",
+              "length": "50.0",
+              "volume": "0.036",
+              "weight": "20.0",
+              "width": "12.0"
             }
+          ],
+          "jobNumber": "-1",
+          "jobStops": [
+            {
+              "companyName": "TESTING COMPANY",
+              "contact": "FADI MUBARAK",
+              "emailAddress": "test@gmail.com",
+              "geographicAddress": {
+                "address1": "17 VULCAN RD",
+                "address2": "test",
+                "country": "AU",
+                "postCode": "6155",
+                "sortCode": "PER",
+                "state": "WA",
+                "suburb": "CANNING VALE"
+              },
+              "stopNumber": "1",
+              "stopType": "P"
+            },
+            {
+              "companyName": "TESTING COMPANY",
+              "contact": "TESTING USER",
+              "emailAddress": "test@gmail.com",
+              "geographicAddress": {
+                "address1": "17 VULCAN RD",
+                "address2": "test",
+                "country": "AU",
+                "postCode": "6155",
+                "sortCode": "PER",
+                "state": "WA",
+                "suburb": "CANNING VALE"
+              },
+              "phoneNumber": "(07) 3114 1499",
+              "stopNumber": "2",
+              "stopType": "D"
+            }
+          ],
+          "price": {
+            "chargeQuantity": "0",
+            "cubicFactor": "0",
+            "discountRate": "0.0",
+            "grossPrice": "0.0",
+            "netPrice": "0.0",
+            "reason": "No Hire time found"
+          },
+          "readyDate": "2024-01-31T16:06:07.000+11:00",
+          "referenceNumbers": [
+            "REF-001",
+            "REF-001"
+          ],
+          "scheduledDeliveryDate": "2024-02-13T17:50:57.000+11:00",
+          "serviceLevel": "N",
+          "validatedHash": "edpLj6sbDhumb5N4RRUJ4njAq93IjyVsqD0sj1CQogE=",
+          "vehicle": {
+            "vehicleID": "-1"
+          },
+          "volume": "0.072",
+          "weight": "41.0"
         }
+      }
     }
+  }
 }
 """
 
 ErrorResponse = """{
-    "soapenv:Envelope": {
-        "@xmlns:soapenv": "http://schemas.xmlsoap.org/soap/envelope/",
-        "@xmlns:xsd": "http://www.w3.org/2001/XMLSchema",
-        "@xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        "soapenv:Body": {
-            "ns1:calculatePriceResponse": {
-                "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
-                "result": {
-                    "errors": "Validation failed: java.lang.Exception: Exception thrown in SuburbDAO.getSuburb :java.lang.Exception: No valid JNDI name found for state UM",
-                    "jobCharge": "0.0",
-                    "totalCharge": "0.0"
-                }
-            }
-        }
-    }
+  "Message": "WRONG serviceLevel"
 }
 """

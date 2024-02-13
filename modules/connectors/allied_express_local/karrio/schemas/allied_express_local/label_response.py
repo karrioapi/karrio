@@ -1,45 +1,29 @@
 from attr import s
-from typing import Optional, List
-from jstruct import JList, JStruct
+from typing import Optional
+from jstruct import JStruct
 
 
 @s(auto_attribs=True)
-class SurchargeType:
-    chargeCode: Optional[str] = None
-    description: Optional[str] = None
-    netValue: Optional[str] = None
-    quantity: Optional[int] = None
-
-
-@s(auto_attribs=True)
-class ResultType:
-    jobCharge: Optional[str] = None
-    surcharges: List[SurchargeType] = JList[SurchargeType]
-    totalCharge: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class Ns1CalculatePriceResponseType:
-    xmlnsns1: Optional[str] = None
-    result: Optional[ResultType] = JStruct[ResultType]
-
-
-@s(auto_attribs=True)
-class SoapenvEnvelopeSoapenvBodyType:
-    ns1calculatePriceResponse: Optional[Ns1CalculatePriceResponseType] = JStruct[Ns1CalculatePriceResponseType]
-
-
-@s(auto_attribs=True)
-class SoapenvEnvelopeType:
-    xmlnssoapenv: Optional[str] = None
-    xmlnsxsd: Optional[str] = None
-    xmlnsxsi: Optional[str] = None
-    soapenvBody: Optional[SoapenvEnvelopeSoapenvBodyType] = JStruct[SoapenvEnvelopeSoapenvBodyType]
+class DiscountClassType:
+    xsinil: Optional[int] = None
 
 
 @s(auto_attribs=True)
 class PriceType:
-    soapenvEnvelope: Optional[SoapenvEnvelopeType] = JStruct[SoapenvEnvelopeType]
+    chargeQuantity: Optional[int] = None
+    cubicFactor: Optional[int] = None
+    discountClass: Optional[DiscountClassType] = JStruct[DiscountClassType]
+    discountRate: Optional[str] = None
+    grossPrice: Optional[str] = None
+    jobCode: Optional[DiscountClassType] = JStruct[DiscountClassType]
+    netPrice: Optional[str] = None
+    rateCode: Optional[DiscountClassType] = JStruct[DiscountClassType]
+    reason: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PriceDetailType:
+    price: Optional[PriceType] = JStruct[PriceType]
 
 
 @s(auto_attribs=True)
@@ -49,12 +33,12 @@ class Ns1GetLabelResponseType:
 
 
 @s(auto_attribs=True)
-class LabelResponseSoapenvBodyType:
+class SoapenvBodyType:
     ns1getLabelResponse: Optional[Ns1GetLabelResponseType] = JStruct[Ns1GetLabelResponseType]
 
 
 @s(auto_attribs=True)
 class LabelResponseType:
-    Price: Optional[PriceType] = JStruct[PriceType]
     Tracking: Optional[str] = None
-    soapenvBody: Optional[LabelResponseSoapenvBodyType] = JStruct[LabelResponseSoapenvBodyType]
+    pricedetail: Optional[PriceDetailType] = JStruct[PriceDetailType]
+    soapenvBody: Optional[SoapenvBodyType] = JStruct[SoapenvBodyType]
