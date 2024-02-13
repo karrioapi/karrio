@@ -1,5 +1,5 @@
 import { Collection, LABEL_TYPES, NoneEnum, NotificationType, CarrierSettingsCarrierNameEnum } from '@karrio/types';
-import { isEqual, isNone, useLocation, validationMessage, validityCheck } from '@karrio/lib';
+import { isEqual, isNone, isNoneOrEmpty, useLocation, validationMessage, validityCheck } from '@karrio/lib';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 import { CarrierConnectionType } from '@karrio/hooks/user-connection';
 import React, { useContext, useReducer, useState } from 'react';
@@ -122,7 +122,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
       value = Array.from(target.selectedOptions).map((o: any) => o.value) as any
     }
 
-    const config = { ...payload.config, [name]: value === 'none' ? null : value };
+    const config = { ...payload.config, [name]: value === 'none' || isNoneOrEmpty(value) ? null : value };
     dispatch({ name: "config", value: config });
   };
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {

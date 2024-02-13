@@ -56,6 +56,7 @@ def parse_response(response: str) -> AlliedResponse:
             (
                 response.replace("soapenv:", "soapenv")
                 .replace("@xmlns:", "xmlns")
+                .replace("@xsi:", "xsi")
                 .replace("ns1:", "ns1")
             )
         )
@@ -71,6 +72,12 @@ def parse_response(response: str) -> AlliedResponse:
     _envelope = _response.get("soapenvEnvelope") or {}
     _body = _envelope.get("soapenvBody") or _response.get("soapenvBody") or {}
 
+    if "Message" in _response:
+        return AlliedResponse(
+            error=_response["Message"],
+            is_error=True,
+        )
+
     if "ns1getShipmentsStatusResponse" in _body:
         _data = _body["ns1getShipmentsStatusResponse"]
         return AlliedResponse(
@@ -84,8 +91,8 @@ def parse_response(response: str) -> AlliedResponse:
             ),
         )
 
-    if "ns1calculatePriceResponse" in _body:
-        _data = _body["ns1calculatePriceResponse"]
+    if "ns1quoteLocalCourierJobResponse" in _body:
+        _data = _body["ns1quoteLocalCourierJobResponse"]
         return AlliedResponse(
             data=_data,
             body=_body,
