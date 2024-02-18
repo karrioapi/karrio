@@ -75,10 +75,7 @@ class SurchargeType:
 
 
 @s(auto_attribs=True)
-class RatedPackageType:
-    groupNumber: Optional[int] = None
-    effectiveNetDiscount: Optional[float] = None
-    packageRateDetail: Optional['RatedPackageType'] = JStruct['RatedPackageType']
+class PackageRateDetailType:
     rateType: Optional[str] = None
     ratedWeightMethod: Optional[str] = None
     baseCharge: Optional[float] = None
@@ -89,9 +86,16 @@ class RatedPackageType:
     netCharge: Optional[float] = None
     totalRebates: Optional[float] = None
     billingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
-    totalFreightDiscounts: Optional[int] = None
+    totalFreightDiscounts: Optional[float] = None
     surcharges: List[SurchargeType] = JList[SurchargeType]
     currency: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class RatedPackageType:
+    groupNumber: Optional[float] = None
+    effectiveNetDiscount: Optional[float] = None
+    packageRateDetail: Optional[PackageRateDetailType] = JStruct[PackageRateDetailType]
 
 
 @s(auto_attribs=True)
@@ -121,13 +125,6 @@ class CurrencyExchangeRateType:
 
 
 @s(auto_attribs=True)
-class TotalBillingWeightType:
-    units: Optional[str] = None
-    valu: Optional[float] = None
-    value: Optional[float] = None
-
-
-@s(auto_attribs=True)
 class ShipmentRateDetailType:
     rateZone: Optional[str] = None
     dimDivisor: Optional[float] = None
@@ -137,9 +134,8 @@ class ShipmentRateDetailType:
     surCharges: List[SurchargeType] = JList[SurchargeType]
     pricingCode: Optional[str] = None
     currencyExchangeRate: Optional[CurrencyExchangeRateType] = JStruct[CurrencyExchangeRateType]
-    totalBillingWeight: Optional[TotalBillingWeightType] = JStruct[TotalBillingWeightType]
+    totalBillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
     currency: Optional[str] = None
-    shipmentRateDetailtotalBillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
 
 
 @s(auto_attribs=True)

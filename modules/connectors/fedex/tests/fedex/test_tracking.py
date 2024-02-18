@@ -24,7 +24,7 @@ class TestFedExTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/track/v1/trackingnumbers",
             )
 
     def test_parse_tracking_response(self):
@@ -52,9 +52,65 @@ if __name__ == "__main__":
 
 TrackingPayload = {"tracking_numbers": ["399368623212", "39936862321"]}
 
-ParsedTrackingResponse = []
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "delivered": False,
+            "estimated_delivery": "2021-10-01",
+            "events": [
+                {
+                    "code": "PU",
+                    "date": "2018-02-02",
+                    "description": "Package available for clearance",
+                    "location": "SEATTLE, WA, 98101, US",
+                    "time": "12:01",
+                }
+            ],
+            "info": {
+                "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=123456789012",
+                "package_weight": 22222.0,
+                "package_weight_unit": "LB",
+                "shipment_destination_country": "US",
+                "shipment_origin_country": "US",
+                "shipment_service": "FedEx Freight Economy.",
+            },
+            "status": "in_transit",
+            "tracking_number": "123456789012",
+        }
+    ],
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "code": "TRACKING.TRACKINGNUMBER.EMPTY",
+            "details": {"tracking_number": "128667043726"},
+            "message": "Please provide tracking number.",
+        },
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "code": "TRACKING.TRACKINGNUMBER.NOTFOUND",
+            "details": {"tracking_number": "39936862321"},
+            "message": "Tracking number cannot be found. Please correct the tracking "
+            "number and try again.",
+        },
+    ],
+]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "code": "TRACKING.TRACKINGNUMBER.EMPTY",
+            "details": {},
+            "message": "Please provide tracking number.",
+        }
+    ],
+]
 
 
 TrackingRequest = {

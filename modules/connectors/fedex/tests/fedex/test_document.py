@@ -24,18 +24,20 @@ class TestFedExTracking(unittest.TestCase):
     def test_get_tracking(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = "{}"
-            karrio.Document.fetch(self.create_document_upload_request).from_(gateway)
+            karrio.Document.upload(self.DocumentUploadRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"https://documentapi.prod.fedex.com/documents/v1/etds/upload",
             )
 
     def test_parse_document_upload_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
             mock.return_value = DocumentUploadResponse
             parsed_response = (
-                karrio.Document.fetch(self.DocumentUploadRequest).from_(gateway).parse()
+                karrio.Document.upload(self.DocumentUploadRequest)
+                .from_(gateway)
+                .parse()
             )
 
             self.assertListEqual(
@@ -60,12 +62,12 @@ DocumentUploadPayload = {
 
 ParsedDocumentUploadResponse = [
     {
-        "carrier_id": "carrier_id",
-        "carrier_name": "carrier_id",
+        "carrier_id": "fedex",
+        "carrier_name": "fedex",
         "documents": [
             {
-                "document_id": "090493e181586308",
-                "file_name": "file.txt",
+                "doc_id": "090493e181586308",
+                "file_name": "090493e181586308",
             }
         ],
         "meta": {},
@@ -76,23 +78,13 @@ ParsedDocumentUploadResponse = [
 
 DocumentUploadRequest = [
     {
+        "attachment": "R0lGODdhIAOwBPAAAA==",
         "document": {
-            "workflowName": "ETDPostshipment",
-            "carrierCode": "FDXE",
+            "contentType": "txt",
+            "meta": {"shipDocumentType": "OTHER", "shipmentDate": ANY},
             "name": "file.txt",
-            "contentType": "text/plain",
-            "meta": {
-                "shipDocumentType": "COMMERCIAL_INVOICE",
-                "formCode": "USMCA",
-                "trackingNumber": "794791292805",
-                "shipmentDate": "2021-02-17T00:00:00",
-                "originLocationCode": "GVTKK",
-                "originCountryCode": "US",
-                "destinationLocationCode": "JNUA",
-                "destinationCountryCode": "IN",
-            },
+            "workflowName": "ETDPostshipment",
         },
-        "attachment": "file.txt",
     }
 ]
 

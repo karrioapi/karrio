@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List
+from typing import Optional, List, Any
 from jstruct import JList, JStruct
 
 
@@ -400,7 +400,7 @@ class ShipmentRateDetailType:
     currencyExchangeRate: Optional[CurrencyExchangeRateType] = JStruct[CurrencyExchangeRateType]
     totalNetFreight: Optional[float] = None
     totalNetFedExCharge: Optional[float] = None
-    shipmentLegRateDetails: List['ShipmentRateDetailType'] = JList['ShipmentRateDetailType']
+    shipmentLegRateDetails: List[Any] = []
     dimDivisor: Optional[int] = None
     rateType: Optional[str] = None
     surcharges: List[SurchargeType] = JList[SurchargeType]
@@ -412,10 +412,6 @@ class ShipmentRateDetailType:
     totalBaseCharge: Optional[float] = None
     totalNetChargeWithDutiesAndTaxes: Optional[float] = None
     currency: Optional[str] = None
-    totalDimWeight: Optional[WeightType] = JStruct[WeightType]
-    legDestinationLocationId: Optional[str] = None
-    dimDivisorType: Optional[str] = None
-    minimumChargeType: Optional[str] = None
 
 
 @s(auto_attribs=True)

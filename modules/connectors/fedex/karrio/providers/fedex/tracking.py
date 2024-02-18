@@ -19,18 +19,19 @@ def parse_tracking_response(
         _extract_details(result, settings)
         for result in results
         if result.get("trackResults") is not None
-        and result["trackResults"][0].get("error") is None
+        and result["trackResults"][0].get("scanEvents") is not None
     ]
-    messages: typing.List[models.Message] = provider_error.parse_error_response(
-        (
-            [response]
-            + [
-                result.get("trackResults", {})[0]
-                for result in results
-                if result.get("trackResults", {})[0].get("error") is not None
-            ]
-        ),
-        settings=settings,
+    messages: typing.List[models.Message] = sum(
+        [
+            provider_error.parse_error_response(
+                result.get("trackResults"),
+                settings,
+                tracking_number=result.get("trackingNumber"),
+            )
+            for result in results
+            if result.get("trackResults") is not None
+        ],
+        start=provider_error.parse_error_response(response, settings),
     )
 
     return details, messages
@@ -86,7 +87,7 @@ def _extract_details(
             )
             for e in detail.scanEvents
         ],
-        estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S%z"),
+        estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(package.trackingNumber),
             shipment_service=lib.failsafe(lambda: detail.serviceDetail.description),

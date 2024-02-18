@@ -17,8 +17,8 @@ cached_auth = {
 
 gateway = karrio.gateway["fedex"].create(
     dict(
-        api_key="api_key",
-        secret_key="secret_key",
+        api_key=api_key,
+        secret_key=secret_key,
         account_number="2349857",
         cache=lib.Cache(**cached_auth),
     )

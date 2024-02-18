@@ -20,6 +20,10 @@ class Settings(core.Settings):
     id: str = None
 
     @property
+    def carrier_name(self):
+        return "fedex"
+
+    @property
     def server_url(self):
         return (
             "https://apis-sandbox.fedex.com"
@@ -42,10 +46,10 @@ class Settings(core.Settings):
 
     @property
     def access_token(self):
-        """Retrieve the access_token using the client_id|client_secret pair
+        """Retrieve the access_token using the api_key|secret_key pair
         or collect it from the cache if an unexpired access_token exist.
         """
-        cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
+        cache_key = f"{self.carrier_name}|{self.api_key}|{self.secret_key}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
         auth = self.cache.get(cache_key) or {}

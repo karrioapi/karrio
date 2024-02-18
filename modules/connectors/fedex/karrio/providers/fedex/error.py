@@ -5,11 +5,11 @@ from karrio.providers.fedex.utils import Settings
 
 
 def parse_error_response(
-    responses: typing.Union[typing.List[dict], dict],
+    response: typing.Union[typing.List[dict], dict],
     settings: Settings,
-    details: dict = None,
+    **details,
 ) -> typing.List[models.Message]:
-    results = responses if isinstance(responses, list) else [responses]
+    responses = response if isinstance(response, list) else [response]
     errors: typing.List[dict] = sum(
         [
             [
@@ -17,6 +17,7 @@ def parse_error_response(
                 *(
                     result["output"]["alerts"]
                     if "alerts" in result.get("output", {})
+                    and not isinstance(result["output"]["alerts"], str)
                     else []
                 ),
                 *(
@@ -32,7 +33,7 @@ def parse_error_response(
                     else []
                 ),
             ]
-            for result in results
+            for result in responses
         ],
         [],
     )

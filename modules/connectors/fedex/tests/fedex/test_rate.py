@@ -24,7 +24,7 @@ class TestFedExRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/rate",
             )
 
     def test_parse_rate_response(self):
@@ -41,374 +41,151 @@ if __name__ == "__main__":
     unittest.main()
 
 
-RatePayload = {}
+RatePayload = {
+    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
+    "recipient": {"city": "Lome", "country_code": "TG"},
+    "parcels": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}],
+    "options": {
+        "currency": "USD",
+        "fedex_one_rate": True,
+        "shipment_date": "2024-02-15",
+    },
+}
 
-ParsedRateResponse = []
+ParsedRateResponse = [
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "currency": "USD",
+            "estimated_delivery": "2019-07-22",
+            "extra_charges": [
+                {"amount": 308.71, "currency": "USD", "name": "Base Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Discounts"},
+                {"amount": 0.0, "currency": "USD", "name": "VAT Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Duties and Taxes"},
+                {"amount": 32.42, "currency": "USD", "name": "Fuel Surcharge"},
+            ],
+            "meta": {
+                "service_name": "fedex_international_first",
+                "transit_time": "THREE_DAYS",
+            },
+            "service": "fedex_international_first",
+            "total_charge": 341.13,
+            "transit_days": 0,
+        },
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "currency": "USD",
+            "estimated_delivery": "2019-07-22",
+            "extra_charges": [
+                {"amount": 239.15, "currency": "USD", "name": "Base Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Discounts"},
+                {"amount": 0.0, "currency": "USD", "name": "VAT Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Duties and Taxes"},
+                {"amount": 25.11, "currency": "USD", "name": "Fuel Surcharge"},
+            ],
+            "meta": {
+                "service_name": "FedEx International Priority",
+                "transit_time": "THREE_DAYS",
+            },
+            "service": "INTERNATIONAL_PRIORITY",
+            "total_charge": 264.26,
+            "transit_days": 0,
+        },
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "currency": "USD",
+            "extra_charges": [
+                {"amount": 145.21, "currency": "USD", "name": "Base Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Discounts"},
+                {"amount": 0.0, "currency": "USD", "name": "VAT Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Duties and Taxes"},
+                {"amount": 15.24, "currency": "USD", "name": "Fuel Surcharge"},
+            ],
+            "meta": {
+                "service_name": "fedex_international_economy",
+                "transit_time": "THREE_DAYS",
+            },
+            "service": "fedex_international_economy",
+            "total_charge": 160.45,
+        },
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "currency": "USD",
+            "extra_charges": [
+                {"amount": 38.17, "currency": "USD", "name": "Base Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Discounts"},
+                {"amount": 0.0, "currency": "USD", "name": "VAT Charge"},
+                {"amount": 0.0, "currency": "USD", "name": "Duties and Taxes"},
+                {"amount": 2.86, "currency": "USD", "name": "Fuel Surcharge"},
+            ],
+            "meta": {"service_name": "fedex_ground"},
+            "service": "fedex_ground",
+            "total_charge": 41.03,
+        },
+    ],
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "code": "MONEYBACKGUARANTEE.NOT.ELIGIBLE",
+            "details": {},
+            "message": "We are unable to process this request. Please try again later "
+            "or contact FedEx Customer Service.",
+        }
+    ],
+]
 
 
 RateRequest = {
-    "accountNumber": {"value": "Your account number"},
+    "accountNumber": {"value": "2349857"},
     "rateRequestControlParameters": {
-        "returnTransitTimes": False,
+        "rateSortOrder": "COMMITASCENDING",
+        "returnTransitTimes": True,
         "servicesNeededOnRateFailure": True,
-        "variableOptions": "FREIGHT_GUARANTEE",
-        "rateSortOrder": "SERVICENAMETRADITIONAL",
+        "variableOptions": ["FEDEX_ONE_RATE", "SIGNATURE_OPTION"],
     },
     "requestedShipment": {
-        "shipper": {
-            "address": {
-                "streetLines": ["1550 Union Blvd", "Suite 302"],
-                "city": "Beverly Hills",
-                "stateOrProvinceCode": "TN",
-                "postalCode": "65247",
-                "countryCode": "US",
-                "residential": False,
-            }
-        },
-        "recipient": {
-            "address": {
-                "streetLines": ["1550 Union Blvd", "Suite 302"],
-                "city": "Beverly Hills",
-                "stateOrProvinceCode": "TN",
-                "postalCode": "65247",
-                "countryCode": "US",
-                "residential": False,
-            }
-        },
-        "serviceType": "STANDARD_OVERNIGHT",
-        "emailNotificationDetail": {
-            "recipients": [
-                {
-                    "emailAddress": "string",
-                    "notificationEventType": ["ON_DELIVERY"],
-                    "smsDetail": {
-                        "phoneNumber": "string",
-                        "phoneNumberCountryCode": "string",
-                    },
-                    "notificationFormatType": "HTML",
-                    "emailNotificationRecipientType": "BROKER",
-                    "notificationType": "EMAIL",
-                    "locale": "string",
-                }
-            ],
-            "personalMessage": "string",
-            "PrintedReference": {
-                "printedReferenceType": "BILL_OF_LADING",
-                "value": "string",
-            },
-        },
-        "preferredCurrency": "USD",
-        "rateRequestType": ["ACCOUNT", "LIST"],
-        "shipDateStamp": "2015-03-25T09:30:00",
+        "documentShipment": False,
+        "packagingType": "YOUR_PACKAGING",
         "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
+        "preferredCurrency": {
+            "code": "currency",
+            "state": "USD",
+            "type": "<class 'str'>",
+        },
+        "rateRequestType": ["LIST", "PREFERRED"],
+        "recipient": {
+            "address": {"city": "Lome", "countryCode": "TG", "residential": False}
+        },
         "requestedPackageLineItems": [
             {
-                "subPackagingType": "BAG",
+                "declaredValue": {"type": "<class 'str'>"},
+                "dimensions": {
+                    "height": 3.0,
+                    "length": 10.0,
+                    "units": "IN",
+                    "width": 3.0,
+                },
                 "groupPackageCount": 1,
-                "contentRecord": [
-                    {
-                        "itemNumber": "string",
-                        "receivedQuantity": 0,
-                        "description": "string",
-                        "partNumber": "string",
-                    }
-                ],
-                "declaredValue": {"amount": "100", "currency": "USD"},
-                "weight": {"units": "LB", "value": 22},
-                "dimensions": {"length": 10, "width": 8, "height": 2, "units": "IN"},
-                "variableHandlingChargeDetail": {
-                    "rateType": "ACCOUNT",
-                    "percentValue": 0,
-                    "rateLevelType": "BUNDLED_RATE",
-                    "fixedValue": {"amount": "100", "currency": "USD"},
-                    "rateElementBasis": "NET_CHARGE",
-                },
-                "packageSpecialServices": {
-                    "specialServiceTypes": ["DANGEROUS_GOODS"],
-                    "signatureOptionType": ["NO_SIGNATURE_REQUIRED"],
-                    "alcoholDetail": {
-                        "alcoholRecipientType": "LICENSEE",
-                        "shipperAgreementType": "Retailer",
-                    },
-                    "dangerousGoodsDetail": {
-                        "offeror": "Offeror Name",
-                        "accessibility": "ACCESSIBLE",
-                        "emergencyContactNumber": "3268545905",
-                        "options": ["BATTERY"],
-                        "containers": [
-                            {
-                                "offeror": "Offeror Name",
-                                "hazardousCommodities": [
-                                    {
-                                        "quantity": {
-                                            "quantityType": "GROSS",
-                                            "amount": 0,
-                                            "units": "LB",
-                                        },
-                                        "innerReceptacles": [
-                                            {
-                                                "quantity": {
-                                                    "quantityType": "GROSS",
-                                                    "amount": 0,
-                                                    "units": "LB",
-                                                }
-                                            }
-                                        ],
-                                        "options": {
-                                            "labelTextOption": "Override",
-                                            "customerSuppliedLabelText": "LabelText",
-                                        },
-                                        "description": {
-                                            "sequenceNumber": 0,
-                                            "processingOptions": [
-                                                "INCLUDE_SPECIAL_PROVISIONS"
-                                            ],
-                                            "subsidiaryClasses": "subsidiaryClass",
-                                            "labelText": "labelText",
-                                            "technicalName": "technicalName",
-                                            "packingDetails": {
-                                                "packingInstructions": "instruction",
-                                                "cargoAircraftOnly": False,
-                                            },
-                                            "authorization": "Authorization Information",
-                                            "reportableQuantity": False,
-                                            "percentage": 10,
-                                            "id": "ID",
-                                            "packingGroup": "DEFAULT",
-                                            "properShippingName": "ShippingName",
-                                            "hazardClass": "hazardClass",
-                                        },
-                                    }
-                                ],
-                                "numberOfContainers": 10,
-                                "containerType": "Copper Box",
-                                "emergencyContactNumber": {
-                                    "areaCode": "202",
-                                    "extension": "3245",
-                                    "countryCode": "US",
-                                    "personalIdentificationNumber": "9545678",
-                                    "localNumber": "23456",
-                                },
-                                "packaging": {"count": 20, "units": "Liter"},
-                                "packingType": "ALL_PACKED_IN_ONE",
-                                "radioactiveContainerClass": "EXCEPTED_PACKAGE",
-                            }
-                        ],
-                        "packaging": {"count": 20, "units": "Liter"},
-                    },
-                    "packageCODDetail": {
-                        "codCollectionAmount": {"amount": 12.45, "currency": "USD"},
-                        "codCollectionType": "ANY",
-                    },
-                    "pieceCountVerificationBoxCount": 0,
-                    "batteryDetails": [
-                        {
-                            "material": "LITHIUM_METAL",
-                            "regulatorySubType": "IATA_SECTION_II",
-                            "packing": "CONTAINED_IN_EQUIPMENT",
-                        }
-                    ],
-                    "dryIceWeight": {"units": "LB", "value": 10},
-                },
+                "weight": {"units": "LB", "value": 4.0},
             }
         ],
-        "documentShipment": False,
-        "variableHandlingChargeDetail": {
-            "rateType": "ACCOUNT",
-            "percentValue": 0,
-            "rateLevelType": "BUNDLED_RATE",
-            "fixedValue": {"amount": "100", "currency": "USD"},
-            "rateElementBasis": "NET_CHARGE",
+        "shipDateStamp": "2024-02-15",
+        "shipmentSpecialServices": {},
+        "shipper": {
+            "address": {
+                "countryCode": "CA",
+                "postalCode": "H3N1S4",
+                "residential": False,
+            }
         },
-        "packagingType": "YOUR_PACKAGING",
-        "totalPackageCount": 3,
-        "totalWeight": 87.5,
-        "shipmentSpecialServices": {
-            "returnShipmentDetail": {"returnType": "PRINT_RETURN_LABEL"},
-            "deliveryOnInvoiceAcceptanceDetail": {
-                "recipient": {
-                    "accountNumber": {"value": 123456789},
-                    "address": {
-                        "streetLines": ["10 FedEx Parkway", "Suite 30"],
-                        "countryCode": "US",
-                    },
-                    "contact": {
-                        "companyName": "FedEx",
-                        "faxNumber": "9013577890",
-                        "personName": "John Taylor",
-                        "phoneNumber": "9013577890",
-                    },
-                }
-            },
-            "internationalTrafficInArmsRegulationsDetail": {
-                "licenseOrExemptionNumber": "432345"
-            },
-            "pendingShipmentDetail": {
-                "pendingShipmentType": "EMAIL",
-                "processingOptions": {"options": ["ALLOW_MODIFICATIONS"]},
-                "recommendedDocumentSpecification": {
-                    "types": ["ANTIQUE_STATEMENT_EUROPEAN_UNION"]
-                },
-                "emailLabelDetail": {
-                    "recipients": [
-                        {
-                            "emailAddress": "string",
-                            "optionsRequested": {
-                                "options": ["PRODUCE_PAPERLESS_SHIPPING_FORMAT"]
-                            },
-                            "role": "SHIPMENT_COMPLETOR",
-                            "locale": {"country": "string", "language": "string"},
-                        }
-                    ],
-                    "message": "string",
-                },
-                "documentReferences": [
-                    {
-                        "documentType": "CERTIFICATE_OF_ORIGIN",
-                        "customerReference": "string",
-                        "description": "ShippingDocumentSpecification",
-                        "documentId": "98123",
-                    }
-                ],
-                "expirationTimeStamp": "2012-12-31",
-                "shipmentDryIceDetail": {
-                    "totalWeight": {"units": "LB", "value": 10},
-                    "packageCount": 12,
-                },
-            },
-            "holdAtLocationDetail": {
-                "locationId": "YBZA",
-                "locationContactAndAddress": {
-                    "address": {
-                        "streetLines": ["10 FedEx Parkway", "Suite 302"],
-                        "city": "Beverly Hills",
-                        "stateOrProvinceCode": "CA",
-                        "postalCode": "38127",
-                        "countryCode": "US",
-                        "residential": False,
-                    },
-                    "contact": {
-                        "personName": "person name",
-                        "emailAddress": "email address",
-                        "phoneNumber": "phone number",
-                        "phoneExtension": "phone extension",
-                        "companyName": "company name",
-                        "faxNumber": "fax number",
-                    },
-                },
-                "locationType": "FEDEX_ONSITE",
-            },
-            "shipmentCODDetail": {
-                "addTransportationChargesDetail": {
-                    "rateType": "ACCOUNT",
-                    "rateLevelType": "BUNDLED_RATE",
-                    "chargeLevelType": "CURRENT_PACKAGE",
-                    "chargeType": "COD_SURCHARGE",
-                },
-                "codRecipient": {"accountNumber": {"value": 123456789}},
-                "remitToName": "FedEx",
-                "codCollectionType": "ANY",
-                "financialInstitutionContactAndAddress": {
-                    "address": {
-                        "streetLines": ["10 FedEx Parkway", "Suite 302"],
-                        "city": "Beverly Hills",
-                        "stateOrProvinceCode": "CA",
-                        "postalCode": "38127",
-                        "countryCode": "US",
-                        "residential": False,
-                    },
-                    "contact": {
-                        "personName": "person name",
-                        "emailAddress": "email address",
-                        "phoneNumber": "phone number",
-                        "phoneExtension": "phone extension",
-                        "companyName": "company name",
-                        "faxNumber": "fax number",
-                    },
-                },
-                "returnReferenceIndicatorType": "INVOICE",
-            },
-            "shipmentDryIceDetail": {
-                "totalWeight": {"units": "LB", "value": 10},
-                "packageCount": 12,
-            },
-            "internationalControlledExportDetail": {"type": "DEA_036"},
-            "homeDeliveryPremiumDetail": {
-                "phoneNumber": {
-                    "areaCode": "areaCode",
-                    "extension": "extension",
-                    "countryCode": "countryCode",
-                    "personalIdentificationNumber": "personalIdentificationNumber",
-                    "localNumber": "localNumber",
-                },
-                "shipTimestamp": "2020-04-24",
-                "homedeliveryPremiumType": "APPOINTMENT",
-            },
-            "specialServiceTypes": ["BROKER_SELECT_OPTION"],
-        },
-        "customsClearanceDetail": {
-            "commercialInvoice": {"shipmentPurpose": "GIFT"},
-            "freightOnValue": "CARRIER_RISK",
-            "dutiesPayment": {
-                "payor": {
-                    "responsibleParty": {
-                        "address": {
-                            "streetLines": ["10 FedEx Parkway", "Suite 302"],
-                            "city": "Beverly Hills",
-                            "stateOrProvinceCode": "CA",
-                            "postalCode": "90210",
-                            "countryCode": "US",
-                            "residential": False,
-                        },
-                        "contact": {
-                            "personName": "John Taylor",
-                            "emailAddress": "sample@company.com",
-                            "phoneNumber": "1234567890",
-                            "phoneExtension": "phone extension",
-                            "companyName": "Fedex",
-                            "faxNumber": "fax number",
-                        },
-                        "accountNumber": {"value": "123456789"},
-                    }
-                },
-                "paymentType": "SENDER",
-            },
-            "commodities": [
-                {
-                    "description": "DOCUMENTS",
-                    "weight": {"units": "LB", "value": 22},
-                    "quantity": 1,
-                    "customsValue": {"amount": "100", "currency": "USD"},
-                    "unitPrice": {"amount": "100", "currency": "USD"},
-                    "numberOfPieces": 1,
-                    "countryOfManufacture": "US",
-                    "quantityUnits": "PCS",
-                    "name": "DOCUMENTS",
-                    "harmonizedCode": "080211",
-                    "partNumber": "P1",
-                }
-            ],
-        },
-        "groupShipment": True,
-        "serviceTypeDetail": {
-            "carrierCode": "FDXE",
-            "description": "string",
-            "serviceName": "string",
-            "serviceCategory": "string",
-        },
-        "smartPostInfoDetail": {
-            "ancillaryEndorsement": "ADDRESS_CORRECTION",
-            "hubId": "5531",
-            "indicia": "MEDIA_MAIL",
-            "specialServices": "USPS_DELIVERY_CONFIRMATION",
-        },
-        "expressFreightDetail": {
-            "bookingConfirmationNumber": "string",
-            "shippersLoadAndCount": 0,
-        },
-        "groundShipment": false,
+        "totalWeight": 4.0,
     },
-    "carrierCodes": ["FDXE"],
 }
 
 RateResponse = """{
@@ -434,21 +211,21 @@ RateResponse = """{
           {
             "rateType": "ACCOUNT",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 403.2,
             "totalNetCharge": 445.54,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 445.54,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 445.54,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 42.34,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -460,11 +237,11 @@ RateResponse = """{
               "currencyExchangeRate": {
                 "fromCurrency": "CAD",
                 "intoCurrency": "CAD",
-                "rate": 1
+                "rate": 1.0
               },
               "totalBillingWeight": {
                 "units": "LB",
-                "valu": 22
+                "value": 22.0
               },
               "currency": "CAD"
             },
@@ -473,21 +250,21 @@ RateResponse = """{
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 403.2,
             "totalNetCharge": 445.54,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 445.54,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 445.54,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 42.34,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -499,11 +276,11 @@ RateResponse = """{
               "currencyExchangeRate": {
                 "fromCurrency": "CAD",
                 "intoCurrency": "CAD",
-                "rate": 1
+                "rate": 1.0
               },
               "totalBillingWeight": {
                 "units": "LB",
-                "value": 22
+                "value": 22.0
               },
               "currency": "CAD"
             },
@@ -512,21 +289,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 308.71,
             "totalNetCharge": 341.13,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 341.13,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 341.13,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 32.42,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -542,7 +319,7 @@ RateResponse = """{
               },
               "totalBillingWeight": {
                 "units": "LB",
-                "value": 22
+                "value": 22.0
               },
               "currency": "USD"
             },
@@ -551,21 +328,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 308.71,
             "totalNetCharge": 341.13,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 341.13,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 341.13,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 32.42,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -694,21 +471,21 @@ RateResponse = """{
           {
             "rateType": "ACCOUNT",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 312.35,
             "totalNetCharge": 345.15,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 345.15,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 345.15,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 32.8,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -733,21 +510,21 @@ RateResponse = """{
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 78.99,
             "totalNetCharge": 87.28,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 87.28,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 87.28,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 8.29,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -772,21 +549,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 60.48,
             "totalNetCharge": 66.83,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 66.83,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 66.83,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 6.3,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -811,21 +588,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 239.15,
             "totalNetCharge": 264.26,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 264.26,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 264.26,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 25.11,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -954,21 +731,21 @@ RateResponse = """{
           {
             "rateType": "ACCOUNT",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 189.65,
             "totalNetCharge": 209.56,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 209.56,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 209.56,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 19.91,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -993,21 +770,21 @@ RateResponse = """{
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 48.56,
             "totalNetCharge": 53.66,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 53.66,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 53.66,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 5.1,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1032,21 +809,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 37.18,
             "totalNetCharge": 41.08,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 41.08,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 41.08,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 3.9,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1071,21 +848,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 145.21,
             "totalNetCharge": 160.45,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 160.45,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 160.45,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 15.24,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1203,18 +980,18 @@ RateResponse = """{
             "totalDiscounts": 2.79,
             "totalBaseCharge": 49.85,
             "totalNetCharge": 53.59,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 53.59,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 53.59,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 3.74,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1231,7 +1008,7 @@ RateResponse = """{
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
+                "groupNumber": 0.0,
                 "effectiveNetDiscount": 2.79,
                 "packageRateDetail": {
                   "rateType": "PAYOR_ACCOUNT_PACKAGE",
@@ -1240,14 +1017,14 @@ RateResponse = """{
                   "netFreight": 49.85,
                   "totalSurcharges": 3.74,
                   "netFedExCharge": 53.59,
-                  "totalTaxes": 0,
+                  "totalTaxes": 0.0,
                   "netCharge": 53.59,
-                  "totalRebates": 0,
+                  "totalRebates": 0.0,
                   "billingWeight": {
                     "units": "LB",
                     "value": 22
                   },
-                  "totalFreightDiscounts": 0,
+                  "totalFreightDiscounts": 0.0,
                   "surcharges": [
                     {
                       "type": "FUEL",
@@ -1265,21 +1042,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 40.16,
             "totalNetCharge": 43.17,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 43.17,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 43.17,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 3.01,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1301,8 +1078,8 @@ RateResponse = """{
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
-                "effectiveNetDiscount": 0,
+                "groupNumber": 0.0,
+                "effectiveNetDiscount": 0.0,
                 "packageRateDetail": {
                   "rateType": "PREFERRED_LIST_PACKAGE",
                   "ratedWeightMethod": "ACTUAL",
@@ -1310,14 +1087,14 @@ RateResponse = """{
                   "netFreight": 40.16,
                   "totalSurcharges": 3.01,
                   "netFedExCharge": 43.17,
-                  "totalTaxes": 0,
+                  "totalTaxes": 0.0,
                   "netCharge": 43.17,
-                  "totalRebates": 0,
+                  "totalRebates": 0.0,
                   "billingWeight": {
                     "units": "LB",
                     "value": 22
                   },
-                  "totalFreightDiscounts": 0,
+                  "totalFreightDiscounts": 0.0,
                   "surcharges": [
                     {
                       "type": "FUEL",
@@ -1334,21 +1111,21 @@ RateResponse = """{
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 38.17,
             "totalNetCharge": 41.03,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 41.03,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 41.03,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 2.86,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1370,32 +1147,33 @@ RateResponse = """{
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
-                "effectiveNetDiscount": 0,
-                "packageRateDetail": null,
-                "rateType": "PREFERRED_ACCOUNT_PACKAGE",
-                "ratedWeightMethod": "ACTUAL",
-                "baseCharge": 38.17,
-                "netFreight": 38.17,
-                "totalSurcharges": 2.86,
-                "netFedExCharge": 41.03,
-                "totalTaxes": 0,
-                "netCharge": 41.03,
-                "totalRebates": 0,
-                "billingWeight": {
-                  "units": "LB",
-                  "value": 22
-                },
-                "totalFreightDiscounts": 0,
-                "surcharges": [
-                  {
-                    "type": "FUEL",
-                    "description": "Fuel Surcharge",
-                    "level": "PACKAGE",
-                    "amount": 2.86
-                  }
-                ],
-                "currency": "USD"
+                "groupNumber": 0.0,
+                "effectiveNetDiscount": 0.0,
+                "packageRateDetail": {
+                  "rateType": "PREFERRED_ACCOUNT_PACKAGE",
+                  "ratedWeightMethod": "ACTUAL",
+                  "baseCharge": 38.17,
+                  "netFreight": 38.17,
+                  "totalSurcharges": 2.86,
+                  "netFedExCharge": 41.03,
+                  "totalTaxes": 0.0,
+                  "netCharge": 41.03,
+                  "totalRebates": 0.0,
+                  "billingWeight": {
+                    "units": "LB",
+                    "value": 22
+                  },
+                  "totalFreightDiscounts": 0.0,
+                  "surcharges": [
+                    {
+                      "type": "FUEL",
+                      "description": "Fuel Surcharge",
+                      "level": "PACKAGE",
+                      "amount": 2.86
+                    }
+                  ],
+                  "currency": "USD"
+                }
               }
             ],
             "currency": "USD"
@@ -1403,21 +1181,21 @@ RateResponse = """{
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 52.45,
             "totalNetCharge": 56.38,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 56.38,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 56.38,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 3.93,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1426,7 +1204,7 @@ RateResponse = """{
                   "amount": 3.93
                 }
               ],
-              "totalBillingWeight\"": {
+              "totalBillingWeight": {
                 "units": "LB",
                 "value": 2
               },
@@ -1434,32 +1212,33 @@ RateResponse = """{
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
-                "effectiveNetDiscount": 0,
-                "packageRateDetail": null,
-                "rateType": "PAYOR_LIST_PACKAGE",
-                "ratedWeightMethod": "ACTUAL",
-                "baseCharge": 52.45,
-                "netFreight": 52.45,
-                "totalSurcharges": 3.93,
-                "netFedExCharge": 56.38,
-                "totalTaxes": 0,
-                "netCharge": 56.38,
-                "totalRebates": 0,
-                "billingWeight": {
-                  "units": "LB",
-                  "value": 22
-                },
-                "totalFreightDiscounts": 0,
-                "surcharges": [
-                  {
-                    "type": "FUEL",
-                    "description": "Fuel Surcharge",
-                    "level": "PACKAGE",
-                    "amount": 3.93
-                  }
-                ],
-                "currency": "CAD"
+                "groupNumber": 0.0,
+                "effectiveNetDiscount": 0.0,
+                "packageRateDetail": {
+                  "rateType": "PAYOR_LIST_PACKAGE",
+                  "ratedWeightMethod": "ACTUAL",
+                  "baseCharge": 52.45,
+                  "netFreight": 52.45,
+                  "totalSurcharges": 3.93,
+                  "netFedExCharge": 56.38,
+                  "totalTaxes": 0.0,
+                  "netCharge": 56.38,
+                  "totalRebates": 0.0,
+                  "billingWeight": {
+                    "units": "LB",
+                    "value": 22
+                  },
+                  "totalFreightDiscounts": 0.0,
+                  "surcharges": [
+                    {
+                      "type": "FUEL",
+                      "description": "Fuel Surcharge",
+                      "level": "PACKAGE",
+                      "amount": 3.93
+                    }
+                  ],
+                  "currency": "CAD"
+                }
               }
             ],
             "currency": "CAD",

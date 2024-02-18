@@ -1,3 +1,4 @@
+import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 from karrio.mappers.fedex.settings import Settings
@@ -5,27 +6,6 @@ from karrio.mappers.fedex.settings import Settings
 
 class Proxy(proxy.Proxy):
     settings: Settings
-
-    def _send_request(
-        self,
-        path: str = "/",
-        request: lib.Serializable = None,
-        method: str = "POST",
-        headers: dict = None,
-        url: str = None,
-    ) -> str:
-        return lib.request(
-            url=url or f"{self.settings.server_url}{path}",
-            trace=self.trace_as("json"),
-            method=method,
-            headers={
-                "content-Type": "application/json",
-                "authorization": f"Bearer {self.settings.access_token}",
-                "x-locale": self.settings.config.locale.state or "en_US",
-                **(headers or {}),
-            },
-            **({"data": lib.to_json(request.serialize())} if request else {}),
-        )
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request("/rate", request)
@@ -78,10 +58,8 @@ class Proxy(proxy.Proxy):
                     if self.settings.test_mode
                     else "https://documentapi.prod.fedex.com/documents/v1/etds/upload"
                 ),
-                request=lib.Serializable(_),
-                headers={
-                    "content-Type": "multipart/form-data",
-                },
+                request=lib.Serializable(_, urllib.parse.urlencode),
+                headers={"content-Type": "multipart/form-data"},
             ),
             requests.serialize(),
         )
@@ -89,4 +67,25 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(
             response,
             lambda __: [lib.to_dict(_) for _ in __],
+        )
+
+    def _send_request(
+        self,
+        path: str = "/",
+        request: lib.Serializable = None,
+        method: str = "POST",
+        headers: dict = None,
+        url: str = None,
+    ) -> str:
+        return lib.request(
+            url=url or f"{self.settings.server_url}{path}",
+            trace=self.trace_as("json"),
+            method=method,
+            headers={
+                "content-Type": "application/json",
+                "authorization": f"Bearer {self.settings.access_token}",
+                "x-locale": self.settings.connection_config.locale.state or "en_US",
+                **(headers or {}),
+            },
+            **({"data": lib.to_json(request.serialize())} if request else {}),
         )

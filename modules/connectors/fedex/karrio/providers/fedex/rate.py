@@ -30,7 +30,8 @@ def _extract_details(
     ctx: dict = {},
 ) -> models.RateDetails:
     # fmt: off
-    rate = lib.to_object(rating.RateReplyDetailType, data)
+    # rate = lib.to_object(rating.RateReplyDetailType, data)
+    rate = rating.RateReplyDetailType(**data)
     service = provider_units.ShippingService.map(rate.serviceType)
     details: rating.RatedShipmentDetailType = (
         next((_ for _ in rate.ratedShipmentDetails if _.rateType == "PREFERRED_CURRENCY"), None) or
@@ -48,8 +49,8 @@ def _extract_details(
         details.totalNetChargeWithDutiesAndTaxes 
         or details.totalNetCharge
     )
-    estimated_delivery = lib.to_date(rate.operationalDetail.commitDate, "%Y-%m-%dT%H:%M:%S")
-    shipping_date = lib.to_date(details.quoteDate or ctx.get("shipment_date") or datetime.datetime.now())
+    estimated_delivery = lib.to_date(getattr(rate.operationalDetail, "commitDate", None), "%Y-%m-%dT%H:%M:%S")
+    shipping_date = lib.to_date(ctx.get("shipment_date") or datetime.datetime.now())
     transit_day_list = (
         (shipping_date + datetime.timedelta(x + 1) for x in range((estimated_delivery.date() - shipping_date.date()).days))
         if estimated_delivery is not None 
@@ -79,8 +80,8 @@ def _extract_details(
             for name, amount in charges
         ],
         meta=dict(
-            service_name=service.name_or_key,
-            transit_time=details.operationalDetail.transitTime,
+            service_name=service.name or rate.serviceName,
+            transit_time=getattr(rate.operationalDetail, "transitTime", None),
         ),
     )
 
@@ -96,12 +97,10 @@ def rate_request(
         payload.parcels,
         required=["weight"],
         presets=provider_units.PackagePresets,
-        package_option_type=provider_units.PackageOption,
     )
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
-        option_type=provider_units.ShippingOption,
         initializer=provider_units.shipping_options_initializer,
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
@@ -155,7 +154,7 @@ def rate_request(
                 fedex.RequestedPackageLineItemType(
                     subPackagingType=package.packaging_type,
                     groupPackageCount=1,
-                    contentRecord=None,
+                    contentRecord=[],
                     declaredValue=package.options.declared_value,
                     weight=fedex.WeightType(
                         units=package.weight.unit,
@@ -243,5 +242,6 @@ def rate_request(
 
     return lib.Serializable(
         request,
+        lib.to_dict,
         dict(shipment_date=shipment_date),
     )

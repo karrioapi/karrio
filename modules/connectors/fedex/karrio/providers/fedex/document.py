@@ -1,7 +1,6 @@
 import karrio.schemas.fedex.paperless_request as fedex
 import time
 import typing
-import urllib.parse
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.fedex.error as provider_error
@@ -85,5 +84,5 @@ def document_upload_request(
 
     return lib.Serializable(
         request,
-        lambda __: [urllib.parse.urlencode(lib.to_dict(_)) for _ in __],
+        lambda __: [lib.to_dict(_) for _ in __],
     )

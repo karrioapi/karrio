@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List
+from typing import Optional, List, Any
 from jstruct import JStruct, JList
 
 
@@ -17,6 +17,57 @@ class RateRequestControlParametersType:
 
 
 @s(auto_attribs=True)
+class RecipientAccountNumberType:
+    value: Optional[int] = None
+
+
+@s(auto_attribs=True)
+class BrokerAddressType:
+    streetLines: List[str] = []
+    countryCode: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class RecipientContactType:
+    companyName: Optional[str] = None
+    faxNumber: Optional[str] = None
+    personName: Optional[str] = None
+    phoneNumber: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class BrokerClassType:
+    accountNumber: Optional[RecipientAccountNumberType] = JStruct[RecipientAccountNumberType]
+    address: Optional[BrokerAddressType] = JStruct[BrokerAddressType]
+    contact: Optional[RecipientContactType] = JStruct[RecipientContactType]
+
+
+@s(auto_attribs=True)
+class BrokerAddressClassType:
+    streetLines: List[str] = []
+    city: Optional[str] = None
+    stateOrProvinceCode: Optional[str] = None
+    postalCode: Optional[int] = None
+    countryCode: Optional[str] = None
+    residential: Optional[bool] = None
+    classification: Optional[str] = None
+    geographicCoordinates: Optional[str] = None
+    urbanizationCode: Optional[str] = None
+    countryName: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class BrokerType:
+    broker: Optional[BrokerClassType] = JStruct[BrokerClassType]
+    type: Optional[str] = None
+    brokerCommitTimestamp: Optional[str] = None
+    brokerCommitDayOfWeek: Optional[str] = None
+    brokerLocationId: Optional[str] = None
+    brokerAddress: Optional[BrokerAddressClassType] = JStruct[BrokerAddressClassType]
+    brokerToDestinationDays: Optional[int] = None
+
+
+@s(auto_attribs=True)
 class CommercialInvoiceType:
     shipmentPurpose: Optional[str] = None
 
@@ -30,7 +81,7 @@ class FixedValueType:
 @s(auto_attribs=True)
 class WeightType:
     units: Optional[str] = None
-    value: Optional[float] = None
+    value: Optional[int] = None
 
 
 @s(auto_attribs=True)
@@ -88,6 +139,7 @@ class DutiesPaymentType:
 
 @s(auto_attribs=True)
 class CustomsClearanceDetailType:
+    brokers: List[BrokerType] = JList[BrokerType]
     commercialInvoice: Optional[CommercialInvoiceType] = JStruct[CommercialInvoiceType]
     freightOnValue: Optional[str] = None
     dutiesPayment: Optional[DutiesPaymentType] = JStruct[DutiesPaymentType]
@@ -101,16 +153,10 @@ class PrintedReferenceType:
 
 
 @s(auto_attribs=True)
-class SMSDetailType:
-    phoneNumber: Optional[str] = None
-    phoneNumberCountryCode: Optional[str] = None
-
-
-@s(auto_attribs=True)
 class EmailNotificationDetailRecipientType:
     emailAddress: Optional[str] = None
     notificationEventType: List[str] = []
-    smsDetail: Optional[SMSDetailType] = JStruct[SMSDetailType]
+    smsDetail: Any = None
     notificationFormatType: Optional[str] = None
     emailNotificationRecipientType: Optional[str] = None
     notificationType: Optional[str] = None
@@ -145,9 +191,9 @@ class ContentRecordType:
 
 @s(auto_attribs=True)
 class DimensionsType:
-    length: Optional[float] = None
-    width: Optional[float] = None
-    height: Optional[float] = None
+    length: Optional[int] = None
+    width: Optional[int] = None
+    height: Optional[int] = None
     units: Optional[str] = None
 
 
@@ -174,52 +220,8 @@ class NumberType:
 
 
 @s(auto_attribs=True)
-class PackingDetailsType:
-    packingInstructions: Optional[str] = None
-    cargoAircraftOnly: Optional[bool] = None
-
-
-@s(auto_attribs=True)
-class DescriptionType:
-    sequenceNumber: Optional[int] = None
-    processingOptions: List[str] = []
-    subsidiaryClasses: Optional[str] = None
-    labelText: Optional[str] = None
-    technicalName: Optional[str] = None
-    packingDetails: Optional[PackingDetailsType] = JStruct[PackingDetailsType]
-    authorization: Optional[str] = None
-    reportableQuantity: Optional[bool] = None
-    percentage: Optional[int] = None
-    id: Optional[str] = None
-    packingGroup: Optional[str] = None
-    properShippingName: Optional[str] = None
-    hazardClass: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class QuantityType:
-    quantityType: Optional[str] = None
-    amount: Optional[float] = None
-    units: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class InnerReceptacleType:
-    quantity: Optional[QuantityType] = JStruct[QuantityType]
-
-
-@s(auto_attribs=True)
-class OptionsType:
-    labelTextOption: Optional[str] = None
-    customerSuppliedLabelText: Optional[str] = None
-
-
-@s(auto_attribs=True)
 class HazardousCommodityType:
-    quantity: Optional[QuantityType] = JStruct[QuantityType]
-    innerReceptacles: List[InnerReceptacleType] = JList[InnerReceptacleType]
-    options: Optional[OptionsType] = JStruct[OptionsType]
-    description: Optional[DescriptionType] = JStruct[DescriptionType]
+    innerReceptacles: List[Any] = []
 
 
 @s(auto_attribs=True)
@@ -304,34 +306,8 @@ class ServiceTypeDetailType:
 
 
 @s(auto_attribs=True)
-class RecipientAccountNumberType:
-    value: Optional[int] = None
-
-
-@s(auto_attribs=True)
-class PurpleAddressType:
-    streetLines: List[str] = []
-    countryCode: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class RecipientContactType:
-    companyName: Optional[str] = None
-    faxNumber: Optional[str] = None
-    personName: Optional[str] = None
-    phoneNumber: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class DeliveryOnInvoiceAcceptanceDetailRecipientType:
-    accountNumber: Optional[RecipientAccountNumberType] = JStruct[RecipientAccountNumberType]
-    address: Optional[PurpleAddressType] = JStruct[PurpleAddressType]
-    contact: Optional[RecipientContactType] = JStruct[RecipientContactType]
-
-
-@s(auto_attribs=True)
 class DeliveryOnInvoiceAcceptanceDetailType:
-    recipient: Optional[DeliveryOnInvoiceAcceptanceDetailRecipientType] = JStruct[DeliveryOnInvoiceAcceptanceDetailRecipientType]
+    recipient: Optional[BrokerClassType] = JStruct[BrokerClassType]
 
 
 @s(auto_attribs=True)

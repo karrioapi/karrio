@@ -13,7 +13,7 @@ def parse_shipment_cancel_response(
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = lib.failsafe(lambda: response["outpus"]["cancelledShipment"])
+    success = lib.failsafe(lambda: response["output"]["cancelledShipment"])
 
     confirmation = (
         models.ConfirmationDetails(
@@ -33,13 +33,13 @@ def shipment_cancel_request(
     payload: models.ShipmentCancelRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = fedex.ShippingCancelRequestType(
+    request = fedex.CancelRequestType(
         accountNumber=fedex.AccountNumberType(
             value=settings.account_number,
         ),
         emailShipment=None,
         senderCountryCode=None,
-        deletionControl=None,
+        deletionControl="DELETE_ALL_PACKAGES",
         trackingNumber=payload.shipment_identifier,
     )
 

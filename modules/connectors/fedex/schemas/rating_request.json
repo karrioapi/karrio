@@ -43,10 +43,7 @@
           "notificationEventType": [
             "ON_DELIVERY"
           ],
-          "smsDetail": {
-            "phoneNumber": "string",
-            "phoneNumberCountryCode": "string"
-          },
+          "smsDetail": null,
           "notificationFormatType": "HTML",
           "emailNotificationRecipientType": "BROKER",
           "notificationType": "EMAIL",
@@ -64,7 +61,7 @@
       "ACCOUNT",
       "LIST"
     ],
-    "shipDateStamp": "2015-03-25T09:30:00",
+    "shipDateStamp": "2019-09-05",
     "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
     "requestedPackageLineItems": [
       {
@@ -84,12 +81,12 @@
         },
         "weight": {
           "units": "LB",
-          "value": 22.0
+          "value": 22
         },
         "dimensions": {
-          "length": 10.0,
-          "width": 8.0,
-          "height": 2.0,
+          "length": 10,
+          "width": 8,
+          "height": 2,
           "units": "IN"
         },
         "variableHandlingChargeDetail": {
@@ -125,44 +122,7 @@
                 "offeror": "Offeror Name",
                 "hazardousCommodities": [
                   {
-                    "quantity": {
-                      "quantityType": "GROSS",
-                      "amount": 0.0,
-                      "units": "LB"
-                    },
-                    "innerReceptacles": [
-                      {
-                        "quantity": {
-                          "quantityType": "GROSS",
-                          "amount": 0.0,
-                          "units": "LB"
-                        }
-                      }
-                    ],
-                    "options": {
-                      "labelTextOption": "Override",
-                      "customerSuppliedLabelText": "LabelText"
-                    },
-                    "description": {
-                      "sequenceNumber": 0,
-                      "processingOptions": [
-                        "INCLUDE_SPECIAL_PROVISIONS"
-                      ],
-                      "subsidiaryClasses": "subsidiaryClass",
-                      "labelText": "labelText",
-                      "technicalName": "technicalName",
-                      "packingDetails": {
-                        "packingInstructions": "instruction",
-                        "cargoAircraftOnly": false
-                      },
-                      "authorization": "Authorization Information",
-                      "reportableQuantity": false,
-                      "percentage": 10,
-                      "id": "ID",
-                      "packingGroup": "DEFAULT",
-                      "properShippingName": "ShippingName",
-                      "hazardClass": "hazardClass"
-                    }
+                    "innerReceptacles": []
                   }
                 ],
                 "numberOfContainers": 10,
@@ -204,7 +164,7 @@
           ],
           "dryIceWeight": {
             "units": "LB",
-            "value": 10.0
+            "value": 10
           }
         }
       }
@@ -292,7 +252,7 @@
         "shipmentDryIceDetail": {
           "totalWeight": {
             "units": "LB",
-            "value": 10.0
+            "value": 10
           },
           "packageCount": 12
         }
@@ -362,7 +322,7 @@
       "shipmentDryIceDetail": {
         "totalWeight": {
           "units": "LB",
-          "value": 10.0
+          "value": 10
         },
         "packageCount": 12
       },
@@ -385,6 +345,37 @@
       ]
     },
     "customsClearanceDetail": {
+      "brokers": [
+        {
+          "broker": {
+            "accountNumber": {
+              "value": 123456789
+            },
+            "address": null,
+            "contact": null
+          },
+          "type": "EXPORT",
+          "brokerCommitTimestamp": "2019-07-22",
+          "brokerCommitDayOfWeek": "SUNDAY",
+          "brokerLocationId": "brokerLocationId",
+          "brokerAddress": {
+            "streetLines": [
+              "10 FedEx Parkway",
+              "Suite 302"
+            ],
+            "city": "Beverly Hills",
+            "stateOrProvinceCode": "CA",
+            "postalCode": "90210",
+            "countryCode": "US",
+            "residential": false,
+            "classification": "residential",
+            "geographicCoordinates": "geographicCoordinates",
+            "urbanizationCode": "code",
+            "countryName": "India"
+          },
+          "brokerToDestinationDays": 10
+        }
+      ],
       "commercialInvoice": {
         "shipmentPurpose": "GIFT"
       },
@@ -423,7 +414,7 @@
           "description": "DOCUMENTS",
           "weight": {
             "units": "LB",
-            "value": 22.0
+            "value": 22
           },
           "quantity": 1,
           "customsValue": {

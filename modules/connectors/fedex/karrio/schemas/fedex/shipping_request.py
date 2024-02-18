@@ -108,7 +108,7 @@ class UsmcaDetailType:
 @s(auto_attribs=True)
 class WeightType:
     units: Optional[str] = None
-    value: Optional[int] = None
+    value: Optional[float] = None
 
 
 @s(auto_attribs=True)
