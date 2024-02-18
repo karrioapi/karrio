@@ -32,7 +32,7 @@ There are two types of keys: a private key and a JSON Web Token.
 
 <img style={{ borderRadius: 5 }} src="/img/assets/api-key.png" width="90%" />
 
-- The JSON Web Token on the other hand are obtained by API request
+- The JWT (JSON Web Token) on the other hand are obtained by API request
 
 <div id="tabs">
 <Tabs>
@@ -71,3 +71,28 @@ Karrio returns an key pair object in response to your API request.
   "access": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjM2MTgyNTg1LCJpYXQiOjE2MzYxODE2ODUsImp0aSI6ImMyYWI5YTAzNTRkYTRlZTQ5ZjQ1ZDdlMmI4NWQ5ZGZkIiwidXNlcl9pZCI6MX0.X-MA-9Vi_zWJfvMWSaL8dNj7XOy8kPNz16gvbciLCIM"
 }
 ```
+
+## Karrio environment
+
+The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. 
+In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in test_mode.
+
+
+:::note [Request environments]
+
+Requests authenticate using **API Key** are already bound to the environment in which they were created.
+
+If you use the **JWT** to authenticate, you can specify the environment in which you want to make the request
+using the `x-text-mode` header.
+
+```javascript
+{
+  ...
+  headers: {
+    "x-test-mode": true  // or false for live mode
+  }
+  ...
+}
+```
+
+:::
