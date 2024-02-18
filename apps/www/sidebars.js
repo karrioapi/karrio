@@ -64,7 +64,7 @@ const sidebars = {
   reference: [
     {
       type: 'link',
-      label: 'API Reference',
+      label: 'OpenAPI',
       href: '/reference/openapi',
     },
     {
