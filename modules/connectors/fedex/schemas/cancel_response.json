@@ -1,0 +1,16 @@
+{
+  "transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+  "customerTransactionId": "AnyCo_order123456789",
+  "output": {
+    "cancelledShipment": true,
+    "cancelledHistory": true,
+    "successMessage": "Success",
+    "alerts": [
+      {
+        "code": "SHIP.RECIPIENT.POSTALCITY.MISMATCH",
+        "alertType": "NOTE",
+        "message": "Recipient Postal-City Mismatch."
+      }
+    ]
+  }
+}

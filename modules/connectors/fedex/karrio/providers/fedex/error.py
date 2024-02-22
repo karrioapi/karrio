@@ -1,0 +1,55 @@
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+from karrio.providers.fedex.utils import Settings
+
+
+def parse_error_response(
+    response: typing.Union[typing.List[dict], dict],
+    settings: Settings,
+    **details,
+) -> typing.List[models.Message]:
+    responses = response if isinstance(response, list) else [response]
+    errors: typing.List[dict] = sum(
+        [
+            [
+                *(result["errors"] if "errors" in result else []),
+                *(
+                    result["output"]["alerts"]
+                    if "alerts" in result.get("output", {})
+                    and not isinstance(result["output"]["alerts"], str)
+                    else []
+                ),
+                *(
+                    [
+                        {
+                            **result["error"],
+                            "tracking_number": result.get("trackingNumberInfo", {}).get(
+                                "trackingNumber"
+                            ),
+                        }
+                    ]
+                    if "error" in result
+                    else []
+                ),
+            ]
+            for result in responses
+        ],
+        [],
+    )
+
+    return [
+        models.Message(
+            carrier_name=settings.carrier_name,
+            carrier_id=settings.carrier_id,
+            code=error.get("code"),
+            message=error.get("message"),
+            details=lib.to_dict(
+                {
+                    **details,
+                    "tracking_number": error.get("tracking_number"),
+                }
+            ),
+        )
+        for error in errors
+    ]
