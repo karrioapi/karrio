@@ -1081,7 +1081,10 @@ def create_carrier_settings_type(name: str, model):
                 "__annotations__": {
                     k: (
                         typing.Optional[v]
-                        if serializers.is_field_optional(model, k)
+                        if (
+                            k not in ConnectionType.__annotations__
+                            or serializers.is_field_optional(model, k)
+                        )
                         else v
                     )
                     for k, v in annotations.items()

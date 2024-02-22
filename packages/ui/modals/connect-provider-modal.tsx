@@ -350,6 +350,14 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("client_secret").required}
                 />}
 
+                {field("secret_key").exists && <InputField label="Secret Key" value={payload.secret_key}
+                  type="text"
+                  name="secret_key"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("secret_key").required}
+                />}
+
                 {field("customer_number").exists && <InputField label="Customer Number" value={payload.customer_number}
                   name="customer_number"
                   onChange={handleChange}
