@@ -41,7 +41,7 @@ class APITestCase(BaseAPITestCase):
             account_number="000000",
             created_by=self.user,
         )
-        self.fedex_carrier = MODELS["fedex"].objects.create(
+        self.fedex_carrier = MODELS["fedex_ws"].objects.create(
             carrier_id="fedex_express",
             test_mode=True,
             user_key="test",
