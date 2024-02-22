@@ -730,6 +730,21 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
       metadata
       capabilities
       account_number
+      api_key
+      secret_key
+      account_country_code
+      config
+    }
+    ... on FedexWSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      account_number
       password
       meter_number
       user_key
@@ -1414,6 +1429,21 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       config
     }
     ... on FedexSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      account_number
+      api_key
+      secret_key
+      account_country_code
+      config
+    }
+    ... on FedexWSSettingsType {
       id
       carrier_id
       carrier_name

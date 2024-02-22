@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.2.rc5`.
+    The current version is `2024.2.rc6`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.2.rc5
+  version: 2024.2.rc6
 paths:
   /:
     get:
@@ -680,9 +680,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
-          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
-          `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
+          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
+          `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -729,9 +729,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
-          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
-          `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
+          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
+          `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1818,6 +1818,7 @@ paths:
           - easypost
           - eshipper
           - fedex
+          - fedex_ws
           - freightcom
           - generic
           - geodis
@@ -1905,6 +1906,7 @@ paths:
           - easypost
           - eshipper
           - fedex
+          - fedex_ws
           - freightcom
           - generic
           - geodis
@@ -1992,6 +1994,7 @@ paths:
           - easypost
           - eshipper
           - fedex
+          - fedex_ws
           - freightcom
           - generic
           - geodis
@@ -2170,6 +2173,7 @@ paths:
           - easypost
           - eshipper
           - fedex
+          - fedex_ws
           - freightcom
           - generic
           - geodis
@@ -2299,6 +2303,7 @@ paths:
           - dpd
           - dpdhl
           - fedex
+          - fedex_ws
           - generic
           - geodis
           - laposte
@@ -2431,9 +2436,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
-          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
-          `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
+          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
+          `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2839,9 +2844,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `freightcom`, `generic`, `geodis`, `laposte`,
-          `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`, `tnt`,
-          `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
+          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
+          `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2983,6 +2988,7 @@ paths:
           - dpd
           - dpdhl
           - fedex
+          - fedex_ws
           - generic
           - geodis
           - laposte
@@ -4763,6 +4769,7 @@ components:
           - easypost
           - eshipper
           - fedex
+          - fedex_ws
           - freightcom
           - generic
           - geodis
@@ -4779,7 +4786,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: be48b0138e0e7bed
+          x-spec-enum-id: dc69b92121ccff3a
           description: |-
             Indicates a carrier (type)
 
@@ -4805,6 +4812,7 @@ components:
             * `easypost` - easypost
             * `eshipper` - eshipper
             * `fedex` - fedex
+            * `fedex_ws` - fedex_ws
             * `freightcom` - freightcom
             * `generic` - generic
             * `geodis` - geodis
@@ -11330,6 +11338,7 @@ components:
           - dpd
           - dpdhl
           - fedex
+          - fedex_ws
           - generic
           - geodis
           - laposte
@@ -11345,7 +11354,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 8da975469a034792
+          x-spec-enum-id: f3a4cc88fccf77a5
           description: |-
             The tracking carrier
 
@@ -11369,6 +11378,7 @@ components:
             * `dpd` - dpd
             * `dpdhl` - dpdhl
             * `fedex` - fedex
+            * `fedex_ws` - fedex_ws
             * `generic` - generic
             * `geodis` - geodis
             * `laposte` - laposte
@@ -11930,7 +11940,6 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    | australiapost | Australia Post |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
@@ -11945,7 +11954,6 @@ tags:
     | laposte | La Poste |
     | geodis | GEODIS |
     | freightcom | Freightcom |
-    | fedex | FedEx |
     | eshipper | eShipper |
     | easypost | EasyPost |
     | dpdhl | Deutsche Post DHL |
@@ -11961,11 +11969,14 @@ tags:
     | canadapost | Canada Post |
     | bpost | Belgian Post |
     | boxknight | BoxKnight |
+    | australiapost | Australia Post |
     | asendia_us | Asendia US |
     | aramex | Aramex |
     | amazon_shipping | AmazonShipping |
     | allied_express_local | Allied Express Local |
     | allied_express | Allied Express |
+    | fedex | FedEx |
+    | fedex_ws | FedEx Web Service |
 
     ---
     ## Services
@@ -11973,14 +11984,6 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
-    ### Australia Post
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | australiapost_parcel_post | T28 |
-    | australiapost_express_post | E34 |
-    | australiapost_parcel_post_signature | T28S |
-    | australiapost_express_post_signature | E34S |
-
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12261,66 +12264,6 @@ tags:
     | freightcom_canadapost_expedited_parcel | 6300 |
     | freightcom_canadapost_xpresspost | 6303 |
     | freightcom_canadapost_priority | 6302 |
-
-    ### FedEx
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | fedex_europe_first_international_priority | EUROPE_FIRST_INTERNATIONAL_PRIORITY |
-    | fedex_1_day_freight | FEDEX_1_DAY_FREIGHT |
-    | fedex_2_day | FEDEX_2_DAY |
-    | fedex_2_day_am | FEDEX_2_DAY_AM |
-    | fedex_2_day_freight | FEDEX_2_DAY_FREIGHT |
-    | fedex_3_day_freight | FEDEX_3_DAY_FREIGHT |
-    | fedex_cargo_airport_to_airport | FEDEX_CARGO_AIRPORT_TO_AIRPORT |
-    | fedex_cargo_freight_forwarding | FEDEX_CARGO_FREIGHT_FORWARDING |
-    | fedex_cargo_international_express_freight | FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT |
-    | fedex_cargo_international_premium | FEDEX_CARGO_INTERNATIONAL_PREMIUM |
-    | fedex_cargo_mail | FEDEX_CARGO_MAIL |
-    | fedex_cargo_registered_mail | FEDEX_CARGO_REGISTERED_MAIL |
-    | fedex_cargo_surface_mail | FEDEX_CARGO_SURFACE_MAIL |
-    | fedex_custom_critical_air_expedite | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE |
-    | fedex_custom_critical_air_expedite_exclusive_use | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE |
-    | fedex_custom_critical_air_expedite_network | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK |
-    | fedex_custom_critical_charter_air | FEDEX_CUSTOM_CRITICAL_CHARTER_AIR |
-    | fedex_custom_critical_point_to_point | FEDEX_CUSTOM_CRITICAL_POINT_TO_POINT |
-    | fedex_custom_critical_surface_expedite | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE |
-    | fedex_custom_critical_surface_expedite_exclusive_use | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE |
-    | fedex_custom_critical_temp_assure_air | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_AIR |
-    | fedex_custom_critical_temp_assure_validated_air | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR |
-    | fedex_custom_critical_white_glove_services | FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES |
-    | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
-    | fedex_express_saver | FEDEX_EXPRESS_SAVER |
-    | fedex_first_freight | FEDEX_FIRST_FREIGHT |
-    | fedex_freight_economy | FEDEX_FREIGHT_ECONOMY |
-    | fedex_freight_priority | FEDEX_FREIGHT_PRIORITY |
-    | fedex_ground | FEDEX_GROUND |
-    | fedex_international_priority_plus | FEDEX_INTERNATIONAL_PRIORITY_PLUS |
-    | fedex_next_day_afternoon | FEDEX_NEXT_DAY_AFTERNOON |
-    | fedex_next_day_early_morning | FEDEX_NEXT_DAY_EARLY_MORNING |
-    | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
-    | fedex_next_day_freight | FEDEX_NEXT_DAY_FREIGHT |
-    | fedex_next_day_mid_morning | FEDEX_NEXT_DAY_MID_MORNING |
-    | fedex_first_overnight | FIRST_OVERNIGHT |
-    | fedex_ground_home_delivery | GROUND_HOME_DELIVERY |
-    | fedex_international_distribution_freight | INTERNATIONAL_DISTRIBUTION_FREIGHT |
-    | fedex_international_economy | INTERNATIONAL_ECONOMY |
-    | fedex_international_economy_distribution | INTERNATIONAL_ECONOMY_DISTRIBUTION |
-    | fedex_international_economy_freight | INTERNATIONAL_ECONOMY_FREIGHT |
-    | fedex_international_first | INTERNATIONAL_FIRST |
-    | fedex_international_ground | INTERNATIONAL_GROUND |
-    | fedex_international_priority | INTERNATIONAL_PRIORITY |
-    | fedex_international_priority_distribution | INTERNATIONAL_PRIORITY_DISTRIBUTION |
-    | fedex_international_priority_express | INTERNATIONAL_PRIORITY_EXPRESS |
-    | fedex_international_priority_freight | INTERNATIONAL_PRIORITY_FREIGHT |
-    | fedex_priority_overnight | PRIORITY_OVERNIGHT |
-    | fedex_same_day | SAME_DAY |
-    | fedex_same_day_city | SAME_DAY_CITY |
-    | fedex_same_day_metro_afternoon | SAME_DAY_METRO_AFTERNOON |
-    | fedex_same_day_metro_morning | SAME_DAY_METRO_MORNING |
-    | fedex_same_day_metro_rush | SAME_DAY_METRO_RUSH |
-    | fedex_smart_post | SMART_POST |
-    | fedex_standard_overnight | STANDARD_OVERNIGHT |
-    | fedex_transborder_distribution_consolidation | TRANSBORDER_DISTRIBUTION_CONSOLIDATION |
 
     ### eShipper
     | Code         | Service Name |
@@ -13200,6 +13143,14 @@ tags:
     | boxknight_nextday | NEXTDAY |
     | boxknight_scheduled | SCHEDULED |
 
+    ### Australia Post
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | australiapost_parcel_post | T28 |
+    | australiapost_express_post | E34 |
+    | australiapost_parcel_post_signature | T28S |
+    | australiapost_express_post_signature | E34S |
+
     ### Asendia US
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13229,6 +13180,66 @@ tags:
     | allied_parcel_service | P |
     | allied_standard_pallet_service | PT |
     | allied_oversized_pallet_service | PT2 |
+
+    ### FedEx Web Service
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | fedex_europe_first_international_priority | EUROPE_FIRST_INTERNATIONAL_PRIORITY |
+    | fedex_1_day_freight | FEDEX_1_DAY_FREIGHT |
+    | fedex_2_day | FEDEX_2_DAY |
+    | fedex_2_day_am | FEDEX_2_DAY_AM |
+    | fedex_2_day_freight | FEDEX_2_DAY_FREIGHT |
+    | fedex_3_day_freight | FEDEX_3_DAY_FREIGHT |
+    | fedex_cargo_airport_to_airport | FEDEX_CARGO_AIRPORT_TO_AIRPORT |
+    | fedex_cargo_freight_forwarding | FEDEX_CARGO_FREIGHT_FORWARDING |
+    | fedex_cargo_international_express_freight | FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT |
+    | fedex_cargo_international_premium | FEDEX_CARGO_INTERNATIONAL_PREMIUM |
+    | fedex_cargo_mail | FEDEX_CARGO_MAIL |
+    | fedex_cargo_registered_mail | FEDEX_CARGO_REGISTERED_MAIL |
+    | fedex_cargo_surface_mail | FEDEX_CARGO_SURFACE_MAIL |
+    | fedex_custom_critical_air_expedite | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE |
+    | fedex_custom_critical_air_expedite_exclusive_use | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE |
+    | fedex_custom_critical_air_expedite_network | FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK |
+    | fedex_custom_critical_charter_air | FEDEX_CUSTOM_CRITICAL_CHARTER_AIR |
+    | fedex_custom_critical_point_to_point | FEDEX_CUSTOM_CRITICAL_POINT_TO_POINT |
+    | fedex_custom_critical_surface_expedite | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE |
+    | fedex_custom_critical_surface_expedite_exclusive_use | FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE |
+    | fedex_custom_critical_temp_assure_air | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_AIR |
+    | fedex_custom_critical_temp_assure_validated_air | FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR |
+    | fedex_custom_critical_white_glove_services | FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES |
+    | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
+    | fedex_express_saver | FEDEX_EXPRESS_SAVER |
+    | fedex_first_freight | FEDEX_FIRST_FREIGHT |
+    | fedex_freight_economy | FEDEX_FREIGHT_ECONOMY |
+    | fedex_freight_priority | FEDEX_FREIGHT_PRIORITY |
+    | fedex_ground | FEDEX_GROUND |
+    | fedex_international_priority_plus | FEDEX_INTERNATIONAL_PRIORITY_PLUS |
+    | fedex_next_day_afternoon | FEDEX_NEXT_DAY_AFTERNOON |
+    | fedex_next_day_early_morning | FEDEX_NEXT_DAY_EARLY_MORNING |
+    | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
+    | fedex_next_day_freight | FEDEX_NEXT_DAY_FREIGHT |
+    | fedex_next_day_mid_morning | FEDEX_NEXT_DAY_MID_MORNING |
+    | fedex_first_overnight | FIRST_OVERNIGHT |
+    | fedex_ground_home_delivery | GROUND_HOME_DELIVERY |
+    | fedex_international_distribution_freight | INTERNATIONAL_DISTRIBUTION_FREIGHT |
+    | fedex_international_economy | INTERNATIONAL_ECONOMY |
+    | fedex_international_economy_distribution | INTERNATIONAL_ECONOMY_DISTRIBUTION |
+    | fedex_international_economy_freight | INTERNATIONAL_ECONOMY_FREIGHT |
+    | fedex_international_first | INTERNATIONAL_FIRST |
+    | fedex_international_ground | INTERNATIONAL_GROUND |
+    | fedex_international_priority | INTERNATIONAL_PRIORITY |
+    | fedex_international_priority_distribution | INTERNATIONAL_PRIORITY_DISTRIBUTION |
+    | fedex_international_priority_express | INTERNATIONAL_PRIORITY_EXPRESS |
+    | fedex_international_priority_freight | INTERNATIONAL_PRIORITY_FREIGHT |
+    | fedex_priority_overnight | PRIORITY_OVERNIGHT |
+    | fedex_same_day | SAME_DAY |
+    | fedex_same_day_city | SAME_DAY_CITY |
+    | fedex_same_day_metro_afternoon | SAME_DAY_METRO_AFTERNOON |
+    | fedex_same_day_metro_morning | SAME_DAY_METRO_MORNING |
+    | fedex_same_day_metro_rush | SAME_DAY_METRO_RUSH |
+    | fedex_smart_post | SMART_POST |
+    | fedex_standard_overnight | STANDARD_OVERNIGHT |
+    | fedex_transborder_distribution_consolidation | TRANSBORDER_DISTRIBUTION_CONSOLIDATION |
 
 
     ---
@@ -13264,21 +13275,6 @@ tags:
     | purolator_express_pack | 12.5 x 16 x 1.0 in |
     | purolator_express_box | 18 x 12 x 3.5 in |
 
-    ### FedEx
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | fedex_envelope_legal_size | 9.5 x 15.5 x 1 in |
-    | fedex_padded_pak | 11.75 x 14.75 x 1 in |
-    | fedex_polyethylene_pak | 12.0 x 15.5 x 1 in |
-    | fedex_clinical_pak | 13.5 x 18.0 x 1 in |
-    | fedex_small_box | 12.25 x 10.9 x 1.5 in |
-    | fedex_medium_box | 13.25 x 11.5 x 2.38 in |
-    | fedex_large_box | 17.88 x 12.38 x 3.0 in |
-    | fedex_extra_large_box | 11.88 x 11.0 x 10.75 in |
-    | fedex_10_kg_box | 15.81 x 12.94 x 10.19 in |
-    | fedex_25_kg_box | 21.56 x 16.56 x 13.19 in |
-    | fedex_tube | 38.0 x 6.0 x 6.0 in |
-
     ### DHL Express
     | Code         | Dimensions   |
     | ------------ | ------------ |
@@ -13311,5 +13307,20 @@ tags:
     | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
     | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
     | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
+
+    ### FedEx Web Service
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | fedex_envelope_legal_size | 9.5 x 15.5 x 1 in |
+    | fedex_padded_pak | 11.75 x 14.75 x 1 in |
+    | fedex_polyethylene_pak | 12.0 x 15.5 x 1 in |
+    | fedex_clinical_pak | 13.5 x 18.0 x 1 in |
+    | fedex_small_box | 12.25 x 10.9 x 1.5 in |
+    | fedex_medium_box | 13.25 x 11.5 x 2.38 in |
+    | fedex_large_box | 17.88 x 12.38 x 3.0 in |
+    | fedex_extra_large_box | 11.88 x 11.0 x 10.75 in |
+    | fedex_10_kg_box | 15.81 x 12.94 x 10.19 in |
+    | fedex_25_kg_box | 21.56 x 16.56 x 13.19 in |
+    | fedex_tube | 38.0 x 6.0 x 6.0 in |
 
 ...
