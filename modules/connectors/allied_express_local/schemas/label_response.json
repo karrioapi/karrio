@@ -1,5 +1,5 @@
 {
-    "Tracking": "AET1021116",
+    "Tracking": "AET1520983",
     "price_detail": {
         "price": {
             "chargeQuantity": "0",
@@ -8,21 +8,22 @@
                 "@xsi:nil": "1"
             },
             "discountRate": "0.0",
-            "grossPrice": "0.0",
+            "grossPrice": "14.21",
             "jobCode": {
                 "@xsi:nil": "1"
             },
-            "netPrice": "0.0",
+            "netPrice": "14.21",
             "rateCode": {
                 "@xsi:nil": "1"
             },
-            "reason": "No Hire time found"
+            "reason": null
         }
     },
+    "result": "CnN0YXJ0eHJlZgoxNDUwMQolJUVPRgo=",
     "soapenv:Body": {
         "ns1:getLabelResponse": {
             "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
-            "result": "CnN0YXJ0eHJlZgoxNDUwMQolJUVPRgo="
+            "result": null
         }
     }
 }

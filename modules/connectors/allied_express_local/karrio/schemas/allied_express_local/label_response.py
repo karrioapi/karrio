@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional
+from typing import Optional, Any
 from jstruct import JStruct
 
 
@@ -18,7 +18,7 @@ class PriceType:
     jobCode: Optional[DiscountClassType] = JStruct[DiscountClassType]
     netPrice: Optional[str] = None
     rateCode: Optional[DiscountClassType] = JStruct[DiscountClassType]
-    reason: Optional[str] = None
+    reason: Any = None
 
 
 @s(auto_attribs=True)
@@ -29,7 +29,7 @@ class PriceDetailType:
 @s(auto_attribs=True)
 class Ns1GetLabelResponseType:
     xmlnsns1: Optional[str] = None
-    result: Optional[str] = None
+    result: Any = None
 
 
 @s(auto_attribs=True)
@@ -41,4 +41,5 @@ class SoapenvBodyType:
 class LabelResponseType:
     Tracking: Optional[str] = None
     pricedetail: Optional[PriceDetailType] = JStruct[PriceDetailType]
+    result: Optional[str] = None
     soapenvBody: Optional[SoapenvBodyType] = JStruct[SoapenvBodyType]

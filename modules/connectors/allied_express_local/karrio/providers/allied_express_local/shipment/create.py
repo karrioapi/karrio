@@ -19,7 +19,7 @@ def parse_shipment_response(
     messages = error.parse_error_response(response, settings)
     shipment = (
         _extract_details(response, settings, ctx=_response.ctx)
-        if not response.is_error and "result" in (response.data or {})
+        if not response.is_error and "result" in (response.response or {})
         else None
     )
 
@@ -34,7 +34,7 @@ def _extract_details(
     shipment: shipping.LabelResponseType = lib.to_object(
         shipping.LabelResponseType, data.response
     )
-    label = shipment.soapenvBody.ns1getLabelResponse.result
+    label = shipment.result or shipment.soapenvBody.ns1getLabelResponse.result
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
