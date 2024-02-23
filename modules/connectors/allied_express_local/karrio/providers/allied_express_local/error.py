@@ -17,8 +17,14 @@ def parse_error_response(
         errors.append(
             [
                 "400",
-                response.data["result"].get("statusError")
-                or response.data["result"].get("errors"),
+                (
+                    (
+                        response.data["result"].get("statusError")
+                        or response.data["result"].get("errors")
+                    )
+                    if isinstance(response.data["result"], dict)
+                    else response.data["result"]
+                ),
             ]
         )
 
