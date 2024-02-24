@@ -30,8 +30,7 @@ def _extract_details(
     ctx: dict = {},
 ) -> models.RateDetails:
     # fmt: off
-    # rate = lib.to_object(rating.RateReplyDetailType, data)
-    rate = rating.RateReplyDetailType(**data)
+    rate = lib.to_object(rating.RateReplyDetailType, data)
     service = provider_units.ShippingService.map(rate.serviceType)
     details: rating.RatedShipmentDetailType = (
         next((_ for _ in rate.ratedShipmentDetails if _.rateType == "PREFERRED_CURRENCY"), None) or
@@ -105,9 +104,26 @@ def rate_request(
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
-    compute_options = lambda _options: [
-        option for _, option in _options.items() if _options.state is not False
+    package_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False and option.code in provider_units.PACKAGE_OPTIONS
     ]
+    rate_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False and option.code in provider_units.RATING_OPTIONS
+    ]
+    shipment_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False
+        and option.code in provider_units.SHIPMENT_OPTIONS
+    ]
+    hub_id = (
+        lib.text(settings.connection_config.smart_post_hub_id.state)
+        or options.fedex_smart_post_hub_id.state
+    )
 
     request = fedex.RatingRequestType(
         accountNumber=fedex.RatingRequestAccountNumberType(
@@ -117,9 +133,9 @@ def rate_request(
             returnTransitTimes=True,
             servicesNeededOnRateFailure=True,
             variableOptions=(
-                [option.code for option in compute_options(options)]
-                if any(compute_options(options))
-                else None
+                [option.code for option in rate_options(options)]
+                if any(rate_options(options))
+                else []
             ),
             rateSortOrder="COMMITASCENDING",
         ),
@@ -146,7 +162,7 @@ def rate_request(
             ),
             serviceType=getattr(service, "value", None),
             emailNotificationDetail=None,
-            preferredCurrency=options.currency,
+            preferredCurrency=options.currency.state,
             rateRequestType=request_types,
             shipDateStamp=lib.fdate(shipment_date, "%Y-%m-%d"),
             pickupType="DROPOFF_AT_FEDEX_LOCATION",
@@ -155,7 +171,7 @@ def rate_request(
                     subPackagingType=package.packaging_type,
                     groupPackageCount=1,
                     contentRecord=[],
-                    declaredValue=package.options.declared_value,
+                    declaredValue=package.options.declared_value.state,
                     weight=fedex.WeightType(
                         units=package.weight.unit,
                         value=package.weight.value,
@@ -188,7 +204,7 @@ def rate_request(
                         fedex.PackageSpecialServicesType(
                             specialServiceTypes=[
                                 option.code
-                                for option in compute_options(package.options)
+                                for option in package_options(package.options)
                             ],
                             signatureOptionType=None,
                             alcoholDetail=None,
@@ -198,7 +214,7 @@ def rate_request(
                             batteryDetails=None,
                             dryIceWeight=None,
                         )
-                        if any(compute_options(package.options))
+                        if any(package_options(package.options))
                         else None
                     ),
                 )
@@ -222,18 +238,27 @@ def rate_request(
                     internationalControlledExportDetail=None,
                     homeDeliveryPremiumDetail=None,
                     specialServiceTypes=(
-                        [option.code for option in compute_options(packages.options)]
-                        if any(compute_options(packages.options))
-                        else None
+                        [option.code for option in shipment_options(packages.options)]
+                        if any(shipment_options(packages.options))
+                        else []
                     ),
                 )
-                if any(options.items())
+                if any(shipment_options(packages.options))
                 else None
             ),
             customsClearanceDetail=None,
             groupShipment=None,
             serviceTypeDetail=None,
-            smartPostInfoDetail=None,
+            smartPostInfoDetail=(
+                fedex.SmartPostInfoDetailType(
+                    ancillaryEndorsement=None,
+                    hubId=hub_id,
+                    indicia=options.fedex_smart_post_allowed_indicia.state,
+                    specialServices=None,
+                )
+                if hub_id is not None
+                else None
+            ),
             expressFreightDetail=None,
             groundShipment=None,
         ),

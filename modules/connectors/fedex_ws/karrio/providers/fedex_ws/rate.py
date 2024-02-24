@@ -1,22 +1,4 @@
-from karrio.schemas.fedex_ws.rate_service_v28 import (
-    RateRequest as FedexRateRequest,
-    RateReplyDetail,
-    TransactionDetail,
-    VersionId,
-    RequestedShipment,
-    TaxpayerIdentification,
-    Party,
-    Contact,
-    Address,
-    Money,
-    Weight as FedexWeight,
-    ShipmentRateDetail,
-    RequestedPackageLineItem,
-    Dimensions,
-    CustomerReference,
-    CustomerReferenceType,
-)
-
+import karrio.schemas.fedex_ws.rate_service_v28 as fedex
 import typing
 import datetime
 import karrio.lib as lib
@@ -44,24 +26,24 @@ def _extract_details(
     settings: provider_utils.Settings,
     ctx: dict,
 ) -> typing.Optional[models.RateDetails]:
-    rate: RateReplyDetail = lib.to_object(RateReplyDetail, detail_node)
+    rate: fedex.RateReplyDetail = lib.to_object(fedex.RateReplyDetail, detail_node)
     service = provider_units.ServiceType.map(rate.ServiceType)
     rate_type = rate.ActualRateType
     applied_options = rate.AppliedOptions
 
     shipment_rate, shipment_discount = typing.cast(
-        typing.Tuple[ShipmentRateDetail, Money],
+        typing.Tuple[fedex.ShipmentRateDetail, fedex.Money],
         next(
             (
                 (r.ShipmentRateDetail, r.EffectiveNetDiscount)
                 for r in rate.RatedShipmentDetails
-                if typing.cast(ShipmentRateDetail, r.ShipmentRateDetail).RateType
+                if typing.cast(fedex.ShipmentRateDetail, r.ShipmentRateDetail).RateType
                 == rate_type
             ),
             (None, None),
         ),
     )
-    currency = typing.cast(Money, shipment_rate.TotalBaseCharge).Currency
+    currency = typing.cast(fedex.Money, shipment_rate.TotalBaseCharge).Currency
     charges = [
         ("Base charge", shipment_rate.TotalBaseCharge.Amount),
         ("Discount", getattr(shipment_discount, "Amount", None)),
@@ -113,35 +95,56 @@ def rate_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    service = units.Services(payload.services, provider_units.ServiceType).first
+    options = lib.to_shipping_options(
+        payload.options,
+        initializer=provider_units.shipping_options_initializer,
+    )
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
         required=["weight"],
-    )
-    service = units.Services(payload.services, provider_units.ServiceType).first
-    options = lib.to_shipping_options(
-        payload.options,
-        package_options=packages.options,
-        option_type=provider_units.RatingOption,
-        initializer=provider_units.shipping_options_initializer,
+        options=payload.options,
+        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
+    package_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False and option.code in provider_units.PACKAGE_OPTIONS
+    ]
+    rate_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False and option.code in provider_units.RATING_OPTIONS
+    ]
+    shipment_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False
+        and option.code in provider_units.SHIPMENT_OPTIONS
+    ]
+    hub_id = (
+        lib.text(settings.connection_config.smart_post_hub_id.state)
+        or options.fedex_smart_post_hub_id.state
+    )
 
-    request = FedexRateRequest(
+    request = fedex.RateRequest(
         WebAuthenticationDetail=settings.webAuthenticationDetail,
         ClientDetail=settings.clientDetail,
-        TransactionDetail=TransactionDetail(CustomerTransactionId="FTC"),
-        Version=VersionId(ServiceId="crs", Major=28, Intermediate=0, Minor=0),
+        TransactionDetail=fedex.TransactionDetail(CustomerTransactionId="FTC"),
+        Version=fedex.VersionId(ServiceId="crs", Major=28, Intermediate=0, Minor=0),
         ReturnTransitAndCommit=True,
         CarrierCodes=None,
         VariableOptions=(
-            [option.code for _, option in options.items()]
-            if any(options.items())
-            else None
+            [option.code for option in rate_options(packages.options)]
+            if any(rate_options(packages.options))
+            else []
         ),
         ConsolidationKey=None,
-        RequestedShipment=RequestedShipment(
+        RequestedShipment=fedex.RequestedShipment(
             ShipTimestamp=shipment_date,
             DropoffType="REGULAR_PICKUP",
             ServiceType=(service.value if service is not None else None),
@@ -149,22 +152,22 @@ def rate_request(
                 packages.package_type or "your_packaging"
             ).value,
             VariationOptions=None,
-            TotalWeight=FedexWeight(
+            TotalWeight=fedex.Weight(
                 Units=packages.weight.unit,
                 Value=packages.weight.LB,
             ),
             TotalInsuredValue=None,
             PreferredCurrency=options.currency.state,
             ShipmentAuthorizationDetail=None,
-            Shipper=Party(
+            Shipper=fedex.Party(
                 AccountNumber=settings.account_number,
                 Tins=(
-                    [TaxpayerIdentification(Number=tax) for tax in shipper.taxes]
+                    [fedex.TaxpayerIdentification(Number=tax) for tax in shipper.taxes]
                     if shipper.has_tax_info
                     else None
                 ),
                 Contact=(
-                    Contact(
+                    fedex.Contact(
                         ContactId=None,
                         PersonName=shipper.person_name,
                         Title=None,
@@ -179,7 +182,7 @@ def rate_request(
                     if shipper.has_contact_info
                     else None
                 ),
-                Address=Address(
+                Address=fedex.Address(
                     StreetLines=shipper.address_lines,
                     City=shipper.city,
                     StateOrProvinceCode=shipper.state_code,
@@ -191,15 +194,18 @@ def rate_request(
                     GeographicCoordinates=None,
                 ),
             ),
-            Recipient=Party(
+            Recipient=fedex.Party(
                 AccountNumber=None,
                 Tins=(
-                    [TaxpayerIdentification(Number=tax) for tax in recipient.taxes]
+                    [
+                        fedex.TaxpayerIdentification(Number=tax)
+                        for tax in recipient.taxes
+                    ]
                     if recipient.has_tax_info
                     else None
                 ),
                 Contact=(
-                    Contact(
+                    fedex.Contact(
                         ContactId=None,
                         PersonName=recipient.person_name,
                         Title=None,
@@ -214,7 +220,7 @@ def rate_request(
                     if recipient.has_contact_info
                     else None
                 ),
-                Address=Address(
+                Address=fedex.Address(
                     StreetLines=recipient.address_lines,
                     City=recipient.city,
                     StateOrProvinceCode=recipient.state_code,
@@ -230,14 +236,47 @@ def rate_request(
             Origin=None,
             SoldTo=None,
             ShippingChargesPayment=None,
-            SpecialServicesRequested=None,
+            SpecialServicesRequested=(
+                fedex.ShipmentSpecialServicesRequested(
+                    SpecialServiceTypes=(
+                        [option.code for option in shipment_options(packages.options)]
+                        if any(shipment_options(packages.options))
+                        else []
+                    ),
+                    CodDetail=None,
+                    DeliveryOnInvoiceAcceptanceDetail=None,
+                    HoldAtLocationDetail=None,
+                    EventNotificationDetail=None,
+                    ReturnShipmentDetail=None,
+                    PendingShipmentDetail=None,
+                    InternationalControlledExportDetail=None,
+                    InternationalTrafficInArmsRegulationsDetail=None,
+                    ShipmentDryIceDetail=None,
+                    HomeDeliveryPremiumDetail=None,
+                    FlatbedTrailerDetail=None,
+                    FreightGuaranteeDetail=None,
+                )
+                if any(shipment_options(packages.options))
+                else None
+            ),
             ExpressFreightDetail=None,
             FreightShipmentDetail=None,
             DeliveryInstructions=None,
             VariableHandlingChargeDetail=None,
             CustomsClearanceDetail=None,
             PickupDetail=None,
-            SmartPostDetail=None,
+            SmartPostDetail=(
+                fedex.SmartPostShipmentDetail(
+                    ProcessingOptionsRequested=None,
+                    Indicia=None,
+                    AncillaryEndorsement=None,
+                    SpecialServices=None,
+                    HubId=hub_id,
+                    CustomerManifestId=None,
+                )
+                if hub_id
+                else None
+            ),
             BlockInsightVisibility=None,
             LabelSpecification=None,
             ShippingDocumentSpecification=None,
@@ -247,14 +286,14 @@ def rate_request(
             ShipmentOnlyFields=None,
             ConfigurationData=None,
             RequestedPackageLineItems=[
-                RequestedPackageLineItem(
+                fedex.RequestedPackageLineItem(
                     SequenceNumber=index,
                     GroupNumber=None,
                     GroupPackageCount=1,
                     VariableHandlingChargeDetail=None,
                     InsuredValue=None,
                     Weight=(
-                        FedexWeight(
+                        fedex.Weight(
                             Units=package.weight.unit,
                             Value=package.weight.value,
                         )
@@ -262,7 +301,7 @@ def rate_request(
                         else None
                     ),
                     Dimensions=(
-                        Dimensions(
+                        fedex.Dimensions(
                             Length=package.length.map(
                                 provider_units.MeasurementOptions
                             ).value,
@@ -289,15 +328,31 @@ def rate_request(
                     ItemDescriptionForClearance=None,
                     CustomerReferences=(
                         [
-                            CustomerReference(
-                                CustomerReferenceType=CustomerReferenceType.CUSTOMER_REFERENCE,
+                            fedex.CustomerReference(
+                                CustomerReferenceType=fedex.CustomerReferenceType.CUSTOMER_REFERENCE,
                                 Value=payload.reference,
                             )
                         ]
                         if any(payload.reference or "")
                         else None
                     ),
-                    SpecialServicesRequested=None,
+                    SpecialServicesRequested=(
+                        fedex.PackageSpecialServicesRequested(
+                            SpecialServiceTypes=[
+                                option.code
+                                for option in package_options(package.options)
+                            ],
+                            CodDetail=None,
+                            DangerousGoodsDetail=None,
+                            DryIceWeight=None,
+                            SignatureOptionDetail=None,
+                            PieceCountVerificationDetail=None,
+                            PriorityAlertDetail=None,
+                            AlcoholDetail=None,
+                        )
+                        if any(package_options(package.options))
+                        else None
+                    ),
                     ContentRecords=None,
                 )
                 for index, package in enumerate(packages, 1)
@@ -312,7 +367,7 @@ def rate_request(
     )
 
 
-def _request_serializer(request: FedexRateRequest) -> str:
+def _request_serializer(request: fedex.RateRequest) -> str:
     namespacedef_ = (
         'xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/"'
         ' xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/"'

@@ -118,7 +118,6 @@ def shipment_request(
         recipient=payload.recipient,
         weight_unit=weight_unit.value,
     )
-
     payment = payload.payment or models.Payment(
         paid_by="sender", account_number=settings.account_number
     )
@@ -126,9 +125,6 @@ def shipment_request(
     label_type, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
     ).value
-    compute_options = lambda _options: [
-        option for _, option in _options.items() if _options.state is not False
-    ]
     billing_address = lib.to_address(
         payload.billing_address
         or dict(
@@ -144,6 +140,21 @@ def shipment_request(
             recipient=payload.recipient,
             third_party=customs.duty_billing_address,
         ).get(customs.duty.paid_by)
+    )
+    package_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False and option.code in provider_units.PACKAGE_OPTIONS
+    ]
+    shipment_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False
+        and option.code in provider_units.SHIPMENT_OPTIONS
+    ]
+    hub_id = (
+        lib.text(settings.connection_config.smart_post_hub_id.state)
+        or options.fedex_smart_post_hub_id.state
     )
 
     requests = [
@@ -288,8 +299,11 @@ def shipment_request(
                 shipmentSpecialServices=(
                     fedex.ShipmentSpecialServicesType(
                         specialServiceTypes=(
-                            [option.code for option in compute_options(package.options)]
-                            if compute_options(package.options)
+                            [
+                                option.code
+                                for option in shipment_options(package.options)
+                            ]
+                            if shipment_options(package.options)
                             else None
                         ),
                         etdDetail=(
@@ -319,7 +333,7 @@ def shipment_request(
                                         for doc in options.doc_files.state
                                     ]
                                     if (options.doc_files.state or [])
-                                    else None
+                                    else []
                                 ),
                                 requestedDocumentTypes=["COMMERCIAL_INVOICE"],
                             )
@@ -336,7 +350,7 @@ def shipment_request(
                         internationalControlledExportDetail=None,
                         homeDeliveryPremiumDetail=None,
                     )
-                    if any(options.items())
+                    if any(shipment_options(packages.options))
                     else None
                 ),
                 emailNotificationDetail=None,
@@ -462,7 +476,16 @@ def shipment_request(
                     if payload.customs is not None
                     else None
                 ),
-                smartPostInfoDetail=None,
+                smartPostInfoDetail=(
+                    fedex.SmartPostInfoDetailType(
+                        ancillaryEndorsement=None,
+                        hubId=hub_id,
+                        indicia=options.fedex_smart_post_allowed_indicia.state,
+                        specialServices=None,
+                    )
+                    if hub_id is not None
+                    else None
+                ),
                 blockInsightVisibility=None,
                 labelSpecification=fedex.LabelSpecificationType(
                     labelFormatType="COMMON2D",
@@ -488,7 +511,7 @@ def shipment_request(
                     )
                     if (
                         customs.commercial_invoice is True
-                        and not options.fedex_electronic_trade_documents.state
+                        and not package.options.fedex_electronic_trade_documents.state
                     )
                     else None
                 ),
@@ -538,7 +561,10 @@ def shipment_request(
                         itemDescription=package.parcel.description,
                         variableHandlingChargeDetail=None,
                         packageSpecialServices=fedex.PackageSpecialServicesType(
-                            specialServiceTypes=["SIGNATURE_OPTION"],
+                            specialServiceTypes=[
+                                option.code
+                                for option in package_options(package.options)
+                            ],
                             priorityAlertDetail=None,
                             signatureOptionType=(
                                 package.options.fedex_signature_option.state

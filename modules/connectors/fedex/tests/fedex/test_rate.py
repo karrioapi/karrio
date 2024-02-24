@@ -147,24 +147,22 @@ RateRequest = {
         "rateSortOrder": "COMMITASCENDING",
         "returnTransitTimes": True,
         "servicesNeededOnRateFailure": True,
-        "variableOptions": ["FEDEX_ONE_RATE", "SIGNATURE_OPTION"],
     },
     "requestedShipment": {
         "documentShipment": False,
         "packagingType": "YOUR_PACKAGING",
         "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
-        "preferredCurrency": {
-            "code": "currency",
-            "state": "USD",
-            "type": "<class 'str'>",
-        },
+        "preferredCurrency": "USD",
         "rateRequestType": ["LIST", "PREFERRED"],
         "recipient": {
-            "address": {"city": "Lome", "countryCode": "TG", "residential": False}
+            "address": {
+                "city": "Lome",
+                "countryCode": "TG",
+                "residential": False,
+            }
         },
         "requestedPackageLineItems": [
             {
-                "declaredValue": {"type": "<class 'str'>"},
                 "dimensions": {
                     "height": 3.0,
                     "length": 10.0,
@@ -176,7 +174,6 @@ RateRequest = {
             }
         ],
         "shipDateStamp": "2024-02-15",
-        "shipmentSpecialServices": {},
         "shipper": {
             "address": {
                 "countryCode": "CA",

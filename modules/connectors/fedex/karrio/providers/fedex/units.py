@@ -186,6 +186,7 @@ class PaymentType(lib.Enum):
 class ConnectionConfig(lib.Enum):
     locale = lib.OptionEnum("locale")
     label_type = lib.OptionEnum("label_type")
+    smart_post_hub_id = lib.OptionEnum("smart_post_hub_id")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
 
@@ -231,19 +232,8 @@ class ShippingService(lib.Enum):
     fedex_distance_deferred = "FEDEX_DISTANCE_DEFERRED"
 
 
-class RatingOption(lib.Enum):
-    fedex_one_rate = lib.OptionEnum("FEDEX_ONE_RATE", bool)
-    fedex_freight_guarantee = lib.OptionEnum("FREIGHT_GUARANTEE", bool)
-    fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool)
-    fedex_smart_post_allowed_indicia = lib.OptionEnum(
-        "SMART_POST_ALLOWED_INDICIA", bool
-    )
-    fedex_smart_post_hub_id = lib.OptionEnum("SMART_POST_HUB_ID", bool)
-
-
 class ShippingOption(lib.Enum):
     # fmt: off
-    
     fedex_appointment = lib.OptionEnum("APPOINTMENT", bool)
     fedex_broker_select_option = lib.OptionEnum("BROKER_SELECT_OPTION", bool)
     fedex_call_before_delivery = lib.OptionEnum("CALL_BEFORE_DELIVERY", bool)
@@ -259,7 +249,6 @@ class ShippingOption(lib.Enum):
     fedex_inside_delivery = lib.OptionEnum("INSIDE_DELIVERY", bool)
     fedex_inside_pickup = lib.OptionEnum("INSIDE_PICKUP", bool)
     fedex_international_controlled_export_service = lib.OptionEnum("INTERNATIONAL_CONTROLLED_EXPORT_SERVICE", bool)
-    fedex_one_rate = lib.OptionEnum("FEDEX_ONE_RATE", bool)
     fedex_third_party_consignee = lib.OptionEnum("THIRD_PARTY_CONSIGNEE", bool)
     fedex_electronic_trade_documents = lib.OptionEnum("ELECTRONIC_TRADE_DOCUMENTS", bool)
     fedex_food = lib.OptionEnum("FOOD", bool)
@@ -278,12 +267,17 @@ class ShippingOption(lib.Enum):
     fedex_protection_from_freezing = lib.OptionEnum("PROTECTION_FROM_FREEZING", bool)
     fedex_returns_clearance = lib.OptionEnum("RETURNS_CLEARANCE", bool)
     fedex_return_shipment = lib.OptionEnum("RETURN_SHIPMENT", bool)
-    fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool)
     fedex_saturday_pickup = lib.OptionEnum("SATURDAY_PICKUP", bool)
     fedex_event_notification = lib.OptionEnum("EVENT_NOTIFICATION", bool)
     fedex_delivery_on_invoice_acceptance = lib.OptionEnum("DELIVERY_ON_INVOICE_ACCEPTANCE", bool)
     fedex_top_load = lib.OptionEnum("TOP_LOAD", bool)
+
+    """ Rating Options """
+    fedex_one_rate = lib.OptionEnum("FEDEX_ONE_RATE", bool)
     fedex_freight_guarantee = lib.OptionEnum("FREIGHT_GUARANTEE", bool)
+    fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool)
+    fedex_smart_post_hub_id = lib.OptionEnum("SMART_POST_HUB_ID", bool)
+    fedex_smart_post_allowed_indicia = lib.OptionEnum("SMART_POST_ALLOWED_INDICIA", bool)
 
     """ Package Options """
 
@@ -304,15 +298,78 @@ class ShippingOption(lib.Enum):
     notification = fedex_event_notification
     paperless_trade = fedex_electronic_trade_documents
     doc_files = lib.OptionEnum("doc_files", lib.to_dict)
-    doc_references = lib.OptionEnum("WEIGHING", lib.to_dict)
-
+    doc_references = lib.OptionEnum("doc_references", lib.to_dict)
     # fmt: on
+
+
+RATING_OPTIONS = [
+    "FREIGHT_GUARANTEE",
+    "SATURDAY_DELIVERY",
+    "SMART_POST_ALLOWED_INDICIA",
+    "SMART_POST_HUB_ID",
+]
+PACKAGE_OPTIONS = [
+    "ALCOHOL",
+    "APPOINTMENT",
+    "BATTERY",
+    "COD",
+    "DANGEROUS_GOODS",
+    "DRY_ICE",
+    "PRIORITY_ALERT",
+    "PRIORITY_ALERT_PLUS",
+    "NON_STANDARD_CONTAINER",
+    "PIECE_COUNT_VERIFICATION",
+    "SIGNATURE_OPTION",
+    "EVENING",
+    "DATE_CERTAIN",
+    "SATURDAY_PICKUP",
+]
+SHIPMENT_OPTIONS = [
+    "APPOINTMENT",
+    "BROKER_SELECT_OPTION",
+    "CALL_BEFORE_DELIVERY",
+    "COD",
+    "CUSTOM_DELIVERY_WINDOW",
+    "CUT_FLOWERS",
+    "DO_NOT_BREAK_DOWN_PALLETS",
+    "DO_NOT_STACK_PALLETS",
+    "DRY_ICE",
+    "EAST_COAST_SPECIAL",
+    "EXCLUDE_FROM_CONSOLIDATION",
+    "EXTREME_LENGTH",
+    "INSIDE_DELIVERY",
+    "INSIDE_PICKUP",
+    "INTERNATIONAL_CONTROLLED_EXPORT_SERVICE",
+    "FEDEX_ONE_RATE",
+    "THIRD_PARTY_CONSIGNEE",
+    "ELECTRONIC_TRADE_DOCUMENTS",
+    "FOOD",
+    "HOLD_AT_LOCATION",
+    "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS",
+    "LIFTGATE_DELIVERY",
+    "LIFTGATE_PICKUP",
+    "LIMITED_ACCESS_DELIVERY",
+    "LIMITED_ACCESS_PICKUP",
+    "OVER_LENGTH",
+    "PENDING_SHIPMENT",
+    "PHARMACY_DELIVERY",
+    "POISON",
+    "HOME_DELIVERY_PREMIUM",
+    "PROTECTION_FROM_FREEZING",
+    "RETURNS_CLEARANCE",
+    "RETURN_SHIPMENT",
+    "SATURDAY_DELIVERY",
+    "SATURDAY_PICKUP",
+    "EVENT_NOTIFICATION",
+    "DELIVERY_ON_INVOICE_ACCEPTANCE",
+    "TOP_LOAD",
+    "FREIGHT_GUARANTEE",
+]
 
 
 def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
-    option_type: lib.Enum = ShippingOption,
 ) -> units.Options:
     """
     Apply default values to the given options.
@@ -335,9 +392,9 @@ def shipping_options_initializer(
         )
 
     def items_filter(key: str) -> bool:
-        return key in option_type and key not in ["doc_files", "doc_references"]  # type: ignore
+        return key in ShippingOption and key not in ["doc_files", "doc_references"]  # type: ignore
 
-    return units.ShippingOptions(_options, option_type, items_filter=items_filter)
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
 class RateType(lib.Enum):

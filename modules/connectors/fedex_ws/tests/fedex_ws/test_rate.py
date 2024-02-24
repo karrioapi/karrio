@@ -283,6 +283,9 @@ RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                         <v28:Residential>false</v28:Residential>
                     </v28:Address>
                 </v28:Recipient>
+                <v28:SpecialServicesRequested>
+                    <v28:SpecialServiceTypes>FEDEX_ONE_RATE</v28:SpecialServiceTypes>
+                </v28:SpecialServicesRequested>
                 <v28:RateRequestTypes>LIST</v28:RateRequestTypes>
                 <v28:RateRequestTypes>PREFERRED</v28:RateRequestTypes>
                 <v28:PackageCount>1</v28:PackageCount>
@@ -299,6 +302,9 @@ RateRequestXml = f"""<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/en
                         <v28:Height>3</v28:Height>
                         <v28:Units>IN</v28:Units>
                     </v28:Dimensions>
+                    <v28:SpecialServicesRequested>
+                        <v28:SpecialServiceTypes>SIGNATURE_OPTION</v28:SpecialServiceTypes>
+                    </v28:SpecialServicesRequested>
                 </v28:RequestedPackageLineItems>
             </v28:RequestedShipment>
         </v28:RateRequest>
@@ -365,6 +371,9 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
                         <v28:Units>LB</v28:Units>
                         <v28:Value>2.2</v28:Value>
                     </v28:Weight>
+                    <v28:SpecialServicesRequested>
+                        <v28:SpecialServiceTypes>SIGNATURE_OPTION</v28:SpecialServiceTypes>
+                    </v28:SpecialServicesRequested>
                 </v28:RequestedPackageLineItems>
             </v28:RequestedShipment>
         </v28:RateRequest>

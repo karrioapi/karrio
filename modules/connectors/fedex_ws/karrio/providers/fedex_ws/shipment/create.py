@@ -89,16 +89,17 @@ def shipment_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    options = lib.to_shipping_options(
+        payload.options,
+        initializer=provider_units.shipping_options_initializer,
+    )
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
         required=["weight"],
+        options=payload.options,
         package_option_type=provider_units.ShippingOption,
-    )
-    options = lib.to_shipping_options(
-        payload.options,
-        package_options=packages.options,
-        initializer=provider_units.shipping_options_initializer,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     weight_unit, dim_unit = (
         provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
@@ -110,12 +111,26 @@ def shipment_request(
         recipient=payload.recipient,
         weight_unit=weight_unit.value,
     )
-
     payment = payload.payment or models.Payment()
     service = provider_units.ServiceType.map(payload.service).value_or_key
     label_type, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
     ).value
+    package_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False and option.code in provider_units.PACKAGE_OPTIONS
+    ]
+    shipment_options = lambda _options: [
+        option
+        for _, option in _options.items()
+        if _options.state is not False
+        and option.code in provider_units.SHIPMENT_OPTIONS
+    ]
+    hub_id = (
+        lib.text(settings.connection_config.smart_post_hub_id.state)
+        or options.fedex_smart_post_hub_id.state
+    )
 
     requests = [
         fedex.ProcessShipmentRequest(
@@ -242,9 +257,12 @@ def shipment_request(
                 SpecialServicesRequested=(
                     fedex.ShipmentSpecialServicesRequested(
                         SpecialServiceTypes=(
-                            [option.code for _, option in options.items()]
-                            if any(options.items())
-                            else None
+                            [
+                                option.code
+                                for option in shipment_options(package.options)
+                            ]
+                            if any(shipment_options(package.options))
+                            else []
                         ),
                         CodDetail=(
                             fedex.CodDetail(
@@ -507,7 +525,18 @@ def shipment_request(
                     else None
                 ),
                 PickupDetail=None,
-                SmartPostDetail=None,
+                SmartPostDetail=(
+                    fedex.SmartPostShipmentDetail(
+                        ProcessingOptionsRequested=None,
+                        Indicia=options.fedex_smart_post_allowed_indicia.state,
+                        AncillaryEndorsement=None,
+                        SpecialServices=None,
+                        HubId=hub_id,
+                        CustomerManifestId=None,
+                    )
+                    if hub_id
+                    else None
+                ),
                 BlockInsightVisibility=None,
                 LabelSpecification=fedex.LabelSpecification(
                     Dispositions=None,
@@ -634,7 +663,16 @@ def shipment_request(
                                     else fedex.SignatureOptionType.SERVICE_DEFAULT
                                 )
                             ),
-                            SpecialServiceTypes=["SIGNATURE_OPTION"],
+                            SpecialServiceTypes=[
+                                option.code
+                                for option in package_options(package.options)
+                            ],
+                            CodDetail=None,
+                            BatteryDetails=None,
+                            DryIceWeight=None,
+                            PieceCountVerificationBoxCount=None,
+                            PriorityAlertDetail=None,
+                            AlcoholDetail=None,
                         ),
                         ContentRecords=None,
                     )

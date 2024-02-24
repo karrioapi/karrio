@@ -310,7 +310,6 @@ ShipmentRequest = [
             ],
             "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
             "shipDatestamp": "2024-02-15",
-            "shipmentSpecialServices": {"specialServiceTypes": ["SIGNATURE_OPTION"]},
             "shipper": {
                 "accountNumber": "2349857",
                 "address": {
@@ -434,10 +433,10 @@ MultiPieceShipmentRequest = [
                         ],
                     },
                     "contact": {
-                        "companyName": "Input Your " "Information",
+                        "companyName": "Input Your Information",
                         "emailAddress": "Input " "Your " "Information",
-                        "personName": "Input Your " "Information",
-                        "phoneNumber": "Input Your " "Information",
+                        "personName": "Input Your Information",
+                        "phoneNumber": "Input Your Information",
                     },
                 }
             ],
@@ -461,14 +460,10 @@ MultiPieceShipmentRequest = [
             "shipDatestamp": "2024-02-17",
             "shipmentSpecialServices": {
                 "etdDetail": {
-                    "attachedDocuments": [None],
                     "attributes": ["POST_SHIPMENT_UPLOAD_REQUESTED"],
                     "requestedDocumentTypes": ["COMMERCIAL_INVOICE"],
                 },
-                "specialServiceTypes": [
-                    "ELECTRONIC_TRADE_DOCUMENTS",
-                    "SIGNATURE_OPTION",
-                ],
+                "specialServiceTypes": ["ELECTRONIC_TRADE_DOCUMENTS"],
             },
             "shipper": {
                 "accountNumber": "2349857",
@@ -479,15 +474,15 @@ MultiPieceShipmentRequest = [
                     "residential": False,
                     "stateOrProvinceCode": "TN",
                     "streetLines": [
-                        "Input Your " "Information",
-                        "Input Your " "Information",
+                        "Input Your Information",
+                        "Input Your Information",
                     ],
                 },
                 "contact": {
-                    "companyName": "Input Your " "Information",
-                    "emailAddress": "Input Your " "Information",
-                    "personName": "Input Your " "Information",
-                    "phoneNumber": "Input Your " "Information",
+                    "companyName": "Input Your Information",
+                    "emailAddress": "Input Your Information",
+                    "personName": "Input Your Information",
+                    "phoneNumber": "Input Your Information",
                 },
             },
             "shippingChargesPayment": {
@@ -502,15 +497,15 @@ MultiPieceShipmentRequest = [
                     "residential": False,
                     "stateOrProvinceCode": "BC",
                     "streetLines": [
-                        "Input Your " "Information",
-                        "Input Your " "Information",
+                        "Input Your Information",
+                        "Input Your Information",
                     ],
                 },
                 "contact": {
-                    "companyName": "Input Your " "Information",
-                    "emailAddress": "Input Your " "Information",
-                    "personName": "Input Your " "Information",
-                    "phoneNumber": "Input Your " "Information",
+                    "companyName": "Input Your Information",
+                    "emailAddress": "Input Your Information",
+                    "personName": "Input Your Information",
+                    "phoneNumber": "Input Your Information",
                 },
             },
             "totalPackageCount": 2,
@@ -597,10 +592,10 @@ MultiPieceShipmentRequest = [
                         ],
                     },
                     "contact": {
-                        "companyName": "Input Your " "Information",
+                        "companyName": "Input Your Information",
                         "emailAddress": "Input " "Your " "Information",
-                        "personName": "Input Your " "Information",
-                        "phoneNumber": "Input Your " "Information",
+                        "personName": "Input Your Information",
+                        "phoneNumber": "Input Your Information",
                     },
                 }
             ],
@@ -624,14 +619,10 @@ MultiPieceShipmentRequest = [
             "shipDatestamp": "2024-02-17",
             "shipmentSpecialServices": {
                 "etdDetail": {
-                    "attachedDocuments": [None],
                     "attributes": ["POST_SHIPMENT_UPLOAD_REQUESTED"],
                     "requestedDocumentTypes": ["COMMERCIAL_INVOICE"],
                 },
-                "specialServiceTypes": [
-                    "ELECTRONIC_TRADE_DOCUMENTS",
-                    "SIGNATURE_OPTION",
-                ],
+                "specialServiceTypes": ["ELECTRONIC_TRADE_DOCUMENTS"],
             },
             "shipper": {
                 "accountNumber": "2349857",
@@ -642,15 +633,15 @@ MultiPieceShipmentRequest = [
                     "residential": False,
                     "stateOrProvinceCode": "TN",
                     "streetLines": [
-                        "Input Your " "Information",
-                        "Input Your " "Information",
+                        "Input Your Information",
+                        "Input Your Information",
                     ],
                 },
                 "contact": {
-                    "companyName": "Input Your " "Information",
-                    "emailAddress": "Input Your " "Information",
-                    "personName": "Input Your " "Information",
-                    "phoneNumber": "Input Your " "Information",
+                    "companyName": "Input Your Information",
+                    "emailAddress": "Input Your Information",
+                    "personName": "Input Your Information",
+                    "phoneNumber": "Input Your Information",
                 },
             },
             "shippingChargesPayment": {
@@ -665,15 +656,15 @@ MultiPieceShipmentRequest = [
                     "residential": False,
                     "stateOrProvinceCode": "BC",
                     "streetLines": [
-                        "Input Your " "Information",
-                        "Input Your " "Information",
+                        "Input Your Information",
+                        "Input Your Information",
                     ],
                 },
                 "contact": {
-                    "companyName": "Input Your " "Information",
-                    "emailAddress": "Input Your " "Information",
-                    "personName": "Input Your " "Information",
-                    "phoneNumber": "Input Your " "Information",
+                    "companyName": "Input Your Information",
+                    "emailAddress": "Input Your Information",
+                    "personName": "Input Your Information",
+                    "phoneNumber": "Input Your Information",
                 },
             },
             "totalPackageCount": 2,
