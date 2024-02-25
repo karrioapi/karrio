@@ -1,25 +1,65 @@
+import gzip
 import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
-from karrio.mappers.fedex.settings import Settings
+import karrio.providers.fedex.utils as provider_utils
+import karrio.mappers.fedex.settings as provider_settings
 
 
 class Proxy(proxy.Proxy):
-    settings: Settings
+    settings: provider_settings.Settings
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/rate", request)
+        response = lib.request(
+            url=f"{self.settings.server_url}/rate/v1/rates/quotes",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "x-locale": "en_US",
+                "content-type": "application/json",
+                "authorization": f"Bearer {self.settings.access_token}",
+            },
+            decoder=provider_utils.parse_response,
+            on_error=lambda b: provider_utils.parse_response(b.read()),
+        )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/track/v1/trackingnumbers", request)
+        response = lib.request(
+            url=f"{self.settings.server_url}/track/v1/trackingnumbers",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "x-locale": "en_US",
+                "content-type": "application/json",
+                "authorization": f"Bearer {self.settings.track_access_token}",
+            },
+            decoder=provider_utils.parse_response,
+            on_error=lambda b: provider_utils.parse_response(b.read()),
+        )
 
         return lib.Deserializable(response, lib.to_dict)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         requests = request.serialize()
-        responses = [self._send_request("/ship", lib.Serializable(requests[0]))]
+        responses = [
+            lib.request(
+                url=f"{self.settings.server_url}/ship/v1/shipments",
+                data=lib.to_json(requests[0]),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "x-locale": "en_US",
+                    "content-type": "application/json",
+                    "authorization": f"Bearer {self.settings.access_token}",
+                },
+                decoder=provider_utils.parse_response,
+                on_error=lambda b: provider_utils.parse_response(b.read()),
+            )
+        ]
         master_id = (
             lib.to_dict(responses[0])
             .get("output", {})
@@ -29,13 +69,22 @@ class Proxy(proxy.Proxy):
 
         if len(requests) > 1 and master_id is not None:
             responses += lib.run_asynchronously(
-                lambda _: self._send_request(
-                    "/ship",
-                    lib.Serializable(
-                        request.replace(
-                            "[MASTER_ID_TYPE]", master_id.TrackingIdType
-                        ).replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber),
+                lambda _: lib.request(
+                    url=f"{self.settings.server_url}/ship/v1/shipments",
+                    data=(
+                        lib.to_json(_)
+                        .replace("[MASTER_ID_TYPE]", master_id.TrackingIdType)
+                        .replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber)
                     ),
+                    trace=self.trace_as("json"),
+                    method="POST",
+                    headers={
+                        "x-locale": "en_US",
+                        "content-type": "application/json",
+                        "authorization": f"Bearer {self.settings.access_token}",
+                    },
+                    decoder=provider_utils.parse_response,
+                    on_error=lambda b: provider_utils.parse_response(b.read()),
                 ),
                 requests[1:],
             )
@@ -46,20 +95,37 @@ class Proxy(proxy.Proxy):
         )
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        response = self._send_request("/ship", request)
+        response = lib.request(
+            url=f"{self.settings.server_url}/ship/v1/shipments/cancel",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="PUT",
+            headers={
+                "x-locale": "en_US",
+                "content-type": "application/json",
+                "authorization": f"Bearer {self.settings.access_token}",
+            },
+            decoder=provider_utils.parse_response,
+            on_error=lambda b: provider_utils.parse_response(b.read()),
+        )
 
         return lib.Deserializable(response, lib.to_dict)
 
     def upload_document(self, requests: lib.Serializable) -> lib.Deserializable:
         response = lib.run_asynchronously(
-            lambda _: self._send_request(
+            lambda _: lib.request(
                 url=(
                     "https://documentapitest.prod.fedex.com/sandbox/documents/v1/etds/upload"
                     if self.settings.test_mode
                     else "https://documentapi.prod.fedex.com/documents/v1/etds/upload"
                 ),
-                request=lib.Serializable(_, urllib.parse.urlencode),
-                headers={"content-Type": "multipart/form-data"},
+                data=urllib.parse.urlencode(_),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "content-Type": "multipart/form-data",
+                    "authorization": f"Bearer {self.settings.access_token}",
+                },
             ),
             requests.serialize(),
         )
@@ -67,25 +133,4 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(
             response,
             lambda __: [lib.to_dict(_) for _ in __],
-        )
-
-    def _send_request(
-        self,
-        path: str = "/",
-        request: lib.Serializable = None,
-        method: str = "POST",
-        headers: dict = None,
-        url: str = None,
-    ) -> str:
-        return lib.request(
-            url=url or f"{self.settings.server_url}{path}",
-            trace=self.trace_as("json"),
-            method=method,
-            headers={
-                "content-Type": "application/json",
-                "authorization": f"Bearer {self.settings.access_token}",
-                "x-locale": self.settings.connection_config.locale.state or "en_US",
-                **(headers or {}),
-            },
-            **({"data": lib.to_json(request.serialize())} if request else {}),
         )

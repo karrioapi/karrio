@@ -188,16 +188,17 @@ def process_request(
 
 def process_response(
     request_id: str,
-    http_response: Any,
-    response,
+    response: Any,
     decoder: Callable,
+    on_ok: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
-    try:
-        _response = decoder(response)
-    except Exception as e:
-        logger.error(e)
-        _response = response
+
+    if on_ok is not None:
+        _response = on_ok(response)
+    else:
+        _data = response.read()
+        _response = failsafe(lambda: decoder(_data)) or _data
 
     if trace:
         _content = _response if isinstance(_response, str) else "undecoded bytes..."
@@ -231,6 +232,7 @@ def process_error(
 
 def request(
     decoder: Callable = decode_bytes,
+    on_ok: Callable[[Any], str] = None,
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
     **kwargs,
@@ -247,7 +249,9 @@ def request(
         _request = process_request(_request_id, trace, **kwargs)
 
         with urlopen(_request) as f:
-            _response = process_response(_request_id, f, f.read(), decoder, trace=trace)
+            _response = process_response(
+                _request_id, f, decoder, on_ok=on_ok, trace=trace
+            )
 
     except HTTPError as e:
         _response = process_error(_request_id, e, on_error=on_error, trace=trace)

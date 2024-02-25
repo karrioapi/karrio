@@ -1,3 +1,4 @@
+import gzip
 import jstruct
 import datetime
 import urllib.parse
@@ -9,9 +10,11 @@ import karrio.core.errors as errors
 class Settings(core.Settings):
     """FedEx connection settings."""
 
-    api_key: str
-    secret_key: str
+    api_key: str = None
+    secret_key: str = None
     account_number: str = None
+    track_api_key: str = None
+    track_secret_key: str = None
 
     cache: lib.Cache = jstruct.JStruct[lib.Cache]
     account_country_code: str = None
@@ -49,6 +52,11 @@ class Settings(core.Settings):
         """Retrieve the access_token using the api_key|secret_key pair
         or collect it from the cache if an unexpired access_token exist.
         """
+        if not all([self.api_key, self.secret_key, self.account_number]):
+            raise Exception(
+                "The api_key, secret_key and account_number are required for Rate, Ship and Other API requests."
+            )
+
         cache_key = f"{self.carrier_name}|{self.api_key}|{self.secret_key}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
@@ -59,13 +67,52 @@ class Settings(core.Settings):
         if token is not None and expiry is not None and expiry > now:
             return token
 
-        self.cache.set(cache_key, lambda: login(self))
+        self.cache.set(
+            cache_key,
+            lambda: login(
+                self,
+                client_id=self.api_key,
+                client_secret=self.secret_key,
+            ),
+        )
+        new_auth = self.cache.get(cache_key)
+
+        return new_auth["access_token"]
+
+    @property
+    def track_access_token(self):
+        """Retrieve the access_token using the track_api_key|track_secret_key pair
+        or collect it from the cache if an unexpired access_token exist.
+        """
+        if not all([self.track_api_key, self.track_secret_key]):
+            raise Exception(
+                "The track_api_key and track_secret_key are required for Track API requests."
+            )
+
+        cache_key = f"{self.carrier_name}|{self.track_api_key}|{self.track_secret_key}"
+        now = datetime.datetime.now() + datetime.timedelta(minutes=30)
+
+        auth = self.cache.get(cache_key) or {}
+        token = auth.get("access_token")
+        expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
+
+        if token is not None and expiry is not None and expiry > now:
+            return token
+
+        self.cache.set(
+            cache_key,
+            lambda: login(
+                self,
+                client_id=self.track_api_key,
+                client_secret=self.track_secret_key,
+            ),
+        )
         new_auth = self.cache.get(cache_key)
 
         return new_auth["access_token"]
 
 
-def login(settings: Settings):
+def login(settings: Settings, client_id: str = None, client_secret: str = None):
     import karrio.providers.fedex.error as error
 
     result = lib.request(
@@ -77,8 +124,8 @@ def login(settings: Settings):
         data=urllib.parse.urlencode(
             dict(
                 grant_type="client_credentials",
-                client_id=settings.api_key,
-                client_secret=settings.secret_key,
+                client_id=client_id,
+                client_secret=client_secret,
             )
         ),
     )
@@ -94,3 +141,8 @@ def login(settings: Settings):
     )
 
     return {**response, "expiry": lib.fdatetime(expiry)}
+
+
+def parse_response(binary_string):
+    content = lib.failsafe(lambda: gzip.decompress(binary_string))
+    return lib.decode(content)

@@ -732,6 +732,8 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
       account_number
       api_key
       secret_key
+      track_api_key
+      track_secret_key
       account_country_code
       config
     }
@@ -1440,6 +1442,8 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       account_number
       api_key
       secret_key
+      track_api_key
+      track_secret_key
       account_country_code
       config
     }

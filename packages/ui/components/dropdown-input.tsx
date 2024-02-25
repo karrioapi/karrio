@@ -120,6 +120,14 @@ export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, i
               </div>}
 
               <ul className="panel dropped-panel">
+                <li
+                  key={`empty-${Date.now()}`}
+                  tabIndex={0}
+                  onClick={onSelect("")}
+                  className={`panel-block is-clickable ${key === selected ? 'is-active' : ''}`}>
+                  <span className='is-size-7'>{`---`}</span>
+                </li>
+
                 {(items || [])
                   .filter(([_, val]) => search === "" || val.toLowerCase().includes(search.toLowerCase()))
                   .map(([key, val], index) => (

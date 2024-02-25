@@ -253,7 +253,10 @@ def rate_request(
                 fedex.SmartPostInfoDetailType(
                     ancillaryEndorsement=None,
                     hubId=hub_id,
-                    indicia=options.fedex_smart_post_allowed_indicia.state,
+                    indicia=(
+                        options.fedex_smart_post_allowed_indicia.state
+                        or "PARCEL_SELECT"
+                    ),
                     specialServices=None,
                 )
                 if hub_id is not None

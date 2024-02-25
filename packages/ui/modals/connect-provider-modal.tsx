@@ -88,7 +88,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
     return fieldState(carrier_name as CarrierNameType, property);
   };
   const directChange = (property: string) => (value: any) => {
-    dispatch({ name: property, value });
+    dispatch({ name: property, value: value === 'none' || isNoneOrEmpty(value) ? null : value });
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,7 +96,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name: string = target.name;
 
-    dispatch({ name, value: value === 'none' ? null : value });
+    dispatch({ name, value: value === 'none' || isNoneOrEmpty(value) ? null : value });
   };
   const handleCarrierChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const target = event.target;
@@ -358,6 +358,21 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("secret_key").required}
                 />}
 
+                {field("track_api_key").exists && <InputField label="Track API Key" value={payload.track_api_key}
+                  name="track_api_key"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("track_api_key").required}
+                />}
+
+                {field("track_secret_key").exists && <InputField label="Track API secret Key" value={payload.track_secret_key}
+                  type="text"
+                  name="track_secret_key"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("track_secret_key").required}
+                />}
+
                 {field("customer_number").exists && <InputField label="Customer Number" value={payload.customer_number}
                   name="customer_number"
                   onChange={handleChange}
@@ -614,6 +629,15 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               {LABEL_TYPES.map(_ => <option key={_} value={_}>{_}</option>)}
                             </SelectField>}
 
+                          {"smart_post_hub_id" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.smart_post_hub_id || ""}
+                              name="smart_post_hub_id"
+                              label="Smart Post Hub ID"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
                           {"enforce_zpl" in connection_configs[carrier_name.toString()] &&
                             <div className="field column is-6 mb-0">
                               <div className="control">
@@ -792,7 +816,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.AsendiaUs]: [["carrier_id", true], ["username", true], ["password", true], ["api_key", true], ["account_number", true]],
       [CarrierSettingsCarrierNameEnum.Boxknight]: [["carrier_id", true], ["username", true], ["password", true]],
       [CarrierSettingsCarrierNameEnum.Bpost]: [["carrier_id", true], ["account_id", true], ["passphrase", true]],
-      [CarrierSettingsCarrierNameEnum.Canadapost]: [["carrier_id", true], ["username", true], ["password", true], ["customer_number", true], ["contract_id", true]],
+      [CarrierSettingsCarrierNameEnum.Canadapost]: [["carrier_id", true], ["username", true], ["password", true], ["customer_number"], ["contract_id"]],
       [CarrierSettingsCarrierNameEnum.Canpar]: [["carrier_id", true], ["username", true], ["password", true]],
       [CarrierSettingsCarrierNameEnum.Chronopost]: [["carrier_id", true], ["account_number", true], ["password", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Colissimo]: [["carrier_id", true], ["contract_number", true], ["password", true], ["laposte_api_key"]],
@@ -812,7 +836,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Locate2u]: [["carrier_id", true], ["client_id", true], ["client_secret", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Nationex]: [["carrier_id", true], ["api_key", true], ["customer_id", true], ["billing_account"], ["language", false, "en"]],
       [CarrierSettingsCarrierNameEnum.Roadie]: [["carrier_id", true], ["api_key", true]],
-      [CarrierSettingsCarrierNameEnum.Fedex]: [["carrier_id", true], ["api_key", true], ["secret_key", true], ["account_number", true], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.Fedex]: [["carrier_id", true], ["api_key"], ["secret_key"], ["track_api_key"], ["track_secret_key"], ["account_number"], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.FedexWs]: [["carrier_id", true], ["user_key"], ["password", true], ["meter_number", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Purolator]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true], ["user_token"]],
       [CarrierSettingsCarrierNameEnum.Royalmail]: [["carrier_id", true], ["client_id", true], ["client_secret", true]],

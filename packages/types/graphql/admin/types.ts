@@ -916,6 +916,8 @@ export interface GetSystemConnections_system_connections_FedexSettingsType {
   account_number: string | null;
   api_key: string | null;
   secret_key: string | null;
+  track_api_key: string | null;
+  track_secret_key: string | null;
   account_country_code: string | null;
   config: any | null;
 }
@@ -1734,6 +1736,8 @@ export interface GetSystemConnection_system_connection_FedexSettingsType {
   account_number: string | null;
   api_key: string | null;
   secret_key: string | null;
+  track_api_key: string | null;
+  track_secret_key: string | null;
   account_country_code: string | null;
   config: any | null;
 }
@@ -3478,9 +3482,11 @@ export interface FedexSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
-  api_key: string;
-  secret_key: string;
-  account_number: string;
+  api_key?: string | null;
+  secret_key?: string | null;
+  account_number?: string | null;
+  track_api_key?: string | null;
+  track_secret_key?: string | null;
   carrier_id: string;
 }
 
@@ -4039,6 +4045,8 @@ export interface UpdateFedexSettingsInput {
   api_key?: string | null;
   secret_key?: string | null;
   account_number?: string | null;
+  track_api_key?: string | null;
+  track_secret_key?: string | null;
   carrier_id?: string | null;
 }
 

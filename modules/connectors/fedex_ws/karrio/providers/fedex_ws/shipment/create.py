@@ -528,13 +528,16 @@ def shipment_request(
                 SmartPostDetail=(
                     fedex.SmartPostShipmentDetail(
                         ProcessingOptionsRequested=None,
-                        Indicia=options.fedex_smart_post_allowed_indicia.state,
+                        indicia=(
+                            options.fedex_smart_post_allowed_indicia.state
+                            or "PARCEL_SELECT"
+                        ),
                         AncillaryEndorsement=None,
                         SpecialServices=None,
                         HubId=hub_id,
                         CustomerManifestId=None,
                     )
-                    if hub_id
+                    if hub_id and service == "SMART_POST"
                     else None
                 ),
                 BlockInsightVisibility=None,

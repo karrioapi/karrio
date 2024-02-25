@@ -24,7 +24,7 @@ class TestFedExRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/rate",
+                f"{gateway.settings.server_url}/rate/v1/rates/quotes",
             )
 
     def test_parse_rate_response(self):

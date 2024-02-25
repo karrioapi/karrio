@@ -10,9 +10,11 @@ import karrio.providers.fedex.utils as provider_utils
 class Settings(provider_utils.Settings):
     """FedEx connection settings."""
 
-    api_key: str  # type:ignore
-    secret_key: str  # type:ignore
+    api_key: str = None
+    secret_key: str = None
     account_number: str = None
+    track_api_key: str = None
+    track_secret_key: str = None
 
     cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     account_country_code: str = None

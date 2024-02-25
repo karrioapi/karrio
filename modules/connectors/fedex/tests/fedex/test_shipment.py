@@ -42,7 +42,7 @@ class TestFedExShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/ship",
+                f"{gateway.settings.server_url}/ship/v1/shipments",
             )
 
     def test_cancel_shipment(self):
@@ -52,7 +52,7 @@ class TestFedExShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/ship",
+                f"{gateway.settings.server_url}/ship/v1/shipments/cancel",
             )
 
     def test_parse_shipment_response(self):

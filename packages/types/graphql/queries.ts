@@ -2059,6 +2059,8 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       account_number
       api_key
       secret_key
+      track_api_key
+      track_secret_key
       account_country_code
       config
     }
