@@ -49,7 +49,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
 
-        if not all([self.tracking_consumer_key]):
+        if not all([self.settings.tracking_consumer_key]):
             raise Exception(
                 "The tracking_consumer_key is required for Track API requests."
             )

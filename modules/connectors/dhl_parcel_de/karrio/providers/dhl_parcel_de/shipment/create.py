@@ -42,8 +42,6 @@ def _extract_details(
     invoice = getattr(shipment.customsDoc, "b64", None)
     tracking_number = str(shipment.shipmentNo)
 
-    print("Touch........")
-
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
