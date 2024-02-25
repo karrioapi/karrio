@@ -33,18 +33,12 @@ class ItemType:
 
 @s(auto_attribs=True)
 class FromType:
-    suburb: Optional[str] = None
-    state: Optional[str] = None
     postcode: Optional[int] = None
-
-
-@s(auto_attribs=True)
-class ShipmentType:
-    shipment_from: Optional[FromType] = JStruct[FromType]
-    to: Optional[FromType] = JStruct[FromType]
-    items: List[ItemType] = JList[ItemType]
+    country: Optional[str] = None
 
 
 @s(auto_attribs=True)
 class RateRequestType:
-    shipments: List[ShipmentType] = JList[ShipmentType]
+    rate_request_from: Optional[FromType] = JStruct[FromType]
+    to: Optional[FromType] = JStruct[FromType]
+    items: List[ItemType] = JList[ItemType]

@@ -68,6 +68,7 @@ def shipment_request(
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     service = provider_units.ShippingService.map(payload.service)
+    is_intl = shipper.country_code != recipient.country_code
     options = lib.to_shipping_options(
         payload.options,
         initializer=provider_units.shipping_options_initializer,
@@ -83,8 +84,8 @@ def shipment_request(
         payload.label_type or "PDF"
     ).value
     label_group = (
-        provider_units.ServiceName.map(service.name).value
-        or provider_units.ServiceName.australiapost_parcel_post.value
+        provider_units.ServiceLabelGroup.map(service.name).value
+        or provider_units.ServiceLabelGroup.australiapost_parcel_post.value
     )
 
     request = dict(
@@ -231,23 +232,27 @@ def shipment_request(
                             description_of_other=customs.content_description,
                             export_declaration_number=customs.options.export_declaration_number.state,
                             import_reference_number=customs.options.import_reference_number.state,
-                            item_contents=[
-                                australiapost.ItemContentType(
-                                    country_of_origin=content.country,
-                                    description=content.description,
-                                    sku=content.sku,
-                                    quantity=content.quantity,
-                                    tariff_code=content.hs_code,
-                                    value=content.value_amount,
-                                    weight=content.weight.KG,
-                                    item_contents_reference=None,
-                                )
-                                for content in (
-                                    package.items
-                                    if any(package.items)
-                                    else customs.commodities
-                                )
-                            ],
+                            item_contents=(
+                                [
+                                    australiapost.ItemContentType(
+                                        country_of_origin=content.country,
+                                        description=content.description,
+                                        sku=content.sku,
+                                        quantity=content.quantity,
+                                        tariff_code=content.hs_code,
+                                        value=content.value_amount,
+                                        weight=content.weight,
+                                        item_contents_reference=None,
+                                    )
+                                    for content in (
+                                        package.items
+                                        if any(package.items)
+                                        else customs.commodities
+                                    )
+                                ]
+                                if is_intl
+                                else []
+                            ),
                         )
                         for idx, package in enumerate(packages, start=1)
                     ],

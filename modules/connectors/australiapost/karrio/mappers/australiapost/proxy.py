@@ -73,10 +73,6 @@ class Proxy(proxy.Proxy):
                         decoder=lib.encode_base64,
                         url=label_url,
                         method="GET",
-                        headers={
-                            "Account-Number": self.settings.account_number,
-                            "Authorization": f"Basic {self.settings.authorization}",
-                        },
                     )
                 )
 
@@ -111,9 +107,10 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        query = urllib.parse.urlencode(request.serialize())
+        query = request.serialize()
+        tracking_ids = ",".join(query["tracking_ids"])
         response = lib.request(
-            url=f"{self.settings.server_url}/shipping/v1/track?{query}",
+            url=f"{self.settings.server_url}/shipping/v1/track?tracking_ids={tracking_ids}",
             trace=self.trace_as("json"),
             method="GET",
             headers={
