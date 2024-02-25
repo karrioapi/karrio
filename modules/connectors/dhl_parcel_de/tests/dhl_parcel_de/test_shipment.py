@@ -40,7 +40,7 @@ class TestDPDHLGermanyShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/v2/orders?validate=true&docFormat=PDF&printFormat=A4&combine=true",
+                f"{gateway.settings.server_url}/v2/orders?docFormat=PDF&printFormat=A4&combine=true",
             )
 
     def test_cancel_shipment(self):
@@ -90,7 +90,7 @@ if __name__ == "__main__":
 
 
 ShipmentPayload = {
-    "service": "deutschepost_paket",
+    "service": "dhl_parcel_de_paket",
     "reference": "Order No. 1234",
     "shipper": {
         "company_name": "My Online Shop GmbH",
@@ -123,7 +123,7 @@ ShipmentPayload = {
 }
 
 IntlShipmentPayload = {
-    "service": "deutschepost_europaket",
+    "service": "dhl_parcel_de_europaket",
     "reference": "Order No. 1234",
     "shipper": {
         "company_name": "My Online Shop GmbH",
@@ -299,7 +299,6 @@ IntlShipmentRequest = {
             },
             "product": "V54EPAK",
             "refNo": "Order No. 1234",
-            "services": {},
             "shipDate": ANY,
             "shipper": {
                 "addressHouse": "10",

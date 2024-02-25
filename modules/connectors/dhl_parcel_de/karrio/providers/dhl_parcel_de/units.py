@@ -86,39 +86,39 @@ class ConnectionConfig(lib.Enum):
 class ShippingService(lib.Enum):
     """Carrier specific services"""
 
-    deutschepost_paket = "V01PAK"
-    deutschepost_warenpost = "V62WP"
-    deutschepost_europaket = "V54EPAK"
-    deutschepost_paket_international = "V53WPAK"
-    deutschepost_warenpost_international = "V66WPI"
+    dhl_parcel_de_paket = "V01PAK"
+    dhl_parcel_de_warenpost = "V62WP"
+    dhl_parcel_de_europaket = "V54EPAK"
+    dhl_parcel_de_paket_international = "V53WPAK"
+    dhl_parcel_de_warenpost_international = "V66WPI"
 
 
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     # fmt: off
-    deutshepost_preferred_neighbour = lib.OptionEnum("preferredNeighbour")
-    deutshepost_preferred_location = lib.OptionEnum("preferredLocation")
-    deutshepost_visual_check_of_age = lib.OptionEnum("visualCheckOfAge")
-    deutshepost_named_person_only = lib.OptionEnum("namedPersonOnly", bool)
-    # deutshepost_ident_check = lib.OptionEnum("identCheck")
-    deutshepost_signed_for_by_recipient = lib.OptionEnum("signedForByRecipient", bool)
-    deutshepost_endorsement = lib.OptionEnum("endorsement")
-    deutshepost_preferred_day = lib.OptionEnum("preferredDay")
-    deutshepost_no_neighbour_delivery = lib.OptionEnum("noNeighbourDelivery", bool)
-    deutshepost_additional_insurance = lib.OptionEnum("additionalInsurance", float)
-    deutschepost_bulky_goods = lib.OptionEnum("bulkyGoods", bool)
-    deutschepost_cash_on_delivery = lib.OptionEnum("cashOnDelivery", float)
-    deutschepost_individual_sender_requirement = lib.OptionEnum("individualSenderRequirement")
-    deutschepost_premium = lib.OptionEnum("premium", bool)
-    deutschepost_closest_drop_point = lib.OptionEnum("closestDropPoint", bool)
-    deutschepost_parcel_outlet_routing = lib.OptionEnum("parcelOutletRouting")
-    # deutschepost_dhl_retoure = lib.OptionEnum("dhlRetoure")
-    deutschepost_postal_delivery_duty_paid = lib.OptionEnum("postalDeliveryDutyPaid", bool)
+    dhl_parcel_de_preferred_neighbour = lib.OptionEnum("preferredNeighbour")
+    dhl_parcel_de_preferred_location = lib.OptionEnum("preferredLocation")
+    dhl_parcel_de_visual_check_of_age = lib.OptionEnum("visualCheckOfAge")
+    dhl_parcel_de_named_person_only = lib.OptionEnum("namedPersonOnly", bool)
+    # dhl_parcel_de_ident_check = lib.OptionEnum("identCheck")
+    dhl_parcel_de_signed_for_by_recipient = lib.OptionEnum("signedForByRecipient", bool)
+    dhl_parcel_de_endorsement = lib.OptionEnum("endorsement")
+    dhl_parcel_de_preferred_day = lib.OptionEnum("preferredDay")
+    dhl_parcel_de_no_neighbour_delivery = lib.OptionEnum("noNeighbourDelivery", bool)
+    dhl_parcel_de_additional_insurance = lib.OptionEnum("additionalInsurance", float)
+    dhl_parcel_de_bulky_goods = lib.OptionEnum("bulkyGoods", bool)
+    dhl_parcel_de_cash_on_delivery = lib.OptionEnum("cashOnDelivery", float)
+    dhl_parcel_de_individual_sender_requirement = lib.OptionEnum("individualSenderRequirement")
+    dhl_parcel_de_premium = lib.OptionEnum("premium", bool)
+    dhl_parcel_de_closest_drop_point = lib.OptionEnum("closestDropPoint", bool)
+    dhl_parcel_de_parcel_outlet_routing = lib.OptionEnum("parcelOutletRouting")
+    # dhl_parcel_de_dhl_retoure = lib.OptionEnum("dhlRetoure")
+    dhl_parcel_de_postal_delivery_duty_paid = lib.OptionEnum("postalDeliveryDutyPaid", bool)
 
     """ Unified Option type mapping """
-    insurance = deutshepost_additional_insurance
-    cash_on_delivery = deutschepost_cash_on_delivery
+    insurance = dhl_parcel_de_additional_insurance
+    cash_on_delivery = dhl_parcel_de_cash_on_delivery
     # fmt: on
 
 
@@ -158,7 +158,7 @@ class TrackingStatus(lib.Enum):
 DEFAULT_SERVICES = [
     models.ServiceLevel(
         service_name="DHL Paket",
-        service_code="dpdhl_paket",
+        service_code="dhl_parcel_de_paket",
         currency="EUR",
         domicile=True,
         min_weight=0.01,
@@ -172,7 +172,7 @@ DEFAULT_SERVICES = [
     ),
     models.ServiceLevel(
         service_name="DHL Paket International",
-        service_code="dpdhl_paket_international",
+        service_code="dhl_parcel_de_paket_international",
         currency="EUR",
         domicile=False,
         international=True,
@@ -187,7 +187,7 @@ DEFAULT_SERVICES = [
     ),
     models.ServiceLevel(
         service_name="DHL EuroPaket",
-        service_code="dpdhl_europaket",
+        service_code="dhl_parcel_de_europaket",
         currency="EUR",
         domicile=False,
         international=True,
@@ -202,7 +202,7 @@ DEFAULT_SERVICES = [
     ),
     models.ServiceLevel(
         service_name="DHL Warenpost",
-        service_code="dpdhl_warenpost",
+        service_code="dhl_parcel_de_warenpost",
         currency="EUR",
         domicile=True,
         international=False,
@@ -217,7 +217,7 @@ DEFAULT_SERVICES = [
     ),
     models.ServiceLevel(
         service_name="DHL Warenpost International",
-        service_code="dpdhl_warenpost_international",
+        service_code="dhl_parcel_de_warenpost_international",
         currency="EUR",
         domicile=False,
         international=True,

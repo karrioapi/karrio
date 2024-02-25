@@ -256,6 +256,13 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("api_key").required}
                 />}
 
+                {field("dhl_api_key").exists && <InputField label="DHL API Key (Consumer Key)" value={payload.dhl_api_key}
+                  name="dhl_api_key"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("dhl_api_key").required}
+                />}
+
                 {field("laposte_api_key").exists && <InputField label="La Poste API Key" value={payload.laposte_api_key}
                   name="laposte_api_key"
                   onChange={handleChange}
@@ -394,12 +401,27 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("consumer_key").required}
                 />}
 
+                {field("tracking_consumer_key").exists && <InputField label="Tracking API consumer key" value={payload.tracking_consumer_key}
+                  name="tracking_consumer_key"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("tracking_consumer_key").required}
+                />}
+
                 {field("consumer_secret").exists && <InputField label="Consumer Secret" value={payload.consumer_secret}
                   type="text"
                   name="consumer_secret"
                   onChange={handleChange}
                   className="is-small"
                   required={field("consumer_secret").required}
+                />}
+
+                {field("tracking_consumer_secret").exists && <InputField label="Tracking API consumer secret" value={payload.tracking_consumer_secret}
+                  type="text"
+                  name="tracking_consumer_secret"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("tracking_consumer_secret").required}
                 />}
 
                 {field("contract_id").exists && <InputField label="Contract Id" value={payload.contract_id}
@@ -822,7 +844,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Colissimo]: [["carrier_id", true], ["contract_number", true], ["password", true], ["laposte_api_key"]],
       [CarrierSettingsCarrierNameEnum.Dicom]: [["carrier_id", true], ["username", true], ["password", true], ["billing_account"]],
       [CarrierSettingsCarrierNameEnum.Dpd]: [["carrier_id", true], ["delis_id", true], ["password", true], ["depot"], ["account_country_code"]],
-      [CarrierSettingsCarrierNameEnum.DhlParcelDe]: [["carrier_id", true], ["username", true], ["password", true], ["dhl_api_key", true], ["customer_number", true], ["consumer_key"], ["consumer_secret"]],
+      [CarrierSettingsCarrierNameEnum.DhlParcelDe]: [["carrier_id", true], ["username", true], ["password", true], ["dhl_api_key", true], ["customer_number"], ["tracking_consumer_key"], ["tracking_consumer_secret"]],
       [CarrierSettingsCarrierNameEnum.Dpdhl]: [["carrier_id", true], ["username", true], ["password", true], ["app_id"], ["app_token"], ["zt_id"], ["zt_password"], ["account_number"]],
       [CarrierSettingsCarrierNameEnum.DhlExpress]: [["carrier_id", true], ["site_id", true], ["password", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.DhlPoland]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true]],

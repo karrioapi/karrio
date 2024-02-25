@@ -130,7 +130,7 @@ def get_available_rates(
         match_min_weight_requirements = (
             service.min_weight is not None
             and package.weight[service.weight_unit]
-            <= units.Weight(service.min_weight, service.weight_unit).value
+            >= units.Weight(service.min_weight, service.weight_unit).value
         ) or (service.min_weight is None)
         match_max_weight_requirements = (
             service.max_weight is not None
@@ -266,6 +266,18 @@ def get_available_rates(
                     message=f"the weight exceeds service {service.service_code} max weight",
                 )
             )
+
+        print(
+            ">>>>>>",
+            destination_covered,
+            match_length_requirements,
+            match_height_requirements,
+            match_width_requirements,
+            match_min_weight_requirements,
+            match_max_weight_requirements,
+            selected_zone,
+            selected_zone is not None,
+        )
 
         if (
             destination_covered
