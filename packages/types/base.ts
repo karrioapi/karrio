@@ -322,7 +322,7 @@ export interface References {
     carriers: Collection;
     custom_carriers: Collection;
     states: Collection<Collection>;
-    options: Collection<Collection>;
+    options: Collection<Collection<{ code: string, type: string }>>;
     services: Collection<Collection>;
     option_names: Collection<Collection>;
     service_names: Collection<Collection>;

@@ -585,7 +585,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {/* Carrier config section */}
 
-                {carrier_name.toString() in connection_configs && <div className='mt-4'>
+                {carrier_name.toString() in (connection_configs || {}) && <div className='mt-4'>
 
                   <Disclosure>
                     {({ open }) => (
