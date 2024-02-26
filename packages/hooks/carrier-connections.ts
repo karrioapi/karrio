@@ -14,10 +14,10 @@ export function useConnections() {
         .reduce(
           (acc, _) => ({
             ...acc,
-            [_.carrier_name]: [...new Set([
+            [_.carrier_name]: [...(new Set<string>([
               ...(acc[_.carrier_name] as string[] || []),
               ...(_.config?.shipping_options || [])
-            ])]
+            ])) as any]
           }),
           {} as Record<string, string[]>,
         )
