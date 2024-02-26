@@ -400,8 +400,8 @@ class ShippingOption(utils.Enum):
     fedex_one_rate = utils.OptionEnum("FEDEX_ONE_RATE", bool)
     fedex_freight_guarantee = utils.OptionEnum("FREIGHT_GUARANTEE", bool)
     fedex_saturday_delivery = utils.OptionEnum("SATURDAY_DELIVERY", bool)
-    fedex_smart_post_hub_id = utils.OptionEnum("SMART_POST_HUB_ID", bool)
-    fedex_smart_post_allowed_indicia = utils.OptionEnum("SMART_POST_ALLOWED_INDICIA", bool)
+    fedex_smart_post_hub_id = utils.OptionEnum("SMART_POST_HUB_ID")
+    fedex_smart_post_allowed_indicia = utils.OptionEnum("SMART_POST_ALLOWED_INDICIA")
 
     """ Package Options """
 
