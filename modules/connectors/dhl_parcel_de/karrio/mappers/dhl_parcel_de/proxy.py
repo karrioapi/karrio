@@ -23,6 +23,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             method="POST",
             headers={
                 "content-type": "application/json",
+                "dhl-api-key": self.settings.dhl_api_key,
                 "Accept-Language": self.settings.language,
                 "Authorization": f"Basic {self.settings.authorization}",
             },
@@ -38,6 +39,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             method="DELETE",
             headers={
                 "content-type": "application/json",
+                "DHL-API-Key": self.settings.dhl_api_key,
                 "Accept-Language": self.settings.language,
                 "Authorization": f"Basic {self.settings.authorization}",
             },
@@ -46,20 +48,23 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        def _get_tracking(tracking_request: dict):
-            query = urllib.parse.urlencode(tracking_request)
-            return lib.request(
-                url=f"{self.settings.tracking_server_url}/track/shipments?{query}",
+
+        if not all([self.settings.tracking_consumer_key]):
+            raise Exception(
+                "The tracking_consumer_key is required for Track API requests."
+            )
+
+        responses: typing.List[dict] = lib.run_asynchronously(
+            lambda request: lib.request(
+                url=f"{self.settings.tracking_server_url}/track/shipments?{urllib.parse.urlencode(request)}",
                 trace=self.trace_as("json"),
                 method="GET",
                 headers={
                     "Accept": "application/json",
                     "DHL-API-Key": self.settings.tracking_consumer_key,
                 },
-            )
-
-        responses: typing.List[dict] = lib.run_asynchronously(
-            _get_tracking, request.serialize()
+            ),
+            request.serialize(),
         )
 
         return lib.Deserializable(responses, lambda res: [lib.to_dict(r) for r in res])

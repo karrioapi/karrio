@@ -61,21 +61,7 @@ class CustomsContentType(lib.StrEnum):
     return_merchandise = return_of_goods
 
 
-class ShippingService(lib.StrEnum):
-    """Carrier specific services"""
-
-    australiapost_parcel_post = "T28"
-    australiapost_express_post = "E34"
-    australiapost_parcel_post_signature = "T28S"
-    australiapost_express_post_signature = "E34S"
-    # australiapost_on_demand = "PTI8"
-    # australiapost_international = "IC10"
-    # australiapost_commercial = "Commercial"
-    # australiapost_startrack = "Startrack"
-    # australiapost_startrack_courier = "Startrack Courier"
-
-
-class ServiceName(lib.StrEnum):
+class ServiceLabelGroup(lib.StrEnum):
     """Carrier specific services"""
 
     australiapost_parcel_post = "Parcel Post"
@@ -85,6 +71,32 @@ class ServiceName(lib.StrEnum):
     australiapost_on_demand = "On Demand"
     australiapost_international = "International"
     australiapost_commercial = "Commercial"
+
+
+class ShippingService(lib.StrEnum):
+    """Carrier specific services"""
+
+    australiapost_parcel_post = "T28"
+    australiapost_express_post = "E34"
+    australiapost_parcel_post_signature = "3D55"
+    australiapost_express_post_signature = "3J55"
+    australiapost_intl_standard_pack_track = "PTI8"
+    australiapost_intl_standard_with_signature = "PTI7"
+    australiapost_intl_express_merch = "ECM8"
+    australiapost_intl_express_docs = "ECD8"
+    australiapost_eparcel_post_returns = "PR"
+    australiapost_express_eparcel_post_returns = "XPR"
+
+    # australiapost_parcel_post = "PARCEL POST"
+    # australiapost_express_post = "EXPRESS POST"
+    # australiapost_parcel_post_signature = "PARCEL POST + SIGNATURE"
+    # australiapost_express_post_signature = "EXPRESS POST + SIGNATURE"
+    # australiapost_intl_standard_pack_track = "INTL STANDARD/PACK & TRACK"
+    # australiapost_intl_standard_with_signature = "INT'L STANDARD WITH SIGNATURE"
+    # australiapost_intl_express_merch = "INTL EXPRESS MERCH"
+    # australiapost_intl_express_docs = "INTL EXPRESS DOCS"
+    # australiapost_eparcel_post_returns = "EPARCEL POST RETURNS"
+    # australiapost_express_eparcel_post_returns = "EXPRESS EPARCEL POST RETURNS"
 
 
 class ShippingOption(lib.Enum):

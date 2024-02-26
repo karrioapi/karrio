@@ -25,7 +25,7 @@ def parse_shipment_response(
                 for _, item in enumerate(items, start=1)
             ]
         )
-        if any(items)
+        if any([lib.failsafe(lambda: _["sstatus"]["statusCode"]) == 200 for _ in items])
         else None
     )
 
@@ -258,7 +258,7 @@ def shipment_request(
         request,
         lib.to_dict,
         dict(
-            validate="true",
+            # validate="true",
             docFormat=doc_format,
             printFormat=print_format,
             combine="true",

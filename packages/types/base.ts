@@ -322,7 +322,7 @@ export interface References {
     carriers: Collection;
     custom_carriers: Collection;
     states: Collection<Collection>;
-    options: Collection<Collection>;
+    options: Collection<Collection<{ code: string, type: string }>>;
     services: Collection<Collection>;
     option_names: Collection<Collection>;
     service_names: Collection<Collection>;
@@ -352,12 +352,14 @@ export const CARRIER_THEMES: Collection = {
     'dhl_universal': 'is-dhl',
     'dpd': 'is-dpd',
     'dpdhl': 'is-dhl',
+    'dhl_parcel_de': 'is-dhl',
     'eshipper': 'is-eshipper',
     'easypost': 'is-easypost',
     'geodis': 'is-geodis',
     'laposte': 'is-laposte',
     'nationex': 'is-nationex',
     'fedex': 'is-fedex',
+    'fedex_ws': 'is-fedex',
     'freightcom': 'is-freightcom',
     'generic': 'is-generic',
     'purolator': 'is-purolator',
@@ -399,6 +401,7 @@ export const CARRIER_IMAGES: Collection = {
     'dhl_express': 'dhl_express',
     'dhl_poland': 'dhl_express',
     'dpdhl': 'dhl_express',
+    'dhl_parcel_de': 'dhl_express',
     'dhl_universal': 'dhl_universal',
     'dpd': 'dpd',
     'dpd_uk': 'dpd',
@@ -406,6 +409,7 @@ export const CARRIER_IMAGES: Collection = {
     'estafeta': 'generic',
     'fastway': 'generic',
     'fedex': 'fedex',
+    'fedex_ws': 'fedex',
     'fedex_mail': 'fedex',
     'fedex_sameday_city': 'fedex',
     'fedex_smartpost': 'fedex',

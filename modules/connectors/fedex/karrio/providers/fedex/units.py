@@ -1,5 +1,5 @@
+import karrio.lib as lib
 import karrio.core.units as units
-import karrio.core.utils as utils
 
 PRESET_DEFAULTS = dict(
     dimension_unit="IN",
@@ -14,7 +14,7 @@ COUNTRY_PREFERED_UNITS = dict(
 )
 
 
-class PackagePresets(utils.Enum):
+class PackagePresets(lib.Enum):
     fedex_envelope_legal_size = units.PackagePreset(
         **dict(weight=1.0, width=9.5, height=15.5, length=1, packaging_type="envelope"),
         **PRESET_DEFAULTS
@@ -107,7 +107,7 @@ class PackagePresets(utils.Enum):
     fedex_pak = fedex_padded_pak
 
 
-class LabelType(utils.Enum):
+class LabelType(lib.Enum):
     PDF_4x6 = ("PDF", "STOCK_4X6")
     PDF_4x6_75 = ("PDF", "STOCK_4X6.75")
     PDF_4x8 = ("PDF", "STOCK_4X8")
@@ -122,7 +122,7 @@ class LabelType(utils.Enum):
     ZPL = ZPL_4x6
 
 
-class Incoterm(utils.Enum):
+class Incoterm(lib.Enum):
     DDP = "DDP"
     DDU = "DDU"
     DAP = "DAP"
@@ -136,7 +136,7 @@ class Incoterm(utils.Enum):
     FOB = "FOB"
 
 
-class PurposeType(utils.Enum):
+class PurposeType(lib.Enum):
     gift = "GIFT"
     not_sold = "NOT_SOLD"
     personal_effects = "PERSONAL_EFFECTS"
@@ -151,16 +151,16 @@ class PurposeType(utils.Enum):
     return_merchandise = repair_and_return
 
 
-class PackagingType(utils.StrEnum):
+class PackagingType(lib.Enum):
     fedex_envelope = "FEDEX_ENVELOPE"
-    fedex_pak = "FEDEX_PAK"
     fedex_box = "FEDEX_BOX"
     fedex_small_box = "FEDEX_SMALL_BOX"
     fedex_medium_box = "FEDEX_MEDIUM_BOX"
     fedex_large_box = "FEDEX_LARGE_BOX"
     fedex_extra_large_box = "FEDEX_EXTRA_LARGE_BOX"
-    fedex_10_kg_box = "FEDEX_10KG_BOX"
-    fedex_25_kg_box = "FEDEX_25KG_BOX"
+    fedex_10kg_box = "FEDEX_10KG_BOX"
+    fedex_25kg_box = "FEDEX_25KG_BOX"
+    fedex_pak = "FEDEX_PAK"
     fedex_tube = "FEDEX_TUBE"
     your_packaging = "YOUR_PACKAGING"
 
@@ -175,62 +175,7 @@ class PackagingType(utils.StrEnum):
     extra_large_box = fedex_extra_large_box
 
 
-class PhysicalPackagingType(utils.StrEnum):
-    bag = "BAG"
-    barrel = "BBL"
-    basket = "BSK"
-    box = "BOX"
-    bucket = "BXT"
-    bundle = "BDL"
-    carton = "CTN"
-    case = "CAS"
-    container = "CNT"
-    crate = "CRT"
-    cylinder = "CYL"
-    drum = "DRM"
-    envelope = "ENV"
-    pail = "PAL"
-    pallet = "PLT"
-    piece = "PC "
-    reel = "REL"
-    roll = "ROL"
-    skid = "SKD"
-    tank = "TNK"
-    tube = "TBE"
-
-    """ Unified Packaging type mapping """
-    pak = roll
-    small_box = box
-    medium_box = box
-    large_box = carton
-    pieces = piece
-
-
-class FreightPackagingType(utils.StrEnum):
-    fedex_10_kg_box = "FEDEX_10KG_BOX"
-    fedex_25_kg_box = "FEDEX_25KG_BOX"
-    fedex_box = "FEDEX_BOX"
-    fedex_envelope = "FEDEX_ENVELOPE"
-    fedex_extra_large_box = "FEDEX_EXTRA_LARGE_BOX"
-    fedex_large_box = "FEDEX_LARGE_BOX"
-    fedex_medium_box = "FEDEX_MEDIUM_BOX"
-    fedex_pak = "FEDEX_PAK"
-    fedex_small_box = "FEDEX_SMALL_BOX"
-    fedex_tube = "FEDEX_TUBE"
-    your_packaging = "YOUR_PACKAGING"
-
-    """ Unified Packaging type mapping """
-    envelope = fedex_envelope
-    pak = fedex_pak
-    tube = fedex_tube
-    pallet = fedex_extra_large_box
-    small_box = fedex_small_box
-    medium_box = fedex_medium_box
-    large_box = fedex_large_box
-    extra_large_box = fedex_extra_large_box
-
-
-class PaymentType(utils.StrEnum):
+class PaymentType(lib.Enum):
     account = "ACCOUNT"
     collect = "COLLECT"
     recipient = "RECIPIENT"
@@ -238,216 +183,193 @@ class PaymentType(utils.StrEnum):
     third_party = "THIRD_PARTY"
 
 
-class ConnectionConfig(utils.Enum):
-    label_type = utils.OptionEnum("label_type")
-    shipping_options = utils.OptionEnum("shipping_options", list)
-    shipping_services = utils.OptionEnum("shipping_services", list)
+class ConnectionConfig(lib.Enum):
+    locale = lib.OptionEnum("locale")
+    label_type = lib.OptionEnum("label_type")
+    smart_post_hub_id = lib.OptionEnum("smart_post_hub_id")
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
 
 
-class ServiceType(utils.Enum):
-    fedex_europe_first_international_priority = "EUROPE_FIRST_INTERNATIONAL_PRIORITY"
+class ShippingService(lib.Enum):
+    fedex_international_priority_express = "FEDEX_INTERNATIONAL_PRIORITY_EXPRESS"
+    fedex_international_first = "INTERNATIONAL_FIRST"
+    fedex_international_priority = "FEDEX_INTERNATIONAL_PRIORITY"
+    fedex_international_economy = "INTERNATIONAL_ECONOMY"
+    fedex_ground = "FEDEX_GROUND"
+    fedex_cargo_mail = "FEDEX_CARGO_MAIL"
+    fedex_cargo_international_premium = "FEDEX_CARGO_INTERNATIONAL_PREMIUM"
+    fedex_first_overnight = "FIRST_OVERNIGHT"
+    fedex_first_overnight_freight = "FIRST_OVERNIGHT_FREIGHT"
     fedex_1_day_freight = "FEDEX_1_DAY_FREIGHT"
-    fedex_2_day = "FEDEX_2_DAY"
-    fedex_2_day_am = "FEDEX_2_DAY_AM"
     fedex_2_day_freight = "FEDEX_2_DAY_FREIGHT"
     fedex_3_day_freight = "FEDEX_3_DAY_FREIGHT"
-    fedex_cargo_airport_to_airport = "FEDEX_CARGO_AIRPORT_TO_AIRPORT"
-    fedex_cargo_freight_forwarding = "FEDEX_CARGO_FREIGHT_FORWARDING"
-    fedex_cargo_international_express_freight = (
-        "FEDEX_CARGO_INTERNATIONAL_EXPRESS_FREIGHT"
-    )
-    fedex_cargo_international_premium = "FEDEX_CARGO_INTERNATIONAL_PREMIUM"
-    fedex_cargo_mail = "FEDEX_CARGO_MAIL"
-    fedex_cargo_registered_mail = "FEDEX_CARGO_REGISTERED_MAIL"
-    fedex_cargo_surface_mail = "FEDEX_CARGO_SURFACE_MAIL"
-    fedex_custom_critical_air_expedite = "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE"
-    fedex_custom_critical_air_expedite_exclusive_use = (
-        "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_EXCLUSIVE_USE"
-    )
-    fedex_custom_critical_air_expedite_network = (
-        "FEDEX_CUSTOM_CRITICAL_AIR_EXPEDITE_NETWORK"
-    )
-    fedex_custom_critical_charter_air = "FEDEX_CUSTOM_CRITICAL_CHARTER_AIR"
-    fedex_custom_critical_point_to_point = "FEDEX_CUSTOM_CRITICAL_POINT_TO_POINT"
-    fedex_custom_critical_surface_expedite = "FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE"
-    fedex_custom_critical_surface_expedite_exclusive_use = (
-        "FEDEX_CUSTOM_CRITICAL_SURFACE_EXPEDITE_EXCLUSIVE_USE"
-    )
-    fedex_custom_critical_temp_assure_air = "FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_AIR"
-    fedex_custom_critical_temp_assure_validated_air = (
-        "FEDEX_CUSTOM_CRITICAL_TEMP_ASSURE_VALIDATED_AIR"
-    )
-    fedex_custom_critical_white_glove_services = (
-        "FEDEX_CUSTOM_CRITICAL_WHITE_GLOVE_SERVICES"
-    )
-    fedex_distance_deferred = "FEDEX_DISTANCE_DEFERRED"
-    fedex_express_saver = "FEDEX_EXPRESS_SAVER"
-    fedex_first_freight = "FEDEX_FIRST_FREIGHT"
-    fedex_freight_economy = "FEDEX_FREIGHT_ECONOMY"
-    fedex_freight_priority = "FEDEX_FREIGHT_PRIORITY"
-    fedex_ground = "FEDEX_GROUND"
-    fedex_international_priority_plus = "FEDEX_INTERNATIONAL_PRIORITY_PLUS"
-    fedex_next_day_afternoon = "FEDEX_NEXT_DAY_AFTERNOON"
-    fedex_next_day_early_morning = "FEDEX_NEXT_DAY_EARLY_MORNING"
-    fedex_next_day_end_of_day = "FEDEX_NEXT_DAY_END_OF_DAY"
-    fedex_next_day_freight = "FEDEX_NEXT_DAY_FREIGHT"
-    fedex_next_day_mid_morning = "FEDEX_NEXT_DAY_MID_MORNING"
-    fedex_first_overnight = "FIRST_OVERNIGHT"
-    fedex_ground_home_delivery = "GROUND_HOME_DELIVERY"
-    fedex_international_distribution_freight = "INTERNATIONAL_DISTRIBUTION_FREIGHT"
-    fedex_international_economy = "INTERNATIONAL_ECONOMY"
-    fedex_international_economy_distribution = "INTERNATIONAL_ECONOMY_DISTRIBUTION"
-    fedex_international_economy_freight = "INTERNATIONAL_ECONOMY_FREIGHT"
-    fedex_international_first = "INTERNATIONAL_FIRST"
-    fedex_international_ground = "INTERNATIONAL_GROUND"
-    fedex_international_priority = "INTERNATIONAL_PRIORITY"
-    fedex_international_priority_distribution = "INTERNATIONAL_PRIORITY_DISTRIBUTION"
-    fedex_international_priority_express = "INTERNATIONAL_PRIORITY_EXPRESS"
     fedex_international_priority_freight = "INTERNATIONAL_PRIORITY_FREIGHT"
+    fedex_international_economy_freight = "INTERNATIONAL_ECONOMY_FREIGHT"
+    fedex_cargo_airport_to_airport = "FEDEX_CARGO_AIRPORT_TO_AIRPORT"
+    fedex_international_priority_distribution = "INTERNATIONAL_PRIORITY_DISTRIBUTION"
+    fedex_ip_direct_distribution_freight = "FEDEX_IP_DIRECT_DISTRIBUTION_FREIGHT"
+    fedex_intl_ground_distribution = "INTL_GROUND_DISTRIBUTION"
+    fedex_ground_home_delivery = "GROUND_HOME_DELIVERY"
+    fedex_smart_post = "SMART_POST"
     fedex_priority_overnight = "PRIORITY_OVERNIGHT"
+    fedex_standard_overnight = "STANDARD_OVERNIGHT"
+    fedex_2_day = "FEDEX_2_DAY"
+    fedex_2_day_am = "FEDEX_2_DAY_AM"
+    fedex_express_saver = "FEDEX_EXPRESS_SAVER"
     fedex_same_day = "SAME_DAY"
     fedex_same_day_city = "SAME_DAY_CITY"
-    fedex_same_day_metro_afternoon = "SAME_DAY_METRO_AFTERNOON"
-    fedex_same_day_metro_morning = "SAME_DAY_METRO_MORNING"
-    fedex_same_day_metro_rush = "SAME_DAY_METRO_RUSH"
-    fedex_smart_post = "SMART_POST"
-    fedex_standard_overnight = "STANDARD_OVERNIGHT"
-    fedex_transborder_distribution_consolidation = (
-        "TRANSBORDER_DISTRIBUTION_CONSOLIDATION"
-    )
+    fedex_one_day_freight = "FEDEX_ONE_DAY_FREIGHT"
+    fedex_international_economy_distribution = "INTERNATIONAL_ECONOMY_DISTRIBUTION"
+    fedex_international_connect_plus = "FEDEX_INTERNATIONAL_CONNECT_PLUS"
+    fedex_international_distribution_freight = "INTERNATIONAL_DISTRIBUTION_FREIGHT"
+    fedex_regional_economy = "FEDEX_REGIONAL_ECONOMY"
+    fedex_next_day_freight = "FEDEX_NEXT_DAY_FREIGHT"
+    fedex_next_day = "FEDEX_NEXT_DAY"
+    fedex_next_day_10am = "FEDEX_NEXT_DAY_10AM"
+    fedex_next_day_12pm = "FEDEX_NEXT_DAY_12PM"
+    fedex_next_day_end_of_day = "FEDEX_NEXT_DAY_END_OF_DAY"
+    fedex_distance_deferred = "FEDEX_DISTANCE_DEFERRED"
 
 
-class RatingOption(utils.Enum):
-    fedex_one_rate = utils.OptionEnum("FEDEX_ONE_RATE", bool)
-    fedex_freight_guarantee = utils.OptionEnum("FREIGHT_GUARANTEE", bool)
-    fedex_saturday_delivery = utils.OptionEnum("SATURDAY_DELIVERY", bool)
-    fedex_smart_post_allowed_indicia = utils.OptionEnum(
-        "SMART_POST_ALLOWED_INDICIA", bool
-    )
-    fedex_smart_post_hub_id = utils.OptionEnum("SMART_POST_HUB_ID", bool)
+class ShippingOption(lib.Enum):
+    # fmt: off
+    fedex_appointment = lib.OptionEnum("APPOINTMENT", bool)
+    fedex_broker_select_option = lib.OptionEnum("BROKER_SELECT_OPTION", bool)
+    fedex_call_before_delivery = lib.OptionEnum("CALL_BEFORE_DELIVERY", bool)
+    fedex_cod = lib.OptionEnum("COD", float)
+    fedex_custom_delivery_window = lib.OptionEnum("CUSTOM_DELIVERY_WINDOW", bool)
+    fedex_cut_flowers = lib.OptionEnum("CUT_FLOWERS", bool)
+    fedex_do_not_break_down_pallets = lib.OptionEnum("DO_NOT_BREAK_DOWN_PALLETS", bool)
+    fedex_do_not_stack_pallets = lib.OptionEnum("DO_NOT_STACK_PALLETS", bool)
+    fedex_dry_ice = lib.OptionEnum("DRY_ICE", bool)
+    fedex_east_coast_special = lib.OptionEnum("EAST_COAST_SPECIAL", bool)
+    fedex_exclude_from_consolidation = lib.OptionEnum("EXCLUDE_FROM_CONSOLIDATION", bool)
+    fedex_extreme_length = lib.OptionEnum("EXTREME_LENGTH", bool)
+    fedex_inside_delivery = lib.OptionEnum("INSIDE_DELIVERY", bool)
+    fedex_inside_pickup = lib.OptionEnum("INSIDE_PICKUP", bool)
+    fedex_international_controlled_export_service = lib.OptionEnum("INTERNATIONAL_CONTROLLED_EXPORT_SERVICE", bool)
+    fedex_third_party_consignee = lib.OptionEnum("THIRD_PARTY_CONSIGNEE", bool)
+    fedex_electronic_trade_documents = lib.OptionEnum("ELECTRONIC_TRADE_DOCUMENTS", bool)
+    fedex_food = lib.OptionEnum("FOOD", bool)
+    fedex_future_day_shipment = lib.OptionEnum("FUTURE_DAY_SHIPMENT", bool)
+    fedex_hold_at_location = lib.OptionEnum("HOLD_AT_LOCATION", bool)
+    fedex_international_traffic_in_arms_regulations = lib.OptionEnum("INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS", bool)
+    fedex_liftgate_delivery = lib.OptionEnum("LIFTGATE_DELIVERY", bool)
+    fedex_liftgate_pickup = lib.OptionEnum("LIFTGATE_PICKUP", bool)
+    fedex_limited_access_delivery = lib.OptionEnum("LIMITED_ACCESS_DELIVERY", bool)
+    fedex_limited_access_pickup = lib.OptionEnum("LIMITED_ACCESS_PICKUP", bool)
+    fedex_over_length = lib.OptionEnum("OVER_LENGTH", bool)
+    fedex_pending_shipment = lib.OptionEnum("PENDING_SHIPMENT", bool)
+    fedex_pharmacy_delivery = lib.OptionEnum("PHARMACY_DELIVERY", bool)
+    fedex_poison = lib.OptionEnum("POISON", bool)
+    fedex_home_delivery_premium = lib.OptionEnum("HOME_DELIVERY_PREMIUM", bool)
+    fedex_protection_from_freezing = lib.OptionEnum("PROTECTION_FROM_FREEZING", bool)
+    fedex_returns_clearance = lib.OptionEnum("RETURNS_CLEARANCE", bool)
+    fedex_return_shipment = lib.OptionEnum("RETURN_SHIPMENT", bool)
+    fedex_saturday_pickup = lib.OptionEnum("SATURDAY_PICKUP", bool)
+    fedex_event_notification = lib.OptionEnum("EVENT_NOTIFICATION", bool)
+    fedex_delivery_on_invoice_acceptance = lib.OptionEnum("DELIVERY_ON_INVOICE_ACCEPTANCE", bool)
+    fedex_top_load = lib.OptionEnum("TOP_LOAD", bool)
 
+    """ Rating Options """
+    fedex_one_rate = lib.OptionEnum("FEDEX_ONE_RATE", bool)
+    fedex_freight_guarantee = lib.OptionEnum("FREIGHT_GUARANTEE", bool)
+    fedex_saturday_delivery = lib.OptionEnum("SATURDAY_DELIVERY", bool)
+    fedex_smart_post_hub_id = lib.OptionEnum("SMART_POST_HUB_ID")
+    fedex_smart_post_allowed_indicia = lib.OptionEnum("SMART_POST_ALLOWED_INDICIA")
 
-class ShippingOption(utils.Enum):
-    fedex_blind_shipment = utils.OptionEnum("BLIND_SHIPMENT", bool)
-    fedex_broker_select_option = utils.OptionEnum("BROKER_SELECT_OPTION", bool)
-    fedex_call_before_delivery = utils.OptionEnum("CALL_BEFORE_DELIVERY", bool)
-    fedex_cod = utils.OptionEnum("COD", float)
-    fedex_cod_remittance = utils.OptionEnum("COD_REMITTANCE", float)
-    fedex_custom_delivery_window = utils.OptionEnum("CUSTOM_DELIVERY_WINDOW", bool)
-    fedex_cut_flowers = utils.OptionEnum("CUT_FLOWERS", bool)
-    fedex_dangerous_goods = utils.OptionEnum("DANGEROUS_GOODS", bool)
-    fedex_delivery_on_invoice_acceptance = utils.OptionEnum(
-        "DELIVERY_ON_INVOICE_ACCEPTANCE", bool
-    )
-    fedex_detention = utils.OptionEnum("DETENTION", bool)
-    fedex_do_not_break_down_pallets = utils.OptionEnum(
-        "DO_NOT_BREAK_DOWN_PALLETS", bool
-    )
-    fedex_do_not_stack_pallets = utils.OptionEnum("DO_NOT_STACK_PALLETS", bool)
-    fedex_dry_ice = utils.OptionEnum("DRY_ICE", bool)
-    fedex_east_coast_special = utils.OptionEnum("EAST_COAST_SPECIAL", bool)
-    fedex_electronic_trade_documents = utils.OptionEnum(
-        "ELECTRONIC_TRADE_DOCUMENTS", bool
-    )
-    fedex_event_notification = utils.OptionEnum("EVENT_NOTIFICATION", bool)
-    fedex_exclude_from_consolidation = utils.OptionEnum(
-        "EXCLUDE_FROM_CONSOLIDATION", bool
-    )
-    fedex_exclusive_use = utils.OptionEnum("EXCLUSIVE_USE", bool)
-    fedex_exhibition_delivery = utils.OptionEnum("EXHIBITION_DELIVERY", bool)
-    fedex_exhibition_pickup = utils.OptionEnum("EXHIBITION_PICKUP", bool)
-    fedex_expedited_alternate_delivery_route = utils.OptionEnum(
-        "EXPEDITED_ALTERNATE_DELIVERY_ROUTE", bool
-    )
-    fedex_expedited_one_day_earlier = utils.OptionEnum(
-        "EXPEDITED_ONE_DAY_EARLIER", bool
-    )
-    fedex_expedited_service_monitoring_and_delivery = utils.OptionEnum(
-        "EXPEDITED_SERVICE_MONITORING_AND_DELIVERY", bool
-    )
-    fedex_expedited_standard_day_early_delivery = utils.OptionEnum(
-        "EXPEDITED_STANDARD_DAY_EARLY_DELIVERY", bool
-    )
-    fedex_extra_labor = utils.OptionEnum("EXTRA_LABOR", bool)
-    fedex_extreme_length = utils.OptionEnum("EXTREME_LENGTH", bool)
-    fedex_one_rate = utils.OptionEnum("FEDEX_ONE_RATE", bool)
-    fedex_flatbed_trailer = utils.OptionEnum("FLATBED_TRAILER", bool)
-    fedex_food = utils.OptionEnum("FOOD", bool)
-    fedex_freight_guarantee = utils.OptionEnum("FREIGHT_GUARANTEE")
-    fedex_freight_to_collect = utils.OptionEnum("FREIGHT_TO_COLLECT", float)
-    fedex_future_day_shipment = utils.OptionEnum("FUTURE_DAY_SHIPMENT", bool)
-    fedex_hold_at_location = utils.OptionEnum("HOLD_AT_LOCATION", bool)
-    fedex_holiday_delivery = utils.OptionEnum("HOLIDAY_DELIVERY", bool)
-    fedex_holiday_guarantee = utils.OptionEnum("HOLIDAY_GUARANTEE", bool)
-    fedex_home_delivery_premium = utils.OptionEnum("HOME_DELIVERY_PREMIUM", bool)
-    fedex_inside_delivery = utils.OptionEnum("INSIDE_DELIVERY", bool)
-    fedex_inside_pickup = utils.OptionEnum("INSIDE_PICKUP", bool)
-    fedex_international_controlled_export_service = utils.OptionEnum(
-        "INTERNATIONAL_CONTROLLED_EXPORT_SERVICE", bool
-    )
-    fedex_international_mail_service = utils.OptionEnum(
-        "INTERNATIONAL_MAIL_SERVICE", bool
-    )
-    fedex_international_traffic_in_arms_regulations = utils.OptionEnum(
-        "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS", bool
-    )
-    fedex_liftgate_delivery = utils.OptionEnum("LIFTGATE_DELIVERY", bool)
-    fedex_liftgate_pickup = utils.OptionEnum("LIFTGATE_PICKUP", bool)
-    fedex_limited_access_delivery = utils.OptionEnum("LIMITED_ACCESS_DELIVERY", bool)
-    fedex_limited_access_pickup = utils.OptionEnum("LIMITED_ACCESS_PICKUP", bool)
-    fedex_marking_or_tagging = utils.OptionEnum("MARKING_OR_TAGGING")
-    fedex_non_business_time = utils.OptionEnum("NON_BUSINESS_TIME", bool)
-    fedex_pallet_shrinkwrap = utils.OptionEnum("PALLET_SHRINKWRAP", bool)
-    fedex_pallet_weight_allowance = utils.OptionEnum("PALLET_WEIGHT_ALLOWANCE", bool)
-    fedex_pallets_provided = utils.OptionEnum("PALLETS_PROVIDED", bool)
-    fedex_pending_complete = utils.OptionEnum("PENDING_COMPLETE", bool)
-    fedex_pending_shipment = utils.OptionEnum("PENDING_SHIPMENT", bool)
-    fedex_permit = utils.OptionEnum("PERMIT")
-    fedex_pharmacy_delivery = utils.OptionEnum("PHARMACY_DELIVERY", bool)
-    fedex_poison = utils.OptionEnum("POISON", bool)
-    fedex_port_delivery = utils.OptionEnum("PORT_DELIVERY", bool)
-    fedex_port_pickup = utils.OptionEnum("PORT_PICKUP", bool)
-    fedex_pre_delivery_notification = utils.OptionEnum(
-        "PRE_DELIVERY_NOTIFICATION", bool
-    )
-    fedex_pre_eig_processing = utils.OptionEnum("PRE_EIG_PROCESSING", bool)
-    fedex_pre_multiplier_processing = utils.OptionEnum(
-        "PRE_MULTIPLIER_PROCESSING", bool
-    )
-    fedex_protection_from_freezing = utils.OptionEnum("PROTECTION_FROM_FREEZING", bool)
-    fedex_regional_mall_delivery = utils.OptionEnum("REGIONAL_MALL_DELIVERY", bool)
-    fedex_regional_mall_pickup = utils.OptionEnum("REGIONAL_MALL_PICKUP", bool)
-    fedex_return_shipment = utils.OptionEnum("RETURN_SHIPMENT", bool)
-    fedex_returns_clearance = utils.OptionEnum("RETURNS_CLEARANCE", bool)
-    fedex_returns_clearance_special_routing_required = utils.OptionEnum(
-        "RETURNS_CLEARANCE_SPECIAL_ROUTING_REQUIRED", bool
-    )
-    fedex_saturday_delivery = utils.OptionEnum("SATURDAY_DELIVERY", bool)
-    fedex_saturday_pickup = utils.OptionEnum("SATURDAY_PICKUP", bool)
-    fedex_shipment_assembly = utils.OptionEnum("SHIPMENT_ASSEMBLY", bool)
-    fedex_sort_and_segregate = utils.OptionEnum("SORT_AND_SEGREGATE", bool)
-    fedex_special_delivery = utils.OptionEnum("SPECIAL_DELIVERY", bool)
-    fedex_special_equipment = utils.OptionEnum("SPECIAL_EQUIPMENT", bool)
-    fedex_storage = utils.OptionEnum("STORAGE", bool)
-    fedex_sunday_delivery = utils.OptionEnum("SUNDAY_DELIVERY", bool)
-    fedex_third_party_consignee = utils.OptionEnum("THIRD_PARTY_CONSIGNEE", bool)
-    fedex_top_load = utils.OptionEnum("TOP_LOAD", bool)
-    fedex_usps_delivery = utils.OptionEnum("USPS_DELIVERY", bool)
-    fedex_usps_pickup = utils.OptionEnum("USPS_PICKUP", bool)
-    fedex_weighing = utils.OptionEnum("WEIGHING", bool)
+    """ Package Options """
+
+    fedex_alcohol = lib.OptionEnum("ALCOHOL", bool)
+    fedex_battery = lib.OptionEnum("BATTERY", bool)
+    fedex_dangerous_goods = lib.OptionEnum("DANGEROUS_GOODS", bool)
+    fedex_priority_alert = lib.OptionEnum("PRIORITY_ALERT", bool)
+    fedex_priority_alert_plus = lib.OptionEnum("PRIORITY_ALERT_PLUS", bool)
+    fedex_non_standard_container = lib.OptionEnum("NON_STANDARD_CONTAINER", bool)
+    fedex_piece_count_verification = lib.OptionEnum("PIECE_COUNT_VERIFICATION", bool)
+    fedex_signature_option = lib.OptionEnum("SIGNATURE_OPTION", bool)
+    fedex_evening = lib.OptionEnum("EVENING", bool)
+    fedex_date_certain = lib.OptionEnum("DATE_CERTAIN", bool)
 
     """ Unified Option type mapping """
-    notification = fedex_event_notification
     cash_on_delivery = fedex_cod
+    dangerous_good = fedex_dangerous_goods
+    notification = fedex_event_notification
     paperless_trade = fedex_electronic_trade_documents
-    doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
-    doc_references = utils.OptionEnum("WEIGHING", utils.DP.to_dict)
+    doc_files = lib.OptionEnum("doc_files", lib.to_dict)
+    doc_references = lib.OptionEnum("doc_references", lib.to_dict)
+    # fmt: on
+
+
+RATING_OPTIONS = [
+    "FREIGHT_GUARANTEE",
+    "SATURDAY_DELIVERY",
+    "SMART_POST_ALLOWED_INDICIA",
+    "SMART_POST_HUB_ID",
+]
+PACKAGE_OPTIONS = [
+    "ALCOHOL",
+    "APPOINTMENT",
+    "BATTERY",
+    "COD",
+    "DANGEROUS_GOODS",
+    "DRY_ICE",
+    "PRIORITY_ALERT",
+    "PRIORITY_ALERT_PLUS",
+    "NON_STANDARD_CONTAINER",
+    "PIECE_COUNT_VERIFICATION",
+    "SIGNATURE_OPTION",
+    "EVENING",
+    "DATE_CERTAIN",
+    "SATURDAY_PICKUP",
+]
+SHIPMENT_OPTIONS = [
+    "APPOINTMENT",
+    "BROKER_SELECT_OPTION",
+    "CALL_BEFORE_DELIVERY",
+    "COD",
+    "CUSTOM_DELIVERY_WINDOW",
+    "CUT_FLOWERS",
+    "DO_NOT_BREAK_DOWN_PALLETS",
+    "DO_NOT_STACK_PALLETS",
+    "DRY_ICE",
+    "EAST_COAST_SPECIAL",
+    "EXCLUDE_FROM_CONSOLIDATION",
+    "EXTREME_LENGTH",
+    "INSIDE_DELIVERY",
+    "INSIDE_PICKUP",
+    "INTERNATIONAL_CONTROLLED_EXPORT_SERVICE",
+    "FEDEX_ONE_RATE",
+    "THIRD_PARTY_CONSIGNEE",
+    "ELECTRONIC_TRADE_DOCUMENTS",
+    "FOOD",
+    "HOLD_AT_LOCATION",
+    "INTERNATIONAL_TRAFFIC_IN_ARMS_REGULATIONS",
+    "LIFTGATE_DELIVERY",
+    "LIFTGATE_PICKUP",
+    "LIMITED_ACCESS_DELIVERY",
+    "LIMITED_ACCESS_PICKUP",
+    "OVER_LENGTH",
+    "PENDING_SHIPMENT",
+    "PHARMACY_DELIVERY",
+    "POISON",
+    "HOME_DELIVERY_PREMIUM",
+    "PROTECTION_FROM_FREEZING",
+    "RETURNS_CLEARANCE",
+    "RETURN_SHIPMENT",
+    "SATURDAY_DELIVERY",
+    "SATURDAY_PICKUP",
+    "EVENT_NOTIFICATION",
+    "DELIVERY_ON_INVOICE_ACCEPTANCE",
+    "TOP_LOAD",
+    "FREIGHT_GUARANTEE",
+]
 
 
 def shipping_options_initializer(
     options: dict,
     package_options: units.Options = None,
-    option_type: utils.Enum = ShippingOption,
 ) -> units.Options:
     """
     Apply default values to the given options.
@@ -470,12 +392,12 @@ def shipping_options_initializer(
         )
 
     def items_filter(key: str) -> bool:
-        return key in option_type and key not in ["doc_files", "doc_references"]  # type: ignore
+        return key in ShippingOption and key not in ["doc_files", "doc_references"]  # type: ignore
 
-    return units.ShippingOptions(_options, option_type, items_filter=items_filter)
+    return units.ShippingOptions(_options, ShippingOption, items_filter=items_filter)
 
 
-class RateType(utils.Enum):
+class RateType(lib.Enum):
     payor_account_package = "PAYOR_ACCOUNT_PACKAGE"
     payor_account_shipment = "PAYOR_ACCOUNT_SHIPMENT"
     payor_list_package = "PAYOR_LIST_PACKAGE"
@@ -486,14 +408,17 @@ class RateType(utils.Enum):
     preferred_list_shipment = "PREFERRED_LIST_SHIPMENT"
 
 
-class UploadDocumentType(utils.StrEnum):
+class UploadDocumentType(lib.Enum):
+    fedex_usmca_commercial_invoice_certification_of_origin = (
+        "USMCA_COMMERCIAL_INVOICE_CERTIFICATION_OF_ORIGIN"
+    )
+    fedex_usmca_certification_of_origin = "USMCA_CERTIFICATION_OF_ORIGIN"
     fedex_certificate_of_origin = "CERTIFICATE_OF_ORIGIN"
     fedex_commercial_invoice = "COMMERCIAL_INVOICE"
-    fedex_etd_label = "ETD_LABEL"
-    fedex_nafta_certificate_of_origin = "NAFTA_CERTIFICATE_OF_ORIGIN"
-    fedex_net_rate_sheet = "NET_RATE_SHEET"
-    fedex_other = "OTHER"
     fedex_pro_forma_invoice = "PRO_FORMA_INVOICE"
+    fedex_net_rate_sheet = "NET_RATE_SHEET"
+    fedex_etd_label = "ETD_LABEL"
+    fedex_other = "OTHER"
 
     """ Unified upload document type mapping """
     certificate_of_origin = fedex_certificate_of_origin
@@ -503,17 +428,16 @@ class UploadDocumentType(utils.StrEnum):
     other = fedex_other
 
 
-class DocumentUploadOption(utils.Enum):
-    fedex_document_producer = utils.OptionEnum("fedex_document_producer")
-    fedex_expiration_date = utils.OptionEnum("fedex_expiration_date")
+class DocumentUploadOption(lib.Enum):
+    fedex_carrier_code = lib.OptionEnum("carrierCode", str)
+    pre_shipment = lib.OptionEnum("pre_shipment", bool)
 
 
-class TrackingStatus(utils.Enum):
+class TrackingStatus(lib.Enum):
     on_hold = ["DE", "SE"]
-    pending = ["OC"]
     delivered = ["DL"]
-    in_transit = [""]
+    in_transit = ["IT", "IX"]
     delivery_failed = ["CA", "RS"]
-    delivery_delayed = ["DD"]
+    delivery_delayed = ["DY", "DD"]
     out_for_delivery = ["AD", "ED", "OD"]
     ready_for_pickup = ["HL"]

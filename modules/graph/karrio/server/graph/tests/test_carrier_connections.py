@@ -132,7 +132,7 @@ SYSTEM_CONNECTIONS = {
             {
                 "id": ANY,
                 "carrier_id": "fedex_express",
-                "carrier_name": "fedex",
+                "carrier_name": "fedex_ws",
                 "test_mode": False,
                 "active": True,
             },

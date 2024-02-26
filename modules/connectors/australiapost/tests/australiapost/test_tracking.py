@@ -24,7 +24,7 @@ class TestAustraliaPostTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/shipping/v1/track?tracking_ids=%5B%277XX1000634011427%27%5D",
+                f"{gateway.settings.server_url}/shipping/v1/track?tracking_ids=7XX1000634011427",
             )
 
     def test_parse_tracking_response(self):

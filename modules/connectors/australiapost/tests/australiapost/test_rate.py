@@ -93,7 +93,7 @@ ParsedRateResponse = [
                 {"amount": 0.82, "currency": "AUD", "name": "GST"},
             ],
             "meta": {"service_name": "PARCEL POST + SIGNATURE"},
-            "service": "australiapost_parcel_post_signature",
+            "service": "T28S",
             "total_charge": 9.0,
         },
         {
@@ -102,7 +102,7 @@ ParsedRateResponse = [
             "currency": "AUD",
             "extra_charges": [{"amount": 3.18, "currency": "AUD", "name": "GST"}],
             "meta": {"service_name": "EXPRESS POST + SIGNATURE"},
-            "service": "australiapost_express_post_signature",
+            "service": "E34S",
             "total_charge": 34.94,
         },
     ],
@@ -128,37 +128,19 @@ ParsedRateResponse = [
 
 
 RateRequest = {
-    "shipments": [
+    "items": [
         {
-            "from": {
-                "postcode": "3000",
-                "state": "VIC",
-                "suburb": "MELBOURNE",
-            },
-            "to": {
-                "postcode": "2000",
-                "state": "NSW",
-                "suburb": "SYDNEY",
-            },
-            "items": [
-                {
-                    "features": {
-                        "TRANSIT_COVER": {
-                            "attributes": {
-                                "cover_amount": 1000.0,
-                            },
-                        }
-                    },
-                    "height": 1.0,
-                    "item_reference": "1",
-                    "length": 5.0,
-                    "packaging_type": "BOX",
-                    "weight": 2.0,
-                    "width": 10.0,
-                }
-            ],
+            "features": {"TRANSIT_COVER": {"attributes": {"cover_amount": 1000.0}}},
+            "height": 1.0,
+            "item_reference": "1",
+            "length": 5.0,
+            "packaging_type": "BOX",
+            "weight": 2.0,
+            "width": 10.0,
         }
-    ]
+    ],
+    "from": {"country": "AU", "postcode": "3000"},
+    "to": {"country": "AU", "postcode": "2000"},
 }
 
 RateResponse = """{

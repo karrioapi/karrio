@@ -18,7 +18,7 @@ def parse_error_response(
             or (
                 isinstance(response.get("status"), dict)
                 and "title" in response.get("status", {})
-                and (response.get("status", {}).get("title") or "") != "ok"
+                and (response.get("status", {}).get("title") or "").lower() != "ok"
             )
         )
     ]

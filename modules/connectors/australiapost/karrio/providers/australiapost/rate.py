@@ -98,53 +98,44 @@ def rate_request(
     services = lib.to_services(payload.services, provider_units.ShippingService)
 
     request = australiapost.RateRequestType(
-        shipments=[
-            australiapost.ShipmentType(
-                shipment_from=australiapost.FromType(
-                    suburb=payload.shipper.city,
-                    state=payload.shipper.state_code,
-                    postcode=payload.shipper.postal_code,
-                ),
-                to=australiapost.FromType(
-                    suburb=payload.recipient.city,
-                    state=payload.recipient.state_code,
-                    postcode=payload.recipient.postal_code,
-                ),
-                items=[
-                    australiapost.ItemType(
-                        item_reference=(
-                            getattr(package.parcel, "id", None) or str(idx)
-                        ),
-                        length=package.length.CM,
-                        width=package.width.CM,
-                        height=package.height.CM,
-                        weight=package.weight.KG,
-                        packaging_type=provider_units.PackagingType.map(
-                            package.packaging_type
-                        ).value,
-                        product_ids=[_.value for _ in services],
-                        features=(
-                            australiapost.FeaturesType(
-                                TRANSIT_COVER=australiapost.TransitCoverType(
-                                    attributes=australiapost.AttributesType(
-                                        cover_amount=package.options.australiapost_transit_cover.state,
-                                    ),
-                                )
-                            )
-                            if package.options.australiapost_transit_cover.state
-                            is not None
-                            else None
-                        ),
+        rate_request_from=australiapost.FromType(
+            postcode=payload.shipper.postal_code,
+            country=payload.shipper.country_code,
+        ),
+        to=australiapost.FromType(
+            postcode=payload.recipient.postal_code,
+            country=payload.recipient.country_code,
+        ),
+        items=[
+            australiapost.ItemType(
+                item_reference=(getattr(package.parcel, "id", None) or str(idx)),
+                length=package.length.CM,
+                width=package.width.CM,
+                height=package.height.CM,
+                weight=package.weight.KG,
+                packaging_type=provider_units.PackagingType.map(
+                    package.packaging_type
+                ).value,
+                product_ids=[_.value for _ in services],
+                features=(
+                    australiapost.FeaturesType(
+                        TRANSIT_COVER=australiapost.TransitCoverType(
+                            attributes=australiapost.AttributesType(
+                                cover_amount=package.options.australiapost_transit_cover.state,
+                            ),
+                        )
                     )
-                    for idx, package in enumerate(packages, start=1)
-                ],
+                    if (package.options.australiapost_transit_cover.state is not None)
+                    else None
+                ),
             )
+            for idx, package in enumerate(packages, start=1)
         ],
     )
 
     return lib.Serializable(
         request,
         lambda _: lib.to_dict(
-            lib.to_json(_).replace("shipment_from", "from"),
+            lib.to_json(_).replace("rate_request_from", "from"),
         ),
     )

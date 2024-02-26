@@ -16,12 +16,14 @@ Django==4.2.10
 -e ./modules/connectors/chronopost
 -e ./modules/connectors/colissimo
 -e ./modules/connectors/dhl_express
+-e ./modules/connectors/dhl_parcel_de
 -e ./modules/connectors/dhl_poland
 -e ./modules/connectors/dhl_universal
 -e ./modules/connectors/dicom
 -e ./modules/connectors/dpd
 -e ./modules/connectors/dpdhl
 -e ./modules/connectors/fedex
+-e ./modules/connectors/fedex_ws
 -e ./modules/connectors/generic
 -e ./modules/connectors/geodis
 -e ./modules/connectors/laposte

@@ -14,7 +14,7 @@ def parse_shipment_cancel_response(
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = not response.is_error and (response.data.get("result")) == "0"
+    success = not response.is_error  # and (response.data.get("result")) == "0"
 
     confirmation = (
         models.ConfirmationDetails(

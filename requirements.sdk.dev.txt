@@ -20,6 +20,7 @@
 -e ./modules/connectors/dpd
 -e ./modules/connectors/dpdhl
 -e ./modules/connectors/fedex
+-e ./modules/connectors/fedex_ws
 -e ./modules/connectors/generic
 -e ./modules/connectors/geodis
 -e ./modules/connectors/laposte

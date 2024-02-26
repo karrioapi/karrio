@@ -26,6 +26,7 @@ import { useLabelDataMutation } from '@karrio/hooks/label-data';
 import { InputField } from '@karrio/ui/components/input-field';
 import { DashboardLayout } from '@/layouts/dashboard-layout';
 import { useNotifier } from '@karrio/ui/components/notifier';
+import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { ModalProvider } from '@karrio/ui/modals/modal';
 import { Spinner } from '@karrio/ui/components/spinner';
 import { bundleContexts } from '@karrio/hooks/utils';
@@ -48,6 +49,7 @@ export default function CreateLabelPage(pageProps: any) {
   const Component: React.FC = () => {
     const notifier = useNotifier();
     const { basePath } = useAppMode();
+    const { references } = useAPIMetadata();
     const { carrierOptions } = useConnections();
     const { addUrlParam, ...router } = useLocation();
     const { query: templates } = useDefaultTemplates();
@@ -477,12 +479,9 @@ export default function CreateLabelPage(pageProps: any) {
                     defaultValue={shipment.options?.insurance}
                     required={!isNone(shipment.options?.insurance)}
                     onChange={e => onChange({ options: { ...shipment.options, insurance: parseFloat(e.target.value) } })}
-                  >
-                    <span className="icon is-small is-left">
-                      <i className="fas fa-dollar-sign"></i>
-                    </span>
-                    <span className="icon is-small is-right">{shipment.options?.currency}</span>
-                  </InputField>
+                    addonLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
+                    addonRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
+                  />
 
                 </div>
 
@@ -510,12 +509,9 @@ export default function CreateLabelPage(pageProps: any) {
                     defaultValue={shipment.options?.cash_on_delivery}
                     required={!isNone(shipment.options?.cash_on_delivery)}
                     onChange={e => onChange({ options: { ...shipment.options, cash_on_delivery: parseFloat(e.target.value) } })}
-                  >
-                    <span className="icon is-small is-left">
-                      <i className="fas fa-dollar-sign"></i>
-                    </span>
-                    <span className="icon is-small is-right">{shipment.options?.currency}</span>
-                  </InputField>
+                    addonLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
+                    addonRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
+                  />
 
                 </div>
 
@@ -580,7 +576,7 @@ export default function CreateLabelPage(pageProps: any) {
               </div>
 
               {/* CARRIER OPTIONS SECTION */}
-              {carrierOptions.length > 0 && <div className='mb-4 px-3'>
+              {Object.keys(carrierOptions).length > 0 && <div className='card mb-4 px-3 mx-2'>
 
                 <Disclosure>
                   {({ open }) => (
@@ -592,32 +588,45 @@ export default function CreateLabelPage(pageProps: any) {
                           {open ? <i className="fas fa-chevron-up"></i> : <i className="fas fa-chevron-down"></i>}
                         </span>
                       </Disclosure.Button>
-                      <Disclosure.Panel className="card is-flat columns is-multiline m-0 px-2">
+                      <Disclosure.Panel className="is-flat m-0 px-0" style={{ maxHeight: '40vh' }}>
 
-                        {(carrierOptions.includes("dpdhl_packstation")) && <>
-                          {/* dpdhl packstation */}
-                          <CheckBoxField name="Packstation"
-                            fieldClass="column mb-0 is-12 px-1 py-2"
-                            defaultChecked={!isNoneOrEmpty(shipment.options?.dpdhl_packstation)}
-                            onChange={e => onChange({ options: { ...shipment.options, dpdhl_packstation: e.target.checked === true ? "" : null } })}
-                          >
-                            <span>Packstation</span>
-                          </CheckBoxField>
+                        {Object.entries(carrierOptions).map(([carrier, options]) => <React.Fragment key={carrier}>
 
-                          <div className="column is-multiline m-0 p-0" style={{
-                            display: `${isNone(shipment.options?.dpdhl_packstation) ? 'none' : 'block'}`
-                          }}>
+                          <label className="label is-capitalized" style={{ fontSize: '0.8em' }}>{references!.carriers[carrier]}</label>
+                          <hr className='my-1' style={{ height: '1px' }} />
 
-                            <InputField name="dpdhl_packstation"
-                              // label="Packstation"
-                              className="is-small"
-                              fieldClass="column mb-0 is-6 px-1 py-2"
-                              value={shipment.options?.dpdhl_packstation}
-                              required={!isNone(shipment.options?.dpdhl_packstation)}
-                              onChange={e => onChange({ options: { ...shipment.options, dpdhl_packstation: e.target.value } })}
-                            />
+                          <div className="columns is-multiline m-0 p-0">
+
+                            {options.map((option, index) => <React.Fragment key={option}>
+
+                              {references!.options[carrier][option]?.type === 'boolean' && <>
+                                <CheckBoxField name={option}
+                                  fieldClass="column mb-0 is-6 pl-0 pr-2 py-4"
+                                  defaultChecked={shipment.options?.[option]}
+                                  onChange={e => onChange({ options: { ...shipment.options, [option]: e.target.checked || null } })}
+                                >
+                                  <span>{formatRef(option)}</span>
+                                </CheckBoxField>
+                              </>}
+
+                              {references!.options[carrier][option]?.type === 'string' && <>
+                                <InputField name={option}
+                                  label={formatRef(option)}
+                                  placeholder={formatRef(option)}
+                                  className="is-small"
+                                  fieldClass="column mb-0 is-6 pl-0 pr-2 py-1"
+                                  defaultValue={shipment.options[option]}
+                                  onChange={e => onChange({ options: { ...shipment.options, [option]: e.target.value } })}
+                                />
+                              </>}
+
+                            </React.Fragment>)}
+
                           </div>
-                        </>}
+
+                          <div className='p-2'></div>
+
+                        </React.Fragment>)}
 
                       </Disclosure.Panel>
                     </div>
