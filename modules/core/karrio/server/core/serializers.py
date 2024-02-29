@@ -183,13 +183,6 @@ class AddressData(validators.AugmentedAddressSerializer):
         max_length=20,
         help_text="The address state code",
     )
-    suburb = serializers.CharField(
-        required=False,
-        allow_blank=True,
-        allow_null=True,
-        max_length=20,
-        help_text="The address suburb if known",
-    )
     residential = serializers.BooleanField(
         allow_null=True,
         required=False,
