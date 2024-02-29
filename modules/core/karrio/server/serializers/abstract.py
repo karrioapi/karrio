@@ -328,20 +328,41 @@ def allow_model_id(model_paths: []):  # type: ignore
                     values = content if isinstance(content, list) else [content]
                     model = pydoc.locate(model_path)
 
-                    if any([isinstance(val, str) for val in values]):
+                    if any([isinstance(val, dict) and "id" in val for val in values]):
                         new_content = []
                         for value in values:
-                            if isinstance(value, str) and (model is not None):
-                                data = model_to_dict(model.objects.get(pk=value))
+                            if (
+                                isinstance(value, dict)
+                                and ("id" in value)
+                                and (model is not None)
+                            ):
+                                data = model_to_dict(model.objects.get(pk=value["id"]))
+
+                                for field, field_data in data.items():
+                                    if isinstance(field_data, list):
+                                        data[field] = [
+                                            (
+                                                model_to_dict(item)
+                                                if hasattr(item, "_meta")
+                                                else item
+                                            )
+                                            for item in field_data
+                                        ]
+
+                                    if hasattr(field_data, "_meta"):
+                                        data[field] = model_to_dict(field_data)
+
                                 ("id" in data) and data.pop("id")
                                 new_content.append(data)
 
                         kwargs.update(
                             data={
                                 **kwargs["data"],
-                                param: new_content
-                                if isinstance(content, list)
-                                else next(iter(new_content)),
+                                param: (
+                                    new_content
+                                    if isinstance(content, list)
+                                    else next(iter(new_content))
+                                ),
                             }
                         )
 
