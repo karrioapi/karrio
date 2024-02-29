@@ -49,17 +49,6 @@ const CarrierIntegrationDetails = ({ children, id, integration = {} }) => {
 
       <hr className="my-8" style={{}} />
 
-      {/* Capabilities */}
-      <h2 className="text-xl font-semibold text-slate-700">Supported Capabilities</h2>
-      <ul class="list-disc list-inside">
-
-        {integration.features.map((feature, index) => (
-          <li key={index}>{feature}</li>
-        ))}
-
-      </ul>
-
-
       {/* Environments */}
       {/* <h2 className="text-xl font-semibold text-slate-700 mt-8 mb-6">Environments</h2> */}
 
