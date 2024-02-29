@@ -315,6 +315,11 @@ class Commodity(serializers.EntitySerializer, CommodityData):
     )
 
 
+@serializers.allow_model_id(
+    [
+        ("items", "karrio.server.manager.models.Commodity"),
+    ]
+)
 class ParcelData(validators.PresetSerializer):
     weight = serializers.FloatField(required=True, help_text="The parcel's weight")
     width = serializers.FloatField(
