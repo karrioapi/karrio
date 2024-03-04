@@ -40,12 +40,11 @@ export default function OrdersPage(pageProps: any) {
     const router = useRouter();
     const { setLoading } = useLoader();
     const { references } = useAPIMetadata();
-    const { query: defaults } = useDefaultTemplates();
-    const context = useOrders({ setVariablesToURL: true });
     const { previewOrder } = useContext(OrderPreviewContext);
     const [allChecked, setAllChecked] = React.useState(false);
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
+    const context = useOrders({ setVariablesToURL: true, preloadNextPage: true });
     const { query: { data: { user_connections } = {} } } = useCarrierConnections();
     const { query: { data: { system_connections } = {} } } = useSystemCarrierConnections();
     const { query: { data: { orders } = {}, ...query }, filter, setFilter } = context;
@@ -159,18 +158,6 @@ export default function OrdersPage(pageProps: any) {
         </>
       )
     };
-    const collectShipments = (selection: string[], current: typeof orders) => {
-      return (current?.edges || [])
-        .filter(({ node: order }) => selection.includes(order.id))
-        .map(({ node: order }) => {
-          const shipment = (
-            order.shipments.find(({ status }) => status === "draft") ||
-            createShipmentFromOrders([order] as OrderType[], defaults)
-          );
-
-          return shipment as ShipmentData;
-        });
-    }
 
     useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
@@ -236,14 +223,10 @@ export default function OrdersPage(pageProps: any) {
 
                   {selection.length > 0 && <td className="p-1 is-vcentered" colSpan={8}>
                     <div className="buttons has-addons ">
-                      <BulkShipmentModalEditor
-                        shipments={collectShipments(selection, orders)}
-                        trigger={
-                          <button className={`button is-small is-default px-3 is-static ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
-                            <span className="has-text-weight-semibold">Create labels</span>
-                          </button>
-                        }
-                      />
+                      <AppLink className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}
+                        href={`/orders/create_labels?order_ids=${selection.join(',')}`}>
+                        <span className="has-text-weight-semibold">Create labels</span>
+                      </AppLink>
                       <a
                         href={url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">

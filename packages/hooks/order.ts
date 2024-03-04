@@ -11,9 +11,9 @@ import React from "react";
 
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
-type FilterType = OrderFilter & { setVariablesToURL?: boolean };
+type FilterType = OrderFilter & { setVariablesToURL?: boolean, isDisabled?: boolean, preloadNextPage?: boolean; };
 
-export function useOrders({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
+export function useOrders({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<OrderFilter>({ ...PAGINATION, ...initialData });
@@ -22,11 +22,14 @@ export function useOrders({ setVariablesToURL = false, ...initialData }: FilterT
   );
 
   // Queries
-  const query = useQuery(
-    ['orders', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  const query = useQuery({
+    queryKey: ['orders', filter],
+    queryFn: () => fetch({ filter }),
+    enabled: !isDisabled,
+    keepPreviousData: true,
+    staleTime: 5000,
+    onError,
+  });
 
   function setFilter(options: OrderFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -56,6 +59,7 @@ export function useOrders({ setVariablesToURL = false, ...initialData }: FilterT
   }
 
   React.useEffect(() => {
+    if (preloadNextPage === false) return;
     if (query.data?.orders.page_info.has_next_page) {
       const _filter = { ...filter, offset: filter.offset as number + 20 };
       queryClient.prefetchQuery(

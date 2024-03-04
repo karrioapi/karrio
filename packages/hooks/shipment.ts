@@ -7,9 +7,9 @@ import React from "react";
 
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
-type FilterType = ShipmentFilter & { setVariablesToURL?: boolean };
+type FilterType = ShipmentFilter & { setVariablesToURL?: boolean, isDisabled?: boolean; preloadNextPage?: boolean; };
 
-export function useShipments({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
+export function useShipments({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<ShipmentFilter>({ ...PAGINATION, ...initialData });
@@ -18,11 +18,14 @@ export function useShipments({ setVariablesToURL = false, ...initialData }: Filt
   );
 
   // Queries
-  const query = useQuery(
-    ['shipments', filter],
-    () => fetch({ filter }),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  const query = useQuery({
+    queryKey: ['shipments', filter],
+    queryFn: () => fetch({ filter }),
+    enabled: !isDisabled,
+    keepPreviousData: true,
+    staleTime: 5000,
+    onError,
+  });
 
   function setFilter(options: ShipmentFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
@@ -52,6 +55,7 @@ export function useShipments({ setVariablesToURL = false, ...initialData }: Filt
   }
 
   React.useEffect(() => {
+    if (preloadNextPage === false) return;
     if (query.data?.shipments.page_info.has_next_page) {
       const _filter = { ...filter, offset: filter.offset as number + 20 };
       queryClient.prefetchQuery(

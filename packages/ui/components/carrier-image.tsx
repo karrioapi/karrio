@@ -1,6 +1,6 @@
 import { CARRIER_IMAGES, CarrierSettingsCarrierNameEnum } from '@karrio/types';
-import Image from "next/legacy/image";
 import { isNoneOrEmpty, p } from '@karrio/lib';
+import Image from "next/legacy/image";
 import React from 'react';
 
 

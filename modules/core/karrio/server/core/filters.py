@@ -183,6 +183,11 @@ class ShipmentFilters(filters.FilterSet):
         method="keyword_filter",
         help_text="shipment' keyword and indexes search",
     )
+    id = filters.CharInFilter(
+        field_name="id",
+        lookup_expr="in",
+        help_text="id(s).",
+    )
 
     parameters = [
         openapi.OpenApiParameter(
@@ -255,6 +260,11 @@ class ShipmentFilters(filters.FilterSet):
         ),
         openapi.OpenApiParameter(
             "keyword",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "id",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),

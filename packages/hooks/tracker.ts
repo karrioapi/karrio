@@ -6,9 +6,9 @@ import React from "react";
 
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
-type FilterType = TrackerFilter & { setVariablesToURL?: boolean };
+type FilterType = TrackerFilter & { setVariablesToURL?: boolean, preloadNextPage?: boolean; };
 
-export function useTrackers({ setVariablesToURL = false, ...initialData }: FilterType = {}) {
+export function useTrackers({ setVariablesToURL = false, preloadNextPage = false, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<TrackerFilter>({ ...PAGINATION, ...initialData });
@@ -47,6 +47,7 @@ export function useTrackers({ setVariablesToURL = false, ...initialData }: Filte
   }
 
   React.useEffect(() => {
+    if (preloadNextPage === false) return;
     if (query.data?.trackers.page_info.has_next_page) {
       const _filter = { ...filter, offset: filter.offset as number + 20 };
       queryClient.prefetchQuery(

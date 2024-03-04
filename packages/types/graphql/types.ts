@@ -5768,8 +5768,8 @@ export interface CanadaPostSettingsInput {
   metadata?: any | null;
   username: string;
   password: string;
-  customer_number: string;
-  contract_id: string;
+  customer_number?: string | null;
+  contract_id?: string | null;
   carrier_id: string;
 }
 
@@ -6713,6 +6713,7 @@ export interface ShipmentFilter {
   first?: number | null;
   keyword?: string | null;
   address?: string | null;
+  id?: string[] | null;
   created_after?: any | null;
   created_before?: any | null;
   carrier_name?: string[] | null;

@@ -197,9 +197,6 @@ class OrderFilters(filters.FilterSet):
             | Q(shipping_to__phone_number__icontains=value)
         )
 
-    def id_filter(self, queryset, name, value):
-        return queryset.filter(Q(id__in=value))
-
     def order_id_filter(self, queryset, name, value):
         return queryset.filter(Q(order_id__in=value))
 

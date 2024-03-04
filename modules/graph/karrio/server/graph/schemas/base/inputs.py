@@ -42,6 +42,7 @@ class TrackerFilter(utils.Paginated):
 class ShipmentFilter(utils.Paginated):
     keyword: typing.Optional[str] = strawberry.UNSET
     address: typing.Optional[str] = strawberry.UNSET
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
     created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
