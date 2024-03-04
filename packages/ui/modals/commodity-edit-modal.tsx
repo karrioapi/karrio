@@ -10,6 +10,7 @@ import { InputField } from '../components/input-field';
 import { CountryInput } from '../forms/country-input';
 import { Notifier } from '../components/notifier';
 import { Loading } from '../components/loader';
+import { useOrders } from '@karrio/hooks/order';
 
 type OperationType = {
   commodity?: CommodityType;
@@ -24,6 +25,7 @@ export const CommodityStateContext = React.createContext<CommodityStateContextTy
 
 interface CommodityEditModalComponent {
   children?: React.ReactNode;
+  orderIds?: string[];
 }
 
 function reducer(state: any, { name, value }: { name: string, value: stateValue | number | boolean }) {
@@ -38,7 +40,7 @@ function reducer(state: any, { name, value }: { name: string, value: stateValue 
   }
 }
 
-export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children }) => {
+export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children, orderIds }) => {
   const { metadata: { ORDERS_MANAGEMENT } } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -48,6 +50,11 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
   const [operation, setOperation] = useState<OperationType | undefined>();
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
+  const { query } = useOrders({
+    first: 10, status: ["partial", "unfulfilled"] as any,
+    ...(!!orderIds ? { order_id: orderIds } : {}),
+    isDisabled: !ORDERS_MANAGEMENT
+  });
 
   const editCommodity = (operation: OperationType) => {
     const commodity = (operation.commodity || DEFAULT_COMMODITY_CONTENT as CommodityType);
@@ -112,6 +119,7 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     label="Order Line Item"
                     value={commodity?.parent_id}
                     onChange={loadLineItem}
+                    query={query}
                     onReady={_ => setMaxQty(_?.unfulfilled_quantity)}
                     dropdownClass="is-small"
                     className="is-small is-fullwidth"

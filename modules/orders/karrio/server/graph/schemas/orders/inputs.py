@@ -1,12 +1,11 @@
 import typing
-import datetime
 import strawberry
 
 import karrio.server.graph.utils as utils
 import karrio.server.graph.schemas.base as base
 import karrio.server.orders.serializers as serializers
 
-OrderStatusEnum: typing.Any = strawberry.enum(serializers.OrderStatus)
+OrderStatusEnum: typing.Any = strawberry.enum(serializers.OrderStatus)  # type: ignore
 
 
 @strawberry.input
@@ -31,9 +30,9 @@ class UpdateOrderMutationInput(utils.BaseInput):
     billing_address: typing.Optional[base.inputs.UpdateAddressInput] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
-    line_items: typing.Optional[
-        typing.List[base.inputs.UpdateCommodityInput]
-    ] = strawberry.UNSET
+    line_items: typing.Optional[typing.List[base.inputs.UpdateCommodityInput]] = (
+        strawberry.UNSET
+    )
 
 
 @strawberry.input

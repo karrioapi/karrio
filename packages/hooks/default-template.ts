@@ -8,11 +8,13 @@ export function useDefaultTemplates() {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery(
-    ['default_templates'],
-    () => karrio.graphql.request<get_default_templates>(gqlstr(GET_DEFAULT_TEMPLATES)),
-    { keepPreviousData: true, staleTime: 5000, onError },
-  );
+  const query = useQuery({
+    queryKey: ['default_templates'],
+    queryFn: () => karrio.graphql.request<get_default_templates>(gqlstr(GET_DEFAULT_TEMPLATES)),
+    keepPreviousData: true,
+    staleTime: 10000,
+    onError,
+  });
 
   return {
     query,

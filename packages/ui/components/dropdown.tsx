@@ -2,12 +2,13 @@ import React, { useState, useRef } from 'react';
 
 
 interface DropdownComponent extends React.InputHTMLAttributes<HTMLDivElement> {
-  direction?: 'is-right' | 'is-left' | 'is-center';
+  direction?: 'is-right' | 'is-left' | 'is-center' | 'is-up';
   menuWrapperStyle?: React.CSSProperties;
+  triggerClassName?: string;
 }
 
 
-export const Dropdown: React.FC<DropdownComponent> = ({ children, direction, menuWrapperStyle, ...props }) => {
+export const Dropdown: React.FC<DropdownComponent> = ({ children, direction, menuWrapperStyle, className, triggerClassName, ...props }) => {
   const [isActive, setIsActive] = useState(false);
   const wrapper = useRef<HTMLDivElement>(null);
   const menuWrapper = useRef<HTMLDivElement>(null);
@@ -33,9 +34,9 @@ export const Dropdown: React.FC<DropdownComponent> = ({ children, direction, men
   });
 
   return (
-    <div className={`dropdown ${direction || "is-right"} ${isActive ? "is-active" : ""}`} {...props} ref={wrapper}>
+    <div className={`dropdown ${direction || "is-right"} ${isActive ? "is-active" : ""} ${className || ""}`} {...props} ref={wrapper}>
 
-      <div className="dropdown-trigger" onClick={handleOnClick} ref={triggerWrapper} style={{ width: '100%' }}>
+      <div className={`dropdown-trigger ${triggerClassName || ''}`} onClick={handleOnClick} ref={triggerWrapper} style={{ width: '100%' }}>
         {React.cloneElement(trigger as any)}
       </div>
 

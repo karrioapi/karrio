@@ -10,11 +10,13 @@ export function useUser() {
   const karrio = useKarrio();
 
   // Queries
-  const query = useQuery(
-    ['user'],
-    () => karrio.graphql.request<GetUser>(gqlstr(GET_USER)),
-    { onError }
-  );
+  const query = useQuery({
+    queryKey: ['user'],
+    queryFn: () => karrio.graphql.request<GetUser>(gqlstr(GET_USER)),
+    refetchOnWindowFocus: false,
+    staleTime: 300000,
+    onError
+  });
 
   return {
     query,

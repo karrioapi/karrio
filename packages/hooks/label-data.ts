@@ -4,7 +4,7 @@ import { get_shipment_data, GET_SHIPMENT_DATA, LabelTypeEnum, PaidByEnum } from 
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { useLoader } from "@karrio/ui/components/loader";
 import { useShipmentMutation } from "./shipment";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAppMode } from "./app-mode";
 import { useKarrio } from "./karrio";
 import moment from "moment";
@@ -54,8 +54,11 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
         ? { shipment }
         : karrio.graphql.request<get_shipment_data>(gqlstr(GET_SHIPMENT_DATA), { variables: { id } })
     ),
+    initialData: { shipment },
+    staleTime: 150000,
     enabled: !!id,
   });
+
   const updateLabelData = (data: Partial<ShipmentType> = {}) => {
     dispatch({ name: "partial", value: data });
     if (id === 'new') query.refetch();
@@ -81,8 +84,13 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   const router = useLocation();
   const notifier = useNotifier();
   const { basePath } = useAppMode();
+  const queryClient = useQueryClient();
   const { mutation, ...state } = useLabelData(id, initialData);
   const [updateRate, setUpdateRate] = React.useState<boolean>(false);
+  const [key, setKey] = React.useState<string>(`${id}-${Date.now()}`);
+  const invalidateCache = () => {
+    queryClient.invalidateQueries(['label', id]);
+  };
 
   // state checks
   const isLocalDraft = (id?: string) => isNoneOrEmpty(id) || id === 'new';
@@ -270,6 +278,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
       } catch (error: any) {
         updateShipment({ messages: errorToMessages(error) });
       }
+      invalidateCache();
     }
   };
   const addParcel = async (data: ParcelType) => {
@@ -426,7 +435,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
       updateShipment({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
     }
   };
-  const buyLabel = async (rate: ShipmentType['rates'][0]) => {
+  const buyLabel = async (rate: ShipmentType['rates'][0], action: { redirect: boolean } = { redirect: true }) => {
     const { messages, rates, ...data } = state.shipment;
     const selection = (
       isLocalDraft(state.shipment.id)
@@ -438,13 +447,14 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
       loader.setLoading(true);
       const { id } = await mutation.buyLabel.mutateAsync({ ...data, ...selection } as any);
       notifier.notify({ type: NotificationType.success, message: 'Label successfully purchased!' });
-      router.push(`${basePath}/shipments/${id}`);
+
+      !!action.redirect && router.push(`${basePath}/shipments/${id}`);
     } catch (error: any) {
       loader.setLoading(false);
       updateShipment({ messages: errorToMessages(error) }, { manuallyUpdated: true });
     }
   };
-  const saveDraft = async () => {
+  const saveDraft = async (action: { redirect: boolean, notify: boolean } = { redirect: true, notify: true }) => {
     const { ...data } = state.shipment;
 
     try {
@@ -454,13 +464,19 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
           ? await mutation.createShipment.mutateAsync(data as ShipmentType)
           : state.shipment
       );
-      notifier.notify({ type: NotificationType.success, message: 'Draft successfully saved!' });
-      const query = (new URLSearchParams({ ...getURLSearchParams(), shipment_id: id })).toString();
-      router.push(`${location.pathname}?${query}`);
+
+      if (action.notify) {
+        notifier.notify({ type: NotificationType.success, message: 'Draft successfully saved!' });
+      }
+      if (!!action.redirect) {
+        const query = (new URLSearchParams({ ...getURLSearchParams(), shipment_id: id })).toString();
+        router.push(`${location.pathname}?${query}`);
+      }
     } catch (error: any) {
       updateShipment({ messages: errorToMessages(error) } as Partial<ShipmentType>);
       loader.setLoading(false);
     }
+    loader.setLoading(false);
   };
 
   React.useEffect(() => {
@@ -471,6 +487,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   }, [state.query]);
 
   return {
+    key,
     state,
     addItems,
     addParcel,
