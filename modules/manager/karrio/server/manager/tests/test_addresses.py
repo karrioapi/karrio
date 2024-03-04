@@ -31,7 +31,6 @@ class TestAddressDetails(APITestCase):
                 "postal_code": "H8Z2Z3",
                 "residential": True,
                 "state_code": "QC",
-                "suburb": "Hamilton",
                 "validate_location": False,
                 "validation": None,
                 "created_by": self.user,
@@ -75,7 +74,6 @@ ADDRESS_RESPONSE = {
     "email": None,
     "phone_number": "+1 438-222-2222",
     "state_code": "QC",
-    "suburb": None,
     "street_number": None,
     "residential": True,
     "address_line1": "5205 rue riviera",
@@ -88,7 +86,6 @@ ADDRESS_UPDATE_DATA = {
     "person_name": "John Doe",
     "company_name": "Doe corp",
     "residential": False,
-    "suburb": None,
 }
 
 ADDRESS_UPDATE_RESPONSE = {
@@ -104,7 +101,6 @@ ADDRESS_UPDATE_RESPONSE = {
     "email": None,
     "phone_number": "438 222 2222",
     "state_code": "QC",
-    "suburb": None,
     "street_number": None,
     "residential": False,
     "address_line1": "5205 rue riviera",
