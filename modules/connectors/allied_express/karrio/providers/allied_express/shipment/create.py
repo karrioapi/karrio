@@ -74,11 +74,11 @@ def shipment_request(
         items=[
             allied.ItemType(
                 dangerous=(True if pkg.options.dangerous_good.state else False),
-                height=pkg.height.CM,
-                length=pkg.length.CM,
-                width=pkg.width.CM,
-                weight=pkg.weight.KG,
-                volume=pkg.volume.m3,
+                height=pkg.height.map(provider_units.MeasurementOptions).CM,
+                length=pkg.length.map(provider_units.MeasurementOptions).CM,
+                width=pkg.width.map(provider_units.MeasurementOptions).CM,
+                weight=pkg.weight.map(provider_units.MeasurementOptions).KG,
+                volume=pkg.volume.map(provider_units.MeasurementOptions).m3,
                 itemCount=(pkg.items.quantity if any(pkg.items) else 1),
             )
             for pkg in packages
@@ -112,8 +112,8 @@ def shipment_request(
             phoneNumber=recipient.phone_number or "(00) 0000 0000",
         ),
         referenceNumbers=([payload.reference] if any(payload.reference or "") else []),
-        weight=packages.weight.KG,
-        volume=packages.volume.m3,
+        weight=packages.weight.map(provider_units.MeasurementOptions).KG,
+        volume=packages.volume.map(provider_units.MeasurementOptions).m3,
         serviceLevel=service,
     )
 

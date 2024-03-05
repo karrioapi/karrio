@@ -150,6 +150,8 @@ class UploadDocumentType(utils.StrEnum):
 
 
 class MeasurementOptionsType(typing.NamedTuple):
+    quant: typing.Optional[float] = None
+
     min_in: typing.Optional[float] = None
     min_cm: typing.Optional[float] = None
     min_lb: typing.Optional[float] = None
@@ -162,7 +164,9 @@ class MeasurementOptionsType(typing.NamedTuple):
     max_kg: typing.Optional[float] = None
     max_oz: typing.Optional[float] = None
     max_g: typing.Optional[float] = None
-    quant: typing.Optional[float] = None
+    
+    min_volume: typing.Optional[float] = None
+    max_volume: typing.Optional[float] = None
 
 
 class CarrierCapabilities(utils.Enum):
@@ -280,6 +284,7 @@ class Volume:
         side3: Dimension = None,
         value: float = None,
         unit: typing.Union[VolumeUnit, str] = VolumeUnit.cm3,
+        options: MeasurementOptionsType = MeasurementOptionsType(),
     ):
         self._side1 = side1
         self._side2 = side2
@@ -288,10 +293,18 @@ class Volume:
         self._value = value
         self._unit = VolumeUnit[unit] if isinstance(unit, str) else unit
 
-        self._quant = 0.001
+        self._quant = 0.01
+        self._min_volume = options.min_volume
 
     def __getitem__(self, item):
         return getattr(self, item)
+
+    def _compute(self, value: float):
+        below_min = self._min_volume is not None and value < self._min_volume
+        return utils.NF.decimal(
+            value=(self._min_volume if below_min else value), 
+            quant=self._quant,
+        )
 
     @property
     def unit(self) -> str:
@@ -317,7 +330,7 @@ class Volume:
         if not missing_value:
             return self._value
 
-        return utils.NF.decimal(
+        return self._compute(
             self._side1.value * self._side2.value * self._side3.value
         )
 
@@ -326,13 +339,13 @@ class Volume:
         if self.value is None:
             return None
         if self._unit == VolumeUnit.m3:
-            return utils.NF.decimal(self.value * 1000, quant=self._quant)
+            return self._compute(self.value * 1000)
         elif self._unit == VolumeUnit.i3:
-            return utils.NF.decimal(self.value / 61.024, quant=self._quant)
+            return self._compute(self.value / 61.024)
         elif self._unit == VolumeUnit.ft3:
-            return utils.NF.decimal(self.value * 28.317, quant=self._quant)
+            return self._compute(self.value * 28.317)
         if self._unit == VolumeUnit.cm3:
-            return utils.NF.decimal(self.value / 1000, quant=self._quant)
+            return self._compute(self.value / 1000)
         else:
             return self.value
 
@@ -341,13 +354,13 @@ class Volume:
         if self.value is None:
             return None
         if self._unit == VolumeUnit.l:
-            return utils.NF.decimal(self.value / 1000, quant=self._quant)
+            return self._compute(self.value / 1000)
         if self._unit == VolumeUnit.cm3:
-            return utils.NF.decimal(self.value / 1e6, quant=self._quant)
+            return self._compute(self.value / 1e6)
         elif self._unit == VolumeUnit.i3:
-            return utils.NF.decimal(self.value / 61020, quant=self._quant)
+            return self._compute(self.value / 61020)
         elif self._unit == VolumeUnit.ft3:
-            return utils.NF.decimal(self.value / 35.315, quant=self._quant)
+            return self._compute(self.value / 35.315)
         else:
             return self.value
 
@@ -356,13 +369,13 @@ class Volume:
         if self.value is None:
             return None
         if self._unit == VolumeUnit.l:
-            return utils.NF.decimal(self.value * 61.024, quant=self._quant)
+            return self._compute(self.value * 61.024)
         if self._unit == VolumeUnit.m3:
-            return utils.NF.decimal(self.value * 1000000, quant=self._quant)
+            return self._compute(self.value * 1000000)
         elif self._unit == VolumeUnit.cm3:
-            return utils.NF.decimal(self.value / 16.387, quant=self._quant)
+            return self._compute(self.value / 16.387)
         elif self._unit == VolumeUnit.ft3:
-            return utils.NF.decimal(self.value * 1728, quant=self._quant)
+            return self._compute(self.value * 1728)
         else:
             return self.value
 
@@ -371,13 +384,13 @@ class Volume:
         if self.value is None:
             return None
         if self._unit == VolumeUnit.l:
-            return utils.NF.decimal(self.value / 28.317, quant=self._quant)
+            return self._compute(self.value / 28.317)
         if self._unit == VolumeUnit.m3:
-            return utils.NF.decimal(self.value * 35.315, quant=self._quant)
+            return self._compute(self.value * 35.315)
         elif self._unit == VolumeUnit.i3:
-            return utils.NF.decimal(self.value / 1728, quant=self._quant)
+            return self._compute(self.value / 1728)
         elif self._unit == VolumeUnit.cm3:
-            return utils.NF.decimal(self.value / 28320, quant=self._quant)
+            return self._compute(self.value / 28320)
         else:
             return self.value
 
@@ -386,13 +399,13 @@ class Volume:
         if self.value is None:
             return None
         if self._unit == VolumeUnit.l:
-            return utils.NF.decimal(self.value * 1000, quant=self._quant)
+            return self._compute(self.value * 1000)
         if self._unit == VolumeUnit.m3:
-            return utils.NF.decimal(self.value * 1e6, quant=self._quant)
+            return self._compute(self.value * 1e6)
         elif self._unit == VolumeUnit.i3:
-            return utils.NF.decimal(self.value * 16.387, quant=self._quant)
+            return self._compute(self.value * 16.387)
         elif self._unit == VolumeUnit.ft3:
-            return utils.NF.decimal(self.value * 28320, quant=self._quant)
+            return self._compute(self.value * 28320)
         else:
             return self.value
 
@@ -400,6 +413,15 @@ class Volume:
     def cubic_meter(self):
         return self.m3
 
+    def map(self, options: MeasurementOptionsType):
+        return Volume(
+            side1=self._side1,
+            side2=self._side2,
+            side3=self._side3,
+            value=self._value, 
+            unit=self._unit, 
+            options=options
+        )
 
 class Girth:
     """The girth common processing helper"""

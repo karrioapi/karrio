@@ -190,7 +190,7 @@ ShipmentRequest = {
             "height": 50.0,
             "itemCount": 1,
             "length": 50.0,
-            "volume": 0.03,
+            "volume": 0.1,
             "weight": 20.0,
             "width": 12.0,
         },
@@ -199,7 +199,7 @@ ShipmentRequest = {
             "height": 50.0,
             "itemCount": 1,
             "length": 50.0,
-            "volume": 0.03,
+            "volume": 0.1,
             "weight": 20.0,
             "width": 12.0,
         },
@@ -234,7 +234,7 @@ ShipmentRequest = {
     },
     "referenceNumbers": ["REF-001"],
     "serviceLevel": "V",
-    "volume": 0.06,
+    "volume": 0.1,
     "weight": 40.0,
 }
 
