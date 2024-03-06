@@ -110,11 +110,6 @@ def rate_request(
     )
     request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
-    package_options = lambda _options: [
-        option
-        for _, option in _options.items()
-        if _options.state is not False and option.code in provider_units.PACKAGE_OPTIONS
-    ]
     rate_options = lambda _options: [
         option
         for _, option in _options.items()
@@ -339,23 +334,7 @@ def rate_request(
                         if any(payload.reference or "")
                         else None
                     ),
-                    SpecialServicesRequested=(
-                        fedex.PackageSpecialServicesRequested(
-                            SpecialServiceTypes=[
-                                option.code
-                                for option in package_options(package.options)
-                            ],
-                            CodDetail=None,
-                            DangerousGoodsDetail=None,
-                            DryIceWeight=None,
-                            SignatureOptionDetail=None,
-                            PieceCountVerificationDetail=None,
-                            PriorityAlertDetail=None,
-                            AlcoholDetail=None,
-                        )
-                        if any(package_options(package.options))
-                        else None
-                    ),
+                    SpecialServicesRequested=None,
                     ContentRecords=None,
                 )
                 for index, package in enumerate(packages, 1)

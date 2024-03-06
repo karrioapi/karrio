@@ -184,7 +184,16 @@ def shipment_request(
                 ShipperIDType=None,
                 TermsOfTrade=customs.incoterm or "DDP",
                 CommerceLicensed=None,
-                Filing=None,
+                Filing=(
+                    dhl_global.Filing(
+                        FilingType=dhl_global.FilingType.AES_4.value,
+                        FTSR=None,
+                        ITN=None,
+                        AES4EIN=customs.options.aes.state
+                    )
+                    if customs.options.aes.state is not None
+                    else None
+                ),
             )
             if is_dutiable
             else None
@@ -213,7 +222,10 @@ def shipment_request(
                 Remarks=customs.content_description,
                 DestinationPort=None,
                 TermsOfPayment=None,
-                PayerGSTVAT=customs.duty_billing_address.state_tax_id,
+                PayerGSTVAT=(
+                    customs.options.vat_registration_number.state 
+                    or customs.duty_billing_address.state_tax_id
+                ),
                 SignatureImage=None,
                 ReceiverReference=None,
                 ExporterId=None,
@@ -385,6 +397,7 @@ def shipment_request(
             StreetNumber=shipper.street_number,
             RegistrationNumbers=None,
             BusinessPartyTypeCode=None,
+            EORI_No=customs.options.eori_number.state,
         ),
         SpecialService=[
             dhl.SpecialService(

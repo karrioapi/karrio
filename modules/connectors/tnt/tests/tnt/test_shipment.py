@@ -185,7 +185,7 @@ ShipmentRequest = """<ESHIPPER>
                 <PAYMENTIND>S</PAYMENTIND>
                 <ITEMS>2</ITEMS>
                 <TOTALWEIGHT>1.2</TOTALWEIGHT>
-                <TOTALVOLUME>0.216</TOTALVOLUME>
+                <TOTALVOLUME>0.22</TOTALVOLUME>
                 <CURRENCY>GBP</CURRENCY>
                 <GOODSVALUE>180</GOODSVALUE>
                 <INSURANCEVALUE>150</INSURANCEVALUE>

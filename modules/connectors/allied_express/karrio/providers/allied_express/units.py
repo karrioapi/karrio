@@ -1,6 +1,11 @@
 import karrio.lib as lib
 import karrio.core.units as units
 
+MeasurementOptions = lib.units.MeasurementOptionsType(
+    quant=0.1,
+    min_volume=0.1,
+)
+
 
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""

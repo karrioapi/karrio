@@ -267,18 +267,6 @@ def get_available_rates(
                 )
             )
 
-        print(
-            ">>>>>>",
-            destination_covered,
-            match_length_requirements,
-            match_height_requirements,
-            match_width_requirements,
-            match_min_weight_requirements,
-            match_max_weight_requirements,
-            selected_zone,
-            selected_zone is not None,
-        )
-
         if (
             destination_covered
             and match_length_requirements
