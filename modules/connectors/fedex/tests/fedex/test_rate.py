@@ -49,6 +49,8 @@ RatePayload = {
         "currency": "USD",
         "fedex_one_rate": True,
         "shipment_date": "2024-02-15",
+        "fedex_smart_post_hub_id": "1000",
+        "fedex_smart_post_allowed_indicia": "PARCEL_SELECT",
     },
 }
 
@@ -147,6 +149,7 @@ RateRequest = {
         "rateSortOrder": "COMMITASCENDING",
         "returnTransitTimes": True,
         "servicesNeededOnRateFailure": True,
+        "variableOptions": ["SMART_POST_HUB_ID", "SMART_POST_ALLOWED_INDICIA"],
     },
     "requestedShipment": {
         "documentShipment": False,
@@ -181,6 +184,7 @@ RateRequest = {
                 "residential": False,
             }
         },
+        "smartPostInfoDetail": {"hubId": "1000", "indicia": "PARCEL_SELECT"},
         "totalWeight": 4.0,
     },
 }

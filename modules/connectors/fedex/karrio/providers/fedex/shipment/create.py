@@ -152,9 +152,8 @@ def shipment_request(
         if _options.state is not False
         and option.code in provider_units.SHIPMENT_OPTIONS
     ]
-    hub_id = (
-        lib.text(settings.connection_config.smart_post_hub_id.state)
-        or options.fedex_smart_post_hub_id.state
+    hub_id = lib.text(options.fedex_smart_post_hub_id.state) or lib.text(
+        settings.connection_config.smart_post_hub_id.state
     )
 
     requests = [
@@ -481,7 +480,7 @@ def shipment_request(
                         ancillaryEndorsement=None,
                         hubId=hub_id,
                         indicia=(
-                            options.fedex_smart_post_allowed_indicia.state
+                            lib.text(options.fedex_smart_post_allowed_indicia.state)
                             or "PARCEL_SELECT"
                         ),
                         specialServices=None,
