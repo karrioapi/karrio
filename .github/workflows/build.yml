@@ -1,0 +1,60 @@
+name: karrio-build
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  VERSION: $(head -1 ./apps/api/karrio/server/VERSION)
+  NEW_VERSION: $(git diff --quiet ${{ github.event.before }} ${{ github.sha }} apps/api/karrio/server/VERSION)
+
+jobs:
+  server-build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+      - run: |
+          echo 'Checking variables... ${{ env.NEW_VERSION != '' }} | ${{ env.NEW_VERSION }} | ${{ env.VERSION }}'
+      
+      - name: Build karrio server image
+        if: ${{ env.NEW_VERSION != '' }}
+        run: |
+          echo 'Building karrio server:${{ env.VERSION }}...'
+          # ./bin/build-server-image-from-source ${{ env.VERSION }}
+
+      - name: Push karrio server image
+        if: ${{ env.NEW_VERSION != '' }}
+        run: |
+          echo 'Pushing karrio server:${{ env.VERSION }}...'
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          # docker push karrio/karrio-server:${{ env.VERSION }}
+
+  # dashboard-build:
+
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: read
+  #     packages: write
+  #     id-token: write
+
+  #   steps:
+  #     - uses: actions/checkout@v3
+
+  #     - name: Build karrio dashboard image
+  #       if: ${{ env.NEW_VERSION != '' }}
+  #       run: |
+  #         echo 'Building karrio dashboard:${{ env.VERSION }}...'
+  #         # ./bin/build-dashboard-from-source ${{ env.VERSION }}
+
+  #     - name: Push karrio dashboard image
+  #       if: ${{ env.NEW_VERSION != '' }}
+  #       run: |
+  #         echo 'Pushing karrio dashboard:${{ env.VERSION }}...'
+  #         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+  #         # docker push karrio/karrio-dashboard:${{ env.VERSION }}
