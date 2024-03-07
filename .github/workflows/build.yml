@@ -5,8 +5,23 @@ on:
     branches: [ "main", "automated-build" ]
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changes.outputs.version }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          version:
+            - 'apps/api/karrio/server/VERSION'
+
   server-build:
 
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
