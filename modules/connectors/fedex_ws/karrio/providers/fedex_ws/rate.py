@@ -121,9 +121,8 @@ def rate_request(
         if _options.state is not False
         and option.code in provider_units.SHIPMENT_OPTIONS
     ]
-    hub_id = (
-        lib.text(settings.connection_config.smart_post_hub_id.state)
-        or options.fedex_smart_post_hub_id.state
+    hub_id = lib.text(options.fedex_smart_post_hub_id.state) or lib.text(
+        settings.connection_config.smart_post_hub_id.state
     )
 
     request = fedex.RateRequest(
@@ -263,8 +262,8 @@ def rate_request(
             SmartPostDetail=(
                 fedex.SmartPostShipmentDetail(
                     ProcessingOptionsRequested=None,
-                    indicia=(
-                        options.fedex_smart_post_allowed_indicia.state
+                    Indicia=(
+                        lib.text(options.fedex_smart_post_allowed_indicia.state)
                         or "PARCEL_SELECT"
                     ),
                     AncillaryEndorsement=None,

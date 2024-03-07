@@ -78,7 +78,11 @@ RateWithPresetPayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcels": [{"id": "1", "package_preset": "fedex_pak"}],
-    "options": {"currency": "USD"},
+    "options": {
+        "currency": "USD",
+        "fedex_smart_post_hub_id": "1000",
+        "fedex_smart_post_allowed_indicia": "PARCEL_SELECT",
+    },
 }
 
 ParsedRateResponse = [
@@ -332,6 +336,8 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
                 <v28:Minor>0</v28:Minor>
             </v28:Version>
             <v28:ReturnTransitAndCommit>true</v28:ReturnTransitAndCommit>
+            <v28:VariableOptions>SMART_POST_HUB_ID</v28:VariableOptions>
+            <v28:VariableOptions>SMART_POST_ALLOWED_INDICIA</v28:VariableOptions>
             <v28:RequestedShipment>
 
                 <v28:DropoffType>REGULAR_PICKUP</v28:DropoffType>
@@ -358,6 +364,10 @@ RateRequestUsingPackagePresetXML = f"""<tns:Envelope xmlns:tns="http://schemas.x
                         <v28:Residential>false</v28:Residential>
                     </v28:Address>
                 </v28:Recipient>
+                <v28:SmartPostDetail>
+                    <v28:Indicia>PARCEL_SELECT</v28:Indicia>
+                    <v28:HubId>1000</v28:HubId>
+                </v28:SmartPostDetail>
                 <v28:RateRequestTypes>LIST</v28:RateRequestTypes>
                 <v28:RateRequestTypes>PREFERRED</v28:RateRequestTypes>
                 <v28:PackageCount>1</v28:PackageCount>
