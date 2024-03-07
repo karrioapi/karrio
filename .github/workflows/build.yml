@@ -11,6 +11,7 @@ jobs:
       version: ${{ steps.changes.outputs.version }}
     steps:
     - uses: actions/checkout@v3
+
     - uses: dorny/paths-filter@v2
       id: changes
       with:
@@ -29,49 +30,55 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          VERSION=$(head -1 ./apps/api/karrio/server/VERSION)
-          NEW_VERSION=$(git diff --quiet ${{ github.event.before }} ${{ github.sha }} ./apps/api/karrio/server/VERSION)
-
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          
-          echo 'Checking variables... ${{ env.NEW_VERSION != '' }} | ${{ env.NEW_VERSION }} | ${{ env.VERSION }}'
+      - uses: actions/checkout@v3
       
-      - name: Build karrio server image
-        if: ${{ env.NEW_VERSION != '' }}
+      - id: get_tag
         run: |
-          echo 'Building karrio server:${{ env.VERSION }}...'
-          # ./bin/build-server-image-from-source ${{ env.VERSION }}
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build karrio server image
+        run: |
+          echo 'Building karrio server:${{ env.tag }}...'
+          ./bin/build-server-image-from-source ${{ env.tag }}
 
       - name: Push karrio server image
-        if: ${{ env.NEW_VERSION != '' }}
         run: |
-          echo 'Pushing karrio server:${{ env.VERSION }}...'
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          # docker push karrio/karrio-server:${{ env.VERSION }}
 
-  # dashboard-build:
+          echo 'Pushing karrio server:${{ env.tag }}...'
+          docker push karrio/server:${{ env.tag }}
+          docker tag karrio/server:${{ env.tag }} karrio/server:nightly
+          docker push karrio/server:nightly
 
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #     id-token: write
+  dashboard-build:
 
-  #   steps:
-      # - uses: actions/checkout@v2
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
 
-  #     - name: Build karrio dashboard image
-  #       if: ${{ env.NEW_VERSION != '' }}
-  #       run: |
-  #         echo 'Building karrio dashboard:${{ env.VERSION }}...'
-  #         # ./bin/build-dashboard-from-source ${{ env.VERSION }}
+    steps:
+      - uses: actions/checkout@v3
+      
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
 
-  #     - name: Push karrio dashboard image
-  #       if: ${{ env.NEW_VERSION != '' }}
-  #       run: |
-  #         echo 'Pushing karrio dashboard:${{ env.VERSION }}...'
-  #         docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-  #         # docker push karrio/karrio-dashboard:${{ env.VERSION }}
+      - name: Build karrio dashboard image
+        run: |
+          echo 'Building karrio dashboard:${{ env.tag }}...'
+          ./bin/build-dashboard-image ${{ env.tag }}
+
+      - name: Push karrio dashboard image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          
+          echo 'Pushing karrio dashboard:${{ env.tag }}...'
+          docker push karrio/dashboard:${{ env.tag }}
+          docker tag karrio/dashboard:${{ env.tag }} karrio/dashboard:nightly
+          docker push karrio/dashboard:nightly
