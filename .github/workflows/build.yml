@@ -2,11 +2,7 @@ name: karrio-build
 
 on:
   push:
-    branches: [ "main" ]
-
-env:
-  VERSION: $(head -1 ./apps/api/karrio/server/VERSION)
-  NEW_VERSION: $(git diff --quiet ${{ github.event.before }} ${{ github.sha }} apps/api/karrio/server/VERSION)
+    branches: [ "main", "automated-build" ]
 
 jobs:
   server-build:
@@ -18,8 +14,14 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v2
       - run: |
+          VERSION=$(head -1 ./apps/api/karrio/server/VERSION)
+          NEW_VERSION=$(git diff --quiet ${{ github.event.before }} ${{ github.sha }} ./apps/api/karrio/server/VERSION)
+
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          
           echo 'Checking variables... ${{ env.NEW_VERSION != '' }} | ${{ env.NEW_VERSION }} | ${{ env.VERSION }}'
       
       - name: Build karrio server image
@@ -44,7 +46,7 @@ jobs:
   #     id-token: write
 
   #   steps:
-  #     - uses: actions/checkout@v3
+      # - uses: actions/checkout@v2
 
   #     - name: Build karrio dashboard image
   #       if: ${{ env.NEW_VERSION != '' }}
