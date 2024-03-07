@@ -47,7 +47,7 @@ jsonfield==3.1.0
 jsonschema==4.21.1
 jsonschema-specifications==2023.12.1
 jstruct==2021.11
-jwcrypto==1.5.4
+jwcrypto==1.5.6
 karrio @ file://${PWD}/modules/sdk
 karrio.allied_express @ file://${PWD}/modules/connectors/allied_express
 karrio.allied_express_local @ file://${PWD}/modules/connectors/allied_express_local
