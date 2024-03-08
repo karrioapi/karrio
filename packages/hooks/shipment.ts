@@ -7,9 +7,9 @@ import React from "react";
 
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
-type FilterType = ShipmentFilter & { setVariablesToURL?: boolean, isDisabled?: boolean; preloadNextPage?: boolean; };
+type FilterType = ShipmentFilter & { setVariablesToURL?: boolean, cacheKey?: string, isDisabled?: boolean; preloadNextPage?: boolean; };
 
-export function useShipments({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, ...initialData }: FilterType = {}) {
+export function useShipments({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, cacheKey, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<ShipmentFilter>({ ...PAGINATION, ...initialData });
@@ -19,7 +19,7 @@ export function useShipments({ setVariablesToURL = false, isDisabled = false, pr
 
   // Queries
   const query = useQuery({
-    queryKey: ['shipments', filter],
+    queryKey: [cacheKey || 'shipments', filter],
     queryFn: () => fetch({ filter }),
     enabled: !isDisabled,
     keepPreviousData: true,

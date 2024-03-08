@@ -156,10 +156,10 @@ export default function CreateLabelPage(pageProps: any) {
       }
     }, [shipment]);
     useEffect(() => {
-      const orders_called = (ORDERS_MANAGEMENT && orders.isFetched) || true;
+      const orders_called = (ORDERS_MANAGEMENT && !orders.isLoading) || true;
       if (
         !ready && query.isFetched &&
-        templates.isFetched &&
+        !templates.isLoading &&
         shipment_id === 'new' &&
         orders_called
       ) {
@@ -173,7 +173,7 @@ export default function CreateLabelPage(pageProps: any) {
       ) {
         setReady(true);
       }
-    }, [templates.isFetched, orders.isFetched, query.isFetched]);
+    }, [templates.isLoading, orders.isLoading, query.isFetched]);
 
 
     return (

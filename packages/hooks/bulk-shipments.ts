@@ -1,4 +1,4 @@
-import { commodityMatch, errorToMessages, getShipmentCommodities, isEqual, isNone, isNoneOrEmpty, toNumber, useLocation } from "@karrio/lib";
+import { commodityMatch, errorToMessages, getShipmentCommodities, isEqual, isNone, isNoneOrEmpty, jsonify, toNumber, useLocation } from "@karrio/lib";
 import { NotificationType, ShipmentType, ParcelType, CustomsType, CommodityType, Collection, DEFAULT_CUSTOMS_CONTENT } from "@karrio/types";
 import { useBatchOperationMutation } from "./batch-operations";
 import { useNotifier } from "@karrio/ui/components/notifier";
@@ -39,9 +39,7 @@ function reducer(state: Partial<BatchShipmentDataType>, { name, value }: { name:
 
 export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
   const loader = useLoader();
-  const router = useLocation();
   const notifier = useNotifier();
-  const { basePath } = useAppMode();
   const queryClient = useQueryClient();
   const mutation = useBatchOperationMutation();
   const shipmentMutation = useShipmentMutation();
@@ -254,6 +252,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
   const addParcel = (shipment_index: number) => async (data: ParcelType) => {
     const update = { parcels: [...batch.shipments[shipment_index].parcels, data] };
     updateShipment(shipment_index)(update, { created: true });
+    setUpdateRate([shipment_index, true]);
   };
   const updateParcel = (shipment_index: number) => (parcel_index: number, parcel_id?: string) => async (data: ParcelType, change?: ChangeType) => {
     if (parcelHasRateUpdateChanges(batch.shipments[shipment_index].parcels[parcel_index], data)) {
@@ -396,21 +395,27 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
 
   // Requests
   const fetchRates = (shipment_index: number) => async () => {
-    const data = batch.shipments[shipment_index];
+    const data = JSON.parse(jsonify(batch.shipments[shipment_index])) as ShipmentType;
 
     try {
-      const { rates, messages } = await shipmentMutation.fetchRates.mutateAsync(data as ShipmentType);
+      const { rates, messages } = await shipmentMutation.fetchRates.mutateAsync(data);
       updateShipment(shipment_index)({ rates, messages } as Partial<ShipmentType>);
     } catch (error: any) {
       updateShipment(shipment_index)({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
     }
   };
   const buyLabels = async () => {
+    const data = {
+      shipments: batch.shipments.map(shipment => ({
+        ...JSON.parse(jsonify(shipment)),
+        service: shipment.options.preferred_service || shipment.rates?.[0]?.service,
+      }))
+    } as BatchShipmentData;
+
     try {
       loader.setLoading(true);
-      await mutation.createShipments.mutateAsync(batch as BatchShipmentData);
+      await mutation.createShipments.mutateAsync(data);
       notifier.notify({ type: NotificationType.success, message: `Batch shipments created.` });
-      // router.push(`${basePath}/orders`);
     } catch (error: any) {
       notifier.notify({ type: NotificationType.error, message: error });
       loader.setLoading(false);
@@ -429,7 +434,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
       console.log('> create missing drafts...');
       Promise
         .all(batch.shipments.map(async shipment => (
-          !!shipment.id
+          (!!shipment.id && (shipment.rates || []).length > 0)
             ? shipment
             : (await shipmentMutation.createShipment.mutateAsync(shipment as any) as ShipmentType)
         )))
