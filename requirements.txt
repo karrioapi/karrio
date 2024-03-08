@@ -144,7 +144,7 @@ uritemplate==4.1.1
 urllib3==2.2.1
 uvicorn==0.27.1
 validators==0.22.0
-weasyprint==61.0
+weasyprint==61.2
 webencodings==0.5.1
 whitenoise==6.6.0
 xlrd==2.0.1
