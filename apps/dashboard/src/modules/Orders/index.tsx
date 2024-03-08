@@ -109,7 +109,8 @@ export default function OrdersPage(pageProps: any) {
     };
     const computeOrderService = (order: any) => {
       const shipment = (
-        order.shipments.find(({ status, tracking_number }) => !!tracking_number && !["cancelled", "draft"].includes(status))
+        order.shipments.find(({ status, tracking_number }) => !!tracking_number && !["cancelled", "draft"].includes(status)) ||
+        order.shipments.find(({ status }) => ["draft"].includes(status))
       );
       const rate = getRate(shipment);
 
