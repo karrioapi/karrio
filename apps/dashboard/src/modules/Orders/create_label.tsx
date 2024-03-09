@@ -162,7 +162,7 @@ export default function CreateShipmentPage(pageProps: any) {
     return (
       <>
 
-        <CommodityEditModalProvider orderIds={(orders.data?.orders?.edges || []).map(({ node }) => node.id)}>
+        <CommodityEditModalProvider orderFilter={{ id: (orders.data?.orders?.edges || []).map(({ node }) => node.order_id) }}>
 
           <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
             <div>

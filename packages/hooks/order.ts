@@ -11,9 +11,9 @@ import React from "react";
 
 const PAGE_SIZE = 20;
 const PAGINATION = { offset: 0, first: PAGE_SIZE };
-type FilterType = OrderFilter & { setVariablesToURL?: boolean, isDisabled?: boolean, preloadNextPage?: boolean; };
+type FilterType = OrderFilter & { setVariablesToURL?: boolean, isDisabled?: boolean, cacheKey?: string, preloadNextPage?: boolean; };
 
-export function useOrders({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, ...initialData }: FilterType = {}) {
+export function useOrders({ setVariablesToURL = false, isDisabled = false, preloadNextPage = false, cacheKey, ...initialData }: FilterType = {}) {
   const karrio = useKarrio();
   const queryClient = useQueryClient();
   const [filter, _setFilter] = React.useState<OrderFilter>({ ...PAGINATION, ...initialData });
@@ -23,7 +23,7 @@ export function useOrders({ setVariablesToURL = false, isDisabled = false, prelo
 
   // Queries
   const query = useQuery({
-    queryKey: ['orders', filter],
+    queryKey: [cacheKey || 'orders', filter],
     queryFn: () => fetch({ filter }),
     enabled: !isDisabled,
     keepPreviousData: true,

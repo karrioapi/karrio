@@ -421,7 +421,7 @@ export default function Page(pageProps: any) {
                     return (
                       <React.Fragment key={keys[shipment_index]}>
                         <ContextProviders>
-                          <CommodityEditModalProvider orderIds={shipmentOrderIds}>
+                          <CommodityEditModalProvider orderFilter={{ id: shipmentOrderIds }}>
 
                             <header className="form-floating-header p-3 is-flex is-justify-content-space-between is-size-7">
                               <div>
