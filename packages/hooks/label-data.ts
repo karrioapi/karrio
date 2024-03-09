@@ -49,12 +49,16 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
   // Queries
   const query = useQuery({
     queryKey: ['label', id],
-    queryFn: () => (
-      id === 'new'
-        ? { shipment }
-        : karrio.graphql.request<get_shipment_data>(gqlstr(GET_SHIPMENT_DATA), { variables: { id } })
-    ),
-    initialData: { shipment },
+    queryFn: async () => {
+      const response = await (
+        id === 'new'
+          ? Promise.resolve({ shipment })
+          : karrio.graphql.request<get_shipment_data>(gqlstr(GET_SHIPMENT_DATA), { variables: { id } })
+      );
+      console.log('response', id, response);
+      return response;
+    },
+    initialData: !!initialData ? { shipment: initialData } : undefined,
     staleTime: 150000,
     enabled: !!id,
   });
@@ -68,7 +72,8 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
     if (id !== 'new' && isEqual(shipment, DEFAULT_SHIPMENT_DATA) && !isNone(query.data?.shipment)) {
       dispatch({ name: "full", value: query!.data!.shipment as ShipmentType })
     }
-  }, [query.data?.shipment])
+  }, [query.data?.shipment]);
+  React.useEffect(() => { query.refetch(); }, [id]);
 
   return {
     query,
@@ -87,10 +92,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   const queryClient = useQueryClient();
   const { mutation, ...state } = useLabelData(id, initialData);
   const [updateRate, setUpdateRate] = React.useState<boolean>(false);
-  const [key, setKey] = React.useState<string>(`${id}-${Date.now()}`);
-  const invalidateCache = () => {
-    queryClient.invalidateQueries(['label', id]);
-  };
+  const invalidateCache = () => { queryClient.invalidateQueries(['label', id]); };
 
   // state checks
   const isLocalDraft = (id?: string) => isNoneOrEmpty(id) || id === 'new';
@@ -487,7 +489,6 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   }, [state.query]);
 
   return {
-    key,
     state,
     addItems,
     addParcel,
