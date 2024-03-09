@@ -66,7 +66,7 @@ export default function Page(pageProps: any) {
 
     return (
       <>
-        <CommodityEditModalProvider orderIds={["none"]}>
+        <CommodityEditModalProvider orderFilter={{ isDisabled: true }}>
 
           <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
             <span className="title is-4 my-2">{`${id === 'new' ? 'Create' : 'Edit'} order`}</span>

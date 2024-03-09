@@ -180,7 +180,7 @@ export default function CreateLabelPage(pageProps: any) {
 
     return (
       <>
-        <CommodityEditModalProvider orderIds={(orders.data?.orders?.edges || []).map(({ node }) => node.id)}>
+        <CommodityEditModalProvider orderFilter={{ isDisabled: true }}>
 
           <header className="px-0 pb-2 pt-4 is-flex is-justify-content-space-between">
             <span className="title is-4">

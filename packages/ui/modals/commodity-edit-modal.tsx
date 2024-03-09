@@ -1,4 +1,4 @@
-import { CurrencyCodeEnum, DEFAULT_COMMODITY_CONTENT, MetadataObjectTypeEnum, WeightUnitEnum } from '@karrio/types';
+import { CurrencyCodeEnum, DEFAULT_COMMODITY_CONTENT, MetadataObjectTypeEnum, OrderFilter, WeightUnitEnum } from '@karrio/types';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 import { isEqual, isNone, validationMessage, validityCheck } from '@karrio/lib';
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from '@karrio/types';
@@ -25,7 +25,7 @@ export const CommodityStateContext = React.createContext<CommodityStateContextTy
 
 interface CommodityEditModalComponent {
   children?: React.ReactNode;
-  orderIds?: string[];
+  orderFilter?: OrderFilter & { isDisabled?: boolean, cacheKey?: string };
 }
 
 function reducer(state: any, { name, value }: { name: string, value: stateValue | number | boolean }) {
@@ -40,7 +40,7 @@ function reducer(state: any, { name, value }: { name: string, value: stateValue 
   }
 }
 
-export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children, orderIds }) => {
+export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children, orderFilter }) => {
   const { metadata: { ORDERS_MANAGEMENT } } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -51,9 +51,9 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
   const { query } = useOrders({
-    first: 10, status: ["partial", "unfulfilled"] as any,
-    ...(!!orderIds ? { order_id: orderIds } : {}),
-    isDisabled: !ORDERS_MANAGEMENT
+    first: 10, status: ["unfulfilled", "partial"] as any,
+    isDisabled: !ORDERS_MANAGEMENT,
+    ...(orderFilter || {}),
   });
 
   const editCommodity = (operation: OperationType) => {
