@@ -24,7 +24,7 @@ def add_extension(
     is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
 ):
     sdk.add_extension(
-        id,
+        id.lower(),
         name,
         features,
         version,
@@ -46,7 +46,7 @@ def add_features(
         raise typer.Abort()
 
     sdk.add_features(
-        extension,
+        extension.lower(),
         name,
         features,
         is_xml_api,
