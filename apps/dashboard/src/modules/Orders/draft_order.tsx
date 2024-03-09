@@ -41,7 +41,6 @@ export default function Page(pageProps: any) {
       setKey(`${id}-${Date.now()}`);
     };
     useEffect(() => {
-      // console.log('order', order, current, query.isFetched, ready, id);
       if (
         !ready && query.isFetched &&
         id === 'new' &&

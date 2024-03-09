@@ -149,25 +149,15 @@ export default function CreateShipmentPage(pageProps: any) {
       }
     }, [order_id]);
     useEffect(() => {
-      const orders_called = (ORDERS_MANAGEMENT && orders.isFetched) || true;
-      if (
-        !ready && query.isFetched &&
-        templates.isFetched &&
-        shipment_id === 'new' &&
-        orders_called &&
-        (orders.data?.orders.edges || []).length > 0
-      ) {
-        setTimeout(() => setInitialData(), 1000);
-      }
-      if (
-        !ready && query.isFetched &&
-        !isNoneOrEmpty(shipment_id) &&
-        shipment_id !== 'new' &&
-        orders_called
-      ) {
-        setReady(true);
-      }
-    }, [query.isFetched, orders.isFetched, templates.isFetched]);
+      if (ready) return;
+      if (orders.isLoading) return;
+      if (templates.isLoading) return;
+      if (shipment_id === 'new') return setInitialData();
+      if (shipment_id !== 'new' && Object.keys(shipment.recipient).length === 0) return;
+
+      setReady(true);
+      setKey(`${shipment_id}-${Date.now()}`);
+    }, [ready, orders.isLoading, templates.isLoading, shipment_id, shipment]);
 
     return (
       <>
@@ -190,7 +180,7 @@ export default function CreateShipmentPage(pageProps: any) {
 
           {!ready && <Spinner />}
 
-          {(ready && Object.keys(shipment.recipient).length > 0) && <div className="columns pb-6 m-0">
+          {ready && <div className="columns pb-6 m-0">
             <div className="column px-0" style={{ minHeight: '850px', minWidth: '260px' }}>
 
               {/* Address section */}
