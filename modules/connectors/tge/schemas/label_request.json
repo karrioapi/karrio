@@ -92,15 +92,15 @@
                                     },
                                     "Description": "Item- Carton",
                                     "Dimensions": {
-                                        "Height": 10,
+                                        "Height": 10.0,
                                         "HeightUOM": "m3",
-                                        "Length": 20,
+                                        "Length": 20.0,
                                         "LengthUOM": "m3",
                                         "Volume": 0.012,
                                         "VolumeUOM": "m3",
-                                        "Weight": 100,
+                                        "Weight": 100.0,
                                         "WeightUOM": "kg",
-                                        "Width": 30,
+                                        "Width": 30.0,
                                         "WidthUOM": "m3"
                                     },
                                     "IDs": {

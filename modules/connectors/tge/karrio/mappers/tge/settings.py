@@ -10,8 +10,13 @@ class Settings(provider_utils.Settings):
 
     # required carrier specific properties
     api_key: str
-    my_toll_identity: str = None
-    my_toll_token: str = None
+    username: str
+    password: str
+    auth_username: str
+    auth_password: str
+    my_toll_token: str
+    my_toll_identity: str
+    account_code: str = None
     channel: str = None
     call_id: str = None
 
@@ -19,6 +24,6 @@ class Settings(provider_utils.Settings):
     id: str = None
     test_mode: bool = False
     carrier_id: str = "tge"
-    account_country_code: str = None
+    account_country_code: str = "AU"
     metadata: dict = {}
     config: dict = {}

@@ -2,7 +2,7 @@
     "TollMessage": {
         "Header": {
             "MessageVersion": "1.0",
-            "MessageIdentifier": "a208d5b1-e395-450f-be5f-f20baa673819",
+            "MessageIdentifier": "a255d5b1-e395-450f-b61f-f20baa673818",
             "CreateTimestamp": "2024-02-24T15:03:28.787+11:00",
             "DocumentType": "RateEnquiry",
             "Environment": "PRD",
@@ -14,7 +14,7 @@
             "Request": {
                 "BusinessID": "IPEC",
                 "SystemFields": {
-                    "PickupDateTime": "2024-02-26T13:26:02.000+00:00"
+                    "PickupDateTime": "2024-03-12T13:26:02.000+00:00"
                 },
                 "ShipmentService": {
                     "ServiceCode": "X",
@@ -26,7 +26,7 @@
                 "ShipmentFinancials": {
                     "ExtraServicesAmount": {
                         "Currency": "AUD",
-                        "Value": "5000"
+                        "Value": 5000.00
                     }
                 },
                 "FreightMode": "Road",
@@ -57,14 +57,14 @@
                                 "CommodityDescription": "ALL FREIGHT"
                             },
                             "ShipmentItemTotals": {
-                                "ShipmentItemCount": "1"
+                                "ShipmentItemCount": 1
                             },
                             "Dimensions": {
-                                "Width": "10",
-                                "Length": "10",
-                                "Height": "10",
-                                "Volume": "0.001",
-                                "Weight": "02"
+                                "Width": 10,
+                                "Length": 10,
+                                "Height": 10,
+                                "Volume": 0.001,
+                                "Weight": 2.0
                             }
                         }
                     ]
