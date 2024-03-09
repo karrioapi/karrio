@@ -88,14 +88,20 @@ export default function Page(pageProps: any) {
     const [allChecked, setAllChecked] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
 
-    const shipmentsOrdersQuery = orderIds.length > 0 ? ordersQuery : useOrders({
-      order_id: (shipmentList?.edges || [])
-        .map(({ node }) => (node.meta?.order_id || node.metadata?.order_ids || "").split(','))
-        .flat().filter(_ => !isNoneOrEmpty(_)),
-      isDisabled: (shipmentList?.edges || [])
-        .map(({ node }) => (node.meta?.order_id || node.metadata?.order_ids || "").split(','))
-        .flat().filter(_ => !isNoneOrEmpty(_)).length === 0
+    const _shipmentsOrdersQuery = useOrders({
+      order_id: (
+        (shipmentList?.edges || [])
+          .map(({ node }) => (node.meta?.order_id || node.metadata?.order_ids || "").split(','))
+          .flat().filter(_ => !isNoneOrEmpty(_))
+      ),
+      isDisabled: (
+        orderIds.length === 0 &&
+        (shipmentList?.edges || [])
+          .map(({ node }) => (node.meta?.order_id || node.metadata?.order_ids || "").split(','))
+          .flat().filter(_ => !isNoneOrEmpty(_)).length === 0
+      )
     });
+    const shipmentsOrdersQuery = orderIds.length > 0 ? ordersQuery : _shipmentsOrdersQuery;
     const { query: { data: { orders: shipmentOrderList } = {} } } = shipmentsOrdersQuery;
 
     const handleSelection = (e: React.ChangeEvent) => {
@@ -118,13 +124,14 @@ export default function Page(pageProps: any) {
     const retrieveShipment = (shipments: ShipmentType[], selected?: string) => {
       const shipment_index = shipments.findIndex(({ id }, index) => `${id || index}` === `${selected}`);
       const shipment = shipments[shipment_index];
-
-      if (!!shipment && !isNone(shipment_index)) {
-        return ((f: (props: { shipment: ShipmentType, shipment_index: number }) => any) => (
-          f({ shipment, shipment_index })
-        ));
-      }
-      return () => <></>;
+      const ShipmentEditor: React.FC = (
+        (!!shipment && !isNone(shipment_index))
+          ? ((f: (props: { shipment: ShipmentType, shipment_index: number }) => any) => (
+            f({ shipment, shipment_index })
+          ))
+          : () => <></>
+      );
+      return ShipmentEditor;
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
