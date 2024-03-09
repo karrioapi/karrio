@@ -29,6 +29,7 @@
 -e ./modules/connectors/roadie
 -e ./modules/connectors/royalmail
 -e ./modules/connectors/sendle
+-e ./modules/connectors/tge
 -e ./modules/connectors/tnt
 -e ./modules/connectors/ups
 -e ./modules/connectors/usps

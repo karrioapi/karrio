@@ -1,10 +1,15 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 
+MeasurementOptions = lib.units.MeasurementOptionsType(
+    quant=0.1,
+    min_volume=0.1,
+)
+
 
 class PackagingType(lib.StrEnum):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -17,19 +22,25 @@ class PackagingType(lib.StrEnum):
     your_packaging = PACKAGE
 
 
+class ConnectionConfig(lib.Enum):
+    app_name = lib.OptionEnum("app_name")
+    server_url = lib.OptionEnum("server_url")
+    text_color = lib.OptionEnum("text_color")
+    brand_color = lib.OptionEnum("brand_color")
+    freight_mode = lib.OptionEnum("freight_mode")
+
+
 class ShippingService(lib.StrEnum):
-    """ Carrier specific services """
-    tge_standard_service = "TGE Standard Service"
+    """Carrier specific services"""
+
+    allied_road_service = "R"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
-    # tge_option = lib.OptionEnum("code")
+    """Carrier specific options"""
 
-    """ Unified Option type mapping """
-    # insurance = tge_coverage  #  maps unified karrio option to carrier specific
-
-    pass
+    instructions = lib.OptionEnum("instructions")
+    dangerous_good = lib.OptionEnum("dangerous_good", bool)
 
 
 def shipping_options_initializer(
@@ -47,13 +58,3 @@ def shipping_options_initializer(
         return key in ShippingOption  # type: ignore
 
     return units.ShippingOptions(options, ShippingOption, items_filter=items_filter)
-
-
-class TrackingStatus(lib.Enum):
-    on_hold = ["on_hold"]
-    delivered = ["delivered"]
-    in_transit = ["in_transit"]
-    delivery_failed = ["delivery_failed"]
-    delivery_delayed = ["delivery_delayed"]
-    out_for_delivery = ["out_for_delivery"]
-    ready_for_pickup = ["ready_for_pickup"]

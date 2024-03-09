@@ -1,0 +1,15 @@
+{
+    "TollMessage": {
+        "Header": {
+            "MessageVersion": "1.0",
+            "MessageIdentifier": "a255d5b1-e395-450f-b61f-f20baa673818",
+            "CreateTimestamp": "2024-02-24T15:03:28.787+11:00",
+            "DocumentType": "RateEnquiry",
+            "Environment": "PRD",
+            "SourceSystemCode": "XP41",
+            "MessageSender": "GOSHIPR",
+            "MessageReceiver": "TOLL"
+        },
+        "Label": {}
+    }
+}

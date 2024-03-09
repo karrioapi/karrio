@@ -1,0 +1,60 @@
+{
+    "TollMessage": {
+        "Header": {
+            "MessageVersion": "1.0",
+            "MessageIdentifier": "a255d5b1-e395-450f-b61f-f20baa673818",
+            "CreateTimestamp": "2024-03-09T21:30:20.022+11:00",
+            "DocumentType": "RateEnquiry",
+            "Environment": "prd",
+            "SourceSystemCode": "XP41",
+            "MessageSender": "TOLL",
+            "MessageReceiver": "GOSHIPR",
+            "ResponseStatus": null,
+            "References": {
+                "Reference": [
+                    {
+                        "ReferenceType": "MapSpecVersion",
+                        "ReferenceValue": "ToM-RateEnq-to-ToM-RateEnq.2"
+                    }
+                ]
+            }
+        },
+        "RateEnquiry": {
+            "Response": {
+                "BaseAmount": {
+                    "Currency": "AUD",
+                    "Value": "14.92"
+                },
+                "GSTAmount": {
+                    "Currency": "AUD",
+                    "Value": "12.42"
+                },
+                "TotalChargeAmount": {
+                    "Currency": "AUD",
+                    "Value": "39.15"
+                },
+                "TotalSurcharges": {
+                    "Currency": "AUD",
+                    "Value": "2.59"
+                },
+                "FreightCharge": {
+                    "Currency": "AUD",
+                    "Value": "9.22"
+                },
+                "TollExtraServiceCharge": {
+                    "Currency": "AUD",
+                    "Value": "0.0"
+                },
+                "TotalFees": {
+                    "Currency": "AUD",
+                    "Value": null
+                },
+                "EnquiryID": "34270397",
+                "TransitTime": {
+                    "UOM": "Day(s)",
+                    "Value": "4"
+                }
+            }
+        }
+    }
+}
