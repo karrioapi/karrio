@@ -72,6 +72,12 @@ You can deploy a hobby instance in one line on Linux with Docker (recommended 4G
 
 The simplest way to set up Karrio and take the front row in helping improve the platform is to request access to our managed deployment on [Karrio Cloud](https://www.karrio.io/get-started).
 
+## Contact us
+
+Chat with us for any commercial inquiries.
+
+<a href="https://cal.com/karrio/discovery?utm_source=banner&utm_campaign=oss"><img src="https://cal.com/book-with-cal-dark.svg" alt="Book us with Cal.com"></a>
+
 ## The problem: Shipping integration is still painful
 
 -   Lack of documentation.
