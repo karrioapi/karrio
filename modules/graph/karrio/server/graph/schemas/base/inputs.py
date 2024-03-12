@@ -82,6 +82,28 @@ class UpdateUserInput(utils.BaseInput):
 
 
 @strawberry.input
+class WorkspaceConfigMutationInput(utils.BaseInput):
+    default_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    default_country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    default_label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
+
+    default_weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    default_dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+
+    customs_aes: typing.Optional[str] = strawberry.UNSET
+    customs_ein: typing.Optional[str] = strawberry.UNSET
+    customs_eel_pfc: typing.Optional[str] = strawberry.UNSET
+    customs_eori_number: typing.Optional[str] = strawberry.UNSET
+    customs_license_number: typing.Optional[str] = strawberry.UNSET
+    customs_certificate_number: typing.Optional[str] = strawberry.UNSET
+    customs_nip_number: typing.Optional[str] = strawberry.UNSET
+    customs_vat_registration_number: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
 class TokenMutationInput(utils.BaseInput):
     key: str
     password: typing.Optional[str] = strawberry.UNSET

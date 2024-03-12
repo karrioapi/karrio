@@ -3556,3 +3556,51 @@ export const DELETE_METAFIELD = gql`mutation deleteMetafield($data: DeleteMutati
   }
 }
 `;
+
+export const GET_WORKSPACE_CONFIG = gql`query GetWorkspaceConfig {
+  workspace_config {
+    object_type
+    default_currency
+    default_country_code
+    default_weight_unit
+    default_dimension_unit
+    state_tax_id
+    federal_tax_id
+    default_label_type
+    customs_aes
+    customs_eel_pfc
+    customs_license_number
+    customs_certificate_number
+    customs_nip_number
+    customs_eori_number
+    customs_vat_registration_number
+  }
+}
+`;
+
+export const UPDATE_WORKSPACE_CONFIG = gql`mutation UpdateWorkspaceConfig($data: WorkspaceConfigMutationInput!) {
+  update_workspace_config(input: $data) {
+    workspace_config {
+      object_type
+      default_currency
+      default_country_code
+      default_weight_unit
+      default_dimension_unit
+      state_tax_id
+      federal_tax_id
+      default_label_type
+      customs_aes
+      customs_eel_pfc
+      customs_license_number
+      customs_certificate_number
+      customs_nip_number
+      customs_eori_number
+      customs_vat_registration_number
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;

@@ -1,5 +1,6 @@
 import os
 import binascii
+import functools
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import models as auth
@@ -7,11 +8,7 @@ from rest_framework.authtoken import models as authtoken
 from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
-from karrio.server.core.models import (
-    ControlledAccessModel,
-    register_model,
-    field_default,
-)
+import karrio.server.core.models as core
 
 
 class UserManager(auth.UserManager):
@@ -44,7 +41,7 @@ class UserManager(auth.UserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-@register_model
+@core.register_model
 class User(auth.AbstractUser):
     full_name = models.CharField(_("full name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
@@ -105,13 +102,13 @@ class User(auth.AbstractUser):
         return _permissions
 
 
-@register_model
-class Token(authtoken.Token, ControlledAccessModel):
+@core.register_model
+class Token(authtoken.Token, core.ControlledAccessModel):
     label = models.CharField(_("label"), max_length=50)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens"
     )
-    test_mode = models.BooleanField(null=False, default=field_default(False))
+    test_mode = models.BooleanField(null=False, default=core.field_default(False))
 
     class Meta:
         verbose_name = _("Token")
@@ -170,6 +167,37 @@ class Token(authtoken.Token, ControlledAccessModel):
         return _permissions if any(_permissions) else self.user.permissions
 
 
-@register_model
+@core.register_model
 class Group(auth.Group):
     pass
+
+
+@core.register_model
+class WorkspaceConfig(core.OwnedEntity):
+    class Meta:
+        db_table = "workspace-config"
+        verbose_name = "Workspace Config"
+        verbose_name_plural = "Workspace Configs"
+
+    id = models.CharField(
+        max_length=50,
+        editable=False,
+        primary_key=True,
+        default=functools.partial(core.uuid, prefix="wcfg_"),
+    )
+    config = models.JSONField(
+        null=False,
+        blank=False,
+        default=core.field_default({}),
+    )
+    created_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        editable=False,
+    )
+
+    @property
+    def object_type(self):
+        return "workspace-config"
