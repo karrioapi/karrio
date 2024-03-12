@@ -210,7 +210,12 @@ def owned_model_serializer(serializer: typing.Type[Serializer]):
 
 
 def link_org(entity: ModelSerializer, context: Context):
-    if hasattr(entity, "org") and context.org is not None and not entity.org.exists():
+    if (
+        context.org is not None
+        and hasattr(entity, "org")
+        and hasattr(entity.org, "exists")
+        and not entity.org.exists()
+    ):
         entity.link = entity.__class__.link.related.related_model.objects.create(
             org=context.org, item=entity
         )

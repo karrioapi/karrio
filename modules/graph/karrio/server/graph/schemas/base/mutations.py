@@ -23,12 +23,12 @@ import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.serializers as serializers
 import karrio.server.providers.models as providers
-import karrio.server.user.models as user_models
 import karrio.server.manager.models as manager
 import karrio.server.core.gateway as gateway
 import karrio.server.graph.models as graph
 import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
+import karrio.server.user.models as auth
 import karrio.server.iam.models as iam
 
 logger = logging.getLogger(__name__)
@@ -57,6 +57,31 @@ class UserUpdateMutation(utils.BaseMutation):
 
 
 @strawberry.type
+class WorkspaceConfigMutation(utils.BaseMutation):
+    workspace_config: typing.Optional[types.WorkspaceConfigType] = None
+
+    @staticmethod
+    @utils.authentication_required
+    @utils.authorization_required(["manage_team"])
+    def mutate(
+        info: Info, **input: inputs.WorkspaceConfigMutationInput
+    ) -> "WorkspaceConfigMutation":
+        data = dict(config=input.copy())
+        workspace = auth.WorkspaceConfig.access_by(info.context.request).first()
+
+        serializer = serializers.WorkspaceConfigModelSerializer(
+            workspace,
+            partial=workspace is not None,
+            data=process_dictionaries_mutations(["config"], data, workspace),
+            context=info.context.request,
+        )
+
+        serializer.is_valid(raise_exception=True)
+
+        return WorkspaceConfigMutation(workspace=serializer.save())  # type:ignore
+
+
+@strawberry.type
 class TokenMutation(utils.BaseMutation):
     token: typing.Optional[types.TokenType] = None
 
@@ -69,7 +94,7 @@ class TokenMutation(utils.BaseMutation):
         refresh: bool = None,
         password: str = None,
     ) -> "UserUpdateMutation":
-        tokens = user_models.Token.access_by(info.context.request).filter(key=key)
+        tokens = auth.Token.access_by(info.context.request).filter(key=key)
 
         if refresh:
             if len(password or "") == 0:
@@ -127,10 +152,10 @@ class CreateAPIKeyMutation(utils.BaseMutation):
                 content_object=api_key,
                 content_type=ContentType.objects.get_for_model(api_key),
             )
-            _ctx.groups.set(user_models.Group.objects.filter(name__in=permissions))
+            _ctx.groups.set(auth.Group.objects.filter(name__in=permissions))
 
         return CreateAPIKeyMutation(
-            api_key=user_models.Token.access_by(context).get(key=api_key.key)
+            api_key=auth.Token.access_by(context).get(key=api_key.key)
         )  # type:ignore
 
 
@@ -145,7 +170,7 @@ class DeleteAPIKeyMutation(utils.BaseMutation):
     def mutate(
         info: Info, password: str, **input: inputs.DeleteAPIKeyMutationInput
     ) -> "DeleteAPIKeyMutation":
-        api_key = user_models.Token.access_by(info.context.request).get(**input)
+        api_key = auth.Token.access_by(info.context.request).get(**input)
         label = api_key.label
         api_key.delete()
 
@@ -200,7 +225,7 @@ class ConfirmEmailChangeMutation(utils.BaseMutation):
 
         if user.id != validated_token["user_id"]:
             raise exceptions.ValidationError(
-                {"token": "user_models.Token is invalid or expired"}
+                {"token": "auth.Token is invalid or expired"}
             )
 
         if user.email == validated_token["new_email"]:

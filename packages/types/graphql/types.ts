@@ -4996,6 +4996,80 @@ export interface deleteMetafieldVariables {
   data: DeleteMutationInput;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkspaceConfig
+// ====================================================
+
+export interface GetWorkspaceConfig_workspace_config {
+  object_type: string;
+  default_currency: CurrencyCodeEnum | null;
+  default_country_code: CountryCodeEnum | null;
+  default_weight_unit: WeightUnitEnum | null;
+  default_dimension_unit: DimensionUnitEnum | null;
+  state_tax_id: string | null;
+  federal_tax_id: string | null;
+  default_label_type: LabelTypeEnum | null;
+  customs_aes: string | null;
+  customs_eel_pfc: string | null;
+  customs_license_number: string | null;
+  customs_certificate_number: string | null;
+  customs_nip_number: string | null;
+  customs_eori_number: string | null;
+  customs_vat_registration_number: string | null;
+}
+
+export interface GetWorkspaceConfig {
+  workspace_config: GetWorkspaceConfig_workspace_config | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateWorkspaceConfig
+// ====================================================
+
+export interface UpdateWorkspaceConfig_update_workspace_config_workspace_config {
+  object_type: string;
+  default_currency: CurrencyCodeEnum | null;
+  default_country_code: CountryCodeEnum | null;
+  default_weight_unit: WeightUnitEnum | null;
+  default_dimension_unit: DimensionUnitEnum | null;
+  state_tax_id: string | null;
+  federal_tax_id: string | null;
+  default_label_type: LabelTypeEnum | null;
+  customs_aes: string | null;
+  customs_eel_pfc: string | null;
+  customs_license_number: string | null;
+  customs_certificate_number: string | null;
+  customs_nip_number: string | null;
+  customs_eori_number: string | null;
+  customs_vat_registration_number: string | null;
+}
+
+export interface UpdateWorkspaceConfig_update_workspace_config_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateWorkspaceConfig_update_workspace_config {
+  workspace_config: UpdateWorkspaceConfig_update_workspace_config_workspace_config | null;
+  errors: UpdateWorkspaceConfig_update_workspace_config_errors[] | null;
+}
+
+export interface UpdateWorkspaceConfig {
+  update_workspace_config: UpdateWorkspaceConfig_update_workspace_config;
+}
+
+export interface UpdateWorkspaceConfigVariables {
+  data: WorkspaceConfigMutationInput;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -7176,6 +7250,25 @@ export interface BatchOperationFilter {
   first?: number | null;
   resource_type?: ResourceStatus[] | null;
   status?: BatchOperationStatus[] | null;
+}
+
+// null
+export interface WorkspaceConfigMutationInput {
+  default_currency?: CurrencyCodeEnum | null;
+  default_country_code?: CountryCodeEnum | null;
+  default_label_type?: LabelTypeEnum | null;
+  default_weight_unit?: WeightUnitEnum | null;
+  default_dimension_unit?: DimensionUnitEnum | null;
+  state_tax_id?: string | null;
+  federal_tax_id?: string | null;
+  customs_aes?: string | null;
+  customs_ein?: string | null;
+  customs_eel_pfc?: string | null;
+  customs_eori_number?: string | null;
+  customs_license_number?: string | null;
+  customs_certificate_number?: string | null;
+  customs_nip_number?: string | null;
+  customs_vat_registration_number?: string | null;
 }
 
 //==============================================================
