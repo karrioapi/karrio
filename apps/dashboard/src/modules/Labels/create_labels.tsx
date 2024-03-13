@@ -1,7 +1,7 @@
 import { AddressType, CURRENCY_OPTIONS, CommodityType, MetadataObjectTypeEnum, NotificationType, OrderType, PaidByEnum, ShipmentType } from '@karrio/types';
 import { createShipmentFromOrders, formatAddressLocationShort, formatRef, formatWeight, isNone, isNoneOrEmpty, p, useLocation } from '@karrio/lib';
-import { CommodityEditModalProvider, CommodityStateContext } from '@karrio/ui/modals/commodity-edit-modal';
 import { CheckBoxField, Dropdown, InputField, SelectField, Spinner, TextAreaField } from '@karrio/ui/components';
+import { CommodityEditModalProvider, CommodityStateContext } from '@karrio/ui/modals/commodity-edit-modal';
 import { MetadataEditor, MetadataEditorContext } from '@karrio/ui/forms/metadata-editor';
 import { AddressModalEditor, ParcelModalEditor } from '@karrio/ui/modals/form-modals';
 import { GoogleGeocodingScript } from '@karrio/ui/components/google-geocoding-script';
@@ -14,6 +14,7 @@ import { RateDescription } from '@karrio/ui/components/rate-description';
 import { useCarrierConnections } from '@karrio/hooks/user-connection';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
 import { useBatchShipmentForm } from '@karrio/hooks/bulk-shipments';
+import { useWorkspaceConfig } from '@karrio/hooks/workspace-config';
 import { useConnections } from '@karrio/hooks/carrier-connections';
 import { CarrierImage } from '@karrio/ui/components/carrier-image';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
@@ -49,6 +50,7 @@ export default function Page(pageProps: any) {
     const { basePath } = useAppMode();
     const { references } = useAPIMetadata();
     const { carrierOptions } = useConnections();
+    const workspace_config = useWorkspaceConfig();
     const { query: defaults } = useDefaultTemplates();
     const { order_ids = '', shipment_ids = '' } = router.query as any;
     const [orderIds] = React.useState<string[]>(order_ids.split(',').filter(_ => !isNoneOrEmpty(_)));
@@ -72,7 +74,7 @@ export default function Page(pageProps: any) {
         .map(({ node: order }) => {
           const shipment = (
             order.shipments.find(({ status }) => status === "draft") ||
-            createShipmentFromOrders([order] as OrderType[], defaults)
+            createShipmentFromOrders([order] as OrderType[], defaults, workspace_config.customsOptions)
           );
 
           return shipment as ShipmentType;
@@ -215,13 +217,23 @@ export default function Page(pageProps: any) {
     React.useEffect(() => {
       if (ready === true) return;
       if (batch.shipments.length === 0) return;
+      if (workspace_config.query.isLoading) return;
       if (orderIds.length > 0 && ordersQuery.query.isLoading) return;
       if (shipmentIds.length > 0 && shipmentsQuery.query.isLoading) return;
       if (shipmentsOrdersQuery.query.isLoading) return;
 
       setReady(true);
       setKeys(batch.shipments.reduce((acc, shipment, index) => ({ ...acc, [index]: `${shipment.id || index}-${new Date()}` }), {}));
-    }, [ready, batch.shipments, orderIds, shipmentIds, ordersQuery.query.isLoading, shipmentsQuery.query.isLoading, shipmentsOrdersQuery.query.isLoading]);
+    }, [
+      ready,
+      orderIds,
+      shipmentIds,
+      batch.shipments,
+      ordersQuery.query.isLoading,
+      shipmentsQuery.query.isLoading,
+      workspace_config.query.isLoading,
+      shipmentsOrdersQuery.query.isLoading,
+    ]);
 
 
     return (

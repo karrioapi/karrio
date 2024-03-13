@@ -3,15 +3,19 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, onError } from "@karrio/lib";
 import { useKarrio } from "./karrio";
 
+type Pops = {
+  defaultValue?: GetWorkspaceConfig_workspace_config;
+};
 
-export function useWorkspaceConfig({ defaultValue }: { defaultValue?: GetWorkspaceConfig_workspace_config }) {
+export function useWorkspaceConfig({ defaultValue }: Pops = {}) {
   const karrio = useKarrio();
+  const workspace_config = defaultValue || karrio.pageData?.workspace_config;
 
   // Queries
   const query = useQuery({
     queryKey: ['workspace-config'],
     queryFn: () => karrio.graphql.request<GetWorkspaceConfig>(gqlstr(GET_WORKSPACE_CONFIG)),
-    initialData: !!defaultValue ? { workspace_config: defaultValue } : undefined,
+    initialData: !!workspace_config ? { workspace_config } : undefined,
     refetchOnWindowFocus: false,
     staleTime: 300000,
     onError
@@ -19,6 +23,13 @@ export function useWorkspaceConfig({ defaultValue }: { defaultValue?: GetWorkspa
 
   return {
     query,
+    get customsOptions() {
+      return (
+        Object.entries(query.data?.workspace_config || {})
+          .filter(([key, value]) => key.includes('customs') && !!value)
+          .reduce((acc, [key, value]) => ({ ...acc, [key.replace("customs_", "")]: value }), {})
+      );
+    }
   };
 }
 

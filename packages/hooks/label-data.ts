@@ -55,7 +55,7 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
           ? Promise.resolve({ shipment })
           : karrio.graphql.request<get_shipment_data>(gqlstr(GET_SHIPMENT_DATA), { variables: { id } })
       );
-      console.log('response', id, response);
+
       return response;
     },
     initialData: !!initialData ? { shipment: initialData } : undefined,
@@ -428,16 +428,20 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
 
   // requests
   const fetchRates = async () => {
+    if (mutation.fetchRates.isLoading) return;
     const { messages, rates, ...data } = state.shipment;
 
     try {
+      loader.setLoading(true);
       const { rates, messages } = await mutation.fetchRates.mutateAsync(data as ShipmentType);
       updateShipment({ rates, messages } as Partial<ShipmentType>);
     } catch (error: any) {
       updateShipment({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
     }
+    loader.setLoading(false);
   };
   const buyLabel = async (rate: ShipmentType['rates'][0], action: { redirect: boolean } = { redirect: true }) => {
+    if (mutation.buyLabel.isLoading) return;
     const { messages, rates, ...data } = state.shipment;
     const selection = (
       isLocalDraft(state.shipment.id)
@@ -455,8 +459,10 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
       loader.setLoading(false);
       updateShipment({ messages: errorToMessages(error) }, { manuallyUpdated: true });
     }
+    loader.setLoading(false);
   };
   const saveDraft = async (action: { redirect: boolean, notify: boolean } = { redirect: true, notify: true }) => {
+    if (mutation.createShipment.isLoading) return;
     const { ...data } = state.shipment;
 
     try {
@@ -482,7 +488,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   };
 
   React.useEffect(() => {
-    if (!state.query.isFetching && updateRate && hasRateRequirements(state.shipment)) {
+    if (!state.query.isFetching && !mutation.fetchRates.isLoading && updateRate && hasRateRequirements(state.shipment)) {
       setUpdateRate(false);
       fetchRates();
     }

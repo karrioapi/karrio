@@ -38,6 +38,7 @@ import { useOrders } from '@karrio/hooks/order';
 import { Disclosure } from '@headlessui/react';
 import Head from 'next/head';
 import moment from 'moment';
+import { useWorkspaceConfig } from '@karrio/hooks/workspace-config';
 
 export { getServerSideProps } from "@/context/main";
 
@@ -55,6 +56,7 @@ export default function CreateShipmentPage(pageProps: any) {
     const { basePath } = useAppMode();
     const { references } = useAPIMetadata();
     const { carrierOptions } = useConnections();
+    const workspace_config = useWorkspaceConfig();
     const { addUrlParam, ...router } = useLocation();
     const { query: templates } = useDefaultTemplates();
     const [ready, setReady] = useState<boolean>(false);
@@ -131,7 +133,7 @@ export default function CreateShipmentPage(pageProps: any) {
     const setInitialData = () => {
       const orderList = orders.data!.orders!.edges.map(({ node }) => node);
 
-      onChange(createShipmentFromOrders(orderList as OrderType[], templates));
+      onChange(createShipmentFromOrders(orderList as OrderType[], templates, workspace_config.customsOptions));
 
       setReady(true);
     };
@@ -152,6 +154,7 @@ export default function CreateShipmentPage(pageProps: any) {
       if (ready) return;
       if (orders.isLoading) return;
       if (templates.isLoading) return;
+      if (workspace_config.query.isLoading) return;
       if (shipment_id === 'new') return setInitialData();
       if (shipment_id !== 'new' && Object.keys(shipment.recipient).length === 0) return;
 
@@ -724,6 +727,7 @@ export default function CreateShipmentPage(pageProps: any) {
                           declared_value: shipment.options?.declared_value,
                         },
                         duty_billing_address: shipment.billing_address,
+                        options: workspace_config.customsOptions,
                       }}
                       onSubmit={mutation.updateCustoms(shipment?.customs?.id)}
                       trigger={

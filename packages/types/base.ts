@@ -272,6 +272,8 @@ export type PortalSessionType = {
     url: string;
 }
 
+export type UserType = graph.GetUser_user;
+
 export interface Metadata {
     HOST: string;
     ADMIN: string;
