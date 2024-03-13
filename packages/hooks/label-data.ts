@@ -73,7 +73,7 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
       dispatch({ name: "full", value: query!.data!.shipment as ShipmentType })
     }
   }, [query.data?.shipment]);
-  React.useEffect(() => { query.refetch(); }, [id]);
+  React.useEffect(() => { if (!query.isFetched || !query.isLoading) query.refetch(); }, [id]);
 
   return {
     query,
@@ -255,7 +255,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
     }
 
     // if it is not a draft and hasn't been manually updated already
-    if (uptateServerState) {
+    if (uptateServerState && !mutation.updateShipment.isLoading) {
       try {
         const invalidCustoms = (
           "customs" in changes && [
@@ -278,9 +278,9 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
             }
           });
       } catch (error: any) {
-        updateShipment({ messages: errorToMessages(error) });
+        state.updateLabelData({ messages: errorToMessages(error) });
       }
-      invalidateCache();
+      // invalidateCache();
     }
   };
   const addParcel = async (data: ParcelType) => {

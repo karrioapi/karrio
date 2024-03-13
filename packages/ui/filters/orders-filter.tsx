@@ -116,7 +116,8 @@ export const OrdersFilter: React.FC<OrdersFilterComponent> = ({ context }) => {
                 defaultValue={filters?.address}
                 onChange={handleChange}
                 name="address"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="e.g: 100 Main St, New York, NY"
               />
@@ -137,7 +138,8 @@ export const OrdersFilter: React.FC<OrdersFilterComponent> = ({ context }) => {
                 defaultValue={filters?.order_id}
                 onChange={handleChange}
                 name="order_id"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="11616493, 11616494, ..."
                 multiple
@@ -159,7 +161,8 @@ export const OrdersFilter: React.FC<OrdersFilterComponent> = ({ context }) => {
                 defaultValue={filters?.source}
                 onChange={handleChange}
                 name="source"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="shopify, erp, ..."
                 multiple
@@ -181,7 +184,8 @@ export const OrdersFilter: React.FC<OrdersFilterComponent> = ({ context }) => {
                 onChange={handleChange}
                 type="datetime-local"
                 name="created_after"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-small"
                 addonLeft={
@@ -195,7 +199,8 @@ export const OrdersFilter: React.FC<OrdersFilterComponent> = ({ context }) => {
                 onChange={handleChange}
                 type="datetime-local"
                 name="created_before"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-fullwidth is-small"
                 addonLeft={

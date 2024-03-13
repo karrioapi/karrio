@@ -73,7 +73,7 @@ export const PasswordManagement: React.FC<{}> = () => {
 
       <InputField
         label="Current Password" name="old_password" type="password"
-        placeholder="Current Password" className="is-small" fieldClass="mt-3"
+        placeholder="Current Password" className="is-small" wrapperClass="mt-3"
         onChange={handleChange} value={data.old_password} required>
         {renderFieldError("old_password", error)}
       </InputField>
@@ -82,14 +82,14 @@ export const PasswordManagement: React.FC<{}> = () => {
 
       <InputField
         label="New Password" name="new_password1" type="password"
-        placeholder="New Password" className="is-small" fieldClass="mt-3"
+        placeholder="New Password" className="is-small" wrapperClass="mt-3"
         onChange={handleChange} value={data.new_password1} required>
         {renderFieldError("new_password1", error)}
       </InputField>
 
       <InputField
         label="Confirm New Password" name="new_password2" type="password"
-        placeholder="Confirm Password" className="is-small" fieldClass="mt-3"
+        placeholder="Confirm Password" className="is-small" wrapperClass="mt-3"
         onChange={handleChange} value={data.new_password2} required>
         {renderFieldError("new_password2", error)}
       </InputField>

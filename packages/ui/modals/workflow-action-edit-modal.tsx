@@ -88,7 +88,8 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
           {/* name */}
           <InputField name="name"
             label="Name"
-            fieldClass="column mb-0 px-1 py-2"
+            wrapperClass="px-1 py-2"
+            fieldClass="column mb-0 p-0"
             defaultValue={action.name || ''}
             required={true}
             onChange={handleChange}
@@ -111,7 +112,8 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
             <InputField name="host"
               label="Host"
               className="is-fullwidth is-small"
-              fieldClass="column mb-0 px-1 py-2"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
               defaultValue={action.host || ''}
               required={action.action_type == AutomationActionType.http_request}
               onChange={handleChange}
@@ -120,7 +122,8 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
             <InputField name="endpoint"
               label="Endpoint"
               className="is-fullwidth is-small"
-              fieldClass="column mb-0 px-1 py-2"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
               defaultValue={action.endpoint || ''}
               onChange={handleChange}
             />
@@ -129,7 +132,8 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
               label="Port"
               type='number'
               className="is-fullwidth is-small"
-              fieldClass="column mb-0 px-1 py-2"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
               defaultValue={action.port || ''}
               onChange={handleChange}
             />
@@ -138,7 +142,8 @@ export const ActionModalEditor: React.FC<ModalFormProps<ActionModalEditorProps>>
             <SelectField name="method"
               label="HTTP method"
               className="is-small is-fullwidth"
-              fieldClass="column is-3 mb-0 px-0 py-2"
+              wrapperClass="px-0 py-2"
+              fieldClass="column is-3 mb-0 p-0"
               value={action?.method || ''}
               required={true}
               onChange={handleChange}

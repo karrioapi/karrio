@@ -8,8 +8,8 @@ interface MessagesDescriptionComponent {
 
 export const MessagesDescription: React.FC<MessagesDescriptionComponent> = ({ messages }) => {
   return (
-    <>
+    <React.Fragment key={Date()}>
       {formatMessage(messages as any)}
-    </>
+    </React.Fragment>
   );
 };

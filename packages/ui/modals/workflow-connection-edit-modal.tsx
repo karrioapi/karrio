@@ -90,7 +90,8 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
           {/* name */}
           <InputField name="name"
             label="Name"
-            fieldClass="column mb-0 px-1 py-2"
+            wrapperClass="px-1 py-2"
+            fieldClass="column mb-0 p-0"
             defaultValue={connection.name || ''}
             required={true}
             onChange={handleChange}
@@ -113,7 +114,8 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
             <InputField name="host"
               label="Host"
               className="is-fullwidth is-small"
-              fieldClass="column mb-0 px-1 py-2"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
               defaultValue={connection.host || ''}
               required={[AutomationAuthType.jwt, AutomationAuthType.oauth2].includes(connection.auth_type as any)}
               onChange={handleChange}
@@ -122,7 +124,8 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
             <InputField name="endpoint"
               label="Endpoint"
               className="is-fullwidth is-small"
-              fieldClass="column mb-0 px-1 py-2"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
               defaultValue={connection.endpoint || ''}
               onChange={handleChange}
             />
@@ -131,7 +134,8 @@ export const ConnectionModalEditor: React.FC<ModalFormProps<ConnectionModalEdito
               label="Port"
               type='number'
               className="is-fullwidth is-small"
-              fieldClass="column mb-0 px-1 py-2"
+              wrapperClass="px-1 py-2"
+              fieldClass="column mb-0 p-0"
               defaultValue={connection.port || ''}
               onChange={handleChange}
             />

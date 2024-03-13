@@ -12,12 +12,13 @@ interface NameInputComponent extends InputFieldComponent {
   label?: string;
   fieldClass?: string;
   controlClass?: string;
+  wrapperClass?: string;
   addonRight?: JSX.Element;
   addonLeft?: JSX.Element;
   ref?: RefObject<HTMLInputElement>;
 }
 
-export const NameInput: React.FC<NameInputComponent> = ({ disableSuggestion, value, onValueChange, label, required, className, fieldClass, controlClass, children, ref, addonLeft, addonRight, ...props }) => {
+export const NameInput: React.FC<NameInputComponent> = ({ disableSuggestion, value, onValueChange, label, required, className, fieldClass, controlClass, wrapperClass, children, ref, addonLeft, addonRight, ...props }) => {
   const { query: { data: { address_templates } = {} }, filter, setFilter } = useAddressTemplates();
   const [query, setQuery] = React.useState<string>(value as string || "");
 
@@ -35,57 +36,61 @@ export const NameInput: React.FC<NameInputComponent> = ({ disableSuggestion, val
 
   return (
     <>
-
-      <div className={`field ${fieldClass}`}>
+      <div className={wrapperClass || ""}>
         {label !== undefined && <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
           {label}
           {required && <span className="icon is-small has-text-danger small-icon">
             <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
           </span>}
         </label>}
-        <div className={`control ${controlClass}`}>
+
+        <div className={`field ${fieldClass}`}>
           {addonLeft && addonLeft}
 
-          <Combobox value={query} onChange={setSeltected as any}>
-            {({ open }) => (
-              <div className={`dropdown is-flex ${(open && (address_templates?.edges || []).length > 0) ? "is-active" : ""}`}>
-                <Combobox.Input
-                  onChange={setSeltected}
-                  className={`dropdown-trigger input ${className || ''}`}
-                  {...(isNone(ref) ? { ref } : {})}
-                  {...props}
-                  autoComplete="off"
-                  data-lpignore="true"
-                  type="search"
-                  displayValue={_ => (_ as any).person_name || query}
-                />
+          <div className={`control ${controlClass}`}>
+            <Combobox value={query} onChange={setSeltected as any}>
+              {({ open }) => (
+                <div className={`dropdown is-flex ${(open && (address_templates?.edges || []).length > 0) ? "is-active" : ""}`}>
+                  <Combobox.Input
+                    onChange={setSeltected}
+                    className={`dropdown-trigger input ${className || ''}`}
+                    {...(isNone(ref) ? { ref } : {})}
+                    {...props}
+                    autoComplete="off"
+                    data-lpignore="true"
+                    type="search"
+                    displayValue={_ => (_ as any).person_name || query}
+                  />
 
-                {!disableSuggestion && <>
-                  <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{ width: "calc(100%)", maxHeight: '40vh' }}>
-                    <Combobox.Options className={'dropdown-content'}>
-                      {(address_templates?.edges || []).map(({ node: template }) => (
-                        <Combobox.Option
-                          as='a'
-                          href='#'
-                          key={template.id}
-                          className={'dropdown-item is-clickable'}
-                          value={template.address}
-                        >
-                          <span className="is-size-7 has-text-dark-grey has-text-weight-bold">
-                            {template.label} - {formatAddress(template?.address as any)}
-                          </span>
-                        </Combobox.Option>
-                      ))}
-                    </Combobox.Options>
-                  </div>
-                </>}
+                  {!disableSuggestion && <>
+                    <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{ width: "calc(100%)", maxHeight: '40vh' }}>
+                      <Combobox.Options className={'dropdown-content'}>
+                        {(address_templates?.edges || []).map(({ node: template }) => (
+                          <Combobox.Option
+                            as='a'
+                            href='#'
+                            key={template.id}
+                            className={'dropdown-item is-clickable'}
+                            value={template.address}
+                          >
+                            <span className="is-size-7 has-text-dark-grey has-text-weight-bold">
+                              {template.label} - {formatAddress(template?.address as any)}
+                            </span>
+                          </Combobox.Option>
+                        ))}
+                      </Combobox.Options>
+                    </div>
+                  </>}
 
-              </div>
-            )}
-          </Combobox>
+                </div>
+              )}
+            </Combobox>
+
+          </div>
 
           {addonRight ? addonRight : <></>}
         </div>
+
         {children}
       </div>
 

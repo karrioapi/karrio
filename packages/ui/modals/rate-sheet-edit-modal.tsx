@@ -249,27 +249,32 @@ export const RateSheetEditModalProvider: React.FC<RateSheetEditModalComponent> =
                                 <tr key={`service-${idx}-${new Date()}`}>
                                   <td className="is-size-7 p-0">
                                     <InputField
-                                      name="service_name" onChange={updateSercice(idx)} value={service.service_name || ''} className="is-small"
+                                      name="service_name" onChange={updateSercice(idx)} value={service.service_name || ''}
+                                      className="is-small"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0">
                                     <InputField
-                                      name="service_code" onChange={updateSercice(idx)} value={service.service_code || ''} className="is-small"
+                                      name="service_code" onChange={updateSercice(idx)} value={service.service_code || ''}
+                                      className="is-small"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0 is-vcentered">
                                     <CheckBoxField
-                                      name="domicile" onChange={updateSercice(idx)} defaultChecked={service?.domicile as boolean} fieldClass="has-text-centered"
+                                      name="domicile" onChange={updateSercice(idx)} defaultChecked={service?.domicile as boolean}
+                                      fieldClass="has-text-centered"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0 is-vcentered">
                                     <CheckBoxField
-                                      name="international" onChange={updateSercice(idx)} defaultChecked={service?.international as boolean} fieldClass="has-text-centered"
+                                      name="international" onChange={updateSercice(idx)} defaultChecked={service?.international as boolean}
+                                      fieldClass="has-text-centered"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0">
                                     <InputField
-                                      name="transit_days" onChange={updateSercice(idx)} value={service.transit_days || ''} type='number' step={1} min={0} className="is-small"
+                                      name="transit_days" onChange={updateSercice(idx)} value={service.transit_days || ''} type='number' step={1} min={0}
+                                      className="is-small"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0">

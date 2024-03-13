@@ -773,8 +773,9 @@ export default function Page(pageProps: any) {
                                   {/* currency */}
                                   <SelectField name="currency"
                                     label="shipment currency"
+                                    wrapperClass="py-2"
                                     className="is-small is-fullwidth"
-                                    fieldClass="column is-8 mb-0 px-0 py-2"
+                                    fieldClass="column is-8 mb-0 px-0"
                                     value={shipment.options?.currency}
                                     required={!isNone(shipment.options?.insurance) || !isNone(shipment.options?.cash_on_delivery) || !isNone(shipment.options?.declared_value)}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, currency: e.target.value } })}
@@ -786,7 +787,7 @@ export default function Page(pageProps: any) {
 
                                   {/* signature confirmation */}
                                   <CheckBoxField name="signature_confirmation"
-                                    fieldClass="column mb-0 is-12 px-0 py-2"
+                                    fieldClass="column mb-0 is-12 px-1 py-2"
                                     defaultChecked={shipment.options?.signature_confirmation}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, signature_confirmation: e.target.checked || null } })}
                                   >
@@ -796,7 +797,7 @@ export default function Page(pageProps: any) {
 
                                   {/* insurance */}
                                   <CheckBoxField name="addInsurance"
-                                    fieldClass="column mb-0 is-12 px-0 py-2"
+                                    fieldClass="column mb-0 is-12 px-1 py-2"
                                     defaultChecked={!isNoneOrEmpty(shipment.options?.insurance)}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, insurance: e.target.checked === true ? "" : null } })}
                                   >
@@ -813,14 +814,15 @@ export default function Page(pageProps: any) {
                                       type="number"
                                       min={0}
                                       step="any"
-                                      className="is-small"
-                                      fieldClass="column mb-0 is-8 px-1 py-0"
+                                      className="column is-4 is-small"
+                                      wrapperClass="px-1 py-2"
+                                      fieldClass="mb-0 p-0"
                                       controlClass="has-icons-left has-icons-right"
                                       defaultValue={shipment.options?.insurance}
                                       required={!isNone(shipment.options?.insurance)}
                                       onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, insurance: parseFloat(e.target.value) } })}
-                                      addonLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
-                                      addonRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
+                                      iconLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
+                                      iconRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
                                     />
 
                                   </div>
@@ -828,7 +830,7 @@ export default function Page(pageProps: any) {
 
                                   {/* Cash on delivery */}
                                   <CheckBoxField name="addCOD"
-                                    fieldClass="column mb-0 is-12 px-0 py-2"
+                                    fieldClass="column mb-0 is-12 px-1 py-2"
                                     defaultChecked={!isNoneOrEmpty(shipment.options?.cash_on_delivery)}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, cash_on_delivery: e.target.checked === true ? "" : null } })}
                                   >
@@ -844,20 +846,21 @@ export default function Page(pageProps: any) {
                                       label="Amount to collect"
                                       type="number" min={0} step="any"
                                       className="is-small"
+                                      wrapperClass="px-1 py-2"
+                                      fieldClass="column mb-0 is-4 p-0"
                                       controlClass="has-icons-left has-icons-right"
-                                      fieldClass="column mb-0 is-8 px-1 py-2"
                                       defaultValue={shipment.options?.cash_on_delivery}
                                       required={!isNone(shipment.options?.cash_on_delivery)}
                                       onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, cash_on_delivery: parseFloat(e.target.value) } })}
-                                      addonLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
-                                      addonRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
+                                      iconLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
+                                      iconRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
                                     />
 
                                   </div>
 
                                   {/* Declared value */}
                                   <CheckBoxField name="addCOD"
-                                    fieldClass="column mb-0 is-12 px-0 py-2"
+                                    fieldClass="column mb-0 is-12 px-1 py-2"
                                     defaultChecked={!isNoneOrEmpty(shipment.options?.declared_value)}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, declared_value: e.target.checked === true ? "" : null } })}
                                   >
@@ -873,12 +876,13 @@ export default function Page(pageProps: any) {
                                       label="Package value"
                                       type="number" min={0} step="any"
                                       className="is-small"
+                                      wrapperClass="px-1 py-2"
+                                      fieldClass="column mb-0 is-4 p-0"
                                       controlClass="has-icons-right"
-                                      fieldClass="column mb-0 is-8 px-1 py-2"
                                       value={shipment.options?.declared_value}
                                       required={!isNone(shipment.options?.declared_value)}
                                       onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, declared_value: parseFloat(e.target.value) } })}
-                                      addonRight={<span className="icon is-small is-right pr-2">{shipment.options?.currency}</span>}
+                                      iconRight={<span className="icon is-small is-right pr-2">{shipment.options?.currency}</span>}
                                     />
 
                                   </div>
@@ -886,7 +890,7 @@ export default function Page(pageProps: any) {
 
                                   {/* paperless trade */}
                                   <CheckBoxField name="paperless_trade"
-                                    fieldClass="column mb-0 is-12 px-0 py-2"
+                                    fieldClass="column mb-0 is-12 px-1 py-2"
                                     defaultChecked={shipment.options?.paperless_trade}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, paperless_trade: e.target.checked } })}
                                   >
@@ -896,7 +900,7 @@ export default function Page(pageProps: any) {
 
                                   {/* hold at location */}
                                   <CheckBoxField name="hold_at_location"
-                                    fieldClass="column mb-0 is-12 px-0 py-2"
+                                    fieldClass="column mb-0 is-12 px-1 py-2"
                                     defaultChecked={shipment.options?.hold_at_location}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, hold_at_location: e.target.checked } })}
                                   >
@@ -906,7 +910,7 @@ export default function Page(pageProps: any) {
 
                                   {/* dangerous good */}
                                   <CheckBoxField name="dangerous_good"
-                                    fieldClass="column mb-0 is-12 px-0 py-2"
+                                    fieldClass="column mb-0 is-12 px-1 py-2"
                                     defaultChecked={shipment.options?.dangerous_good}
                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, dangerous_good: e.target.checked } })}
                                   >
@@ -955,7 +959,8 @@ export default function Page(pageProps: any) {
                                                     label={formatRef(option)}
                                                     placeholder={formatRef(option)}
                                                     className="is-small"
-                                                    fieldClass="mb-0 p-1"
+                                                    wrapperClass="pl-0 pr-2 py-1"
+                                                    fieldClass="column mb-0 is-6 p-0"
                                                     defaultValue={shipment.options[option]}
                                                     onChange={e => onChange(shipment_index, shipment, { options: { ...shipment.options, [option]: e.target.value } })}
                                                   />

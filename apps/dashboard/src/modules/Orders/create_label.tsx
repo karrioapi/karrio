@@ -240,6 +240,89 @@ export default function CreateShipmentPage(pageProps: any) {
 
                 </div>
 
+
+
+                <hr className='my-1' style={{ height: '1px' }} />
+
+                <div className="p-3">
+                  <label className="label is-capitalized" style={{ fontSize: '0.8em' }}>Shipment Paid By</label>
+
+                  <div className="control">
+
+                    <label className="radio">
+                      <input
+                        className="mr-1"
+                        type="radio"
+                        name="paid_by"
+                        defaultChecked={shipment.payment?.paid_by === PaidByEnum.sender}
+                        onChange={() => mutation.updateShipment({ payment: { paid_by: PaidByEnum.sender } } as any)}
+                      />
+                      <span className="is-size-7 has-text-weight-bold">{formatRef(PaidByEnum.sender.toString())}</span>
+                    </label>
+                    <label className="radio">
+                      <input
+                        className="mr-1"
+                        type="radio"
+                        name="paid_by"
+                        defaultChecked={shipment.payment?.paid_by === PaidByEnum.recipient}
+                        onChange={() => mutation.updateShipment({ payment: { ...shipment.payment, paid_by: PaidByEnum.recipient } })}
+                      />
+                      <span className="is-size-7 has-text-weight-bold">{formatRef(PaidByEnum.recipient.toString())}</span>
+                    </label>
+                    <label className="radio">
+                      <input
+                        className="mr-1"
+                        type="radio"
+                        name="paid_by"
+                        defaultChecked={shipment.payment?.paid_by === PaidByEnum.third_party}
+                        onChange={() => mutation.updateShipment({ payment: { ...shipment.payment, paid_by: PaidByEnum.third_party } })}
+                      />
+                      <span className="is-size-7 has-text-weight-bold">{formatRef(PaidByEnum.third_party.toString())}</span>
+                    </label>
+
+                  </div>
+
+                  {(shipment.payment?.paid_by && shipment.payment?.paid_by !== PaidByEnum.sender) &&
+                    <div className="columns m-1 px-2 py-0" style={{ borderLeft: "solid 2px #ddd" }}>
+                      <InputField
+                        label="account number"
+                        className="is-small"
+                        defaultValue={shipment?.payment?.account_number as string}
+                        onChange={e => mutation.updateShipment({ payment: { ...shipment.payment, account_number: e.target.value } })}
+                      />
+                    </div>}
+                </div>
+
+                {/* Billing address section */}
+                {(shipment.billing_address || shipment.payment?.paid_by === PaidByEnum.third_party) && <>
+
+                  <div className="p-3">
+                    <header className="is-flex is-justify-content-space-between">
+                      <label className="label is-capitalized" style={{ fontSize: '0.8em' }}>Billing address</label>
+                      <div className="is-vcentered">
+                        <AddressModalEditor
+                          shipment={shipment}
+                          address={shipment.billing_address || (orders.data?.orders.edges || [{}])[0].node?.billing_address || {} as AddressType}
+                          onSubmit={(address) => onChange({ billing_address: address })}
+                          trigger={
+                            <button className="button is-small is-info is-text is-inverted p-1" disabled={query.isFetching}>
+                              Edit billing address
+                            </button>
+                          }
+                        />
+                      </div>
+                    </header>
+
+                    {shipment.billing_address &&
+                      <AddressDescription address={shipment!.billing_address as any} />}
+
+                    {!shipment.billing_address && <div className="notification is-default p-2 is-size-7">
+                      Add shipment billing address. (optional)
+                    </div>}
+
+                  </div>
+                </>}
+
               </div>
 
               {/* Parcel & Items section */}
@@ -386,7 +469,8 @@ export default function CreateShipmentPage(pageProps: any) {
                     label="shipment date"
                     type="date"
                     className="is-small"
-                    fieldClass="column mb-0 is-4 p-0 mb-2"
+                    wrapperClass="px-1 py-2"
+                    fieldClass="column mb-0 is-4 p-0"
                     defaultValue={shipment.options?.shipment_date}
                     onChange={e => onChange({ options: { ...shipment.options, shipment_date: e.target.value } })}
                   />
@@ -396,7 +480,8 @@ export default function CreateShipmentPage(pageProps: any) {
                   <SelectField name="currency"
                     label="shipment currency"
                     className="is-small is-fullwidth"
-                    fieldClass="column is-4 mb-0 px-0 py-2"
+                    wrapperClass="px-1 py-2"
+                    fieldClass="column is-4 mb-0 p-0"
                     value={shipment.options?.currency}
                     required={!isNone(shipment.options?.insurance) || !isNone(shipment.options?.cash_on_delivery) || !isNone(shipment.options?.declared_value)}
                     onChange={e => onChange({ options: { ...shipment.options, currency: e.target.value } })}
@@ -408,7 +493,7 @@ export default function CreateShipmentPage(pageProps: any) {
 
                   {/* signature confirmation */}
                   <CheckBoxField name="signature_confirmation"
-                    fieldClass="column mb-0 is-12 px-0 py-2"
+                    fieldClass="column mb-0 is-12 px-1 py-2"
                     defaultChecked={shipment.options?.signature_confirmation}
                     onChange={e => onChange({ options: { ...shipment.options, signature_confirmation: e.target.checked } })}
                   >
@@ -418,7 +503,7 @@ export default function CreateShipmentPage(pageProps: any) {
 
                   {/* insurance */}
                   <CheckBoxField name="addInsurance"
-                    fieldClass="column mb-0 is-12 px-0 py-2"
+                    fieldClass="column mb-0 is-12 px-1 py-2"
                     defaultChecked={!isNone(shipment.options?.insurance)}
                     onChange={e => onChange({ options: { ...shipment.options, insurance: e.target.checked === true ? "" : null } })}
                   >
@@ -436,24 +521,22 @@ export default function CreateShipmentPage(pageProps: any) {
                       min={0}
                       step="any"
                       className="is-small"
-                      fieldClass="column mb-0 is-4 px-1 py-0"
+                      wrapperClass="px-1 py-2"
+                      fieldClass="column mb-0 is-4 p-0"
                       controlClass="has-icons-left has-icons-right"
                       defaultValue={shipment.options?.insurance}
                       required={!isNone(shipment.options?.insurance)}
                       onChange={e => onChange({ options: { ...shipment.options, insurance: parseFloat(e.target.value) } })}
-                    >
-                      <span className="icon is-small is-left">
-                        <i className="fas fa-dollar-sign"></i>
-                      </span>
-                      <span className="icon is-small is-right">{shipment.options?.currency}</span>
-                    </InputField>
+                      iconLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
+                      iconRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
+                    />
 
                   </div>
 
 
                   {/* Cash on delivery */}
                   <CheckBoxField name="addCOD"
-                    fieldClass="column mb-0 is-12 px-0 py-2"
+                    fieldClass="column mb-0 is-12 px-1 py-2"
                     defaultChecked={!isNone(shipment.options?.cash_on_delivery)}
                     onChange={e => onChange({ options: { ...shipment.options, cash_on_delivery: e.target.checked === true ? "" : null } })}
                   >
@@ -469,24 +552,22 @@ export default function CreateShipmentPage(pageProps: any) {
                       label="Amount to collect"
                       type="number" min={0} step="any"
                       className="is-small"
+                      wrapperClass="px-1 py-2"
+                      fieldClass="column mb-0 is-4 p-0"
                       controlClass="has-icons-left has-icons-right"
-                      fieldClass="column mb-0 is-4 px-1 py-2"
                       value={shipment.options?.cash_on_delivery}
                       required={!isNone(shipment.options?.cash_on_delivery)}
                       onChange={e => onChange({ options: { ...shipment.options, cash_on_delivery: parseFloat(e.target.value) } })}
-                    >
-                      <span className="icon is-small is-left">
-                        <i className="fas fa-dollar-sign"></i>
-                      </span>
-                      <span className="icon is-small is-right">{shipment.options?.currency}</span>
-                    </InputField>
+                      iconLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
+                      iconRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
+                    />
 
                   </div>
 
 
                   {/* Declared value */}
                   <CheckBoxField name="addDeclaredValue"
-                    fieldClass="column mb-0 is-12 px-0 py-2"
+                    fieldClass="column mb-0 is-12 px-1 py-2"
                     defaultChecked={!isNone(shipment.options?.declared_value)}
                     onChange={e => onChange({ options: { ...shipment.options, declared_value: e.target.checked === true ? "" : null } })}
                   >
@@ -502,19 +583,21 @@ export default function CreateShipmentPage(pageProps: any) {
                       label="Package value"
                       type="number" min={0} step="any"
                       className="is-small"
-                      controlClass="has-icons-right"
-                      fieldClass="column mb-0 is-4 px-1 py-2"
+                      wrapperClass="px-1 py-2"
+                      fieldClass="column mb-0 is-4 p-0"
+                      controlClass="has-icons-left has-icons-right"
                       value={shipment.options?.declared_value}
                       required={!isNone(shipment.options?.declared_value)}
                       onChange={e => onChange({ options: { ...shipment.options, declared_value: parseFloat(e.target.value) } })}
-                      addonRight={<span className="icon is-small is-right pr-2">{shipment.options?.currency}</span>}
+                      iconLeft={<span className="icon is-small is-left"><i className="fas fa-dollar-sign"></i></span>}
+                      iconRight={<span className="icon is-small is-right">{shipment.options?.currency}</span>}
                     />
                   </div>
 
 
                   {/* paperless trade */}
                   <CheckBoxField name="paperless_trade"
-                    fieldClass="column mb-0 is-12 px-0 py-2"
+                    fieldClass="column mb-0 is-12 px-1 py-2"
                     defaultChecked={shipment.options?.paperless_trade}
                     onChange={e => onChange({ options: { ...shipment.options, paperless_trade: e.target.checked } })}
                   >
@@ -524,7 +607,7 @@ export default function CreateShipmentPage(pageProps: any) {
 
                   {/* hold at location */}
                   <CheckBoxField name="hold_at_location"
-                    fieldClass="column mb-0 is-12 px-0 py-2"
+                    fieldClass="column mb-0 is-12 px-1 py-2"
                     defaultChecked={shipment.options?.hold_at_location}
                     onChange={e => onChange({ options: { ...shipment.options, hold_at_location: e.target.checked } })}
                   >
@@ -534,7 +617,7 @@ export default function CreateShipmentPage(pageProps: any) {
 
                   {/* dangerous good */}
                   <CheckBoxField name="dangerous_good"
-                    fieldClass="column mb-0 is-12 px-0 py-2"
+                    fieldClass="column mb-0 is-12 px-1 py-2"
                     defaultChecked={shipment.options?.dangerous_good}
                     onChange={e => onChange({ options: { ...shipment.options, dangerous_good: e.target.checked } })}
                   >
@@ -583,7 +666,8 @@ export default function CreateShipmentPage(pageProps: any) {
                                     label={formatRef(option)}
                                     placeholder={formatRef(option)}
                                     className="is-small"
-                                    fieldClass="column mb-0 is-6 pl-0 pr-2 py-1"
+                                    wrapperClass="pl-0 pr-2 py-1"
+                                    fieldClass="column mb-0 is-6 p-0"
                                     defaultValue={shipment.options[option]}
                                     onChange={e => onChange({ options: { ...shipment.options, [option]: e.target.value } })}
                                   />
@@ -618,88 +702,6 @@ export default function CreateShipmentPage(pageProps: any) {
                   />
 
                 </div>
-
-                <hr className='my-1' style={{ height: '1px' }} />
-
-                <div className="p-3">
-                  <label className="label is-capitalized" style={{ fontSize: '0.8em' }}>Shipment Paid By</label>
-
-                  <div className="control">
-
-                    <label className="radio">
-                      <input
-                        className="mr-1"
-                        type="radio"
-                        name="paid_by"
-                        defaultChecked={shipment.payment?.paid_by === PaidByEnum.sender}
-                        onChange={() => mutation.updateShipment({ payment: { paid_by: PaidByEnum.sender } } as any)}
-                      />
-                      <span className="is-size-7 has-text-weight-bold">{formatRef(PaidByEnum.sender.toString())}</span>
-                    </label>
-                    <label className="radio">
-                      <input
-                        className="mr-1"
-                        type="radio"
-                        name="paid_by"
-                        defaultChecked={shipment.payment?.paid_by === PaidByEnum.recipient}
-                        onChange={() => mutation.updateShipment({ payment: { ...shipment.payment, paid_by: PaidByEnum.recipient } })}
-                      />
-                      <span className="is-size-7 has-text-weight-bold">{formatRef(PaidByEnum.recipient.toString())}</span>
-                    </label>
-                    <label className="radio">
-                      <input
-                        className="mr-1"
-                        type="radio"
-                        name="paid_by"
-                        defaultChecked={shipment.payment?.paid_by === PaidByEnum.third_party}
-                        onChange={() => mutation.updateShipment({ payment: { ...shipment.payment, paid_by: PaidByEnum.third_party } })}
-                      />
-                      <span className="is-size-7 has-text-weight-bold">{formatRef(PaidByEnum.third_party.toString())}</span>
-                    </label>
-
-                  </div>
-
-                  {(shipment.payment?.paid_by && shipment.payment?.paid_by !== PaidByEnum.sender) &&
-                    <div className="columns m-1 px-2 py-0" style={{ borderLeft: "solid 2px #ddd" }}>
-                      <InputField
-                        label="account number"
-                        className="is-small"
-                        defaultValue={shipment?.payment?.account_number as string}
-                        onChange={e => mutation.updateShipment({ payment: { ...shipment.payment, account_number: e.target.value } })}
-                      />
-                    </div>}
-                </div>
-
-                {/* Billing address section */}
-                {(shipment.billing_address || shipment.payment?.paid_by === PaidByEnum.third_party) && <>
-                  <hr className='my-1' style={{ height: '1px' }} />
-
-                  <div className="p-3">
-                    <header className="is-flex is-justify-content-space-between">
-                      <label className="label is-capitalized" style={{ fontSize: '0.8em' }}>Billing address</label>
-                      <div className="is-vcentered">
-                        <AddressModalEditor
-                          shipment={shipment}
-                          address={shipment.billing_address || (orders.data?.orders.edges || [{}])[0].node?.billing_address || {} as AddressType}
-                          onSubmit={(address) => onChange({ billing_address: address })}
-                          trigger={
-                            <button className="button is-small is-info is-text is-inverted p-1" disabled={query.isFetching}>
-                              Edit billing address
-                            </button>
-                          }
-                        />
-                      </div>
-                    </header>
-
-                    {shipment.billing_address &&
-                      <AddressDescription address={shipment!.billing_address as any} />}
-
-                    {!shipment.billing_address && <div className="notification is-default p-2 is-size-7">
-                      Add shipment billing address. (optional)
-                    </div>}
-
-                  </div>
-                </>}
 
               </div>
 

@@ -98,7 +98,8 @@ export const CreateOrganizationModalProvider: React.FC<{ children?: React.ReactN
                   onChange={handleChange}
                   defaultValue={organization.name}
                   className="is-small"
-                  fieldClass="column mb-0 px-2 py-2"
+                  wrapperClass="px-2 py-2"
+                  fieldClass="column mb-0 p-0"
                   required
                 />
 

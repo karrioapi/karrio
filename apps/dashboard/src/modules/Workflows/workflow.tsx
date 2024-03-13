@@ -65,11 +65,11 @@ export default function Page(pageProps: any) {
         >
           <div className="column is-vcentered">
             <AppLink className="button is-small is-white" href="/workflows" style={{ borderRadius: '50%' }}>
-              <span className="icon is-size-6">
+              <span className="icon is-large">
                 <i className="fas fa-lg fa-times"></i>
               </span>
             </AppLink>
-            <span className="title is-4 has-text-weight-semibold px-3">Edit workflow</span>
+            <span className="title is-6 has-text-weight-semibold px-2 py-3">Edit workflow</span>
           </div>
           <div className="column is-flex is-justify-content-end">
             <button type="button" className="button is-small is-success" onClick={() => mutation.save()}
@@ -149,7 +149,8 @@ export default function Page(pageProps: any) {
 
                             <InputField name="schedule"
                               label="Schedule (cron)"
-                              fieldClass="column mb-0 px-1 py-2"
+                              wrapperClass="px-1 py-2"
+                              fieldClass="column mb-0 p-0"
                               defaultValue={workflow.trigger?.schedule || ''}
                               required={workflow.trigger?.trigger_type == AutomationTriggerType.scheduled}
                               onChange={e => handleChange({ trigger: { ...workflow.trigger, schedule: e.target.value } })}
@@ -164,14 +165,16 @@ export default function Page(pageProps: any) {
 
                             <InputField name="secret"
                               label="Webhook secret"
-                              fieldClass="column mb-0 px-1 py-2"
+                              wrapperClass="px-1 py-2"
+                              fieldClass="column mb-0 p-0"
                               defaultValue={workflow.trigger?.secret || ''}
                               onChange={e => handleChange({ trigger: { ...workflow.trigger, secret: e.target.value } })}
                             />
 
                             <InputField name="secret_key"
                               label="Webhook secret key"
-                              fieldClass="column mb-0 px-1 py-0"
+                              wrapperClass="px-1 py-2"
+                              fieldClass="column mb-0 p-0"
                               defaultValue={workflow.trigger?.secret_key || ''}
                               required={!isNoneOrEmpty(workflow.trigger?.secret_key)}
                               onChange={e => handleChange({ trigger: { ...workflow.trigger, secret_key: e.target.value } })}
@@ -183,19 +186,16 @@ export default function Page(pageProps: any) {
 
                         <hr className='my-1' style={{ height: '1px' }} />
 
-                        {/* trigger webhook */}
+                        {/* webhook URL */}
                         <InputField
                           label="Webhook URL"
                           className="is-small"
+                          wrapperClass="column p-3"
+                          fieldClass="mb-0 p-0"
                           controlClass="has-icons-right"
-                          fieldClass="column mb-0 p-2"
                           value={(!!workflow.id && workflow.id !== 'new') ? url$`${metadata.HOST}/v1/workflows/${workflow.id}/trigger` : ''}
+                          iconRight={<span className="icon is-small is-right"><i className="fas fa-copy"></i></span>}
                           readOnly
-                          addonRight={
-                            <span className="icon is-small is-right">
-                              <i className="fas fa-copy"></i>
-                            </span>
-                          }
                         />
                       </Disclosure.Panel>
                     </Disclosure>

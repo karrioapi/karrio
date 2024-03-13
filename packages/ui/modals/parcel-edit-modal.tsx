@@ -121,7 +121,8 @@ export const ParcelEditModal: React.FC<ParcelEditModalComponent> = ({ children }
                       onChange={e => setTemplate({ ...template, label: e.target.value })}
                       defaultValue={template.label}
                       className="is-small"
-                      fieldClass="column mb-0 px-1 py-2"
+                      wrapperClass="px-1 py-2"
+                      fieldClass="column mb-0 p-0"
                       required
                     />
                   </div>

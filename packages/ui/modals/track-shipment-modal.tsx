@@ -99,7 +99,10 @@ export const TrackerModalProvider: React.FC<{ children?: React.ReactNode }> = ({
               </div>
               <div className="p-3 my-4"></div>
 
-              <InputField label="Tracking Number" defaultValue="" onChange={e => setTrackingNumber(e.target.value)} fieldClass="mt-6" required />
+              <InputField label="Tracking Number" defaultValue="" onChange={e => setTrackingNumber(e.target.value)}
+                wrapperClass="mt-6"
+                required
+              />
 
               {carrierList.length > 0 &&
                 <SelectField label="Carrier" onChange={e => updateCarrier(e.target.value)} className="is-fullwidth" required>
