@@ -113,7 +113,8 @@ export const LogsFilter: React.FC<LogsFilterComponent> = ({ context }) => {
                 onChange={handleChange}
                 type="datetime-local"
                 name="date_after"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-small"
                 addonLeft={
@@ -127,7 +128,8 @@ export const LogsFilter: React.FC<LogsFilterComponent> = ({ context }) => {
                 onChange={handleChange}
                 type="datetime-local"
                 name="date_before"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-fullwidth is-small"
                 addonLeft={
@@ -152,7 +154,8 @@ export const LogsFilter: React.FC<LogsFilterComponent> = ({ context }) => {
                 defaultValue={filters?.api_endpoint}
                 onChange={handleChange}
                 name="api_endpoint"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="e.g: /v1/trackers"
               />
@@ -172,7 +175,8 @@ export const LogsFilter: React.FC<LogsFilterComponent> = ({ context }) => {
                 defaultValue={filters?.remote_addr}
                 onChange={handleChange}
                 name="remote_addr"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="e.g: 192.168.0.1"
               />
@@ -192,7 +196,8 @@ export const LogsFilter: React.FC<LogsFilterComponent> = ({ context }) => {
                 defaultValue={filters?.entity_id}
                 onChange={handleChange}
                 name="entity_id"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="e.g: shp_123456"
               />

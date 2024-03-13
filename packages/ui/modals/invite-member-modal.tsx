@@ -92,7 +92,7 @@ export const InviteMemberProvider: React.FC<{ children?: React.ReactNode }> = ({
                   label="Enter team member email addresses"
                   placeholder="john@mail.com, jane@mail.com, etc."
                   defaultValue=""
-                  fieldClass="mt-6"
+                  wrapperClass="mt-6"
                   onChange={e => setEmails(e.target.value.split(',').map(e => e.trim()))}
                   onInvalid={validityCheck(validationMessage('Please enter a valid email list'))}
                   multiple

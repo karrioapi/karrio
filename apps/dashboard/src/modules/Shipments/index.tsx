@@ -223,7 +223,7 @@ export default function ShipmentsPage(pageProps: any) {
                     >
                       <div className="icon-text">
                         <CarrierImage
-                          carrier_name={shipment.meta?.carrier || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
+                          carrier_name={shipment.meta?.carrier || getRate(shipment).meta?.rate_provider || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
                           containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
                           text_color={(shipment.selected_rate_carrier || getCarrier(getRate(shipment)))?.config?.text_color}
                           background={(shipment.selected_rate_carrier || getCarrier(getRate(shipment)))?.config?.brand_color}

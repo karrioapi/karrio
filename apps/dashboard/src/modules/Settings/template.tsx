@@ -98,11 +98,11 @@ export default function DocumentTemplatePage(pageProps: any) {
         <div className="columns">
           <div className="column is-vcentered">
             <AppLink className="button is-small is-white" href="/settings/templates" style={{ borderRadius: '50%' }}>
-              <span className="icon is-size-6">
+              <span className="icon is-large">
                 <i className="fas fa-lg fa-times"></i>
               </span>
             </AppLink>
-            <span className="title is-4 has-text-weight-semibold px-3">Edit document template</span>
+            <span className="title is-6 has-text-weight-semibold px-2 py-3">Edit document template</span>
           </div>
           <div className="column is-flex is-justify-content-end">
             <a className={`button is-small is-primary mx-1 ${isNoneOrEmpty(template.id) ? 'is-static' : ''}`}

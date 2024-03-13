@@ -120,7 +120,7 @@ export default function OrdersPage(pageProps: any) {
 
         return <>
           <CarrierImage
-            carrier_name={_shipment?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            carrier_name={_shipment?.meta?.carrier || _rate?.meta?.rate_provider || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
             text_color={getCarrier(_rate)?.config?.text_color}
             background={getCarrier(_rate)?.config?.background}
@@ -138,7 +138,7 @@ export default function OrdersPage(pageProps: any) {
       return (
         <>
           <CarrierImage
-            carrier_name={shipment.meta?.carrier || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            carrier_name={shipment.meta?.carrier || rate.meta?.carrier_name || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
             text_color={getCarrier(rate)?.config?.text_color}
             background={getCarrier(rate)?.config?.background}

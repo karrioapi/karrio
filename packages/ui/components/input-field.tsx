@@ -33,7 +33,7 @@ export const InputField: React.FC<InputFieldComponent> = ({ label, required, cla
       <div className={`field ${fieldClass || ""}`}>
         {addonLeft ? <div className="control">{addonLeft}</div> : <></>}
 
-        <div className={`control ${controlClass || ""}`}>
+        <div className={`control is-flex ${controlClass || ""}`}>
           <input type="text" className={`input ${className || ""}`} {...Props} {...Ref} />
           {iconLeft ? iconLeft : <></>}
           {iconRight ? iconRight : <></>}

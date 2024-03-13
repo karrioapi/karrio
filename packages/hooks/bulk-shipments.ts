@@ -245,7 +245,12 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
             }
           });
       } catch (error: any) {
-        updateShipment(shipment_index)({ messages: errorToMessages(error) });
+        const update = {
+          shipments: batch.shipments.map((shipment, index) => (
+            (shipment.id === shipment_id || index === shipment_index) ? { ...shipment, messages: errorToMessages(error) } : shipment
+          ))
+        };
+        updateBatch(update as any);
       }
     }
   };

@@ -124,7 +124,8 @@ export const AddressEditModal: React.FC<AddressEditModalComponent> = ({ children
                     onChange={handleChange}
                     defaultValue={template?.label}
                     className="is-small"
-                    fieldClass="column mb-0 px-2 py-2"
+                    wrapperClass="px-2 py-2"
+                    fieldClass="column mb-0 p-0"
                     required />
                 </div>
                 <div className="columns mb-1">
