@@ -119,6 +119,11 @@ export const CURRENCY_OPTIONS = Array.from(new Set(
         .values(graph.CurrencyCodeEnum)
 ));
 
+export const COUNTRY_OPTIONS = Array.from(new Set(
+    Object
+        .values(graph.CountryCodeEnum)
+));
+
 export const DIMENSION_UNITS = Array.from(new Set(
     Object
         .values(graph.DimensionUnitEnum)
@@ -244,9 +249,10 @@ export const HTTP_METHODS = [
 export enum NoneEnum { none = "none" };
 
 export type dataT<T> = { data?: T };
-export type UserContextDataType = {
+export type AccountContextDataType = {
     data: {
         user: graph.GetUser_user,
+        workspace_config: graph.GetWorkspaceConfig_workspace_config,
     }
 };
 export type OrgContextDataType = {

@@ -76,6 +76,11 @@ export default function ParcelsPage(pageProps: any) {
                 <span>Account</span>
               </AppLink>
             </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/profile" shallow={false} prefetch={false}>
+                <span>Profile</span>
+              </AppLink>
+            </li>
             {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/organization" shallow={false} prefetch={false}>
                 <span>Organization</span>
