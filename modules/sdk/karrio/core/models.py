@@ -218,6 +218,16 @@ class AddressValidationRequest:
 
 
 @attr.s(auto_attribs=True)
+class ManifestRequest:
+    """manifest request unified data type."""
+
+    shipment_identifiers: List[str]
+
+    address: Address = JStruct[Address]
+    options: Dict = {}
+
+
+@attr.s(auto_attribs=True)
 class Message:
     """Karrio unified Message data type."""
 
@@ -329,7 +339,7 @@ class TrackingDetails:
 
 @attr.s(auto_attribs=True)
 class Documents:
-    """Karrio unified shipment details data type."""
+    """Karrio unified shipment documents details data type."""
 
     label: str
 
@@ -364,6 +374,25 @@ class PickupDetails:
     pickup_charge: ChargeDetails = JStruct[ChargeDetails]
     ready_time: str = None
     closing_time: str = None
+    meta: dict = None
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class ManifestDocument:
+    """Karrio unified manifest document details data type."""
+
+    manifest: str = None
+
+
+@attr.s(auto_attribs=True)
+class ManifestDetails:
+    """Karrio unified manifest details data type."""
+
+    carrier_name: str
+    carrier_id: str
+    doc: ManifestDocument = JStruct[ManifestDocument]
+    meta: dict = None
     id: str = None
 
 

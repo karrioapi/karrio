@@ -309,9 +309,9 @@ class Rating:
 
                 return IDeserialize(deserialize)
 
-            deserializable_collection: typing.List[
-                IDeserialize
-            ] = lib.run_asynchronously(lambda g: fail_safe(g)(process)(g), gateways)
+            deserializable_collection: typing.List[IDeserialize] = (
+                lib.run_asynchronously(lambda g: fail_safe(g)(process)(g), gateways)
+            )
 
             def flatten(*args):
                 responses = [p.parse() for p in deserializable_collection]
@@ -481,6 +481,43 @@ class Document:
             @fail_safe(gateway)
             def deserialize():
                 return gateway.mapper.parse_document_upload_response(response)
+
+            return IDeserialize(deserialize)
+
+        return IRequestFrom(action)
+
+
+class Manifest:
+    """The unified Manifest API fluent interface"""
+
+    @staticmethod
+    def create(args: typing.Union[models.ManifestRequest, dict]) -> IRequestFrom:
+        """Submit a manifest creation to a carrier.
+        This operation is often referred to as manifesting a batch of shipments
+
+        Args:
+            args (Union[ManifestRequest, dict]): the manifest creation request payload
+
+        Returns:
+            IRequestWith: a lazy request dataclass instance
+        """
+        logger.debug(f"create a manifest. payload: {lib.to_json(args)}")
+        payload = lib.to_object(models.ManifestRequest, lib.to_dict(args))
+
+        def action(gateway: gateway.Gateway):
+            is_valid, abortion = check_operation(
+                gateway,
+                "create_manifest",
+            )
+            if not is_valid:
+                return abortion
+
+            request: lib.Serializable = gateway.mapper.create_manifest_request(payload)
+            response: lib.Deserializable = gateway.proxy.create_manifest(request)
+
+            @fail_safe(gateway)
+            def deserialize():
+                return gateway.mapper.parse_manifest_response(response)
 
             return IDeserialize(deserialize)
 
