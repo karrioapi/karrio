@@ -78,7 +78,9 @@ class WorkspaceConfigMutation(utils.BaseMutation):
 
         serializer.is_valid(raise_exception=True)
 
-        return WorkspaceConfigMutation(workspace=serializer.save())  # type:ignore
+        return WorkspaceConfigMutation(
+            workspace_config=serializer.save()
+        )  # type:ignore
 
 
 @strawberry.type

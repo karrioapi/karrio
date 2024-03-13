@@ -112,6 +112,10 @@ class WorkspaceConfigType:
         return self.config.get("customs_aes")
 
     @strawberry.field
+    def customs_ein(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_ein")
+
+    @strawberry.field
     def customs_eel_pfc(self: auth.WorkspaceConfig) -> typing.Optional[str]:
         return self.config.get("customs_eel_pfc")
 

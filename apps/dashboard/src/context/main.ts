@@ -1,4 +1,4 @@
-import { UserContextDataType, Metadata, PortalSessionType, SessionType, SubscriptionType, OrgContextDataType, TenantType } from "@karrio/types";
+import { AccountContextDataType, Metadata, PortalSessionType, SessionType, SubscriptionType, OrgContextDataType, TenantType } from "@karrio/types";
 import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
 import { createServerError, isNone, ServerErrorCode, url$ } from "@karrio/lib";
 import { KARRIO_API } from "@karrio/hooks/karrio";
@@ -78,9 +78,9 @@ export async function loadContextData(session: SessionType, metadata: Metadata):
     'authorization': `Bearer ${accessToken}`,
   } as any;
 
-  const getUserData = () => (
+  const getAccountData = () => (
     axios
-      .post<UserContextDataType>(url$`${metadata.HOST || ''}/graphql`, { query: USER_DATA_QUERY }, { headers })
+      .post<AccountContextDataType>(url$`${metadata.HOST || ''}/graphql`, { query: ACCOUNT_DATA_QUERY }, { headers })
       .then(({ data }) => data)
   );
   const getOrgData = () => (!!metadata?.MULTI_ORGANIZATIONS
@@ -92,7 +92,7 @@ export async function loadContextData(session: SessionType, metadata: Metadata):
 
   try {
     const [{ data: user }, { data: org }] = await Promise.all([
-      getUserData(), getOrgData()
+      getAccountData(), getOrgData()
     ]);
     return { metadata, ...user, ...org };
   } catch (e: any | Response) {
@@ -222,7 +222,7 @@ async function getAPIURL(ctx: RequestContext) {
 }
 
 
-const USER_DATA_QUERY = `{
+const ACCOUNT_DATA_QUERY = `{
   user {
     email
     full_name
@@ -231,6 +231,23 @@ const USER_DATA_QUERY = `{
     last_login
     date_joined
     permissions
+  }
+  workspace_config {
+    object_type
+    default_currency
+    default_country_code
+    default_weight_unit
+    default_dimension_unit
+    state_tax_id
+    federal_tax_id
+    default_label_type
+    customs_aes
+    customs_eel_pfc
+    customs_license_number
+    customs_certificate_number
+    customs_nip_number
+    customs_eori_number
+    customs_vat_registration_number
   }
 }`;
 const ORG_DATA_QUERY = `{

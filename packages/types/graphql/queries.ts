@@ -3568,6 +3568,7 @@ export const GET_WORKSPACE_CONFIG = gql`query GetWorkspaceConfig {
     federal_tax_id
     default_label_type
     customs_aes
+    customs_ein
     customs_eel_pfc
     customs_license_number
     customs_certificate_number
@@ -3590,6 +3591,7 @@ export const UPDATE_WORKSPACE_CONFIG = gql`mutation UpdateWorkspaceConfig($data:
       federal_tax_id
       default_label_type
       customs_aes
+      customs_ein
       customs_eel_pfc
       customs_license_number
       customs_certificate_number

@@ -5,12 +5,15 @@ export interface InputFieldComponent extends React.InputHTMLAttributes<HTMLInput
   label?: string;
   fieldClass?: string;
   controlClass?: string;
+  wrapperClass?: string;
   addonRight?: JSX.Element;
   addonLeft?: JSX.Element;
+  iconRight?: JSX.Element;
+  iconLeft?: JSX.Element;
   ref?: RefObject<HTMLInputElement>;
 }
 
-export const InputField: React.FC<InputFieldComponent> = ({ label, required, className, fieldClass, controlClass, children, ref, addonLeft, addonRight, ...props }) => {
+export const InputField: React.FC<InputFieldComponent> = ({ label, required, className, fieldClass, controlClass, wrapperClass, children, ref, addonLeft, addonRight, iconLeft, iconRight, ...props }) => {
   const Ref = isNone(ref) ? { ref } : {};
   const Props = {
     required,
@@ -19,19 +22,28 @@ export const InputField: React.FC<InputFieldComponent> = ({ label, required, cla
   };
 
   return (
-    <div className={`field ${fieldClass}`}>
+    <div className={wrapperClass || ""}>
       {label !== undefined && <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
         {label}
         {required && <span className="icon is-small has-text-danger small-icon">
           <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
         </span>}
       </label>}
-      <div className={`control ${controlClass}`}>
-        {addonLeft && addonLeft}
-        <input type="text" className={`input ${className}`} {...Props} {...Ref} />
-        {addonRight ? addonRight : <></>}
+
+      <div className={`field ${fieldClass || ""}`}>
+        {addonLeft ? <div className="control">{addonLeft}</div> : <></>}
+
+        <div className={`control ${controlClass || ""}`}>
+          <input type="text" className={`input ${className || ""}`} {...Props} {...Ref} />
+          {iconLeft ? iconLeft : <></>}
+          {iconRight ? iconRight : <></>}
+        </div>
+
+        {addonRight ? <div className="control">{addonRight}</div> : <></>}
       </div>
+
       {children}
+
     </div>
   )
 };
