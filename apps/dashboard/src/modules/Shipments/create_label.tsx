@@ -35,6 +35,7 @@ import React, { useEffect, useState } from 'react';
 import { useOrders } from '@karrio/hooks/order';
 import { Disclosure } from '@headlessui/react';
 import Head from 'next/head';
+import { useWorkspaceConfig } from '@karrio/hooks/workspace-config';
 
 export { getServerSideProps } from "@/context/main";
 
@@ -51,6 +52,7 @@ export default function CreateLabelPage(pageProps: any) {
     const { basePath } = useAppMode();
     const { references } = useAPIMetadata();
     const { carrierOptions } = useConnections();
+    const workspace_config = useWorkspaceConfig();
     const { addUrlParam, ...router } = useLocation();
     const { query: templates } = useDefaultTemplates();
     const [ready, setReady] = useState<boolean>(false);
@@ -162,6 +164,7 @@ export default function CreateLabelPage(pageProps: any) {
       if (
         !ready &&
         !templates.isFetched &&
+        !workspace_config.query.isFetched &&
         shipment_id === 'new' &&
         orders_called
       ) {
@@ -175,7 +178,7 @@ export default function CreateLabelPage(pageProps: any) {
       ) {
         setReady(true);
       }
-    }, [ready, templates.isFetched, orders.isFetched, query.isFetched, shipment_id, shipment]);
+    }, [ready, templates.isFetched, orders.isFetched, query.isFetched, workspace_config.query.isFetched, shipment_id, shipment]);
 
 
     return (
@@ -760,6 +763,7 @@ export default function CreateLabelPage(pageProps: any) {
                         },
                         duty_billing_address: shipment.billing_address,
                         commodities: getShipmentCommodities(shipment),
+                        options: workspace_config.customsOptions,
                       }}
                       onSubmit={mutation.updateCustoms(shipment?.customs?.id)}
                       trigger={

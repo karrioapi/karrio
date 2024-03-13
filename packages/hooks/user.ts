@@ -1,18 +1,18 @@
-import { UPDATE_USER, GET_USER, UpdateUserInput, RegisterUserMutationInput, RequestEmailChangeMutationInput, REGISTER_USER, CONFIRM_EMAIL_CHANGE, ConfirmEmailChangeMutationInput, CONFIRM_PASSWORD_RESET, ConfirmPasswordResetMutationInput, ChangePasswordMutationInput, GetUser, confirm_email_change, request_email_change, confirm_password_reset, register_user, change_password, update_user, GetUser_user, REQUEST_EMAIL_CHANGE, ConfirmEmailMutationInput, confirm_email, CONFIRM_EMAIL, CHANGE_PASSWORD, RequestPasswordResetMutationInput, request_password_reset, REQUEST_PASSWORD_RESET } from "@karrio/types";
+import { UPDATE_USER, GET_USER, UpdateUserInput, RegisterUserMutationInput, RequestEmailChangeMutationInput, REGISTER_USER, CONFIRM_EMAIL_CHANGE, ConfirmEmailChangeMutationInput, CONFIRM_PASSWORD_RESET, ConfirmPasswordResetMutationInput, ChangePasswordMutationInput, GetUser, confirm_email_change, request_email_change, confirm_password_reset, register_user, change_password, update_user, REQUEST_EMAIL_CHANGE, ConfirmEmailMutationInput, confirm_email, CONFIRM_EMAIL, CHANGE_PASSWORD, RequestPasswordResetMutationInput, request_password_reset, REQUEST_PASSWORD_RESET } from "@karrio/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, onError } from "@karrio/lib";
 import { useKarrio } from "./karrio";
 
-export type UserType = GetUser_user;
-
 
 export function useUser() {
   const karrio = useKarrio();
+  const user = karrio.pageData?.user;
 
   // Queries
   const query = useQuery({
     queryKey: ['user'],
     queryFn: () => karrio.graphql.request<GetUser>(gqlstr(GET_USER)),
+    initialData: !!user ? { user } : undefined,
     refetchOnWindowFocus: false,
     staleTime: 300000,
     onError

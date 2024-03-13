@@ -1,6 +1,7 @@
 import { CURRENCY_OPTIONS, CustomsType, CUSTOMS_CONTENT_TYPES, DutyType, INCOTERMS, NotificationType, PAYOR_OPTIONS, ShipmentType, CurrencyCodeEnum, PaidByEnum, DEFAULT_CUSTOMS_CONTENT } from '@karrio/types';
 import React, { FormEvent, useContext, useEffect, useReducer, useRef, useState } from 'react';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
+import { useWorkspaceConfig } from '@karrio/hooks/workspace-config';
 import { TextAreaField } from '../components/textarea-field';
 import { CheckBoxField } from '../components/checkbox-field';
 import { ButtonField } from '../components/button-field';
@@ -31,15 +32,20 @@ interface CustomsInfoFormComponent {
 export const CustomsInfoForm: React.FC<CustomsInfoFormComponent> = ({ children, value, shipment, isTemplate, onSubmit, onChange, onTemplateChange }) => {
   const form = useRef<any>(null);
   const { notify } = useContext(Notify);
+  const workspace_config = useWorkspaceConfig();
   const { loading, setLoading } = useContext(Loading);
   const { query: { data: { user } = {} } } = useUser();
   const { query: { data: { default_templates } = {} } } = useDefaultTemplates();
+  const default_value = {
+    ...(default_templates?.default_customs?.customs || DEFAULT_CUSTOMS_CONTENT),
+    options: workspace_config.customsOptions,
+  } as CustomsType;
   const [customs, dispatch] = useReducer((state: any, { name, value }: { name: string, value: string | boolean | object | any }) => {
     switch (name) {
       case 'hasDuty':
         return { ...state, duty: value === true ? DEFAULT_DUTY : null };
       case 'optOut':
-        return value === true ? null : { ...(default_templates?.default_customs?.customs || DEFAULT_CUSTOMS_CONTENT) as CustomsType };
+        return value === true ? null : { ...default_value };
       case 'full':
         return { ...(value as object) };
       case 'commercial_invoice':

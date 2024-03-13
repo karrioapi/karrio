@@ -18,7 +18,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <NextPostHogProvider>
         <QueryClientProvider client={queryClient}>
           <APIMetadataProvider metadata={pageProps?.metadata}>
-            <ClientProvider>
+            <ClientProvider {...pageProps}>
               <MainLayout error={pageProps?.error}>
                 <Component {...pageProps} />
               </MainLayout>
