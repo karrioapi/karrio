@@ -164,7 +164,7 @@ class MeasurementOptionsType(typing.NamedTuple):
     max_kg: typing.Optional[float] = None
     max_oz: typing.Optional[float] = None
     max_g: typing.Optional[float] = None
-    
+
     min_volume: typing.Optional[float] = None
     max_volume: typing.Optional[float] = None
 
@@ -175,6 +175,7 @@ class CarrierCapabilities(utils.Enum):
     shipping = "shipping"
     tracking = "tracking"
     paperless = "paperless"
+    manifest = "manifest"
 
     @classmethod
     def get_capabilities(cls):
@@ -194,6 +195,8 @@ class CarrierCapabilities(utils.Enum):
             return "shipping"
         elif "document" in method_name:
             return "paperless"
+        elif "manifest" in method_name:
+            return "manifest"
 
         return None
 
@@ -302,7 +305,7 @@ class Volume:
     def _compute(self, value: float):
         below_min = self._min_volume is not None and value < self._min_volume
         return utils.NF.decimal(
-            value=(self._min_volume if below_min else value), 
+            value=(self._min_volume if below_min else value),
             quant=self._quant,
         )
 
@@ -330,9 +333,7 @@ class Volume:
         if not missing_value:
             return self._value
 
-        return self._compute(
-            self._side1.value * self._side2.value * self._side3.value
-        )
+        return self._compute(self._side1.value * self._side2.value * self._side3.value)
 
     @property
     def l(self):
@@ -418,10 +419,11 @@ class Volume:
             side1=self._side1,
             side2=self._side2,
             side3=self._side3,
-            value=self._value, 
-            unit=self._unit, 
-            options=options
+            value=self._value,
+            unit=self._unit,
+            options=options,
         )
+
 
 class Girth:
     """The girth common processing helper"""

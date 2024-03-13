@@ -178,6 +178,25 @@ class Mapper(abc.ABC):
             self.settings.carrier_name,
         )
 
+    def create_manifest_request(
+        self, payload: models.ManifestRequest
+    ) -> lib.Serializable:
+        """Create a carrier specific manifest request data from payload
+
+        Args:
+            payload (ManifestRequest): the manifest request payload
+
+        Returns:
+            Serializable: a carrier specific serializable request data type
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_manifest_request.__name__,
+            self.settings.carrier_name,
+        )
+
     """Response Parsers"""
 
     def parse_address_validation_response(
@@ -352,5 +371,25 @@ class Mapper(abc.ABC):
         """
         raise errors.MethodNotSupportedError(
             self.__class__.parse_document_upload_response.__name__,
+            self.settings.carrier_name,
+        )
+
+    def parse_manifest_response(
+        self, response: lib.Deserializable
+    ) -> typing.Tuple[models.ManifestDetails, typing.List[models.Message]]:
+        """Create a unified API manifest result from carrier response
+
+        Args:
+            response (Deserializable): a deserializable manifest response (xml, json, text...)
+
+        Returns:
+            Tuple[ManifestDetails, List[Message]]: the manifest details
+                as well as errors and messages returned
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.parse_manifest_response.__name__,
             self.settings.carrier_name,
         )

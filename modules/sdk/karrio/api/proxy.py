@@ -166,3 +166,19 @@ class Proxy(abc.ABC):
         raise errors.MethodNotSupportedError(
             self.__class__.upload_document.__name__, self.settings.carrier_name
         )
+
+    def create_manifest(self, request: lib.Serializable) -> lib.Deserializable:
+        """Send one or many request(s) to create a manifest from a carrier webservice
+
+        Args:
+            request (Serializable): a carrier specific serializable request data type
+
+        Returns:
+            Deserializable: a Deserializable rate response (xml, json, text...)
+
+        Raises:
+            MethodNotSupportedError: Is raised when the carrier integration does not implement this method
+        """
+        raise errors.MethodNotSupportedError(
+            self.__class__.create_manifest.__name__, self.settings.carrier_name
+        )
