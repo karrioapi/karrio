@@ -9,16 +9,16 @@ class Settings(provider_utils.Settings):
     """TGE connection settings."""
 
     # required carrier specific properties
-    api_key: str
     username: str
     password: str
-    auth_username: str
-    auth_password: str
+    api_key: str
+    toll_username: str
+    toll_password: str
     my_toll_token: str
     my_toll_identity: str
     account_code: str = None
-    channel: str = None
-    call_id: str = None
+    sssc_count: int = 0
+    shipment_count: int = 0
 
     # generic properties
     id: str = None

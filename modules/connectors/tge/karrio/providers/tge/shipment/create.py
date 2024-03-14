@@ -1,8 +1,8 @@
-import datetime
-import uuid
 import karrio.schemas.tge.label_request as tge
 import karrio.schemas.tge.label_response as shipping
+import uuid
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -19,8 +19,9 @@ def parse_shipment_response(
 
     messages = error.parse_error_response(response, settings)
     shipment = (
-        _extract_details(response, settings, ctx=_response.ctx)
-        if not response.is_error and "result" in (response.data or {})
+        _extract_details(response["TollMessage"], settings, ctx=_response.ctx)
+        if "ResponseMessages" in response.get("TollMessage", {})
+        and any(response["TollMessage"]["ResponseMessages"]["ResponseMessage"])
         else None
     )
 
@@ -32,20 +33,30 @@ def _extract_details(
     settings: provider_utils.Settings,
     ctx: dict = {},
 ) -> models.ShipmentDetails:
-    shipment: shipping.LabelResponseType = lib.to_object(
-        shipping.LabelResponseType, data.response
+    shipment = lib.to_object(shipping.TollMessageType, data)
+
+    SSCCs = ctx["SSCCs"]
+    sscc_count = ctx["sscc_count"]
+    label_type = ctx["label_type"]
+    tracking_number = ctx["ShipmentID"]
+    shipment_count = ctx["shipment_count"]
+    label = lib.bundle_base64(
+        [_.ResponseMessage for _ in shipment.ResponseMessages.ResponseMessage],
+        format=label_type,
     )
-    label = shipment.soapenvBody.ns1getLabelResponse.result
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=shipment.Tracking,
-        shipment_identifier=shipment.Tracking,
-        label_type="PDF",
+        tracking_number=tracking_number,
+        shipment_identifier=tracking_number,
+        label_type=label_type,
         docs=models.Documents(label=label),
         meta=dict(
-            postal_code=ctx.get("postal_code", ""),
+            SSCCs=SSCCs,
+            sscc_count=sscc_count,
+            ShipmentID=tracking_number,
+            shipment_count=shipment_count,
         ),
     )
 
@@ -54,12 +65,19 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    MessageIdentifier = str(uuid.uuid4())
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    is_pdf = "PDF" in (payload.label_type or "PDF")
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        option_type=provider_units.ShippingOption,
+        shipment_count=settings.shipment_count,
+        package_count=len(payload.parcels),
+        sssc_count=settings.sssc_count,
+        SSCC_GS1=settings.connection_config.SSCC_GS1.state or "",
+        SHIP_GS1=settings.connection_config.SHIP_GS1.state or "",
+        initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
         payload.parcels,
@@ -68,30 +86,38 @@ def shipment_request(
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     payment = payload.payment or models.Payment()
+    create_date = datetime.datetime.now()
+    shipping_date = lib.to_date(packages.options.shipment_date.state or create_date)
+    SSCCs = (options.tge_ssc_ids.state or "").split(",")
 
     request = tge.LabelRequestType(
         TollMessage=tge.TollMessageType(
             Header=tge.HeaderType(
-                MessageVersion="1.0",
-                MessageIdentifier=str(uuid.uuid4()),
-                CreateTimestamp=(
-                    datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
+                MessageVersion="2.5",
+                DocumentType="Label",
+                MessageIdentifier=MessageIdentifier,
+                CreateTimestamp=lib.fdatetime(
+                    create_date,
+                    output_format="%Y-%m-%dT%H:%M:%S.%fZ",
                 ),
-                DocumentType="RateEnquiry",
                 Environment=("PRD" if not settings.test_mode else "TST"),
-                SourceSystemCode=settings.channel or "XP41",
-                MessageSender=settings.connection_config.app_name.state or "GOSHIPR",
+                SourceSystemCode=(settings.connection_config.channel.state or "YF73"),
+                MessageSender=(
+                    settings.connection_config.message_sender.state or "GOSHIPR"
+                ),
             ),
             Print=tge.PrintType(
-                BusinessID=options.tge_business_id.state,
+                BusinessID=(settings.connection_config.business_id.state or "IPEC"),
                 PrintSettings=tge.PrintSettingsType(
-                    IsLabelThermal=False,
-                    IsZPLRawResponseRequired=False,
-                    PDF=tge.PDFType(
-                        IsPDFA4=True,
-                        PDFSettings=tge.PDFSettingsType(
-                            StartQuadrant=1,
-                        ),
+                    IsLabelThermal=not is_pdf,
+                    IsZPLRawResponseRequired=not is_pdf,
+                    PDF=(
+                        tge.PDFType(
+                            IsPDFA4=True,
+                            PDFSettings=tge.PDFSettingsType(StartQuadrant=1),
+                        )
+                        if is_pdf
+                        else None
                     ),
                 ),
                 PrintDocumentType="Label",
@@ -101,6 +127,9 @@ def shipment_request(
                     ),
                     PartyName=shipper.contact,
                     PhysicalAddress=tge.PhysicalAddressType(
+                        AddressType=(
+                            "Residential" if recipient.shipper else "Business"
+                        ),
                         AddressLine1=shipper.address_line1,
                         AddressLine2=shipper.address_line2,
                         CountryCode=shipper.country_code,
@@ -109,18 +138,17 @@ def shipment_request(
                         Suburb=shipper.city,
                     ),
                 ),
-                CreateDateTime=datetime.datetime.now().strftime(
-                    "%Y-%m-%dT%H:%M:%S.%f%z"
+                CreateDateTime=lib.fdatetime(
+                    create_date, output_format="%Y-%m-%dT%H:%M:%S.%fZ"
                 ),
                 ShipmentCollection=tge.ShipmentCollectionType(
                     Shipment=[
                         tge.ShipmentType(
                             BillToParty=tge.BillToPartyType(
                                 AccountCode=(
-                                    payment.account_number
-                                    or settings.account_code.state
+                                    payment.account_number or settings.account_code
                                 ),
-                                Payer=("S" if payment.payer == "sender" else "R"),
+                                Payer=("S" if payment.paid_by == "sender" else "R"),
                             ),
                             ConsigneeParty=tge.ConsignPartyType(
                                 Contact=tge.ContactType(
@@ -130,6 +158,11 @@ def shipment_request(
                                 ),
                                 PartyName=recipient.contact,
                                 PhysicalAddress=tge.PhysicalAddressType(
+                                    AddressType=(
+                                        "Residential"
+                                        if recipient.residential
+                                        else "Business"
+                                    ),
                                     AddressLine1=recipient.address_line1,
                                     AddressLine2=recipient.address_line2,
                                     CountryCode=recipient.country_code,
@@ -138,51 +171,37 @@ def shipment_request(
                                     Suburb=recipient.city,
                                 ),
                             ),
-                            CreateDateTime=datetime.datetime.now().strftime(
-                                "%Y-%m-%dT%H:%M:%S.%f%z"
+                            CreateDateTime=lib.fdatetime(
+                                shipping_date,
+                                output_format="%Y-%m-%dT%H:%M:%S.%fZ",
                             ),
-                            DatePeriodCollection=(
-                                tge.DatePeriodCollectionType(
-                                    DatePeriod=[
-                                        *(
-                                            [
-                                                tge.DatePeriodType(
-                                                    DateTime=lib.fdatetime(
-                                                        options.tge_despatch_date.state
-                                                    ),
-                                                    Type="DespatchDate",
-                                                )
-                                            ]
-                                            if options.tge_despatch_date.state
-                                            else []
+                            DatePeriodCollection=tge.DatePeriodCollectionType(
+                                DatePeriod=[
+                                    tge.DatePeriodType(
+                                        DateTime=(
+                                            options.tge_despatch_date.state
+                                            or f"{lib.fdate(shipping_date)}T90:00:00.000Z"
                                         ),
-                                        *(
-                                            [
-                                                tge.DatePeriodType(
-                                                    DateTime=lib.fdatetime(
-                                                        options.tge_required_delivery_date.state
-                                                    ),
-                                                    Type="RequiredDeliveryDate",
-                                                )
-                                            ]
-                                            if options.tge_required_delivery_date.state
-                                            else []
-                                        ),
-                                    ]
-                                )
-                                if any(
-                                    [
-                                        options.tge_despatch_date.state,
-                                        options.tge_required_delivery_date.state,
-                                    ]
-                                )
-                                else None
+                                        DateType="DespatchDate",
+                                    ),
+                                    *(
+                                        [
+                                            tge.DatePeriodType(
+                                                DateTime=options.tge_required_delivery_date.state,
+                                                DateType="RequiredDeliveryDate",
+                                            )
+                                        ]
+                                        if options.tge_required_delivery_date.state
+                                        else []
+                                    ),
+                                ]
                             ),
                             FreightMode=(
                                 lib.text(options.tge_freight_mode.state)
                                 or lib.text(
                                     settings.connection_config.freight_mode.state
                                 )
+                                or "Road"
                             ),
                             References=(
                                 tge.ReferencesType(
@@ -194,10 +213,7 @@ def shipment_request(
                                     ]
                                 )
                             ),
-                            ShipmentID=(
-                                options.tge_shipment_id.state
-                                or getattr(payload, "id", None)
-                            ),
+                            ShipmentID=options.tge_shipment_id.state,
                             ShipmentItemCollection=tge.ShipmentItemCollectionType(
                                 ShipmentItem=[
                                     tge.ShipmentItemType(
@@ -220,28 +236,29 @@ def shipment_request(
                                             Height=package.height.map(
                                                 provider_units.MeasurementOptions
                                             ).CM,
+                                            HeightUOM="cm",
                                             Length=package.length.map(
                                                 provider_units.MeasurementOptions
                                             ).CM,
+                                            LengthUOM="cm",
                                             Volume=package.volume.map(
                                                 provider_units.MeasurementOptions
                                             ).cm3,
+                                            VolumeUOM="cm3",
                                             Weight=package.weight.map(
                                                 provider_units.MeasurementOptions
                                             ).KG,
+                                            WeightUOM="kg",
                                             Width=package.width.map(
                                                 provider_units.MeasurementOptions
                                             ).CM,
+                                            WidthUOM="cm",
                                         ),
                                         IDs=tge.IDsType(
                                             ID=[
                                                 tge.IDType(
                                                     SchemeName="SSCC",
-                                                    Value=(
-                                                        package.parcel.reference_number
-                                                        or getattr(package, "id", None)
-                                                        or str(uuid.uuid4())
-                                                    ),
+                                                    Value=SSCCs[index],
                                                 ),
                                             ]
                                         ),
@@ -253,7 +270,7 @@ def shipment_request(
                                             ShipmentProductCode="",
                                         ),
                                     )
-                                    for package in packages
+                                    for index, package in enumerate(packages)
                                 ],
                             ),
                             SpecialInstruction=options.tge_special_instruction.state,
@@ -264,4 +281,18 @@ def shipment_request(
         )
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(
+        request,
+        lib.to_dict,
+        dict(
+            SSCCs=SSCCs,
+            label_type=("PDF" if is_pdf else "ZPL"),
+            ShipmentID=options.tge_shipment_id.state,
+            SourceSystemCode=(settings.connection_config.channel or "YF73"),
+            MessageSender=(
+                settings.connection_config.message_sender.state or "GOSHIPR"
+            ),
+            shipment_count=settings.shipment_count + 1,
+            sscc_count=settings.sssc_count + len(packages),
+        ),
+    )

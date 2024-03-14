@@ -8,16 +8,16 @@ import karrio.core as core
 class Settings(core.Settings):
     """TGE connection settings."""
 
-    api_key: str
     username: str
     password: str
-    auth_username: str
-    auth_password: str
+    api_key: str
+    toll_username: str
+    toll_password: str
     my_toll_token: str
     my_toll_identity: str
     account_code: str = None
-    channel: str = None
-    call_id: str = None
+    sssc_count: int = 0
+    shipment_count: int = 0
 
     @property
     def carrier_name(self):
@@ -29,7 +29,7 @@ class Settings(core.Settings):
 
     @property
     def auth(self):
-        pair = "%s:%s" % (self.auth_username, self.auth_password)
+        pair = "%s:%s" % (self.toll_username, self.toll_password)
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
     @property
