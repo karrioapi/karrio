@@ -212,7 +212,8 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
                           {computeRates(sheet.services || [])
                             .map(({ max, services }) => (
                               <React.Fragment key={`svc-${new Date()}`}>
-                                <tr style={{ minWidth: '100px', maxWidth: '100px' }}>
+                                <tr style={{ minWidth: '100px', position: 'sticky', top: 0, left: 0, zIndex: 1 }} className='is-selected'>
+                                  <td className="is-size-7 text-ellipsis is-info" style={{ minWidth: '80px', position: 'sticky', top: 0, left: 0, zIndex: 1 }}>zones</td>
                                   {services.map(service => (
                                     <td key={service.service_code} className="is-size-7 text-ellipsis">
                                       {service.service_code}
@@ -223,8 +224,9 @@ export const RateSheetModalEditor: React.FC<ModalFormProps<RateSheetModalEditorP
                                 {(services || []).length > 0 && Array.from(Array(max).keys()).map((__, idx) => (
 
                                   <tr key={`${idx}-${new Date()}`}>
+                                    <td className="is-size-7 is-info" style={{ minWidth: '80px', position: 'sticky', top: 0, left: 0 }}>zone {idx}</td>
                                     {services.map((service, key) => (
-                                      <td key={`${key}-${new Date()}`} className="is-size-7" style={{ width: '100px', maxWidth: '100px' }}>
+                                      <td key={`${key}-${new Date()}`} className="is-size-7" style={{ width: '100px', minWidth: '100px' }}>
                                         {service.zones[idx]?.rate || ''}
                                       </td>
                                     ))}
