@@ -52,52 +52,27 @@ if __name__ == "__main__":
 
 RatePayload = {
     "shipper": {
-        "company_name": "TESTING COMPANY",
-        "address_line1": "17 VULCAN RD",
-        "city": "CANNING VALE",
-        "postal_code": "6155",
+        "city": "MELBOURNE",
+        "state_code": "VIC",
+        "postal_code": "3000",
         "country_code": "AU",
-        "person_name": "TEST USER",
-        "state_code": "WA",
-        "email": "test@gmail.com",
-        "phone_number": "(07) 3114 1499",
     },
     "recipient": {
-        "company_name": "TESTING COMPANY",
-        "address_line1": "17 VULCAN RD",
-        "address_line2": "test",
-        "city": "CANNING VALE",
-        "postal_code": "6155",
-        "country_code": "AU",
-        "person_name": "TEST USER",
+        "city": "Ballajura",
         "state_code": "WA",
-        "email": "test@gmail.com",
+        "postal_code": "6066",
+        "country_code": "AU",
     },
     "parcels": [
         {
-            "height": 50,
-            "length": 50,
-            "weight": 20,
-            "width": 12,
-            "dimension_unit": "CM",
+            "height": 10,
+            "length": 10,
+            "width": 10,
+            "weight": 2.0,
             "weight_unit": "KG",
-            "options": {"dangerous_good": False},
-        },
-        {
-            "height": 50,
-            "length": 50,
-            "weight": 20,
-            "width": 12,
             "dimension_unit": "CM",
-            "weight_unit": "KG",
-            "options": {"dangerous_good": True},
         },
     ],
-    "services": ["allied_road_service"],
-    "options": {
-        "instructions": "This is just an instruction",
-    },
-    "reference": "REF-001",
 }
 
 ParsedRateResponse = [
@@ -107,11 +82,16 @@ ParsedRateResponse = [
             "carrier_name": "tge",
             "currency": "AUD",
             "extra_charges": [
-                {"amount": 14.18, "currency": "AUD", "name": "Job charge"}
+                {"amount": 14.92, "currency": "AUD", "name": "BaseAmount"},
+                {"amount": 12.42, "currency": "AUD", "name": "GSTAmount"},
+                {"amount": 39.15, "currency": "AUD", "name": "TotalChargeAmount"},
+                {"amount": 2.59, "currency": "AUD", "name": "TotalSurcharges"},
+                {"amount": 9.22, "currency": "AUD", "name": "FreightCharge"},
+                {"amount": 4.0, "currency": "AUD", "name": "TransitTime"},
             ],
-            "meta": {"service_name": "allied_road_service"},
-            "service": "allied_road_service",
-            "total_charge": 40.66,
+            "meta": {"EnquiryID": "34270397"},
+            "total_charge": 39.15,
+            "transit_days": 4,
         }
     ],
     [],
@@ -125,9 +105,8 @@ ParsedErrorResponse = [
             "carrier_name": "tge",
             "code": "400",
             "details": {},
-            "message": "Validation failed: java.lang.Exception: Exception thrown in "
-            "SuburbDAO.getSuburb :java.lang.Exception: No valid JNDI name "
-            "found for state UM",
+            "message": "The combination of MessageSender, SourceSystemCode, Shipment "
+            "Number or SSCC ID was invalid.",
         }
     ],
 ]
@@ -136,60 +115,51 @@ ParsedErrorResponse = [
 RateRequest = {
     "TollMessage": {
         "Header": {
-            "MessageVersion": "1.0",
-            "MessageIdentifier": "a255d5b1-e395-450f-b61f-f20baa673818",
-            "CreateTimestamp": "2024-02-24T15:03:28.787+11:00",
+            "CreateTimestamp": ANY,
             "DocumentType": "RateEnquiry",
             "Environment": "PRD",
-            "SourceSystemCode": "XP41",
-            "MessageSender": "GOSHIPR",
+            "MessageIdentifier": ANY,
             "MessageReceiver": "TOLL",
+            "MessageSender": "GOSHIPR",
+            "MessageVersion": "1.0",
+            "SourceSystemCode": "XP41",
         },
         "RateEnquiry": {
             "Request": {
-                "BusinessID": "IPEC",
-                "SystemFields": {"PickupDateTime": "2024-03-12T13:26:02.000+00:00"},
-                "ShipmentService": {"ServiceCode": "X", "ShipmentProductCode": ""},
-                "ShipmentFlags": {"ExtraServiceFlag": "true"},
-                "ShipmentFinancials": {
-                    "ExtraServicesAmount": {"Currency": "AUD", "Value": 5000.00}
-                },
-                "FreightMode": "Road",
                 "BillToParty": {"AccountCode": "80502494"},
-                "ConsignorParty": {
-                    "PhysicalAddress": {
-                        "Suburb": "MELBOURNE",
-                        "StateCode": "VIC",
-                        "PostalCode": "3000",
-                        "CountryCode": "AU",
-                    }
-                },
                 "ConsigneeParty": {
                     "PhysicalAddress": {
-                        "Suburb": "Ballajura",
-                        "StateCode": "WA",
-                        "PostalCode": "6066",
                         "CountryCode": "AU",
+                        "PostalCode": "6066",
+                        "StateCode": "WA",
+                        "Suburb": "Ballajura",
                     }
                 },
+                "ConsignorParty": {
+                    "PhysicalAddress": {
+                        "CountryCode": "AU",
+                        "PostalCode": "3000",
+                        "StateCode": "VIC",
+                        "Suburb": "MELBOURNE",
+                    }
+                },
+                "FreightMode": "Road",
                 "ShipmentItems": {
                     "ShipmentItem": [
                         {
-                            "Commodity": {
-                                "CommodityCode": "Z",
-                                "CommodityDescription": "ALL FREIGHT",
+                            "Commodity": {"CommodityCode": "Z"},
+                            "Dimensions": {
+                                "Height": 10.0,
+                                "Length": 10.0,
+                                "Volume": 1000.0,
+                                "Weight": 2.0,
+                                "Width": 10.0,
                             },
                             "ShipmentItemTotals": {"ShipmentItemCount": 1},
-                            "Dimensions": {
-                                "Width": 10,
-                                "Length": 10,
-                                "Height": 10,
-                                "Volume": 0.001,
-                                "Weight": 2.0,
-                            },
                         }
                     ]
                 },
+                "ShipmentService": {},
             }
         },
     }

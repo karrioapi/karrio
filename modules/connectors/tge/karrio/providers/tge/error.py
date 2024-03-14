@@ -9,18 +9,29 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
+
     errors: typing.List[dict] = sum(
         (
             (
-                e["ErrorMessages"]["ErrorMessage"]
-                if any(e.get("ErrorMessages", {}).get("ErrorMessage"))
+                e["TollMessage"]["ErrorMessages"]["ErrorMessage"]
+                if any(
+                    e.get("TollMessage", {})
+                    .get("ErrorMessages", {})
+                    .get("ErrorMessage")
+                    or []
+                )
                 else [e]
             )
             for e in responses
             if (
-                any(e.get("message"))
-                or any(e.get("ExceptionMessage"))
-                or any(e.get("ErrorMessages", {}).get("ErrorMessage"))
+                e.get("message") is not None
+                or e.get("ExceptionMessage") is not None
+                or any(
+                    e.get("TollMessage", {})
+                    .get("ErrorMessages", {})
+                    .get("ErrorMessage")
+                    or []
+                )
             )
         ),
         [],

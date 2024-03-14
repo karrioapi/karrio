@@ -24,9 +24,9 @@
             "PrintDocumentType": "Label",
             "ConsignorParty": {
                 "Contact": {
-                    "Name": "FADI MUBARAK"
+                    "Name": "TEST USER"
                 },
-                "PartyName": "FADI MUBARAK",
+                "PartyName": "TEST USER",
                 "PhysicalAddress": {
                     "AddressLine1": "17 VULCAN RD",
                     "AddressLine2": "Testing",
@@ -47,9 +47,9 @@
                         },
                         "ConsigneeParty": {
                             "Contact": {
-                                "Name": "Salman Kaleem"
+                                "Name": "TEST USER"
                             },
-                            "PartyName": "Salman Kaleem",
+                            "PartyName": "TEST USER",
                             "PhysicalAddress": {
                                 "AddressLine1": "44 Mordaunt Circuit",
                                 "AddressLine2": "Testing",

@@ -62,7 +62,7 @@ def _extract_details(
             for name, amount in charges
             if amount > 0
         ],
-        transit_days=getattr(rate.TransitTime, "Value", None),
+        transit_days=lib.to_int(getattr(rate.TransitTime, "Value", None)),
         meta=dict(
             service_name=service.name,
             EnquiryID=rate.EnquiryID,
@@ -79,7 +79,9 @@ def rate_request(
     services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
-        option_type=provider_units.ShippingOption,
+        sssc_count=settings.sssc_count,
+        shipment_count=settings.shipment_count,
+        initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
         payload.parcels,
@@ -88,19 +90,24 @@ def rate_request(
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     service = getattr(services.first, "value", None)
+    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
 
     request = tge.RateRequestType(
         TollMessage=tge.TollMessageType(
             Header=tge.HeaderType(
                 MessageVersion="1.0",
-                MessageIdentifier=str(uuid.uuid4()),
-                CreateTimestamp=(
-                    datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S.%f%z")
-                ),
                 DocumentType="RateEnquiry",
+                MessageIdentifier=str(uuid.uuid4()),
+                CreateTimestamp=lib.fdatetime(
+                    shipping_date, output_format="%Y-%m-%dT%H:%M:%S.%fZ"
+                ),
                 Environment=("PRD" if not settings.test_mode else "TST"),
-                SourceSystemCode=settings.channel or "XP41",
-                MessageSender=settings.connection_config.app_name.state or "GOSHIPR",
+                SourceSystemCode=(
+                    settings.connection_config.source_system_code.state or "XP41"
+                ),
+                MessageSender=(
+                    settings.connection_config.message_sender.state or "GOSHIPR"
+                ),
                 MessageReceiver="TOLL",
             ),
             RateEnquiry=tge.RateEnquiryType(
@@ -118,9 +125,7 @@ def rate_request(
                         ShipmentProductCode="",
                     ),
                     ShipmentFlags=(
-                        tge.ShipmentFlagsType(
-                            ExtraServiceFlag="true",
-                        )
+                        tge.ShipmentFlagsType(ExtraServiceFlag="true")
                         if options.tge_extra_service_flag.state
                         else None
                     ),
@@ -137,9 +142,10 @@ def rate_request(
                     FreightMode=(
                         lib.text(options.tge_freight_mode.state)
                         or lib.text(settings.connection_config.freight_mode.state)
+                        or "Road"
                     ),
                     BillToParty=tge.BillToPartyType(
-                        AccountCode=settings.account_code.state,
+                        AccountCode=settings.account_code,
                     ),
                     ConsignorParty=tge.ConsignPartyType(
                         PhysicalAddress=tge.PhysicalAddressType(
@@ -174,19 +180,19 @@ def rate_request(
                                 ),
                                 Dimensions=tge.DimensionsType(
                                     Width=package.width.map(
-                                        provider_utils.MeasurementOptions
+                                        provider_units.MeasurementOptions
                                     ).CM,
                                     Length=package.length.map(
-                                        provider_utils.MeasurementOptions
+                                        provider_units.MeasurementOptions
                                     ).CM,
                                     Height=package.height.map(
-                                        provider_utils.MeasurementOptions
+                                        provider_units.MeasurementOptions
                                     ).CM,
                                     Volume=package.volume.map(
-                                        provider_utils.MeasurementOptions
+                                        provider_units.MeasurementOptions
                                     ).cm3,
                                     Weight=package.weight.map(
-                                        provider_utils.MeasurementOptions
+                                        provider_units.MeasurementOptions
                                     ).KG,
                                 ),
                             )
