@@ -29,8 +29,8 @@ def process_shipments(shipment_ids=[]):
 
 @utils.error_wrapper
 def process_shipment(shipment):
-    perferred_service = shipment.options.get("perferred_service")
-    should_purchase = any(perferred_service or "")
+    preferred_service = shipment.options.get("preferred_service")
+    should_purchase = any(preferred_service or "")
     should_update = should_purchase or len(shipment.rates) == 0
     context = serializers.get_object_context(shipment)
 
@@ -47,5 +47,5 @@ def process_shipment(shipment):
         shipment = buy_shipment_label(
             shipment,
             context=context,
-            service=perferred_service,
+            service=preferred_service,
         )

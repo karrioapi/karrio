@@ -611,7 +611,6 @@ def rate_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
-        option_type=provider_units.ShippingOption,
     )   # preprocess the request options
 
     request = None  # map data to convert karrio model to {{id}} specific type
@@ -934,7 +933,6 @@ def shipment_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
-        option_type=provider_units.ShippingOption,
     )   # preprocess the request options
 
     request = None  # map data to convert karrio model to {{id}} specific type

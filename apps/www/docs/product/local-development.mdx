@@ -53,6 +53,23 @@ curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/.env -o .env
 └── .env
 ```
 
+:::tip[Cloud deployment]
+
+If you are deploying on a cloud virtual environment (e.g: AWS EC2 or Digital Ocean droplet),
+you need to update `KARRIO_PUBLIC_URL` in the `.env` file to your server's `IP address` instead of `localhost`.
+
+````diff
+
+...
+- KARRIO_PUBLIC_URL=http://localhost:5002
++ KARRIO_PUBLIC_URL=http://[YOUR-VM-IP-ADDRESS]:5002
+...
+
+````
+
+:::
+
+
 ## Start karrio services
 
 ```bash title="Terminal"

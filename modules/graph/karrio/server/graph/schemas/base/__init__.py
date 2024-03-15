@@ -22,6 +22,9 @@ class Query:
     api_keys: typing.List[types.APIKeyType] = strawberry.field(
         resolver=types.APIKeyType.resolve_list
     )
+    workspace_config: typing.Optional[types.WorkspaceConfigType] = strawberry.field(
+        resolver=types.WorkspaceConfigType.resolve
+    )
 
     user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
         resolver=types.ConnectionType.resolve_list_legacy
@@ -81,9 +84,9 @@ class Query:
     carrier_connection: typing.Optional[types.CarrierConnectionType] = strawberry.field(
         resolver=types.ConnectionType.resolve
     )
-    carrier_connections: utils.Connection[
-        types.CarrierConnectionType
-    ] = strawberry.field(resolver=types.ConnectionType.resolve_list)
+    carrier_connections: utils.Connection[types.CarrierConnectionType] = (
+        strawberry.field(resolver=types.ConnectionType.resolve_list)
+    )
 
 
 @strawberry.type
@@ -99,6 +102,12 @@ class Mutation:
         self, info: Info, input: inputs.RegisterUserMutationInput
     ) -> mutations.RegisterUserMutation:
         return mutations.RegisterUserMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_workspace_config(
+        self, info: Info, input: inputs.WorkspaceConfigMutationInput
+    ) -> mutations.WorkspaceConfigMutation:
+        return mutations.WorkspaceConfigMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def mutate_token(

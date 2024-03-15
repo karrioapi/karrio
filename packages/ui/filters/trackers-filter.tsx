@@ -109,7 +109,8 @@ export const TrackersFilter: React.FC<TrackersFilterComponent> = ({ context }) =
                 onChange={handleChange}
                 type="datetime-local"
                 name="created_after"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-small"
                 addonLeft={
@@ -123,7 +124,8 @@ export const TrackersFilter: React.FC<TrackersFilterComponent> = ({ context }) =
                 onChange={handleChange}
                 type="datetime-local"
                 name="created_before"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-fullwidth is-small"
                 addonLeft={

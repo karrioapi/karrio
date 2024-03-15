@@ -8,6 +8,7 @@ import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
 import karrio.server.graph.models as graph
 import karrio.server.core.models as core
+import karrio.server.user.models as auth
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -36,6 +37,28 @@ class UserModelSerializer(serializers.ModelSerializer):
             user.save(update_fields=["is_active"])
 
         return user
+
+
+@serializers.owned_model_serializer
+class WorkspaceConfigModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = auth.WorkspaceConfig
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
+        exclude = ["created_at", "updated_at", "created_by"]
+
+    def create(
+        self, validated_data: dict, context: serializers.Context = None, **kwargs
+    ):
+        instance = super().create(validated_data, context=context, **kwargs)
+
+        if (
+            hasattr(auth.WorkspaceConfig, "org")
+            and getattr(context, "org", None) is not None
+        ):
+            context.org.config = instance
+            context.org.save()
+
+        return instance
 
 
 @serializers.owned_model_serializer

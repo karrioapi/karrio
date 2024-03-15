@@ -42,6 +42,7 @@ class TrackerFilter(utils.Paginated):
 class ShipmentFilter(utils.Paginated):
     keyword: typing.Optional[str] = strawberry.UNSET
     address: typing.Optional[str] = strawberry.UNSET
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
     created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
@@ -78,6 +79,28 @@ class CarrierFilter(utils.BaseInput):
 class UpdateUserInput(utils.BaseInput):
     full_name: typing.Optional[str] = strawberry.UNSET
     is_active: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class WorkspaceConfigMutationInput(utils.BaseInput):
+    default_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    default_country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    default_label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
+
+    default_weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    default_dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+
+    customs_aes: typing.Optional[str] = strawberry.UNSET
+    customs_ein: typing.Optional[str] = strawberry.UNSET
+    customs_eel_pfc: typing.Optional[str] = strawberry.UNSET
+    customs_eori_number: typing.Optional[str] = strawberry.UNSET
+    customs_license_number: typing.Optional[str] = strawberry.UNSET
+    customs_certificate_number: typing.Optional[str] = strawberry.UNSET
+    customs_nip_number: typing.Optional[str] = strawberry.UNSET
+    customs_vat_registration_number: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input

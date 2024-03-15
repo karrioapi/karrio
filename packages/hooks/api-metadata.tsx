@@ -35,7 +35,8 @@ const APIMetadataProvider: React.FC<{ metadata: Metadata, children?: React.React
         } : {}))
         .then(({ data }) => data)
     ),
-    staleTime: 5000,
+    refetchOnWindowFocus: false,
+    staleTime: 300000,
     onError
   });
 

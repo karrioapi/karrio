@@ -119,6 +119,11 @@ export const CURRENCY_OPTIONS = Array.from(new Set(
         .values(graph.CurrencyCodeEnum)
 ));
 
+export const COUNTRY_OPTIONS = Array.from(new Set(
+    Object
+        .values(graph.CountryCodeEnum)
+));
+
 export const DIMENSION_UNITS = Array.from(new Set(
     Object
         .values(graph.DimensionUnitEnum)
@@ -244,9 +249,10 @@ export const HTTP_METHODS = [
 export enum NoneEnum { none = "none" };
 
 export type dataT<T> = { data?: T };
-export type UserContextDataType = {
+export type AccountContextDataType = {
     data: {
         user: graph.GetUser_user,
+        workspace_config: graph.GetWorkspaceConfig_workspace_config,
     }
 };
 export type OrgContextDataType = {
@@ -265,6 +271,8 @@ export type SubscriptionType = {
 export type PortalSessionType = {
     url: string;
 }
+
+export type UserType = graph.GetUser_user;
 
 export interface Metadata {
     HOST: string;
@@ -445,9 +453,9 @@ export const CARRIER_IMAGES: Collection = {
     'usps': 'usps',
     'veho': 'generic',
     'yanwen': 'yanwen',
-    'eshipper': 'eshipper',
-    'easypost': 'easypost',
-    'freightcom': 'freightcom',
+    'eshipper': 'generic',
+    'easypost': 'generic',
+    'freightcom': 'generic',
     'generic': 'generic',
     'sf_express': 'sf_express',
     'tnt': 'tnt',

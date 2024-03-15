@@ -7,12 +7,13 @@ export interface DropdownInputComponent extends React.AllHTMLAttributes<HTMLInpu
   fieldClass?: string;
   controlClass?: string;
   dropdownClass?: string;
+  wrapperClass?: string;
   items?: [string, string][];
   onValueChange: (value?: string | null) => void;
 }
 
 
-export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, items, value, className, fieldClass, controlClass, dropdownClass, required, onValueChange, ...props }) => {
+export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, items, value, className, fieldClass, controlClass, dropdownClass, wrapperClass, required, onValueChange, ...props }) => {
   const control = useRef<any>(null);
   const btn = useRef<HTMLInputElement>(null);
   const [key, setKey] = useState<string>(`dropdown-${Date.now()}`);
@@ -69,81 +70,86 @@ export const DropdownInput: React.FC<DropdownInputComponent> = ({ label, name, i
   }, [items, value, find]);
 
   return (
-    <div className={`field ${fieldClass}`} key={key}>
+    <div className={wrapperClass || ""}>
       {label !== undefined && <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
         {label}
         {required && <span className="icon is-small has-text-danger small-icon">
           <i className="fas fa-asterisk" style={{ fontSize: ".7em" }}></i>
         </span>}
       </label>}
-      <div className={`control ${controlClass}`}>
-        <div className={`dropdown select is-fullwidth ${isActive ? 'is-active' : ''} ${dropdownClass}`} key={`dropdown-input-${key}`}>
-          <input
-            onClick={handleOnClick}
-            onChange={onRefChange}
-            value={selected || ""}
-            className={"dropdown-trigger input is-clickable is-fullwidth px-2" + ` ${className}` || ''}
-            aria-haspopup="true"
-            readOnly
-            style={{ height: '100%' }}
-            {...props}
-          />
-          <input
-            style={{ zIndex: -1, position: "absolute", left: '20px', bottom: '0' }}
-            name={name}
-            value={selected || ""}
-            onChange={onRefChange}
-            tabIndex={-1}
-            required={required}
-          />
 
-          <div className="dropdown-menu py-0" id={`dropdown-input-${key}`} role="menu" style={{ right: 0, left: 0 }}>
-            <div className="dropdown-content py-0">
+      <div className={`field ${fieldClass}`} key={key}>
 
-              <div className="panel-block px-1 py-1">
-                <p className="control has-icons-left">
-                  <input
-                    type="text"
-                    className={"input" + ` ${className}` || ''}
-                    defaultValue={search || ''}
-                    onInput={onSearch}
-                    ref={control}
-                  />
-                  <span className="icon is-left is-small">
-                    <i className="fas fa-search" aria-hidden="true"></i>
-                  </span>
-                </p>
+        <div className={`control ${controlClass}`}>
+          <div className={`dropdown select is-fullwidth ${isActive ? 'is-active' : ''} ${dropdownClass}`} key={`dropdown-input-${key}`}>
+            <input
+              onClick={handleOnClick}
+              onChange={onRefChange}
+              value={selected || ""}
+              className={"dropdown-trigger input is-clickable is-fullwidth px-2" + ` ${className}` || ''}
+              aria-haspopup="true"
+              readOnly
+              style={{ height: '100%' }}
+              {...props}
+            />
+            <input
+              style={{ zIndex: -1, position: "absolute", left: '20px', bottom: '0' }}
+              name={name}
+              value={selected || ""}
+              onChange={onRefChange}
+              tabIndex={-1}
+              required={required}
+            />
+
+            <div className="dropdown-menu py-0" id={`dropdown-input-${key}`} role="menu" style={{ right: 0, left: 0 }}>
+              <div className="dropdown-content py-0">
+
+                <div className="panel-block px-1 py-1">
+                  <p className="control has-icons-left">
+                    <input
+                      type="text"
+                      className={"input" + ` ${className}` || ''}
+                      defaultValue={search || ''}
+                      onInput={onSearch}
+                      ref={control}
+                    />
+                    <span className="icon is-left is-small">
+                      <i className="fas fa-search" aria-hidden="true"></i>
+                    </span>
+                  </p>
+                </div>
+
+                {items?.length === 0 && <div className="panel-block px-1 py-1">
+                  No items found...
+                </div>}
+
+                <ul className="panel dropped-panel">
+                  <li
+                    key={`empty-${Date.now()}`}
+                    tabIndex={0}
+                    onClick={onSelect("")}
+                    className={`panel-block is-clickable ${key === selected ? 'is-active' : ''}`}>
+                    <span className='is-size-7'>{`---`}</span>
+                  </li>
+
+                  {(items || [])
+                    .filter(([_, val]) => search === "" || val.toLowerCase().includes(search.toLowerCase()))
+                    .map(([key, val], index) => (
+                      <li
+                        key={`${key}-${Date.now()}`}
+                        tabIndex={index + 1}
+                        onClick={onSelect(key)}
+                        className={`panel-block is-clickable ${key === selected ? 'is-active' : ''}`}>
+                        <span className='is-size-7'>{val}</span>
+                      </li>
+                    ))
+                  }
+                </ul>
               </div>
-
-              {items?.length === 0 && <div className="panel-block px-1 py-1">
-                No items found...
-              </div>}
-
-              <ul className="panel dropped-panel">
-                <li
-                  key={`empty-${Date.now()}`}
-                  tabIndex={0}
-                  onClick={onSelect("")}
-                  className={`panel-block is-clickable ${key === selected ? 'is-active' : ''}`}>
-                  <span className='is-size-7'>{`---`}</span>
-                </li>
-
-                {(items || [])
-                  .filter(([_, val]) => search === "" || val.toLowerCase().includes(search.toLowerCase()))
-                  .map(([key, val], index) => (
-                    <li
-                      key={`${key}-${Date.now()}`}
-                      tabIndex={index + 1}
-                      onClick={onSelect(key)}
-                      className={`panel-block is-clickable ${key === selected ? 'is-active' : ''}`}>
-                      <span className='is-size-7'>{val}</span>
-                    </li>
-                  ))
-                }
-              </ul>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );

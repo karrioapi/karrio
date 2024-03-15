@@ -50,6 +50,105 @@ class UserType:
         return User.objects.get(id=info.context.request.user.id)
 
 
+@strawberry_django.type(auth.WorkspaceConfig)
+class WorkspaceConfigType:
+    object_type: str
+
+    @property
+    def config(self: auth.WorkspaceConfig) -> dict:
+        try:
+            return lib.to_dict(self.config)
+        except:
+            return self.config
+
+    # general preferences
+    # region
+
+    @strawberry.field
+    def default_currency(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.CurrencyCodeEnum]:
+        return self.config.get("default_currency")
+
+    @strawberry.field
+    def default_country_code(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.CountryCodeEnum]:
+        return self.config.get("default_country_code")
+
+    @strawberry.field
+    def default_weight_unit(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.WeightUnitEnum]:
+        return self.config.get("default_weight_unit")
+
+    @strawberry.field
+    def default_dimension_unit(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.DimensionUnitEnum]:
+        return self.config.get("default_dimension_unit")
+
+    @strawberry.field
+    def state_tax_id(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("state_tax_id")
+
+    @strawberry.field
+    def federal_tax_id(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("federal_tax_id")
+
+    @strawberry.field
+    def default_label_type(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelTypeEnum]:
+        return self.config.get("default_label_type")
+
+    # endregion
+
+    # customs identifiers
+    # region
+
+    @strawberry.field
+    def customs_aes(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_aes")
+
+    @strawberry.field
+    def customs_ein(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_ein")
+
+    @strawberry.field
+    def customs_eel_pfc(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_eel_pfc")
+
+    @strawberry.field
+    def customs_license_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_license_number")
+
+    @strawberry.field
+    def customs_certificate_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_certificate_number")
+
+    @strawberry.field
+    def customs_nip_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_nip_number")
+
+    @strawberry.field
+    def customs_eori_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_eori_number")
+
+    @strawberry.field
+    def customs_vat_registration_number(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("customs_vat_registration_number")
+
+    # endregion
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
+        return auth.WorkspaceConfig.access_by(info.context.request).first()
+
+
 @strawberry_django.type(core.Metafield)
 class MetafieldType:
     object_type: str

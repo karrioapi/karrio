@@ -15,7 +15,9 @@ export type ModalFormProps<T> = T & {
 export type CustomProps = {
   backgroundDismiss?: boolean;
   addCloseButton?: boolean;
+  addBackground?: boolean;
   className?: string;
+  modalClassName?: string;
 };
 
 export const ModalContext = React.createContext<ModalContextType>({} as ModalContextType);
@@ -24,11 +26,11 @@ export const ModalProvider: React.FC<ModalComponent> = ({ children }) => {
   const [isActive, setIsActive] = useState(false);
   const [key, setKey] = useState<string>(`modal-${Date.now()}`);
   const [modal, setModal] = useState<JSX.Element | undefined>();
-  const [props, setProps] = useState<CustomProps>({ addCloseButton: true });
+  const [props, setProps] = useState<CustomProps>({ addCloseButton: true, addBackground: true });
 
   const open = (modal: JSX.Element, props: CustomProps = {}) => {
     setModal(modal);
-    setProps({ addCloseButton: true, ...props });
+    setProps({ addCloseButton: true, addBackground: true, ...props });
     setIsActive(true);
     setKey(`modal-${Date.now()}`);
   };
@@ -42,8 +44,8 @@ export const ModalProvider: React.FC<ModalComponent> = ({ children }) => {
       <ModalContext.Provider value={{ open, close }}>
         {children}
 
-        <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
-          <div className="modal-background" {...(props.backgroundDismiss ? { onClick: close } : {})}></div>
+        <div className={`modal ${props.modalClassName || ''} ${isActive ? "is-active" : ""}`} key={key}>
+          {props.addBackground && <div className="modal-background" {...(props.backgroundDismiss ? { onClick: close } : {})}></div>}
 
           <div className={`modal-card ${props.className || ''}`}>
 

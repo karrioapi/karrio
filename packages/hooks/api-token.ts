@@ -11,7 +11,7 @@ export function useAPIToken() {
   const query = useQuery(
     ['api_token'],
     () => karrio.graphql.request<GetToken>(gqlstr(GET_API_TOKEN)),
-    { onError, staleTime: 1500000 }
+    { onError, staleTime: 1500000, refetchOnWindowFocus: false, }
   );
 
   return {

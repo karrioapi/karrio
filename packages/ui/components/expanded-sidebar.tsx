@@ -52,13 +52,6 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           <span className="has-text-weight-bold">Home</span>
         </AppLink>
 
-        {metadata?.ORDERS_MANAGEMENT && <>
-          <AppLink href="/orders" className={"menu-item " + activeClass("/orders")} shallow={false} prefetch={false}>
-            <i className={`fa fa-inbox pr-2 ${isActive("/orders") ? "" : 'has-text-grey'}`}></i>
-            <span className="has-text-weight-bold">Orders</span>
-          </AppLink>
-        </>}
-
         <AppLink href="/shipments" className={"menu-item " + activeClass("/shipments")} shallow={false} prefetch={false}>
           <i className={`fa fa-truck pr-2 ${isActive("/shipments") ? "" : 'has-text-grey'}`}></i>
           <span className="has-text-weight-bold">Shipments</span>
@@ -68,6 +61,13 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           <i className={`fa fa-location-arrow pr-2 ${isActive("/trackers") ? "" : 'has-text-grey'}`}></i>
           <span className="has-text-weight-bold">Trackers</span>
         </AppLink>
+
+        {metadata?.ORDERS_MANAGEMENT && <>
+          <AppLink href="/orders" className={"menu-item " + activeClass("/orders")} shallow={false} prefetch={false}>
+            <i className={`fa fa-inbox pr-2 ${isActive("/orders") ? "" : 'has-text-grey'}`}></i>
+            <span className="has-text-weight-bold">Orders</span>
+          </AppLink>
+        </>}
 
         <AppLink href="/connections" className={"menu-item " + activeClass("/connections")} shallow={false} prefetch={false}>
           <i className={`fa fa-th-list pr-2 ${isActive("/connections") ? "" : 'has-text-grey'}`}></i>

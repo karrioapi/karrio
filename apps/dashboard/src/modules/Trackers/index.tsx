@@ -28,7 +28,7 @@ export default function TrackersPage(pageProps: any) {
     const { previewTracker } = useContext(TrackingPreviewContext);
     const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
     const [initialized, setInitialized] = React.useState(false);
-    const context = useTrackers({ setVariablesToURL: true });
+    const context = useTrackers({ setVariablesToURL: true, preloadNextPage: true });
     const { query: { data: { trackers } = {}, ...query }, filter, setFilter } = context;
 
     const remove = (id: string) => async () => {

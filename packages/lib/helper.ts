@@ -401,7 +401,7 @@ export function toSingleItem(collection: CommodityType[]) {
     }, [] as typeof collection[]);
 }
 
-export function createShipmentFromOrders(orderList: OrderType[], templates: any): Partial<ShipmentType> {
+export function createShipmentFromOrders(orderList: OrderType[], templates: any, customsOptions?: any): Partial<ShipmentType> {
 
   const default_parcel = templates.data?.default_templates.default_parcel?.parcel;
   const default_address = templates.data?.default_templates.default_address?.address;
@@ -466,6 +466,7 @@ export function createShipmentFromOrders(orderList: OrderType[], templates: any)
       declared_value,
     },
     duty_billing_address: billing_address,
+    options: customsOptions || {},
   });
 
   return {

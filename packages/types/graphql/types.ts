@@ -3060,6 +3060,29 @@ export interface get_user_connections_user_connections_SendleSettingsType {
   config: any | null;
 }
 
+export interface get_user_connections_user_connections_TGESettingsType {
+  __typename: "TGESettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  config: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  api_key: string | null;
+  toll_username: string | null;
+  toll_password: string | null;
+  my_toll_token: string | null;
+  my_toll_identity: string | null;
+  account_code: string | null;
+  sssc_count: number | null;
+  shipment_count: number | null;
+}
+
 export interface get_user_connections_user_connections_TNTSettingsType {
   __typename: "TNTSettingsType";
   id: string;
@@ -3145,7 +3168,7 @@ export interface get_user_connections_user_connections_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLParcelDESettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FedexWSSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
+export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLParcelDESettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FedexWSSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TGESettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
 
 export interface get_user_connections {
   user_connections: get_user_connections_user_connections[];
@@ -4996,6 +5019,82 @@ export interface deleteMetafieldVariables {
   data: DeleteMutationInput;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetWorkspaceConfig
+// ====================================================
+
+export interface GetWorkspaceConfig_workspace_config {
+  object_type: string;
+  default_currency: CurrencyCodeEnum | null;
+  default_country_code: CountryCodeEnum | null;
+  default_weight_unit: WeightUnitEnum | null;
+  default_dimension_unit: DimensionUnitEnum | null;
+  state_tax_id: string | null;
+  federal_tax_id: string | null;
+  default_label_type: LabelTypeEnum | null;
+  customs_aes: string | null;
+  customs_ein: string | null;
+  customs_eel_pfc: string | null;
+  customs_license_number: string | null;
+  customs_certificate_number: string | null;
+  customs_nip_number: string | null;
+  customs_eori_number: string | null;
+  customs_vat_registration_number: string | null;
+}
+
+export interface GetWorkspaceConfig {
+  workspace_config: GetWorkspaceConfig_workspace_config | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateWorkspaceConfig
+// ====================================================
+
+export interface UpdateWorkspaceConfig_update_workspace_config_workspace_config {
+  object_type: string;
+  default_currency: CurrencyCodeEnum | null;
+  default_country_code: CountryCodeEnum | null;
+  default_weight_unit: WeightUnitEnum | null;
+  default_dimension_unit: DimensionUnitEnum | null;
+  state_tax_id: string | null;
+  federal_tax_id: string | null;
+  default_label_type: LabelTypeEnum | null;
+  customs_aes: string | null;
+  customs_ein: string | null;
+  customs_eel_pfc: string | null;
+  customs_license_number: string | null;
+  customs_certificate_number: string | null;
+  customs_nip_number: string | null;
+  customs_eori_number: string | null;
+  customs_vat_registration_number: string | null;
+}
+
+export interface UpdateWorkspaceConfig_update_workspace_config_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateWorkspaceConfig_update_workspace_config {
+  workspace_config: UpdateWorkspaceConfig_update_workspace_config_workspace_config | null;
+  errors: UpdateWorkspaceConfig_update_workspace_config_errors[] | null;
+}
+
+export interface UpdateWorkspaceConfig {
+  update_workspace_config: UpdateWorkspaceConfig_update_workspace_config;
+}
+
+export interface UpdateWorkspaceConfigVariables {
+  data: WorkspaceConfigMutationInput;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -5524,6 +5623,7 @@ export enum CarrierNameEnum {
   roadie = "roadie",
   royalmail = "royalmail",
   sendle = "sendle",
+  tge = "tge",
   tnt = "tnt",
   ups = "ups",
   usps = "usps",
@@ -5621,6 +5721,7 @@ export interface CreateCarrierConnectionMutationInput {
   roadie?: RoadieSettingsInput | null;
   royalmail?: RoyalMailSettingsInput | null;
   sendle?: SendleSettingsInput | null;
+  tge?: TGESettingsInput | null;
   tnt?: TNTSettingsInput | null;
   ups?: UPSSettingsInput | null;
   usps?: USPSSettingsInput | null;
@@ -5768,8 +5869,8 @@ export interface CanadaPostSettingsInput {
   metadata?: any | null;
   username: string;
   password: string;
-  customer_number: string;
-  contract_id: string;
+  customer_number?: string | null;
+  contract_id?: string | null;
   carrier_id: string;
 }
 
@@ -6064,6 +6165,24 @@ export interface SendleSettingsInput {
 }
 
 // null
+export interface TGESettingsInput {
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username: string;
+  password: string;
+  api_key: string;
+  toll_username: string;
+  toll_password: string;
+  my_toll_token: string;
+  my_toll_identity: string;
+  account_code: string;
+  sssc_count: number;
+  shipment_count: number;
+  carrier_id: string;
+}
+
+// null
 export interface TNTSettingsInput {
   account_country_code?: string | null;
   active?: boolean | null;
@@ -6158,6 +6277,7 @@ export interface UpdateCarrierConnectionMutationInput {
   roadie?: UpdateRoadieSettingsInput | null;
   royalmail?: UpdateRoyalMailSettingsInput | null;
   sendle?: UpdateSendleSettingsInput | null;
+  tge?: UpdateTGESettingsInput | null;
   tnt?: UpdateTNTSettingsInput | null;
   ups?: UpdateUPSSettingsInput | null;
   usps?: UpdateUSPSSettingsInput | null;
@@ -6624,6 +6744,25 @@ export interface UpdateSendleSettingsInput {
 }
 
 // null
+export interface UpdateTGESettingsInput {
+  id: string;
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username?: string | null;
+  password?: string | null;
+  api_key?: string | null;
+  toll_username?: string | null;
+  toll_password?: string | null;
+  my_toll_token?: string | null;
+  my_toll_identity?: string | null;
+  account_code?: string | null;
+  sssc_count?: number | null;
+  shipment_count?: number | null;
+  carrier_id?: string | null;
+}
+
+// null
 export interface UpdateTNTSettingsInput {
   id: string;
   account_country_code?: string | null;
@@ -6713,6 +6852,7 @@ export interface ShipmentFilter {
   first?: number | null;
   keyword?: string | null;
   address?: string | null;
+  id?: string[] | null;
   created_after?: any | null;
   created_before?: any | null;
   carrier_name?: string[] | null;
@@ -7175,6 +7315,25 @@ export interface BatchOperationFilter {
   first?: number | null;
   resource_type?: ResourceStatus[] | null;
   status?: BatchOperationStatus[] | null;
+}
+
+// null
+export interface WorkspaceConfigMutationInput {
+  default_currency?: CurrencyCodeEnum | null;
+  default_country_code?: CountryCodeEnum | null;
+  default_label_type?: LabelTypeEnum | null;
+  default_weight_unit?: WeightUnitEnum | null;
+  default_dimension_unit?: DimensionUnitEnum | null;
+  state_tax_id?: string | null;
+  federal_tax_id?: string | null;
+  customs_aes?: string | null;
+  customs_ein?: string | null;
+  customs_eel_pfc?: string | null;
+  customs_eori_number?: string | null;
+  customs_license_number?: string | null;
+  customs_certificate_number?: string | null;
+  customs_nip_number?: string | null;
+  customs_vat_registration_number?: string | null;
 }
 
 //==============================================================

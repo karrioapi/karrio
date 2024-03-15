@@ -127,8 +127,10 @@ export const CustomsInfoEditModal: React.FC<CustomsInfoEditModalComponent> = ({ 
                     onChange={handleChange}
                     defaultValue={template?.label}
                     className="is-small"
-                    fieldClass="column mb-0 px-2 py-2"
-                    required />
+                    wrapperClass="px-2 py-2"
+                    fieldClass="column mb-0 p-0"
+                    required
+                  />
                 </div>
 
                 <div className="columns mb-1">

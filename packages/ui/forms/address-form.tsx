@@ -93,7 +93,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
         <NameInput label="name"
           className="is-small"
           value={address.person_name}
-          fieldClass="column mb-0 px-2 py-2"
+          wrapperClass="column px-1 py-3"
+          fieldClass="mb-0 p-0"
           disableSuggestion={isNone(shipment)}
           onValueChange={(value, refresh) => {
             dispatch({ name: "partial", value });
@@ -110,7 +111,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           onChange={handleChange}
           value={address.company_name}
           className="is-small"
-          fieldClass="column mb-0 px-2 py-2"
+          wrapperClass="column px-1 py-3"
+          fieldClass="mb-0 p-0"
           max={30}
         />
       </div>
@@ -122,7 +124,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           value={address.country_code}
           className="is-small"
           dropdownClass="is-small"
-          fieldClass="column mb-0 px-2 py-2"
+          wrapperClass="column px-1 py-3"
+          fieldClass="mb-0 p-0"
           required
         />
       </div>
@@ -135,7 +138,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           value={address.address_line1}
           country_code={address.country_code}
           className="is-small"
-          fieldClass="column mb-0 px-2 py-2"
+          wrapperClass="column px-1 py-3"
+          fieldClass="mb-0 p-0"
           required
         />
       </div>
@@ -147,7 +151,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           onChange={handleChange}
           value={address.address_line2}
           className="is-small"
-          fieldClass="column  mb-0 px-2 py-2"
+          wrapperClass="column px-1 py-3"
+          fieldClass="mb-0 p-0"
           max={50}
         />
       </div>
@@ -160,7 +165,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           onChange={handleChange}
           value={address.street_number}
           className="is-small"
-          fieldClass="column is-6 mb-0 px-2 py-2"
+          wrapperClass="column is-6 px-1 py-3"
+          fieldClass="mb-0 p-0"
           max={20}
         />
 
@@ -170,7 +176,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           onChange={handleChange}
           value={address.city}
           className="is-small"
-          fieldClass="column is-6 mb-0 px-2 py-2"
+          wrapperClass="column is-6 px-1 py-3"
+          fieldClass="mb-0 p-0"
           required
         />
 
@@ -179,7 +186,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           onValueChange={value => dispatch({ name: "state_code", value: value as string })}
           value={address.state_code}
           className="is-small"
-          fieldClass="column is-6 mb-0 px-2 py-2"
+          wrapperClass="column is-6 px-1 py-3"
+          fieldClass="mb-0 p-0"
           country_code={address.country_code}
           required={Object.keys(references.states || {}).includes(address.country_code)}
         />
@@ -190,7 +198,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           value={address.postal_code}
           country={address.country_code}
           className="is-small"
-          fieldClass="column is-6 mb-0 px-2 py-2"
+          wrapperClass="column is-6 px-1 py-3"
+          fieldClass="mb-0 p-0"
           required={COUNTRY_WITH_POSTAL_CODE.includes(address.country_code)}
         />
       </div>
@@ -201,7 +210,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           onChange={handleChange}
           value={address.email}
           className="is-small"
-          fieldClass="column mb-0 is-6 px-2 py-2"
+          wrapperClass="column px-1 py-3"
+          fieldClass="mb-0 p-0"
           type="email"
         />
 
@@ -211,7 +221,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
           value={address.phone_number}
           country={address.country_code}
           className="is-small"
-          fieldClass="column mb-0 px-2 py-2"
+          wrapperClass="column px-1 py-3"
+          fieldClass="mb-0 p-0"
         />
       </div>
 
@@ -220,7 +231,7 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
         <CheckBoxField name="residential"
           onChange={handleChange}
           defaultChecked={address.residential}
-          fieldClass="column mb-0 is-12 px-2 py-2"
+          fieldClass="column mb-0 is-12 px-2 py-3"
         >
           <span>Residential address</span>
         </CheckBoxField>
@@ -247,7 +258,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
             onChange={handleChange}
             value={address.federal_tax_id}
             className="is-small"
-            fieldClass="column is-7 mb-0 px-2 py-2"
+            wrapperClass="px-2 py-2"
+            fieldClass="column is-7 mb-0 p-0"
             max={20}
           />
 
@@ -257,7 +269,8 @@ export const AddressForm: React.FC<AddressFormComponent> = ({ value, default_val
             onChange={handleChange}
             value={address.state_tax_id}
             className="is-small"
-            fieldClass="column is-7 mb-0 px-2 py-2"
+            wrapperClass="px-2 py-2"
+            fieldClass="column is-7 mb-0 p-0"
             max={20}
           />
 

@@ -94,6 +94,7 @@ karrio.server.manager @ file://${PWD}/modules/manager
 karrio.server.orders @ file://${PWD}/modules/orders
 karrio.server.pricing @ file://${PWD}/modules/pricing
 karrio.server.proxy @ file://${PWD}/modules/proxy
+karrio.tge @ file://${PWD}/modules/connectors/tge
 karrio.tnt @ file://${PWD}/modules/connectors/tnt
 karrio.ups @ file://${PWD}/modules/connectors/ups
 karrio.usps @ file://${PWD}/modules/connectors/usps

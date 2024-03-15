@@ -198,7 +198,8 @@ export const RateSheetEditModalProvider: React.FC<RateSheetEditModalComponent> =
                             {computeRates(services || [])
                               .map(({ max, services }) => (
                                 <React.Fragment key={`svc-${new Date()}`}>
-                                  <tr style={{ minWidth: '100px', maxWidth: '100px' }}>
+                                  <tr style={{ minWidth: '100px', position: 'sticky', top: 0, left: 0, zIndex: 1 }} className='is-selected'>
+                                    <td className="is-size-7 text-ellipsis is-info" style={{ minWidth: '80px', position: 'sticky', top: 0, left: 0, zIndex: 1 }}>zones</td>
                                     {services.map(service => (
                                       <td key={service.service_code} className="is-size-7 text-ellipsis">
                                         {service.service_code}
@@ -209,8 +210,9 @@ export const RateSheetEditModalProvider: React.FC<RateSheetEditModalComponent> =
                                   {(services || []).length > 0 && Array.from(Array(max).keys()).map((__, idx) => (
 
                                     <tr key={`${idx}-${new Date()}`}>
+                                      <td className="is-size-7 is-info" style={{ minWidth: '80px', position: 'sticky', top: 0, left: 0 }}>zone {idx}</td>
                                       {services.map((service, key) => (
-                                        <td key={`${key}-${new Date()}`} className="is-size-7" style={{ width: '100px', maxWidth: '100px' }}>
+                                        <td key={`${key}-${new Date()}`} className="is-size-7" style={{ width: '100px', minWidth: '100px' }}>
                                           {service.zones[idx]?.rate || ''}
                                         </td>
                                       ))}
@@ -249,27 +251,32 @@ export const RateSheetEditModalProvider: React.FC<RateSheetEditModalComponent> =
                                 <tr key={`service-${idx}-${new Date()}`}>
                                   <td className="is-size-7 p-0">
                                     <InputField
-                                      name="service_name" onChange={updateSercice(idx)} value={service.service_name || ''} className="is-small"
+                                      name="service_name" onChange={updateSercice(idx)} value={service.service_name || ''}
+                                      className="is-small"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0">
                                     <InputField
-                                      name="service_code" onChange={updateSercice(idx)} value={service.service_code || ''} className="is-small"
+                                      name="service_code" onChange={updateSercice(idx)} value={service.service_code || ''}
+                                      className="is-small"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0 is-vcentered">
                                     <CheckBoxField
-                                      name="domicile" onChange={updateSercice(idx)} defaultChecked={service?.domicile as boolean} fieldClass="has-text-centered"
+                                      name="domicile" onChange={updateSercice(idx)} defaultChecked={service?.domicile as boolean}
+                                      fieldClass="has-text-centered"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0 is-vcentered">
                                     <CheckBoxField
-                                      name="international" onChange={updateSercice(idx)} defaultChecked={service?.international as boolean} fieldClass="has-text-centered"
+                                      name="international" onChange={updateSercice(idx)} defaultChecked={service?.international as boolean}
+                                      fieldClass="has-text-centered"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0">
                                     <InputField
-                                      name="transit_days" onChange={updateSercice(idx)} value={service.transit_days || ''} type='number' step={1} min={0} className="is-small"
+                                      name="transit_days" onChange={updateSercice(idx)} value={service.transit_days || ''} type='number' step={1} min={0}
+                                      className="is-small"
                                     />
                                   </td>
                                   <td className="is-size-7 p-0">

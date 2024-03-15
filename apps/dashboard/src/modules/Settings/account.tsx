@@ -1,7 +1,5 @@
+import { WorkspaceConfigForm } from "@karrio/ui/forms/workspace-config-form";
 import { CloseAccountAction } from "@karrio/ui/forms/close-account-action";
-import { ProfileUpdateInput } from "@karrio/ui/forms/profile-update-input";
-import { PasswordManagement } from "@karrio/ui/forms/password-management";
-import { EmailManagement } from "@karrio/ui/forms/email-management";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -31,6 +29,11 @@ export default function AccountPage(pageProps: any) {
                 <span>Account</span>
               </AppLink>
             </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/settings/profile" shallow={false} prefetch={false}>
+                <span>Profile</span>
+              </AppLink>
+            </li>
             {MULTI_ORGANIZATIONS && <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/settings/organization" shallow={false} prefetch={false}>
                 <span>Organization</span>
@@ -54,37 +57,14 @@ export default function AccountPage(pageProps: any) {
           </ul>
         </div>
 
-
         <div>
-          <div className="columns py-6 my-4">
-            <div className="column is-5 pr-2">
-              <p className="subtitle is-6 py-1">Profile</p>
-              <p className="is-size-7 pr-2">Your email address is your identity on {APP_NAME} and is used to log in.</p>
-            </div>
 
-            <div className="column is-4">
-              <EmailManagement />
-              <ProfileUpdateInput label="Name (Optional)" propertyKey="full_name" inputType="text" />
-            </div>
-
-            <div className="column is-3"></div>
-          </div>
+          {/* General preferences section */}
+          <WorkspaceConfigForm pageProps={pageProps} />
 
           <hr style={{ height: '1px' }} />
 
-          <div className="columns py-6 my-4">
-            <div className="column is-5 pr-6">
-              <p className="subtitle is-6 py-1">Password</p>
-              <p className="is-size-7 pr-6">You can change your password.</p>
-            </div>
-
-            <PasswordManagement />
-
-            <div className="column is-3"></div>
-          </div>
-
-          <hr style={{ height: '1px' }} />
-
+          {/* Close account section */}
           <div className="columns py-6 my-4">
             <div className="column is-5">
               <p className="subtitle is-6 py-1">Close Account</p>
@@ -99,6 +79,7 @@ export default function AccountPage(pageProps: any) {
               </CloseAccountAction>
             </div>
           </div>
+
         </div>
       </>
     );

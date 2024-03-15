@@ -43,7 +43,9 @@ export const OrganizationProvider: React.FC<OrganizationProviderProps> = ({ chil
         return data;
       }
     ),
+    initialData: { organizations: props.organizations },
     enabled: props.metadata?.MULTI_ORGANIZATIONS === true,
+    refetchOnWindowFocus: false,
     staleTime: 1500000,
     onError
   });

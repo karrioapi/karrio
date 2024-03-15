@@ -1,12 +1,9 @@
-import { createShipmentFromOrders, formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, toSingleItem, url$ } from "@karrio/lib";
+import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
-import { BulkShipmentModalEditor } from "@karrio/ui/modals/bulk-shipment-modal";
 import { OrderPreview, OrderPreviewContext } from "@/components/order-preview";
 import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
-import { AddressType, OrderType, ShipmentType } from "@karrio/types";
-import { useDefaultTemplates } from "@karrio/hooks/default-template";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
@@ -16,11 +13,11 @@ import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { AddressType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Spinner } from "@karrio/ui/components/spinner";
-import { ShipmentData } from "@karrio/types/rest/api";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
@@ -40,12 +37,11 @@ export default function OrdersPage(pageProps: any) {
     const router = useRouter();
     const { setLoading } = useLoader();
     const { references } = useAPIMetadata();
-    const { query: defaults } = useDefaultTemplates();
-    const context = useOrders({ setVariablesToURL: true });
     const { previewOrder } = useContext(OrderPreviewContext);
     const [allChecked, setAllChecked] = React.useState(false);
     const [initialized, setInitialized] = React.useState(false);
     const [selection, setSelection] = React.useState<string[]>([]);
+    const context = useOrders({ setVariablesToURL: true, preloadNextPage: true });
     const { query: { data: { user_connections } = {} } } = useCarrierConnections();
     const { query: { data: { system_connections } = {} } } = useSystemCarrierConnections();
     const { query: { data: { orders } = {}, ...query }, filter, setFilter } = context;
@@ -110,7 +106,8 @@ export default function OrdersPage(pageProps: any) {
     };
     const computeOrderService = (order: any) => {
       const shipment = (
-        order.shipments.find(({ status, tracking_number }) => !!tracking_number && !["cancelled", "draft"].includes(status))
+        order.shipments.find(({ status, tracking_number }) => !!tracking_number && !["cancelled", "draft"].includes(status)) ||
+        order.shipments.find(({ status }) => ["draft"].includes(status))
       );
       const rate = getRate(shipment);
 
@@ -123,7 +120,7 @@ export default function OrdersPage(pageProps: any) {
 
         return <>
           <CarrierImage
-            carrier_name={_shipment?.meta?.carrier || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            carrier_name={_shipment?.meta?.carrier || _rate?.meta?.rate_provider || _rate?.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
             text_color={getCarrier(_rate)?.config?.text_color}
             background={getCarrier(_rate)?.config?.background}
@@ -141,7 +138,7 @@ export default function OrdersPage(pageProps: any) {
       return (
         <>
           <CarrierImage
-            carrier_name={shipment.meta?.carrier || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
+            carrier_name={shipment.meta?.carrier || rate.meta?.carrier_name || rate.carrier_name || formatCarrierSlug(references.APP_NAME)}
             containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
             text_color={getCarrier(rate)?.config?.text_color}
             background={getCarrier(rate)?.config?.background}
@@ -159,18 +156,6 @@ export default function OrdersPage(pageProps: any) {
         </>
       )
     };
-    const collectShipments = (selection: string[], current: typeof orders) => {
-      return (current?.edges || [])
-        .filter(({ node: order }) => selection.includes(order.id))
-        .map(({ node: order }) => {
-          const shipment = (
-            order.shipments.find(({ status }) => status === "draft") ||
-            createShipmentFromOrders([order] as OrderType[], defaults)
-          );
-
-          return shipment as ShipmentData;
-        });
-    }
 
     useEffect(() => { updateFilter(); }, [router.query]);
     useEffect(() => { setLoading(query.isFetching); }, [query.isFetching]);
@@ -236,14 +221,10 @@ export default function OrdersPage(pageProps: any) {
 
                   {selection.length > 0 && <td className="p-1 is-vcentered" colSpan={8}>
                     <div className="buttons has-addons ">
-                      <BulkShipmentModalEditor
-                        shipments={collectShipments(selection, orders)}
-                        trigger={
-                          <button className={`button is-small is-default px-3 is-static ${unfulfilledSelection(selection) ? '' : 'is-static'}`}>
-                            <span className="has-text-weight-semibold">Create labels</span>
-                          </button>
-                        }
-                      />
+                      <AppLink className={`button is-small is-default px-3 ${unfulfilledSelection(selection) ? '' : 'is-static'}`}
+                        href={`/orders/create_labels?order_ids=${selection.join(',')}`}>
+                        <span className="has-text-weight-semibold">Create labels</span>
+                      </AppLink>
                       <a
                         href={url$`${references.HOST}/documents/orders/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?orders=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">

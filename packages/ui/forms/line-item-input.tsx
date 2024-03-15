@@ -7,10 +7,10 @@ import { CommodityType } from '@karrio/types';
 interface LineItemInputComponent extends Omit<DropdownInputComponent, 'items' | 'onChange' | 'onValueChange'> {
   onChange?: (value?: CommodityType) => void;
   onReady?: (value?: CommodityType) => void;
+  query: ReturnType<typeof useOrders>['query'];
 }
 
-export const LineItemInput: React.FC<LineItemInputComponent> = ({ onChange, onReady, ...props }) => {
-  const { query } = useOrders({ first: 10, status: ["partial", "unfulfilled"] as any });
+export const LineItemInput: React.FC<LineItemInputComponent> = ({ onChange, onReady, query, ...props }) => {
   const [lineItems, setLineItems] = useState<CommodityType[]>();
   const [items, setItems] = useState<[string, string][]>([]);
 

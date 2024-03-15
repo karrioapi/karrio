@@ -1,6 +1,6 @@
-import { UserType, useUser, useUserMutation } from '@karrio/hooks/user';
+import { useUser, useUserMutation } from '@karrio/hooks/user';
+import { NotificationType, UserType } from '@karrio/types';
 import React, { useContext, useState } from 'react';
-import { NotificationType } from '@karrio/types';
 import { Notify } from '../components/notifier';
 
 interface ProfileUpdateInputComponent {

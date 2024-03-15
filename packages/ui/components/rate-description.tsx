@@ -16,7 +16,7 @@ export const RateDescription: React.FC<RateDescriptionComponent> = ({ rate }) =>
         <span>{rate.total_charge} {rate.currency}</span>
         {!isNone(rate.transit_days) && <span> - {rate.transit_days} Transit days</span>}
       </span><br />
-      <span className="has-text-info m-0 p-0 text-ellipsis" style={{ fontSize: '0.8rem', maxWidth: '100%' }}>
+      <span className="has-text-info m-0 p-0 text-ellipsis" style={{ fontSize: '0.75rem', maxWidth: '100%' }}>
         {rate.carrier_name}:{rate.carrier_id}
       </span>
     </div>

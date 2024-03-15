@@ -100,7 +100,6 @@ class Address(BaseAddress):
     phone_number: str = None
 
     state_code: str = None
-    suburb: str = None
     residential: bool = False
 
     address_line1: str = ""

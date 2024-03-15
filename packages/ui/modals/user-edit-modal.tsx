@@ -80,7 +80,8 @@ export const UserModalEditor: React.FC<ModalFormProps<UserModalEditorProps>> = (
               onChange={handleChange}
               defaultValue={user?.full_name || ""}
               className="is-small"
-              fieldClass="column mb-0 px-2 py-2"
+              wrapperClass="px-2 py-2"
+              fieldClass="column mb-0 p-0"
               required
             />
           </div>
@@ -92,7 +93,8 @@ export const UserModalEditor: React.FC<ModalFormProps<UserModalEditorProps>> = (
               onChange={handleChange}
               defaultValue={user?.email || ""}
               className="is-small"
-              fieldClass="column mb-0 px-2 py-2"
+              wrapperClass="px-2 py-2"
+              fieldClass="column mb-0 p-0"
               required
             />
           </div>
@@ -117,7 +119,8 @@ export const UserModalEditor: React.FC<ModalFormProps<UserModalEditorProps>> = (
                 onChange={handleChange}
                 defaultValue={user?.password1 || ""}
                 className="is-small"
-                fieldClass="column mb-0 px-2 py-2"
+                wrapperClass="px-2 py-2"
+                fieldClass="column mb-0 p-0"
                 required
               />
             </div>
@@ -130,7 +133,8 @@ export const UserModalEditor: React.FC<ModalFormProps<UserModalEditorProps>> = (
                 onChange={handleChange}
                 defaultValue={user?.password2 || ""}
                 className="is-small"
-                fieldClass="column mb-0 px-2 py-2"
+                wrapperClass="px-2 py-2"
+                fieldClass="column mb-0 p-0"
                 required
               />
             </div>

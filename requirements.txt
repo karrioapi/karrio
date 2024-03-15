@@ -94,6 +94,7 @@ jwcrypto==1.5.6
 -e git+ssh://git@github.com/karrioapi/karrio.git@0ba337cc40b984fddf70a5717accd7704fd9b610#egg=karrio.server.orders&subdirectory=modules/orders
 -e git+ssh://git@github.com/karrioapi/karrio.git@0ba337cc40b984fddf70a5717accd7704fd9b610#egg=karrio.server.pricing&subdirectory=modules/pricing
 -e git+ssh://git@github.com/karrioapi/karrio.git@0ba337cc40b984fddf70a5717accd7704fd9b610#egg=karrio.server.proxy&subdirectory=modules/proxy
+-e git+ssh://git@github.com/karrioapi/karrio.git@0ba337cc40b984fddf70a5717accd7704fd9b610#egg=karrio.tge&subdirectory=modules/connectors/tge
 -e git+ssh://git@github.com/karrioapi/karrio.git@0ba337cc40b984fddf70a5717accd7704fd9b610#egg=karrio.tnt&subdirectory=modules/connectors/tnt
 -e git+ssh://git@github.com/karrioapi/karrio.git@0ba337cc40b984fddf70a5717accd7704fd9b610#egg=karrio.ups&subdirectory=modules/connectors/ups
 -e git+ssh://git@github.com/karrioapi/karrio.git@0ba337cc40b984fddf70a5717accd7704fd9b610#egg=karrio.usps&subdirectory=modules/connectors/usps

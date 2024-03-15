@@ -37,10 +37,11 @@ export default function ShipmentsPage(pageProps: any) {
     const context = useShipments({
       status: ['purchased', 'delivered', 'in_transit', 'cancelled', 'needs_attention', 'out_for_delivery', 'delivery_failed'] as any,
       setVariablesToURL: true,
+      preloadNextPage: true,
     })
     const { query: { data: { shipments } = {}, ...query }, filter, setFilter } = context;
     const { query: { data: { document_templates } = {} } } = useDocumentTemplates({
-      related_object: "shipment" as any
+      related_object: "shipment" as any, active: true,
     });
 
     const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
@@ -78,6 +79,11 @@ export default function ShipmentsPage(pageProps: any) {
       const format = computeDocFormat(selection);
       return (shipments?.edges || []).filter(({ node: shipment }) => (
         selection.includes(shipment.id) && shipment.label_type == format
+      )).length === selection.length;
+    };
+    const draftSelection = (selection: string[]) => {
+      return (shipments?.edges || []).filter(({ node: shipment }) => (
+        selection.includes(shipment.id) && shipment.status == "draft"
       )).length === selection.length;
     };
     const getRate = (shipment: any) => (
@@ -158,6 +164,10 @@ export default function ShipmentsPage(pageProps: any) {
 
                   {selection.length > 0 && <td className="p-1 is-vcentered" colSpan={6}>
                     <div className="buttons has-addons">
+                      <AppLink className={`button is-small is-default px-3 ${draftSelection(selection) ? '' : 'is-static'}`}
+                        href={`/shipments/create_labels?shipment_ids=${selection.join(',')}`}>
+                        <span className="has-text-weight-semibold">Create labels</span>
+                      </AppLink>
                       <a
                         href={url$`${metadata.HOST}/documents/shipments/label.${(computeDocFormat(selection) || "pdf")?.toLocaleLowerCase()}?shipments=${selection.join(',')}`}
                         className={`button is-small is-default px-3 ${compatibleTypeSelection(selection) ? '' : 'is-static'}`} target="_blank" rel="noreferrer">
@@ -213,7 +223,7 @@ export default function ShipmentsPage(pageProps: any) {
                     >
                       <div className="icon-text">
                         <CarrierImage
-                          carrier_name={shipment.meta?.carrier || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
+                          carrier_name={shipment.meta?.carrier || getRate(shipment).meta?.rate_provider || getRate(shipment).carrier_name || formatCarrierSlug(metadata.APP_NAME)}
                           containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
                           text_color={(shipment.selected_rate_carrier || getCarrier(getRate(shipment)))?.config?.text_color}
                           background={(shipment.selected_rate_carrier || getCarrier(getRate(shipment)))?.config?.brand_color}

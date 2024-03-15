@@ -2266,6 +2266,27 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       account_country_code
       config
     }
+    ... on TGESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      username
+      password
+      api_key
+      toll_username
+      toll_password
+      my_toll_token
+      my_toll_identity
+      account_code
+      sssc_count
+      shipment_count
+    }
     ... on TNTSettingsType {
       id
       carrier_id
@@ -3549,6 +3570,56 @@ export const GET_BATCH_OPERATIONS = gql`query get_batch_operations($filter: Batc
 export const DELETE_METAFIELD = gql`mutation deleteMetafield($data: DeleteMutationInput!) {
   delete_metafield(input: $data) {
     id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const GET_WORKSPACE_CONFIG = gql`query GetWorkspaceConfig {
+  workspace_config {
+    object_type
+    default_currency
+    default_country_code
+    default_weight_unit
+    default_dimension_unit
+    state_tax_id
+    federal_tax_id
+    default_label_type
+    customs_aes
+    customs_ein
+    customs_eel_pfc
+    customs_license_number
+    customs_certificate_number
+    customs_nip_number
+    customs_eori_number
+    customs_vat_registration_number
+  }
+}
+`;
+
+export const UPDATE_WORKSPACE_CONFIG = gql`mutation UpdateWorkspaceConfig($data: WorkspaceConfigMutationInput!) {
+  update_workspace_config(input: $data) {
+    workspace_config {
+      object_type
+      default_currency
+      default_country_code
+      default_weight_unit
+      default_dimension_unit
+      state_tax_id
+      federal_tax_id
+      default_label_type
+      customs_aes
+      customs_ein
+      customs_eel_pfc
+      customs_license_number
+      customs_certificate_number
+      customs_nip_number
+      customs_eori_number
+      customs_vat_registration_number
+    }
     errors {
       field
       messages

@@ -1,4 +1,4 @@
-import { CurrencyCodeEnum, DEFAULT_COMMODITY_CONTENT, MetadataObjectTypeEnum, WeightUnitEnum } from '@karrio/types';
+import { CurrencyCodeEnum, DEFAULT_COMMODITY_CONTENT, MetadataObjectTypeEnum, OrderFilter, WeightUnitEnum } from '@karrio/types';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
 import { isEqual, isNone, validationMessage, validityCheck } from '@karrio/lib';
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from '@karrio/types';
@@ -10,6 +10,7 @@ import { InputField } from '../components/input-field';
 import { CountryInput } from '../forms/country-input';
 import { Notifier } from '../components/notifier';
 import { Loading } from '../components/loader';
+import { useOrders } from '@karrio/hooks/order';
 
 type OperationType = {
   commodity?: CommodityType;
@@ -24,6 +25,7 @@ export const CommodityStateContext = React.createContext<CommodityStateContextTy
 
 interface CommodityEditModalComponent {
   children?: React.ReactNode;
+  orderFilter?: OrderFilter & { isDisabled?: boolean, cacheKey?: string };
 }
 
 function reducer(state: any, { name, value }: { name: string, value: stateValue | number | boolean }) {
@@ -38,7 +40,7 @@ function reducer(state: any, { name, value }: { name: string, value: stateValue 
   }
 }
 
-export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children }) => {
+export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children, orderFilter }) => {
   const { metadata: { ORDERS_MANAGEMENT } } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -48,6 +50,11 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
   const [operation, setOperation] = useState<OperationType | undefined>();
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
+  const { query } = useOrders({
+    first: 10, status: ["unfulfilled", "partial"] as any,
+    isDisabled: !ORDERS_MANAGEMENT,
+    ...(orderFilter || {}),
+  });
 
   const editCommodity = (operation: OperationType) => {
     const commodity = (operation.commodity || DEFAULT_COMMODITY_CONTENT as CommodityType);
@@ -112,6 +119,7 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     label="Order Line Item"
                     value={commodity?.parent_id}
                     onChange={loadLineItem}
+                    query={query}
                     onReady={_ => setMaxQty(_?.unfulfilled_quantity)}
                     dropdownClass="is-small"
                     className="is-small is-fullwidth"
@@ -146,7 +154,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     onChange={handleChange}
                     value={commodity?.title}
                     className="is-small is-fullwidth"
-                    fieldClass="column mb-0 is-12 px-2 py-1"
+                    wrapperClass="column is-12 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     disabled={!isNone(commodity?.parent_id)}
                     max={35}
                   />
@@ -160,7 +169,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     onChange={handleChange}
                     value={commodity?.hs_code}
                     className="is-small is-fullwidth"
-                    fieldClass="column mb-0 is-12 px-2 py-1"
+                    wrapperClass="column is-12 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     disabled={!isNone(commodity?.parent_id)}
                     max={35}
                   />
@@ -174,7 +184,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     value={commodity?.sku}
                     onChange={handleChange}
                     className="is-small is-fullwidth"
-                    fieldClass="column is-7 mb-0 px-2 py-1"
+                    wrapperClass="column is-7 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     placeholder="0000001"
                     disabled={!isNone(commodity?.parent_id)}
                     max={35}
@@ -201,7 +212,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     min="1"
                     step="1"
                     className="is-small"
-                    fieldClass="column mb-0 is-3 px-2 py-1"
+                    wrapperClass="column is-3 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     onChange={handleChange}
                     value={commodity?.quantity}
                     onInvalid={validityCheck(validationMessage('Please enter a valid quantity'))}
