@@ -420,6 +420,7 @@ export interface GetSystemConnections_system_connections_BelgianPostSettingsType
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -428,6 +429,7 @@ export interface GetSystemConnections_system_connections_BelgianPostSettingsType
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -527,6 +529,7 @@ export interface GetSystemConnections_system_connections_ColissimoSettingsType_s
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -535,6 +538,7 @@ export interface GetSystemConnections_system_connections_ColissimoSettingsType_s
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -669,6 +673,7 @@ export interface GetSystemConnections_system_connections_DHLPolandSettingsType_s
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -677,6 +682,7 @@ export interface GetSystemConnections_system_connections_DHLPolandSettingsType_s
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -751,6 +757,7 @@ export interface GetSystemConnections_system_connections_DicomSettingsType {
 
 export interface GetSystemConnections_system_connections_DPDSettingsType_services_zones {
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
   label: string | null;
   latitude: number | null;
@@ -777,6 +784,7 @@ export interface GetSystemConnections_system_connections_DPDSettingsType_service
   max_width: number | null;
   service_code: string | null;
   service_name: string | null;
+  carrier_service_code: string | null;
   transit_days: number | null;
   transit_time: number | null;
   weight_unit: WeightUnitEnum | null;
@@ -821,6 +829,7 @@ export interface GetSystemConnections_system_connections_DPDHLSettingsType_servi
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -829,6 +838,7 @@ export interface GetSystemConnections_system_connections_DPDHLSettingsType_servi
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -966,6 +976,7 @@ export interface GetSystemConnections_system_connections_GenericSettingsType_ser
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -974,6 +985,7 @@ export interface GetSystemConnections_system_connections_GenericSettingsType_ser
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -1152,6 +1164,29 @@ export interface GetSystemConnections_system_connections_SendleSettingsType {
   config: any | null;
 }
 
+export interface GetSystemConnections_system_connections_TGESettingsType {
+  __typename: "TGESettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  config: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  api_key: string | null;
+  toll_username: string | null;
+  toll_password: string | null;
+  my_toll_token: string | null;
+  my_toll_identity: string | null;
+  account_code: string | null;
+  sssc_count: number | null;
+  shipment_count: number | null;
+}
+
 export interface GetSystemConnections_system_connections_TNTSettingsType {
   __typename: "TNTSettingsType";
   id: string;
@@ -1237,7 +1272,7 @@ export interface GetSystemConnections_system_connections_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type GetSystemConnections_system_connections = GetSystemConnections_system_connections_AlliedExpressSettingsType | GetSystemConnections_system_connections_AlliedExpressLocalSettingsType | GetSystemConnections_system_connections_AmazonShippingSettingsType | GetSystemConnections_system_connections_AramexSettingsType | GetSystemConnections_system_connections_AsendiaUSSettingsType | GetSystemConnections_system_connections_AustraliaPostSettingsType | GetSystemConnections_system_connections_BoxKnightSettingsType | GetSystemConnections_system_connections_BelgianPostSettingsType | GetSystemConnections_system_connections_CanadaPostSettingsType | GetSystemConnections_system_connections_CanparSettingsType | GetSystemConnections_system_connections_ChronopostSettingsType | GetSystemConnections_system_connections_ColissimoSettingsType | GetSystemConnections_system_connections_DHLParcelDESettingsType | GetSystemConnections_system_connections_DHLExpressSettingsType | GetSystemConnections_system_connections_DHLPolandSettingsType | GetSystemConnections_system_connections_DHLUniversalSettingsType | GetSystemConnections_system_connections_DicomSettingsType | GetSystemConnections_system_connections_DPDSettingsType | GetSystemConnections_system_connections_DPDHLSettingsType | GetSystemConnections_system_connections_EShipperSettingsType | GetSystemConnections_system_connections_EasyPostSettingsType | GetSystemConnections_system_connections_FedexSettingsType | GetSystemConnections_system_connections_FedexWSSettingsType | GetSystemConnections_system_connections_FreightcomSettingsType | GetSystemConnections_system_connections_GenericSettingsType | GetSystemConnections_system_connections_GEODISSettingsType | GetSystemConnections_system_connections_LaPosteSettingsType | GetSystemConnections_system_connections_Locate2uSettingsType | GetSystemConnections_system_connections_NationexSettingsType | GetSystemConnections_system_connections_PurolatorSettingsType | GetSystemConnections_system_connections_RoadieSettingsType | GetSystemConnections_system_connections_RoyalMailSettingsType | GetSystemConnections_system_connections_SendleSettingsType | GetSystemConnections_system_connections_TNTSettingsType | GetSystemConnections_system_connections_UPSSettingsType | GetSystemConnections_system_connections_USPSSettingsType | GetSystemConnections_system_connections_USPSInternationalSettingsType | GetSystemConnections_system_connections_Zoom2uSettingsType;
+export type GetSystemConnections_system_connections = GetSystemConnections_system_connections_AlliedExpressSettingsType | GetSystemConnections_system_connections_AlliedExpressLocalSettingsType | GetSystemConnections_system_connections_AmazonShippingSettingsType | GetSystemConnections_system_connections_AramexSettingsType | GetSystemConnections_system_connections_AsendiaUSSettingsType | GetSystemConnections_system_connections_AustraliaPostSettingsType | GetSystemConnections_system_connections_BoxKnightSettingsType | GetSystemConnections_system_connections_BelgianPostSettingsType | GetSystemConnections_system_connections_CanadaPostSettingsType | GetSystemConnections_system_connections_CanparSettingsType | GetSystemConnections_system_connections_ChronopostSettingsType | GetSystemConnections_system_connections_ColissimoSettingsType | GetSystemConnections_system_connections_DHLParcelDESettingsType | GetSystemConnections_system_connections_DHLExpressSettingsType | GetSystemConnections_system_connections_DHLPolandSettingsType | GetSystemConnections_system_connections_DHLUniversalSettingsType | GetSystemConnections_system_connections_DicomSettingsType | GetSystemConnections_system_connections_DPDSettingsType | GetSystemConnections_system_connections_DPDHLSettingsType | GetSystemConnections_system_connections_EShipperSettingsType | GetSystemConnections_system_connections_EasyPostSettingsType | GetSystemConnections_system_connections_FedexSettingsType | GetSystemConnections_system_connections_FedexWSSettingsType | GetSystemConnections_system_connections_FreightcomSettingsType | GetSystemConnections_system_connections_GenericSettingsType | GetSystemConnections_system_connections_GEODISSettingsType | GetSystemConnections_system_connections_LaPosteSettingsType | GetSystemConnections_system_connections_Locate2uSettingsType | GetSystemConnections_system_connections_NationexSettingsType | GetSystemConnections_system_connections_PurolatorSettingsType | GetSystemConnections_system_connections_RoadieSettingsType | GetSystemConnections_system_connections_RoyalMailSettingsType | GetSystemConnections_system_connections_SendleSettingsType | GetSystemConnections_system_connections_TGESettingsType | GetSystemConnections_system_connections_TNTSettingsType | GetSystemConnections_system_connections_UPSSettingsType | GetSystemConnections_system_connections_USPSSettingsType | GetSystemConnections_system_connections_USPSInternationalSettingsType | GetSystemConnections_system_connections_Zoom2uSettingsType;
 
 export interface GetSystemConnections {
   system_connections: GetSystemConnections_system_connections[];
@@ -1252,7 +1287,37 @@ export interface GetSystemConnections {
 // ====================================================
 
 export interface GetSystemConnection_system_connection_AlliedExpressSettingsType {
-  __typename: "AlliedExpressSettingsType" | "AlliedExpressLocalSettingsType" | "DHLParcelDESettingsType";
+  __typename: "AlliedExpressSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string | null;
+  password: string | null;
+  account: string | null;
+  service_type: string | null;
+}
+
+export interface GetSystemConnection_system_connection_AlliedExpressLocalSettingsType {
+  __typename: "AlliedExpressLocalSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string | null;
+  password: string | null;
+  account: string | null;
+  service_type: string | null;
 }
 
 export interface GetSystemConnection_system_connection_AmazonShippingSettingsType {
@@ -1350,6 +1415,7 @@ export interface GetSystemConnection_system_connection_BelgianPostSettingsType_s
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -1358,6 +1424,7 @@ export interface GetSystemConnection_system_connection_BelgianPostSettingsType_s
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -1371,6 +1438,14 @@ export interface GetSystemConnection_system_connection_BelgianPostSettingsType_s
   domicile: boolean | null;
   international: boolean | null;
   zones: GetSystemConnection_system_connection_BelgianPostSettingsType_services_zones[];
+}
+
+export interface GetSystemConnection_system_connection_BelgianPostSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
 }
 
 export interface GetSystemConnection_system_connection_BelgianPostSettingsType {
@@ -1387,6 +1462,7 @@ export interface GetSystemConnection_system_connection_BelgianPostSettingsType {
   account_id: string | null;
   passphrase: string | null;
   services: GetSystemConnection_system_connection_BelgianPostSettingsType_services[] | null;
+  rate_sheet: GetSystemConnection_system_connection_BelgianPostSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnection_system_connection_CanadaPostSettingsType {
@@ -1448,6 +1524,7 @@ export interface GetSystemConnection_system_connection_ColissimoSettingsType_ser
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -1456,6 +1533,7 @@ export interface GetSystemConnection_system_connection_ColissimoSettingsType_ser
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -1469,6 +1547,14 @@ export interface GetSystemConnection_system_connection_ColissimoSettingsType_ser
   domicile: boolean | null;
   international: boolean | null;
   zones: GetSystemConnection_system_connection_ColissimoSettingsType_services_zones[];
+}
+
+export interface GetSystemConnection_system_connection_ColissimoSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
 }
 
 export interface GetSystemConnection_system_connection_ColissimoSettingsType {
@@ -1486,6 +1572,72 @@ export interface GetSystemConnection_system_connection_ColissimoSettingsType {
   contract_number: string | null;
   laposte_api_key: string | null;
   services: GetSystemConnection_system_connection_ColissimoSettingsType_services[] | null;
+  rate_sheet: GetSystemConnection_system_connection_ColissimoSettingsType_rate_sheet | null;
+}
+
+export interface GetSystemConnection_system_connection_DHLParcelDESettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface GetSystemConnection_system_connection_DHLParcelDESettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: GetSystemConnection_system_connection_DHLParcelDESettingsType_services_zones[];
+}
+
+export interface GetSystemConnection_system_connection_DHLParcelDESettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface GetSystemConnection_system_connection_DHLParcelDESettingsType {
+  __typename: "DHLParcelDESettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  customer_number: string | null;
+  dhl_api_key: string | null;
+  tracking_consumer_key: string | null;
+  tracking_consumer_secret: string | null;
+  config: any | null;
+  services: GetSystemConnection_system_connection_DHLParcelDESettingsType_services[] | null;
+  rate_sheet: GetSystemConnection_system_connection_DHLParcelDESettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnection_system_connection_DHLExpressSettingsType {
@@ -1516,6 +1668,7 @@ export interface GetSystemConnection_system_connection_DHLPolandSettingsType_ser
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -1524,6 +1677,7 @@ export interface GetSystemConnection_system_connection_DHLPolandSettingsType_ser
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -1539,6 +1693,14 @@ export interface GetSystemConnection_system_connection_DHLPolandSettingsType_ser
   zones: GetSystemConnection_system_connection_DHLPolandSettingsType_services_zones[];
 }
 
+export interface GetSystemConnection_system_connection_DHLPolandSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnection_system_connection_DHLPolandSettingsType {
   __typename: "DHLPolandSettingsType";
   id: string;
@@ -1547,13 +1709,14 @@ export interface GetSystemConnection_system_connection_DHLPolandSettingsType {
   display_name: string;
   test_mode: boolean;
   active: boolean;
-  metadata: any | null;
   capabilities: string[];
+  metadata: any | null;
+  config: any | null;
   username: string | null;
   password: string | null;
   account_number: string | null;
   services: GetSystemConnection_system_connection_DHLPolandSettingsType_services[] | null;
-  config: any | null;
+  rate_sheet: GetSystemConnection_system_connection_DHLPolandSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnection_system_connection_DHLUniversalSettingsType {
@@ -1589,6 +1752,7 @@ export interface GetSystemConnection_system_connection_DicomSettingsType {
 
 export interface GetSystemConnection_system_connection_DPDSettingsType_services_zones {
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
   label: string | null;
   latitude: number | null;
@@ -1615,10 +1779,19 @@ export interface GetSystemConnection_system_connection_DPDSettingsType_services 
   max_width: number | null;
   service_code: string | null;
   service_name: string | null;
+  carrier_service_code: string | null;
   transit_days: number | null;
   transit_time: number | null;
   weight_unit: WeightUnitEnum | null;
   zones: GetSystemConnection_system_connection_DPDSettingsType_services_zones[];
+}
+
+export interface GetSystemConnection_system_connection_DPDSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
 }
 
 export interface GetSystemConnection_system_connection_DPDSettingsType {
@@ -1630,13 +1803,14 @@ export interface GetSystemConnection_system_connection_DPDSettingsType {
   test_mode: boolean;
   active: boolean;
   metadata: any | null;
+  config: any | null;
   capabilities: string[];
   delis_id: string | null;
   password: string | null;
   depot: string | null;
   account_country_code: string | null;
-  config: any | null;
   services: GetSystemConnection_system_connection_DPDSettingsType_services[] | null;
+  rate_sheet: GetSystemConnection_system_connection_DPDSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnection_system_connection_DPDHLSettingsType_services_zones {
@@ -1650,6 +1824,7 @@ export interface GetSystemConnection_system_connection_DPDHLSettingsType_service
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -1658,6 +1833,7 @@ export interface GetSystemConnection_system_connection_DPDHLSettingsType_service
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -1671,6 +1847,14 @@ export interface GetSystemConnection_system_connection_DPDHLSettingsType_service
   domicile: boolean | null;
   international: boolean | null;
   zones: GetSystemConnection_system_connection_DPDHLSettingsType_services_zones[];
+}
+
+export interface GetSystemConnection_system_connection_DPDHLSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
 }
 
 export interface GetSystemConnection_system_connection_DPDHLSettingsType {
@@ -1692,6 +1876,7 @@ export interface GetSystemConnection_system_connection_DPDHLSettingsType {
   account_number: string | null;
   config: any | null;
   services: GetSystemConnection_system_connection_DPDHLSettingsType_services[] | null;
+  rate_sheet: GetSystemConnection_system_connection_DPDHLSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnection_system_connection_EShipperSettingsType {
@@ -1786,6 +1971,7 @@ export interface GetSystemConnection_system_connection_GenericSettingsType_servi
   latitude: number | null;
   longitude: number | null;
   cities: string[] | null;
+  postal_codes: string[] | null;
   country_codes: CountryCodeEnum[] | null;
 }
 
@@ -1794,6 +1980,7 @@ export interface GetSystemConnection_system_connection_GenericSettingsType_servi
   active: boolean | null;
   service_name: string | null;
   service_code: string | null;
+  carrier_service_code: string | null;
   description: string | null;
   currency: CurrencyCodeEnum | null;
   transit_days: number | null;
@@ -1819,6 +2006,14 @@ export interface GetSystemConnection_system_connection_GenericSettingsType_label
   height: number | null;
 }
 
+export interface GetSystemConnection_system_connection_GenericSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
 export interface GetSystemConnection_system_connection_GenericSettingsType {
   __typename: "GenericSettingsType";
   id: string;
@@ -1830,11 +2025,12 @@ export interface GetSystemConnection_system_connection_GenericSettingsType {
   test_mode: boolean;
   active: boolean;
   metadata: any | null;
+  config: any | null;
   capabilities: string[];
   account_country_code: string | null;
   services: GetSystemConnection_system_connection_GenericSettingsType_services[] | null;
   label_template: GetSystemConnection_system_connection_GenericSettingsType_label_template | null;
-  config: any | null;
+  rate_sheet: GetSystemConnection_system_connection_GenericSettingsType_rate_sheet | null;
 }
 
 export interface GetSystemConnection_system_connection_GEODISSettingsType {
@@ -1963,6 +2159,29 @@ export interface GetSystemConnection_system_connection_SendleSettingsType {
   config: any | null;
 }
 
+export interface GetSystemConnection_system_connection_TGESettingsType {
+  __typename: "TGESettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  config: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  api_key: string | null;
+  toll_username: string | null;
+  toll_password: string | null;
+  my_toll_token: string | null;
+  my_toll_identity: string | null;
+  account_code: string | null;
+  sssc_count: number | null;
+  shipment_count: number | null;
+}
+
 export interface GetSystemConnection_system_connection_TNTSettingsType {
   __typename: "TNTSettingsType";
   id: string;
@@ -2048,7 +2267,7 @@ export interface GetSystemConnection_system_connection_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type GetSystemConnection_system_connection = GetSystemConnection_system_connection_AlliedExpressSettingsType | GetSystemConnection_system_connection_AmazonShippingSettingsType | GetSystemConnection_system_connection_AramexSettingsType | GetSystemConnection_system_connection_AsendiaUSSettingsType | GetSystemConnection_system_connection_AustraliaPostSettingsType | GetSystemConnection_system_connection_BoxKnightSettingsType | GetSystemConnection_system_connection_BelgianPostSettingsType | GetSystemConnection_system_connection_CanadaPostSettingsType | GetSystemConnection_system_connection_CanparSettingsType | GetSystemConnection_system_connection_ChronopostSettingsType | GetSystemConnection_system_connection_ColissimoSettingsType | GetSystemConnection_system_connection_DHLExpressSettingsType | GetSystemConnection_system_connection_DHLPolandSettingsType | GetSystemConnection_system_connection_DHLUniversalSettingsType | GetSystemConnection_system_connection_DicomSettingsType | GetSystemConnection_system_connection_DPDSettingsType | GetSystemConnection_system_connection_DPDHLSettingsType | GetSystemConnection_system_connection_EShipperSettingsType | GetSystemConnection_system_connection_EasyPostSettingsType | GetSystemConnection_system_connection_FedexSettingsType | GetSystemConnection_system_connection_FedexWSSettingsType | GetSystemConnection_system_connection_FreightcomSettingsType | GetSystemConnection_system_connection_GenericSettingsType | GetSystemConnection_system_connection_GEODISSettingsType | GetSystemConnection_system_connection_LaPosteSettingsType | GetSystemConnection_system_connection_Locate2uSettingsType | GetSystemConnection_system_connection_NationexSettingsType | GetSystemConnection_system_connection_PurolatorSettingsType | GetSystemConnection_system_connection_RoadieSettingsType | GetSystemConnection_system_connection_RoyalMailSettingsType | GetSystemConnection_system_connection_SendleSettingsType | GetSystemConnection_system_connection_TNTSettingsType | GetSystemConnection_system_connection_UPSSettingsType | GetSystemConnection_system_connection_USPSSettingsType | GetSystemConnection_system_connection_USPSInternationalSettingsType | GetSystemConnection_system_connection_Zoom2uSettingsType;
+export type GetSystemConnection_system_connection = GetSystemConnection_system_connection_AlliedExpressSettingsType | GetSystemConnection_system_connection_AlliedExpressLocalSettingsType | GetSystemConnection_system_connection_AmazonShippingSettingsType | GetSystemConnection_system_connection_AramexSettingsType | GetSystemConnection_system_connection_AsendiaUSSettingsType | GetSystemConnection_system_connection_AustraliaPostSettingsType | GetSystemConnection_system_connection_BoxKnightSettingsType | GetSystemConnection_system_connection_BelgianPostSettingsType | GetSystemConnection_system_connection_CanadaPostSettingsType | GetSystemConnection_system_connection_CanparSettingsType | GetSystemConnection_system_connection_ChronopostSettingsType | GetSystemConnection_system_connection_ColissimoSettingsType | GetSystemConnection_system_connection_DHLParcelDESettingsType | GetSystemConnection_system_connection_DHLExpressSettingsType | GetSystemConnection_system_connection_DHLPolandSettingsType | GetSystemConnection_system_connection_DHLUniversalSettingsType | GetSystemConnection_system_connection_DicomSettingsType | GetSystemConnection_system_connection_DPDSettingsType | GetSystemConnection_system_connection_DPDHLSettingsType | GetSystemConnection_system_connection_EShipperSettingsType | GetSystemConnection_system_connection_EasyPostSettingsType | GetSystemConnection_system_connection_FedexSettingsType | GetSystemConnection_system_connection_FedexWSSettingsType | GetSystemConnection_system_connection_FreightcomSettingsType | GetSystemConnection_system_connection_GenericSettingsType | GetSystemConnection_system_connection_GEODISSettingsType | GetSystemConnection_system_connection_LaPosteSettingsType | GetSystemConnection_system_connection_Locate2uSettingsType | GetSystemConnection_system_connection_NationexSettingsType | GetSystemConnection_system_connection_PurolatorSettingsType | GetSystemConnection_system_connection_RoadieSettingsType | GetSystemConnection_system_connection_RoyalMailSettingsType | GetSystemConnection_system_connection_SendleSettingsType | GetSystemConnection_system_connection_TGESettingsType | GetSystemConnection_system_connection_TNTSettingsType | GetSystemConnection_system_connection_UPSSettingsType | GetSystemConnection_system_connection_USPSSettingsType | GetSystemConnection_system_connection_USPSInternationalSettingsType | GetSystemConnection_system_connection_Zoom2uSettingsType;
 
 export interface GetSystemConnection {
   system_connection: GetSystemConnection_system_connection | null;
@@ -3025,6 +3244,7 @@ export enum CarrierNameEnum {
   roadie = "roadie",
   royalmail = "royalmail",
   sendle = "sendle",
+  tge = "tge",
   tnt = "tnt",
   ups = "ups",
   usps = "usps",
@@ -3183,6 +3403,7 @@ export interface CreateConnectionMutationInput {
   roadie?: RoadieSettingsInput | null;
   royalmail?: RoyalMailSettingsInput | null;
   sendle?: SendleSettingsInput | null;
+  tge?: TGESettingsInput | null;
   tnt?: TNTSettingsInput | null;
   ups?: UPSSettingsInput | null;
   usps?: USPSSettingsInput | null;
@@ -3330,8 +3551,8 @@ export interface CanadaPostSettingsInput {
   metadata?: any | null;
   username: string;
   password: string;
-  customer_number: string;
-  contract_id: string;
+  customer_number?: string | null;
+  contract_id?: string | null;
   carrier_id: string;
 }
 
@@ -3626,6 +3847,24 @@ export interface SendleSettingsInput {
 }
 
 // null
+export interface TGESettingsInput {
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username: string;
+  password: string;
+  api_key: string;
+  toll_username: string;
+  toll_password: string;
+  my_toll_token: string;
+  my_toll_identity: string;
+  account_code: string;
+  sssc_count: number;
+  shipment_count: number;
+  carrier_id: string;
+}
+
+// null
 export interface TNTSettingsInput {
   account_country_code?: string | null;
   active?: boolean | null;
@@ -3720,6 +3959,7 @@ export interface UpdateConnectionMutationInput {
   roadie?: UpdateRoadieSettingsInput | null;
   royalmail?: UpdateRoyalMailSettingsInput | null;
   sendle?: UpdateSendleSettingsInput | null;
+  tge?: UpdateTGESettingsInput | null;
   tnt?: UpdateTNTSettingsInput | null;
   ups?: UpdateUPSSettingsInput | null;
   usps?: UpdateUSPSSettingsInput | null;
@@ -4182,6 +4422,25 @@ export interface UpdateSendleSettingsInput {
   metadata?: any | null;
   sendle_id?: string | null;
   api_key?: string | null;
+  carrier_id?: string | null;
+}
+
+// null
+export interface UpdateTGESettingsInput {
+  id: string;
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username?: string | null;
+  password?: string | null;
+  api_key?: string | null;
+  toll_username?: string | null;
+  toll_password?: string | null;
+  my_toll_token?: string | null;
+  my_toll_identity?: string | null;
+  account_code?: string | null;
+  sssc_count?: number | null;
+  shipment_count?: number | null;
   carrier_id?: string | null;
 }
 

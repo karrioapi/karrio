@@ -23,7 +23,6 @@ class PackagingType(lib.StrEnum):
 
 
 class ConnectionConfig(lib.Enum):
-    call_id = lib.OptionEnum("call_id")
     channel = lib.OptionEnum("channel")
     server_url = lib.OptionEnum("server_url")
     text_color = lib.OptionEnum("text_color")

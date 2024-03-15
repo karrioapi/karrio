@@ -307,6 +307,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -330,6 +331,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -401,6 +403,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -424,6 +427,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -525,6 +529,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -548,6 +553,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -614,11 +620,13 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
         max_width
         service_code
         service_name
+        carrier_service_code
         transit_days
         transit_time
         weight_unit
         zones {
           cities
+          postal_codes
           country_codes
           label
           latitude
@@ -661,6 +669,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -684,6 +693,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -784,6 +794,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -807,6 +818,7 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -937,6 +949,27 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
       account_country_code
       config
     }
+    ... on TGESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      username
+      password
+      api_key
+      toll_username
+      toll_password
+      my_toll_token
+      my_toll_identity
+      account_code
+      sssc_count
+      shipment_count
+    }
     ... on TNTSettingsType {
       id
       carrier_id
@@ -1018,6 +1051,36 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
 export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!) {
   system_connection(id: $id) {
     __typename
+    ... on AlliedExpressSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+      service_type
+    }
+    ... on AlliedExpressLocalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+      service_type
+    }
     ... on AmazonShippingSettingsType {
       id
       carrier_id
@@ -1109,6 +1172,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1132,8 +1196,16 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
       }
     }
     ... on CanadaPostSettingsType {
@@ -1196,6 +1268,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1219,8 +1292,73 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DHLParcelDESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      customer_number
+      dhl_api_key
+      tracking_consumer_key
+      tracking_consumer_secret
+      config
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
       }
     }
     ... on DHLExpressSettingsType {
@@ -1245,8 +1383,9 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       display_name
       test_mode
       active
-      metadata
       capabilities
+      metadata
+      config
       username
       password
       account_number
@@ -1255,6 +1394,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1278,10 +1418,17 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
-      config
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
     }
     ... on DHLUniversalSettingsType {
       id
@@ -1318,12 +1465,12 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       test_mode
       active
       metadata
+      config
       capabilities
       delis_id
       password
       depot
       account_country_code
-      config
       services {
         active
         currency
@@ -1338,11 +1485,13 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
         max_width
         service_code
         service_name
+        carrier_service_code
         transit_days
         transit_time
         weight_unit
         zones {
           cities
+          postal_codes
           country_codes
           label
           latitude
@@ -1354,6 +1503,13 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
           transit_days
           transit_time
         }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
       }
     }
     ... on DPDHLSettingsType {
@@ -1378,6 +1534,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1401,8 +1558,16 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
       }
     }
     ... on EShipperSettingsType {
@@ -1486,6 +1651,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       test_mode
       active
       metadata
+      config
       capabilities
       account_country_code
       services {
@@ -1493,6 +1659,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
         active
         service_name
         service_code
+        carrier_service_code
         description
         currency
         transit_days
@@ -1516,6 +1683,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
           latitude
           longitude
           cities
+          postal_codes
           country_codes
         }
       }
@@ -1528,7 +1696,13 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
         width
         height
       }
-      config
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
     }
     ... on GEODISSettingsType {
       id
@@ -1640,6 +1814,27 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       account_country_code
       config
     }
+    ... on TGESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      username
+      password
+      api_key
+      toll_username
+      toll_password
+      my_toll_token
+      my_toll_identity
+      account_code
+      sssc_count
+      shipment_count
+    }
     ... on TNTSettingsType {
       id
       carrier_id
@@ -1716,8 +1911,7 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       api_key
     }
   }
-}
-`;
+}`;
 
 export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
   rate_sheet(id: $id) {
