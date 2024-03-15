@@ -16,8 +16,8 @@ class Settings(core.Settings):
     my_toll_token: str
     my_toll_identity: str
     account_code: str = None
-    sssc_count: int = 0
-    shipment_count: int = 0
+    sssc_count: int = None
+    shipment_count: int = None
 
     @property
     def carrier_name(self):

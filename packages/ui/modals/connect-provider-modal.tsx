@@ -12,6 +12,7 @@ import { CountryInput } from '../forms/country-input';
 import { useAppMode } from '@karrio/hooks/app-mode';
 import { Disclosure } from '@headlessui/react';
 import { Loading } from '../components/loader';
+import { TextAreaField } from '../components';
 
 type CarrierNameType = CarrierSettingsCarrierNameEnum | NoneEnum;
 type OperationType = {
@@ -91,7 +92,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
     dispatch({ name: property, value: value === 'none' || isNoneOrEmpty(value) ? null : value });
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<any>) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name: string = target.name;
@@ -551,6 +552,34 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("mws_auth_token").required}
                 />}
 
+                {field("toll_username").exists && <InputField label="TOLL username" value={payload.toll_username}
+                  name="toll_username"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("toll_username").required}
+                />}
+
+                {field("toll_password").exists && <InputField label="TOLL password" value={payload.toll_password}
+                  name="toll_password"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("toll_password").required}
+                />}
+
+                {field("my_toll_token").exists && <TextAreaField label="My TOLL token" value={payload.my_toll_token}
+                  name="my_toll_token"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("my_toll_token").required}
+                />}
+
+                {field("account_code").exists && <InputField label="Account code" value={payload.account_code}
+                  name="account_code"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("account_code").required}
+                />}
+
                 {field("lang").exists && <SelectField value={payload.lang}
                   label="Lang"
                   name="lang"
@@ -696,6 +725,113 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                             <InputField value={payload.config?.service_suffix || ""}
                               name="service_suffix"
                               label="Fixed service suffix"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"business_id" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.business_id || ""}
+                              name="business_id"
+                              label="Business ID"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SYSID" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SYSID || ""}
+                              name="SYSID"
+                              label="TOLL SYSID"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SHIP_GS1" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SHIP_GS1 || ""}
+                              name="SHIP_GS1"
+                              label="TOLL SHIP_GS1"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SHIP_range_start" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SHIP_range_start || ""}
+                              type="number"
+                              step={1}
+                              name="SHIP_range_start"
+                              label="TOLL SHIP range start"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SHIP_range_end" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SHIP_range_end || ""}
+                              type="number"
+                              step={1}
+                              name="SHIP_range_end"
+                              label="TOLL SHIP range end"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SSCC_GS1" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SSCC_GS1 || ""}
+                              name="SSCC_GS1"
+                              label="TOLL SSCC_GS1"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SSCC_range_start" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SSCC_range_start || ""}
+                              type="number"
+                              step={1}
+                              name="SSCC_range_start"
+                              label="TOLL SSCC range start"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SSCC_range_end" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SSCC_range_end || ""}
+                              type="number"
+                              step={1}
+                              name="SSCC_range_end"
+                              label="TOLL SSCC range end"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"channel" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.channel || ""}
+                              name="channel"
+                              label="Channel"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"freight_mode" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.freight_mode || ""}
+                              name="freight_mode"
+                              label="Channel"
+                              onChange={handleConfigChange}
+                              fieldClass="column is-6 mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"message_sender" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.message_sender || ""}
+                              name="message_sender"
+                              label="Channel"
                               onChange={handleConfigChange}
                               fieldClass="column is-6 mb-0"
                               className="is-small is-fullwidth"
@@ -863,6 +999,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Purolator]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true], ["user_token"]],
       [CarrierSettingsCarrierNameEnum.Royalmail]: [["carrier_id", true], ["client_id", true], ["client_secret", true]],
       [CarrierSettingsCarrierNameEnum.Sendle]: [["carrier_id", true], ["sendle_id", true], ["api_key", true], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.Tge]: [["carrier_id", true], ["username", true], ["password", true], ["api_key", true], ["toll_username", true], ["toll_password", true], ["account_code", true], ["my_toll_token", true], ["my_toll_identity", true]],
       [CarrierSettingsCarrierNameEnum.Tnt]: [["carrier_id", true], ["username", true], ["password", true], ["account_number"], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Ups]: [["carrier_id", true], ["client_id", true], ["client_secret", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Usps]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],

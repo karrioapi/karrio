@@ -72,9 +72,17 @@ def shipment_request(
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        shipment_count=settings.shipment_count,
         package_count=len(payload.parcels),
-        sssc_count=settings.sssc_count,
+        sssc_count=(
+            settings.sssc_count
+            if settings.sssc_count is not None
+            else lib.to_int(settings.connection_config.SSCC_range_start.state) or 0
+        ),
+        shipment_count=(
+            settings.shipment_count
+            if settings.shipment_count is not None
+            else lib.to_int(settings.connection_config.SHIP_range_start.state) or 0
+        ),
         SSCC_GS1=settings.connection_config.SSCC_GS1.state or "",
         SHIP_GS1=settings.connection_config.SHIP_GS1.state or "",
         initializer=provider_units.shipping_options_initializer,

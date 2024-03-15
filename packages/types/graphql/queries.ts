@@ -2266,6 +2266,27 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       account_country_code
       config
     }
+    ... on TGESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      username
+      password
+      api_key
+      toll_username
+      toll_password
+      my_toll_token
+      my_toll_identity
+      account_code
+      sssc_count
+      shipment_count
+    }
     ... on TNTSettingsType {
       id
       carrier_id
