@@ -2,7 +2,7 @@ name: karrio-build
 
 on:
   push:
-    branches: [ "main", "automated-build" ]
+    branches: [ "main" ]
 
 jobs:
   changes:

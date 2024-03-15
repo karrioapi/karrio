@@ -11939,12 +11939,12 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    | tge | TGE |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
     | ups | UPS |
     | tnt | TNT |
+    | tge | TGE |
     | sendle | Sendle |
     | royalmail | Royal Mail |
     | roadie | Roadie |
@@ -11984,11 +11984,6 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
-    ### TGE
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | tge_freight_service | X |
-
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12130,6 +12125,11 @@ tags:
     | tnt_express | EX |
     | tnt_economy_express | 48N |
     | tnt_global_express | 15N |
+
+    ### TGE
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | tge_freight_service | X |
 
     ### Sendle
     | Code         | Service Name |
