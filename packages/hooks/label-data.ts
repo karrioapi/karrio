@@ -434,7 +434,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
       const { rates, messages } = await mutation.fetchRates.mutateAsync(data as ShipmentType);
       updateShipment({ rates, messages } as Partial<ShipmentType>);
     } catch (error: any) {
-      updateShipment({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
+      updateShipment({ rates: [], messages: errorToMessages(error) });
     }
     loader.setLoading(false);
   });
@@ -455,7 +455,7 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
       !!action.redirect && router.push(`${basePath}/shipments/${id}`);
     } catch (error: any) {
       loader.setLoading(false);
-      updateShipment({ messages: errorToMessages(error) }, { manuallyUpdated: true });
+      updateShipment({ messages: errorToMessages(error) });
     }
     loader.setLoading(false);
   });

@@ -54,21 +54,32 @@ def _extract_details(
     # fmt: off
     shipment = lib.to_object(shipping.TransactionShipmentType, data)
     service = provider_units.ShippingService.map(shipment.serviceType)
+    pieceDocuments: typing.List[shipping.PackageDocuments] = sum(
+        [_.packageDocuments for _ in shipment.pieceResponses],
+        start=[],
+    )
+    documents = pieceDocuments if len(pieceDocuments) > 0 else shipment.shipmentDocuments
 
     tracking_number = shipment.masterTrackingNumber
-    invoices = [_ for _ in shipment.shipmentDocuments if "INVOICE" in _.contentType]
-    labels = [_ for _ in shipment.shipmentDocuments if "LABEL" in _.contentType]
+    invoices = [_ for _ in documents if "INVOICE" in _.contentType]
+    labels = [_ for _ in documents if "LABEL" in _.contentType]
 
     invoice_type = invoices[0].docType if len(invoices) > 0 else "PDF"
     invoice = (
-        lib.bundle_base64([_.encodedLabel for _ in invoices], invoice_type)
+        lib.bundle_base64(
+            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in invoices], 
+            invoice_type,
+        )
         if len(invoices) > 0
         else None
     )
 
     label_type = labels[0].docType if len(labels) > 0 else "PDF"
     label = (
-        lib.bundle_base64([_.encodedLabel for _ in labels], label_type)
+        lib.bundle_base64(
+            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in labels], 
+            label_type,
+        )
         if len(labels) > 0
         else None
     )

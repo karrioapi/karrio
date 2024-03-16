@@ -155,7 +155,7 @@ export default function CreateShipmentPage(pageProps: any) {
       if (orders.isLoading) return;
       if (templates.isLoading) return;
       if (workspace_config.query.isLoading) return;
-      if (shipment_id === 'new') return setInitialData();
+      if (shipment_id === 'new') return setTimeout(() => setInitialData(), 500) as any;
       if (shipment_id !== 'new' && Object.keys(shipment.recipient).length === 0) return;
 
       setReady(true);
