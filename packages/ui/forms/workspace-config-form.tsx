@@ -304,34 +304,6 @@ export const WorkspaceConfigForm: React.FC<WorkspaceConfigFormProps> = ({ pagePr
             </>}
           />
 
-          {/* EIN */}
-          <InputField name="customs_ein"
-            label="EIN"
-            wrapperClass="py-2"
-            disabled={!(user?.permissions || []).includes("manage_team")}
-            className="is-small"
-            controlClass="is-expanded"
-            fieldClass={`column mb-0 p-0 ${(payload.customs_ein !== workspace_config?.customs_ein) ? 'is-12 is-grouped' : 'is-10'}`}
-            defaultValue={payload?.customs_ein || ""}
-            onChange={onChange}
-            addonRight={<>
-              {(payload.customs_ein !== workspace_config?.customs_ein) &&
-                <div className="buttons">
-                  <button
-                    onClick={() => dispatch({ name: "customs_ein", value: workspace_config!.customs_ein })}
-                    className="button is-small is-default">
-                    cancel
-                  </button>
-                  <button
-
-                    onClick={() => mutation.updateWorkspaceConfig.mutateAsync({ customs_ein: payload.customs_ein })}
-                    className={`button is-small is-success ${mutation.updateWorkspaceConfig.isLoading ? 'is-loading' : ''}`}>
-                    save
-                  </button>
-                </div>}
-            </>}
-          />
-
           {/* EEL/PFC */}
           <InputField name="customs_eel_pfc"
             label="EEL/PFC"

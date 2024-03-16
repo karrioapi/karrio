@@ -2020,18 +2020,6 @@
             "deprecationReason": null
           },
           {
-            "name": "customs_ein",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "customs_eel_pfc",
             "description": null,
             "args": [],
@@ -30652,16 +30640,6 @@
           },
           {
             "name": "customs_aes",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "customs_ein",
             "description": null,
             "type": {
               "kind": "SCALAR",

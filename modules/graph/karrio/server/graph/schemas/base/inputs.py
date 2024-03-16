@@ -94,7 +94,6 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     federal_tax_id: typing.Optional[str] = strawberry.UNSET
 
     customs_aes: typing.Optional[str] = strawberry.UNSET
-    customs_ein: typing.Optional[str] = strawberry.UNSET
     customs_eel_pfc: typing.Optional[str] = strawberry.UNSET
     customs_eori_number: typing.Optional[str] = strawberry.UNSET
     customs_license_number: typing.Optional[str] = strawberry.UNSET

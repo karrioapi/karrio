@@ -5037,7 +5037,6 @@ export interface GetWorkspaceConfig_workspace_config {
   federal_tax_id: string | null;
   default_label_type: LabelTypeEnum | null;
   customs_aes: string | null;
-  customs_ein: string | null;
   customs_eel_pfc: string | null;
   customs_license_number: string | null;
   customs_certificate_number: string | null;
@@ -5068,7 +5067,6 @@ export interface UpdateWorkspaceConfig_update_workspace_config_workspace_config 
   federal_tax_id: string | null;
   default_label_type: LabelTypeEnum | null;
   customs_aes: string | null;
-  customs_ein: string | null;
   customs_eel_pfc: string | null;
   customs_license_number: string | null;
   customs_certificate_number: string | null;
@@ -7327,7 +7325,6 @@ export interface WorkspaceConfigMutationInput {
   state_tax_id?: string | null;
   federal_tax_id?: string | null;
   customs_aes?: string | null;
-  customs_ein?: string | null;
   customs_eel_pfc?: string | null;
   customs_eori_number?: string | null;
   customs_license_number?: string | null;
