@@ -9,6 +9,7 @@ class CarrierFeatures(lib.StrEnum):
     pickup = "pickup"
     address = "address"
     upload = "upload"
+    manifest = "manifest"
 
 
 DEFAULT_FEATURES = [
