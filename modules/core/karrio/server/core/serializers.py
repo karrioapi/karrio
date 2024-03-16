@@ -510,7 +510,9 @@ class CustomsData(serializers.Serializer):
         allow_null=True,
         allow_blank=True,
         validators=[validators.valid_date_format("invoice_date")],
-        help_text="The invoice date",
+        help_text="""The invoice date.<br/>
+        Date Format: `YYYY-MM-DD`
+        """,
     )
     commercial_invoice = serializers.BooleanField(
         required=False,

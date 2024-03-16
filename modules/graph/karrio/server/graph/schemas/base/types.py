@@ -480,7 +480,7 @@ class CustomsType:
     content_description: typing.Optional[str] = strawberry.UNSET
     incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
     invoice: typing.Optional[str] = strawberry.UNSET
-    invoice_date: typing.Optional[datetime.date] = strawberry.UNSET
+    invoice_date: typing.Optional[str] = strawberry.UNSET
     signer: typing.Optional[str] = strawberry.UNSET
     created_at: typing.Optional[datetime.datetime] = strawberry.UNSET
     updated_at: typing.Optional[datetime.datetime] = strawberry.UNSET
