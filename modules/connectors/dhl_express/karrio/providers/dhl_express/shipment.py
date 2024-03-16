@@ -1,3 +1,4 @@
+from karrio.schemas.fedex.rating_request import NumberType
 import karrio.schemas.dhl_express.ship_val_global_req_10_0 as dhl
 import karrio.schemas.dhl_express.ship_val_global_res_10_0 as dhl_res
 import karrio.schemas.dhl_express.datatypes_global_v10 as dhl_global
@@ -156,7 +157,19 @@ def shipment_request(
             StreetName=recipient.street_name,
             BuildingName=None,
             StreetNumber=recipient.street_number,
-            RegistrationNumbers=None,
+            RegistrationNumbers=(
+                dhl.RegistrationNumbers(
+                    RegistrationNumber=[
+                        dhl.RegistrationNumber(
+                            Number=recipient.tax_id,
+                            NumberTypeCode="VAT",
+                            NumberIssuerCountryCode=None,
+                        )
+                    ]
+                )
+                if recipient.tax_id is not None
+                else None
+            ),
             BusinessPartyTypeCode=None,
         ),
         Commodity=(
@@ -189,7 +202,7 @@ def shipment_request(
                         FilingType=dhl_global.FilingType.AES_4.value,
                         FTSR=None,
                         ITN=None,
-                        AES4EIN=customs.options.aes.state
+                        AES4EIN=customs.options.aes.state,
                     )
                     if customs.options.aes.state is not None
                     else None
@@ -223,7 +236,7 @@ def shipment_request(
                 DestinationPort=None,
                 TermsOfPayment=None,
                 PayerGSTVAT=(
-                    customs.options.vat_registration_number.state 
+                    customs.options.vat_registration_number.state
                     or customs.duty_billing_address.state_tax_id
                 ),
                 SignatureImage=None,
@@ -395,7 +408,19 @@ def shipment_request(
             StreetName=shipper.street_name,
             BuildingName=None,
             StreetNumber=shipper.street_number,
-            RegistrationNumbers=None,
+            RegistrationNumbers=(
+                dhl.RegistrationNumbers(
+                    RegistrationNumber=[
+                        dhl.RegistrationNumber(
+                            Number=shipper.tax_id,
+                            NumberTypeCode="VAT",
+                            NumberIssuerCountryCode=None,
+                        )
+                    ]
+                )
+                if shipper.tax_id is not None
+                else None
+            ),
             BusinessPartyTypeCode=None,
             EORI_No=customs.options.eori_number.state,
         ),
