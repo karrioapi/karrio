@@ -17,6 +17,7 @@ import { useCarrierConnections } from '@karrio/hooks/user-connection';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
 import { CheckBoxField } from '@karrio/ui/components/checkbox-field';
 import { TextAreaField } from '@karrio/ui/components/textarea-field';
+import { useWorkspaceConfig } from '@karrio/hooks/workspace-config';
 import { useConnections } from '@karrio/hooks/carrier-connections';
 import { CarrierImage } from '@karrio/ui/components/carrier-image';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
@@ -35,7 +36,6 @@ import React, { useEffect, useState } from 'react';
 import { useOrders } from '@karrio/hooks/order';
 import { Disclosure } from '@headlessui/react';
 import Head from 'next/head';
-import { useWorkspaceConfig } from '@karrio/hooks/workspace-config';
 
 export { getServerSideProps } from "@/context/main";
 
@@ -913,8 +913,8 @@ export default function CreateLabelPage(pageProps: any) {
                     <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">SHIPPING SERVICES</span>
                     <div className="is-vcentered">
                       <button className="button is-small is-info is-text is-inverted p-1"
-                        onClick={() => mutation.fetchRates()}
-                        disabled={requireInfoForRating(shipment)}>
+                        onClick={() => mutation.fetchRates.mutateAsync()}
+                        disabled={requireInfoForRating(shipment) || mutation.fetchRates.isLoading}>
                         Refresh rates
                       </button>
                     </div>
@@ -989,10 +989,10 @@ export default function CreateLabelPage(pageProps: any) {
                   </div>
 
                   <ButtonField
-                    onClick={() => mutation.buyLabel(selected_rate as any)}
+                    onClick={() => mutation.buyLabel.mutateAsync(selected_rate as any)}
                     fieldClass="has-text-centered py-1 px-6 m-0"
                     className="is-success is-fullwidth"
-                    disabled={(shipment.rates || []).filter(r => r.id === selected_rate?.id).length === 0 || query.isFetching}>
+                    disabled={(shipment.rates || []).filter(r => r.id === selected_rate?.id).length === 0 || mutation.buyLabel.isLoading || query.isFetching}>
                     <span className="px-6">Buy shipping label</span>
                   </ButtonField>
 
@@ -1000,10 +1000,10 @@ export default function CreateLabelPage(pageProps: any) {
 
                   {!(!!shipment.id && shipment.id !== 'new') &&
                     <ButtonField
-                      onClick={() => mutation.saveDraft()}
+                      onClick={() => mutation.saveDraft.mutateAsync({})}
                       fieldClass="has-text-centered py-1 px-6 m-0"
                       className="is-default is-fullwidth"
-                      disabled={query.isFetching}>
+                      disabled={query.isFetching || mutation.saveDraft.isLoading}>
                       <span className="px-6">Save draft</span>
                     </ButtonField>}
 

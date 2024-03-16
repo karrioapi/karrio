@@ -87,7 +87,7 @@ export interface get_customs_info_templates_customs_templates_edges_node_customs
   content_description: string | null;
   duty: get_customs_info_templates_customs_templates_edges_node_customs_duty | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   certify: boolean | null;
   options: any | null;
@@ -164,7 +164,7 @@ export interface get_default_templates_default_templates_default_customs_customs
   content_description: string | null;
   duty: get_default_templates_default_templates_default_customs_customs_duty | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   certify: boolean | null;
   options: any | null;
@@ -531,7 +531,7 @@ export interface get_shipment_shipment_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_shipment_shipment_customs_duty | null;
   options: any | null;
@@ -861,7 +861,7 @@ export interface get_shipments_shipments_edges_node_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_shipments_shipments_edges_node_customs_duty | null;
   options: any | null;
@@ -1130,7 +1130,7 @@ export interface get_shipment_data_shipment_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_shipment_data_shipment_customs_duty | null;
   options: any | null;
@@ -1349,7 +1349,7 @@ export interface partial_shipment_update_partial_shipment_update_shipment_custom
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: partial_shipment_update_partial_shipment_update_shipment_customs_duty | null;
   options: any | null;
@@ -3719,7 +3719,7 @@ export interface get_order_order_shipments_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_order_order_shipments_customs_duty | null;
   options: any | null;
@@ -4195,7 +4195,7 @@ export interface get_orders_orders_edges_node_shipments_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_orders_orders_edges_node_shipments_customs_duty | null;
   options: any | null;

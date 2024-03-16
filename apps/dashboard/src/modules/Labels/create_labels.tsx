@@ -1,16 +1,19 @@
-import { AddressType, CURRENCY_OPTIONS, CommodityType, MetadataObjectTypeEnum, NotificationType, OrderType, PaidByEnum, ShipmentType } from '@karrio/types';
-import { createShipmentFromOrders, formatAddressLocationShort, formatRef, formatWeight, isNone, isNoneOrEmpty, p, useLocation } from '@karrio/lib';
+import { AddressType, CURRENCY_OPTIONS, CommodityType, CustomsType, DEFAULT_CUSTOMS_CONTENT, MetadataObjectTypeEnum, NotificationType, OrderType, PaidByEnum, ShipmentType } from '@karrio/types';
+import { createShipmentFromOrders, formatAddressLocationShort, formatRef, formatWeight, getShipmentCommodities, isNone, isNoneOrEmpty, p, useLocation } from '@karrio/lib';
 import { CheckBoxField, Dropdown, InputField, SelectField, Spinner, TextAreaField } from '@karrio/ui/components';
 import { CommodityEditModalProvider, CommodityStateContext } from '@karrio/ui/modals/commodity-edit-modal';
+import { AddressModalEditor, CustomsModalEditor, ParcelModalEditor } from '@karrio/ui/modals/form-modals';
 import { MetadataEditor, MetadataEditorContext } from '@karrio/ui/forms/metadata-editor';
-import { AddressModalEditor, ParcelModalEditor } from '@karrio/ui/modals/form-modals';
+import { CustomsInfoDescription } from '@karrio/ui/components/customs-info-description';
 import { GoogleGeocodingScript } from '@karrio/ui/components/google-geocoding-script';
+import { CommodityDescription } from '@karrio/ui/components/commodity-description';
 import { MessagesDescription } from '@karrio/ui/components/messages-description';
 import { AddressDescription } from '@karrio/ui/components/address-description';
 import { useSystemCarrierConnections } from '@karrio/hooks/admin/connections';
 import { ParcelDescription } from '@karrio/ui/components/parcel-description';
 import { CommoditySummary } from '@karrio/ui/components/commodity-summary';
 import { RateDescription } from '@karrio/ui/components/rate-description';
+import { LineItemSelector } from '@karrio/ui/forms/line-item-selector';
 import { useCarrierConnections } from '@karrio/hooks/user-connection';
 import { useDefaultTemplates } from '@karrio/hooks/default-template';
 import { useBatchShipmentForm } from '@karrio/hooks/bulk-shipments';
@@ -40,6 +43,8 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function Page(pageProps: any) {
+  const { ORDERS_MANAGEMENT } = pageProps?.metadata;
+
   const Component: React.FC = () => {
 
     // General context data         -----------------------------------------------------------
@@ -139,7 +144,7 @@ export default function Page(pageProps: any) {
     const handleSubmit = async (e: React.FormEvent) => {
       e.preventDefault();
       try {
-        await mutation.buyLabels();
+        await mutation.buyLabels.mutateAsync();
         router.push(`${basePath}${location.pathname.replace(basePath, '').replace('create_labels', '')}`);
       } catch (message: any) {
         notifier.notify({ type: NotificationType.error, message });
@@ -163,6 +168,21 @@ export default function Page(pageProps: any) {
         shipment.parcels.length === 0 ||
         shipmentsQuery.query.isFetching === true
       );
+    };
+    const isInternational = (shipment: ShipmentType) => {
+      return (
+        shipment.recipient.country_code !== undefined &&
+        shipment.shipper.country_code !== undefined &&
+        shipment.recipient.country_code !== shipment.shipper.country_code
+      );
+    };
+    const isPackedItem = (cdt: CommodityType, shipment: ShipmentType) => {
+      const item = getShipmentCommodities(shipment).find(item => (
+        (!!cdt.parent_id && cdt.parent_id === item.parent_id)
+        || (!!cdt.hs_code && cdt.hs_code === cdt.hs_code)
+        || (!!cdt.sku && cdt.sku === item.sku)
+      ));
+      return !!item;
     };
     const getCarrier = (rate: ShipmentType['rates'][0]) => !!rate && (
       user_connections?.find(_ => _.id === rate.meta.carrier_connection_id || _.carrier_id === rate.carrier_id)
@@ -251,7 +271,7 @@ export default function Page(pageProps: any) {
           </div>
           <div>
             <button type="button" className="button is-small is-success" onClick={handleSubmit}
-              disabled={loader.loading || (batch?.shipments || []).length === 0 || (batch?.shipments || []).filter(_ => (_.rates || []).length === 0).length > 0}>
+              disabled={loader.loading || mutation.buyLabels.isLoading || (batch?.shipments || []).length === 0 || (batch?.shipments || []).filter(_ => (_.rates || []).length === 0).length > 0}>
               <span>Create labels</span>
             </button>
           </div>
@@ -999,6 +1019,140 @@ export default function Page(pageProps: any) {
                               </div>
 
 
+
+                              {/* Customs declaration section */}
+                              {isInternational(shipment) && <div className="card px-0 py-3 mt-5">
+
+                                <header className="px-3 is-flex is-justify-content-space-between">
+                                  <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">CUSTOMS DECLARATION</span>
+                                  <div className="is-vcentered">
+                                    <CustomsModalEditor
+                                      header='Edit customs info'
+                                      shipment={shipment}
+                                      customs={shipment?.customs as any || {
+                                        ...DEFAULT_CUSTOMS_CONTENT,
+                                        incoterm: shipment.payment?.paid_by == PaidByEnum.sender ? 'DDP' : 'DDU',
+                                        duty: {
+                                          ...DEFAULT_CUSTOMS_CONTENT.duty,
+                                          currency: shipment.options?.currency,
+                                          paid_by: shipment.payment?.paid_by,
+                                          account_number: shipment.payment?.account_number,
+                                          declared_value: shipment.options?.declared_value,
+                                        },
+                                        duty_billing_address: shipment.billing_address,
+                                        commodities: getShipmentCommodities(shipment),
+                                        options: workspace_config.customsOptions,
+                                      }}
+                                      onSubmit={mutation.updateCustoms(shipment_index)(shipment?.customs?.id)}
+                                      trigger={
+                                        <button className="button is-small is-info is-text is-inverted p-1">
+                                          Edit customs info
+                                        </button>
+                                      }
+                                    />
+                                  </div>
+                                </header>
+
+                                <hr className='my-1' style={{ height: '1px' }} />
+
+                                <div className="p-3">
+
+                                  {!isNone(shipment.customs) && <>
+                                    <CustomsInfoDescription customs={shipment.customs as CustomsType} />
+
+                                    {/* Commodities section */}
+                                    <span className="is-size-7 mt-4 has-text-weight-semibold">COMMODITIES</span>
+
+                                    {(shipment.customs!.commodities || []).map((commodity, index) => <React.Fragment key={index + "customs-info"}>
+                                      <hr className="mt-1 mb-2" style={{ height: '1px' }} />
+                                      <div className="is-flex is-justify-content-space-between is-vcentered">
+                                        <CommodityDescription className="is-flex-grow-1 pr-2" commodity={commodity} prefix={`${index + 1} - `} />
+                                        <div>
+                                          <CommodityStateContext.Consumer>{({ editCommodity }) => (
+                                            <button type="button" className="button is-small is-white"
+                                              disabled={isPackedItem(commodity, shipment)}
+                                              onClick={() => editCommodity({
+                                                commodity,
+                                                onSubmit: _ => mutation.updateCommodity(shipment_index)(index, shipment.customs?.id)(_)
+                                              })}>
+                                              <span className="icon is-small"><i className="fas fa-pen"></i></span>
+                                            </button>
+                                          )}</CommodityStateContext.Consumer>
+                                          <button type="button" className="button is-small is-white"
+                                            disabled={shipment.customs!.commodities.length === 1}
+                                            onClick={() => mutation.removeCommodity(shipment_index)(index, shipment.customs?.id)(commodity.id)}>
+                                            <span className="icon is-small"><i className="fas fa-times"></i></span>
+                                          </button>
+                                        </div>
+                                      </div>
+                                    </React.Fragment>)}
+
+                                    {(shipment.customs!.commodities || []).length === 0 && <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                                      You need provide commodity items for customs purpose. (required)
+                                    </div>}
+
+                                    <div className="is-flex is-justify-content-space-between mt-4">
+                                      <CommodityStateContext.Consumer>{({ editCommodity }) => (
+                                        <button type="button" className="button is-small is-info is-inverted p-2"
+                                          onClick={() => editCommodity({
+                                            onSubmit: _ => mutation.addCommodities(shipment_index)([_] as any)
+                                          })}>
+                                          <span className="icon is-small">
+                                            <i className="fas fa-plus"></i>
+                                          </span>
+                                          <span>add commodity</span>
+                                        </button>
+                                      )}</CommodityStateContext.Consumer>
+                                      {ORDERS_MANAGEMENT && <LineItemSelector
+                                        title='Add commodities'
+                                        shipment={shipment}
+                                        onChange={_ => mutation.addCommodities(_ as any)}
+                                      />}
+                                    </div>
+
+                                    {/* Duty Billing address section */}
+                                    {(shipment.customs!.duty_billing_address || shipment.customs!.duty?.paid_by === PaidByEnum.third_party) && <>
+                                      <hr className='my-1' style={{ height: '1px' }} />
+
+                                      <div className="py-3">
+                                        <header className="is-flex is-justify-content-space-between">
+                                          <label className="label is-capitalized" style={{ fontSize: '0.8em' }}>Billing address</label>
+                                          <div className="is-vcentered">
+                                            <AddressModalEditor
+                                              address={shipment.customs?.duty_billing_address || {} as AddressType}
+                                              onSubmit={(address) => mutation.updateShipment(shipment_index)({
+                                                customs: { ...shipment!.customs, duty_billing_address: address } as any
+                                              })}
+                                              trigger={
+                                                <button className="button is-small is-info is-text is-inverted p-1">
+                                                  Edit duty billing address
+                                                </button>
+                                              }
+                                            />
+                                          </div>
+                                        </header>
+
+                                        {shipment!.customs!.duty_billing_address &&
+                                          <AddressDescription address={shipment!.customs!.duty_billing_address as any} />}
+
+                                        {isNone(shipment!.customs!.duty_billing_address) && <div className="notification is-default p-2 is-size-7">
+                                          Add customs duty billing address. (optional)
+                                        </div>}
+
+                                      </div>
+                                    </>}
+                                  </>}
+
+                                  {isNone(shipment.customs) && <div className="notification is-warning is-light my-2 py-2 px-4 is-size-7">
+                                    Looks like you have an international shipment.
+                                    You may need to provide a customs declaration unless you are shipping documents only.
+                                  </div>}
+
+                                </div>
+
+                              </div>}
+
+
                               {/* Shipment Summary */}
                               <CommoditySummary
                                 shipment={shipment}
@@ -1071,8 +1225,8 @@ export default function Page(pageProps: any) {
                                 </div>
                                 <div className="is-vcentered">
                                   <button className="button is-small is-info is-text is-inverted p-1"
-                                    onClick={() => mutation.fetchRates(shipment_index)()}
-                                    disabled={requireInfoForRating(shipment)}>
+                                    onClick={() => mutation.fetchRates.mutateAsync(shipment_index)}
+                                    disabled={requireInfoForRating(shipment) || mutation.fetchRates.isLoading}>
                                     Refresh rates
                                   </button>
                                 </div>
