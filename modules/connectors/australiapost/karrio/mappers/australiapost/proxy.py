@@ -1,6 +1,5 @@
 """Karrio Australia Post client proxy."""
 
-import urllib.parse
 import karrio.lib as lib
 import karrio.api.proxy as proxy
 import karrio.mappers.australiapost.settings as provider_settings
@@ -122,3 +121,31 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
+
+    def create_manifest(self, request: lib.Serializable) -> lib.Deserializable:
+        ctx = {}
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipping/v1/orders",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Account-Number": self.settings.account_number,
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
+
+        order_id = lib.to_dict(response).get("order", {}).get("order_id")
+
+        if order_id is not None:
+            ctx.update(
+                manifest=lib.request(
+                    url=f"{self.settings.server_url}/shipping/v1/accounts/{self.settings.account_number}/orders/{order_id}/summary",
+                    decoder=lib.encode_base64,
+                    method="GET",
+                )
+            )
+
+        return lib.Deserializable(response, lib.to_dict, ctx=ctx)

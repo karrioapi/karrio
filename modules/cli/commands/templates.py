@@ -1628,7 +1628,7 @@ class Test{{compact_name}}Manifest(unittest.TestCase):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
             mock.return_value = ManifestResponse
             parsed_response = (
-                karrio.Manifest.fetch(self.ManifestRequest)
+                karrio.Manifest.create(self.ManifestRequest)
                 .from_(gateway)
                 .parse()
             )

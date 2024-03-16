@@ -1,4 +1,3 @@
-
 from karrio.providers.australiapost.utils import Settings
 from karrio.providers.australiapost.rate import parse_rate_response, rate_request
 from karrio.providers.australiapost.shipment import (
@@ -10,4 +9,8 @@ from karrio.providers.australiapost.shipment import (
 from karrio.providers.australiapost.tracking import (
     parse_tracking_response,
     tracking_request,
+)
+from karrio.providers.australiapost.manifest import (
+    parse_manifest_response,
+    manifest_request,
 )

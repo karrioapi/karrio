@@ -76,6 +76,7 @@ Attributes:
     gateway (GatewayInitializer): Gateway initializer singleton instance
 
 """
+
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
 from karrio.api.gateway import GatewayInitializer
@@ -88,6 +89,7 @@ Shipment = interface.Shipment
 Tracking = interface.Tracking
 Address = interface.Address
 Document = interface.Document
+Manifest = interface.Manifest
 
 
 __all__ = [
@@ -98,4 +100,5 @@ __all__ = [
     "Tracking",
     "Address",
     "Document",
+    "Manifest",
 ]

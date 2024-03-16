@@ -1,0 +1,68 @@
+{
+    "order": {
+        "order_id": "AP0000002422",
+        "order_reference": "My order reference",
+        "order_creation_date": "2014-08-27T13:55:47+10:00",
+        "order_summary": {
+            "total_cost": 13.29,
+            "total_cost_ex_gst": 12.08,
+            "total_gst": 1.21,
+            "status": "Initiated",
+            "tracking_summary": {
+                "Sealed": 1
+            },
+            "number_of_shipments": 1,
+            "number_of_items": 1,
+            "dangerous_goods_included": false,
+            "total_weight": 5.000,
+            "shipping_methods": {
+                "3H03": 1
+            }
+        },
+        "shipments": [
+            {
+                "shipment_id": "569b9a3accdc791c4ba34d6f",
+                "shipment_reference": "XYZ-001-01",
+                "shipment_creation_date": "2014-08-27T13:55:47+10:00",
+                "email_tracking_enabled": false,
+                "items": [
+                    {
+                        "weight": 5.000,
+                        "authority_to_leave": true,
+                        "safe_drop_enabled": true,
+                        "allow_partial_delivery": true,
+                        "item_id": "NfMK1UnLtDcAAAFyJ1IF297V",
+                        "item_reference": "the reference",
+                        "tracking_details": {
+                            "article_id": "2JD541813301000870900",
+                            "consignment_id": "2JD5418133",
+                            "barcode_id": "0199312650999998912JD541813301000870900|4200221|8008200703142616"
+                        },
+                        "product_id": "3H03",
+                        "item_summary": {
+                            "total_cost": 13.29,
+                            "total_cost_ex_gst": 12.08,
+                            "total_gst": 1.21,
+                            "status": "Sealed"
+                        }
+                    }
+                ],
+                "shipment_summary": {
+                    "total_cost": 13.29,
+                    "total_cost_ex_gst": 12.08,
+                    "fuel_surcharge": 0.00,
+                    "total_gst": 1.21,
+                    "status": "Sealed",
+                    "tracking_summary": {
+                        "Sealed": 1
+                    },
+                    "number_of_items": 1
+                },
+                "movement_type": "DESPATCH",
+                "charge_to_account": "0000000000",
+                "shipment_modified_date": "2014-08-27T13:55:47+10:00"
+            }
+        ],
+        "payment_method": "CHARGE_TO_ACCOUNT"
+    }
+}
