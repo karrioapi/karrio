@@ -41,3 +41,27 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, provider_utils.parse_response, request.ctx)
+
+    def create_manifest(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        responses = lib.run_asynchronously(
+            lambda _: lib.request(
+                url=f"{self.settings.server_url}/printmanifest",
+                data=_,
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "x-mytoll-identity": self.settings.my_toll_identity,
+                    "x-mytoll-token": self.settings.my_toll_token,
+                    "x-api-key": self.settings.api_key,
+                    "Content-Type": "application/json",
+                    "accept": "*/*",
+                },
+            ),
+            request.serialize(),
+        )
+
+        return lib.Deserializable(
+            responses,
+            lambda __: [provider_utils.parse_response(_) for _ in __],
+        )
