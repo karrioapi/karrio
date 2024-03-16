@@ -8,6 +8,7 @@ gateway = karrio.gateway["canadapost"].create(
         customer_number="2004381",
         contract_id="42708517",
         config={
+            "transmit_shipment_by_default": True,
             "cost_center": "karrio-app",
             "shipping_services": [
                 _.name

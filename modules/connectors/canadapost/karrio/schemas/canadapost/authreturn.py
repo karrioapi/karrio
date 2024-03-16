@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Jul 14 15:39:43 2021 by generateDS.py version 2.39.2.
-# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sat Mar 16 02:19:28 2024 by generateDS.py version 2.43.3.
+# Python 3.12.2 (main, Feb 28 2024, 21:12:07) [GCC 11.4.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './canadapost_lib/authreturn.py')
+#   ('-o', './karrio/schemas/canadapost/authreturn.py')
 #
 # Command line arguments:
 #   ./schemas/authreturn.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./canadapost_lib/authreturn.py" ./schemas/authreturn.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/canadapost/authreturn.py" ./schemas/authreturn.xsd
 #
 # Current working directory (os.getcwd()):
 #   canadapost
@@ -30,14 +30,12 @@ import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
-try:
-    from lxml import etree as etree_
-except ModulenotfoundExp_ :
-    from xml.etree import ElementTree as etree_
+from lxml import etree as etree_
 
 
 Validate_simpletypes_ = True
 SaveElementTreeNode = True
+TagNamePrefix = ""
 if sys.version_info.major == 2:
     BaseStrType_ = basestring
 else:
@@ -192,6 +190,33 @@ except ModulenotfoundExp_ as exp:
                 return self.__name
             def dst(self, dt):
                 return None
+        def __str__(self):
+            settings = {
+                'str_pretty_print': True,
+                'str_indent_level': 0,
+                'str_namespaceprefix': '',
+                'str_name': self.__class__.__name__,
+                'str_namespacedefs': '',
+            }
+            for n in settings:
+                if hasattr(self, n):
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
+            output = StringIO()
+            self.export(
+                output,
+                settings['str_indent_level'],
+                pretty_print=settings['str_pretty_print'],
+                namespaceprefix_=settings['str_namespaceprefix'],
+                name_=settings['str_name'],
+                namespacedef_=settings['str_namespacedefs']
+            )
+            strval = output.getvalue()
+            output.close()
+            return strval
         def gds_format_string(self, input_data, input_name=''):
             return input_data
         def gds_parse_string(self, input_data, node=None, input_name=''):
@@ -202,11 +227,11 @@ except ModulenotfoundExp_ as exp:
             else:
                 return input_data
         def gds_format_base64(self, input_data, input_name=''):
-            return base64.b64encode(input_data)
+            return base64.b64encode(input_data).decode('ascii')
         def gds_validate_base64(self, input_data, node=None, input_name=''):
             return input_data
         def gds_format_integer(self, input_data, input_name=''):
-            return '%d' % input_data
+            return '%d' % int(input_data)
         def gds_parse_integer(self, input_data, node=None, input_name=''):
             try:
                 ival = int(input_data)
@@ -233,7 +258,11 @@ except ModulenotfoundExp_ as exp:
                     raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
-            return ('%.15f' % input_data).rstrip('0')
+            value = ('%.15f' % float(input_data)).rstrip('0')
+            if value.endswith('.'):
+                value += '0'
+            return value
+    
         def gds_parse_float(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -322,6 +351,7 @@ except ModulenotfoundExp_ as exp:
         def gds_format_boolean(self, input_data, input_name=''):
             return ('%s' % input_data).lower()
         def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
             if input_data in ('true', '1'):
                 bval = True
             elif input_data in ('false', '0'):
@@ -501,6 +531,7 @@ except ModulenotfoundExp_ as exp:
             # The target value must match at least one of the patterns
             # in order for the test to succeed.
             found1 = True
+            target = str(target)
             for patterns1 in patterns:
                 found2 = False
                 for patterns2 in patterns1:
@@ -746,6 +777,7 @@ def quote_attrib(inStr):
     s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('<', '&lt;')
     s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
     if '"' in s1:
         if "'" in s1:
             s1 = '"%s"' % s1.replace('"', "&quot;")
@@ -875,7 +907,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element, mapping_=None, nsmap_=None):
+    def to_etree(self, element, mapping_=None, reverse_mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -895,7 +927,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self, mapping_=None, nsmap_=None):
+    def to_etree_simple(self, mapping_=None, reverse_mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -968,11 +1000,10 @@ def _cast(typ, value):
         return value
     return typ(value)
 
-#
-# Data representation classes.
-#
 
-
+#
+# Start enum classes
+#
 class RelType(str, Enum):
     RETURN_LABEL='returnLabel'
 
@@ -994,6 +1025,9 @@ class output_formatType(str, Enum):
     _3_X_5='3x5'
 
 
+#
+# Start data representation classes
+#
 class AuthorizedReturnInfoType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
@@ -1055,7 +1089,7 @@ class AuthorizedReturnInfoType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on TrackingPINType' % {"value" : value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.tracking_pin is not None or
             self.public_key_info is not None or
@@ -1080,7 +1114,7 @@ class AuthorizedReturnInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AuthorizedReturnInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AuthorizedReturnInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1182,7 +1216,7 @@ class PublicKeyInfoType(GeneratedsSuper):
         return self.url
     def set_url(self, url):
         self.url = url
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.expiry_date is not None or
             self.url is not None
@@ -1206,7 +1240,7 @@ class PublicKeyInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PublicKeyInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PublicKeyInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1346,7 +1380,7 @@ class AuthorizedReturnType(GeneratedsSuper):
                 result = False
         return result
     validate_create_public_keyType_patterns_ = [['^(true)$']]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.create_public_key is not None or
             self.service_code is not None or
@@ -1377,7 +1411,7 @@ class AuthorizedReturnType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AuthorizedReturnType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AuthorizedReturnType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1523,7 +1557,7 @@ class AuthSettlementInfoType(GeneratedsSuper):
         return self.contract_id
     def set_contract_id(self, contract_id):
         self.contract_id = contract_id
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.paid_by_customer is not None or
             self.contract_id is not None
@@ -1547,7 +1581,7 @@ class AuthSettlementInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AuthSettlementInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AuthSettlementInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1677,7 +1711,7 @@ class ReturnerType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on CompanyNameType' % {"value" : value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.name is not None or
             self.company is not None or
@@ -1702,7 +1736,7 @@ class ReturnerType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ReturnerType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ReturnerType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1875,7 +1909,7 @@ class ReceiverType(GeneratedsSuper):
                 result = False
         return result
     validate_EmailType_patterns_ = [["^((['_A-Za-z0-9\\-\\+]+)(\\.['_A-Za-z0-9\\-\\+]+)*@([A-Za-z0-9-]+)(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,5}))$"]]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.name is not None or
             self.company is not None or
@@ -1902,7 +1936,7 @@ class ReceiverType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ReceiverType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ReceiverType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2052,7 +2086,7 @@ class ReferencesType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on customer-ref-2Type' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.customer_ref_1 is not None or
             self.customer_ref_2 is not None
@@ -2076,7 +2110,7 @@ class ReferencesType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ReferencesType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ReferencesType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2236,7 +2270,7 @@ class DomesticAddressDetailsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on cityType' % {"value" : value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.address_line_1 is not None or
             self.address_line_2 is not None or
@@ -2263,7 +2297,7 @@ class DomesticAddressDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='DomesticAddressDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='DomesticAddressDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2405,7 +2439,7 @@ class ParcelCharacteristicsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minExclusive restriction on weightType' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.weight is not None or
             self.dimensions is not None
@@ -2429,7 +2463,7 @@ class ParcelCharacteristicsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ParcelCharacteristicsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ParcelCharacteristicsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2555,7 +2589,7 @@ class PrintPreferencesType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on encodingType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.output_format is not None or
             self.encoding is not None or
@@ -2580,7 +2614,7 @@ class PrintPreferencesType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PrintPreferencesType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PrintPreferencesType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2707,7 +2741,7 @@ class NotificationsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on email-subjectType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.notification or
             self.email_subject is not None
@@ -2731,7 +2765,7 @@ class NotificationsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='NotificationsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='NotificationsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2825,7 +2859,7 @@ class dimensionsType(GeneratedsSuper):
         return self.height
     def set_height(self, height):
         self.height = height
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.length is not None or
             self.width is not None or
@@ -2850,7 +2884,7 @@ class dimensionsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='dimensionsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='dimensionsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2979,7 +3013,7 @@ class notificationType(GeneratedsSuper):
                 result = False
         return result
     validate_EmailType_patterns_ = [["^((['_A-Za-z0-9\\-\\+]+)(\\.['_A-Za-z0-9\\-\\+]+)*@([A-Za-z0-9-]+)(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,5}))$"]]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.email is not None or
             self.on_shipment is not None or
@@ -3005,7 +3039,7 @@ class notificationType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='notificationType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='notificationType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -3078,6 +3112,11 @@ class notificationType(GeneratedsSuper):
 # end class notificationType
 
 
+#
+# End data representation classes.
+#
+
+
 GDSClassesMapping = {
 }
 
@@ -3094,9 +3133,10 @@ def usage():
 
 def get_root_tag(node):
     tag = Tag_pattern_.match(node.tag).groups()[-1]
-    rootClass = GDSClassesMapping.get(tag)
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
     if rootClass is None:
-        rootClass = globals().get(tag)
+        rootClass = globals().get(prefix_tag)
     return tag, rootClass
 
 
@@ -3150,7 +3190,7 @@ def parse(inFileName, silence=False, print_warnings=True):
 
 
 def parseEtree(inFileName, silence=False, print_warnings=True,
-               mapping=None, nsmap=None):
+               mapping=None, reverse_mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -3161,12 +3201,15 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
         rootClass = AuthorizedReturnType
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
-    # Enable Python to collect the space used by the DOM.
     if mapping is None:
         mapping = {}
+    if reverse_mapping is None:
+        reverse_mapping = {}
     rootElement = rootObj.to_etree(
-        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
-    reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
+        None, name_=rootTag, mapping_=mapping,
+        reverse_mapping_=reverse_mapping, nsmap_=nsmap)
+    reverse_node_mapping = rootObj.gds_reverse_node_mapping(mapping)
+    # Enable Python to collect the space used by the DOM.
     if not SaveElementTreeNode:
         doc = None
         rootNode = None
@@ -3183,7 +3226,7 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
             len(gds_collector.get_messages()), ))
         gds_collector.write_messages(sys.stderr)
         sys.stderr.write(separator)
-    return rootObj, rootElement, mapping, reverse_mapping
+    return rootObj, rootElement, mapping, reverse_node_mapping
 
 
 def parseString(inString, silence=False, print_warnings=True):

@@ -84,6 +84,7 @@ class ConnectionConfig(lib.Enum):
     cost_center = lib.OptionEnum("cost_center")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    transmit_shipment_by_default = lib.OptionEnum("transmit_shipment_by_default", bool)
 
 
 class ServiceType(lib.Enum):
@@ -128,6 +129,7 @@ class ShippingOption(lib.Enum):
 
     """ Custom Option """
     canadapost_cost_center = lib.OptionEnum("cost-centre")
+    canadapost_submit_shipment = lib.OptionEnum("transmit-shipment", bool)
 
     """ Unified Option type mapping """
     insurance = canadapost_coverage
@@ -279,4 +281,5 @@ INTERNATIONAL_NON_DELIVERY_OPTION = [
 
 CUSTOM_OPTIONS = [
     ShippingOption.canadapost_cost_center.name,
+    ShippingOption.canadapost_submit_shipment.name,
 ]
