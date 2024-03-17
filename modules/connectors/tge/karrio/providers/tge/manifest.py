@@ -1,8 +1,8 @@
-import datetime
-import uuid
 import karrio.schemas.tge.manifest_request as tge
 import karrio.schemas.tge.manifest_response as manifest
+import uuid
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.models as models
 import karrio.providers.tge.error as provider_error
@@ -66,23 +66,18 @@ def manifest_request(
         option_type=lib.units.create_enum(
             "ManifestOptions",
             {
-                "reference": lib.OptionEnum("reference"),
                 "manifest_id": lib.OptionEnum("manifest_id"),
                 "shipments": lib.OptionEnum("shipments", lib.to_dict),
             },
         ),
     )
-    shipments = [
-        lib.to_object(models.ShipmentRequest, _)
-        for _ in (manifest_options.shipments.state or [])
-    ]
     requests = []
 
     for shipment_data in manifest_options.shipments.state or []:
         shipment_payload = lib.to_object(models.ShipmentRequest, shipment_data)
         meta = shipment_data.get("meta", {})
-        SSCCs = meta.get("SSCCs")
         ShipmentID = meta.get("ShipmentID")
+        SSCCs = meta.get("SSCCs")
 
         MessageIdentifier = str(uuid.uuid4())
         shipper = lib.to_address(shipment_payload.shipper)

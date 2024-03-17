@@ -57,9 +57,7 @@ ManifestPayload = {
         "email": "john.citizen@citizen.com",
         "phone_number": "0401234567",
     },
-    "options": {
-        "reference": "My order reference",
-    },
+    "reference": "My order reference",
 }
 
 ParsedManifestResponse = [

@@ -50,7 +50,6 @@ def manifest_request(
         option_type=lib.units.create_enum(
             "ManifestOptions",
             {
-                "reference": lib.OptionEnum("reference"),
                 "group_ids": lib.OptionEnum("group_ids", list),
                 "shipments": lib.OptionEnum("shipments", lib.to_dict),
                 "method_of_payment": lib.OptionEnum("method_of_payment"),
@@ -102,7 +101,7 @@ def manifest_request(
                 postal_zip_code=address.postal_code,
             ),
         ),
-        customer_reference=options.reference.state,
+        customer_reference=payload.reference,
         excluded_shipments=lib.identity(
             canadapost.ExcludedShipmentsType(
                 shipment_id=options.excluded_shipments.state.slit(",")

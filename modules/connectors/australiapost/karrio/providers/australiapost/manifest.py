@@ -48,15 +48,9 @@ def manifest_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
     address = lib.to_address(payload.address)
-    options = lib.units.Options(
-        payload.options,
-        option_type=lib.units.create_enum(
-            "ManifestOptions", {"reference": lib.OptionEnum("reference")}
-        ),
-    )
 
     request = australiapost.ManifestRequestType(
-        order_reference=options.reference.state,
+        order_reference=lib.text(payload.reference),
         payment_method="CHARGE_TO_ACCOUNT",
         consignor=lib.text(address.company_name or address.contact, max=40),
         shipments=[

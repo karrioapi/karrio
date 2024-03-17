@@ -224,7 +224,10 @@ class ManifestRequest:
     shipment_identifiers: List[str]
 
     address: Address = JStruct[Address]
+    reference: str = None
     options: Dict = {}
+
+    metadata: Dict = {}
 
 
 @attr.s(auto_attribs=True)
