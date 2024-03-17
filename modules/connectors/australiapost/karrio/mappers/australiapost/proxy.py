@@ -123,7 +123,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def create_manifest(self, request: lib.Serializable) -> lib.Deserializable:
-        ctx = {}
+        ctx: dict = {}
         response = lib.request(
             url=f"{self.settings.server_url}/shipping/v1/orders",
             data=lib.to_json(request.serialize()),
