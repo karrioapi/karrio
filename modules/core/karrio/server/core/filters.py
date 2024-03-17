@@ -612,3 +612,66 @@ class RateSheetFilter(filters.FilterSet):
             | models.Q(slug__icontains=value)
             | models.Q(carrier_name__icontains=value)
         )
+
+
+class ManifestFilters(filters.FilterSet):
+    carrier_name = filters.MultipleChoiceFilter(
+        method="carrier_filter",
+        choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
+    )
+    created_after = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="gte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+    created_before = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="lte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            description=(
+                "The unique carrier slug. <br/>"
+                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+            ),
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
+
+    class Meta:
+        import karrio.server.manager.models as manager
+
+        model = manager.Manifest
+        fields: typing.List[str] = []
+
+    def carrier_filter(self, queryset, name, values):
+        _filters = [
+            models.Q(
+                **{f"manifest_carrier__{value.replace('_', '')}settings__isnull": False}
+            )
+            for value in values
+        ]
+        query = _filters.pop()
+
+        for item in _filters:
+            query |= item
+
+        return queryset.filter(query)

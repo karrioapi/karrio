@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.2`.
+    The current version is `2024.2.rc10`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: '2024.2'
+  version: 2024.2.rc10
 paths:
   /:
     get:
@@ -1115,6 +1115,139 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+  /v1/manifests:
+    get:
+      operationId: $$$$&&list
+      description: Retrieve all manifests.
+      summary: List manifests
+      parameters:
+      - in: query
+        name: carrier_name
+        schema:
+          type: string
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
+          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
+          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
+          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+      - in: query
+        name: created_after
+        schema:
+          type: string
+          format: date-time
+      - in: query
+        name: created_before
+        schema:
+          type: string
+          format: date-time
+      tags:
+      - Manifests
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestList'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    post:
+      operationId: $$$$&&create
+      description: Create a manifest for one or many shipments with labels already
+        purchased.
+      summary: Create a manifest
+      tags:
+      - Manifests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManifestData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manifest'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/manifests/{id}:
+    get:
+      operationId: $$$$&&retrieve
+      description: Retrieve a shipping manifest.
+      summary: Retrieve a manifest
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Manifests
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Manifest'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
   /v1/orders:
     get:
       operationId: '&&&&list'
@@ -1768,6 +1901,52 @@ paths:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
         '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/proxy/manifests:
+    post:
+      operationId: '@@@$create_manifest'
+      description: |2
+
+        Some carriers require shipment manifests to be created for pickups and dropoff.
+        Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment.
+      summary: Create a manifest
+      tags:
+      - Proxy
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ManifestRequest'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManifestResponse'
+          description: ''
+        '400':
           content:
             application/json:
               schema:
@@ -6652,7 +6831,8 @@ components:
         invoice_date:
           type: string
           nullable: true
-          description: The invoice date
+          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         commercial_invoice:
           type: boolean
           nullable: true
@@ -6765,7 +6945,8 @@ components:
         invoice_date:
           type: string
           nullable: true
-          description: The invoice date
+          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         commercial_invoice:
           type: boolean
           nullable: true
@@ -8131,6 +8312,211 @@ components:
       required:
       - weight
       - weight_unit
+    Manifest:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique manifest identifier
+        object_type:
+          type: string
+          default: manifest
+          description: Specifies the object type
+        carrier_name:
+          type: string
+          description: The manifest carrier
+        carrier_id:
+          type: string
+          description: The manifest carrier configured name
+        meta:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: provider specific metadata
+        test_mode:
+          type: boolean
+          description: Specified whether it was created with a carrier in test mode
+        shipment_identifiers:
+          type: array
+          items:
+            type: string
+          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
+            \        shipment_identifier is often a tracking_number or shipment_id\
+            \ returned when you purchase a label.\n        "
+        address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: The address of the warehouse or location where the shipments
+            originate.
+        options:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: "<details>\n        <summary>The options available for the\
+            \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
+            \             {\n                    \"tracking_number\": \"123456789\"\
+            ,\n                    ...\n                    \"meta\": {...}\n    \
+            \            }\n            ]\n        }\n        "
+        reference:
+          type: string
+          nullable: true
+          description: The manifest reference
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the pickup
+        manifest_url:
+          type: string
+          format: uri
+          nullable: true
+          description: The Manifest file URL
+      required:
+      - address
+      - carrier_id
+      - carrier_name
+      - shipment_identifiers
+      - test_mode
+    ManifestData:
+      type: object
+      properties:
+        carrier_name:
+          type: string
+          description: The manifest's carrier
+        address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: The address of the warehouse or location where the shipments
+            originate.
+        options:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: "<details>\n        <summary>The options available for the\
+            \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
+            \             {\n                    \"tracking_number\": \"123456789\"\
+            ,\n                    ...\n                    \"meta\": {...}\n    \
+            \            }\n            ]\n        }\n        "
+        reference:
+          type: string
+          nullable: true
+          description: The manifest reference
+        shipment_ids:
+          type: array
+          items:
+            type: string
+          description: The list of existing shipment object ids with label purchased.
+      required:
+      - address
+      - carrier_name
+      - shipment_ids
+    ManifestDetails:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique manifest identifier
+        object_type:
+          type: string
+          default: manifest
+          description: Specifies the object type
+        carrier_name:
+          type: string
+          description: The manifest carrier
+        carrier_id:
+          type: string
+          description: The manifest carrier configured name
+        doc:
+          allOf:
+          - $ref: '#/components/schemas/ManifestDocument'
+          nullable: true
+          description: The manifest documents
+        meta:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: provider specific metadata
+        test_mode:
+          type: boolean
+          description: Specified whether it was created with a carrier in test mode
+      required:
+      - carrier_id
+      - carrier_name
+      - test_mode
+    ManifestDocument:
+      type: object
+      properties:
+        manifest:
+          type: string
+          nullable: true
+          description: A manifest file in base64 string
+    ManifestList:
+      type: object
+      properties:
+        count:
+          type: integer
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Manifest'
+      required:
+      - results
+    ManifestRequest:
+      type: object
+      properties:
+        shipment_identifiers:
+          type: array
+          items:
+            type: string
+          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
+            \        shipment_identifier is often a tracking_number or shipment_id\
+            \ returned when you purchase a label.\n        "
+        carrier_name:
+          type: string
+          description: The manifest's carrier
+        address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: The address of the warehouse or location where the shipments
+            originate.
+        options:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: "<details>\n        <summary>The options available for the\
+            \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
+            \             {\n                    \"tracking_number\": \"123456789\"\
+            ,\n                    ...\n                    \"meta\": {...}\n    \
+            \            }\n            ]\n        }\n        "
+        reference:
+          type: string
+          nullable: true
+          description: The manifest reference
+      required:
+      - address
+      - carrier_name
+      - shipment_identifiers
+    ManifestResponse:
+      type: object
+      properties:
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          description: The list of note or warning messages
+        manifest:
+          allOf:
+          - $ref: '#/components/schemas/ManifestDetails'
+          description: The manifest details
     Message:
       type: object
       properties:
@@ -9262,7 +9648,8 @@ components:
         invoice_date:
           type: string
           nullable: true
-          description: The invoice date
+          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
+            \        "
         commercial_invoice:
           type: boolean
           nullable: true
@@ -9801,6 +10188,16 @@ components:
           type: string
           nullable: true
           description: The pickup expected closing or late time
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the pickup
+        meta:
+          type: object
+          additionalProperties: {}
+          nullable: true
+          description: provider specific metadata
         address:
           allOf:
           - $ref: '#/components/schemas/Address'
@@ -9827,11 +10224,6 @@ components:
           additionalProperties: {}
           nullable: true
           description: Advanced carrier specific pickup options
-        metadata:
-          type: object
-          additionalProperties: {}
-          default: {}
-          description: User metadata for the pickup
         test_mode:
           type: boolean
           description: Specified whether it was created with a carrier in test mode
@@ -11890,10 +12282,6 @@ tags:
     \            Parcel objects are linked to your shipment history, and can be used\
     \ for recurring shipping\n                using the same packaging.\n        \
     \        "
-- name: Customs
-  description: "This is an object representing your Karrio shipping customs declaration.\n\
-    \                You can retrieve all customs declarations used historically with\
-    \ your Karrio account shipments.\n                "
 - name: Shipments
   description: "This is an object representing your Karrio shipment.\n           \
     \     A Shipment guides you through process of preparing and purchasing a label\
@@ -11905,6 +12293,11 @@ tags:
     \                A Document upload record keep traces of shipping trade documents\
     \ uploaded to carriers\n                to fast track customs and border processing.\n\
     \                "
+- name: Manifests
+  description: "This is an object representing your Karrio manifest details.\n   \
+    \             Some carriers require manifests to be created after labels are generated.\n\
+    \                A manifest is a summary of all the shipments that are being sent\
+    \ out.\n                "
 - name: Trackers
   description: "This is an object representing your Karrio shipment tracker.\n   \
     \             A shipment tracker is an object attached to a shipment by it's tracking\
@@ -11939,12 +12332,15 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
+    | australiapost | Australia Post |
+    | canadapost | Canada Post |
+    | dhl_express | DHL Express |
+    | tge | TGE |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
     | ups | UPS |
     | tnt | TNT |
-    | tge | TGE |
     | sendle | Sendle |
     | royalmail | Royal Mail |
     | roadie | Roadie |
@@ -11964,14 +12360,11 @@ tags:
     | dhl_universal | DHL Universal |
     | dhl_poland | DHL Parcel Poland |
     | dhl_parcel_de | DHL Parcel DE |
-    | dhl_express | DHL Express |
     | colissimo | Colissimo |
     | chronopost | Chronopost |
     | canpar | Canpar |
-    | canadapost | Canada Post |
     | bpost | Belgian Post |
     | boxknight | BoxKnight |
-    | australiapost | Australia Post |
     | asendia_us | Asendia US |
     | aramex | Aramex |
     | amazon_shipping | AmazonShipping |
@@ -11984,6 +12377,93 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
+    ### Australia Post
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | australiapost_parcel_post | T28 |
+    | australiapost_express_post | E34 |
+    | australiapost_parcel_post_signature | 3D55 |
+    | australiapost_express_post_signature | 3J55 |
+    | australiapost_intl_standard_pack_track | PTI8 |
+    | australiapost_intl_standard_with_signature | PTI7 |
+    | australiapost_intl_express_merch | ECM8 |
+    | australiapost_intl_express_docs | ECD8 |
+    | australiapost_eparcel_post_returns | PR |
+    | australiapost_express_eparcel_post_returns | XPR |
+
+    ### Canada Post
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | canadapost_regular_parcel | DOM.RP |
+    | canadapost_expedited_parcel | DOM.EP |
+    | canadapost_xpresspost | DOM.XP |
+    | canadapost_xpresspost_certified | DOM.XP.CERT |
+    | canadapost_priority | DOM.PC |
+    | canadapost_library_books | DOM.LIB |
+    | canadapost_expedited_parcel_usa | USA.EP |
+    | canadapost_priority_worldwide_envelope_usa | USA.PW.ENV |
+    | canadapost_priority_worldwide_pak_usa | USA.PW.PAK |
+    | canadapost_priority_worldwide_parcel_usa | USA.PW.PARCEL |
+    | canadapost_small_packet_usa_air | USA.SP.AIR |
+    | canadapost_tracked_packet_usa | USA.TP |
+    | canadapost_tracked_packet_usa_lvm | USA.TP.LVM |
+    | canadapost_xpresspost_usa | USA.XP |
+    | canadapost_xpresspost_international | INT.XP |
+    | canadapost_international_parcel_air | INT.IP.AIR |
+    | canadapost_international_parcel_surface | INT.IP.SURF |
+    | canadapost_priority_worldwide_envelope_intl | INT.PW.ENV |
+    | canadapost_priority_worldwide_pak_intl | INT.PW.PAK |
+    | canadapost_priority_worldwide_parcel_intl | INT.PW.PARCEL |
+    | canadapost_small_packet_international_air | INT.SP.AIR |
+    | canadapost_small_packet_international_surface | INT.SP.SURF |
+    | canadapost_tracked_packet_international | INT.TP |
+
+    ### DHL Express
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dhl_logistics_services | 0 |
+    | dhl_domestic_express_12_00 | 1 |
+    | dhl_express_choice | 2 |
+    | dhl_express_choice_nondoc | 3 |
+    | dhl_jetline | 4 |
+    | dhl_sprintline | 5 |
+    | dhl_air_capacity_sales | 6 |
+    | dhl_express_easy | 7 |
+    | dhl_express_easy_nondoc | 8 |
+    | dhl_parcel_product | 9 |
+    | dhl_accounting | A |
+    | dhl_breakbulk_express | B |
+    | dhl_medical_express | C |
+    | dhl_express_worldwide_doc | D |
+    | dhl_express_9_00_nondoc | E |
+    | dhl_freight_worldwide_nondoc | F |
+    | dhl_economy_select_domestic | G |
+    | dhl_economy_select_nondoc | H |
+    | dhl_express_domestic_9_00 | I |
+    | dhl_jumbo_box_nondoc | J |
+    | dhl_express_9_00 | K |
+    | dhl_express_10_30 | L |
+    | dhl_express_10_30_nondoc | M |
+    | dhl_express_domestic | N |
+    | dhl_express_domestic_10_30 | O |
+    | dhl_express_worldwide_nondoc | P |
+    | dhl_medical_express_nondoc | Q |
+    | dhl_globalmail | R |
+    | dhl_same_day | S |
+    | dhl_express_12_00 | T |
+    | dhl_express_worldwide | U |
+    | dhl_parcel_product_nondoc | V |
+    | dhl_economy_select | W |
+    | dhl_express_envelope | X |
+    | dhl_express_12_00_nondoc | Y |
+    | dhl_destination_charges | Z |
+    | dhl_express_all | None |
+
+    ### TGE
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | tge_freight_service | X |
+
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12125,11 +12605,6 @@ tags:
     | tnt_express | EX |
     | tnt_economy_express | 48N |
     | tnt_global_express | 15N |
-
-    ### TGE
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | tge_freight_service | X |
 
     ### Sendle
     | Code         | Service Name |
@@ -13127,47 +13602,6 @@ tags:
     | dhl_parcel_de_paket_international | V53WPAK |
     | dhl_parcel_de_warenpost_international | V66WPI |
 
-    ### DHL Express
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dhl_logistics_services | 0 |
-    | dhl_domestic_express_12_00 | 1 |
-    | dhl_express_choice | 2 |
-    | dhl_express_choice_nondoc | 3 |
-    | dhl_jetline | 4 |
-    | dhl_sprintline | 5 |
-    | dhl_air_capacity_sales | 6 |
-    | dhl_express_easy | 7 |
-    | dhl_express_easy_nondoc | 8 |
-    | dhl_parcel_product | 9 |
-    | dhl_accounting | A |
-    | dhl_breakbulk_express | B |
-    | dhl_medical_express | C |
-    | dhl_express_worldwide_doc | D |
-    | dhl_express_9_00_nondoc | E |
-    | dhl_freight_worldwide_nondoc | F |
-    | dhl_economy_select_domestic | G |
-    | dhl_economy_select_nondoc | H |
-    | dhl_express_domestic_9_00 | I |
-    | dhl_jumbo_box_nondoc | J |
-    | dhl_express_9_00 | K |
-    | dhl_express_10_30 | L |
-    | dhl_express_10_30_nondoc | M |
-    | dhl_express_domestic | N |
-    | dhl_express_domestic_10_30 | O |
-    | dhl_express_worldwide_nondoc | P |
-    | dhl_medical_express_nondoc | Q |
-    | dhl_globalmail | R |
-    | dhl_same_day | S |
-    | dhl_express_12_00 | T |
-    | dhl_express_worldwide | U |
-    | dhl_parcel_product_nondoc | V |
-    | dhl_economy_select | W |
-    | dhl_express_envelope | X |
-    | dhl_express_12_00_nondoc | Y |
-    | dhl_destination_charges | Z |
-    | dhl_express_all | None |
-
     ### Colissimo
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13198,33 +13632,6 @@ tags:
     | chronopost_premium_international | 37 |
     | chronopost_classic_international | 44 |
 
-    ### Canada Post
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | canadapost_regular_parcel | DOM.RP |
-    | canadapost_expedited_parcel | DOM.EP |
-    | canadapost_xpresspost | DOM.XP |
-    | canadapost_xpresspost_certified | DOM.XP.CERT |
-    | canadapost_priority | DOM.PC |
-    | canadapost_library_books | DOM.LIB |
-    | canadapost_expedited_parcel_usa | USA.EP |
-    | canadapost_priority_worldwide_envelope_usa | USA.PW.ENV |
-    | canadapost_priority_worldwide_pak_usa | USA.PW.PAK |
-    | canadapost_priority_worldwide_parcel_usa | USA.PW.PARCEL |
-    | canadapost_small_packet_usa_air | USA.SP.AIR |
-    | canadapost_tracked_packet_usa | USA.TP |
-    | canadapost_tracked_packet_usa_lvm | USA.TP.LVM |
-    | canadapost_xpresspost_usa | USA.XP |
-    | canadapost_xpresspost_international | INT.XP |
-    | canadapost_international_parcel_air | INT.IP.AIR |
-    | canadapost_international_parcel_surface | INT.IP.SURF |
-    | canadapost_priority_worldwide_envelope_intl | INT.PW.ENV |
-    | canadapost_priority_worldwide_pak_intl | INT.PW.PAK |
-    | canadapost_priority_worldwide_parcel_intl | INT.PW.PARCEL |
-    | canadapost_small_packet_international_air | INT.SP.AIR |
-    | canadapost_small_packet_international_surface | INT.SP.SURF |
-    | canadapost_tracked_packet_international | INT.TP |
-
     ### Belgian Post
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13249,20 +13656,6 @@ tags:
     | boxknight_sameday | SAMEDAY |
     | boxknight_nextday | NEXTDAY |
     | boxknight_scheduled | SCHEDULED |
-
-    ### Australia Post
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | australiapost_parcel_post | T28 |
-    | australiapost_express_post | E34 |
-    | australiapost_parcel_post_signature | 3D55 |
-    | australiapost_express_post_signature | 3J55 |
-    | australiapost_intl_standard_pack_track | PTI8 |
-    | australiapost_intl_standard_with_signature | PTI7 |
-    | australiapost_intl_express_merch | ECM8 |
-    | australiapost_intl_express_docs | ECD8 |
-    | australiapost_eparcel_post_returns | PR |
-    | australiapost_express_eparcel_post_returns | XPR |
 
     ### Asendia US
     | Code         | Service Name |
@@ -13302,6 +13695,39 @@ tags:
     ---
     ## Parcel Templates
     Use any of the following templates when you ship with special carrier packaging.
+    ### Canada Post
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | canadapost_mailing_box | 10.2 x 15.2 x 1.0 cm |
+    | canadapost_extra_small_mailing_box | 14.0 x 14.0 x 14.0 cm |
+    | canadapost_small_mailing_box | 28.6 x 22.9 x 6.4 cm |
+    | canadapost_medium_mailing_box | 31.0 x 23.5 x 13.3 cm |
+    | canadapost_large_mailing_box | 38.1 x 30.5 x 9.5 cm |
+    | canadapost_extra_large_mailing_box | 40.0 x 30.5 x 21.6 cm |
+    | canadapost_corrugated_small_box | 42.0 x 32.0 x 32.0 cm |
+    | canadapost_corrugated_medium_box | 46.0 x 38.0 x 32.0 cm |
+    | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
+    | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
+    | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
+
+    ### DHL Express
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
+    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
+    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
+    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
+    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
+    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
+    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
+    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
+    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
+    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
+    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
+    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
+    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
+    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
+
     ### UPS
     | Code         | Dimensions   |
     | ------------ | ------------ |
@@ -13346,38 +13772,5 @@ tags:
     | fedex_10_kg_box | 15.81 x 12.94 x 10.19 in |
     | fedex_25_kg_box | 21.56 x 16.56 x 13.19 in |
     | fedex_tube | 38.0 x 6.0 x 6.0 in |
-
-    ### DHL Express
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
-    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
-    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
-    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
-    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
-    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
-    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
-    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
-    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
-    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
-    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
-    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
-    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
-    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
-
-    ### Canada Post
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | canadapost_mailing_box | 10.2 x 15.2 x 1.0 cm |
-    | canadapost_extra_small_mailing_box | 14.0 x 14.0 x 14.0 cm |
-    | canadapost_small_mailing_box | 28.6 x 22.9 x 6.4 cm |
-    | canadapost_medium_mailing_box | 31.0 x 23.5 x 13.3 cm |
-    | canadapost_large_mailing_box | 38.1 x 30.5 x 9.5 cm |
-    | canadapost_extra_large_mailing_box | 40.0 x 30.5 x 21.6 cm |
-    | canadapost_corrugated_small_box | 42.0 x 32.0 x 32.0 cm |
-    | canadapost_corrugated_medium_box | 46.0 x 38.0 x 32.0 cm |
-    | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
-    | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
-    | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
 
 ...

@@ -447,6 +447,12 @@ class Pickups:
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
+        def process_meta(parent) -> dict:
+            return {
+                **(parent.meta or {}),
+                "ext": carrier.ext,
+            }
+
         return datatypes.PickupResponse(
             pickup=datatypes.Pickup(
                 **{
@@ -454,6 +460,8 @@ class Pickups:
                     **lib.to_dict(pickup),
                     "id": f"pck_{uuid.uuid4().hex}",
                     "test_mode": carrier.test_mode,
+                    "meta": process_meta(pickup),
+                    "messages": messages,
                 }
             ),
             messages=messages,
@@ -667,4 +675,55 @@ class Documents:
                 "id": f"sdoc_{uuid.uuid4().hex}",
                 "messages": lib.to_dict(messages),
             },
+        )
+
+
+class Manifests:
+    @staticmethod
+    def create(
+        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+    ) -> datatypes.ManifestResponse:
+        carrier = carrier or Carriers.first(
+            **{
+                **dict(active=True, capability="manifest", raise_not_found=True),
+                **carrier_filters,
+            }
+        )
+
+        if carrier is None:
+            raise NotFound("No active carrier connection found to process the request")
+
+        request = karrio.Manifest.create(
+            datatypes.ManifestRequest(**lib.to_dict(payload))
+        )
+
+        # The request call is wrapped in utils.identity to simplify mocking in tests
+        manifest, messages = utils.identity(
+            lambda: request.from_(carrier.gateway).parse()
+        )
+
+        if manifest is None:
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
+            )
+
+        def process_meta(parent) -> dict:
+            return {
+                **(parent.meta or {}),
+                "ext": carrier.ext,
+            }
+
+        return datatypes.ManifestResponse(
+            manifest=datatypes.Manifest(
+                **{
+                    **payload,
+                    **lib.to_dict(manifest),
+                    "id": f"manf_{uuid.uuid4().hex}",
+                    "test_mode": carrier.test_mode,
+                    "meta": process_meta(manifest),
+                    "messages": messages,
+                }
+            ),
+            messages=messages,
         )

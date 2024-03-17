@@ -934,6 +934,12 @@ class PickupDetails(serializers.Serializer):
         allow_null=True,
         help_text="The pickup expected closing or late time",
     )
+    metadata = serializers.PlainDictField(
+        required=False, default={}, help_text="User metadata for the pickup"
+    )
+    meta = serializers.PlainDictField(
+        required=False, allow_null=True, help_text="provider specific metadata"
+    )
 
 
 class Pickup(PickupDetails, PickupRequest):
@@ -942,9 +948,6 @@ class Pickup(PickupDetails, PickupRequest):
         many=True,
         allow_empty=False,
         help_text="The shipment parcels to pickup.",
-    )
-    metadata = serializers.PlainDictField(
-        required=False, default={}, help_text="User metadata for the pickup"
     )
     test_mode = serializers.BooleanField(
         required=True,
@@ -1526,6 +1529,118 @@ class ShipmentCancelRequest(serializers.Serializer):
         default={},
         help_text="Advanced carrier specific cancellation options",
     )
+
+
+@serializers.allow_model_id(
+    [
+        ("address", "karrio.server.manager.models.Address"),
+    ]
+)
+class ManifestRequest(serializers.Serializer):
+    shipment_identifiers = serializers.StringListField(
+        required=True,
+        help_text="""The list of shipment identifiers you want to add to your manifest.<br/>
+        shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.
+        """,
+    )
+    carrier_name = serializers.CharField(
+        required=True, help_text="The manifest's carrier"
+    )
+    address = AddressData(
+        required=True,
+        help_text="The address of the warehouse or location where the shipments originate.",
+    )
+    options = serializers.PlainDictField(
+        required=False,
+        default={},
+        help_text="""<details>
+        <summary>The options available for the manifest.</summary>
+
+        {
+            "shipments": [
+                {
+                    "tracking_number": "123456789",
+                    ...
+                    "meta": {...}
+                }
+            ]
+        }
+        """,
+    )
+    reference = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The manifest reference",
+    )
+
+
+class ManifestData(ManifestRequest):
+    shipment_identifiers = None
+    shipment_ids = serializers.StringListField(
+        required=True,
+        help_text="""The list of existing shipment object ids with label purchased.""",
+    )
+
+
+class ManifestDocument(serializers.Serializer):
+    manifest = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="A manifest file in base64 string",
+    )
+
+
+class ManifestDetails(serializers.Serializer):
+    id = serializers.CharField(required=False, help_text="A unique manifest identifier")
+    object_type = serializers.CharField(
+        default="manifest", help_text="Specifies the object type"
+    )
+    carrier_name = serializers.CharField(
+        required=True, help_text="The manifest carrier"
+    )
+    carrier_id = serializers.CharField(
+        required=True, help_text="The manifest carrier configured name"
+    )
+    doc = ManifestDocument(
+        required=False,
+        allow_null=True,
+        help_text="The manifest documents",
+    )
+    meta = serializers.PlainDictField(
+        required=False, allow_null=True, help_text="provider specific metadata"
+    )
+    test_mode = serializers.BooleanField(
+        required=True,
+        help_text="Specified whether it was created with a carrier in test mode",
+    )
+
+
+class Manifest(ManifestDetails, ManifestRequest):
+    doc = None
+    metadata = serializers.PlainDictField(
+        required=False, default={}, help_text="User metadata for the pickup"
+    )
+    manifest_url = serializers.URLField(
+        required=False,
+        allow_blank=True,
+        allow_null=True,
+        help_text="The Manifest file URL",
+    )
+    messages = Message(
+        required=False,
+        many=True,
+        default=[],
+        help_text="The list of note or warning messages",
+    )
+
+
+class ManifestResponse(serializers.Serializer):
+    messages = Message(
+        required=False, many=True, help_text="The list of note or warning messages"
+    )
+    manifest = ManifestDetails(required=False, help_text="The manifest details")
 
 
 class Operation(serializers.Serializer):
