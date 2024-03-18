@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.generic",
-    version="2024.2.rc1",
+    version="2024.2",
     description="Karrio - Custom carrier Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
