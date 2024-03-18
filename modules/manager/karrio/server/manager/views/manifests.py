@@ -1,5 +1,5 @@
-import base64
 import io
+import base64
 import logging
 import django_downloadview
 import django.urls as urls
@@ -8,6 +8,7 @@ import rest_framework.status as status
 import rest_framework.request as request
 import rest_framework.response as response
 import rest_framework.pagination as pagination
+import rest_framework.throttling as throttling
 import django_filters.rest_framework as django_filters
 
 import karrio.server.openapi as openapi
@@ -23,6 +24,7 @@ Manifests = serializers.PaginatedResult("ManifestList", serializers.Manifest)
 
 
 class ManifestList(api.GenericAPIView):
+    throttle_scope = "carrier_request"
     pagination_class = type(
         "CustomPagination", (pagination.LimitOffsetPagination,), dict(default_limit=20)
     )
@@ -30,6 +32,11 @@ class ManifestList(api.GenericAPIView):
     filterset_class = filters.ManifestFilters
     serializer_class = Manifests
     model = models.Manifest
+
+    def get_throttles(self):
+        if self.request.method == "POST":
+            return [throttling.ScopedRateThrottle()]
+        return super().get_throttles()
 
     @openapi.extend_schema(
         tags=["Manifests"],
@@ -52,10 +59,6 @@ class ManifestList(api.GenericAPIView):
         )
         return self.get_paginated_response(response)
 
-
-class ManifestRequest(api.APIView):
-    throttle_scope = "carrier_request"
-
     @openapi.extend_schema(
         tags=["Manifests"],
         operation_id=f"{ENDPOINT_ID}create",
@@ -72,7 +75,7 @@ class ManifestRequest(api.APIView):
         """Create a manifest for one or many shipments with labels already purchased."""
 
         manifest = (
-            serializers.ManifestData.map(data=request.data, context=request)
+            serializers.ManifestSerializer.map(data=request.data, context=request)
             .save()
             .instance
         )
@@ -110,8 +113,8 @@ class ManifestDoc(django_downloadview.VirtualDownloadView):
         format: str = "pdf",
         **kwargs,
     ):
-        """Retrieve a shipment label."""
-        self.manifest = models.Manifest.objects.get(pk=pk, label__isnull=False)
+        """Retrieve a manifest file."""
+        self.manifest = models.Manifest.objects.get(pk=pk, manifest__isnull=False)
         self.document = getattr(self.manifest, doc, None)
         self.name = f"{doc}_{self.manifest.id}.{format}"
 
@@ -136,13 +139,6 @@ router.router.urls.append(
         "manifests",
         ManifestList.as_view(),
         name="manifest-list",
-    )
-)
-router.router.urls.append(
-    urls.path(
-        "manifests",
-        ManifestRequest.as_view(),
-        name="manifest-request",
     )
 )
 router.router.urls.append(

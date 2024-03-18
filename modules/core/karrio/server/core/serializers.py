@@ -1536,13 +1536,7 @@ class ShipmentCancelRequest(serializers.Serializer):
         ("address", "karrio.server.manager.models.Address"),
     ]
 )
-class ManifestRequest(serializers.Serializer):
-    shipment_identifiers = serializers.StringListField(
-        required=True,
-        help_text="""The list of shipment identifiers you want to add to your manifest.<br/>
-        shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.
-        """,
-    )
+class ManifestRequestData(serializers.Serializer):
     carrier_name = serializers.CharField(
         required=True, help_text="The manifest's carrier"
     )
@@ -1575,8 +1569,16 @@ class ManifestRequest(serializers.Serializer):
     )
 
 
-class ManifestData(ManifestRequest):
-    shipment_identifiers = None
+class ManifestRequest(ManifestRequestData):
+    shipment_identifiers = serializers.StringListField(
+        required=True,
+        help_text="""The list of shipment identifiers you want to add to your manifest.<br/>
+        shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.
+        """,
+    )
+
+
+class ManifestData(ManifestRequestData):
     shipment_ids = serializers.StringListField(
         required=True,
         help_text="""The list of existing shipment object ids with label purchased.""",

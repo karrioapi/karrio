@@ -731,6 +731,13 @@ class Shipment(core.OwnedEntity):
         blank=True,
         null=True,
     )
+    manifest = models.ForeignKey(
+        "Manifest",
+        on_delete=models.SET_NULL,
+        related_name="shipments",
+        blank=True,
+        null=True,
+    )
 
     def delete(self, *args, **kwargs):
         self.parcels.all().delete()
@@ -872,6 +879,17 @@ class ManifestManager(models.Manager):
 
 @core.register_model
 class Manifest(core.OwnedEntity):
+    DIRECT_PROPS = [
+        "meta",
+        "options",
+        "metadata",
+        "messages",
+        "created_by",
+        "reference",
+    ]
+    RELATIONAL_PROPS = [
+        "address",
+    ]
     HIDDEN_PROPS = (
         "manifest_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
@@ -890,6 +908,12 @@ class Manifest(core.OwnedEntity):
         default=functools.partial(core.uuid, prefix="manf_"),
         editable=False,
     )
+    address = models.OneToOneField(
+        "Address", on_delete=models.CASCADE, related_name="manifest"
+    )
+    metadata = models.JSONField(
+        blank=True, null=True, default=functools.partial(utils.identity, value={})
+    )
     meta = models.JSONField(
         blank=True, null=True, default=functools.partial(utils.identity, value={})
     )
@@ -901,11 +925,11 @@ class Manifest(core.OwnedEntity):
     )
     reference = models.CharField(max_length=100, null=True, blank=True)
     manifest = models.TextField(max_length=None, null=True, blank=True)
+    test_mode = models.BooleanField(null=False)
 
     # System Reference fields
 
     manifest_carrier = models.ForeignKey(providers.Carrier, on_delete=models.CASCADE)
-    shipments = models.ManyToManyField("Shipment", related_name="shipment_manifest")
 
     # Computed properties
 
@@ -926,3 +950,7 @@ class Manifest(core.OwnedEntity):
             "karrio.server.manager:manifest-docs",
             kwargs=dict(pk=self.pk, doc="manifest", format="pdf"),
         )
+
+    @property
+    def shipment_identifiers(self) -> typing.List[str]:
+        return [shipment.shipment_identifier for shipment in self.shipments.all()]

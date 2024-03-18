@@ -563,6 +563,7 @@ class Rates:
     def fetch(
         payload: dict,
         carriers: typing.List[providers.Carrier] = None,
+        raise_on_error: bool = True,
         **carrier_filters,
     ) -> datatypes.RateResponse:
         services = payload.get("services", [])
@@ -582,7 +583,7 @@ class Rates:
             carriers, carrier_ids, shipper_country_code
         )
 
-        if len(gateways) == 0:
+        if raise_on_error and len(gateways) == 0:
             raise NotFound("No active carrier connection found to process the request")
 
         request = karrio.Rating.fetch(lib.to_object(datatypes.RateRequest, payload))
@@ -590,7 +591,7 @@ class Rates:
         # The request call is wrapped in utils.identity to simplify mocking in tests
         rates, messages = utils.identity(lambda: request.from_(*gateways).parse())
 
-        if not any(rates) and any(messages):
+        if raise_on_error and not any(rates) and any(messages):
             raise exceptions.APIException(
                 detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
