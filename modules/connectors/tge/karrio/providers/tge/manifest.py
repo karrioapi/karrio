@@ -96,11 +96,13 @@ def manifest_request(
         service = provider_units.ShippingService.map(
             shipment_payload.service
         ).value_or_key
-
         payment = shipment_payload.payment or models.Payment()
-        shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
-        pickup_date = shipping_date + datetime.timedelta(hours=1)
-        create_date = datetime.datetime.now()
+
+        now = datetime.datetime.now() + datetime.timedelta(hours=1)
+        create_time = lib.fdatetime(now, output_format="%H:%M:%S")
+        create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+        shipping_date = lib.to_date(options.shipment_date.state or now)
+        pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
 
         requests += [
             tge.ManifestRequestType(
@@ -109,7 +111,7 @@ def manifest_request(
                         MessageVersion="2.5",
                         DocumentType="Manifest",
                         MessageIdentifier=MessageIdentifier,
-                        CreateTimestamp=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
+                        CreateTimestamp=f"{create_date}{create_time}.000Z",
                         Environment=("PRD" if not settings.test_mode else "TST"),
                         SourceSystemCode=(
                             settings.connection_config.channel.state or "YF73"
@@ -155,13 +157,13 @@ def manifest_request(
                         ManifestID=tge.ManifestIDType(
                             Value=(options.manifest_id.state or ShipmentID)
                         ),
-                        CreateDateTime=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
+                        CreateDateTime=f"{create_date}{create_time}.000Z",
                         DatePeriodCollection=tge.DatePeriodCollectionType(
                             DatePeriod=[
                                 tge.DatePeriodType(
                                     DateTime=(
                                         options.tge_despatch_date.state
-                                        or f"{lib.fdatetime(pickup_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z"
+                                        or f"{pickup_date}{create_time}.000Z"
                                     ),
                                     DateType="DespatchDate",
                                 ),
@@ -211,13 +213,13 @@ def manifest_request(
                                             Suburb=recipient.city,
                                         ),
                                     ),
-                                    CreateDateTime=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
+                                    CreateDateTime=f"{create_date}{create_time}.000Z",
                                     DatePeriodCollection=tge.DatePeriodCollectionType(
                                         DatePeriod=[
                                             tge.DatePeriodType(
                                                 DateTime=(
                                                     options.tge_despatch_date.state
-                                                    or f"{lib.fdatetime(pickup_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z"
+                                                    or f"{pickup_date}{create_time}.000Z"
                                                 ),
                                                 DateType="DespatchDate",
                                             ),
@@ -245,7 +247,10 @@ def manifest_request(
                                             Reference=[
                                                 tge.ReferenceType(
                                                     ReferenceType="ShipmentReference1",
-                                                    ReferenceValue=shipment_payload.reference or getattr(shipment_payload, "id", "N/A"),
+                                                    ReferenceValue=shipment_payload.reference
+                                                    or getattr(
+                                                        shipment_payload, "id", "N/A"
+                                                    ),
                                                 ),
                                             ]
                                         )

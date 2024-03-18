@@ -10,6 +10,7 @@ from karrio.core.models import (
 )
 from karrio.server.core.tests import APITestCase
 import karrio.server.manager.models as models
+import karrio.server.providers.models as providers
 
 
 class TestShipmentFixture(APITestCase):
@@ -123,7 +124,7 @@ class TestShipmentDetails(TestShipmentFixture):
 class TestShipmentPurchase(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
-        carrier = models.Carrier.objects.get(carrier_id="canadapost")
+        carrier = providers.Carrier.objects.get(carrier_id="canadapost")
         self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",

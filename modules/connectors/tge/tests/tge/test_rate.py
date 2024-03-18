@@ -168,7 +168,7 @@ RateRequest = {
                     ]
                 },
                 "ShipmentService": {"ServiceCode": "X"},
-                "SystemFields": {"PickupDateTime": "2024-03-17T09:00:00.000+00:00"},
+                "SystemFields": {"PickupDateTime": ANY},
             }
         },
     }

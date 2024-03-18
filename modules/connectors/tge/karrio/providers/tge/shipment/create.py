@@ -1,4 +1,3 @@
-from venv import create
 import karrio.schemas.tge.label_request as tge
 import karrio.schemas.tge.label_response as shipping
 import uuid
@@ -71,12 +70,12 @@ def shipment_request(
     recipient = lib.to_address(payload.recipient)
     is_pdf = "PDF" in (payload.label_type or "PDF")
     service = provider_units.ShippingService.map(payload.service).value_or_key
-    sssc_count=(
+    sssc_count = lib.identity(
         settings.sssc_count
         if settings.sssc_count is not None
         else lib.to_int(settings.connection_config.SSCC_range_start.state) or 0
     )
-    shipment_count=(
+    shipment_count = lib.identity(
         settings.shipment_count
         if settings.shipment_count is not None
         else lib.to_int(settings.connection_config.SHIP_range_start.state) or 0
@@ -96,11 +95,14 @@ def shipment_request(
         package_option_type=provider_units.ShippingOption,
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
-    payment = payload.payment or models.Payment()
-    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
-    pickup_date = shipping_date + datetime.timedelta(hours=1)
-    create_date = datetime.datetime.now()
     SSCCs = options.tge_ssc_ids.state
+    payment = payload.payment or models.Payment()
+
+    now = datetime.datetime.now() + datetime.timedelta(hours=1)
+    create_time = lib.fdatetime(now, output_format="%H:%M:%S")
+    create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+    shipping_date = lib.to_date(options.shipment_date.state or now)
+    pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
 
     request = tge.LabelRequestType(
         TollMessage=tge.TollMessageType(
@@ -108,7 +110,7 @@ def shipment_request(
                 MessageVersion="2.5",
                 DocumentType="Label",
                 MessageIdentifier=MessageIdentifier,
-                CreateTimestamp=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
+                CreateTimestamp=f"{create_date}{create_time}.000Z",
                 Environment=("PRD" if not settings.test_mode else "TST"),
                 SourceSystemCode=(settings.connection_config.channel.state or "YF73"),
                 MessageSender=(
@@ -147,7 +149,7 @@ def shipment_request(
                         Suburb=shipper.city,
                     ),
                 ),
-                CreateDateTime=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
+                CreateDateTime=f"{create_date}{create_time}.000Z",
                 ShipmentCollection=tge.ShipmentCollectionType(
                     Shipment=[
                         tge.ShipmentType(
@@ -178,13 +180,13 @@ def shipment_request(
                                     Suburb=recipient.city,
                                 ),
                             ),
-                            CreateDateTime=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
+                            CreateDateTime=f"{create_date}{create_time}.000Z",
                             DatePeriodCollection=tge.DatePeriodCollectionType(
                                 DatePeriod=[
                                     tge.DatePeriodType(
                                         DateTime=(
                                             options.tge_despatch_date.state
-                                            or f"{lib.fdatetime(pickup_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z"
+                                            or f"{pickup_date}{create_time}.000Z"
                                         ),
                                         DateType="DespatchDate",
                                     ),
@@ -212,7 +214,10 @@ def shipment_request(
                                     Reference=[
                                         tge.ReferenceType(
                                             ReferenceType="ShipmentReference1",
-                                            ReferenceValue=payload.reference or getattr(payload, "id", "N/A"),
+                                            ReferenceValue=(
+                                                payload.reference
+                                                or getattr(payload, "id", "N/A")
+                                            ),
                                         ),
                                     ]
                                 )

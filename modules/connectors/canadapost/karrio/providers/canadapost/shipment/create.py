@@ -91,10 +91,17 @@ def shipment_request(
     group_id = str(uuid.uuid4().hex)
     customer_request_ids = [f"{group_id}" for _ in range(len(packages))]
     submit_shipment = lib.identity(
+        #  set to true if canadapost_submit_shipment is true
         options.canadapost_submit_shipment.state
+        #  default to true if transmit_shipment_by_default is true
         or (
             settings.connection_config.transmit_shipment_by_default.state
             and options.canadapost_submit_shipment.state is not False
+        )
+        # default to true if no value is set
+        or (
+            settings.connection_config.transmit_shipment_by_default.state is None
+            and options.canadapost_submit_shipment.state is None
         )
     )
 

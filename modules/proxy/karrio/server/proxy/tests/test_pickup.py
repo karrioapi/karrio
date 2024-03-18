@@ -216,6 +216,7 @@ PICKUP_RESPONSE = {
         "package_location": "At the main entrance hall",
         "options": {},
         "metadata": {},
+        "meta": {"ext": "canadapost"},
     },
 }
 
@@ -277,6 +278,7 @@ PICKUP_UPDATE_RESPONSE = {
         "package_location": "At the main entrance hall",
         "options": {},
         "metadata": {},
+        "meta": {},
     },
 }
 

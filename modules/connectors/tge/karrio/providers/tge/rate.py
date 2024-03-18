@@ -88,9 +88,12 @@ def rate_request(
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     service = getattr(services.first, "value", None)
-    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
-    pickup_date = shipping_date + datetime.timedelta(hours=1)
-    create_date = datetime.datetime.now()
+
+    now = datetime.datetime.now() + datetime.timedelta(hours=1)
+    create_time = lib.fdatetime(now, output_format="%H:%M:%S")
+    create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+    shipping_date = lib.to_date(options.shipment_date.state or now)
+    pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
 
     request = tge.RateRequestType(
         TollMessage=tge.TollMessageType(
@@ -98,7 +101,7 @@ def rate_request(
                 MessageVersion="1.0",
                 DocumentType="RateEnquiry",
                 MessageIdentifier=str(uuid.uuid4()),
-                CreateTimestamp=f"{lib.fdate(create_date)}T09:00:00.000+00:00",
+                CreateTimestamp=f"{create_date}{create_time}.000+00:00",
                 Environment="prd",
                 SourceSystemCode=(
                     settings.connection_config.source_system_code.state or "XP41"
@@ -114,7 +117,7 @@ def rate_request(
                     SystemFields=tge.SystemFieldsType(
                         PickupDateTime=(
                             options.pickup_datetime.state
-                            or f"{lib.fdate(pickup_date)}T09:00:00.000+00:00"
+                            or f"{pickup_date}{create_time}.000+00:00"
                         ),
                     ),
                     ShipmentService=tge.ShipmentServiceType(
