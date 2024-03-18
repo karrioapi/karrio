@@ -29,6 +29,7 @@ from karrio.core.models import (
     DocumentUploadRequest,
     ManifestRequest,
     ManifestDetails,
+    ManifestDocument,
 )
 
 
@@ -310,6 +311,7 @@ class Manifest:
 
     shipment_identifiers: typing.List[str]
     address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
+    doc: ManifestDocument = jstruct.JStruct[ManifestDocument]
 
     reference: str = None
     metadata: typing.Dict = {}

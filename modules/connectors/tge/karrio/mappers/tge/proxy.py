@@ -12,13 +12,14 @@ class Proxy(proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/calculatePrice",
-            data=request.serialize(),
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
             headers={
                 "Authorization": f"Basic {self.settings.authorization}",
                 "Auth": f"Basic {self.settings.auth}",
                 "Content-Type": "application/json",
+                "accept": "*/*",
             },
         )
 
@@ -27,7 +28,7 @@ class Proxy(proxy.Proxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/printlabel",
-            data=request.serialize(),
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
             headers={
@@ -46,7 +47,7 @@ class Proxy(proxy.Proxy):
         responses = lib.run_asynchronously(
             lambda _: lib.request(
                 url=f"{self.settings.server_url}/printmanifest",
-                data=_,
+                data=lib.to_json(_),
                 trace=self.trace_as("json"),
                 method="POST",
                 headers={

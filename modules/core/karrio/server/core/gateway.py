@@ -188,6 +188,10 @@ class Shipments:
             test_mode=selected_rate.test_mode,
             services=[selected_rate.service],
         )
+
+        if carrier is None:
+            raise NotFound("No active carrier connection found to process the request")
+
         request = lib.to_object(
             datatypes.ShipmentRequest,
             {**lib.to_dict(payload), "service": selected_rate.service},
@@ -694,7 +698,7 @@ class Manifests:
             raise NotFound("No active carrier connection found to process the request")
 
         request = karrio.Manifest.create(
-            datatypes.ManifestRequest(**lib.to_dict(payload))
+            lib.to_object(datatypes.ManifestRequest, lib.to_dict(payload))
         )
 
         # The request call is wrapped in utils.identity to simplify mocking in tests

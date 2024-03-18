@@ -13618,30 +13618,6 @@
             "deprecationReason": null
           },
           {
-            "name": "sssc_count",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "shipment_count",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
             "name": "object_type",
             "description": null,
             "args": [],
@@ -21286,34 +21262,6 @@
             "defaultValue": null
           },
           {
-            "name": "sssc_count",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "shipment_count",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "SCALAR",
-                "name": "Int",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
             "name": "carrier_id",
             "description": null,
             "type": {
@@ -26202,26 +26150,6 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "sssc_count",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "shipment_count",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "Int",
               "ofType": null
             },
             "defaultValue": null

@@ -24,6 +24,7 @@
             "SourceSystemCode": "XP41"
         }
     },
+    "Exception": "The combination of MessageSender, SourceSystemCode, Shipment Number or SSCC ID was invalid.",
     "ExceptionMessage": "The combination of MessageSender, SourceSystemCode, Shipment Number or SSCC ID was invalid.",
     "message": "The combination of MessageSender, SourceSystemCode, Shipment Number or SSCC ID was invalid."
 }

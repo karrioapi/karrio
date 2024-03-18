@@ -2284,8 +2284,6 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       my_toll_token
       my_toll_identity
       account_code
-      sssc_count
-      shipment_count
     }
     ... on TNTSettingsType {
       id

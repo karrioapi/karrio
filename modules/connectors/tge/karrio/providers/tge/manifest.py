@@ -97,9 +97,10 @@ def manifest_request(
             shipment_payload.service
         ).value_or_key
 
-        create_date = datetime.datetime.now()
         payment = shipment_payload.payment or models.Payment()
-        shipping_date = lib.to_date(packages.options.shipment_date.state or create_date)
+        shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
+        pickup_date = shipping_date + datetime.timedelta(hours=1)
+        create_date = datetime.datetime.now()
 
         requests += [
             tge.ManifestRequestType(
@@ -108,10 +109,7 @@ def manifest_request(
                         MessageVersion="2.5",
                         DocumentType="Manifest",
                         MessageIdentifier=MessageIdentifier,
-                        CreateTimestamp=lib.fdatetime(
-                            create_date,
-                            output_format="%Y-%m-%dT%H:%M:%S.%fZ",
-                        ),
+                        CreateTimestamp=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
                         Environment=("PRD" if not settings.test_mode else "TST"),
                         SourceSystemCode=(
                             settings.connection_config.channel.state or "YF73"
@@ -125,12 +123,12 @@ def manifest_request(
                             settings.connection_config.business_id.state or "IPEC"
                         ),
                         PrintSettings=tge.PrintSettingsType(
-                            IsLabelThermal=not is_pdf,
-                            IsZPLRawResponseRequired=not is_pdf,
+                            IsLabelThermal="false" if is_pdf else "true",
+                            IsZPLRawResponseRequired="false" if is_pdf else "true",
                             PDF=(
                                 tge.PDFType(
-                                    IsPDFA4=True,
-                                    PDFSettings=tge.PDFSettingsType(StartQuadrant=1),
+                                    IsPDFA4="true",
+                                    PDFSettings=tge.PDFSettingsType(StartQuadrant="1"),
                                 )
                                 if is_pdf
                                 else None
@@ -157,15 +155,13 @@ def manifest_request(
                         ManifestID=tge.ManifestIDType(
                             Value=(options.manifest_id.state or ShipmentID)
                         ),
-                        CreateDateTime=lib.fdatetime(
-                            create_date, output_format="%Y-%m-%dT%H:%M:%S.%fZ"
-                        ),
+                        CreateDateTime=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
                         DatePeriodCollection=tge.DatePeriodCollectionType(
                             DatePeriod=[
                                 tge.DatePeriodType(
                                     DateTime=(
                                         options.tge_despatch_date.state
-                                        or f"{lib.fdate(shipping_date)}T90:00:00.000Z"
+                                        or f"{lib.fdatetime(pickup_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z"
                                     ),
                                     DateType="DespatchDate",
                                 ),
@@ -215,16 +211,13 @@ def manifest_request(
                                             Suburb=recipient.city,
                                         ),
                                     ),
-                                    CreateDateTime=lib.fdatetime(
-                                        shipping_date,
-                                        output_format="%Y-%m-%dT%H:%M:%S.%fZ",
-                                    ),
+                                    CreateDateTime=f"{lib.fdatetime(create_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z",
                                     DatePeriodCollection=tge.DatePeriodCollectionType(
                                         DatePeriod=[
                                             tge.DatePeriodType(
                                                 DateTime=(
                                                     options.tge_despatch_date.state
-                                                    or f"{lib.fdate(shipping_date)}T90:00:00.000Z"
+                                                    or f"{lib.fdatetime(pickup_date, output_format="%Y-%m-%dT%H:%M:%S")}.000Z"
                                                 ),
                                                 DateType="DespatchDate",
                                             ),
@@ -252,7 +245,7 @@ def manifest_request(
                                             Reference=[
                                                 tge.ReferenceType(
                                                     ReferenceType="ShipmentReference1",
-                                                    ReferenceValue=shipment_payload.reference,
+                                                    ReferenceValue=shipment_payload.reference or getattr(shipment_payload, "id", "N/A"),
                                                 ),
                                             ]
                                         )

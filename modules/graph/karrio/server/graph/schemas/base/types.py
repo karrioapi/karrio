@@ -1126,7 +1126,11 @@ class ConnectionType:
 
 def create_carrier_settings_type(name: str, model):
     _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-    EXCLUDED_FIELDS = ["cache"]
+    EXCLUDED_FIELDS = [
+        "cache",
+        "sssc_count",
+        "shipment_count",
+    ]
 
     @strawberry.type
     class _Settings(ConnectionType):

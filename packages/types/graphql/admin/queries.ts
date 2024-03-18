@@ -967,8 +967,6 @@ export const GET_SYSTEM_CONNECTIONS = gql`query GetSystemConnections {
       my_toll_token
       my_toll_identity
       account_code
-      sssc_count
-      shipment_count
     }
     ... on TNTSettingsType {
       id
@@ -1832,8 +1830,6 @@ export const GET_SYSTEM_CONNECTION = gql`query GetSystemConnection($id: String!)
       my_toll_token
       my_toll_identity
       account_code
-      sssc_count
-      shipment_count
     }
     ... on TNTSettingsType {
       id

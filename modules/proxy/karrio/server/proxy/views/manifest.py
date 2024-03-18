@@ -38,17 +38,17 @@ class ManifestingAPI(api.APIView):
     def post(self, request: request.Request):
         payload = serializers.ManifestRequest.map(data=request.data).data
 
-        response = gateway.Manifest.create(payload, context=request)
+        manifest = gateway.Manifests.create(payload, context=request)
 
         return response.Response(
-            serializers.ManifestResponse(response).data, status=status.HTTP_200_OK
+            serializers.ManifestResponse(manifest).data, status=status.HTTP_200_OK
         )
 
 
 router.router.urls.append(
     urls.path(
-        "proxy/manifests",
+        "proxy/manifest",
         ManifestingAPI.as_view(),
-        name="shipment-manifests",
+        name="shipment-manifest",
     )
 )

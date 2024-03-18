@@ -117,7 +117,7 @@ RateRequest = {
         "Header": {
             "CreateTimestamp": ANY,
             "DocumentType": "RateEnquiry",
-            "Environment": "PRD",
+            "Environment": "prd",
             "MessageIdentifier": ANY,
             "MessageReceiver": "TOLL",
             "MessageSender": "GOSHIPR",
@@ -127,6 +127,7 @@ RateRequest = {
         "RateEnquiry": {
             "Request": {
                 "BillToParty": {"AccountCode": "80502494"},
+                "BusinessID": "IPEC",
                 "ConsigneeParty": {
                     "PhysicalAddress": {
                         "CountryCode": "AU",
@@ -144,22 +145,30 @@ RateRequest = {
                     }
                 },
                 "FreightMode": "Road",
+                "ShipmentFinancials": {
+                    "ExtraServicesAmount": {"Currency": "AUD", "Value": "0"}
+                },
+                "ShipmentFlags": {"ExtraServiceFlag": "true"},
                 "ShipmentItems": {
                     "ShipmentItem": [
                         {
-                            "Commodity": {"CommodityCode": "Z"},
-                            "Dimensions": {
-                                "Height": 10.0,
-                                "Length": 10.0,
-                                "Volume": 1000.0,
-                                "Weight": 2.0,
-                                "Width": 10.0,
+                            "Commodity": {
+                                "CommodityCode": "Z",
+                                "CommodityDescription": "ALL FREIGHT",
                             },
-                            "ShipmentItemTotals": {"ShipmentItemCount": 1},
+                            "Dimensions": {
+                                "Height": "10.0",
+                                "Length": "10.0",
+                                "Volume": "0.1",
+                                "Weight": "2.0",
+                                "Width": "10.0",
+                            },
+                            "ShipmentItemTotals": {"ShipmentItemCount": "1"},
                         }
                     ]
                 },
-                "ShipmentService": {},
+                "ShipmentService": {"ServiceCode": "X"},
+                "SystemFields": {"PickupDateTime": "2024-03-17T09:00:00.000+00:00"},
             }
         },
     }

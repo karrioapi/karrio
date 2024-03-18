@@ -157,9 +157,9 @@ ManifestRequest = {
             "ManifestID": {"Value": "8880419999995"},
             "PrintDocumentType": "Manifest",
             "PrintSettings": {
-                "IsLabelThermal": False,
-                "IsZPLRawResponseRequired": False,
-                "PDF": {"IsPDFA4": True, "PDFSettings": {"StartQuadrant": 1}},
+                "IsLabelThermal": "false",
+                "IsZPLRawResponseRequired": "false",
+                "PDF": {"IsPDFA4": "true", "PDFSettings": {"StartQuadrant": "1"}},
             },
             "ShipmentCollection": {
                 "Shipment": [
