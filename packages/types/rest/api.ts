@@ -14,7 +14,7 @@
 
 
 import type { Configuration } from './configuration';
-import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
+import type { AxiosPromise, AxiosInstance, AxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 // Some imports not used depending on template conditions
 // @ts-ignore
@@ -10491,7 +10491,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        authenticate: async (tokenObtainPair: TokenObtainPair, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        authenticate: async (tokenObtainPair: TokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'tokenObtainPair' is not null or undefined
             assertParamExists('authenticate', 'tokenObtainPair', tokenObtainPair)
             const localVarPath = `/api/token`;
@@ -10502,17 +10502,17 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(tokenObtainPair, localVarRequestOptions, configuration)
 
             return {
@@ -10526,7 +10526,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        data: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        data: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/references`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10535,15 +10535,15 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10557,7 +10557,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getVerifiedToken: async (verifiedTokenObtainPair: VerifiedTokenObtainPair, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getVerifiedToken: async (verifiedTokenObtainPair: VerifiedTokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'verifiedTokenObtainPair' is not null or undefined
             assertParamExists('getVerifiedToken', 'verifiedTokenObtainPair', verifiedTokenObtainPair)
             const localVarPath = `/api/token/verified`;
@@ -10568,17 +10568,17 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(verifiedTokenObtainPair, localVarRequestOptions, configuration)
 
             return {
@@ -10592,7 +10592,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        ping: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        ping: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -10601,15 +10601,15 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10623,7 +10623,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        refreshToken: async (tokenRefresh: TokenRefresh, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        refreshToken: async (tokenRefresh: TokenRefresh, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'tokenRefresh' is not null or undefined
             assertParamExists('refreshToken', 'tokenRefresh', tokenRefresh)
             const localVarPath = `/api/token/refresh`;
@@ -10634,17 +10634,17 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(tokenRefresh, localVarRequestOptions, configuration)
 
             return {
@@ -10659,7 +10659,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        verifyToken: async (tokenVerify: TokenVerify, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        verifyToken: async (tokenVerify: TokenVerify, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'tokenVerify' is not null or undefined
             assertParamExists('verifyToken', 'tokenVerify', tokenVerify)
             const localVarPath = `/api/token/verify`;
@@ -10670,17 +10670,17 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(tokenVerify, localVarRequestOptions, configuration)
 
             return {
@@ -10695,7 +10695,7 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
  * APIApi - functional programming interface
  * @export
  */
-export const APIApiFp = function(configuration?: Configuration) {
+export const APIApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = APIApiAxiosParamCreator(configuration)
     return {
         /**
@@ -10705,7 +10705,7 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async authenticate(tokenObtainPair: TokenObtainPair, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+        async authenticate(tokenObtainPair: TokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.authenticate(tokenObtainPair, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.authenticate']?.[index]?.url;
@@ -10717,7 +10717,7 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async data(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
+        async data(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.data(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.data']?.[index]?.url;
@@ -10730,7 +10730,7 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getVerifiedToken(verifiedTokenObtainPair: VerifiedTokenObtainPair, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+        async getVerifiedToken(verifiedTokenObtainPair: VerifiedTokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getVerifiedToken(verifiedTokenObtainPair, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.getVerifiedToken']?.[index]?.url;
@@ -10742,7 +10742,7 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async ping(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
+        async ping(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.ping(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.ping']?.[index]?.url;
@@ -10755,7 +10755,7 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async refreshToken(tokenRefresh: TokenRefresh, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+        async refreshToken(tokenRefresh: TokenRefresh, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.refreshToken(tokenRefresh, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.refreshToken']?.[index]?.url;
@@ -10768,7 +10768,7 @@ export const APIApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async verifyToken(tokenVerify: TokenVerify, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
+        async verifyToken(tokenVerify: TokenVerify, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.verifyToken(tokenVerify, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.verifyToken']?.[index]?.url;
@@ -10916,7 +10916,7 @@ export class APIApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public authenticate(requestParameters: APIApiAuthenticateRequest, options?: RawAxiosRequestConfig) {
+    public authenticate(requestParameters: APIApiAuthenticateRequest, options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -10927,7 +10927,7 @@ export class APIApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public data(options?: RawAxiosRequestConfig) {
+    public data(options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).data(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -10939,7 +10939,7 @@ export class APIApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public getVerifiedToken(requestParameters: APIApiGetVerifiedTokenRequest, options?: RawAxiosRequestConfig) {
+    public getVerifiedToken(requestParameters: APIApiGetVerifiedTokenRequest, options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -10950,7 +10950,7 @@ export class APIApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public ping(options?: RawAxiosRequestConfig) {
+    public ping(options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).ping(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -10962,7 +10962,7 @@ export class APIApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public refreshToken(requestParameters: APIApiRefreshTokenRequest, options?: RawAxiosRequestConfig) {
+    public refreshToken(requestParameters: APIApiRefreshTokenRequest, options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).refreshToken(requestParameters.tokenRefresh, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -10974,7 +10974,7 @@ export class APIApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof APIApi
      */
-    public verifyToken(requestParameters: APIApiVerifyTokenRequest, options?: RawAxiosRequestConfig) {
+    public verifyToken(requestParameters: APIApiVerifyTokenRequest, options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).verifyToken(requestParameters.tokenVerify, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -10994,7 +10994,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (addressData: AddressData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (addressData: AddressData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'addressData' is not null or undefined
             assertParamExists('create', 'addressData', addressData)
             const localVarPath = `/v1/addresses`;
@@ -11005,7 +11005,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11024,12 +11024,12 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(addressData, localVarRequestOptions, configuration)
 
             return {
@@ -11044,7 +11044,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        discard: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        discard: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('discard', 'id', id)
             const localVarPath = `/v1/addresses/{id}`
@@ -11056,7 +11056,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11075,10 +11075,10 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11091,7 +11091,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/addresses`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11100,7 +11100,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11119,10 +11119,10 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11136,7 +11136,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/addresses/{id}`
@@ -11148,7 +11148,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11167,10 +11167,10 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11185,7 +11185,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (id: string, patchedAddressData?: PatchedAddressData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (id: string, patchedAddressData?: PatchedAddressData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/addresses/{id}`
@@ -11197,7 +11197,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11216,12 +11216,12 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(patchedAddressData, localVarRequestOptions, configuration)
 
             return {
@@ -11236,7 +11236,7 @@ export const AddressesApiAxiosParamCreator = function (configuration?: Configura
  * AddressesApi - functional programming interface
  * @export
  */
-export const AddressesApiFp = function(configuration?: Configuration) {
+export const AddressesApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = AddressesApiAxiosParamCreator(configuration)
     return {
         /**
@@ -11246,7 +11246,7 @@ export const AddressesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(addressData: AddressData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
+        async create(addressData: AddressData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(addressData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AddressesApi.create']?.[index]?.url;
@@ -11259,7 +11259,7 @@ export const AddressesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async discard(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
+        async discard(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.discard(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AddressesApi.discard']?.[index]?.url;
@@ -11271,7 +11271,7 @@ export const AddressesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AddressList>> {
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<AddressList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AddressesApi.list']?.[index]?.url;
@@ -11284,7 +11284,7 @@ export const AddressesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AddressesApi.retrieve']?.[index]?.url;
@@ -11298,7 +11298,7 @@ export const AddressesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(id: string, patchedAddressData?: PatchedAddressData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
+        async update(id: string, patchedAddressData?: PatchedAddressData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Address>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, patchedAddressData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['AddressesApi.update']?.[index]?.url;
@@ -11444,7 +11444,7 @@ export class AddressesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AddressesApi
      */
-    public create(requestParameters: AddressesApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: AddressesApiCreateRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).create(requestParameters.addressData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -11456,7 +11456,7 @@ export class AddressesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AddressesApi
      */
-    public discard(requestParameters: AddressesApiDiscardRequest, options?: RawAxiosRequestConfig) {
+    public discard(requestParameters: AddressesApiDiscardRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -11467,7 +11467,7 @@ export class AddressesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AddressesApi
      */
-    public list(options?: RawAxiosRequestConfig) {
+    public list(options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -11479,7 +11479,7 @@ export class AddressesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AddressesApi
      */
-    public retrieve(requestParameters: AddressesApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: AddressesApiRetrieveRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -11491,7 +11491,7 @@ export class AddressesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof AddressesApi
      */
-    public update(requestParameters: AddressesApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: AddressesApiUpdateRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedAddressData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -11511,7 +11511,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createOrders: async (batchOrderData: BatchOrderData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createOrders: async (batchOrderData: BatchOrderData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'batchOrderData' is not null or undefined
             assertParamExists('createOrders', 'batchOrderData', batchOrderData)
             const localVarPath = `/v1/batches/orders`;
@@ -11522,7 +11522,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11541,12 +11541,12 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(batchOrderData, localVarRequestOptions, configuration)
 
             return {
@@ -11561,7 +11561,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createShipments: async (batchShipmentData: BatchShipmentData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createShipments: async (batchShipmentData: BatchShipmentData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'batchShipmentData' is not null or undefined
             assertParamExists('createShipments', 'batchShipmentData', batchShipmentData)
             const localVarPath = `/v1/batches/shipments`;
@@ -11572,7 +11572,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11591,12 +11591,12 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(batchShipmentData, localVarRequestOptions, configuration)
 
             return {
@@ -11611,7 +11611,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createTrackers: async (batchTrackerData: BatchTrackerData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createTrackers: async (batchTrackerData: BatchTrackerData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'batchTrackerData' is not null or undefined
             assertParamExists('createTrackers', 'batchTrackerData', batchTrackerData)
             const localVarPath = `/v1/batches/trackers`;
@@ -11622,7 +11622,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11641,12 +11641,12 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(batchTrackerData, localVarRequestOptions, configuration)
 
             return {
@@ -11666,7 +11666,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        importFile: async (dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dataFile2?: File, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        importFile: async (dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dataFile2?: File, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/batches/data/import`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11675,7 +11675,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
             const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
@@ -11707,24 +11707,24 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             }
 
 
-            if (resourceType2 !== undefined) { 
+            if (resourceType2 !== undefined) {
                 localVarFormParams.append('resource_type', resourceType2 as any);
             }
-    
-            if (dataTemplate2 !== undefined) { 
+
+            if (dataTemplate2 !== undefined) {
                 localVarFormParams.append('data_template', dataTemplate2 as any);
             }
-    
-            if (dataFile2 !== undefined) { 
+
+            if (dataFile2 !== undefined) {
                 localVarFormParams.append('data_file', dataFile2 as any);
             }
-    
-    
+
+
             localVarHeaderParameter['Content-Type'] = 'multipart/form-data';
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = localVarFormParams;
 
             return {
@@ -11738,7 +11738,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/batches/operations`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11747,7 +11747,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11766,10 +11766,10 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11783,7 +11783,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/batches/operations/{id}`
@@ -11795,7 +11795,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -11814,10 +11814,10 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -11831,7 +11831,7 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
  * BatchesApi - functional programming interface
  * @export
  */
-export const BatchesApiFp = function(configuration?: Configuration) {
+export const BatchesApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = BatchesApiAxiosParamCreator(configuration)
     return {
         /**
@@ -11841,7 +11841,7 @@ export const BatchesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createOrders(batchOrderData: BatchOrderData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
+        async createOrders(batchOrderData: BatchOrderData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createOrders(batchOrderData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['BatchesApi.createOrders']?.[index]?.url;
@@ -11854,7 +11854,7 @@ export const BatchesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createShipments(batchShipmentData: BatchShipmentData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
+        async createShipments(batchShipmentData: BatchShipmentData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createShipments(batchShipmentData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['BatchesApi.createShipments']?.[index]?.url;
@@ -11867,7 +11867,7 @@ export const BatchesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createTrackers(batchTrackerData: BatchTrackerData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
+        async createTrackers(batchTrackerData: BatchTrackerData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createTrackers(batchTrackerData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['BatchesApi.createTrackers']?.[index]?.url;
@@ -11885,7 +11885,7 @@ export const BatchesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async importFile(dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dataFile2?: File, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
+        async importFile(dataFile?: File, dataTemplate?: string, resourceType?: ImportFileResourceTypeEnum, resourceType2?: string, dataTemplate2?: string, dataFile2?: File, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.importFile(dataFile, dataTemplate, resourceType, resourceType2, dataTemplate2, dataFile2, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['BatchesApi.importFile']?.[index]?.url;
@@ -11897,7 +11897,7 @@ export const BatchesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperations>> {
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperations>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['BatchesApi.list']?.[index]?.url;
@@ -11910,7 +11910,7 @@ export const BatchesApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<BatchOperation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['BatchesApi.retrieve']?.[index]?.url;
@@ -12108,7 +12108,7 @@ export class BatchesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof BatchesApi
      */
-    public createOrders(requestParameters: BatchesApiCreateOrdersRequest, options?: RawAxiosRequestConfig) {
+    public createOrders(requestParameters: BatchesApiCreateOrdersRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).createOrders(requestParameters.batchOrderData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -12120,7 +12120,7 @@ export class BatchesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof BatchesApi
      */
-    public createShipments(requestParameters: BatchesApiCreateShipmentsRequest, options?: RawAxiosRequestConfig) {
+    public createShipments(requestParameters: BatchesApiCreateShipmentsRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).createShipments(requestParameters.batchShipmentData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -12132,7 +12132,7 @@ export class BatchesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof BatchesApi
      */
-    public createTrackers(requestParameters: BatchesApiCreateTrackersRequest, options?: RawAxiosRequestConfig) {
+    public createTrackers(requestParameters: BatchesApiCreateTrackersRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).createTrackers(requestParameters.batchTrackerData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -12144,7 +12144,7 @@ export class BatchesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof BatchesApi
      */
-    public importFile(requestParameters: BatchesApiImportFileRequest = {}, options?: RawAxiosRequestConfig) {
+    public importFile(requestParameters: BatchesApiImportFileRequest = {}, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).importFile(requestParameters.dataFile, requestParameters.dataTemplate, requestParameters.resourceType, requestParameters.resourceType2, requestParameters.dataTemplate2, requestParameters.dataFile2, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -12155,7 +12155,7 @@ export class BatchesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof BatchesApi
      */
-    public list(options?: RawAxiosRequestConfig) {
+    public list(options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -12167,7 +12167,7 @@ export class BatchesApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof BatchesApi
      */
-    public retrieve(requestParameters: BatchesApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: BatchesApiRetrieveRequest, options?: AxiosRequestConfig) {
         return BatchesApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -12197,7 +12197,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getServices: async (carrierName: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getServices: async (carrierName: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('getServices', 'carrierName', carrierName)
             const localVarPath = `/v1/carriers/{carrier_name}/services`
@@ -12209,7 +12209,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12228,10 +12228,10 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12249,7 +12249,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/carriers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12258,7 +12258,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12297,10 +12297,10 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             }
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12314,7 +12314,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/carriers/{id}`
@@ -12326,7 +12326,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12345,10 +12345,10 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12362,7 +12362,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
  * CarriersApi - functional programming interface
  * @export
  */
-export const CarriersApiFp = function(configuration?: Configuration) {
+export const CarriersApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = CarriersApiAxiosParamCreator(configuration)
     return {
         /**
@@ -12372,7 +12372,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getServices(carrierName: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
+        async getServices(carrierName: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getServices(carrierName, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CarriersApi.getServices']?.[index]?.url;
@@ -12389,7 +12389,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierList>> {
+        async list(active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(active, carrierName, metadataKey, metadataValue, systemOnly, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CarriersApi.list']?.[index]?.url;
@@ -12402,7 +12402,7 @@ export const CarriersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierSettings>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierSettings>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CarriersApi.retrieve']?.[index]?.url;
@@ -12536,7 +12536,7 @@ export class CarriersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CarriersApi
      */
-    public getServices(requestParameters: CarriersApiGetServicesRequest, options?: RawAxiosRequestConfig) {
+    public getServices(requestParameters: CarriersApiGetServicesRequest, options?: AxiosRequestConfig) {
         return CarriersApiFp(this.configuration).getServices(requestParameters.carrierName, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -12548,7 +12548,7 @@ export class CarriersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CarriersApi
      */
-    public list(requestParameters: CarriersApiListRequest = {}, options?: RawAxiosRequestConfig) {
+    public list(requestParameters: CarriersApiListRequest = {}, options?: AxiosRequestConfig) {
         return CarriersApiFp(this.configuration).list(requestParameters.active, requestParameters.carrierName, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.systemOnly, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -12560,7 +12560,7 @@ export class CarriersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CarriersApi
      */
-    public retrieve(requestParameters: CarriersApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: CarriersApiRetrieveRequest, options?: AxiosRequestConfig) {
         return CarriersApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -12580,7 +12580,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (customsData: CustomsData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (customsData: CustomsData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'customsData' is not null or undefined
             assertParamExists('create', 'customsData', customsData)
             const localVarPath = `/v1/customs_info`;
@@ -12591,7 +12591,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12610,12 +12610,12 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(customsData, localVarRequestOptions, configuration)
 
             return {
@@ -12630,7 +12630,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        discard: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        discard: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('discard', 'id', id)
             const localVarPath = `/v1/customs_info/{id}`
@@ -12642,7 +12642,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12661,10 +12661,10 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12677,7 +12677,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/customs_info`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -12686,7 +12686,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12705,10 +12705,10 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12722,7 +12722,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/customs_info/{id}`
@@ -12734,7 +12734,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12753,10 +12753,10 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -12771,7 +12771,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (id: string, patchedCustomsData?: PatchedCustomsData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (id: string, patchedCustomsData?: PatchedCustomsData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/customs_info/{id}`
@@ -12783,7 +12783,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -12802,12 +12802,12 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(patchedCustomsData, localVarRequestOptions, configuration)
 
             return {
@@ -12822,7 +12822,7 @@ export const CustomsApiAxiosParamCreator = function (configuration?: Configurati
  * CustomsApi - functional programming interface
  * @export
  */
-export const CustomsApiFp = function(configuration?: Configuration) {
+export const CustomsApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = CustomsApiAxiosParamCreator(configuration)
     return {
         /**
@@ -12832,7 +12832,7 @@ export const CustomsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(customsData: CustomsData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
+        async create(customsData: CustomsData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(customsData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CustomsApi.create']?.[index]?.url;
@@ -12845,7 +12845,7 @@ export const CustomsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async discard(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
+        async discard(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.discard(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CustomsApi.discard']?.[index]?.url;
@@ -12857,7 +12857,7 @@ export const CustomsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CustomsList>> {
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CustomsList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CustomsApi.list']?.[index]?.url;
@@ -12870,7 +12870,7 @@ export const CustomsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CustomsApi.retrieve']?.[index]?.url;
@@ -12884,7 +12884,7 @@ export const CustomsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(id: string, patchedCustomsData?: PatchedCustomsData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
+        async update(id: string, patchedCustomsData?: PatchedCustomsData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, patchedCustomsData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CustomsApi.update']?.[index]?.url;
@@ -13030,7 +13030,7 @@ export class CustomsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CustomsApi
      */
-    public create(requestParameters: CustomsApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: CustomsApiCreateRequest, options?: AxiosRequestConfig) {
         return CustomsApiFp(this.configuration).create(requestParameters.customsData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13042,7 +13042,7 @@ export class CustomsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CustomsApi
      */
-    public discard(requestParameters: CustomsApiDiscardRequest, options?: RawAxiosRequestConfig) {
+    public discard(requestParameters: CustomsApiDiscardRequest, options?: AxiosRequestConfig) {
         return CustomsApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13053,7 +13053,7 @@ export class CustomsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CustomsApi
      */
-    public list(options?: RawAxiosRequestConfig) {
+    public list(options?: AxiosRequestConfig) {
         return CustomsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13065,7 +13065,7 @@ export class CustomsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CustomsApi
      */
-    public retrieve(requestParameters: CustomsApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: CustomsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return CustomsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13077,7 +13077,7 @@ export class CustomsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof CustomsApi
      */
-    public update(requestParameters: CustomsApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: CustomsApiUpdateRequest, options?: AxiosRequestConfig) {
         return CustomsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedCustomsData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -13099,7 +13099,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (createdAfter?: string, createdBefore?: string, shipmentId?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (createdAfter?: string, createdBefore?: string, shipmentId?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/documents`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13108,7 +13108,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13143,10 +13143,10 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             }
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13160,7 +13160,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/documents/{id}`
@@ -13172,7 +13172,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13191,10 +13191,10 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13208,7 +13208,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        upload: async (documentUploadData: DocumentUploadData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        upload: async (documentUploadData: DocumentUploadData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'documentUploadData' is not null or undefined
             assertParamExists('upload', 'documentUploadData', documentUploadData)
             const localVarPath = `/v1/documents`;
@@ -13219,7 +13219,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13238,12 +13238,12 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(documentUploadData, localVarRequestOptions, configuration)
 
             return {
@@ -13258,7 +13258,7 @@ export const DocumentsApiAxiosParamCreator = function (configuration?: Configura
  * DocumentsApi - functional programming interface
  * @export
  */
-export const DocumentsApiFp = function(configuration?: Configuration) {
+export const DocumentsApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = DocumentsApiAxiosParamCreator(configuration)
     return {
         /**
@@ -13270,7 +13270,7 @@ export const DocumentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(createdAfter?: string, createdBefore?: string, shipmentId?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DocumentUploadRecords>> {
+        async list(createdAfter?: string, createdBefore?: string, shipmentId?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DocumentUploadRecords>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(createdAfter, createdBefore, shipmentId, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['DocumentsApi.list']?.[index]?.url;
@@ -13283,7 +13283,7 @@ export const DocumentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DocumentUploadRecord>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DocumentUploadRecord>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['DocumentsApi.retrieve']?.[index]?.url;
@@ -13296,7 +13296,7 @@ export const DocumentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async upload(documentUploadData: DocumentUploadData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DocumentUploadRecord>> {
+        async upload(documentUploadData: DocumentUploadData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<DocumentUploadRecord>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.upload(documentUploadData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['DocumentsApi.upload']?.[index]?.url;
@@ -13416,7 +13416,7 @@ export class DocumentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof DocumentsApi
      */
-    public list(requestParameters: DocumentsApiListRequest = {}, options?: RawAxiosRequestConfig) {
+    public list(requestParameters: DocumentsApiListRequest = {}, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).list(requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.shipmentId, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13428,7 +13428,7 @@ export class DocumentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof DocumentsApi
      */
-    public retrieve(requestParameters: DocumentsApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: DocumentsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13440,7 +13440,7 @@ export class DocumentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof DocumentsApi
      */
-    public upload(requestParameters: DocumentsApiUploadRequest, options?: RawAxiosRequestConfig) {
+    public upload(requestParameters: DocumentsApiUploadRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).upload(requestParameters.documentUploadData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -13460,7 +13460,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (manifestData: ManifestData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (manifestData: ManifestData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'manifestData' is not null or undefined
             assertParamExists('create', 'manifestData', manifestData)
             const localVarPath = `/v1/manifests`;
@@ -13471,7 +13471,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13490,12 +13490,12 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(manifestData, localVarRequestOptions, configuration)
 
             return {
@@ -13512,7 +13512,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/manifests`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13521,7 +13521,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13556,10 +13556,10 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             }
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13573,7 +13573,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/manifests/{id}`
@@ -13585,7 +13585,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13604,10 +13604,10 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13621,7 +13621,7 @@ export const ManifestsApiAxiosParamCreator = function (configuration?: Configura
  * ManifestsApi - functional programming interface
  * @export
  */
-export const ManifestsApiFp = function(configuration?: Configuration) {
+export const ManifestsApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = ManifestsApiAxiosParamCreator(configuration)
     return {
         /**
@@ -13631,7 +13631,7 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(manifestData: ManifestData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
+        async create(manifestData: ManifestData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(manifestData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ManifestsApi.create']?.[index]?.url;
@@ -13646,7 +13646,7 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestList>> {
+        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ManifestsApi.list']?.[index]?.url;
@@ -13659,7 +13659,7 @@ export const ManifestsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ManifestsApi.retrieve']?.[index]?.url;
@@ -13779,7 +13779,7 @@ export class ManifestsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ManifestsApi
      */
-    public create(requestParameters: ManifestsApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: ManifestsApiCreateRequest, options?: AxiosRequestConfig) {
         return ManifestsApiFp(this.configuration).create(requestParameters.manifestData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13791,7 +13791,7 @@ export class ManifestsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ManifestsApi
      */
-    public list(requestParameters: ManifestsApiListRequest = {}, options?: RawAxiosRequestConfig) {
+    public list(requestParameters: ManifestsApiListRequest = {}, options?: AxiosRequestConfig) {
         return ManifestsApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -13803,7 +13803,7 @@ export class ManifestsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ManifestsApi
      */
-    public retrieve(requestParameters: ManifestsApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: ManifestsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return ManifestsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -13823,7 +13823,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cancel: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        cancel: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('cancel', 'id', id)
             const localVarPath = `/v1/orders/{id}/cancel`
@@ -13835,7 +13835,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13854,10 +13854,10 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13871,7 +13871,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (orderData: OrderData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (orderData: OrderData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'orderData' is not null or undefined
             assertParamExists('create', 'orderData', orderData)
             const localVarPath = `/v1/orders`;
@@ -13882,7 +13882,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13901,12 +13901,12 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(orderData, localVarRequestOptions, configuration)
 
             return {
@@ -13922,7 +13922,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
          * @deprecated
          * @throws {RequiredError}
          */
-        dismiss: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        dismiss: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('dismiss', 'id', id)
             const localVarPath = `/v1/orders/{id}`
@@ -13934,7 +13934,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13953,10 +13953,10 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -13969,7 +13969,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/orders`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -13978,7 +13978,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -13997,10 +13997,10 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14014,7 +14014,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/orders/{id}`
@@ -14026,7 +14026,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14045,10 +14045,10 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14063,7 +14063,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (id: string, orderUpdateData?: OrderUpdateData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (id: string, orderUpdateData?: OrderUpdateData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/orders/{id}`
@@ -14075,7 +14075,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14094,12 +14094,12 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(orderUpdateData, localVarRequestOptions, configuration)
 
             return {
@@ -14114,7 +14114,7 @@ export const OrdersApiAxiosParamCreator = function (configuration?: Configuratio
  * OrdersApi - functional programming interface
  * @export
  */
-export const OrdersApiFp = function(configuration?: Configuration) {
+export const OrdersApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = OrdersApiAxiosParamCreator(configuration)
     return {
         /**
@@ -14124,7 +14124,7 @@ export const OrdersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async cancel(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
+        async cancel(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.cancel(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['OrdersApi.cancel']?.[index]?.url;
@@ -14137,7 +14137,7 @@ export const OrdersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(orderData: OrderData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
+        async create(orderData: OrderData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(orderData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['OrdersApi.create']?.[index]?.url;
@@ -14151,7 +14151,7 @@ export const OrdersApiFp = function(configuration?: Configuration) {
          * @deprecated
          * @throws {RequiredError}
          */
-        async dismiss(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
+        async dismiss(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.dismiss(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['OrdersApi.dismiss']?.[index]?.url;
@@ -14163,7 +14163,7 @@ export const OrdersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderList>> {
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OrderList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['OrdersApi.list']?.[index]?.url;
@@ -14176,7 +14176,7 @@ export const OrdersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['OrdersApi.retrieve']?.[index]?.url;
@@ -14190,7 +14190,7 @@ export const OrdersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(id: string, orderUpdateData?: OrderUpdateData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
+        async update(id: string, orderUpdateData?: OrderUpdateData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Order>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, orderUpdateData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['OrdersApi.update']?.[index]?.url;
@@ -14361,7 +14361,7 @@ export class OrdersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof OrdersApi
      */
-    public cancel(requestParameters: OrdersApiCancelRequest, options?: RawAxiosRequestConfig) {
+    public cancel(requestParameters: OrdersApiCancelRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).cancel(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14373,7 +14373,7 @@ export class OrdersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof OrdersApi
      */
-    public create(requestParameters: OrdersApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: OrdersApiCreateRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).create(requestParameters.orderData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14386,7 +14386,7 @@ export class OrdersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof OrdersApi
      */
-    public dismiss(requestParameters: OrdersApiDismissRequest, options?: RawAxiosRequestConfig) {
+    public dismiss(requestParameters: OrdersApiDismissRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).dismiss(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14397,7 +14397,7 @@ export class OrdersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof OrdersApi
      */
-    public list(options?: RawAxiosRequestConfig) {
+    public list(options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14409,7 +14409,7 @@ export class OrdersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof OrdersApi
      */
-    public retrieve(requestParameters: OrdersApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: OrdersApiRetrieveRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14421,7 +14421,7 @@ export class OrdersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof OrdersApi
      */
-    public update(requestParameters: OrdersApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: OrdersApiUpdateRequest, options?: AxiosRequestConfig) {
         return OrdersApiFp(this.configuration).update(requestParameters.id, requestParameters.orderUpdateData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -14441,7 +14441,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (parcelData: ParcelData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (parcelData: ParcelData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'parcelData' is not null or undefined
             assertParamExists('create', 'parcelData', parcelData)
             const localVarPath = `/v1/parcels`;
@@ -14452,7 +14452,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14471,12 +14471,12 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(parcelData, localVarRequestOptions, configuration)
 
             return {
@@ -14491,7 +14491,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        discard: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        discard: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('discard', 'id', id)
             const localVarPath = `/v1/parcels/{id}`
@@ -14503,7 +14503,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14522,10 +14522,10 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14538,7 +14538,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/parcels`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -14547,7 +14547,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14566,10 +14566,10 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14583,7 +14583,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/parcels/{id}`
@@ -14595,7 +14595,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14614,10 +14614,10 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -14632,7 +14632,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (id: string, patchedParcelData?: PatchedParcelData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (id: string, patchedParcelData?: PatchedParcelData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/parcels/{id}`
@@ -14644,7 +14644,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14663,12 +14663,12 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(patchedParcelData, localVarRequestOptions, configuration)
 
             return {
@@ -14683,7 +14683,7 @@ export const ParcelsApiAxiosParamCreator = function (configuration?: Configurati
  * ParcelsApi - functional programming interface
  * @export
  */
-export const ParcelsApiFp = function(configuration?: Configuration) {
+export const ParcelsApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = ParcelsApiAxiosParamCreator(configuration)
     return {
         /**
@@ -14693,7 +14693,7 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(parcelData: ParcelData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
+        async create(parcelData: ParcelData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(parcelData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParcelsApi.create']?.[index]?.url;
@@ -14706,7 +14706,7 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async discard(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
+        async discard(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.discard(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParcelsApi.discard']?.[index]?.url;
@@ -14718,7 +14718,7 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ParcelList>> {
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ParcelList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParcelsApi.list']?.[index]?.url;
@@ -14731,7 +14731,7 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParcelsApi.retrieve']?.[index]?.url;
@@ -14745,7 +14745,7 @@ export const ParcelsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(id: string, patchedParcelData?: PatchedParcelData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
+        async update(id: string, patchedParcelData?: PatchedParcelData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Parcel>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, patchedParcelData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ParcelsApi.update']?.[index]?.url;
@@ -14891,7 +14891,7 @@ export class ParcelsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ParcelsApi
      */
-    public create(requestParameters: ParcelsApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: ParcelsApiCreateRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).create(requestParameters.parcelData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14903,7 +14903,7 @@ export class ParcelsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ParcelsApi
      */
-    public discard(requestParameters: ParcelsApiDiscardRequest, options?: RawAxiosRequestConfig) {
+    public discard(requestParameters: ParcelsApiDiscardRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14914,7 +14914,7 @@ export class ParcelsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ParcelsApi
      */
-    public list(options?: RawAxiosRequestConfig) {
+    public list(options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14926,7 +14926,7 @@ export class ParcelsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ParcelsApi
      */
-    public retrieve(requestParameters: ParcelsApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: ParcelsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -14938,7 +14938,7 @@ export class ParcelsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ParcelsApi
      */
-    public update(requestParameters: ParcelsApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: ParcelsApiUpdateRequest, options?: AxiosRequestConfig) {
         return ParcelsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedParcelData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -14959,7 +14959,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cancel: async (id: string, pickupCancelData?: PickupCancelData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        cancel: async (id: string, pickupCancelData?: PickupCancelData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('cancel', 'id', id)
             const localVarPath = `/v1/pickups/{id}/cancel`
@@ -14971,7 +14971,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -14990,12 +14990,12 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(pickupCancelData, localVarRequestOptions, configuration)
 
             return {
@@ -15009,7 +15009,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/pickups`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -15018,7 +15018,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15037,10 +15037,10 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -15054,7 +15054,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/pickups/{id}`
@@ -15066,7 +15066,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15085,10 +15085,10 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -15103,7 +15103,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        schedule: async (carrierName: string, pickupData: PickupData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        schedule: async (carrierName: string, pickupData: PickupData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('schedule', 'carrierName', carrierName)
             // verify required parameter 'pickupData' is not null or undefined
@@ -15117,7 +15117,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15136,12 +15136,12 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(pickupData, localVarRequestOptions, configuration)
 
             return {
@@ -15157,7 +15157,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (id: string, pickupUpdateData: PickupUpdateData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (id: string, pickupUpdateData: PickupUpdateData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             // verify required parameter 'pickupUpdateData' is not null or undefined
@@ -15171,7 +15171,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15190,12 +15190,12 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(pickupUpdateData, localVarRequestOptions, configuration)
 
             return {
@@ -15210,7 +15210,7 @@ export const PickupsApiAxiosParamCreator = function (configuration?: Configurati
  * PickupsApi - functional programming interface
  * @export
  */
-export const PickupsApiFp = function(configuration?: Configuration) {
+export const PickupsApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = PickupsApiAxiosParamCreator(configuration)
     return {
         /**
@@ -15221,7 +15221,7 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async cancel(id: string, pickupCancelData?: PickupCancelData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
+        async cancel(id: string, pickupCancelData?: PickupCancelData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.cancel(id, pickupCancelData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['PickupsApi.cancel']?.[index]?.url;
@@ -15233,7 +15233,7 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['PickupsApi.list']?.[index]?.url;
@@ -15246,7 +15246,7 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['PickupsApi.retrieve']?.[index]?.url;
@@ -15260,7 +15260,7 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async schedule(carrierName: string, pickupData: PickupData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
+        async schedule(carrierName: string, pickupData: PickupData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.schedule(carrierName, pickupData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['PickupsApi.schedule']?.[index]?.url;
@@ -15274,7 +15274,7 @@ export const PickupsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(id: string, pickupUpdateData: PickupUpdateData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
+        async update(id: string, pickupUpdateData: PickupUpdateData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Pickup>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, pickupUpdateData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['PickupsApi.update']?.[index]?.url;
@@ -15434,7 +15434,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof PickupsApi
      */
-    public cancel(requestParameters: PickupsApiCancelRequest, options?: RawAxiosRequestConfig) {
+    public cancel(requestParameters: PickupsApiCancelRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).cancel(requestParameters.id, requestParameters.pickupCancelData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -15445,7 +15445,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof PickupsApi
      */
-    public list(options?: RawAxiosRequestConfig) {
+    public list(options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -15457,7 +15457,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof PickupsApi
      */
-    public retrieve(requestParameters: PickupsApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: PickupsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -15469,7 +15469,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof PickupsApi
      */
-    public schedule(requestParameters: PickupsApiScheduleRequest, options?: RawAxiosRequestConfig) {
+    public schedule(requestParameters: PickupsApiScheduleRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).schedule(requestParameters.carrierName, requestParameters.pickupData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -15481,7 +15481,7 @@ export class PickupsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof PickupsApi
      */
-    public update(requestParameters: PickupsApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: PickupsApiUpdateRequest, options?: AxiosRequestConfig) {
         return PickupsApiFp(this.configuration).update(requestParameters.id, requestParameters.pickupUpdateData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -15501,7 +15501,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        buyLabel: async (shippingRequest: ShippingRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        buyLabel: async (shippingRequest: ShippingRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'shippingRequest' is not null or undefined
             assertParamExists('buyLabel', 'shippingRequest', shippingRequest)
             const localVarPath = `/v1/proxy/shipping`;
@@ -15512,7 +15512,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15531,12 +15531,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(shippingRequest, localVarRequestOptions, configuration)
 
             return {
@@ -15552,7 +15552,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cancelPickup: async (carrierName: CancelPickupCarrierNameEnum, pickupCancelRequest: PickupCancelRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        cancelPickup: async (carrierName: CancelPickupCarrierNameEnum, pickupCancelRequest: PickupCancelRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('cancelPickup', 'carrierName', carrierName)
             // verify required parameter 'pickupCancelRequest' is not null or undefined
@@ -15566,7 +15566,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15585,12 +15585,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(pickupCancelRequest, localVarRequestOptions, configuration)
 
             return {
@@ -15605,7 +15605,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        createManifest: async (manifestRequest: ManifestRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        createManifest: async (manifestRequest: ManifestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'manifestRequest' is not null or undefined
             assertParamExists('createManifest', 'manifestRequest', manifestRequest)
             const localVarPath = `/v1/proxy/manifests`;
@@ -15616,7 +15616,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15635,12 +15635,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(manifestRequest, localVarRequestOptions, configuration)
 
             return {
@@ -15655,7 +15655,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        fetchRates: async (rateRequest: RateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        fetchRates: async (rateRequest: RateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'rateRequest' is not null or undefined
             assertParamExists('fetchRates', 'rateRequest', rateRequest)
             const localVarPath = `/v1/proxy/rates`;
@@ -15666,7 +15666,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15685,12 +15685,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(rateRequest, localVarRequestOptions, configuration)
 
             return {
@@ -15706,7 +15706,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        getTracking: async (trackingData: TrackingData, hub?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        getTracking: async (trackingData: TrackingData, hub?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'trackingData' is not null or undefined
             assertParamExists('getTracking', 'trackingData', trackingData)
             const localVarPath = `/v1/proxy/tracking`;
@@ -15717,7 +15717,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15740,12 +15740,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             }
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(trackingData, localVarRequestOptions, configuration)
 
             return {
@@ -15761,7 +15761,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        schedulePickup: async (carrierName: SchedulePickupCarrierNameEnum, pickupRequest: PickupRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        schedulePickup: async (carrierName: SchedulePickupCarrierNameEnum, pickupRequest: PickupRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('schedulePickup', 'carrierName', carrierName)
             // verify required parameter 'pickupRequest' is not null or undefined
@@ -15775,7 +15775,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15794,12 +15794,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(pickupRequest, localVarRequestOptions, configuration)
 
             return {
@@ -15817,7 +15817,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @deprecated
          * @throws {RequiredError}
          */
-        trackShipment: async (carrierName: TrackShipmentCarrierNameEnum, trackingNumber: string, hub?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        trackShipment: async (carrierName: TrackShipmentCarrierNameEnum, trackingNumber: string, hub?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('trackShipment', 'carrierName', carrierName)
             // verify required parameter 'trackingNumber' is not null or undefined
@@ -15832,7 +15832,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15855,10 +15855,10 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             }
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -15873,7 +15873,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        updatePickup: async (carrierName: UpdatePickupCarrierNameEnum, pickupUpdateRequest: PickupUpdateRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        updatePickup: async (carrierName: UpdatePickupCarrierNameEnum, pickupUpdateRequest: PickupUpdateRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('updatePickup', 'carrierName', carrierName)
             // verify required parameter 'pickupUpdateRequest' is not null or undefined
@@ -15887,7 +15887,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15906,12 +15906,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(pickupUpdateRequest, localVarRequestOptions, configuration)
 
             return {
@@ -15927,7 +15927,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        voidLabel: async (carrierName: VoidLabelCarrierNameEnum, shipmentCancelRequest: ShipmentCancelRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        voidLabel: async (carrierName: VoidLabelCarrierNameEnum, shipmentCancelRequest: ShipmentCancelRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('voidLabel', 'carrierName', carrierName)
             // verify required parameter 'shipmentCancelRequest' is not null or undefined
@@ -15941,7 +15941,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -15960,12 +15960,12 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(shipmentCancelRequest, localVarRequestOptions, configuration)
 
             return {
@@ -15980,7 +15980,7 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
  * ProxyApi - functional programming interface
  * @export
  */
-export const ProxyApiFp = function(configuration?: Configuration) {
+export const ProxyApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = ProxyApiAxiosParamCreator(configuration)
     return {
         /**
@@ -15990,7 +15990,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async buyLabel(shippingRequest: ShippingRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShippingResponse>> {
+        async buyLabel(shippingRequest: ShippingRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShippingResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.buyLabel(shippingRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.buyLabel']?.[index]?.url;
@@ -16004,7 +16004,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async cancelPickup(carrierName: CancelPickupCarrierNameEnum, pickupCancelRequest: PickupCancelRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OperationResponse>> {
+        async cancelPickup(carrierName: CancelPickupCarrierNameEnum, pickupCancelRequest: PickupCancelRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OperationResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.cancelPickup(carrierName, pickupCancelRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.cancelPickup']?.[index]?.url;
@@ -16017,7 +16017,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async createManifest(manifestRequest: ManifestRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestResponse>> {
+        async createManifest(manifestRequest: ManifestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.createManifest(manifestRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.createManifest']?.[index]?.url;
@@ -16030,7 +16030,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async fetchRates(rateRequest: RateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RateResponse>> {
+        async fetchRates(rateRequest: RateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<RateResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.fetchRates(rateRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.fetchRates']?.[index]?.url;
@@ -16044,7 +16044,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async getTracking(trackingData: TrackingData, hub?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingResponse>> {
+        async getTracking(trackingData: TrackingData, hub?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.getTracking(trackingData, hub, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.getTracking']?.[index]?.url;
@@ -16058,7 +16058,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async schedulePickup(carrierName: SchedulePickupCarrierNameEnum, pickupRequest: PickupRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupResponse>> {
+        async schedulePickup(carrierName: SchedulePickupCarrierNameEnum, pickupRequest: PickupRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.schedulePickup(carrierName, pickupRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.schedulePickup']?.[index]?.url;
@@ -16074,7 +16074,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @deprecated
          * @throws {RequiredError}
          */
-        async trackShipment(carrierName: TrackShipmentCarrierNameEnum, trackingNumber: string, hub?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingResponse>> {
+        async trackShipment(carrierName: TrackShipmentCarrierNameEnum, trackingNumber: string, hub?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.trackShipment(carrierName, trackingNumber, hub, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.trackShipment']?.[index]?.url;
@@ -16088,7 +16088,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async updatePickup(carrierName: UpdatePickupCarrierNameEnum, pickupUpdateRequest: PickupUpdateRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupResponse>> {
+        async updatePickup(carrierName: UpdatePickupCarrierNameEnum, pickupUpdateRequest: PickupUpdateRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<PickupResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.updatePickup(carrierName, pickupUpdateRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.updatePickup']?.[index]?.url;
@@ -16102,7 +16102,7 @@ export const ProxyApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async voidLabel(carrierName: VoidLabelCarrierNameEnum, shipmentCancelRequest: ShipmentCancelRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OperationResponse>> {
+        async voidLabel(carrierName: VoidLabelCarrierNameEnum, shipmentCancelRequest: ShipmentCancelRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<OperationResponse>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.voidLabel(carrierName, shipmentCancelRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ProxyApi.voidLabel']?.[index]?.url;
@@ -16402,7 +16402,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public buyLabel(requestParameters: ProxyApiBuyLabelRequest, options?: RawAxiosRequestConfig) {
+    public buyLabel(requestParameters: ProxyApiBuyLabelRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).buyLabel(requestParameters.shippingRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16414,7 +16414,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public cancelPickup(requestParameters: ProxyApiCancelPickupRequest, options?: RawAxiosRequestConfig) {
+    public cancelPickup(requestParameters: ProxyApiCancelPickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).cancelPickup(requestParameters.carrierName, requestParameters.pickupCancelRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16426,7 +16426,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public createManifest(requestParameters: ProxyApiCreateManifestRequest, options?: RawAxiosRequestConfig) {
+    public createManifest(requestParameters: ProxyApiCreateManifestRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).createManifest(requestParameters.manifestRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16438,7 +16438,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public fetchRates(requestParameters: ProxyApiFetchRatesRequest, options?: RawAxiosRequestConfig) {
+    public fetchRates(requestParameters: ProxyApiFetchRatesRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).fetchRates(requestParameters.rateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16450,7 +16450,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public getTracking(requestParameters: ProxyApiGetTrackingRequest, options?: RawAxiosRequestConfig) {
+    public getTracking(requestParameters: ProxyApiGetTrackingRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).getTracking(requestParameters.trackingData, requestParameters.hub, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16462,7 +16462,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public schedulePickup(requestParameters: ProxyApiSchedulePickupRequest, options?: RawAxiosRequestConfig) {
+    public schedulePickup(requestParameters: ProxyApiSchedulePickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).schedulePickup(requestParameters.carrierName, requestParameters.pickupRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16475,7 +16475,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public trackShipment(requestParameters: ProxyApiTrackShipmentRequest, options?: RawAxiosRequestConfig) {
+    public trackShipment(requestParameters: ProxyApiTrackShipmentRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).trackShipment(requestParameters.carrierName, requestParameters.trackingNumber, requestParameters.hub, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16487,7 +16487,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public updatePickup(requestParameters: ProxyApiUpdatePickupRequest, options?: RawAxiosRequestConfig) {
+    public updatePickup(requestParameters: ProxyApiUpdatePickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).updatePickup(requestParameters.carrierName, requestParameters.pickupUpdateRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -16499,7 +16499,7 @@ export class ProxyApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ProxyApi
      */
-    public voidLabel(requestParameters: ProxyApiVoidLabelRequest, options?: RawAxiosRequestConfig) {
+    public voidLabel(requestParameters: ProxyApiVoidLabelRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).voidLabel(requestParameters.carrierName, requestParameters.shipmentCancelRequest, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -16741,7 +16741,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        cancel: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        cancel: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('cancel', 'id', id)
             const localVarPath = `/v1/shipments/{id}/cancel`
@@ -16753,7 +16753,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -16772,10 +16772,10 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -16789,7 +16789,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (shipmentData: ShipmentData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (shipmentData: ShipmentData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'shipmentData' is not null or undefined
             assertParamExists('create', 'shipmentData', shipmentData)
             const localVarPath = `/v1/shipments`;
@@ -16800,7 +16800,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -16819,12 +16819,12 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(shipmentData, localVarRequestOptions, configuration)
 
             return {
@@ -16852,7 +16852,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, id?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, id?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/shipments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -16861,7 +16861,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -16940,10 +16940,10 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             }
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -16958,7 +16958,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        purchase: async (id: string, shipmentPurchaseData: ShipmentPurchaseData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        purchase: async (id: string, shipmentPurchaseData: ShipmentPurchaseData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('purchase', 'id', id)
             // verify required parameter 'shipmentPurchaseData' is not null or undefined
@@ -16972,7 +16972,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -16991,12 +16991,12 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(shipmentPurchaseData, localVarRequestOptions, configuration)
 
             return {
@@ -17012,7 +17012,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        rates: async (id: string, shipmentRateData?: ShipmentRateData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        rates: async (id: string, shipmentRateData?: ShipmentRateData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('rates', 'id', id)
             const localVarPath = `/v1/shipments/{id}/rates`
@@ -17024,7 +17024,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17043,12 +17043,12 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(shipmentRateData, localVarRequestOptions, configuration)
 
             return {
@@ -17063,7 +17063,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/shipments/{id}`
@@ -17075,7 +17075,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17094,10 +17094,10 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -17112,7 +17112,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (id: string, shipmentUpdateData?: ShipmentUpdateData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (id: string, shipmentUpdateData?: ShipmentUpdateData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/shipments/{id}`
@@ -17124,7 +17124,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17143,12 +17143,12 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(shipmentUpdateData, localVarRequestOptions, configuration)
 
             return {
@@ -17163,7 +17163,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
  * ShipmentsApi - functional programming interface
  * @export
  */
-export const ShipmentsApiFp = function(configuration?: Configuration) {
+export const ShipmentsApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = ShipmentsApiAxiosParamCreator(configuration)
     return {
         /**
@@ -17173,7 +17173,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async cancel(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async cancel(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.cancel(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.cancel']?.[index]?.url;
@@ -17186,7 +17186,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(shipmentData: ShipmentData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async create(shipmentData: ShipmentData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(shipmentData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.create']?.[index]?.url;
@@ -17212,7 +17212,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, id?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShipmentList>> {
+        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, id?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShipmentList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, id, keyword, metadataKey, metadataValue, optionKey, optionValue, reference, service, status, trackingNumber, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.list']?.[index]?.url;
@@ -17226,7 +17226,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async purchase(id: string, shipmentPurchaseData: ShipmentPurchaseData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async purchase(id: string, shipmentPurchaseData: ShipmentPurchaseData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.purchase(id, shipmentPurchaseData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.purchase']?.[index]?.url;
@@ -17240,7 +17240,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async rates(id: string, shipmentRateData?: ShipmentRateData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async rates(id: string, shipmentRateData?: ShipmentRateData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.rates(id, shipmentRateData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.rates']?.[index]?.url;
@@ -17253,7 +17253,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.retrieve']?.[index]?.url;
@@ -17267,7 +17267,7 @@ export const ShipmentsApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(id: string, shipmentUpdateData?: ShipmentUpdateData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
+        async update(id: string, shipmentUpdateData?: ShipmentUpdateData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Shipment>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, shipmentUpdateData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.update']?.[index]?.url;
@@ -17581,7 +17581,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ShipmentsApi
      */
-    public cancel(requestParameters: ShipmentsApiCancelRequest, options?: RawAxiosRequestConfig) {
+    public cancel(requestParameters: ShipmentsApiCancelRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).cancel(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17593,7 +17593,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ShipmentsApi
      */
-    public create(requestParameters: ShipmentsApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: ShipmentsApiCreateRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).create(requestParameters.shipmentData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17605,7 +17605,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ShipmentsApi
      */
-    public list(requestParameters: ShipmentsApiListRequest = {}, options?: RawAxiosRequestConfig) {
+    public list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.id, requestParameters.keyword, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17617,7 +17617,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ShipmentsApi
      */
-    public purchase(requestParameters: ShipmentsApiPurchaseRequest, options?: RawAxiosRequestConfig) {
+    public purchase(requestParameters: ShipmentsApiPurchaseRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).purchase(requestParameters.id, requestParameters.shipmentPurchaseData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17629,7 +17629,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ShipmentsApi
      */
-    public rates(requestParameters: ShipmentsApiRatesRequest, options?: RawAxiosRequestConfig) {
+    public rates(requestParameters: ShipmentsApiRatesRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).rates(requestParameters.id, requestParameters.shipmentRateData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17641,7 +17641,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ShipmentsApi
      */
-    public retrieve(requestParameters: ShipmentsApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: ShipmentsApiRetrieveRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -17653,7 +17653,7 @@ export class ShipmentsApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof ShipmentsApi
      */
-    public update(requestParameters: ShipmentsApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: ShipmentsApiUpdateRequest, options?: AxiosRequestConfig) {
         return ShipmentsApiFp(this.configuration).update(requestParameters.id, requestParameters.shipmentUpdateData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -17675,7 +17675,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        add: async (trackingData: TrackingData, hub?: string, pendingPickup?: boolean, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        add: async (trackingData: TrackingData, hub?: string, pendingPickup?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'trackingData' is not null or undefined
             assertParamExists('add', 'trackingData', trackingData)
             const localVarPath = `/v1/trackers`;
@@ -17686,7 +17686,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17713,12 +17713,12 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             }
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(trackingData, localVarRequestOptions, configuration)
 
             return {
@@ -17737,7 +17737,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @deprecated
          * @throws {RequiredError}
          */
-        create: async (carrierName: string, carrierName2: CreateCarrierNameEnum, trackingNumber: string, hub?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (carrierName: string, carrierName2: CreateCarrierNameEnum, trackingNumber: string, hub?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'carrierName' is not null or undefined
             assertParamExists('create', 'carrierName', carrierName)
             // verify required parameter 'carrierName2' is not null or undefined
@@ -17754,7 +17754,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17781,10 +17781,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             }
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -17802,7 +17802,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, status?: string, trackingNumber?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/trackers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -17811,7 +17811,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17854,10 +17854,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             }
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -17871,7 +17871,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        remove: async (idOrTrackingNumber: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        remove: async (idOrTrackingNumber: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'idOrTrackingNumber' is not null or undefined
             assertParamExists('remove', 'idOrTrackingNumber', idOrTrackingNumber)
             const localVarPath = `/v1/trackers/{id_or_tracking_number}`
@@ -17883,7 +17883,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17902,10 +17902,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -17919,7 +17919,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieves: async (idOrTrackingNumber: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieves: async (idOrTrackingNumber: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'idOrTrackingNumber' is not null or undefined
             assertParamExists('retrieves', 'idOrTrackingNumber', idOrTrackingNumber)
             const localVarPath = `/v1/trackers/{id_or_tracking_number}`
@@ -17931,7 +17931,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17950,10 +17950,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -17968,7 +17968,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (idOrTrackingNumber: string, trackerUpdateData?: TrackerUpdateData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (idOrTrackingNumber: string, trackerUpdateData?: TrackerUpdateData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'idOrTrackingNumber' is not null or undefined
             assertParamExists('update', 'idOrTrackingNumber', idOrTrackingNumber)
             const localVarPath = `/v1/trackers/{id_or_tracking_number}`
@@ -17980,7 +17980,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PUT', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -17999,12 +17999,12 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(trackerUpdateData, localVarRequestOptions, configuration)
 
             return {
@@ -18019,7 +18019,7 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
  * TrackersApi - functional programming interface
  * @export
  */
-export const TrackersApiFp = function(configuration?: Configuration) {
+export const TrackersApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = TrackersApiAxiosParamCreator(configuration)
     return {
         /**
@@ -18031,7 +18031,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async add(trackingData: TrackingData, hub?: string, pendingPickup?: boolean, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+        async add(trackingData: TrackingData, hub?: string, pendingPickup?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.add(trackingData, hub, pendingPickup, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TrackersApi.add']?.[index]?.url;
@@ -18048,7 +18048,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @deprecated
          * @throws {RequiredError}
          */
-        async create(carrierName: string, carrierName2: CreateCarrierNameEnum, trackingNumber: string, hub?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+        async create(carrierName: string, carrierName2: CreateCarrierNameEnum, trackingNumber: string, hub?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(carrierName, carrierName2, trackingNumber, hub, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TrackersApi.create']?.[index]?.url;
@@ -18065,7 +18065,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, status?: string, trackingNumber?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
+        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackerList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, status, trackingNumber, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TrackersApi.list']?.[index]?.url;
@@ -18078,7 +18078,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async remove(idOrTrackingNumber: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+        async remove(idOrTrackingNumber: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.remove(idOrTrackingNumber, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TrackersApi.remove']?.[index]?.url;
@@ -18091,7 +18091,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieves(idOrTrackingNumber: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+        async retrieves(idOrTrackingNumber: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieves(idOrTrackingNumber, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TrackersApi.retrieves']?.[index]?.url;
@@ -18105,7 +18105,7 @@ export const TrackersApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(idOrTrackingNumber: string, trackerUpdateData?: TrackerUpdateData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
+        async update(idOrTrackingNumber: string, trackerUpdateData?: TrackerUpdateData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TrackingStatus>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(idOrTrackingNumber, trackerUpdateData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['TrackersApi.update']?.[index]?.url;
@@ -18354,7 +18354,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrackersApi
      */
-    public add(requestParameters: TrackersApiAddRequest, options?: RawAxiosRequestConfig) {
+    public add(requestParameters: TrackersApiAddRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).add(requestParameters.trackingData, requestParameters.hub, requestParameters.pendingPickup, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -18367,7 +18367,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrackersApi
      */
-    public create(requestParameters: TrackersApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: TrackersApiCreateRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).create(requestParameters.carrierName, requestParameters.carrierName2, requestParameters.trackingNumber, requestParameters.hub, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -18379,7 +18379,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrackersApi
      */
-    public list(requestParameters: TrackersApiListRequest = {}, options?: RawAxiosRequestConfig) {
+    public list(requestParameters: TrackersApiListRequest = {}, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -18391,7 +18391,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrackersApi
      */
-    public remove(requestParameters: TrackersApiRemoveRequest, options?: RawAxiosRequestConfig) {
+    public remove(requestParameters: TrackersApiRemoveRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).remove(requestParameters.idOrTrackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -18403,7 +18403,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrackersApi
      */
-    public retrieves(requestParameters: TrackersApiRetrievesRequest, options?: RawAxiosRequestConfig) {
+    public retrieves(requestParameters: TrackersApiRetrievesRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).retrieves(requestParameters.idOrTrackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -18415,7 +18415,7 @@ export class TrackersApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof TrackersApi
      */
-    public update(requestParameters: TrackersApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: TrackersApiUpdateRequest, options?: AxiosRequestConfig) {
         return TrackersApiFp(this.configuration).update(requestParameters.idOrTrackingNumber, requestParameters.trackerUpdateData, options).then((request) => request(this.axios, this.basePath));
     }
 }
@@ -18477,7 +18477,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        create: async (webhookData: WebhookData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        create: async (webhookData: WebhookData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'webhookData' is not null or undefined
             assertParamExists('create', 'webhookData', webhookData)
             const localVarPath = `/v1/webhooks`;
@@ -18488,7 +18488,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -18507,12 +18507,12 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(webhookData, localVarRequestOptions, configuration)
 
             return {
@@ -18526,7 +18526,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/webhooks`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -18535,7 +18535,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -18554,10 +18554,10 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -18571,7 +18571,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        remove: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        remove: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('remove', 'id', id)
             const localVarPath = `/v1/webhooks/{id}`
@@ -18583,7 +18583,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -18602,10 +18602,10 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -18619,7 +18619,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        retrieve: async (id: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('retrieve', 'id', id)
             const localVarPath = `/v1/webhooks/{id}`
@@ -18631,7 +18631,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -18650,10 +18650,10 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -18668,7 +18668,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        test: async (id: string, webhookTestRequest: WebhookTestRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        test: async (id: string, webhookTestRequest: WebhookTestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('test', 'id', id)
             // verify required parameter 'webhookTestRequest' is not null or undefined
@@ -18682,7 +18682,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -18701,12 +18701,12 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(webhookTestRequest, localVarRequestOptions, configuration)
 
             return {
@@ -18722,7 +18722,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        update: async (id: string, patchedWebhookData?: PatchedWebhookData, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        update: async (id: string, patchedWebhookData?: PatchedWebhookData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             // verify required parameter 'id' is not null or undefined
             assertParamExists('update', 'id', id)
             const localVarPath = `/v1/webhooks/{id}`
@@ -18734,7 +18734,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
                 baseOptions = configuration.baseOptions;
             }
 
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options};
+            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
@@ -18753,12 +18753,12 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
             await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
-    
+
             localVarHeaderParameter['Content-Type'] = 'application/json';
 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
             localVarRequestOptions.data = serializeDataIfNeeded(patchedWebhookData, localVarRequestOptions, configuration)
 
             return {
@@ -18773,7 +18773,7 @@ export const WebhooksApiAxiosParamCreator = function (configuration?: Configurat
  * WebhooksApi - functional programming interface
  * @export
  */
-export const WebhooksApiFp = function(configuration?: Configuration) {
+export const WebhooksApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = WebhooksApiAxiosParamCreator(configuration)
     return {
         /**
@@ -18783,7 +18783,7 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async create(webhookData: WebhookData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Webhook>> {
+        async create(webhookData: WebhookData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Webhook>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.create(webhookData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['WebhooksApi.create']?.[index]?.url;
@@ -18795,7 +18795,7 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WebhookList>> {
+        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<WebhookList>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['WebhooksApi.list']?.[index]?.url;
@@ -18808,7 +18808,7 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async remove(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Operation>> {
+        async remove(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Operation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.remove(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['WebhooksApi.remove']?.[index]?.url;
@@ -18821,7 +18821,7 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async retrieve(id: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Webhook>> {
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Webhook>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['WebhooksApi.retrieve']?.[index]?.url;
@@ -18835,7 +18835,7 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async test(id: string, webhookTestRequest: WebhookTestRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Operation>> {
+        async test(id: string, webhookTestRequest: WebhookTestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Operation>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.test(id, webhookTestRequest, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['WebhooksApi.test']?.[index]?.url;
@@ -18849,7 +18849,7 @@ export const WebhooksApiFp = function(configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async update(id: string, patchedWebhookData?: PatchedWebhookData, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Webhook>> {
+        async update(id: string, patchedWebhookData?: PatchedWebhookData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Webhook>> {
             const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, patchedWebhookData, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['WebhooksApi.update']?.[index]?.url;
@@ -19026,7 +19026,7 @@ export class WebhooksApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WebhooksApi
      */
-    public create(requestParameters: WebhooksApiCreateRequest, options?: RawAxiosRequestConfig) {
+    public create(requestParameters: WebhooksApiCreateRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).create(requestParameters.webhookData, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -19037,7 +19037,7 @@ export class WebhooksApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WebhooksApi
      */
-    public list(options?: RawAxiosRequestConfig) {
+    public list(options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -19049,7 +19049,7 @@ export class WebhooksApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WebhooksApi
      */
-    public remove(requestParameters: WebhooksApiRemoveRequest, options?: RawAxiosRequestConfig) {
+    public remove(requestParameters: WebhooksApiRemoveRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).remove(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -19061,7 +19061,7 @@ export class WebhooksApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WebhooksApi
      */
-    public retrieve(requestParameters: WebhooksApiRetrieveRequest, options?: RawAxiosRequestConfig) {
+    public retrieve(requestParameters: WebhooksApiRetrieveRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -19073,7 +19073,7 @@ export class WebhooksApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WebhooksApi
      */
-    public test(requestParameters: WebhooksApiTestRequest, options?: RawAxiosRequestConfig) {
+    public test(requestParameters: WebhooksApiTestRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).test(requestParameters.id, requestParameters.webhookTestRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
@@ -19085,7 +19085,7 @@ export class WebhooksApi extends BaseAPI {
      * @throws {RequiredError}
      * @memberof WebhooksApi
      */
-    public update(requestParameters: WebhooksApiUpdateRequest, options?: RawAxiosRequestConfig) {
+    public update(requestParameters: WebhooksApiUpdateRequest, options?: AxiosRequestConfig) {
         return WebhooksApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedWebhookData, options).then((request) => request(this.axios, this.basePath));
     }
 }
