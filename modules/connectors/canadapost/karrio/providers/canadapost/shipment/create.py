@@ -1,4 +1,5 @@
 import karrio.schemas.canadapost.shipment as canadapost
+import uuid
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -50,8 +51,12 @@ def _extract_shipment(
         shipment_identifier=info.tracking_pin,
         docs=models.Documents(label=label),
         label_type=ctx["label_type"],
-        meta=dict(
-            carrier_tracking_link=settings.tracking_url.format(info.tracking_pin),
+        meta=lib.to_dict(
+            dict(
+                carrier_tracking_link=settings.tracking_url.format(info.tracking_pin),
+                customer_request_ids=ctx["customer_request_ids"],
+                group_id=ctx["group_id"],
+            )
         ),
     )
 
@@ -83,10 +88,26 @@ def shipment_request(
     label_encoding, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
     ).value
+    group_id = str(uuid.uuid4().hex)
+    customer_request_ids = [f"{group_id}" for _ in range(len(packages))]
+    submit_shipment = lib.identity(
+        #  set to true if canadapost_submit_shipment is true
+        options.canadapost_submit_shipment.state
+        #  default to true if transmit_shipment_by_default is true
+        or (
+            settings.connection_config.transmit_shipment_by_default.state
+            and options.canadapost_submit_shipment.state is not False
+        )
+        # default to true if no value is set
+        or (
+            settings.connection_config.transmit_shipment_by_default.state is None
+            and options.canadapost_submit_shipment.state is None
+        )
+    )
 
     requests = [
         canadapost.ShipmentType(
-            customer_request_id=None,
+            customer_request_id=customer_request_ids[index],
             groupIdOrTransmitShipment=canadapost.groupIdOrTransmitShipment(),
             quickship_label_requested=None,
             cpc_pickup_indicator=None,
@@ -199,33 +220,37 @@ def shipment_request(
                         licence_number=customs.options.license_number.state,
                         invoice_number=customs.invoice,
                         sku_list=(
-                            canadapost.sku_listType(
-                                item=[
-                                    canadapost.SkuType(
-                                        customs_number_of_units=item.quantity,
-                                        customs_description=lib.text(
-                                            item.title
-                                            or item.description
-                                            or item.sku
+                            (
+                                canadapost.sku_listType(
+                                    item=[
+                                        canadapost.SkuType(
+                                            customs_number_of_units=item.quantity,
+                                            customs_description=lib.text(
+                                                item.title
+                                                or item.description
+                                                or item.sku
+                                                or "N/B",
+                                                max=35,
+                                            ),
+                                            sku=item.sku or "0000",
+                                            hs_tariff_code=item.hs_code,
+                                            unit_weight=(item.weight or 1),
+                                            customs_value_per_unit=item.value_amount,
+                                            customs_unit_of_measure=None,
+                                            country_of_origin=(
+                                                item.origin_country
+                                                or shipper.country_code
+                                            ),
+                                            province_of_origin=shipper.state_code
                                             or "N/B",
-                                            max=35,
-                                        ),
-                                        sku=item.sku or "0000",
-                                        hs_tariff_code=item.hs_code,
-                                        unit_weight=(item.weight or 1),
-                                        customs_value_per_unit=item.value_amount,
-                                        customs_unit_of_measure=None,
-                                        country_of_origin=(
-                                            item.origin_country or shipper.country_code
-                                        ),
-                                        province_of_origin=shipper.state_code or "N/B",
-                                    )
-                                    for item in customs.commodities
-                                ]
+                                        )
+                                        for item in customs.commodities
+                                    ]
+                                )
                             )
-                        )
-                        if any(customs.commodities or [])
-                        else None,
+                            if any(customs.commodities or [])
+                            else None
+                        ),
                     )
                     if payload.customs is not None
                     else None
@@ -253,12 +278,10 @@ def shipment_request(
             ),
             return_spec=None,
             pre_authorized_payment=None,
+            create_qr_code=None,
         )
-        for package in packages
+        for index, package in enumerate(packages)
     ]
-
-    for _ in requests:
-        _.groupIdOrTransmitShipment.original_tagname_ = "transmit-shipment"
 
     return lib.Serializable(
         requests,
@@ -267,8 +290,19 @@ def shipment_request(
                 request,
                 name_="shipment",
                 namespacedef_='xmlns="http://www.canadapost.ca/ws/shipment-v8"',
+            ).replace(
+                "<groupIdOrTransmitShipment/>",
+                (
+                    "<transmit-shipment/>"
+                    if submit_shipment
+                    else f"<group-id>{group_id}<group-id>"
+                ),
             )
             for request in __
         ],
-        dict(label_type=label_encoding),
+        dict(
+            label_type=label_encoding,
+            customer_request_ids=customer_request_ids,
+            group_id=(group_id if submit_shipment else None),
+        ),
     )

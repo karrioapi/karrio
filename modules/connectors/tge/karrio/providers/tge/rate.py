@@ -79,8 +79,6 @@ def rate_request(
     services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
-        sssc_count=settings.sssc_count,
-        shipment_count=settings.shipment_count,
         initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
@@ -90,7 +88,12 @@ def rate_request(
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
     service = getattr(services.first, "value", None)
-    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
+
+    now = datetime.datetime.now() + datetime.timedelta(hours=1)
+    create_time = lib.fdatetime(now, output_format="%H:%M:%S")
+    create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+    shipping_date = lib.to_date(options.shipment_date.state or now)
+    pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
 
     request = tge.RateRequestType(
         TollMessage=tge.TollMessageType(
@@ -98,10 +101,8 @@ def rate_request(
                 MessageVersion="1.0",
                 DocumentType="RateEnquiry",
                 MessageIdentifier=str(uuid.uuid4()),
-                CreateTimestamp=lib.fdatetime(
-                    shipping_date, output_format="%Y-%m-%dT%H:%M:%S.%fZ"
-                ),
-                Environment=("PRD" if not settings.test_mode else "TST"),
+                CreateTimestamp=f"{create_date}{create_time}.000+00:00",
+                Environment="prd",
                 SourceSystemCode=(
                     settings.connection_config.source_system_code.state or "XP41"
                 ),
@@ -112,32 +113,28 @@ def rate_request(
             ),
             RateEnquiry=tge.RateEnquiryType(
                 Request=tge.RequestType(
-                    BusinessID=options.tge_business_id.state,
-                    SystemFields=(
-                        tge.SystemFieldsType(
-                            PickupDateTime=payload.pickup_datetime,
-                        )
-                        if options.tge_pickup_datetime.state
-                        else None
+                    BusinessID=options.tge_business_id.state or "IPEC",
+                    SystemFields=tge.SystemFieldsType(
+                        PickupDateTime=(
+                            options.pickup_datetime.state
+                            or f"{pickup_date}{create_time}.000+00:00"
+                        ),
                     ),
                     ShipmentService=tge.ShipmentServiceType(
-                        ServiceCode=service,
-                        ShipmentProductCode="",
+                        ServiceCode=service or "X",
                     ),
-                    ShipmentFlags=(
-                        tge.ShipmentFlagsType(ExtraServiceFlag="true")
-                        if options.tge_extra_service_flag.state
-                        else None
-                    ),
-                    ShipmentFinancials=(
-                        tge.ShipmentFinancialsType(
-                            ExtraServicesAmount=tge.ExtraServicesAmountType(
-                                Currency=options.currency.state,
-                                Value=options.tge_extra_services_amount.state,
-                            )
+                    ShipmentFlags=tge.ShipmentFlagsType(ExtraServiceFlag="true"),
+                    ShipmentFinancials=tge.ShipmentFinancialsType(
+                        ExtraServicesAmount=tge.ExtraServicesAmountType(
+                            Currency=options.currency.state or "AUD",
+                            Value=str(
+                                lib.to_int(
+                                    options.tge_extra_services_amount.state
+                                    or options.declared_value.state
+                                    or 0.0
+                                )
+                            ),
                         )
-                        if options.tge_extra_services_amount.state
-                        else None
                     ),
                     FreightMode=(
                         lib.text(options.tge_freight_mode.state)
@@ -167,33 +164,38 @@ def rate_request(
                         ShipmentItem=[
                             tge.ShipmentItemType(
                                 Commodity=tge.CommodityType(
-                                    CommodityCode=(
-                                        provider_units.PackagingType.map(
-                                            package.packaging_type
-                                        ).value
-                                        or "Z"
-                                    ),
-                                    CommodityDescription=package.description,
+                                    CommodityCode="Z",
+                                    CommodityDescription="ALL FREIGHT",
                                 ),
                                 ShipmentItemTotals=tge.ShipmentItemTotalsType(
-                                    ShipmentItemCount=len(packages),
+                                    ShipmentItemCount=str(len(packages)),
                                 ),
                                 Dimensions=tge.DimensionsType(
-                                    Width=package.width.map(
-                                        provider_units.MeasurementOptions
-                                    ).CM,
-                                    Length=package.length.map(
-                                        provider_units.MeasurementOptions
-                                    ).CM,
-                                    Height=package.height.map(
-                                        provider_units.MeasurementOptions
-                                    ).CM,
-                                    Volume=package.volume.map(
-                                        provider_units.MeasurementOptions
-                                    ).cm3,
-                                    Weight=package.weight.map(
-                                        provider_units.MeasurementOptions
-                                    ).KG,
+                                    Width=str(
+                                        package.width.map(
+                                            provider_units.MeasurementOptions
+                                        ).CM
+                                    ),
+                                    Length=str(
+                                        package.length.map(
+                                            provider_units.MeasurementOptions
+                                        ).CM
+                                    ),
+                                    Height=str(
+                                        package.height.map(
+                                            provider_units.MeasurementOptions
+                                        ).CM
+                                    ),
+                                    Volume=str(
+                                        package.volume.map(
+                                            provider_units.MeasurementOptions
+                                        ).m3
+                                    ),
+                                    Weight=str(
+                                        package.weight.map(
+                                            provider_units.MeasurementOptions
+                                        ).KG
+                                    ),
                                 ),
                             )
                             for package in packages

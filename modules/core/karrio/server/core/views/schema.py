@@ -222,12 +222,6 @@ def render_tags(request, APP_NAME):
                 """,
             },
             {
-                "name": "Customs",
-                "description": f"""This is an object representing your {APP_NAME} shipping customs declaration.
-                You can retrieve all customs declarations used historically with your {APP_NAME} account shipments.
-                """,
-            },
-            {
                 "name": "Shipments",
                 "description": f"""This is an object representing your {APP_NAME} shipment.
                 A Shipment guides you through process of preparing and purchasing a label for an order.
@@ -240,6 +234,13 @@ def render_tags(request, APP_NAME):
                 "description": f"""This is an object representing your {APP_NAME} document upload record.
                 A Document upload record keep traces of shipping trade documents uploaded to carriers
                 to fast track customs and border processing.
+                """,
+            },
+            {
+                "name": "Manifests",
+                "description": f"""This is an object representing your {APP_NAME} manifest details.
+                Some carriers require manifests to be created after labels are generated.
+                A manifest is a summary of all the shipments that are being sent out.
                 """,
             },
             {

@@ -182,6 +182,8 @@ class PickupRequest:
     package_location: str = None
     options: Dict = {}
 
+    metadata: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class PickupUpdateRequest:
@@ -222,8 +224,10 @@ class ManifestRequest:
     """manifest request unified data type."""
 
     shipment_identifiers: List[str]
+    address: Address = JStruct[Address, REQUIRED]
 
-    address: Address = JStruct[Address]
+    reference: str = None
+    metadata: Dict = {}
     options: Dict = {}
 
 

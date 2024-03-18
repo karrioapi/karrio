@@ -16,7 +16,7 @@ class TGESettings(carrier.Carrier):
     api_key = models.CharField(max_length=100)
     toll_username = models.CharField(max_length=100)
     toll_password = models.CharField(max_length=100)
-    my_toll_token = models.CharField(max_length=250)
+    my_toll_token = models.TextField(max_length=None)
     my_toll_identity = models.CharField(max_length=100)
     account_code = models.CharField(max_length=100)
 

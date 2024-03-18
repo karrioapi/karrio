@@ -27,6 +27,9 @@ from karrio.core.models import (
     TrackingInfo,
     DocumentFile,
     DocumentUploadRequest,
+    ManifestRequest,
+    ManifestDetails,
+    ManifestDocument,
 )
 
 
@@ -122,6 +125,7 @@ class PickupRequest(BasePickupRequest):
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
     instruction: str = None
     package_location: str = None
+    metadata: typing.Dict = {}
     options: typing.Dict = {}
 
 
@@ -226,13 +230,13 @@ class Shipment:
     tracking_url: str = None
     tracker_id: str = None
     status: str = ""
+    metadata: typing.Dict = {}
     meta: dict = {}
     id: str = None
 
-    metadata: typing.Dict = {}
+    messages: typing.List[Message] = jstruct.JList[Message]
     created_at: str = None
     test_mode: bool = None
-    messages: typing.List[Message] = jstruct.JList[Message]
 
 
 @attr.s(auto_attribs=True)
@@ -250,8 +254,12 @@ class Pickup:
     pickup_charge: ChargeDetails = jstruct.JStruct[ChargeDetails]
     instruction: str = None
     package_location: str = None
+    metadata: typing.Dict = {}
     options: typing.Dict = {}
+    meta: dict = {}
     id: str = None
+
+    messages: typing.List[Message] = jstruct.JList[Message]
     test_mode: bool = None
 
 
@@ -297,6 +305,25 @@ class DocumentUploadResponse:
 
 
 @attr.s(auto_attribs=True)
+class Manifest:
+    carrier_id: str
+    carrier_name: str
+
+    shipment_identifiers: typing.List[str]
+    address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
+    doc: ManifestDocument = jstruct.JStruct[ManifestDocument]
+
+    reference: str = None
+    metadata: typing.Dict = {}
+    options: typing.Dict = {}
+    meta: dict = {}
+    id: str = None
+
+    messages: typing.List[Message] = jstruct.JList[Message]
+    test_mode: bool = None
+
+
+@attr.s(auto_attribs=True)
 class ConfirmationResponse:
     messages: typing.List[Message] = jstruct.JList[Message]
     confirmation: Confirmation = jstruct.JStruct[Confirmation]
@@ -318,6 +345,12 @@ class RateResponse:
 class TrackingResponse:
     messages: typing.List[Message] = jstruct.JList[Message]
     tracking: Tracking = jstruct.JStruct[Tracking]
+
+
+@attr.s(auto_attribs=True)
+class ManifestResponse:
+    messages: typing.List[Message] = jstruct.JList[Message]
+    manifest: Manifest = jstruct.JStruct[Manifest]
 
 
 @attr.s(auto_attribs=True)

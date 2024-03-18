@@ -155,7 +155,7 @@ export default function CreateShipmentPage(pageProps: any) {
       if (orders.isLoading) return;
       if (templates.isLoading) return;
       if (workspace_config.query.isLoading) return;
-      if (shipment_id === 'new') return setInitialData();
+      if (shipment_id === 'new') return setTimeout(() => setInitialData(), 500) as any;
       if (shipment_id !== 'new' && Object.keys(shipment.recipient).length === 0) return;
 
       setReady(true);
@@ -859,8 +859,8 @@ export default function CreateShipmentPage(pageProps: any) {
                     <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">SHIPPING SERVICES</span>
                     <div className="is-vcentered">
                       <button className="button is-small is-info is-text is-inverted p-1"
-                        onClick={() => mutation.fetchRates()}
-                        disabled={requireInfoForRating(shipment)}>
+                        onClick={() => mutation.fetchRates.mutateAsync()}
+                        disabled={requireInfoForRating(shipment) || mutation.fetchRates.isLoading}>
                         Refresh rates
                       </button>
                     </div>
@@ -933,10 +933,10 @@ export default function CreateShipmentPage(pageProps: any) {
                   </div>
 
                   <ButtonField
-                    onClick={() => mutation.buyLabel(selected_rate as any)}
+                    onClick={() => mutation.buyLabel.mutateAsync(selected_rate as any)}
                     fieldClass="has-text-centered py-1 px-6 m-0"
                     className="is-success is-fullwidth"
-                    disabled={(shipment.rates || []).filter(r => r.id === selected_rate?.id).length === 0 || loading}>
+                    disabled={(shipment.rates || []).filter(r => r.id === selected_rate?.id).length === 0 || mutation.buyLabel.isLoading || loading}>
                     <span className="px-6">Buy shipping label</span>
                   </ButtonField>
 
@@ -944,10 +944,10 @@ export default function CreateShipmentPage(pageProps: any) {
 
                   {!(!!shipment.id && shipment.id !== 'new') &&
                     <ButtonField
-                      onClick={() => mutation.saveDraft()}
+                      onClick={() => mutation.saveDraft.mutateAsync({})}
                       fieldClass="has-text-centered py-1 px-6 m-0"
                       className="is-default is-fullwidth"
-                      disabled={query.isFetching}>
+                      disabled={query.isFetching || mutation.saveDraft.isLoading}>
                       <span className="px-6">Save draft</span>
                     </ButtonField>}
 

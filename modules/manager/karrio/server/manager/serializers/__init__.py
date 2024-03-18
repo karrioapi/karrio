@@ -45,3 +45,6 @@ from karrio.server.manager.serializers.document import (
     DocumentUploadSerializer,
     can_upload_shipment_document,
 )
+from karrio.server.manager.serializers.manifest import (
+    ManifestSerializer,
+)

@@ -112,10 +112,6 @@ class WorkspaceConfigType:
         return self.config.get("customs_aes")
 
     @strawberry.field
-    def customs_ein(self: auth.WorkspaceConfig) -> typing.Optional[str]:
-        return self.config.get("customs_ein")
-
-    @strawberry.field
     def customs_eel_pfc(self: auth.WorkspaceConfig) -> typing.Optional[str]:
         return self.config.get("customs_eel_pfc")
 
@@ -484,7 +480,7 @@ class CustomsType:
     content_description: typing.Optional[str] = strawberry.UNSET
     incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
     invoice: typing.Optional[str] = strawberry.UNSET
-    invoice_date: typing.Optional[datetime.date] = strawberry.UNSET
+    invoice_date: typing.Optional[str] = strawberry.UNSET
     signer: typing.Optional[str] = strawberry.UNSET
     created_at: typing.Optional[datetime.datetime] = strawberry.UNSET
     updated_at: typing.Optional[datetime.datetime] = strawberry.UNSET
@@ -1130,7 +1126,11 @@ class ConnectionType:
 
 def create_carrier_settings_type(name: str, model):
     _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-    EXCLUDED_FIELDS = ["cache"]
+    EXCLUDED_FIELDS = [
+        "cache",
+        "sssc_count",
+        "shipment_count",
+    ]
 
     @strawberry.type
     class _Settings(ConnectionType):

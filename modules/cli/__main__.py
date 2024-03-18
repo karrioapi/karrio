@@ -13,8 +13,8 @@ app.add_typer(
 
 @app.command()
 def add_extension(
-    id: str = typer.Option(..., prompt=True),
-    name: str = typer.Option(..., prompt=True),
+    carrier_slug: str = typer.Option(..., prompt=True),
+    display_name: str = typer.Option(..., prompt=True),
     features: typing.Optional[str] = typer.Option(
         ", ".join(utils.DEFAULT_FEATURES), prompt=True
     ),
@@ -24,8 +24,8 @@ def add_extension(
     is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
 ):
     sdk.add_extension(
-        id.lower(),
-        name,
+        carrier_slug.lower(),
+        display_name,
         features,
         version,
         is_xml_api,
@@ -34,20 +34,20 @@ def add_extension(
 
 @app.command()
 def add_features(
-    extension: str = typer.Option(None),
-    name: str = typer.Option(..., prompt=True),
+    carrier_slug: str = typer.Option(..., prompt=True),
+    display_name: str = typer.Option(..., prompt=True),
     features: typing.Optional[str] = typer.Option(
         ", ".join(utils.DEFAULT_FEATURES), prompt=True
     ),
     is_xml_api: typing.Optional[bool] = typer.Option(False, prompt="Is XML API?"),
 ):
-    if not extension:
+    if not carrier_slug:
         print("No carrier slug provided")
         raise typer.Abort()
 
     sdk.add_features(
-        extension.lower(),
-        name,
+        carrier_slug.lower(),
+        display_name,
         features,
         is_xml_api,
     )

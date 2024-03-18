@@ -51,7 +51,7 @@ class ShippingService(lib.StrEnum):
 class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
-    tge_ssc_ids = lib.OptionEnum("tge_ssc_ids")
+    tge_ssc_ids = lib.OptionEnum("tge_ssc_ids", list)
     tge_shipment_id = lib.OptionEnum("tge_shipment_id")
     tge_freight_mode = lib.OptionEnum("tge_freight_mode")
     tge_despatch_date = lib.OptionEnum("tge_despatch_date")
@@ -75,18 +75,21 @@ def shipping_options_initializer(
     """
     _options = options.copy()
 
-    if "tge_ssc_ids" in _options:
-        _options["tge_ssc_ids"] = _options["tge_ssc_ids"].split(",")
+    if (
+        "tge_ssc_ids" not in _options
+        and SSCC_GS1 is not None
+        and sssc_count is not None
+    ):
+        _options["tge_ssc_ids"] = [
+            f"000{SSCC_GS1}{str(sssc_count + _).zfill(6)}"
+            for _, __ in enumerate(range(package_count), start=1)
+        ]
 
-    if "tge_ssc_ids" not in _options and SSCC_GS1 is not None:
-        _options["tge_ssc_ids"] = ",".join(
-            [
-                f"000{SSCC_GS1}{str(sssc_count + _).zfill(7)}0"
-                for _, __ in enumerate(range(package_count), start=1)
-            ]
-        )
-
-    if "tge_shipment_id" not in _options and SHIP_GS1 is not None:
+    if (
+        "tge_shipment_id" not in _options
+        and SHIP_GS1 is not None
+        and shipment_count is not None
+    ):
         _options["tge_shipment_id"] = f"{SHIP_GS1}{str(shipment_count + 1).zfill(7)}"
 
     if package_options is not None:

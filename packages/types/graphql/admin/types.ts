@@ -1183,8 +1183,6 @@ export interface GetSystemConnections_system_connections_TGESettingsType {
   my_toll_token: string | null;
   my_toll_identity: string | null;
   account_code: string | null;
-  sssc_count: number | null;
-  shipment_count: number | null;
 }
 
 export interface GetSystemConnections_system_connections_TNTSettingsType {
@@ -2178,8 +2176,6 @@ export interface GetSystemConnection_system_connection_TGESettingsType {
   my_toll_token: string | null;
   my_toll_identity: string | null;
   account_code: string | null;
-  sssc_count: number | null;
-  shipment_count: number | null;
 }
 
 export interface GetSystemConnection_system_connection_TNTSettingsType {
@@ -3859,8 +3855,6 @@ export interface TGESettingsInput {
   my_toll_token: string;
   my_toll_identity: string;
   account_code: string;
-  sssc_count: number;
-  shipment_count: number;
   carrier_id: string;
 }
 
@@ -4439,8 +4433,6 @@ export interface UpdateTGESettingsInput {
   my_toll_token?: string | null;
   my_toll_identity?: string | null;
   account_code?: string | null;
-  sssc_count?: number | null;
-  shipment_count?: number | null;
   carrier_id?: string | null;
 }
 

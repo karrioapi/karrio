@@ -1,0 +1,144 @@
+{
+    "TollMessage": {
+        "Header": {
+            "CreateTimestamp": "2024-02-07T08:20:11.518Z",
+            "Environment": "PRD",
+            "MessageIdentifier": "d734c5d2-28ce-11e1-b467-0ed5f894f718b",
+            "MessageSender": "GOSHIPR",
+            "DocumentType": "Manifest",
+            "MessageVersion": "2.5",
+            "SourceSystemCode": "XP41"
+        },
+        "Print": {
+            "BusinessID": "IPEC",
+            "PrintSettings": {
+                "IsLabelThermal": "false",
+                "IsZPLRawResponseRequired": "false",
+                "PDF": {
+                    "IsPDFA4": "true",
+                    "PDFSettings": {
+                        "StartQuadrant": "1"
+                    }
+                }
+            },
+            "PrintDocumentType": "Manifest",
+            "ConsignorParty": {
+                "Contact": {
+                    "Name": "TEST USER"
+                },
+                "PartyName": "TEST USER",
+                "PhysicalAddress": {
+                    "AddressLine1": "17 VULCAN RD",
+                    "AddressLine2": "Testing",
+                    "AddressType": "Business",
+                    "CountryCode": "AU",
+                    "PostalCode": "6155",
+                    "StateCode": "WA",
+                    "Suburb": "CANNING VALE"
+                }
+            },
+            "ManifestID": {
+                "Value": "MYT-206294"
+            },
+            "CreateDateTime": "2024-02-07T08:20:11.518Z",
+            "DatePeriodCollection": {
+                "DatePeriod": [
+                    {
+                        "DateTime": "2024-02-08T09:44:11.518Z",
+                        "DateType": "DespatchDate"
+                    },
+                    {
+                        "DateTime": "2024-02-11T09:44:11.518Z",
+                        "DateType": "RequiredDeliveryDate"
+                    }
+                ]
+            },
+            "ShipmentCollection": {
+                "Shipment": [
+                    {
+                        "BillToParty": {
+                            "AccountCode": "80502494",
+                            "Payer": "S"
+                        },
+                        "ConsigneeParty": {
+                            "Contact": {
+                                "Name": "Salman Kaleem"
+                            },
+                            "PartyName": "Salman Kaleem",
+                            "PhysicalAddress": {
+                                "AddressLine1": "44 Mordaunt Circuit",
+                                "AddressLine2": "Testing",
+                                "AddressType": "Business",
+                                "CountryCode": "AU",
+                                "PostalCode": "6155",
+                                "StateCode": "WA",
+                                "Suburb": "CANNING VALE"
+                            }
+                        },
+                        "CreateDateTime": "2024-02-07T08:20:11.518Z",
+                        "DatePeriodCollection": {
+                            "DatePeriod": [
+                                {
+                                    "DateTime": "2024-02-08T09:44:11.518Z",
+                                    "DateType": "DespatchDate"
+                                },
+                                {
+                                    "DateTime": "2024-02-11T09:44:11.518Z",
+                                    "DateType": "RequiredDeliveryDate"
+                                }
+                            ]
+                        },
+                        "FreightMode": "Road",
+                        "References": {
+                            "Reference": [
+                                {
+                                    "ReferenceType": "ShipmentReference1",
+                                    "ReferenceValue": "testing 123"
+                                }
+                            ]
+                        },
+                        "ShipmentID": "8880419999995",
+                        "ShipmentItemCollection": {
+                            "ShipmentItem": [
+                                {
+                                    "Commodity": {
+                                        "CommodityCode": "BG",
+                                        "CommodityDescription": "BAG"
+                                    },
+                                    "Description": "Item- Carton",
+                                    "Dimensions": {
+                                        "Height": 10,
+                                        "HeightUOM": "m3",
+                                        "Length": 20,
+                                        "LengthUOM": "m3",
+                                        "Volume": 0.012,
+                                        "VolumeUOM": "m3",
+                                        "Weight": 100,
+                                        "WeightUOM": "kg",
+                                        "Width": 30,
+                                        "WidthUOM": "m3"
+                                    },
+                                    "IDs": {
+                                        "ID": [
+                                            {
+                                                "SchemeName": "SSCC",
+                                                "Value": "00093275103613941860"
+                                            }
+                                        ]
+                                    },
+                                    "ShipmentItemTotals": {
+                                        "ShipmentItemCount": 1
+                                    },
+                                    "ShipmentService": {
+                                        "ServiceCode": "X"
+                                    }
+                                }
+                            ]
+                        },
+                        "SpecialInstruction": "Shipment With DG"
+                    }
+                ]
+            }
+        }
+    }
+}

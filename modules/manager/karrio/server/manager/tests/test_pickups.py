@@ -223,6 +223,7 @@ PICKUP_RESPONSE = {
     "package_location": "At the main entrance hall",
     "options": {},
     "metadata": {},
+    "meta": ANY,
 }
 
 PICKUP_UPDATE_RESPONSE = {
@@ -281,6 +282,7 @@ PICKUP_UPDATE_RESPONSE = {
     "package_location": "At the main entrance hall next to the distributor",
     "options": {},
     "metadata": {},
+    "meta": ANY,
 }
 
 PICKUP_CANCEL_RESPONSE = {
@@ -339,4 +341,5 @@ PICKUP_CANCEL_RESPONSE = {
     "options": {},
     "metadata": {},
     "test_mode": True,
+    "meta": ANY,
 }

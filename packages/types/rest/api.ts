@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.2`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.2.rc10`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2024.2
+ * The version of the OpenAPI document: 2024.2.rc10
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -2151,7 +2151,7 @@ export interface Customs {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof Customs
      */
@@ -2268,7 +2268,7 @@ export interface CustomsData {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof CustomsData
      */
@@ -4148,6 +4148,284 @@ export const LineItemOriginCountryEnum = {
 
 export type LineItemOriginCountryEnum = typeof LineItemOriginCountryEnum[keyof typeof LineItemOriginCountryEnum];
 
+/**
+ * 
+ * @export
+ * @interface Manifest
+ */
+export interface Manifest {
+    /**
+     * A unique manifest identifier
+     * @type {string}
+     * @memberof Manifest
+     */
+    'id'?: string;
+    /**
+     * Specifies the object type
+     * @type {string}
+     * @memberof Manifest
+     */
+    'object_type'?: string;
+    /**
+     * The manifest carrier
+     * @type {string}
+     * @memberof Manifest
+     */
+    'carrier_name': string;
+    /**
+     * The manifest carrier configured name
+     * @type {string}
+     * @memberof Manifest
+     */
+    'carrier_id': string;
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof Manifest
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
+     * Specified whether it was created with a carrier in test mode
+     * @type {boolean}
+     * @memberof Manifest
+     */
+    'test_mode': boolean;
+    /**
+     * The list of shipment identifiers you want to add to your manifest.<br/>         shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.         
+     * @type {Array<string>}
+     * @memberof Manifest
+     */
+    'shipment_identifiers': Array<string>;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof Manifest
+     */
+    'address': AddressData;
+    /**
+     * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof Manifest
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * The manifest reference
+     * @type {string}
+     * @memberof Manifest
+     */
+    'reference'?: string | null;
+    /**
+     * User metadata for the pickup
+     * @type {{ [key: string]: any; }}
+     * @memberof Manifest
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * The Manifest file URL
+     * @type {string}
+     * @memberof Manifest
+     */
+    'manifest_url'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestData
+ */
+export interface ManifestData {
+    /**
+     * The manifest\'s carrier
+     * @type {string}
+     * @memberof ManifestData
+     */
+    'carrier_name': string;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ManifestData
+     */
+    'address': AddressData;
+    /**
+     * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof ManifestData
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * The manifest reference
+     * @type {string}
+     * @memberof ManifestData
+     */
+    'reference'?: string | null;
+    /**
+     * The list of existing shipment object ids with label purchased.
+     * @type {Array<string>}
+     * @memberof ManifestData
+     */
+    'shipment_ids': Array<string>;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestDetails
+ */
+export interface ManifestDetails {
+    /**
+     * A unique manifest identifier
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'id'?: string;
+    /**
+     * Specifies the object type
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'object_type'?: string;
+    /**
+     * The manifest carrier
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'carrier_name': string;
+    /**
+     * The manifest carrier configured name
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'carrier_id': string;
+    /**
+     * 
+     * @type {ManifestDetailsDoc}
+     * @memberof ManifestDetails
+     */
+    'doc'?: ManifestDetailsDoc | null;
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof ManifestDetails
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
+     * Specified whether it was created with a carrier in test mode
+     * @type {boolean}
+     * @memberof ManifestDetails
+     */
+    'test_mode': boolean;
+}
+/**
+ * The manifest documents
+ * @export
+ * @interface ManifestDetailsDoc
+ */
+export interface ManifestDetailsDoc {
+    /**
+     * A manifest file in base64 string
+     * @type {string}
+     * @memberof ManifestDetailsDoc
+     */
+    'manifest'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestDocument
+ */
+export interface ManifestDocument {
+    /**
+     * A manifest file in base64 string
+     * @type {string}
+     * @memberof ManifestDocument
+     */
+    'manifest'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestList
+ */
+export interface ManifestList {
+    /**
+     * 
+     * @type {number}
+     * @memberof ManifestList
+     */
+    'count'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<Manifest>}
+     * @memberof ManifestList
+     */
+    'results': Array<Manifest>;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestRequest
+ */
+export interface ManifestRequest {
+    /**
+     * The list of shipment identifiers you want to add to your manifest.<br/>         shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.         
+     * @type {Array<string>}
+     * @memberof ManifestRequest
+     */
+    'shipment_identifiers': Array<string>;
+    /**
+     * The manifest\'s carrier
+     * @type {string}
+     * @memberof ManifestRequest
+     */
+    'carrier_name': string;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ManifestRequest
+     */
+    'address': AddressData;
+    /**
+     * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof ManifestRequest
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * The manifest reference
+     * @type {string}
+     * @memberof ManifestRequest
+     */
+    'reference'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestResponse
+ */
+export interface ManifestResponse {
+    /**
+     * The list of note or warning messages
+     * @type {Array<Message>}
+     * @memberof ManifestResponse
+     */
+    'messages'?: Array<Message>;
+    /**
+     * 
+     * @type {ManifestDetails}
+     * @memberof ManifestResponse
+     */
+    'manifest'?: ManifestDetails;
+}
 /**
  * 
  * @export
@@ -6165,7 +6443,7 @@ export interface PatchedCustomsData {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof PatchedCustomsData
      */
@@ -6640,6 +6918,18 @@ export interface Pickup {
      */
     'closing_time'?: string | null;
     /**
+     * User metadata for the pickup
+     * @type {{ [key: string]: any; }}
+     * @memberof Pickup
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof Pickup
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
      * 
      * @type {Address}
      * @memberof Pickup
@@ -6669,12 +6959,6 @@ export interface Pickup {
      * @memberof Pickup
      */
     'options'?: { [key: string]: any; } | null;
-    /**
-     * User metadata for the pickup
-     * @type {{ [key: string]: any; }}
-     * @memberof Pickup
-     */
-    'metadata'?: { [key: string]: any; };
     /**
      * Specified whether it was created with a carrier in test mode
      * @type {boolean}
@@ -7844,7 +8128,7 @@ export interface ShipmentCustoms {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof ShipmentCustoms
      */
@@ -8392,7 +8676,7 @@ export interface ShipmentDataCustoms {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof ShipmentDataCustoms
      */
@@ -13164,6 +13448,369 @@ export class DocumentsApi extends BaseAPI {
 
 
 /**
+ * ManifestsApi - axios parameter creator
+ * @export
+ */
+export const ManifestsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * @summary Create a manifest
+         * @param {ManifestData} manifestData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (manifestData: ManifestData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'manifestData' is not null or undefined
+            assertParamExists('create', 'manifestData', manifestData)
+            const localVarPath = `/v1/manifests`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(manifestData, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve all manifests.
+         * @summary List manifests
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [createdAfter] 
+         * @param {string} [createdBefore] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/manifests`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (carrierName !== undefined) {
+                localVarQueryParameter['carrier_name'] = carrierName;
+            }
+
+            if (createdAfter !== undefined) {
+                localVarQueryParameter['created_after'] = (createdAfter as any instanceof Date) ?
+                    (createdAfter as any).toISOString() :
+                    createdAfter;
+            }
+
+            if (createdBefore !== undefined) {
+                localVarQueryParameter['created_before'] = (createdBefore as any instanceof Date) ?
+                    (createdBefore as any).toISOString() :
+                    createdBefore;
+            }
+
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve a shipping manifest.
+         * @summary Retrieve a manifest
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieve', 'id', id)
+            const localVarPath = `/v1/manifests/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ManifestsApi - functional programming interface
+ * @export
+ */
+export const ManifestsApiFp = function (configuration?: Configuration) {
+    const localVarAxiosParamCreator = ManifestsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * @summary Create a manifest
+         * @param {ManifestData} manifestData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(manifestData: ManifestData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(manifestData, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ManifestsApi.create']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Retrieve all manifests.
+         * @summary List manifests
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [createdAfter] 
+         * @param {string} [createdBefore] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ManifestsApi.list']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Retrieve a shipping manifest.
+         * @summary Retrieve a manifest
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ManifestsApi.retrieve']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ManifestsApi - factory interface
+ * @export
+ */
+export const ManifestsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ManifestsApiFp(configuration)
+    return {
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * @summary Create a manifest
+         * @param {ManifestsApiCreateRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(requestParameters: ManifestsApiCreateRequest, options?: AxiosRequestConfig): AxiosPromise<Manifest> {
+            return localVarFp.create(requestParameters.manifestData, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve all manifests.
+         * @summary List manifests
+         * @param {ManifestsApiListRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(requestParameters: ManifestsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<ManifestList> {
+            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve a shipping manifest.
+         * @summary Retrieve a manifest
+         * @param {ManifestsApiRetrieveRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve(requestParameters: ManifestsApiRetrieveRequest, options?: AxiosRequestConfig): AxiosPromise<Manifest> {
+            return localVarFp.retrieve(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for create operation in ManifestsApi.
+ * @export
+ * @interface ManifestsApiCreateRequest
+ */
+export interface ManifestsApiCreateRequest {
+    /**
+     * 
+     * @type {ManifestData}
+     * @memberof ManifestsApiCreate
+     */
+    readonly manifestData: ManifestData
+}
+
+/**
+ * Request parameters for list operation in ManifestsApi.
+ * @export
+ * @interface ManifestsApiListRequest
+ */
+export interface ManifestsApiListRequest {
+    /**
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+     * @type {string}
+     * @memberof ManifestsApiList
+     */
+    readonly carrierName?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestsApiList
+     */
+    readonly createdAfter?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestsApiList
+     */
+    readonly createdBefore?: string
+}
+
+/**
+ * Request parameters for retrieve operation in ManifestsApi.
+ * @export
+ * @interface ManifestsApiRetrieveRequest
+ */
+export interface ManifestsApiRetrieveRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestsApiRetrieve
+     */
+    readonly id: string
+}
+
+/**
+ * ManifestsApi - object-oriented interface
+ * @export
+ * @class ManifestsApi
+ * @extends {BaseAPI}
+ */
+export class ManifestsApi extends BaseAPI {
+    /**
+     * Create a manifest for one or many shipments with labels already purchased.
+     * @summary Create a manifest
+     * @param {ManifestsApiCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ManifestsApi
+     */
+    public create(requestParameters: ManifestsApiCreateRequest, options?: AxiosRequestConfig) {
+        return ManifestsApiFp(this.configuration).create(requestParameters.manifestData, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve all manifests.
+     * @summary List manifests
+     * @param {ManifestsApiListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ManifestsApi
+     */
+    public list(requestParameters: ManifestsApiListRequest = {}, options?: AxiosRequestConfig) {
+        return ManifestsApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve a shipping manifest.
+     * @summary Retrieve a manifest
+     * @param {ManifestsApiRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ManifestsApi
+     */
+    public retrieve(requestParameters: ManifestsApiRetrieveRequest, options?: AxiosRequestConfig) {
+        return ManifestsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * OrdersApi - axios parameter creator
  * @export
  */
@@ -14952,6 +15599,56 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+         * @summary Create a manifest
+         * @param {ManifestRequest} manifestRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createManifest: async (manifestRequest: ManifestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'manifestRequest' is not null or undefined
+            assertParamExists('createManifest', 'manifestRequest', manifestRequest)
+            const localVarPath = `/v1/proxy/manifests`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(manifestRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available. 
          * @summary Fetch shipment rates
          * @param {RateRequest} rateRequest 
@@ -15314,6 +16011,19 @@ export const ProxyApiFp = function (configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+         * @summary Create a manifest
+         * @param {ManifestRequest} manifestRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createManifest(manifestRequest: ManifestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createManifest(manifestRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ProxyApi.createManifest']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available. 
          * @summary Fetch shipment rates
          * @param {RateRequest} rateRequest 
@@ -15429,6 +16139,16 @@ export const ProxyApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.cancelPickup(requestParameters.carrierName, requestParameters.pickupCancelRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+         * @summary Create a manifest
+         * @param {ProxyApiCreateManifestRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createManifest(requestParameters: ProxyApiCreateManifestRequest, options?: AxiosRequestConfig): AxiosPromise<ManifestResponse> {
+            return localVarFp.createManifest(requestParameters.manifestRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available. 
          * @summary Fetch shipment rates
          * @param {ProxyApiFetchRatesRequest} requestParameters Request parameters.
@@ -15525,6 +16245,20 @@ export interface ProxyApiCancelPickupRequest {
      * @memberof ProxyApiCancelPickup
      */
     readonly pickupCancelRequest: PickupCancelRequest
+}
+
+/**
+ * Request parameters for createManifest operation in ProxyApi.
+ * @export
+ * @interface ProxyApiCreateManifestRequest
+ */
+export interface ProxyApiCreateManifestRequest {
+    /**
+     * 
+     * @type {ManifestRequest}
+     * @memberof ProxyApiCreateManifest
+     */
+    readonly manifestRequest: ManifestRequest
 }
 
 /**
@@ -15682,6 +16416,18 @@ export class ProxyApi extends BaseAPI {
      */
     public cancelPickup(requestParameters: ProxyApiCancelPickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).cancelPickup(requestParameters.carrierName, requestParameters.pickupCancelRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+     * @summary Create a manifest
+     * @param {ProxyApiCreateManifestRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProxyApi
+     */
+    public createManifest(requestParameters: ProxyApiCreateManifestRequest, options?: AxiosRequestConfig) {
+        return ProxyApiFp(this.configuration).createManifest(requestParameters.manifestRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

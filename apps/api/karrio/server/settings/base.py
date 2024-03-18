@@ -486,6 +486,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": VERSION,
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": True,
+    "ENUM_GENERATE_CHOICE_DESCRIPTION": False,
     "ENUM_NAME_OVERRIDES": {
         "CountryEnum": "karrio.server.core.serializers.COUNTRIES",
         "CurrencyEnum": "karrio.server.core.serializers.CURRENCIES",

@@ -35,9 +35,13 @@ NON_HUBS_CARRIERS = [
 def contextual_metadata(request: Request):
     _host: str = typing.cast(
         str,
-        request.build_absolute_uri(reverse("karrio.server.core:metadata", kwargs={}))
-        if hasattr(request, "build_absolute_uri")
-        else "/",
+        (
+            request.build_absolute_uri(
+                reverse("karrio.server.core:metadata", kwargs={})
+            )
+            if hasattr(request, "build_absolute_uri")
+            else "/"
+        ),
     )
     host = _host[:-1] if _host[-1] == "/" else _host
 

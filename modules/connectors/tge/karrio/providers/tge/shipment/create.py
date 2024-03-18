@@ -70,19 +70,21 @@ def shipment_request(
     recipient = lib.to_address(payload.recipient)
     is_pdf = "PDF" in (payload.label_type or "PDF")
     service = provider_units.ShippingService.map(payload.service).value_or_key
+    sssc_count = lib.identity(
+        settings.sssc_count
+        if settings.sssc_count is not None
+        else lib.to_int(settings.connection_config.SSCC_range_start.state) or 0
+    )
+    shipment_count = lib.identity(
+        settings.shipment_count
+        if settings.shipment_count is not None
+        else lib.to_int(settings.connection_config.SHIP_range_start.state) or 0
+    )
     options = lib.to_shipping_options(
         payload.options,
         package_count=len(payload.parcels),
-        sssc_count=(
-            settings.sssc_count
-            if settings.sssc_count is not None
-            else lib.to_int(settings.connection_config.SSCC_range_start.state) or 0
-        ),
-        shipment_count=(
-            settings.shipment_count
-            if settings.shipment_count is not None
-            else lib.to_int(settings.connection_config.SHIP_range_start.state) or 0
-        ),
+        sssc_count=sssc_count,
+        shipment_count=shipment_count,
         SSCC_GS1=settings.connection_config.SSCC_GS1.state or "",
         SHIP_GS1=settings.connection_config.SHIP_GS1.state or "",
         initializer=provider_units.shipping_options_initializer,
@@ -93,10 +95,14 @@ def shipment_request(
         package_option_type=provider_units.ShippingOption,
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
+    SSCCs = options.tge_ssc_ids.state
     payment = payload.payment or models.Payment()
-    create_date = datetime.datetime.now()
-    shipping_date = lib.to_date(packages.options.shipment_date.state or create_date)
-    SSCCs = (options.tge_ssc_ids.state or "").split(",")
+
+    now = datetime.datetime.now() + datetime.timedelta(hours=1)
+    create_time = lib.fdatetime(now, output_format="%H:%M:%S")
+    create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+    shipping_date = lib.to_date(options.shipment_date.state or now)
+    pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
 
     request = tge.LabelRequestType(
         TollMessage=tge.TollMessageType(
@@ -104,10 +110,7 @@ def shipment_request(
                 MessageVersion="2.5",
                 DocumentType="Label",
                 MessageIdentifier=MessageIdentifier,
-                CreateTimestamp=lib.fdatetime(
-                    create_date,
-                    output_format="%Y-%m-%dT%H:%M:%S.%fZ",
-                ),
+                CreateTimestamp=f"{create_date}{create_time}.000Z",
                 Environment=("PRD" if not settings.test_mode else "TST"),
                 SourceSystemCode=(settings.connection_config.channel.state or "YF73"),
                 MessageSender=(
@@ -117,12 +120,12 @@ def shipment_request(
             Print=tge.PrintType(
                 BusinessID=(settings.connection_config.business_id.state or "IPEC"),
                 PrintSettings=tge.PrintSettingsType(
-                    IsLabelThermal=not is_pdf,
-                    IsZPLRawResponseRequired=not is_pdf,
+                    IsLabelThermal="false" if is_pdf else "true",
+                    IsZPLRawResponseRequired="false" if is_pdf else "true",
                     PDF=(
                         tge.PDFType(
-                            IsPDFA4=True,
-                            PDFSettings=tge.PDFSettingsType(StartQuadrant=1),
+                            IsPDFA4="true",
+                            PDFSettings=tge.PDFSettingsType(StartQuadrant="1"),
                         )
                         if is_pdf
                         else None
@@ -146,9 +149,7 @@ def shipment_request(
                         Suburb=shipper.city,
                     ),
                 ),
-                CreateDateTime=lib.fdatetime(
-                    create_date, output_format="%Y-%m-%dT%H:%M:%S.%fZ"
-                ),
+                CreateDateTime=f"{create_date}{create_time}.000Z",
                 ShipmentCollection=tge.ShipmentCollectionType(
                     Shipment=[
                         tge.ShipmentType(
@@ -179,16 +180,13 @@ def shipment_request(
                                     Suburb=recipient.city,
                                 ),
                             ),
-                            CreateDateTime=lib.fdatetime(
-                                shipping_date,
-                                output_format="%Y-%m-%dT%H:%M:%S.%fZ",
-                            ),
+                            CreateDateTime=f"{create_date}{create_time}.000Z",
                             DatePeriodCollection=tge.DatePeriodCollectionType(
                                 DatePeriod=[
                                     tge.DatePeriodType(
                                         DateTime=(
                                             options.tge_despatch_date.state
-                                            or f"{lib.fdate(shipping_date)}T90:00:00.000Z"
+                                            or f"{pickup_date}{create_time}.000Z"
                                         ),
                                         DateType="DespatchDate",
                                     ),
@@ -216,7 +214,10 @@ def shipment_request(
                                     Reference=[
                                         tge.ReferenceType(
                                             ReferenceType="ShipmentReference1",
-                                            ReferenceValue=payload.reference,
+                                            ReferenceValue=(
+                                                payload.reference
+                                                or getattr(payload, "id", "N/A")
+                                            ),
                                         ),
                                     ]
                                 )
@@ -244,15 +245,15 @@ def shipment_request(
                                             Height=package.height.map(
                                                 provider_units.MeasurementOptions
                                             ).CM,
-                                            HeightUOM="cm",
+                                            HeightUOM="m3",
                                             Length=package.length.map(
                                                 provider_units.MeasurementOptions
                                             ).CM,
-                                            LengthUOM="cm",
+                                            LengthUOM="m3",
                                             Volume=package.volume.map(
                                                 provider_units.MeasurementOptions
                                             ).cm3,
-                                            VolumeUOM="cm3",
+                                            VolumeUOM="m3",
                                             Weight=package.weight.map(
                                                 provider_units.MeasurementOptions
                                             ).KG,
@@ -260,7 +261,7 @@ def shipment_request(
                                             Width=package.width.map(
                                                 provider_units.MeasurementOptions
                                             ).CM,
-                                            WidthUOM="cm",
+                                            WidthUOM="m3",
                                         ),
                                         IDs=tge.IDsType(
                                             ID=[
@@ -300,7 +301,7 @@ def shipment_request(
             MessageSender=(
                 settings.connection_config.message_sender.state or "GOSHIPR"
             ),
-            shipment_count=settings.shipment_count + 1,
-            sscc_count=settings.sssc_count + len(packages),
+            shipment_count=shipment_count + 1,
+            sscc_count=sssc_count + len(packages),
         ),
     )

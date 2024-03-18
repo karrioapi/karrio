@@ -2,18 +2,18 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Jul 14 15:39:45 2021 by generateDS.py version 2.39.2.
-# Python 3.8.6 (v3.8.6:db455296be, Sep 23 2020, 13:31:39)  [Clang 6.0 (clang-600.0.57)]
+# Generated Sat Mar 16 02:19:32 2024 by generateDS.py version 2.43.3.
+# Python 3.12.2 (main, Feb 28 2024, 21:12:07) [GCC 11.4.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
-#   ('-o', './canadapost_lib/pickuprequest.py')
+#   ('-o', './karrio/schemas/canadapost/pickuprequest.py')
 #
 # Command line arguments:
 #   ./schemas/pickuprequest.xsd
 #
 # Command line:
-#   /Users/danielkobina/Workspace/project/karrio-carriers/.venv/karrio-carriers/bin/generateDS --no-namespace-defs -o "./canadapost_lib/pickuprequest.py" ./schemas/pickuprequest.xsd
+#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/canadapost/pickuprequest.py" ./schemas/pickuprequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   canadapost
@@ -30,14 +30,12 @@ import re as re_
 import base64
 import datetime as datetime_
 import decimal as decimal_
-try:
-    from lxml import etree as etree_
-except ModulenotfoundExp_ :
-    from xml.etree import ElementTree as etree_
+from lxml import etree as etree_
 
 
 Validate_simpletypes_ = True
 SaveElementTreeNode = True
+TagNamePrefix = ""
 if sys.version_info.major == 2:
     BaseStrType_ = basestring
 else:
@@ -192,6 +190,33 @@ except ModulenotfoundExp_ as exp:
                 return self.__name
             def dst(self, dt):
                 return None
+        def __str__(self):
+            settings = {
+                'str_pretty_print': True,
+                'str_indent_level': 0,
+                'str_namespaceprefix': '',
+                'str_name': self.__class__.__name__,
+                'str_namespacedefs': '',
+            }
+            for n in settings:
+                if hasattr(self, n):
+                    settings[n] = getattr(self, n)
+            if sys.version_info.major == 2:
+                from StringIO import StringIO
+            else:
+                from io import StringIO
+            output = StringIO()
+            self.export(
+                output,
+                settings['str_indent_level'],
+                pretty_print=settings['str_pretty_print'],
+                namespaceprefix_=settings['str_namespaceprefix'],
+                name_=settings['str_name'],
+                namespacedef_=settings['str_namespacedefs']
+            )
+            strval = output.getvalue()
+            output.close()
+            return strval
         def gds_format_string(self, input_data, input_name=''):
             return input_data
         def gds_parse_string(self, input_data, node=None, input_name=''):
@@ -202,11 +227,11 @@ except ModulenotfoundExp_ as exp:
             else:
                 return input_data
         def gds_format_base64(self, input_data, input_name=''):
-            return base64.b64encode(input_data)
+            return base64.b64encode(input_data).decode('ascii')
         def gds_validate_base64(self, input_data, node=None, input_name=''):
             return input_data
         def gds_format_integer(self, input_data, input_name=''):
-            return '%d' % input_data
+            return '%d' % int(input_data)
         def gds_parse_integer(self, input_data, node=None, input_name=''):
             try:
                 ival = int(input_data)
@@ -233,7 +258,11 @@ except ModulenotfoundExp_ as exp:
                     raise_parse_error(node, 'Requires sequence of integer values')
             return values
         def gds_format_float(self, input_data, input_name=''):
-            return ('%.15f' % input_data).rstrip('0')
+            value = ('%.15f' % float(input_data)).rstrip('0')
+            if value.endswith('.'):
+                value += '0'
+            return value
+    
         def gds_parse_float(self, input_data, node=None, input_name=''):
             try:
                 fval_ = float(input_data)
@@ -322,6 +351,7 @@ except ModulenotfoundExp_ as exp:
         def gds_format_boolean(self, input_data, input_name=''):
             return ('%s' % input_data).lower()
         def gds_parse_boolean(self, input_data, node=None, input_name=''):
+            input_data = input_data.strip()
             if input_data in ('true', '1'):
                 bval = True
             elif input_data in ('false', '0'):
@@ -501,6 +531,7 @@ except ModulenotfoundExp_ as exp:
             # The target value must match at least one of the patterns
             # in order for the test to succeed.
             found1 = True
+            target = str(target)
             for patterns1 in patterns:
                 found2 = False
                 for patterns2 in patterns1:
@@ -746,6 +777,7 @@ def quote_attrib(inStr):
     s1 = s1.replace('&', '&amp;')
     s1 = s1.replace('<', '&lt;')
     s1 = s1.replace('>', '&gt;')
+    s1 = s1.replace('\n', '&#10;')
     if '"' in s1:
         if "'" in s1:
             s1 = '"%s"' % s1.replace('"', "&quot;")
@@ -875,7 +907,7 @@ class MixedContainer:
                 self.name,
                 base64.b64encode(self.value),
                 self.name))
-    def to_etree(self, element, mapping_=None, nsmap_=None):
+    def to_etree(self, element, mapping_=None, reverse_mapping_=None, nsmap_=None):
         if self.category == MixedContainer.CategoryText:
             # Prevent exporting empty content as empty lines.
             if self.value.strip():
@@ -895,7 +927,7 @@ class MixedContainer:
             subelement.text = self.to_etree_simple()
         else:    # category == MixedContainer.CategoryComplex
             self.value.to_etree(element)
-    def to_etree_simple(self, mapping_=None, nsmap_=None):
+    def to_etree_simple(self, mapping_=None, reverse_mapping_=None, nsmap_=None):
         if self.content_type == MixedContainer.TypeString:
             text = self.value
         elif (self.content_type == MixedContainer.TypeInteger or
@@ -968,11 +1000,10 @@ def _cast(typ, value):
         return value
     return typ(value)
 
-#
-# Data representation classes.
-#
 
-
+#
+# Start enum classes
+#
 class DayOfTheWeekType(str, Enum):
     MON='MON'
     TUE='TUE'
@@ -1000,6 +1031,9 @@ class PickupTypeType(str, Enum):
     SCHEDULED='Scheduled'
 
 
+#
+# Start data representation classes
+#
 class PickupRequestDetailsType(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
@@ -1131,7 +1165,7 @@ class PickupRequestDetailsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PickupVolumeType' % {"value" : value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.customer_request_id is not None or
             self.pickup_type is not None or
@@ -1162,7 +1196,7 @@ class PickupRequestDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1350,7 +1384,7 @@ class PickupRequestUpdateDetailsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PickupVolumeType' % {"value" : value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.contact_info is not None or
             self.location_details is not None or
@@ -1377,7 +1411,7 @@ class PickupRequestUpdateDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestUpdateDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestUpdateDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1492,7 +1526,7 @@ class PickupRequestsType(GeneratedsSuper):
         self.pickup_request.insert(index, value)
     def replace_pickup_request_at(self, index, value):
         self.pickup_request[index] = value
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pickup_request
         ):
@@ -1515,7 +1549,7 @@ class PickupRequestsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1667,7 +1701,7 @@ class PickupDetailsType(GeneratedsSuper):
                 result = False
         return result
     validate_PostalCodeType_patterns_ = [['^([A-Z]\\d[A-Z]\\d[A-Z]\\d)$']]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.date is not None or
             self.contract_id is not None or
@@ -1695,7 +1729,7 @@ class PickupDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1834,7 +1868,7 @@ class PickupRequestInfoType(GeneratedsSuper):
         return self.links
     def set_links(self, links):
         self.links = links
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pickup_request_header is not None or
             self.pickup_request_price is not None or
@@ -1859,7 +1893,7 @@ class PickupRequestInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -1951,7 +1985,7 @@ class PickupRequestType(GeneratedsSuper):
         return self.links
     def set_links(self, links):
         self.links = links
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pickup_request_header is not None or
             self.links is not None
@@ -1975,7 +2009,7 @@ class PickupRequestType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2059,7 +2093,7 @@ class PickupRequestDetailedInfoType(GeneratedsSuper):
         return self.pickup_request_details
     def set_pickup_request_details(self, pickup_request_details):
         self.pickup_request_details = pickup_request_details
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pickup_request_header is not None or
             self.pickup_request_details is not None
@@ -2083,7 +2117,7 @@ class PickupRequestDetailedInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestDetailedInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestDetailedInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2209,7 +2243,7 @@ class PickupRequestResponseDetailsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd minLength restriction on PickupVolumeType' % {"value" : value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pickup_location is not None or
             self.contact_info is not None or
@@ -2237,7 +2271,7 @@ class PickupRequestResponseDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestResponseDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestResponseDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2355,7 +2389,7 @@ class HoldPickupsInfoType(GeneratedsSuper):
         return self.effective_date
     def set_effective_date(self, effective_date):
         self.effective_date = effective_date
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.effective_date is not None
         ):
@@ -2378,7 +2412,7 @@ class HoldPickupsInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='HoldPickupsInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='HoldPickupsInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2453,7 +2487,7 @@ class ResumePickupsInfoType(GeneratedsSuper):
         return self.effective_date
     def set_effective_date(self, effective_date):
         self.effective_date = effective_date
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.effective_date is not None
         ):
@@ -2476,7 +2510,7 @@ class ResumePickupsInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ResumePickupsInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ResumePickupsInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2553,7 +2587,7 @@ class PickupLocationType(GeneratedsSuper):
         return self.alternate_address
     def set_alternate_address(self, alternate_address):
         self.alternate_address = alternate_address
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.business_address_flag is not None or
             self.alternate_address is not None
@@ -2577,7 +2611,7 @@ class PickupLocationType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupLocationType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupLocationType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2756,7 +2790,7 @@ class AlternateAddressType(GeneratedsSuper):
                 result = False
         return result
     validate_PostalCodeType_patterns_ = [['^([A-Z]\\d[A-Z]\\d[A-Z]\\d)$']]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.company is not None or
             self.address_line_1 is not None or
@@ -2783,7 +2817,7 @@ class AlternateAddressType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='AlternateAddressType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='AlternateAddressType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -2996,7 +3030,7 @@ class ContactInfoType(GeneratedsSuper):
                 result = False
         return result
     validate_PhoneExtentionType_patterns_ = [['^(\\d{1,6})$']]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.contact_name is not None or
             self.email is not None or
@@ -3023,7 +3057,7 @@ class ContactInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ContactInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ContactInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -3234,7 +3268,7 @@ class ContactInfoResponseDetailsType(GeneratedsSuper):
                 result = False
         return result
     validate_PhoneExtentionType_patterns_ = [['^(\\d{1,6})$']]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.contact_name is not None or
             self.email is not None or
@@ -3261,7 +3295,7 @@ class ContactInfoResponseDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ContactInfoResponseDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ContactInfoResponseDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -3407,7 +3441,7 @@ class LocationDetailsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on pickup-instructionsType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.five_ton_flag is not None or
             self.loading_dock_flag is not None or
@@ -3432,7 +3466,7 @@ class LocationDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='LocationDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='LocationDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -3544,7 +3578,7 @@ class ItemsCharacteristicsType(GeneratedsSuper):
         return self.heavy_item_flag
     def set_heavy_item_flag(self, heavy_item_flag):
         self.heavy_item_flag = heavy_item_flag
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pww_flag is not None or
             self.priority_flag is not None or
@@ -3570,7 +3604,7 @@ class ItemsCharacteristicsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ItemsCharacteristicsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ItemsCharacteristicsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -3672,7 +3706,7 @@ class ItemsCharacteristicsUpdateDetailsType(GeneratedsSuper):
         return self.heavy_item_flag
     def set_heavy_item_flag(self, heavy_item_flag):
         self.heavy_item_flag = heavy_item_flag
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.heavy_item_flag is not None
         ):
@@ -3695,7 +3729,7 @@ class ItemsCharacteristicsUpdateDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ItemsCharacteristicsUpdateDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ItemsCharacteristicsUpdateDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -3773,7 +3807,7 @@ class PickupTimesType(GeneratedsSuper):
         return self.scheduled_pickup_times
     def set_scheduled_pickup_times(self, scheduled_pickup_times):
         self.scheduled_pickup_times = scheduled_pickup_times
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.on_demand_pickup_time is not None or
             self.scheduled_pickup_times is not None
@@ -3797,7 +3831,7 @@ class PickupTimesType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupTimesType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupTimesType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -3907,7 +3941,7 @@ class OnDemandPickupTimeType(GeneratedsSuper):
                 result = False
         return result
     validate_PickupTimeType_patterns_ = [['^((12|13|14|15|16|17):(00|15|30|45))$']]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.date is not None or
             self.preferred_time is not None or
@@ -3932,7 +3966,7 @@ class OnDemandPickupTimeType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='OnDemandPickupTimeType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='OnDemandPickupTimeType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -4036,7 +4070,7 @@ class ScheduledPickupTimesType(GeneratedsSuper):
         self.pickup_times_per_day.insert(index, value)
     def replace_pickup_times_per_day_at(self, index, value):
         self.pickup_times_per_day[index] = value
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pickup_times_per_day
         ):
@@ -4059,7 +4093,7 @@ class ScheduledPickupTimesType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='ScheduledPickupTimesType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='ScheduledPickupTimesType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -4180,7 +4214,7 @@ class PickupTimesPerDayType(GeneratedsSuper):
                 result = False
         return result
     validate_PickupTimeType_patterns_ = [['^((12|13|14|15|16|17):(00|15|30|45))$']]
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.day is not None or
             self.preferred_time_1 is not None or
@@ -4206,7 +4240,7 @@ class PickupTimesPerDayType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupTimesPerDayType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupTimesPerDayType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -4359,7 +4393,7 @@ class PaymentInfoType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on MethodOfPaymentType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.contract_id is not None or
             self.method_of_payment is not None or
@@ -4384,7 +4418,7 @@ class PaymentInfoType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PaymentInfoType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PaymentInfoType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -4554,7 +4588,7 @@ class PreAuthorizedPaymentType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on PreAuthorizedPaymentAmountType' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.account_number is not None or
             self.auth_code is not None or
@@ -4580,7 +4614,7 @@ class PreAuthorizedPaymentType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PreAuthorizedPaymentType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PreAuthorizedPaymentType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -4769,7 +4803,7 @@ class PickupRequestHeaderType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd enumeration restriction on PickupTypeType' % {"value" : encode_str_2_3(value), "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.request_id is not None or
             self.request_status is not None or
@@ -4796,7 +4830,7 @@ class PickupRequestHeaderType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestHeaderType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestHeaderType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -4938,7 +4972,7 @@ class LinkType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s is not of the correct base simple type (str)' % {"value": value, "lineno": lineno, })
                 return False
             pass
-    def _hasContent(self):
+    def has__content(self):
         if (
 
         ):
@@ -4961,7 +4995,7 @@ class LinkType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='LinkType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='LinkType', pretty_print=pretty_print)
             outfile.write('</%s%s>%s' % (namespaceprefix_, name_, eol_))
@@ -5107,7 +5141,7 @@ class PickupRequestPriceType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on CostTypeAllowsZero' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pre_tax_amount is not None or
             self.gst_amount is not None or
@@ -5136,7 +5170,7 @@ class PickupRequestPriceType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestPriceType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestPriceType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -5320,7 +5354,7 @@ class PickupRequestPriceNoCCType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxInclusive restriction on CostTypeAllowsZero' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.pre_tax_amount is not None or
             self.gst_amount is not None or
@@ -5347,7 +5381,7 @@ class PickupRequestPriceNoCCType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='PickupRequestPriceNoCCType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='PickupRequestPriceNoCCType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -5625,7 +5659,7 @@ class SupplierAccountReceiptDetailsType(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on transaction-typeType' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.merchant_name is not None or
             self.merchant_url is not None or
@@ -5655,7 +5689,7 @@ class SupplierAccountReceiptDetailsType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='SupplierAccountReceiptDetailsType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='SupplierAccountReceiptDetailsType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -5983,7 +6017,7 @@ class cc_receipt_details_type(GeneratedsSuper):
                 self.gds_collector_.add_message('Value "%(value)s"%(lineno)s does not match xsd maxLength restriction on transaction-typeType5' % {"value": value, "lineno": lineno} )
                 result = False
         return result
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.merchant_name is not None or
             self.merchant_url is not None or
@@ -6014,7 +6048,7 @@ class cc_receipt_details_type(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='cc-receipt-details-type')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='cc-receipt-details-type', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -6190,7 +6224,7 @@ class linksType(GeneratedsSuper):
         self.link.insert(index, value)
     def replace_link_at(self, index, value):
         self.link[index] = value
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.link
         ):
@@ -6213,7 +6247,7 @@ class linksType(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='linksType')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='linksType', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -6292,7 +6326,7 @@ class linksType1(GeneratedsSuper):
         self.link.insert(index, value)
     def replace_link_at(self, index, value):
         self.link[index] = value
-    def _hasContent(self):
+    def has__content(self):
         if (
             self.link
         ):
@@ -6315,7 +6349,7 @@ class linksType1(GeneratedsSuper):
         outfile.write('<%s%s%s' % (namespaceprefix_, name_, namespacedef_ and ' ' + namespacedef_ or '', ))
         already_processed = set()
         self._exportAttributes(outfile, level, already_processed, namespaceprefix_, name_='linksType1')
-        if self._hasContent():
+        if self.has__content():
             outfile.write('>%s' % (eol_, ))
             self._exportChildren(outfile, level + 1, namespaceprefix_, namespacedef_, name_='linksType1', pretty_print=pretty_print)
             showIndent(outfile, level, pretty_print)
@@ -6354,6 +6388,11 @@ class linksType1(GeneratedsSuper):
 # end class linksType1
 
 
+#
+# End data representation classes.
+#
+
+
 GDSClassesMapping = {
 }
 
@@ -6370,9 +6409,10 @@ def usage():
 
 def get_root_tag(node):
     tag = Tag_pattern_.match(node.tag).groups()[-1]
-    rootClass = GDSClassesMapping.get(tag)
+    prefix_tag = TagNamePrefix + tag
+    rootClass = GDSClassesMapping.get(prefix_tag)
     if rootClass is None:
-        rootClass = globals().get(tag)
+        rootClass = globals().get(prefix_tag)
     return tag, rootClass
 
 
@@ -6426,7 +6466,7 @@ def parse(inFileName, silence=False, print_warnings=True):
 
 
 def parseEtree(inFileName, silence=False, print_warnings=True,
-               mapping=None, nsmap=None):
+               mapping=None, reverse_mapping=None, nsmap=None):
     parser = None
     doc = parsexml_(inFileName, parser)
     gds_collector = GdsCollector_()
@@ -6437,12 +6477,15 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
         rootClass = PickupRequestDetailsType
     rootObj = rootClass.factory()
     rootObj.build(rootNode, gds_collector_=gds_collector)
-    # Enable Python to collect the space used by the DOM.
     if mapping is None:
         mapping = {}
+    if reverse_mapping is None:
+        reverse_mapping = {}
     rootElement = rootObj.to_etree(
-        None, name_=rootTag, mapping_=mapping, nsmap_=nsmap)
-    reverse_mapping = rootObj.gds_reverse_node_mapping(mapping)
+        None, name_=rootTag, mapping_=mapping,
+        reverse_mapping_=reverse_mapping, nsmap_=nsmap)
+    reverse_node_mapping = rootObj.gds_reverse_node_mapping(mapping)
+    # Enable Python to collect the space used by the DOM.
     if not SaveElementTreeNode:
         doc = None
         rootNode = None
@@ -6459,7 +6502,7 @@ def parseEtree(inFileName, silence=False, print_warnings=True,
             len(gds_collector.get_messages()), ))
         gds_collector.write_messages(sys.stderr)
         sys.stderr.write(separator)
-    return rootObj, rootElement, mapping, reverse_mapping
+    return rootObj, rootElement, mapping, reverse_node_mapping
 
 
 def parseString(inString, silence=False, print_warnings=True):

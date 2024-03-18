@@ -25,6 +25,7 @@ def parse_error_response(
             for e in responses
             if (
                 e.get("message") is not None
+                or e.get("Exception") is not None
                 or e.get("ExceptionMessage") is not None
                 or any(
                     e.get("TollMessage", {})
@@ -44,6 +45,7 @@ def parse_error_response(
             code=error.get("ErrorNumber", {}).get("value") or "400",
             message=(
                 error.get("message")
+                or error.get("Exception")
                 or error.get("ErrorMessage")
                 or error.get("ExceptionMessage")
             ),

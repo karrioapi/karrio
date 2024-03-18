@@ -87,7 +87,7 @@ export interface get_customs_info_templates_customs_templates_edges_node_customs
   content_description: string | null;
   duty: get_customs_info_templates_customs_templates_edges_node_customs_duty | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   certify: boolean | null;
   options: any | null;
@@ -164,7 +164,7 @@ export interface get_default_templates_default_templates_default_customs_customs
   content_description: string | null;
   duty: get_default_templates_default_templates_default_customs_customs_duty | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   certify: boolean | null;
   options: any | null;
@@ -531,7 +531,7 @@ export interface get_shipment_shipment_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_shipment_shipment_customs_duty | null;
   options: any | null;
@@ -861,7 +861,7 @@ export interface get_shipments_shipments_edges_node_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_shipments_shipments_edges_node_customs_duty | null;
   options: any | null;
@@ -1130,7 +1130,7 @@ export interface get_shipment_data_shipment_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_shipment_data_shipment_customs_duty | null;
   options: any | null;
@@ -1349,7 +1349,7 @@ export interface partial_shipment_update_partial_shipment_update_shipment_custom
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: partial_shipment_update_partial_shipment_update_shipment_customs_duty | null;
   options: any | null;
@@ -3079,8 +3079,6 @@ export interface get_user_connections_user_connections_TGESettingsType {
   my_toll_token: string | null;
   my_toll_identity: string | null;
   account_code: string | null;
-  sssc_count: number | null;
-  shipment_count: number | null;
 }
 
 export interface get_user_connections_user_connections_TNTSettingsType {
@@ -3719,7 +3717,7 @@ export interface get_order_order_shipments_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_order_order_shipments_customs_duty | null;
   options: any | null;
@@ -4195,7 +4193,7 @@ export interface get_orders_orders_edges_node_shipments_customs {
   content_description: string | null;
   incoterm: IncotermCodeEnum | null;
   invoice: string | null;
-  invoice_date: any | null;
+  invoice_date: string | null;
   signer: string | null;
   duty: get_orders_orders_edges_node_shipments_customs_duty | null;
   options: any | null;
@@ -5037,7 +5035,6 @@ export interface GetWorkspaceConfig_workspace_config {
   federal_tax_id: string | null;
   default_label_type: LabelTypeEnum | null;
   customs_aes: string | null;
-  customs_ein: string | null;
   customs_eel_pfc: string | null;
   customs_license_number: string | null;
   customs_certificate_number: string | null;
@@ -5068,7 +5065,6 @@ export interface UpdateWorkspaceConfig_update_workspace_config_workspace_config 
   federal_tax_id: string | null;
   default_label_type: LabelTypeEnum | null;
   customs_aes: string | null;
-  customs_ein: string | null;
   customs_eel_pfc: string | null;
   customs_license_number: string | null;
   customs_certificate_number: string | null;
@@ -6177,8 +6173,6 @@ export interface TGESettingsInput {
   my_toll_token: string;
   my_toll_identity: string;
   account_code: string;
-  sssc_count: number;
-  shipment_count: number;
   carrier_id: string;
 }
 
@@ -6757,8 +6751,6 @@ export interface UpdateTGESettingsInput {
   my_toll_token?: string | null;
   my_toll_identity?: string | null;
   account_code?: string | null;
-  sssc_count?: number | null;
-  shipment_count?: number | null;
   carrier_id?: string | null;
 }
 
@@ -7327,7 +7319,6 @@ export interface WorkspaceConfigMutationInput {
   state_tax_id?: string | null;
   federal_tax_id?: string | null;
   customs_aes?: string | null;
-  customs_ein?: string | null;
   customs_eel_pfc?: string | null;
   customs_eori_number?: string | null;
   customs_license_number?: string | null;

@@ -96,9 +96,9 @@ class ShipmentSerializer(ShipmentData):
     def create(
         self, validated_data: dict, context: Context, **kwargs
     ) -> models.Shipment:
-        fetch_rates = validated_data.get("fetch_rates") is not False
-        carrier_ids = validated_data.get("carrier_ids") or []
         service = validated_data.get("service")
+        carrier_ids = validated_data.get("carrier_ids") or []
+        fetch_rates = validated_data.get("fetch_rates") is not False
         services = [service] if service is not None else validated_data.get("services")
         carriers = gateway.Carriers.list(
             context=context,

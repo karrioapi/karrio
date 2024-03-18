@@ -1,3 +1,4 @@
+import re
 import unittest
 from unittest.mock import patch, ANY
 import karrio
@@ -19,13 +20,28 @@ class TestCanadaPostShipment(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-        self.assertEqual(request.serialize()[0], ShipmentRequestXML)
+
+        self.assertEqual(
+            re.sub(
+                "    <customer-request-id>[^>]+</customer-request-id>",
+                "    <customer-request-id></customer-request-id>",
+                request.serialize()[0],
+            ),
+            ShipmentRequestXML,
+        )
 
     def test_create_shipment_with_package_preset_request(self):
         request = gateway.mapper.create_shipment_request(
             models.ShipmentRequest(**shipment_with_package_preset_data)
         )
-        self.assertEqual(request.serialize()[0], ShipmentRequestWithPackagePresetXML)
+        self.assertEqual(
+            re.sub(
+                "    <customer-request-id>[^>]+</customer-request-id>",
+                "    <customer-request-id></customer-request-id>",
+                request.serialize()[0],
+            ),
+            ShipmentRequestWithPackagePresetXML,
+        )
 
     def test_create_cancel_shipment_request(self):
         requests = gateway.mapper.create_cancel_shipment_request(
@@ -270,6 +286,7 @@ multi_piece_shipment_data = {
     "reference": "#Order 11111 11114",
 }
 
+
 ParsedShipmentResponse = [
     {
         "carrier_name": "canadapost",
@@ -279,8 +296,29 @@ ParsedShipmentResponse = [
         "label_type": "PDF",
         "docs": {"label": ANY},
         "meta": {
-            "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012"
+            "group_id": ANY,
+            "customer_request_ids": ANY,
+            "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012",
         },
+    },
+    [],
+]
+
+ParsedMultiPieceShipmentResponse = [
+    {
+        "carrier_id": "canadapost",
+        "carrier_name": "canadapost",
+        "docs": {"label": ANY},
+        "meta": {
+            "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012",
+            "shipment_identifiers": ANY,
+            "customer_request_ids": ANY,
+            "tracking_numbers": ANY,
+            "group_id": ANY,
+        },
+        "label_type": "PDF",
+        "shipment_identifier": "123456789012",
+        "tracking_number": "123456789012",
     },
     [],
 ]
@@ -295,29 +333,12 @@ ParsedShipmentCancelResponse = [
     [],
 ]
 
-ParsedMultiPieceShipmentResponse = [
-    {
-        "carrier_id": "canadapost",
-        "carrier_name": "canadapost",
-        "docs": {"label": ANY},
-        "meta": {
-            "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012",
-            "shipment_identifiers": ANY,
-            "tracking_numbers": ANY,
-        },
-        "label_type": "PDF",
-        "shipment_identifier": "123456789012",
-        "tracking_number": "123456789012",
-    },
-    [],
-]
-
-
 ShipmentPriceLinkXML = """
 <link rel="price" href="https://XX/rs/111111111/2222222222/shipment/347881315405043891/price" media-type="application/vnd.cpc.shipment-v8+xml" />
 """
 
-ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
+ShipmentRequestXML = f"""<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
+    <customer-request-id></customer-request-id>
     <transmit-shipment/>
     <requested-shipping-point>H2B1A0</requested-shipping-point>
     <provide-pricing-info>true</provide-pricing-info>
@@ -390,6 +411,7 @@ ShipmentRequestXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8
 """
 
 ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.ca/ws/shipment-v8">
+    <customer-request-id></customer-request-id>
     <transmit-shipment/>
     <requested-shipping-point>H2B1A0</requested-shipping-point>
     <provide-pricing-info>true</provide-pricing-info>
@@ -452,65 +474,6 @@ ShipmentRequestWithPackagePresetXML = """<shipment xmlns="http://www.canadapost.
         </settlement-info>
     </delivery-spec>
 </shipment>
-"""
-
-NonContractShipmentRequestXML = """<non-contract-shipment xmlns="http://www.canadapost.ca/ws/ncshipment-v4">
-    <delivery-spec>
-        <service-code>DOM.EP</service-code>
-        <sender>
-            <name>Bob</name>
-            <company>CGI</company>
-            <contact-phone>1 (450) 823-8432</contact-phone>
-            <address-details>
-                <address-line-1>502 MAIN ST N</address-line-1>
-                <city>MONTREAL</city>
-                <prov-state>QC</prov-state>
-                <postal-zip-code>H2B1A0</postal-zip-code>
-            </address-details>
-        </sender>
-        <destination>
-            <name>Jain</name>
-            <company>CGI</company>
-            <address-details>
-                <address-line-1>23 jardin private</address-line-1>
-                <city>Ottawa</city>
-                <prov-state>ON</prov-state>
-                <country-code>CA</country-code>
-                <postal-zip-code>K1K4T3</postal-zip-code>
-            </address-details>
-        </destination>
-        <options>
-            <option>
-                <option-code>SO</option-code>
-            </option>
-            <option>
-                <option-code>COD</option-code>
-                <option-amount>10.5</option-amount>
-            </option>
-            <option>
-                <option-code>COV</option-code>
-                <option-amount>70.0</option-amount>
-            </option>
-        </options>
-        <parcel-characteristics>
-            <weight>20</weight>
-            <dimensions>
-                <length>6.0</length>
-                <width>12.0</width>
-                <height>9.0</height>
-            </dimensions>
-        </parcel-characteristics>
-        <preferences>
-            <show-packing-instructions>false</show-packing-instructions>
-            <show-postage-rate>true</show-postage-rate>
-            <show-insured-value>true</show-insured-value>
-        </preferences>
-        <references>
-            <cost-centre>karrio</cost-centre>
-            <customer-ref-1>#Order 11111</customer-ref-1>
-        </references>
-    </delivery-spec>
-</non-contract-shipment>
 """
 
 ShipmentResponseXML = """<?xml version="1.0" encoding="UTF-8"?>

@@ -1,10 +1,10 @@
-import { commodityMatch, errorToMessages, getShipmentCommodities, isEqual, isNone, isNoneOrEmpty, jsonify, toNumber, useLocation } from "@karrio/lib";
+import { commodityMatch, errorToMessages, getShipmentCommodities, handleFailure, isEqual, isNone, isNoneOrEmpty, jsonify, onError, toNumber, useLocation } from "@karrio/lib";
 import { NotificationType, ShipmentType, ParcelType, CustomsType, CommodityType, Collection, DEFAULT_CUSTOMS_CONTENT } from "@karrio/types";
 import { useBatchOperationMutation } from "./batch-operations";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { BatchShipmentData } from "@karrio/types/rest/api";
 import { useLoader } from "@karrio/ui/components/loader";
-import { useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useShipmentMutation } from "./shipment";
 import { useAppMode } from "./app-mode";
 import React from "react";
@@ -399,17 +399,17 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
   };
 
   // Requests
-  const fetchRates = (shipment_index: number) => async () => {
+  const fetchRates = useMutation(async (shipment_index: number) => {
     const data = JSON.parse(jsonify(batch.shipments[shipment_index])) as ShipmentType;
-
     try {
       const { rates, messages } = await shipmentMutation.fetchRates.mutateAsync(data);
-      updateShipment(shipment_index)({ rates, messages } as Partial<ShipmentType>);
+      await updateShipment(shipment_index)({ rates, messages } as Partial<ShipmentType>);
     } catch (error: any) {
-      updateShipment(shipment_index)({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
+      await updateShipment(shipment_index)({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
     }
-  };
-  const buyLabels = async () => {
+  });
+  const buyLabels = useMutation(async () => {
+    if (mutation.createShipments.isLoading) return;
     const data = {
       shipments: batch.shipments.map(shipment => ({
         ...JSON.parse(jsonify(shipment)),
@@ -425,7 +425,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
       notifier.notify({ type: NotificationType.error, message: error });
       loader.setLoading(false);
     }
-  }
+  });
 
   // Effects
   React.useEffect(() => {
@@ -456,7 +456,7 @@ export function useBatchShipmentForm({ shipmentList }: BatchShipmentFormProps) {
     const [index, hasChanges] = updateRate;
     if (hasChanges && hasRateRequirements(batch.shipments[index])) {
       setUpdateRate([index, false]);
-      fetchRates(index)();
+      fetchRates.mutateAsync(index);
     }
   }, [batch.shipments]);
 

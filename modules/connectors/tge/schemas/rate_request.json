@@ -26,7 +26,7 @@
                 "ShipmentFinancials": {
                     "ExtraServicesAmount": {
                         "Currency": "AUD",
-                        "Value": 5000.00
+                        "Value": "5000.00"
                     }
                 },
                 "FreightMode": "Road",
@@ -57,14 +57,14 @@
                                 "CommodityDescription": "ALL FREIGHT"
                             },
                             "ShipmentItemTotals": {
-                                "ShipmentItemCount": 1
+                                "ShipmentItemCount": "1"
                             },
                             "Dimensions": {
-                                "Width": 10,
-                                "Length": 10,
-                                "Height": 10,
-                                "Volume": 0.001,
-                                "Weight": 2.0
+                                "Width": "10",
+                                "Length": "10",
+                                "Height": "10",
+                                "Volume": "0.001",
+                                "Weight": "2.0"
                             }
                         }
                     ]

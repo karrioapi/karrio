@@ -97,7 +97,7 @@ ParsedShipmentResponse = [
         "docs": {"label": ANY},
         "label_type": "PDF",
         "meta": {
-            "SSCCs": ["00099475103613941860"],
+            "SSCCs": ["0009947510361394186"],
             "ShipmentID": "8880419999995",
             "shipment_count": 9999995,
             "sscc_count": 361394186,
@@ -153,9 +153,9 @@ ShipmentRequest = {
             "CreateDateTime": ANY,
             "PrintDocumentType": "Label",
             "PrintSettings": {
-                "IsLabelThermal": False,
-                "IsZPLRawResponseRequired": False,
-                "PDF": {"IsPDFA4": True, "PDFSettings": {"StartQuadrant": 1}},
+                "IsLabelThermal": "false",
+                "IsZPLRawResponseRequired": "false",
+                "PDF": {"IsPDFA4": "true", "PDFSettings": {"StartQuadrant": "1"}},
             },
             "ShipmentCollection": {
                 "Shipment": [
@@ -173,7 +173,7 @@ ShipmentRequest = {
                                 "Suburb": "CANNING VALE",
                             },
                         },
-                        "CreateDateTime": "2024-02-08T00:00:00.000000Z",
+                        "CreateDateTime": ANY,
                         "DatePeriodCollection": {
                             "DatePeriod": [
                                 {
@@ -206,21 +206,21 @@ ShipmentRequest = {
                                     "Description": "Item- Carton",
                                     "Dimensions": {
                                         "Height": 10.0,
-                                        "HeightUOM": "cm",
+                                        "HeightUOM": "m3",
                                         "Length": 20.0,
-                                        "LengthUOM": "cm",
+                                        "LengthUOM": "m3",
                                         "Volume": 6000.0,
-                                        "VolumeUOM": "cm3",
+                                        "VolumeUOM": "m3",
                                         "Weight": 100.0,
                                         "WeightUOM": "kg",
                                         "Width": 30.0,
-                                        "WidthUOM": "cm",
+                                        "WidthUOM": "m3",
                                     },
                                     "IDs": {
                                         "ID": [
                                             {
                                                 "SchemeName": "SSCC",
-                                                "Value": "00099475103613941860",
+                                                "Value": "0009947510361394186",
                                             }
                                         ]
                                     },

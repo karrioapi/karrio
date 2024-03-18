@@ -94,7 +94,6 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     federal_tax_id: typing.Optional[str] = strawberry.UNSET
 
     customs_aes: typing.Optional[str] = strawberry.UNSET
-    customs_ein: typing.Optional[str] = strawberry.UNSET
     customs_eel_pfc: typing.Optional[str] = strawberry.UNSET
     customs_eori_number: typing.Optional[str] = strawberry.UNSET
     customs_license_number: typing.Optional[str] = strawberry.UNSET
@@ -483,7 +482,15 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
     def carrier_settings_input(name: str, model):
         _name = f"{'Update' if is_update else ''}{model.__name__}Input"
         _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-        _excluded = ["services", "id", "cache", "test_mode", "rate_sheet"]
+        _excluded = [
+            "services",
+            "id",
+            "cache",
+            "test_mode",
+            "rate_sheet",
+            "sssc_count",
+            "shipment_count",
+        ]
         _optionals = ["account_country_code", "label_template"]
         _template_type: typing.Any = "LabelTemplateInput"
         _service_type: typing.Any = typing.List[  # type: ignore
