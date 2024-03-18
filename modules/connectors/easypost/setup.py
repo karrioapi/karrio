@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.easypost",
-    version="2024.2.rc4",
+    version="2024.2",
     description="Karrio - EasyPost Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

@@ -7,7 +7,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.tge",
-    version="2024.2.rc8",
+    version="2024.2",
     description="Karrio - TGE Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

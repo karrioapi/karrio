@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.2.rc10`.
+    The current version is `2024.2`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.2.rc10
+  version: '2024.2'
 paths:
   /:
     get:
@@ -1918,7 +1918,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/proxy/manifests:
+  /v1/proxy/manifest:
     post:
       operationId: '@@@$create_manifest'
       description: |2
@@ -3884,243 +3884,7 @@ components:
           - ZW
           type: string
           x-spec-enum-id: f907b2af5d9d32f1
-          description: |-
-            The address country code
-
-            * `AD` - AD
-            * `AE` - AE
-            * `AF` - AF
-            * `AG` - AG
-            * `AI` - AI
-            * `AL` - AL
-            * `AM` - AM
-            * `AN` - AN
-            * `AO` - AO
-            * `AR` - AR
-            * `AS` - AS
-            * `AT` - AT
-            * `AU` - AU
-            * `AW` - AW
-            * `AZ` - AZ
-            * `BA` - BA
-            * `BB` - BB
-            * `BD` - BD
-            * `BE` - BE
-            * `BF` - BF
-            * `BG` - BG
-            * `BH` - BH
-            * `BI` - BI
-            * `BJ` - BJ
-            * `BM` - BM
-            * `BN` - BN
-            * `BO` - BO
-            * `BR` - BR
-            * `BS` - BS
-            * `BT` - BT
-            * `BW` - BW
-            * `BY` - BY
-            * `BZ` - BZ
-            * `CA` - CA
-            * `CD` - CD
-            * `CF` - CF
-            * `CG` - CG
-            * `CH` - CH
-            * `CI` - CI
-            * `CK` - CK
-            * `CL` - CL
-            * `CM` - CM
-            * `CN` - CN
-            * `CO` - CO
-            * `CR` - CR
-            * `CU` - CU
-            * `CV` - CV
-            * `CY` - CY
-            * `CZ` - CZ
-            * `DE` - DE
-            * `DJ` - DJ
-            * `DK` - DK
-            * `DM` - DM
-            * `DO` - DO
-            * `DZ` - DZ
-            * `EC` - EC
-            * `EE` - EE
-            * `EG` - EG
-            * `ER` - ER
-            * `ES` - ES
-            * `ET` - ET
-            * `FI` - FI
-            * `FJ` - FJ
-            * `FK` - FK
-            * `FM` - FM
-            * `FO` - FO
-            * `FR` - FR
-            * `GA` - GA
-            * `GB` - GB
-            * `GD` - GD
-            * `GE` - GE
-            * `GF` - GF
-            * `GG` - GG
-            * `GH` - GH
-            * `GI` - GI
-            * `GL` - GL
-            * `GM` - GM
-            * `GN` - GN
-            * `GP` - GP
-            * `GQ` - GQ
-            * `GR` - GR
-            * `GT` - GT
-            * `GU` - GU
-            * `GW` - GW
-            * `GY` - GY
-            * `HK` - HK
-            * `HN` - HN
-            * `HR` - HR
-            * `HT` - HT
-            * `HU` - HU
-            * `IC` - IC
-            * `ID` - ID
-            * `IE` - IE
-            * `IL` - IL
-            * `IN` - IN
-            * `IQ` - IQ
-            * `IR` - IR
-            * `IS` - IS
-            * `IT` - IT
-            * `JE` - JE
-            * `JM` - JM
-            * `JO` - JO
-            * `JP` - JP
-            * `KE` - KE
-            * `KG` - KG
-            * `KH` - KH
-            * `KI` - KI
-            * `KM` - KM
-            * `KN` - KN
-            * `KP` - KP
-            * `KR` - KR
-            * `KV` - KV
-            * `KW` - KW
-            * `KY` - KY
-            * `KZ` - KZ
-            * `LA` - LA
-            * `LB` - LB
-            * `LC` - LC
-            * `LI` - LI
-            * `LK` - LK
-            * `LR` - LR
-            * `LS` - LS
-            * `LT` - LT
-            * `LU` - LU
-            * `LV` - LV
-            * `LY` - LY
-            * `MA` - MA
-            * `MC` - MC
-            * `MD` - MD
-            * `ME` - ME
-            * `MG` - MG
-            * `MH` - MH
-            * `MK` - MK
-            * `ML` - ML
-            * `MM` - MM
-            * `MN` - MN
-            * `MO` - MO
-            * `MP` - MP
-            * `MQ` - MQ
-            * `MR` - MR
-            * `MS` - MS
-            * `MT` - MT
-            * `MU` - MU
-            * `MV` - MV
-            * `MW` - MW
-            * `MX` - MX
-            * `MY` - MY
-            * `MZ` - MZ
-            * `NA` - NA
-            * `NC` - NC
-            * `NE` - NE
-            * `NG` - NG
-            * `NI` - NI
-            * `NL` - NL
-            * `NO` - NO
-            * `NP` - NP
-            * `NR` - NR
-            * `NU` - NU
-            * `NZ` - NZ
-            * `OM` - OM
-            * `PA` - PA
-            * `PE` - PE
-            * `PF` - PF
-            * `PG` - PG
-            * `PH` - PH
-            * `PK` - PK
-            * `PL` - PL
-            * `PR` - PR
-            * `PT` - PT
-            * `PW` - PW
-            * `PY` - PY
-            * `QA` - QA
-            * `RE` - RE
-            * `RO` - RO
-            * `RS` - RS
-            * `RU` - RU
-            * `RW` - RW
-            * `SA` - SA
-            * `SB` - SB
-            * `SC` - SC
-            * `SD` - SD
-            * `SE` - SE
-            * `SG` - SG
-            * `SH` - SH
-            * `SI` - SI
-            * `SK` - SK
-            * `SL` - SL
-            * `SM` - SM
-            * `SN` - SN
-            * `SO` - SO
-            * `SR` - SR
-            * `SS` - SS
-            * `ST` - ST
-            * `SV` - SV
-            * `SY` - SY
-            * `SZ` - SZ
-            * `TC` - TC
-            * `TD` - TD
-            * `TG` - TG
-            * `TH` - TH
-            * `TJ` - TJ
-            * `TL` - TL
-            * `TN` - TN
-            * `TO` - TO
-            * `TR` - TR
-            * `TT` - TT
-            * `TV` - TV
-            * `TW` - TW
-            * `TZ` - TZ
-            * `UA` - UA
-            * `UG` - UG
-            * `US` - US
-            * `UY` - UY
-            * `UZ` - UZ
-            * `VA` - VA
-            * `VC` - VC
-            * `VE` - VE
-            * `VG` - VG
-            * `VI` - VI
-            * `VN` - VN
-            * `VU` - VU
-            * `WS` - WS
-            * `XB` - XB
-            * `XC` - XC
-            * `XE` - XE
-            * `XM` - XM
-            * `XN` - XN
-            * `XS` - XS
-            * `XY` - XY
-            * `YE` - YE
-            * `YT` - YT
-            * `ZA` - ZA
-            * `ZM` - ZM
-            * `ZW` - ZW
+          description: The address country code
         email:
           type: string
           nullable: true
@@ -4446,243 +4210,7 @@ components:
           - ZW
           type: string
           x-spec-enum-id: f907b2af5d9d32f1
-          description: |-
-            The address country code
-
-            * `AD` - AD
-            * `AE` - AE
-            * `AF` - AF
-            * `AG` - AG
-            * `AI` - AI
-            * `AL` - AL
-            * `AM` - AM
-            * `AN` - AN
-            * `AO` - AO
-            * `AR` - AR
-            * `AS` - AS
-            * `AT` - AT
-            * `AU` - AU
-            * `AW` - AW
-            * `AZ` - AZ
-            * `BA` - BA
-            * `BB` - BB
-            * `BD` - BD
-            * `BE` - BE
-            * `BF` - BF
-            * `BG` - BG
-            * `BH` - BH
-            * `BI` - BI
-            * `BJ` - BJ
-            * `BM` - BM
-            * `BN` - BN
-            * `BO` - BO
-            * `BR` - BR
-            * `BS` - BS
-            * `BT` - BT
-            * `BW` - BW
-            * `BY` - BY
-            * `BZ` - BZ
-            * `CA` - CA
-            * `CD` - CD
-            * `CF` - CF
-            * `CG` - CG
-            * `CH` - CH
-            * `CI` - CI
-            * `CK` - CK
-            * `CL` - CL
-            * `CM` - CM
-            * `CN` - CN
-            * `CO` - CO
-            * `CR` - CR
-            * `CU` - CU
-            * `CV` - CV
-            * `CY` - CY
-            * `CZ` - CZ
-            * `DE` - DE
-            * `DJ` - DJ
-            * `DK` - DK
-            * `DM` - DM
-            * `DO` - DO
-            * `DZ` - DZ
-            * `EC` - EC
-            * `EE` - EE
-            * `EG` - EG
-            * `ER` - ER
-            * `ES` - ES
-            * `ET` - ET
-            * `FI` - FI
-            * `FJ` - FJ
-            * `FK` - FK
-            * `FM` - FM
-            * `FO` - FO
-            * `FR` - FR
-            * `GA` - GA
-            * `GB` - GB
-            * `GD` - GD
-            * `GE` - GE
-            * `GF` - GF
-            * `GG` - GG
-            * `GH` - GH
-            * `GI` - GI
-            * `GL` - GL
-            * `GM` - GM
-            * `GN` - GN
-            * `GP` - GP
-            * `GQ` - GQ
-            * `GR` - GR
-            * `GT` - GT
-            * `GU` - GU
-            * `GW` - GW
-            * `GY` - GY
-            * `HK` - HK
-            * `HN` - HN
-            * `HR` - HR
-            * `HT` - HT
-            * `HU` - HU
-            * `IC` - IC
-            * `ID` - ID
-            * `IE` - IE
-            * `IL` - IL
-            * `IN` - IN
-            * `IQ` - IQ
-            * `IR` - IR
-            * `IS` - IS
-            * `IT` - IT
-            * `JE` - JE
-            * `JM` - JM
-            * `JO` - JO
-            * `JP` - JP
-            * `KE` - KE
-            * `KG` - KG
-            * `KH` - KH
-            * `KI` - KI
-            * `KM` - KM
-            * `KN` - KN
-            * `KP` - KP
-            * `KR` - KR
-            * `KV` - KV
-            * `KW` - KW
-            * `KY` - KY
-            * `KZ` - KZ
-            * `LA` - LA
-            * `LB` - LB
-            * `LC` - LC
-            * `LI` - LI
-            * `LK` - LK
-            * `LR` - LR
-            * `LS` - LS
-            * `LT` - LT
-            * `LU` - LU
-            * `LV` - LV
-            * `LY` - LY
-            * `MA` - MA
-            * `MC` - MC
-            * `MD` - MD
-            * `ME` - ME
-            * `MG` - MG
-            * `MH` - MH
-            * `MK` - MK
-            * `ML` - ML
-            * `MM` - MM
-            * `MN` - MN
-            * `MO` - MO
-            * `MP` - MP
-            * `MQ` - MQ
-            * `MR` - MR
-            * `MS` - MS
-            * `MT` - MT
-            * `MU` - MU
-            * `MV` - MV
-            * `MW` - MW
-            * `MX` - MX
-            * `MY` - MY
-            * `MZ` - MZ
-            * `NA` - NA
-            * `NC` - NC
-            * `NE` - NE
-            * `NG` - NG
-            * `NI` - NI
-            * `NL` - NL
-            * `NO` - NO
-            * `NP` - NP
-            * `NR` - NR
-            * `NU` - NU
-            * `NZ` - NZ
-            * `OM` - OM
-            * `PA` - PA
-            * `PE` - PE
-            * `PF` - PF
-            * `PG` - PG
-            * `PH` - PH
-            * `PK` - PK
-            * `PL` - PL
-            * `PR` - PR
-            * `PT` - PT
-            * `PW` - PW
-            * `PY` - PY
-            * `QA` - QA
-            * `RE` - RE
-            * `RO` - RO
-            * `RS` - RS
-            * `RU` - RU
-            * `RW` - RW
-            * `SA` - SA
-            * `SB` - SB
-            * `SC` - SC
-            * `SD` - SD
-            * `SE` - SE
-            * `SG` - SG
-            * `SH` - SH
-            * `SI` - SI
-            * `SK` - SK
-            * `SL` - SL
-            * `SM` - SM
-            * `SN` - SN
-            * `SO` - SO
-            * `SR` - SR
-            * `SS` - SS
-            * `ST` - ST
-            * `SV` - SV
-            * `SY` - SY
-            * `SZ` - SZ
-            * `TC` - TC
-            * `TD` - TD
-            * `TG` - TG
-            * `TH` - TH
-            * `TJ` - TJ
-            * `TL` - TL
-            * `TN` - TN
-            * `TO` - TO
-            * `TR` - TR
-            * `TT` - TT
-            * `TV` - TV
-            * `TW` - TW
-            * `TZ` - TZ
-            * `UA` - UA
-            * `UG` - UG
-            * `US` - US
-            * `UY` - UY
-            * `UZ` - UZ
-            * `VA` - VA
-            * `VC` - VC
-            * `VE` - VE
-            * `VG` - VG
-            * `VI` - VI
-            * `VN` - VN
-            * `VU` - VU
-            * `WS` - WS
-            * `XB` - XB
-            * `XC` - XC
-            * `XE` - XE
-            * `XM` - XM
-            * `XN` - XN
-            * `XS` - XS
-            * `XY` - XY
-            * `YE` - YE
-            * `YT` - YT
-            * `ZA` - ZA
-            * `ZM` - ZM
-            * `ZW` - ZW
+          description: The address country code
         email:
           type: string
           nullable: true
@@ -4773,14 +4301,7 @@ components:
           - completed_with_errors
           type: string
           x-spec-enum-id: 75e3c72297e66209
-          description: |-
-            The batch operation resource status
-
-            * `queued` - queued
-            * `running` - running
-            * `failed` - failed
-            * `completed` - completed
-            * `completed_with_errors` - completed_with_errors
+          description: The batch operation resource status
         errors:
           type: object
           additionalProperties: {}
@@ -4802,12 +4323,6 @@ components:
           - completed
           - completed_with_errors
           type: string
-          description: |-
-            * `queued` - queued
-            * `running` - running
-            * `failed` - failed
-            * `completed` - completed
-            * `completed_with_errors` - completed_with_errors
           x-spec-enum-id: 75e3c72297e66209
         resource_type:
           enum:
@@ -4816,11 +4331,6 @@ components:
           - trackers
           - billing
           type: string
-          description: |-
-            * `orders` - orders
-            * `shipments` - shipments
-            * `trackers` - trackers
-            * `billing` - billing
           x-spec-enum-id: 11343e2af644580f
         resources:
           type: array
@@ -4967,48 +4477,7 @@ components:
           - zoom2u
           type: string
           x-spec-enum-id: 1765d529f2970d04
-          description: |-
-            Indicates a carrier (type)
-
-            * `allied_express` - allied_express
-            * `allied_express_local` - allied_express_local
-            * `amazon_shipping` - amazon_shipping
-            * `aramex` - aramex
-            * `asendia_us` - asendia_us
-            * `australiapost` - australiapost
-            * `boxknight` - boxknight
-            * `bpost` - bpost
-            * `canadapost` - canadapost
-            * `canpar` - canpar
-            * `chronopost` - chronopost
-            * `colissimo` - colissimo
-            * `dhl_express` - dhl_express
-            * `dhl_parcel_de` - dhl_parcel_de
-            * `dhl_poland` - dhl_poland
-            * `dhl_universal` - dhl_universal
-            * `dicom` - dicom
-            * `dpd` - dpd
-            * `dpdhl` - dpdhl
-            * `easypost` - easypost
-            * `eshipper` - eshipper
-            * `fedex` - fedex
-            * `fedex_ws` - fedex_ws
-            * `freightcom` - freightcom
-            * `generic` - generic
-            * `geodis` - geodis
-            * `laposte` - laposte
-            * `locate2u` - locate2u
-            * `nationex` - nationex
-            * `purolator` - purolator
-            * `roadie` - roadie
-            * `royalmail` - royalmail
-            * `sendle` - sendle
-            * `tge` - tge
-            * `tnt` - tnt
-            * `ups` - ups
-            * `usps` - usps
-            * `usps_international` - usps_international
-            * `zoom2u` - zoom2u
+          description: Indicates a carrier (type)
         display_name:
           type: string
           description: The carrier verbose name.
@@ -5076,13 +4545,7 @@ components:
           - G
           type: string
           x-spec-enum-id: 2aa755cf319c6df9
-          description: |-
-            The commodity's weight unit
-
-            * `KG` - KG
-            * `LB` - LB
-            * `OZ` - OZ
-            * `G` - G
+          description: The commodity's weight unit
         title:
           type: string
           nullable: true
@@ -5261,152 +4724,7 @@ components:
           type: string
           x-spec-enum-id: f0290aeafc544e9d
           nullable: true
-          description: |-
-            The currency of the commodity value amount
-
-            * `EUR` - EUR
-            * `AED` - AED
-            * `USD` - USD
-            * `XCD` - XCD
-            * `AMD` - AMD
-            * `ANG` - ANG
-            * `AOA` - AOA
-            * `ARS` - ARS
-            * `AUD` - AUD
-            * `AWG` - AWG
-            * `AZN` - AZN
-            * `BAM` - BAM
-            * `BBD` - BBD
-            * `BDT` - BDT
-            * `XOF` - XOF
-            * `BGN` - BGN
-            * `BHD` - BHD
-            * `BIF` - BIF
-            * `BMD` - BMD
-            * `BND` - BND
-            * `BOB` - BOB
-            * `BRL` - BRL
-            * `BSD` - BSD
-            * `BTN` - BTN
-            * `BWP` - BWP
-            * `BYN` - BYN
-            * `BZD` - BZD
-            * `CAD` - CAD
-            * `CDF` - CDF
-            * `XAF` - XAF
-            * `CHF` - CHF
-            * `NZD` - NZD
-            * `CLP` - CLP
-            * `CNY` - CNY
-            * `COP` - COP
-            * `CRC` - CRC
-            * `CUC` - CUC
-            * `CVE` - CVE
-            * `CZK` - CZK
-            * `DJF` - DJF
-            * `DKK` - DKK
-            * `DOP` - DOP
-            * `DZD` - DZD
-            * `EGP` - EGP
-            * `ERN` - ERN
-            * `ETB` - ETB
-            * `FJD` - FJD
-            * `GBP` - GBP
-            * `GEL` - GEL
-            * `GHS` - GHS
-            * `GMD` - GMD
-            * `GNF` - GNF
-            * `GTQ` - GTQ
-            * `GYD` - GYD
-            * `HKD` - HKD
-            * `HNL` - HNL
-            * `HRK` - HRK
-            * `HTG` - HTG
-            * `HUF` - HUF
-            * `IDR` - IDR
-            * `ILS` - ILS
-            * `INR` - INR
-            * `IRR` - IRR
-            * `ISK` - ISK
-            * `JMD` - JMD
-            * `JOD` - JOD
-            * `JPY` - JPY
-            * `KES` - KES
-            * `KGS` - KGS
-            * `KHR` - KHR
-            * `KMF` - KMF
-            * `KPW` - KPW
-            * `KRW` - KRW
-            * `KWD` - KWD
-            * `KYD` - KYD
-            * `KZT` - KZT
-            * `LAK` - LAK
-            * `LKR` - LKR
-            * `LRD` - LRD
-            * `LSL` - LSL
-            * `LYD` - LYD
-            * `MAD` - MAD
-            * `MDL` - MDL
-            * `MGA` - MGA
-            * `MKD` - MKD
-            * `MMK` - MMK
-            * `MNT` - MNT
-            * `MOP` - MOP
-            * `MRO` - MRO
-            * `MUR` - MUR
-            * `MVR` - MVR
-            * `MWK` - MWK
-            * `MXN` - MXN
-            * `MYR` - MYR
-            * `MZN` - MZN
-            * `NAD` - NAD
-            * `XPF` - XPF
-            * `NGN` - NGN
-            * `NIO` - NIO
-            * `NOK` - NOK
-            * `NPR` - NPR
-            * `OMR` - OMR
-            * `PEN` - PEN
-            * `PGK` - PGK
-            * `PHP` - PHP
-            * `PKR` - PKR
-            * `PLN` - PLN
-            * `PYG` - PYG
-            * `QAR` - QAR
-            * `RSD` - RSD
-            * `RUB` - RUB
-            * `RWF` - RWF
-            * `SAR` - SAR
-            * `SBD` - SBD
-            * `SCR` - SCR
-            * `SDG` - SDG
-            * `SEK` - SEK
-            * `SGD` - SGD
-            * `SHP` - SHP
-            * `SLL` - SLL
-            * `SOS` - SOS
-            * `SRD` - SRD
-            * `SSP` - SSP
-            * `STD` - STD
-            * `SYP` - SYP
-            * `SZL` - SZL
-            * `THB` - THB
-            * `TJS` - TJS
-            * `TND` - TND
-            * `TOP` - TOP
-            * `TRY` - TRY
-            * `TTD` - TTD
-            * `TWD` - TWD
-            * `TZS` - TZS
-            * `UAH` - UAH
-            * `UYU` - UYU
-            * `UZS` - UZS
-            * `VEF` - VEF
-            * `VND` - VND
-            * `VUV` - VUV
-            * `WST` - WST
-            * `YER` - YER
-            * `ZAR` - ZAR
+          description: The currency of the commodity value amount
         origin_country:
           enum:
           - AD
@@ -5647,243 +4965,7 @@ components:
           type: string
           x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
-          description: |-
-            The origin or manufacture country
-
-            * `AD` - AD
-            * `AE` - AE
-            * `AF` - AF
-            * `AG` - AG
-            * `AI` - AI
-            * `AL` - AL
-            * `AM` - AM
-            * `AN` - AN
-            * `AO` - AO
-            * `AR` - AR
-            * `AS` - AS
-            * `AT` - AT
-            * `AU` - AU
-            * `AW` - AW
-            * `AZ` - AZ
-            * `BA` - BA
-            * `BB` - BB
-            * `BD` - BD
-            * `BE` - BE
-            * `BF` - BF
-            * `BG` - BG
-            * `BH` - BH
-            * `BI` - BI
-            * `BJ` - BJ
-            * `BM` - BM
-            * `BN` - BN
-            * `BO` - BO
-            * `BR` - BR
-            * `BS` - BS
-            * `BT` - BT
-            * `BW` - BW
-            * `BY` - BY
-            * `BZ` - BZ
-            * `CA` - CA
-            * `CD` - CD
-            * `CF` - CF
-            * `CG` - CG
-            * `CH` - CH
-            * `CI` - CI
-            * `CK` - CK
-            * `CL` - CL
-            * `CM` - CM
-            * `CN` - CN
-            * `CO` - CO
-            * `CR` - CR
-            * `CU` - CU
-            * `CV` - CV
-            * `CY` - CY
-            * `CZ` - CZ
-            * `DE` - DE
-            * `DJ` - DJ
-            * `DK` - DK
-            * `DM` - DM
-            * `DO` - DO
-            * `DZ` - DZ
-            * `EC` - EC
-            * `EE` - EE
-            * `EG` - EG
-            * `ER` - ER
-            * `ES` - ES
-            * `ET` - ET
-            * `FI` - FI
-            * `FJ` - FJ
-            * `FK` - FK
-            * `FM` - FM
-            * `FO` - FO
-            * `FR` - FR
-            * `GA` - GA
-            * `GB` - GB
-            * `GD` - GD
-            * `GE` - GE
-            * `GF` - GF
-            * `GG` - GG
-            * `GH` - GH
-            * `GI` - GI
-            * `GL` - GL
-            * `GM` - GM
-            * `GN` - GN
-            * `GP` - GP
-            * `GQ` - GQ
-            * `GR` - GR
-            * `GT` - GT
-            * `GU` - GU
-            * `GW` - GW
-            * `GY` - GY
-            * `HK` - HK
-            * `HN` - HN
-            * `HR` - HR
-            * `HT` - HT
-            * `HU` - HU
-            * `IC` - IC
-            * `ID` - ID
-            * `IE` - IE
-            * `IL` - IL
-            * `IN` - IN
-            * `IQ` - IQ
-            * `IR` - IR
-            * `IS` - IS
-            * `IT` - IT
-            * `JE` - JE
-            * `JM` - JM
-            * `JO` - JO
-            * `JP` - JP
-            * `KE` - KE
-            * `KG` - KG
-            * `KH` - KH
-            * `KI` - KI
-            * `KM` - KM
-            * `KN` - KN
-            * `KP` - KP
-            * `KR` - KR
-            * `KV` - KV
-            * `KW` - KW
-            * `KY` - KY
-            * `KZ` - KZ
-            * `LA` - LA
-            * `LB` - LB
-            * `LC` - LC
-            * `LI` - LI
-            * `LK` - LK
-            * `LR` - LR
-            * `LS` - LS
-            * `LT` - LT
-            * `LU` - LU
-            * `LV` - LV
-            * `LY` - LY
-            * `MA` - MA
-            * `MC` - MC
-            * `MD` - MD
-            * `ME` - ME
-            * `MG` - MG
-            * `MH` - MH
-            * `MK` - MK
-            * `ML` - ML
-            * `MM` - MM
-            * `MN` - MN
-            * `MO` - MO
-            * `MP` - MP
-            * `MQ` - MQ
-            * `MR` - MR
-            * `MS` - MS
-            * `MT` - MT
-            * `MU` - MU
-            * `MV` - MV
-            * `MW` - MW
-            * `MX` - MX
-            * `MY` - MY
-            * `MZ` - MZ
-            * `NA` - NA
-            * `NC` - NC
-            * `NE` - NE
-            * `NG` - NG
-            * `NI` - NI
-            * `NL` - NL
-            * `NO` - NO
-            * `NP` - NP
-            * `NR` - NR
-            * `NU` - NU
-            * `NZ` - NZ
-            * `OM` - OM
-            * `PA` - PA
-            * `PE` - PE
-            * `PF` - PF
-            * `PG` - PG
-            * `PH` - PH
-            * `PK` - PK
-            * `PL` - PL
-            * `PR` - PR
-            * `PT` - PT
-            * `PW` - PW
-            * `PY` - PY
-            * `QA` - QA
-            * `RE` - RE
-            * `RO` - RO
-            * `RS` - RS
-            * `RU` - RU
-            * `RW` - RW
-            * `SA` - SA
-            * `SB` - SB
-            * `SC` - SC
-            * `SD` - SD
-            * `SE` - SE
-            * `SG` - SG
-            * `SH` - SH
-            * `SI` - SI
-            * `SK` - SK
-            * `SL` - SL
-            * `SM` - SM
-            * `SN` - SN
-            * `SO` - SO
-            * `SR` - SR
-            * `SS` - SS
-            * `ST` - ST
-            * `SV` - SV
-            * `SY` - SY
-            * `SZ` - SZ
-            * `TC` - TC
-            * `TD` - TD
-            * `TG` - TG
-            * `TH` - TH
-            * `TJ` - TJ
-            * `TL` - TL
-            * `TN` - TN
-            * `TO` - TO
-            * `TR` - TR
-            * `TT` - TT
-            * `TV` - TV
-            * `TW` - TW
-            * `TZ` - TZ
-            * `UA` - UA
-            * `UG` - UG
-            * `US` - US
-            * `UY` - UY
-            * `UZ` - UZ
-            * `VA` - VA
-            * `VC` - VC
-            * `VE` - VE
-            * `VG` - VG
-            * `VI` - VI
-            * `VN` - VN
-            * `VU` - VU
-            * `WS` - WS
-            * `XB` - XB
-            * `XC` - XC
-            * `XE` - XE
-            * `XM` - XM
-            * `XN` - XN
-            * `XS` - XS
-            * `XY` - XY
-            * `YE` - YE
-            * `YT` - YT
-            * `ZA` - ZA
-            * `ZM` - ZM
-            * `ZW` - ZW
+          description: The origin or manufacture country
         parent_id:
           type: string
           nullable: true
@@ -5919,13 +5001,7 @@ components:
           - G
           type: string
           x-spec-enum-id: 2aa755cf319c6df9
-          description: |-
-            The commodity's weight unit
-
-            * `KG` - KG
-            * `LB` - LB
-            * `OZ` - OZ
-            * `G` - G
+          description: The commodity's weight unit
         title:
           type: string
           nullable: true
@@ -6104,152 +5180,7 @@ components:
           type: string
           x-spec-enum-id: f0290aeafc544e9d
           nullable: true
-          description: |-
-            The currency of the commodity value amount
-
-            * `EUR` - EUR
-            * `AED` - AED
-            * `USD` - USD
-            * `XCD` - XCD
-            * `AMD` - AMD
-            * `ANG` - ANG
-            * `AOA` - AOA
-            * `ARS` - ARS
-            * `AUD` - AUD
-            * `AWG` - AWG
-            * `AZN` - AZN
-            * `BAM` - BAM
-            * `BBD` - BBD
-            * `BDT` - BDT
-            * `XOF` - XOF
-            * `BGN` - BGN
-            * `BHD` - BHD
-            * `BIF` - BIF
-            * `BMD` - BMD
-            * `BND` - BND
-            * `BOB` - BOB
-            * `BRL` - BRL
-            * `BSD` - BSD
-            * `BTN` - BTN
-            * `BWP` - BWP
-            * `BYN` - BYN
-            * `BZD` - BZD
-            * `CAD` - CAD
-            * `CDF` - CDF
-            * `XAF` - XAF
-            * `CHF` - CHF
-            * `NZD` - NZD
-            * `CLP` - CLP
-            * `CNY` - CNY
-            * `COP` - COP
-            * `CRC` - CRC
-            * `CUC` - CUC
-            * `CVE` - CVE
-            * `CZK` - CZK
-            * `DJF` - DJF
-            * `DKK` - DKK
-            * `DOP` - DOP
-            * `DZD` - DZD
-            * `EGP` - EGP
-            * `ERN` - ERN
-            * `ETB` - ETB
-            * `FJD` - FJD
-            * `GBP` - GBP
-            * `GEL` - GEL
-            * `GHS` - GHS
-            * `GMD` - GMD
-            * `GNF` - GNF
-            * `GTQ` - GTQ
-            * `GYD` - GYD
-            * `HKD` - HKD
-            * `HNL` - HNL
-            * `HRK` - HRK
-            * `HTG` - HTG
-            * `HUF` - HUF
-            * `IDR` - IDR
-            * `ILS` - ILS
-            * `INR` - INR
-            * `IRR` - IRR
-            * `ISK` - ISK
-            * `JMD` - JMD
-            * `JOD` - JOD
-            * `JPY` - JPY
-            * `KES` - KES
-            * `KGS` - KGS
-            * `KHR` - KHR
-            * `KMF` - KMF
-            * `KPW` - KPW
-            * `KRW` - KRW
-            * `KWD` - KWD
-            * `KYD` - KYD
-            * `KZT` - KZT
-            * `LAK` - LAK
-            * `LKR` - LKR
-            * `LRD` - LRD
-            * `LSL` - LSL
-            * `LYD` - LYD
-            * `MAD` - MAD
-            * `MDL` - MDL
-            * `MGA` - MGA
-            * `MKD` - MKD
-            * `MMK` - MMK
-            * `MNT` - MNT
-            * `MOP` - MOP
-            * `MRO` - MRO
-            * `MUR` - MUR
-            * `MVR` - MVR
-            * `MWK` - MWK
-            * `MXN` - MXN
-            * `MYR` - MYR
-            * `MZN` - MZN
-            * `NAD` - NAD
-            * `XPF` - XPF
-            * `NGN` - NGN
-            * `NIO` - NIO
-            * `NOK` - NOK
-            * `NPR` - NPR
-            * `OMR` - OMR
-            * `PEN` - PEN
-            * `PGK` - PGK
-            * `PHP` - PHP
-            * `PKR` - PKR
-            * `PLN` - PLN
-            * `PYG` - PYG
-            * `QAR` - QAR
-            * `RSD` - RSD
-            * `RUB` - RUB
-            * `RWF` - RWF
-            * `SAR` - SAR
-            * `SBD` - SBD
-            * `SCR` - SCR
-            * `SDG` - SDG
-            * `SEK` - SEK
-            * `SGD` - SGD
-            * `SHP` - SHP
-            * `SLL` - SLL
-            * `SOS` - SOS
-            * `SRD` - SRD
-            * `SSP` - SSP
-            * `STD` - STD
-            * `SYP` - SYP
-            * `SZL` - SZL
-            * `THB` - THB
-            * `TJS` - TJS
-            * `TND` - TND
-            * `TOP` - TOP
-            * `TRY` - TRY
-            * `TTD` - TTD
-            * `TWD` - TWD
-            * `TZS` - TZS
-            * `UAH` - UAH
-            * `UYU` - UYU
-            * `UZS` - UZS
-            * `VEF` - VEF
-            * `VND` - VND
-            * `VUV` - VUV
-            * `WST` - WST
-            * `YER` - YER
-            * `ZAR` - ZAR
+          description: The currency of the commodity value amount
         origin_country:
           enum:
           - AD
@@ -6490,243 +5421,7 @@ components:
           type: string
           x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
-          description: |-
-            The origin or manufacture country
-
-            * `AD` - AD
-            * `AE` - AE
-            * `AF` - AF
-            * `AG` - AG
-            * `AI` - AI
-            * `AL` - AL
-            * `AM` - AM
-            * `AN` - AN
-            * `AO` - AO
-            * `AR` - AR
-            * `AS` - AS
-            * `AT` - AT
-            * `AU` - AU
-            * `AW` - AW
-            * `AZ` - AZ
-            * `BA` - BA
-            * `BB` - BB
-            * `BD` - BD
-            * `BE` - BE
-            * `BF` - BF
-            * `BG` - BG
-            * `BH` - BH
-            * `BI` - BI
-            * `BJ` - BJ
-            * `BM` - BM
-            * `BN` - BN
-            * `BO` - BO
-            * `BR` - BR
-            * `BS` - BS
-            * `BT` - BT
-            * `BW` - BW
-            * `BY` - BY
-            * `BZ` - BZ
-            * `CA` - CA
-            * `CD` - CD
-            * `CF` - CF
-            * `CG` - CG
-            * `CH` - CH
-            * `CI` - CI
-            * `CK` - CK
-            * `CL` - CL
-            * `CM` - CM
-            * `CN` - CN
-            * `CO` - CO
-            * `CR` - CR
-            * `CU` - CU
-            * `CV` - CV
-            * `CY` - CY
-            * `CZ` - CZ
-            * `DE` - DE
-            * `DJ` - DJ
-            * `DK` - DK
-            * `DM` - DM
-            * `DO` - DO
-            * `DZ` - DZ
-            * `EC` - EC
-            * `EE` - EE
-            * `EG` - EG
-            * `ER` - ER
-            * `ES` - ES
-            * `ET` - ET
-            * `FI` - FI
-            * `FJ` - FJ
-            * `FK` - FK
-            * `FM` - FM
-            * `FO` - FO
-            * `FR` - FR
-            * `GA` - GA
-            * `GB` - GB
-            * `GD` - GD
-            * `GE` - GE
-            * `GF` - GF
-            * `GG` - GG
-            * `GH` - GH
-            * `GI` - GI
-            * `GL` - GL
-            * `GM` - GM
-            * `GN` - GN
-            * `GP` - GP
-            * `GQ` - GQ
-            * `GR` - GR
-            * `GT` - GT
-            * `GU` - GU
-            * `GW` - GW
-            * `GY` - GY
-            * `HK` - HK
-            * `HN` - HN
-            * `HR` - HR
-            * `HT` - HT
-            * `HU` - HU
-            * `IC` - IC
-            * `ID` - ID
-            * `IE` - IE
-            * `IL` - IL
-            * `IN` - IN
-            * `IQ` - IQ
-            * `IR` - IR
-            * `IS` - IS
-            * `IT` - IT
-            * `JE` - JE
-            * `JM` - JM
-            * `JO` - JO
-            * `JP` - JP
-            * `KE` - KE
-            * `KG` - KG
-            * `KH` - KH
-            * `KI` - KI
-            * `KM` - KM
-            * `KN` - KN
-            * `KP` - KP
-            * `KR` - KR
-            * `KV` - KV
-            * `KW` - KW
-            * `KY` - KY
-            * `KZ` - KZ
-            * `LA` - LA
-            * `LB` - LB
-            * `LC` - LC
-            * `LI` - LI
-            * `LK` - LK
-            * `LR` - LR
-            * `LS` - LS
-            * `LT` - LT
-            * `LU` - LU
-            * `LV` - LV
-            * `LY` - LY
-            * `MA` - MA
-            * `MC` - MC
-            * `MD` - MD
-            * `ME` - ME
-            * `MG` - MG
-            * `MH` - MH
-            * `MK` - MK
-            * `ML` - ML
-            * `MM` - MM
-            * `MN` - MN
-            * `MO` - MO
-            * `MP` - MP
-            * `MQ` - MQ
-            * `MR` - MR
-            * `MS` - MS
-            * `MT` - MT
-            * `MU` - MU
-            * `MV` - MV
-            * `MW` - MW
-            * `MX` - MX
-            * `MY` - MY
-            * `MZ` - MZ
-            * `NA` - NA
-            * `NC` - NC
-            * `NE` - NE
-            * `NG` - NG
-            * `NI` - NI
-            * `NL` - NL
-            * `NO` - NO
-            * `NP` - NP
-            * `NR` - NR
-            * `NU` - NU
-            * `NZ` - NZ
-            * `OM` - OM
-            * `PA` - PA
-            * `PE` - PE
-            * `PF` - PF
-            * `PG` - PG
-            * `PH` - PH
-            * `PK` - PK
-            * `PL` - PL
-            * `PR` - PR
-            * `PT` - PT
-            * `PW` - PW
-            * `PY` - PY
-            * `QA` - QA
-            * `RE` - RE
-            * `RO` - RO
-            * `RS` - RS
-            * `RU` - RU
-            * `RW` - RW
-            * `SA` - SA
-            * `SB` - SB
-            * `SC` - SC
-            * `SD` - SD
-            * `SE` - SE
-            * `SG` - SG
-            * `SH` - SH
-            * `SI` - SI
-            * `SK` - SK
-            * `SL` - SL
-            * `SM` - SM
-            * `SN` - SN
-            * `SO` - SO
-            * `SR` - SR
-            * `SS` - SS
-            * `ST` - ST
-            * `SV` - SV
-            * `SY` - SY
-            * `SZ` - SZ
-            * `TC` - TC
-            * `TD` - TD
-            * `TG` - TG
-            * `TH` - TH
-            * `TJ` - TJ
-            * `TL` - TL
-            * `TN` - TN
-            * `TO` - TO
-            * `TR` - TR
-            * `TT` - TT
-            * `TV` - TV
-            * `TW` - TW
-            * `TZ` - TZ
-            * `UA` - UA
-            * `UG` - UG
-            * `US` - US
-            * `UY` - UY
-            * `UZ` - UZ
-            * `VA` - VA
-            * `VC` - VC
-            * `VE` - VE
-            * `VG` - VG
-            * `VI` - VI
-            * `VN` - VN
-            * `VU` - VU
-            * `WS` - WS
-            * `XB` - XB
-            * `XC` - XC
-            * `XE` - XE
-            * `XM` - XM
-            * `XN` - XN
-            * `XS` - XS
-            * `XY` - XY
-            * `YE` - YE
-            * `YT` - YT
-            * `ZA` - ZA
-            * `ZM` - ZM
-            * `ZW` - ZW
+          description: The origin or manufacture country
         parent_id:
           type: string
           nullable: true
@@ -6776,13 +5471,6 @@ components:
           - ''
           - null
           type: string
-          description: |-
-            * `documents` - documents
-            * `gift` - gift
-            * `sample` - sample
-            * `merchandise` - merchandise
-            * `return_merchandise` - return_merchandise
-            * `other` - other
           x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
@@ -6807,22 +5495,7 @@ components:
           type: string
           x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
-          description: |-
-            The customs 'term of trade' also known as 'incoterm'
-
-            * `CFR` - CFR
-            * `CIF` - CIF
-            * `CIP` - CIP
-            * `CPT` - CPT
-            * `DAF` - DAF
-            * `DDP` - DDP
-            * `DDU` - DDU
-            * `DEQ` - DEQ
-            * `DES` - DES
-            * `EXW` - EXW
-            * `FAS` - FAS
-            * `FCA` - FCA
-            * `FOB` - FOB
+          description: The customs 'term of trade' also known as 'incoterm'
         invoice:
           type: string
           nullable: true
@@ -6890,13 +5563,6 @@ components:
           - ''
           - null
           type: string
-          description: |-
-            * `documents` - documents
-            * `gift` - gift
-            * `sample` - sample
-            * `merchandise` - merchandise
-            * `return_merchandise` - return_merchandise
-            * `other` - other
           x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
@@ -6921,22 +5587,7 @@ components:
           type: string
           x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
-          description: |-
-            The customs 'term of trade' also known as 'incoterm'
-
-            * `CFR` - CFR
-            * `CIF` - CIF
-            * `CIP` - CIP
-            * `CPT` - CPT
-            * `DAF` - DAF
-            * `DDP` - DDP
-            * `DDU` - DDU
-            * `DEQ` - DEQ
-            * `DES` - DES
-            * `EXW` - EXW
-            * `FAS` - FAS
-            * `FCA` - FCA
-            * `FOB` - FOB
+          description: The customs 'term of trade' also known as 'incoterm'
         invoice:
           type: string
           nullable: true
@@ -7125,12 +5776,7 @@ components:
           type: string
           x-spec-enum-id: 4d1fdef60a9538c0
           nullable: true
-          description: |-
-            The duty payer
-
-            * `sender` - sender
-            * `recipient` - recipient
-            * `third_party` - third_party
+          description: The duty payer
         currency:
           enum:
           - EUR
@@ -7281,152 +5927,7 @@ components:
           type: string
           x-spec-enum-id: f0290aeafc544e9d
           nullable: true
-          description: |-
-            The declared value currency
-
-            * `EUR` - EUR
-            * `AED` - AED
-            * `USD` - USD
-            * `XCD` - XCD
-            * `AMD` - AMD
-            * `ANG` - ANG
-            * `AOA` - AOA
-            * `ARS` - ARS
-            * `AUD` - AUD
-            * `AWG` - AWG
-            * `AZN` - AZN
-            * `BAM` - BAM
-            * `BBD` - BBD
-            * `BDT` - BDT
-            * `XOF` - XOF
-            * `BGN` - BGN
-            * `BHD` - BHD
-            * `BIF` - BIF
-            * `BMD` - BMD
-            * `BND` - BND
-            * `BOB` - BOB
-            * `BRL` - BRL
-            * `BSD` - BSD
-            * `BTN` - BTN
-            * `BWP` - BWP
-            * `BYN` - BYN
-            * `BZD` - BZD
-            * `CAD` - CAD
-            * `CDF` - CDF
-            * `XAF` - XAF
-            * `CHF` - CHF
-            * `NZD` - NZD
-            * `CLP` - CLP
-            * `CNY` - CNY
-            * `COP` - COP
-            * `CRC` - CRC
-            * `CUC` - CUC
-            * `CVE` - CVE
-            * `CZK` - CZK
-            * `DJF` - DJF
-            * `DKK` - DKK
-            * `DOP` - DOP
-            * `DZD` - DZD
-            * `EGP` - EGP
-            * `ERN` - ERN
-            * `ETB` - ETB
-            * `FJD` - FJD
-            * `GBP` - GBP
-            * `GEL` - GEL
-            * `GHS` - GHS
-            * `GMD` - GMD
-            * `GNF` - GNF
-            * `GTQ` - GTQ
-            * `GYD` - GYD
-            * `HKD` - HKD
-            * `HNL` - HNL
-            * `HRK` - HRK
-            * `HTG` - HTG
-            * `HUF` - HUF
-            * `IDR` - IDR
-            * `ILS` - ILS
-            * `INR` - INR
-            * `IRR` - IRR
-            * `ISK` - ISK
-            * `JMD` - JMD
-            * `JOD` - JOD
-            * `JPY` - JPY
-            * `KES` - KES
-            * `KGS` - KGS
-            * `KHR` - KHR
-            * `KMF` - KMF
-            * `KPW` - KPW
-            * `KRW` - KRW
-            * `KWD` - KWD
-            * `KYD` - KYD
-            * `KZT` - KZT
-            * `LAK` - LAK
-            * `LKR` - LKR
-            * `LRD` - LRD
-            * `LSL` - LSL
-            * `LYD` - LYD
-            * `MAD` - MAD
-            * `MDL` - MDL
-            * `MGA` - MGA
-            * `MKD` - MKD
-            * `MMK` - MMK
-            * `MNT` - MNT
-            * `MOP` - MOP
-            * `MRO` - MRO
-            * `MUR` - MUR
-            * `MVR` - MVR
-            * `MWK` - MWK
-            * `MXN` - MXN
-            * `MYR` - MYR
-            * `MZN` - MZN
-            * `NAD` - NAD
-            * `XPF` - XPF
-            * `NGN` - NGN
-            * `NIO` - NIO
-            * `NOK` - NOK
-            * `NPR` - NPR
-            * `OMR` - OMR
-            * `PEN` - PEN
-            * `PGK` - PGK
-            * `PHP` - PHP
-            * `PKR` - PKR
-            * `PLN` - PLN
-            * `PYG` - PYG
-            * `QAR` - QAR
-            * `RSD` - RSD
-            * `RUB` - RUB
-            * `RWF` - RWF
-            * `SAR` - SAR
-            * `SBD` - SBD
-            * `SCR` - SCR
-            * `SDG` - SDG
-            * `SEK` - SEK
-            * `SGD` - SGD
-            * `SHP` - SHP
-            * `SLL` - SLL
-            * `SOS` - SOS
-            * `SRD` - SRD
-            * `SSP` - SSP
-            * `STD` - STD
-            * `SYP` - SYP
-            * `SZL` - SZL
-            * `THB` - THB
-            * `TJS` - TJS
-            * `TND` - TND
-            * `TOP` - TOP
-            * `TRY` - TRY
-            * `TTD` - TTD
-            * `TWD` - TWD
-            * `TZS` - TZS
-            * `UAH` - UAH
-            * `UYU` - UYU
-            * `UZS` - UZS
-            * `VEF` - VEF
-            * `VND` - VND
-            * `VUV` - VUV
-            * `WST` - WST
-            * `YER` - YER
-            * `ZAR` - ZAR
+          description: The declared value currency
         declared_value:
           type: number
           format: double
@@ -7481,13 +5982,7 @@ components:
           - G
           type: string
           x-spec-enum-id: 2aa755cf319c6df9
-          description: |-
-            The commodity's weight unit
-
-            * `KG` - KG
-            * `LB` - LB
-            * `OZ` - OZ
-            * `G` - G
+          description: The commodity's weight unit
         title:
           type: string
           nullable: true
@@ -7666,152 +6161,7 @@ components:
           type: string
           x-spec-enum-id: f0290aeafc544e9d
           nullable: true
-          description: |-
-            The currency of the commodity value amount
-
-            * `EUR` - EUR
-            * `AED` - AED
-            * `USD` - USD
-            * `XCD` - XCD
-            * `AMD` - AMD
-            * `ANG` - ANG
-            * `AOA` - AOA
-            * `ARS` - ARS
-            * `AUD` - AUD
-            * `AWG` - AWG
-            * `AZN` - AZN
-            * `BAM` - BAM
-            * `BBD` - BBD
-            * `BDT` - BDT
-            * `XOF` - XOF
-            * `BGN` - BGN
-            * `BHD` - BHD
-            * `BIF` - BIF
-            * `BMD` - BMD
-            * `BND` - BND
-            * `BOB` - BOB
-            * `BRL` - BRL
-            * `BSD` - BSD
-            * `BTN` - BTN
-            * `BWP` - BWP
-            * `BYN` - BYN
-            * `BZD` - BZD
-            * `CAD` - CAD
-            * `CDF` - CDF
-            * `XAF` - XAF
-            * `CHF` - CHF
-            * `NZD` - NZD
-            * `CLP` - CLP
-            * `CNY` - CNY
-            * `COP` - COP
-            * `CRC` - CRC
-            * `CUC` - CUC
-            * `CVE` - CVE
-            * `CZK` - CZK
-            * `DJF` - DJF
-            * `DKK` - DKK
-            * `DOP` - DOP
-            * `DZD` - DZD
-            * `EGP` - EGP
-            * `ERN` - ERN
-            * `ETB` - ETB
-            * `FJD` - FJD
-            * `GBP` - GBP
-            * `GEL` - GEL
-            * `GHS` - GHS
-            * `GMD` - GMD
-            * `GNF` - GNF
-            * `GTQ` - GTQ
-            * `GYD` - GYD
-            * `HKD` - HKD
-            * `HNL` - HNL
-            * `HRK` - HRK
-            * `HTG` - HTG
-            * `HUF` - HUF
-            * `IDR` - IDR
-            * `ILS` - ILS
-            * `INR` - INR
-            * `IRR` - IRR
-            * `ISK` - ISK
-            * `JMD` - JMD
-            * `JOD` - JOD
-            * `JPY` - JPY
-            * `KES` - KES
-            * `KGS` - KGS
-            * `KHR` - KHR
-            * `KMF` - KMF
-            * `KPW` - KPW
-            * `KRW` - KRW
-            * `KWD` - KWD
-            * `KYD` - KYD
-            * `KZT` - KZT
-            * `LAK` - LAK
-            * `LKR` - LKR
-            * `LRD` - LRD
-            * `LSL` - LSL
-            * `LYD` - LYD
-            * `MAD` - MAD
-            * `MDL` - MDL
-            * `MGA` - MGA
-            * `MKD` - MKD
-            * `MMK` - MMK
-            * `MNT` - MNT
-            * `MOP` - MOP
-            * `MRO` - MRO
-            * `MUR` - MUR
-            * `MVR` - MVR
-            * `MWK` - MWK
-            * `MXN` - MXN
-            * `MYR` - MYR
-            * `MZN` - MZN
-            * `NAD` - NAD
-            * `XPF` - XPF
-            * `NGN` - NGN
-            * `NIO` - NIO
-            * `NOK` - NOK
-            * `NPR` - NPR
-            * `OMR` - OMR
-            * `PEN` - PEN
-            * `PGK` - PGK
-            * `PHP` - PHP
-            * `PKR` - PKR
-            * `PLN` - PLN
-            * `PYG` - PYG
-            * `QAR` - QAR
-            * `RSD` - RSD
-            * `RUB` - RUB
-            * `RWF` - RWF
-            * `SAR` - SAR
-            * `SBD` - SBD
-            * `SCR` - SCR
-            * `SDG` - SDG
-            * `SEK` - SEK
-            * `SGD` - SGD
-            * `SHP` - SHP
-            * `SLL` - SLL
-            * `SOS` - SOS
-            * `SRD` - SRD
-            * `SSP` - SSP
-            * `STD` - STD
-            * `SYP` - SYP
-            * `SZL` - SZL
-            * `THB` - THB
-            * `TJS` - TJS
-            * `TND` - TND
-            * `TOP` - TOP
-            * `TRY` - TRY
-            * `TTD` - TTD
-            * `TWD` - TWD
-            * `TZS` - TZS
-            * `UAH` - UAH
-            * `UYU` - UYU
-            * `UZS` - UZS
-            * `VEF` - VEF
-            * `VND` - VND
-            * `VUV` - VUV
-            * `WST` - WST
-            * `YER` - YER
-            * `ZAR` - ZAR
+          description: The currency of the commodity value amount
         origin_country:
           enum:
           - AD
@@ -8052,243 +6402,7 @@ components:
           type: string
           x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
-          description: |-
-            The origin or manufacture country
-
-            * `AD` - AD
-            * `AE` - AE
-            * `AF` - AF
-            * `AG` - AG
-            * `AI` - AI
-            * `AL` - AL
-            * `AM` - AM
-            * `AN` - AN
-            * `AO` - AO
-            * `AR` - AR
-            * `AS` - AS
-            * `AT` - AT
-            * `AU` - AU
-            * `AW` - AW
-            * `AZ` - AZ
-            * `BA` - BA
-            * `BB` - BB
-            * `BD` - BD
-            * `BE` - BE
-            * `BF` - BF
-            * `BG` - BG
-            * `BH` - BH
-            * `BI` - BI
-            * `BJ` - BJ
-            * `BM` - BM
-            * `BN` - BN
-            * `BO` - BO
-            * `BR` - BR
-            * `BS` - BS
-            * `BT` - BT
-            * `BW` - BW
-            * `BY` - BY
-            * `BZ` - BZ
-            * `CA` - CA
-            * `CD` - CD
-            * `CF` - CF
-            * `CG` - CG
-            * `CH` - CH
-            * `CI` - CI
-            * `CK` - CK
-            * `CL` - CL
-            * `CM` - CM
-            * `CN` - CN
-            * `CO` - CO
-            * `CR` - CR
-            * `CU` - CU
-            * `CV` - CV
-            * `CY` - CY
-            * `CZ` - CZ
-            * `DE` - DE
-            * `DJ` - DJ
-            * `DK` - DK
-            * `DM` - DM
-            * `DO` - DO
-            * `DZ` - DZ
-            * `EC` - EC
-            * `EE` - EE
-            * `EG` - EG
-            * `ER` - ER
-            * `ES` - ES
-            * `ET` - ET
-            * `FI` - FI
-            * `FJ` - FJ
-            * `FK` - FK
-            * `FM` - FM
-            * `FO` - FO
-            * `FR` - FR
-            * `GA` - GA
-            * `GB` - GB
-            * `GD` - GD
-            * `GE` - GE
-            * `GF` - GF
-            * `GG` - GG
-            * `GH` - GH
-            * `GI` - GI
-            * `GL` - GL
-            * `GM` - GM
-            * `GN` - GN
-            * `GP` - GP
-            * `GQ` - GQ
-            * `GR` - GR
-            * `GT` - GT
-            * `GU` - GU
-            * `GW` - GW
-            * `GY` - GY
-            * `HK` - HK
-            * `HN` - HN
-            * `HR` - HR
-            * `HT` - HT
-            * `HU` - HU
-            * `IC` - IC
-            * `ID` - ID
-            * `IE` - IE
-            * `IL` - IL
-            * `IN` - IN
-            * `IQ` - IQ
-            * `IR` - IR
-            * `IS` - IS
-            * `IT` - IT
-            * `JE` - JE
-            * `JM` - JM
-            * `JO` - JO
-            * `JP` - JP
-            * `KE` - KE
-            * `KG` - KG
-            * `KH` - KH
-            * `KI` - KI
-            * `KM` - KM
-            * `KN` - KN
-            * `KP` - KP
-            * `KR` - KR
-            * `KV` - KV
-            * `KW` - KW
-            * `KY` - KY
-            * `KZ` - KZ
-            * `LA` - LA
-            * `LB` - LB
-            * `LC` - LC
-            * `LI` - LI
-            * `LK` - LK
-            * `LR` - LR
-            * `LS` - LS
-            * `LT` - LT
-            * `LU` - LU
-            * `LV` - LV
-            * `LY` - LY
-            * `MA` - MA
-            * `MC` - MC
-            * `MD` - MD
-            * `ME` - ME
-            * `MG` - MG
-            * `MH` - MH
-            * `MK` - MK
-            * `ML` - ML
-            * `MM` - MM
-            * `MN` - MN
-            * `MO` - MO
-            * `MP` - MP
-            * `MQ` - MQ
-            * `MR` - MR
-            * `MS` - MS
-            * `MT` - MT
-            * `MU` - MU
-            * `MV` - MV
-            * `MW` - MW
-            * `MX` - MX
-            * `MY` - MY
-            * `MZ` - MZ
-            * `NA` - NA
-            * `NC` - NC
-            * `NE` - NE
-            * `NG` - NG
-            * `NI` - NI
-            * `NL` - NL
-            * `NO` - NO
-            * `NP` - NP
-            * `NR` - NR
-            * `NU` - NU
-            * `NZ` - NZ
-            * `OM` - OM
-            * `PA` - PA
-            * `PE` - PE
-            * `PF` - PF
-            * `PG` - PG
-            * `PH` - PH
-            * `PK` - PK
-            * `PL` - PL
-            * `PR` - PR
-            * `PT` - PT
-            * `PW` - PW
-            * `PY` - PY
-            * `QA` - QA
-            * `RE` - RE
-            * `RO` - RO
-            * `RS` - RS
-            * `RU` - RU
-            * `RW` - RW
-            * `SA` - SA
-            * `SB` - SB
-            * `SC` - SC
-            * `SD` - SD
-            * `SE` - SE
-            * `SG` - SG
-            * `SH` - SH
-            * `SI` - SI
-            * `SK` - SK
-            * `SL` - SL
-            * `SM` - SM
-            * `SN` - SN
-            * `SO` - SO
-            * `SR` - SR
-            * `SS` - SS
-            * `ST` - ST
-            * `SV` - SV
-            * `SY` - SY
-            * `SZ` - SZ
-            * `TC` - TC
-            * `TD` - TD
-            * `TG` - TG
-            * `TH` - TH
-            * `TJ` - TJ
-            * `TL` - TL
-            * `TN` - TN
-            * `TO` - TO
-            * `TR` - TR
-            * `TT` - TT
-            * `TV` - TV
-            * `TW` - TW
-            * `TZ` - TZ
-            * `UA` - UA
-            * `UG` - UG
-            * `US` - US
-            * `UY` - UY
-            * `UZ` - UZ
-            * `VA` - VA
-            * `VC` - VC
-            * `VE` - VE
-            * `VG` - VG
-            * `VI` - VI
-            * `VN` - VN
-            * `VU` - VU
-            * `WS` - WS
-            * `XB` - XB
-            * `XC` - XC
-            * `XE` - XE
-            * `XM` - XM
-            * `XN` - XN
-            * `XS` - XS
-            * `XY` - XY
-            * `YE` - YE
-            * `YT` - YT
-            * `ZA` - ZA
-            * `ZM` - ZM
-            * `ZW` - ZW
+          description: The origin or manufacture country
         parent_id:
           type: string
           nullable: true
@@ -8336,13 +6450,6 @@ components:
         test_mode:
           type: boolean
           description: Specified whether it was created with a carrier in test mode
-        shipment_identifiers:
-          type: array
-          items:
-            type: string
-          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
-            \        shipment_identifier is often a tracking_number or shipment_id\
-            \ returned when you purchase a label.\n        "
         address:
           allOf:
           - $ref: '#/components/schemas/AddressData'
@@ -8361,6 +6468,13 @@ components:
           type: string
           nullable: true
           description: The manifest reference
+        shipment_identifiers:
+          type: array
+          items:
+            type: string
+          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
+            \        shipment_identifier is often a tracking_number or shipment_id\
+            \ returned when you purchase a label.\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -8371,6 +6485,12 @@ components:
           format: uri
           nullable: true
           description: The Manifest file URL
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/Message'
+          default: []
+          description: The list of note or warning messages
       required:
       - address
       - carrier_id
@@ -8473,13 +6593,6 @@ components:
     ManifestRequest:
       type: object
       properties:
-        shipment_identifiers:
-          type: array
-          items:
-            type: string
-          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
-            \        shipment_identifier is often a tracking_number or shipment_id\
-            \ returned when you purchase a label.\n        "
         carrier_name:
           type: string
           description: The manifest's carrier
@@ -8501,6 +6614,13 @@ components:
           type: string
           nullable: true
           description: The manifest reference
+        shipment_identifiers:
+          type: array
+          items:
+            type: string
+          description: "The list of shipment identifiers you want to add to your manifest.<br/>\n\
+            \        shipment_identifier is often a tracking_number or shipment_id\
+            \ returned when you purchase a label.\n        "
       required:
       - address
       - carrier_name
@@ -8610,14 +6730,7 @@ components:
           type: string
           x-spec-enum-id: 4993b3ade2f339b3
           default: unfulfilled
-          description: |-
-            The order status.
-
-            * `unfulfilled` - unfulfilled
-            * `cancelled` - cancelled
-            * `fulfilled` - fulfilled
-            * `delivered` - delivered
-            * `partial` - partial
+          description: The order status.
         shipping_to:
           allOf:
           - $ref: '#/components/schemas/Address'
@@ -8836,13 +6949,7 @@ components:
           - G
           type: string
           x-spec-enum-id: 2aa755cf319c6df9
-          description: |-
-            The parcel's weight unit
-
-            * `KG` - KG
-            * `LB` - LB
-            * `OZ` - OZ
-            * `G` - G
+          description: The parcel's weight unit
         dimension_unit:
           enum:
           - CM
@@ -8851,11 +6958,7 @@ components:
           type: string
           x-spec-enum-id: 41993cb8117c279c
           nullable: true
-          description: |-
-            The parcel's dimension unit
-
-            * `CM` - CM
-            * `IN` - IN
+          description: The parcel's dimension unit
         items:
           type: array
           items:
@@ -8946,13 +7049,7 @@ components:
           - G
           type: string
           x-spec-enum-id: 2aa755cf319c6df9
-          description: |-
-            The parcel's weight unit
-
-            * `KG` - KG
-            * `LB` - LB
-            * `OZ` - OZ
-            * `G` - G
+          description: The parcel's weight unit
         dimension_unit:
           enum:
           - CM
@@ -8961,11 +7058,7 @@ components:
           type: string
           x-spec-enum-id: 41993cb8117c279c
           nullable: true
-          description: |-
-            The parcel's dimension unit
-
-            * `CM` - CM
-            * `IN` - IN
+          description: The parcel's dimension unit
         items:
           type: array
           items:
@@ -9286,243 +7379,7 @@ components:
           - ZW
           type: string
           x-spec-enum-id: f907b2af5d9d32f1
-          description: |-
-            The address country code
-
-            * `AD` - AD
-            * `AE` - AE
-            * `AF` - AF
-            * `AG` - AG
-            * `AI` - AI
-            * `AL` - AL
-            * `AM` - AM
-            * `AN` - AN
-            * `AO` - AO
-            * `AR` - AR
-            * `AS` - AS
-            * `AT` - AT
-            * `AU` - AU
-            * `AW` - AW
-            * `AZ` - AZ
-            * `BA` - BA
-            * `BB` - BB
-            * `BD` - BD
-            * `BE` - BE
-            * `BF` - BF
-            * `BG` - BG
-            * `BH` - BH
-            * `BI` - BI
-            * `BJ` - BJ
-            * `BM` - BM
-            * `BN` - BN
-            * `BO` - BO
-            * `BR` - BR
-            * `BS` - BS
-            * `BT` - BT
-            * `BW` - BW
-            * `BY` - BY
-            * `BZ` - BZ
-            * `CA` - CA
-            * `CD` - CD
-            * `CF` - CF
-            * `CG` - CG
-            * `CH` - CH
-            * `CI` - CI
-            * `CK` - CK
-            * `CL` - CL
-            * `CM` - CM
-            * `CN` - CN
-            * `CO` - CO
-            * `CR` - CR
-            * `CU` - CU
-            * `CV` - CV
-            * `CY` - CY
-            * `CZ` - CZ
-            * `DE` - DE
-            * `DJ` - DJ
-            * `DK` - DK
-            * `DM` - DM
-            * `DO` - DO
-            * `DZ` - DZ
-            * `EC` - EC
-            * `EE` - EE
-            * `EG` - EG
-            * `ER` - ER
-            * `ES` - ES
-            * `ET` - ET
-            * `FI` - FI
-            * `FJ` - FJ
-            * `FK` - FK
-            * `FM` - FM
-            * `FO` - FO
-            * `FR` - FR
-            * `GA` - GA
-            * `GB` - GB
-            * `GD` - GD
-            * `GE` - GE
-            * `GF` - GF
-            * `GG` - GG
-            * `GH` - GH
-            * `GI` - GI
-            * `GL` - GL
-            * `GM` - GM
-            * `GN` - GN
-            * `GP` - GP
-            * `GQ` - GQ
-            * `GR` - GR
-            * `GT` - GT
-            * `GU` - GU
-            * `GW` - GW
-            * `GY` - GY
-            * `HK` - HK
-            * `HN` - HN
-            * `HR` - HR
-            * `HT` - HT
-            * `HU` - HU
-            * `IC` - IC
-            * `ID` - ID
-            * `IE` - IE
-            * `IL` - IL
-            * `IN` - IN
-            * `IQ` - IQ
-            * `IR` - IR
-            * `IS` - IS
-            * `IT` - IT
-            * `JE` - JE
-            * `JM` - JM
-            * `JO` - JO
-            * `JP` - JP
-            * `KE` - KE
-            * `KG` - KG
-            * `KH` - KH
-            * `KI` - KI
-            * `KM` - KM
-            * `KN` - KN
-            * `KP` - KP
-            * `KR` - KR
-            * `KV` - KV
-            * `KW` - KW
-            * `KY` - KY
-            * `KZ` - KZ
-            * `LA` - LA
-            * `LB` - LB
-            * `LC` - LC
-            * `LI` - LI
-            * `LK` - LK
-            * `LR` - LR
-            * `LS` - LS
-            * `LT` - LT
-            * `LU` - LU
-            * `LV` - LV
-            * `LY` - LY
-            * `MA` - MA
-            * `MC` - MC
-            * `MD` - MD
-            * `ME` - ME
-            * `MG` - MG
-            * `MH` - MH
-            * `MK` - MK
-            * `ML` - ML
-            * `MM` - MM
-            * `MN` - MN
-            * `MO` - MO
-            * `MP` - MP
-            * `MQ` - MQ
-            * `MR` - MR
-            * `MS` - MS
-            * `MT` - MT
-            * `MU` - MU
-            * `MV` - MV
-            * `MW` - MW
-            * `MX` - MX
-            * `MY` - MY
-            * `MZ` - MZ
-            * `NA` - NA
-            * `NC` - NC
-            * `NE` - NE
-            * `NG` - NG
-            * `NI` - NI
-            * `NL` - NL
-            * `NO` - NO
-            * `NP` - NP
-            * `NR` - NR
-            * `NU` - NU
-            * `NZ` - NZ
-            * `OM` - OM
-            * `PA` - PA
-            * `PE` - PE
-            * `PF` - PF
-            * `PG` - PG
-            * `PH` - PH
-            * `PK` - PK
-            * `PL` - PL
-            * `PR` - PR
-            * `PT` - PT
-            * `PW` - PW
-            * `PY` - PY
-            * `QA` - QA
-            * `RE` - RE
-            * `RO` - RO
-            * `RS` - RS
-            * `RU` - RU
-            * `RW` - RW
-            * `SA` - SA
-            * `SB` - SB
-            * `SC` - SC
-            * `SD` - SD
-            * `SE` - SE
-            * `SG` - SG
-            * `SH` - SH
-            * `SI` - SI
-            * `SK` - SK
-            * `SL` - SL
-            * `SM` - SM
-            * `SN` - SN
-            * `SO` - SO
-            * `SR` - SR
-            * `SS` - SS
-            * `ST` - ST
-            * `SV` - SV
-            * `SY` - SY
-            * `SZ` - SZ
-            * `TC` - TC
-            * `TD` - TD
-            * `TG` - TG
-            * `TH` - TH
-            * `TJ` - TJ
-            * `TL` - TL
-            * `TN` - TN
-            * `TO` - TO
-            * `TR` - TR
-            * `TT` - TT
-            * `TV` - TV
-            * `TW` - TW
-            * `TZ` - TZ
-            * `UA` - UA
-            * `UG` - UG
-            * `US` - US
-            * `UY` - UY
-            * `UZ` - UZ
-            * `VA` - VA
-            * `VC` - VC
-            * `VE` - VE
-            * `VG` - VG
-            * `VI` - VI
-            * `VN` - VN
-            * `VU` - VU
-            * `WS` - WS
-            * `XB` - XB
-            * `XC` - XC
-            * `XE` - XE
-            * `XM` - XM
-            * `XN` - XN
-            * `XS` - XS
-            * `XY` - XY
-            * `YE` - YE
-            * `YT` - YT
-            * `ZA` - ZA
-            * `ZM` - ZM
-            * `ZW` - ZW
+          description: The address country code
         email:
           type: string
           nullable: true
@@ -9593,13 +7450,6 @@ components:
           - ''
           - null
           type: string
-          description: |-
-            * `documents` - documents
-            * `gift` - gift
-            * `sample` - sample
-            * `merchandise` - merchandise
-            * `return_merchandise` - return_merchandise
-            * `other` - other
           x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
         content_description:
@@ -9624,22 +7474,7 @@ components:
           type: string
           x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
-          description: |-
-            The customs 'term of trade' also known as 'incoterm'
-
-            * `CFR` - CFR
-            * `CIF` - CIF
-            * `CIP` - CIP
-            * `CPT` - CPT
-            * `DAF` - DAF
-            * `DDP` - DDP
-            * `DDU` - DDU
-            * `DEQ` - DEQ
-            * `DES` - DES
-            * `EXW` - EXW
-            * `FAS` - FAS
-            * `FCA` - FCA
-            * `FOB` - FOB
+          description: The customs 'term of trade' also known as 'incoterm'
         invoice:
           type: string
           nullable: true
@@ -9733,13 +7568,7 @@ components:
           - G
           type: string
           x-spec-enum-id: 2aa755cf319c6df9
-          description: |-
-            The parcel's weight unit
-
-            * `KG` - KG
-            * `LB` - LB
-            * `OZ` - OZ
-            * `G` - G
+          description: The parcel's weight unit
         dimension_unit:
           enum:
           - CM
@@ -9748,11 +7577,7 @@ components:
           type: string
           x-spec-enum-id: 41993cb8117c279c
           nullable: true
-          description: |-
-            The parcel's dimension unit
-
-            * `CM` - CM
-            * `IN` - IN
+          description: The parcel's dimension unit
         items:
           type: array
           items:
@@ -9810,25 +7635,6 @@ components:
             - batch_running
             - batch_completed
             type: string
-            description: |-
-              * `all` - all
-              * `shipment_purchased` - shipment_purchased
-              * `shipment_cancelled` - shipment_cancelled
-              * `shipment_fulfilled` - shipment_fulfilled
-              * `shipment_out_for_delivery` - shipment_out_for_delivery
-              * `shipment_needs_attention` - shipment_needs_attention
-              * `shipment_delivery_failed` - shipment_delivery_failed
-              * `tracker_created` - tracker_created
-              * `tracker_updated` - tracker_updated
-              * `order_created` - order_created
-              * `order_updated` - order_updated
-              * `order_fulfilled` - order_fulfilled
-              * `order_cancelled` - order_cancelled
-              * `order_delivered` - order_delivered
-              * `batch_queued` - batch_queued
-              * `batch_failed` - batch_failed
-              * `batch_running` - batch_running
-              * `batch_completed` - batch_completed
             x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
@@ -9846,12 +7652,7 @@ components:
           type: string
           x-spec-enum-id: 4d1fdef60a9538c0
           default: sender
-          description: |-
-            The payor type
-
-            * `sender` - sender
-            * `recipient` - recipient
-            * `third_party` - third_party
+          description: The payor type
         currency:
           enum:
           - EUR
@@ -10002,152 +7803,7 @@ components:
           type: string
           x-spec-enum-id: f0290aeafc544e9d
           nullable: true
-          description: |-
-            The payment amount currency
-
-            * `EUR` - EUR
-            * `AED` - AED
-            * `USD` - USD
-            * `XCD` - XCD
-            * `AMD` - AMD
-            * `ANG` - ANG
-            * `AOA` - AOA
-            * `ARS` - ARS
-            * `AUD` - AUD
-            * `AWG` - AWG
-            * `AZN` - AZN
-            * `BAM` - BAM
-            * `BBD` - BBD
-            * `BDT` - BDT
-            * `XOF` - XOF
-            * `BGN` - BGN
-            * `BHD` - BHD
-            * `BIF` - BIF
-            * `BMD` - BMD
-            * `BND` - BND
-            * `BOB` - BOB
-            * `BRL` - BRL
-            * `BSD` - BSD
-            * `BTN` - BTN
-            * `BWP` - BWP
-            * `BYN` - BYN
-            * `BZD` - BZD
-            * `CAD` - CAD
-            * `CDF` - CDF
-            * `XAF` - XAF
-            * `CHF` - CHF
-            * `NZD` - NZD
-            * `CLP` - CLP
-            * `CNY` - CNY
-            * `COP` - COP
-            * `CRC` - CRC
-            * `CUC` - CUC
-            * `CVE` - CVE
-            * `CZK` - CZK
-            * `DJF` - DJF
-            * `DKK` - DKK
-            * `DOP` - DOP
-            * `DZD` - DZD
-            * `EGP` - EGP
-            * `ERN` - ERN
-            * `ETB` - ETB
-            * `FJD` - FJD
-            * `GBP` - GBP
-            * `GEL` - GEL
-            * `GHS` - GHS
-            * `GMD` - GMD
-            * `GNF` - GNF
-            * `GTQ` - GTQ
-            * `GYD` - GYD
-            * `HKD` - HKD
-            * `HNL` - HNL
-            * `HRK` - HRK
-            * `HTG` - HTG
-            * `HUF` - HUF
-            * `IDR` - IDR
-            * `ILS` - ILS
-            * `INR` - INR
-            * `IRR` - IRR
-            * `ISK` - ISK
-            * `JMD` - JMD
-            * `JOD` - JOD
-            * `JPY` - JPY
-            * `KES` - KES
-            * `KGS` - KGS
-            * `KHR` - KHR
-            * `KMF` - KMF
-            * `KPW` - KPW
-            * `KRW` - KRW
-            * `KWD` - KWD
-            * `KYD` - KYD
-            * `KZT` - KZT
-            * `LAK` - LAK
-            * `LKR` - LKR
-            * `LRD` - LRD
-            * `LSL` - LSL
-            * `LYD` - LYD
-            * `MAD` - MAD
-            * `MDL` - MDL
-            * `MGA` - MGA
-            * `MKD` - MKD
-            * `MMK` - MMK
-            * `MNT` - MNT
-            * `MOP` - MOP
-            * `MRO` - MRO
-            * `MUR` - MUR
-            * `MVR` - MVR
-            * `MWK` - MWK
-            * `MXN` - MXN
-            * `MYR` - MYR
-            * `MZN` - MZN
-            * `NAD` - NAD
-            * `XPF` - XPF
-            * `NGN` - NGN
-            * `NIO` - NIO
-            * `NOK` - NOK
-            * `NPR` - NPR
-            * `OMR` - OMR
-            * `PEN` - PEN
-            * `PGK` - PGK
-            * `PHP` - PHP
-            * `PKR` - PKR
-            * `PLN` - PLN
-            * `PYG` - PYG
-            * `QAR` - QAR
-            * `RSD` - RSD
-            * `RUB` - RUB
-            * `RWF` - RWF
-            * `SAR` - SAR
-            * `SBD` - SBD
-            * `SCR` - SCR
-            * `SDG` - SDG
-            * `SEK` - SEK
-            * `SGD` - SGD
-            * `SHP` - SHP
-            * `SLL` - SLL
-            * `SOS` - SOS
-            * `SRD` - SRD
-            * `SSP` - SSP
-            * `STD` - STD
-            * `SYP` - SYP
-            * `SZL` - SZL
-            * `THB` - THB
-            * `TJS` - TJS
-            * `TND` - TND
-            * `TOP` - TOP
-            * `TRY` - TRY
-            * `TTD` - TTD
-            * `TWD` - TWD
-            * `TZS` - TZS
-            * `UAH` - UAH
-            * `UYU` - UYU
-            * `UZS` - UZS
-            * `VEF` - VEF
-            * `VND` - VND
-            * `VUV` - VUV
-            * `WST` - WST
-            * `YER` - YER
-            * `ZAR` - ZAR
+          description: The payment amount currency
         account_number:
           type: string
           nullable: true
@@ -10731,12 +8387,7 @@ components:
           type: string
           x-spec-enum-id: d10a5d5e08394b13
           nullable: true
-          description: |-
-            The shipment label file type.
-
-            * `PDF` - PDF
-            * `ZPL` - ZPL
-            * `PNG` - PNG
+          description: The shipment label file type.
         carrier_ids:
           type: array
           items:
@@ -10779,18 +8430,7 @@ components:
           type: string
           x-spec-enum-id: e418e9eb782a00a9
           default: draft
-          description: |-
-            The current Shipment status
-
-            * `draft` - draft
-            * `purchased` - purchased
-            * `cancelled` - cancelled
-            * `shipped` - shipped
-            * `in_transit` - in_transit
-            * `delivered` - delivered
-            * `needs_attention` - needs_attention
-            * `out_for_delivery` - out_for_delivery
-            * `delivery_failed` - delivery_failed
+          description: The current Shipment status
         carrier_name:
           type: string
           nullable: true
@@ -10935,12 +8575,7 @@ components:
           type: string
           x-spec-enum-id: d10a5d5e08394b13
           default: PDF
-          description: |-
-            The shipment label file type.
-
-            * `PDF` - PDF
-            * `ZPL` - ZPL
-            * `PNG` - PNG
+          description: The shipment label file type.
         service:
           type: string
           description: '**Specify a service to Buy a label in one call without rating.**'
@@ -11046,12 +8681,7 @@ components:
           type: string
           x-spec-enum-id: d10a5d5e08394b13
           default: PDF
-          description: |-
-            The shipment label file type.
-
-            * `PDF` - PDF
-            * `ZPL` - ZPL
-            * `PNG` - PNG
+          description: The shipment label file type.
         service:
           type: string
           description: '**Specify a service to Buy a label in one call without rating.**'
@@ -11120,12 +8750,7 @@ components:
           type: string
           x-spec-enum-id: d10a5d5e08394b13
           default: PDF
-          description: |-
-            The shipment label file type.
-
-            * `PDF` - PDF
-            * `ZPL` - ZPL
-            * `PNG` - PNG
+          description: The shipment label file type.
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -11180,12 +8805,7 @@ components:
           type: string
           x-spec-enum-id: d10a5d5e08394b13
           default: PDF
-          description: |-
-            The shipment label file type.
-
-            * `PDF` - PDF
-            * `ZPL` - ZPL
-            * `PNG` - PNG
+          description: The shipment label file type.
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -11283,12 +8903,7 @@ components:
           type: string
           x-spec-enum-id: d10a5d5e08394b13
           default: PDF
-          description: |-
-            The shipment label file type.
-
-            * `PDF` - PDF
-            * `ZPL` - ZPL
-            * `PNG` - PNG
+          description: The shipment label file type.
         selected_rate_id:
           type: string
           description: The shipment selected rate.
@@ -11406,12 +9021,7 @@ components:
           type: string
           x-spec-enum-id: d10a5d5e08394b13
           nullable: true
-          description: |-
-            The shipment label file type.
-
-            * `PDF` - PDF
-            * `ZPL` - ZPL
-            * `PNG` - PNG
+          description: The shipment label file type.
         carrier_ids:
           type: array
           items:
@@ -11454,18 +9064,7 @@ components:
           type: string
           x-spec-enum-id: e418e9eb782a00a9
           default: draft
-          description: |-
-            The current Shipment status
-
-            * `draft` - draft
-            * `purchased` - purchased
-            * `cancelled` - cancelled
-            * `shipped` - shipped
-            * `in_transit` - in_transit
-            * `delivered` - delivered
-            * `needs_attention` - needs_attention
-            * `out_for_delivery` - out_for_delivery
-            * `delivery_failed` - delivery_failed
+          description: The current Shipment status
         carrier_name:
           type: string
           nullable: true
@@ -11622,18 +9221,7 @@ components:
           type: string
           x-spec-enum-id: 979a07e5fd2a5042
           default: pending
-          description: |-
-            The current tracking status
-
-            * `pending` - pending
-            * `unknown` - unknown
-            * `on_hold` - on_hold
-            * `delivered` - delivered
-            * `in_transit` - in_transit
-            * `delivery_delayed` - delivery_delayed
-            * `out_for_delivery` - out_for_delivery
-            * `ready_for_pickup` - ready_for_pickup
-            * `delivery_failed` - delivery_failed
+          description: The current tracking status
         estimated_delivery:
           type: string
           description: The delivery estimated date
@@ -11745,45 +9333,7 @@ components:
           - zoom2u
           type: string
           x-spec-enum-id: db5a0511af909ff1
-          description: |-
-            The tracking carrier
-
-            * `allied_express` - allied_express
-            * `allied_express_local` - allied_express_local
-            * `amazon_shipping` - amazon_shipping
-            * `aramex` - aramex
-            * `asendia_us` - asendia_us
-            * `australiapost` - australiapost
-            * `boxknight` - boxknight
-            * `bpost` - bpost
-            * `canadapost` - canadapost
-            * `canpar` - canpar
-            * `chronopost` - chronopost
-            * `colissimo` - colissimo
-            * `dhl_express` - dhl_express
-            * `dhl_parcel_de` - dhl_parcel_de
-            * `dhl_poland` - dhl_poland
-            * `dhl_universal` - dhl_universal
-            * `dicom` - dicom
-            * `dpd` - dpd
-            * `dpdhl` - dpdhl
-            * `fedex` - fedex
-            * `fedex_ws` - fedex_ws
-            * `generic` - generic
-            * `geodis` - geodis
-            * `laposte` - laposte
-            * `locate2u` - locate2u
-            * `nationex` - nationex
-            * `purolator` - purolator
-            * `roadie` - roadie
-            * `royalmail` - royalmail
-            * `sendle` - sendle
-            * `tge` - tge
-            * `tnt` - tnt
-            * `ups` - ups
-            * `usps` - usps
-            * `usps_international` - usps_international
-            * `zoom2u` - zoom2u
+          description: The tracking carrier
         account_number:
           type: string
           nullable: true
@@ -11993,18 +9543,7 @@ components:
           type: string
           x-spec-enum-id: 979a07e5fd2a5042
           default: pending
-          description: |-
-            The current tracking status
-
-            * `pending` - pending
-            * `unknown` - unknown
-            * `on_hold` - on_hold
-            * `delivered` - delivered
-            * `in_transit` - in_transit
-            * `delivery_delayed` - delivery_delayed
-            * `out_for_delivery` - out_for_delivery
-            * `ready_for_pickup` - ready_for_pickup
-            * `delivery_failed` - delivery_failed
+          description: The current tracking status
         estimated_delivery:
           type: string
           description: The delivery estimated date
@@ -12096,25 +9635,6 @@ components:
             - batch_running
             - batch_completed
             type: string
-            description: |-
-              * `all` - all
-              * `shipment_purchased` - shipment_purchased
-              * `shipment_cancelled` - shipment_cancelled
-              * `shipment_fulfilled` - shipment_fulfilled
-              * `shipment_out_for_delivery` - shipment_out_for_delivery
-              * `shipment_needs_attention` - shipment_needs_attention
-              * `shipment_delivery_failed` - shipment_delivery_failed
-              * `tracker_created` - tracker_created
-              * `tracker_updated` - tracker_updated
-              * `order_created` - order_created
-              * `order_updated` - order_updated
-              * `order_fulfilled` - order_fulfilled
-              * `order_cancelled` - order_cancelled
-              * `order_delivered` - order_delivered
-              * `batch_queued` - batch_queued
-              * `batch_failed` - batch_failed
-              * `batch_running` - batch_running
-              * `batch_completed` - batch_completed
             x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
@@ -12175,25 +9695,6 @@ components:
             - batch_running
             - batch_completed
             type: string
-            description: |-
-              * `all` - all
-              * `shipment_purchased` - shipment_purchased
-              * `shipment_cancelled` - shipment_cancelled
-              * `shipment_fulfilled` - shipment_fulfilled
-              * `shipment_out_for_delivery` - shipment_out_for_delivery
-              * `shipment_needs_attention` - shipment_needs_attention
-              * `shipment_delivery_failed` - shipment_delivery_failed
-              * `tracker_created` - tracker_created
-              * `tracker_updated` - tracker_updated
-              * `order_created` - order_created
-              * `order_updated` - order_updated
-              * `order_fulfilled` - order_fulfilled
-              * `order_cancelled` - order_cancelled
-              * `order_delivered` - order_delivered
-              * `batch_queued` - batch_queued
-              * `batch_failed` - batch_failed
-              * `batch_running` - batch_running
-              * `batch_completed` - batch_completed
             x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
@@ -12332,15 +9833,12 @@ tags:
     ## Carriers
     | Carrier Name | Display Name |
     | ------------ | ------------ |
-    | australiapost | Australia Post |
-    | canadapost | Canada Post |
-    | dhl_express | DHL Express |
-    | tge | TGE |
     | zoom2u | Zoom2u |
     | usps_international | USPS International |
     | usps | USPS |
     | ups | UPS |
     | tnt | TNT |
+    | tge | TGE |
     | sendle | Sendle |
     | royalmail | Royal Mail |
     | roadie | Roadie |
@@ -12360,11 +9858,14 @@ tags:
     | dhl_universal | DHL Universal |
     | dhl_poland | DHL Parcel Poland |
     | dhl_parcel_de | DHL Parcel DE |
+    | dhl_express | DHL Express |
     | colissimo | Colissimo |
     | chronopost | Chronopost |
     | canpar | Canpar |
+    | canadapost | Canada Post |
     | bpost | Belgian Post |
     | boxknight | BoxKnight |
+    | australiapost | Australia Post |
     | asendia_us | Asendia US |
     | aramex | Aramex |
     | amazon_shipping | AmazonShipping |
@@ -12377,93 +9878,6 @@ tags:
     when purchasing shipping labels using single call label creation.
     You can also find all of the possible service levels for each of your carrier
     accounts by using [this endpoint](#operation/&&get_services).
-    ### Australia Post
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | australiapost_parcel_post | T28 |
-    | australiapost_express_post | E34 |
-    | australiapost_parcel_post_signature | 3D55 |
-    | australiapost_express_post_signature | 3J55 |
-    | australiapost_intl_standard_pack_track | PTI8 |
-    | australiapost_intl_standard_with_signature | PTI7 |
-    | australiapost_intl_express_merch | ECM8 |
-    | australiapost_intl_express_docs | ECD8 |
-    | australiapost_eparcel_post_returns | PR |
-    | australiapost_express_eparcel_post_returns | XPR |
-
-    ### Canada Post
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | canadapost_regular_parcel | DOM.RP |
-    | canadapost_expedited_parcel | DOM.EP |
-    | canadapost_xpresspost | DOM.XP |
-    | canadapost_xpresspost_certified | DOM.XP.CERT |
-    | canadapost_priority | DOM.PC |
-    | canadapost_library_books | DOM.LIB |
-    | canadapost_expedited_parcel_usa | USA.EP |
-    | canadapost_priority_worldwide_envelope_usa | USA.PW.ENV |
-    | canadapost_priority_worldwide_pak_usa | USA.PW.PAK |
-    | canadapost_priority_worldwide_parcel_usa | USA.PW.PARCEL |
-    | canadapost_small_packet_usa_air | USA.SP.AIR |
-    | canadapost_tracked_packet_usa | USA.TP |
-    | canadapost_tracked_packet_usa_lvm | USA.TP.LVM |
-    | canadapost_xpresspost_usa | USA.XP |
-    | canadapost_xpresspost_international | INT.XP |
-    | canadapost_international_parcel_air | INT.IP.AIR |
-    | canadapost_international_parcel_surface | INT.IP.SURF |
-    | canadapost_priority_worldwide_envelope_intl | INT.PW.ENV |
-    | canadapost_priority_worldwide_pak_intl | INT.PW.PAK |
-    | canadapost_priority_worldwide_parcel_intl | INT.PW.PARCEL |
-    | canadapost_small_packet_international_air | INT.SP.AIR |
-    | canadapost_small_packet_international_surface | INT.SP.SURF |
-    | canadapost_tracked_packet_international | INT.TP |
-
-    ### DHL Express
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | dhl_logistics_services | 0 |
-    | dhl_domestic_express_12_00 | 1 |
-    | dhl_express_choice | 2 |
-    | dhl_express_choice_nondoc | 3 |
-    | dhl_jetline | 4 |
-    | dhl_sprintline | 5 |
-    | dhl_air_capacity_sales | 6 |
-    | dhl_express_easy | 7 |
-    | dhl_express_easy_nondoc | 8 |
-    | dhl_parcel_product | 9 |
-    | dhl_accounting | A |
-    | dhl_breakbulk_express | B |
-    | dhl_medical_express | C |
-    | dhl_express_worldwide_doc | D |
-    | dhl_express_9_00_nondoc | E |
-    | dhl_freight_worldwide_nondoc | F |
-    | dhl_economy_select_domestic | G |
-    | dhl_economy_select_nondoc | H |
-    | dhl_express_domestic_9_00 | I |
-    | dhl_jumbo_box_nondoc | J |
-    | dhl_express_9_00 | K |
-    | dhl_express_10_30 | L |
-    | dhl_express_10_30_nondoc | M |
-    | dhl_express_domestic | N |
-    | dhl_express_domestic_10_30 | O |
-    | dhl_express_worldwide_nondoc | P |
-    | dhl_medical_express_nondoc | Q |
-    | dhl_globalmail | R |
-    | dhl_same_day | S |
-    | dhl_express_12_00 | T |
-    | dhl_express_worldwide | U |
-    | dhl_parcel_product_nondoc | V |
-    | dhl_economy_select | W |
-    | dhl_express_envelope | X |
-    | dhl_express_12_00_nondoc | Y |
-    | dhl_destination_charges | Z |
-    | dhl_express_all | None |
-
-    ### TGE
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | tge_freight_service | X |
-
     ### Zoom2u
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -12605,6 +10019,11 @@ tags:
     | tnt_express | EX |
     | tnt_economy_express | 48N |
     | tnt_global_express | 15N |
+
+    ### TGE
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | tge_freight_service | X |
 
     ### Sendle
     | Code         | Service Name |
@@ -13602,6 +11021,47 @@ tags:
     | dhl_parcel_de_paket_international | V53WPAK |
     | dhl_parcel_de_warenpost_international | V66WPI |
 
+    ### DHL Express
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | dhl_logistics_services | 0 |
+    | dhl_domestic_express_12_00 | 1 |
+    | dhl_express_choice | 2 |
+    | dhl_express_choice_nondoc | 3 |
+    | dhl_jetline | 4 |
+    | dhl_sprintline | 5 |
+    | dhl_air_capacity_sales | 6 |
+    | dhl_express_easy | 7 |
+    | dhl_express_easy_nondoc | 8 |
+    | dhl_parcel_product | 9 |
+    | dhl_accounting | A |
+    | dhl_breakbulk_express | B |
+    | dhl_medical_express | C |
+    | dhl_express_worldwide_doc | D |
+    | dhl_express_9_00_nondoc | E |
+    | dhl_freight_worldwide_nondoc | F |
+    | dhl_economy_select_domestic | G |
+    | dhl_economy_select_nondoc | H |
+    | dhl_express_domestic_9_00 | I |
+    | dhl_jumbo_box_nondoc | J |
+    | dhl_express_9_00 | K |
+    | dhl_express_10_30 | L |
+    | dhl_express_10_30_nondoc | M |
+    | dhl_express_domestic | N |
+    | dhl_express_domestic_10_30 | O |
+    | dhl_express_worldwide_nondoc | P |
+    | dhl_medical_express_nondoc | Q |
+    | dhl_globalmail | R |
+    | dhl_same_day | S |
+    | dhl_express_12_00 | T |
+    | dhl_express_worldwide | U |
+    | dhl_parcel_product_nondoc | V |
+    | dhl_economy_select | W |
+    | dhl_express_envelope | X |
+    | dhl_express_12_00_nondoc | Y |
+    | dhl_destination_charges | Z |
+    | dhl_express_all | None |
+
     ### Colissimo
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13632,6 +11092,33 @@ tags:
     | chronopost_premium_international | 37 |
     | chronopost_classic_international | 44 |
 
+    ### Canada Post
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | canadapost_regular_parcel | DOM.RP |
+    | canadapost_expedited_parcel | DOM.EP |
+    | canadapost_xpresspost | DOM.XP |
+    | canadapost_xpresspost_certified | DOM.XP.CERT |
+    | canadapost_priority | DOM.PC |
+    | canadapost_library_books | DOM.LIB |
+    | canadapost_expedited_parcel_usa | USA.EP |
+    | canadapost_priority_worldwide_envelope_usa | USA.PW.ENV |
+    | canadapost_priority_worldwide_pak_usa | USA.PW.PAK |
+    | canadapost_priority_worldwide_parcel_usa | USA.PW.PARCEL |
+    | canadapost_small_packet_usa_air | USA.SP.AIR |
+    | canadapost_tracked_packet_usa | USA.TP |
+    | canadapost_tracked_packet_usa_lvm | USA.TP.LVM |
+    | canadapost_xpresspost_usa | USA.XP |
+    | canadapost_xpresspost_international | INT.XP |
+    | canadapost_international_parcel_air | INT.IP.AIR |
+    | canadapost_international_parcel_surface | INT.IP.SURF |
+    | canadapost_priority_worldwide_envelope_intl | INT.PW.ENV |
+    | canadapost_priority_worldwide_pak_intl | INT.PW.PAK |
+    | canadapost_priority_worldwide_parcel_intl | INT.PW.PARCEL |
+    | canadapost_small_packet_international_air | INT.SP.AIR |
+    | canadapost_small_packet_international_surface | INT.SP.SURF |
+    | canadapost_tracked_packet_international | INT.TP |
+
     ### Belgian Post
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -13656,6 +11143,20 @@ tags:
     | boxknight_sameday | SAMEDAY |
     | boxknight_nextday | NEXTDAY |
     | boxknight_scheduled | SCHEDULED |
+
+    ### Australia Post
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | australiapost_parcel_post | T28 |
+    | australiapost_express_post | E34 |
+    | australiapost_parcel_post_signature | 3D55 |
+    | australiapost_express_post_signature | 3J55 |
+    | australiapost_intl_standard_pack_track | PTI8 |
+    | australiapost_intl_standard_with_signature | PTI7 |
+    | australiapost_intl_express_merch | ECM8 |
+    | australiapost_intl_express_docs | ECD8 |
+    | australiapost_eparcel_post_returns | PR |
+    | australiapost_express_eparcel_post_returns | XPR |
 
     ### Asendia US
     | Code         | Service Name |
@@ -13695,39 +11196,6 @@ tags:
     ---
     ## Parcel Templates
     Use any of the following templates when you ship with special carrier packaging.
-    ### Canada Post
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | canadapost_mailing_box | 10.2 x 15.2 x 1.0 cm |
-    | canadapost_extra_small_mailing_box | 14.0 x 14.0 x 14.0 cm |
-    | canadapost_small_mailing_box | 28.6 x 22.9 x 6.4 cm |
-    | canadapost_medium_mailing_box | 31.0 x 23.5 x 13.3 cm |
-    | canadapost_large_mailing_box | 38.1 x 30.5 x 9.5 cm |
-    | canadapost_extra_large_mailing_box | 40.0 x 30.5 x 21.6 cm |
-    | canadapost_corrugated_small_box | 42.0 x 32.0 x 32.0 cm |
-    | canadapost_corrugated_medium_box | 46.0 x 38.0 x 32.0 cm |
-    | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
-    | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
-    | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
-
-    ### DHL Express
-    | Code         | Dimensions   |
-    | ------------ | ------------ |
-    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
-    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
-    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
-    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
-    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
-    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
-    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
-    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
-    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
-    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
-    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
-    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
-    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
-    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
-
     ### UPS
     | Code         | Dimensions   |
     | ------------ | ------------ |
@@ -13772,5 +11240,38 @@ tags:
     | fedex_10_kg_box | 15.81 x 12.94 x 10.19 in |
     | fedex_25_kg_box | 21.56 x 16.56 x 13.19 in |
     | fedex_tube | 38.0 x 6.0 x 6.0 in |
+
+    ### DHL Express
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | dhl_express_envelope | 35.0 x 27.5 x 1.0 cm |
+    | dhl_express_standard_flyer | 40.0 x 30.0 x 1.5 cm |
+    | dhl_express_large_flyer | 47.5 x 37.5 x 1.5 cm |
+    | dhl_express_box_2 | 33.7 x 18.2 x 10.0 cm |
+    | dhl_express_box_3 | 33.6 x 32.0 x 5.2 cm |
+    | dhl_express_box_4 | 33.7 x 32.2 x 18.0 cm |
+    | dhl_express_box_5 | 33.7 x 32.2 x 34.5 cm |
+    | dhl_express_box_6 | 41.7 x 35.9 x 36.9 cm |
+    | dhl_express_box_7 | 48.1 x 40.4 x 38.9 cm |
+    | dhl_express_box_8 | 54.2 x 44.4 x 40.9 cm |
+    | dhl_express_tube | 96.0 x 15.0 x 15.0 cm |
+    | dhl_didgeridoo_box | 13.0 x 13.0 x 162.0 cm |
+    | dhl_jumbo_box | 45.0 x 42.7 x 33.0 cm |
+    | dhl_jumbo_box_junior | 39.9 x 34.0 x 24.1 cm |
+
+    ### Canada Post
+    | Code         | Dimensions   |
+    | ------------ | ------------ |
+    | canadapost_mailing_box | 10.2 x 15.2 x 1.0 cm |
+    | canadapost_extra_small_mailing_box | 14.0 x 14.0 x 14.0 cm |
+    | canadapost_small_mailing_box | 28.6 x 22.9 x 6.4 cm |
+    | canadapost_medium_mailing_box | 31.0 x 23.5 x 13.3 cm |
+    | canadapost_large_mailing_box | 38.1 x 30.5 x 9.5 cm |
+    | canadapost_extra_large_mailing_box | 40.0 x 30.5 x 21.6 cm |
+    | canadapost_corrugated_small_box | 42.0 x 32.0 x 32.0 cm |
+    | canadapost_corrugated_medium_box | 46.0 x 38.0 x 32.0 cm |
+    | canadapost_corrugated_large_box | 46.0 x 46.0 x 40.6 cm |
+    | canadapost_xexpresspost_certified_envelope | 26.0 x 15.9 x 1.5 cm |
+    | canadapost_xexpresspost_national_large_envelope | 40.0 x 29.2 x 1.5 cm |
 
 ...
