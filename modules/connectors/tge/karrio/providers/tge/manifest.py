@@ -98,11 +98,13 @@ def manifest_request(
         ).value_or_key
         payment = shipment_payload.payment or models.Payment()
 
-        now = datetime.datetime.now() + datetime.timedelta(hours=1)
+        now = datetime.datetime.now()
         create_time = lib.fdatetime(now, output_format="%H:%M:%S")
-        create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+        create_date = lib.fdatetime(now, output_format="%Y-%m-%dT")
         shipping_date = lib.to_date(options.shipment_date.state or now)
-        pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
+        pickup_date = lib.fdatetime(
+            provider_utils.next_pickup_date(shipping_date), output_format="%Y-%m-%dT"
+        )
 
         requests += [
             tge.ManifestRequestType(

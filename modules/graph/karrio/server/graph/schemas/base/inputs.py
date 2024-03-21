@@ -488,7 +488,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
             "cache",
             "test_mode",
             "rate_sheet",
-            "sssc_count",
+            "sscc_count",
             "shipment_count",
         ]
         _optionals = ["account_country_code", "label_template"]

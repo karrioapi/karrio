@@ -66,7 +66,7 @@ def shipping_options_initializer(
     package_options: units.ShippingOptions = None,
     shipment_count: int = 0,
     package_count: int = 0,
-    sssc_count: int = 0,
+    sscc_count: int = 0,
     SSCC_GS1: str = "",
     SHIP_GS1: str = "",
 ) -> units.ShippingOptions:
@@ -74,23 +74,6 @@ def shipping_options_initializer(
     Apply default values to the given options.
     """
     _options = options.copy()
-
-    if (
-        "tge_ssc_ids" not in _options
-        and SSCC_GS1 is not None
-        and sssc_count is not None
-    ):
-        _options["tge_ssc_ids"] = [
-            f"000{SSCC_GS1}{str(sssc_count + _).zfill(6)}"
-            for _, __ in enumerate(range(package_count), start=1)
-        ]
-
-    if (
-        "tge_shipment_id" not in _options
-        and SHIP_GS1 is not None
-        and shipment_count is not None
-    ):
-        _options["tge_shipment_id"] = f"{SHIP_GS1}{str(shipment_count + 1).zfill(7)}"
 
     if package_options is not None:
         _options.update(package_options.content)

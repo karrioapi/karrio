@@ -97,7 +97,7 @@ ParsedShipmentResponse = [
         "docs": {"label": ANY},
         "label_type": "PDF",
         "meta": {
-            "SSCCs": ["0009947510361394186"],
+            "SSCCs": ["0009947510361394195"],
             "ShipmentID": "8880419999995",
             "shipment_count": 9999995,
             "sscc_count": 361394186,
@@ -209,7 +209,7 @@ ShipmentRequest = {
                                         "HeightUOM": "m3",
                                         "Length": 20.0,
                                         "LengthUOM": "m3",
-                                        "Volume": 6000.0,
+                                        "Volume": 0.1,
                                         "VolumeUOM": "m3",
                                         "Weight": 100.0,
                                         "WeightUOM": "kg",
@@ -220,7 +220,7 @@ ShipmentRequest = {
                                         "ID": [
                                             {
                                                 "SchemeName": "SSCC",
-                                                "Value": "0009947510361394186",
+                                                "Value": "0009947510361394195",
                                             }
                                         ]
                                     },

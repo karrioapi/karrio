@@ -1,6 +1,8 @@
 """Karrio TGE client settings."""
 
 import attr
+import jstruct
+import karrio.lib as lib
 import karrio.providers.tge.utils as provider_utils
 
 
@@ -17,7 +19,7 @@ class Settings(provider_utils.Settings):
     my_toll_token: str
     my_toll_identity: str
     account_code: str = None
-    sssc_count: int = None
+    sscc_count: int = None
     shipment_count: int = None
 
     # generic properties
@@ -25,5 +27,6 @@ class Settings(provider_utils.Settings):
     test_mode: bool = False
     carrier_id: str = "tge"
     account_country_code: str = "AU"
+    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     metadata: dict = {}
     config: dict = {}
