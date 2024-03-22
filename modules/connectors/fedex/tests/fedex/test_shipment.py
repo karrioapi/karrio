@@ -305,6 +305,7 @@ ShipmentRequest = [
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
                     },
                     "sequenceNumber": 1,
+                    "subPackagingType": "YOUR_PACKAGING",
                     "weight": {"units": "LB", "value": 20.0},
                 }
             ],
@@ -453,6 +454,7 @@ MultiPieceShipmentRequest = [
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
                     },
                     "sequenceNumber": 1,
+                    "subPackagingType": "YOUR_PACKAGING",
                     "weight": {"units": "LB", "value": 1.0},
                 }
             ],
@@ -612,6 +614,7 @@ MultiPieceShipmentRequest = [
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
                     },
                     "sequenceNumber": 2,
+                    "subPackagingType": "YOUR_PACKAGING",
                     "weight": {"units": "LB", "value": 2.0},
                 }
             ],
