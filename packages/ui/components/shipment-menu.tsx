@@ -6,7 +6,7 @@ import { useShipmentMutation } from '@karrio/hooks/shipment';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useRouter } from 'next/dist/client/router';
 import { useAppMode } from '@karrio/hooks/app-mode';
-import { isNone, url$ } from '@karrio/lib';
+import { formatRef, isNone, isNoneOrEmpty, url$ } from '@karrio/lib';
 
 
 interface ShipmentMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
@@ -97,26 +97,42 @@ export const ShipmentMenu: React.FC<ShipmentMenuComponent> = ({ shipment, isView
 
           {(
             shipment.carrier_name &&
-            !(shipment!.carrier_name in (references.carriers || {})) &&
-            ![ShipmentStatusEnum.cancelled, ShipmentStatusEnum.delivered].includes(shipment.status as any)
+            isNoneOrEmpty(shipment.tracker_id) &&
+            ![ShipmentStatusEnum.cancelled, ShipmentStatusEnum.delivered, ManualShipmentStatusEnum.delivery_failed].includes(shipment.status as any)
           ) && <>
               <hr className="my-1" style={{ height: '1px' }} />
 
               {(shipment.status === ShipmentStatusEnum.purchased) &&
                 <a className="dropdown-item" onClick={() => confirmCancellation({
                   identifier: shipment.id as string,
-                  label: `Mark shipment as ${ManualShipmentStatusEnum.in_transit}`,
+                  label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.in_transit.toString())}`,
                   action: 'Apply',
                   onConfirm: changeStatus(shipment, ManualShipmentStatusEnum.in_transit),
-                })}>Mark as {ManualShipmentStatusEnum.in_transit}</a>}
+                })}>Mark as {formatRef(ManualShipmentStatusEnum.in_transit.toString())}</a>}
 
               {([ShipmentStatusEnum.purchased, ShipmentStatusEnum.in_transit].includes(shipment.status as any)) &&
                 <a className="dropdown-item" onClick={() => confirmCancellation({
                   identifier: shipment.id as string,
-                  label: `Mark shipment as ${ManualShipmentStatusEnum.delivered}`,
+                  label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.needs_attention.toString())}`,
+                  action: 'Save',
+                  onConfirm: changeStatus(shipment, ManualShipmentStatusEnum.needs_attention),
+                })}>Mark as {formatRef(ManualShipmentStatusEnum.needs_attention.toString())}</a>}
+
+              {([ShipmentStatusEnum.purchased, ShipmentStatusEnum.in_transit, ShipmentStatusEnum.needs_attention].includes(shipment.status as any)) &&
+                <a className="dropdown-item" onClick={() => confirmCancellation({
+                  identifier: shipment.id as string,
+                  label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivery_failed.toString())}`,
+                  action: 'Save',
+                  onConfirm: changeStatus(shipment, ManualShipmentStatusEnum.delivery_failed),
+                })}>Mark as {formatRef(ManualShipmentStatusEnum.delivery_failed.toString())}</a>}
+
+              {([ShipmentStatusEnum.purchased, ShipmentStatusEnum.in_transit, ShipmentStatusEnum.needs_attention].includes(shipment.status as any)) &&
+                <a className="dropdown-item" onClick={() => confirmCancellation({
+                  identifier: shipment.id as string,
+                  label: `Mark shipment as ${formatRef(ManualShipmentStatusEnum.delivered.toString())}`,
                   action: 'Save',
                   onConfirm: changeStatus(shipment, ManualShipmentStatusEnum.delivered),
-                })}>Mark as {ManualShipmentStatusEnum.delivered}</a>}
+                })}>Mark as {formatRef(ManualShipmentStatusEnum.delivered.toString())}</a>}
 
             </>}
 

@@ -44217,6 +44217,18 @@
             "deprecationReason": null
           },
           {
+            "name": "needs_attention",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
+            "name": "delivery_failed",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
+          },
+          {
             "name": "delivered",
             "description": null,
             "isDeprecated": false,

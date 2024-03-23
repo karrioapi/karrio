@@ -5561,7 +5561,9 @@ export enum TrackerStatusEnum {
 
 export enum ManualShipmentStatusEnum {
   delivered = "delivered",
+  delivery_failed = "delivery_failed",
   in_transit = "in_transit",
+  needs_attention = "needs_attention",
 }
 
 export enum EventTypes {
