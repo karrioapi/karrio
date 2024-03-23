@@ -87,13 +87,15 @@ def rate_request(
         package_option_type=provider_units.ShippingOption,
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
-    service = getattr(services.first, "value", None)
+    service = getattr(services.first, "value", None) or "X"
 
-    now = datetime.datetime.now() + datetime.timedelta(hours=1)
+    now = datetime.datetime.now()
     create_time = lib.fdatetime(now, output_format="%H:%M:%S")
-    create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+    create_date = lib.fdatetime(now, output_format="%Y-%m-%dT")
     shipping_date = lib.to_date(options.shipment_date.state or now)
-    pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
+    pickup_date = lib.fdatetime(
+        provider_utils.next_pickup_date(shipping_date), output_format="%Y-%m-%dT"
+    )
 
     request = tge.RateRequestType(
         TollMessage=tge.TollMessageType(
@@ -121,7 +123,7 @@ def rate_request(
                         ),
                     ),
                     ShipmentService=tge.ShipmentServiceType(
-                        ServiceCode=service or "X",
+                        ServiceCode=service,
                     ),
                     ShipmentFlags=tge.ShipmentFlagsType(ExtraServiceFlag="true"),
                     ShipmentFinancials=tge.ShipmentFinancialsType(
@@ -131,7 +133,7 @@ def rate_request(
                                 lib.to_int(
                                     options.tge_extra_services_amount.state
                                     or options.declared_value.state
-                                    or 0.0
+                                    or 0
                                 )
                             ),
                         )
@@ -172,19 +174,25 @@ def rate_request(
                                 ),
                                 Dimensions=tge.DimensionsType(
                                     Width=str(
-                                        package.width.map(
-                                            provider_units.MeasurementOptions
-                                        ).CM
+                                        lib.to_int(
+                                            package.width.map(
+                                                provider_units.MeasurementOptions
+                                            ).CM
+                                        )
                                     ),
                                     Length=str(
-                                        package.length.map(
-                                            provider_units.MeasurementOptions
-                                        ).CM
+                                        lib.to_int(
+                                            package.length.map(
+                                                provider_units.MeasurementOptions
+                                            ).CM
+                                        )
                                     ),
                                     Height=str(
-                                        package.height.map(
-                                            provider_units.MeasurementOptions
-                                        ).CM
+                                        lib.to_int(
+                                            package.height.map(
+                                                provider_units.MeasurementOptions
+                                            ).CM
+                                        )
                                     ),
                                     Volume=str(
                                         package.volume.map(
@@ -206,4 +214,4 @@ def rate_request(
         )
     )
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(request, lib.to_dict, dict(service=service))

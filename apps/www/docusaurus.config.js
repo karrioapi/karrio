@@ -258,20 +258,16 @@ const config = {
                 to: '/',
               },
               {
+                label: 'Carriers',
+                to: '/carriers',
+              },
+              {
                 label: 'Product',
                 to: '/product',
               },
               {
-                label: 'Reference',
-                to: '/reference',
-              },
-              {
-                label: 'OpenAPI',
+                label: 'API Reference',
                 href: '/reference/openapi',
-              },
-              {
-                label: 'Carriers',
-                to: '/carriers',
               },
             ],
           },
@@ -289,6 +285,10 @@ const config = {
               {
                 label: 'Twitter',
                 href: 'https://twitter.com/karrio',
+              },
+              {
+                label: 'Launch week X',
+                href: 'https://www.karrio.io/launch-week-x',
               },
             ],
           },
@@ -309,7 +309,7 @@ const config = {
             title: 'About Us',
             items: [
               {
-                label: 'Join our beta',
+                label: 'Get Started',
                 href: 'https://karrio.io/get-started',
               },
               {

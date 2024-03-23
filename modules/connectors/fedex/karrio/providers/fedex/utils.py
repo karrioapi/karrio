@@ -148,7 +148,9 @@ def parse_response(binary_string):
     return lib.decode(content)
 
 
-def process_request(settings: Settings, data: dict, request_type: str) -> dict:
+def process_request(
+    settings: Settings, data: dict, request_type: str, ctx: dict = None
+) -> dict:
     if settings.test_mode is False:
         return data
 
@@ -175,7 +177,7 @@ def process_request(settings: Settings, data: dict, request_type: str) -> dict:
         if "FEDEX_ONE_RATE" in data.get("requestedShipment", {}).get(
             "shipmentSpecialServices", {}
         ).get("specialServiceTypes", []):
-            return ONE_RATE_SHIPMENT
+            return apply_label_type(ONE_RATE_SHIPMENT, ctx)
 
         if (
             data["requestedShipment"]["shipper"]["address"]["countryCode"] != "US"
@@ -183,11 +185,31 @@ def process_request(settings: Settings, data: dict, request_type: str) -> dict:
             != "US"
         ):
             if len(data["requestedShipment"]["requestedPackageLineItems"]) > 1:
-                return INTL_SINGLE_SHOT_MULTI_PIECE_SHIPMENT
+                return apply_label_type(INTL_SINGLE_SHOT_MULTI_PIECE_SHIPMENT, ctx)
 
-            return MASTER_SHIPMENT
+            return apply_label_type(MASTER_SHIPMENT, ctx)
 
-        return MASTER_SHIPMENT
+        return apply_label_type(MASTER_SHIPMENT, ctx)
+
+    return data
+
+
+def apply_label_type(data: dict, ctx: dict) -> dict:
+    if ctx is None:
+        return data
+
+    if "ZPL" in ctx.get("label_type", ""):
+        return {
+            **data,
+            "requestedShipment": {
+                **data["requestedShipment"],
+                "labelSpecification": {
+                    **data["requestedShipment"]["labelSpecification"],
+                    "imageType": "ZPL",
+                    "labelStockType": "PAPER_4X6",
+                },
+            },
+        }
 
     return data
 

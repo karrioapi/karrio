@@ -70,23 +70,9 @@ def shipment_request(
     recipient = lib.to_address(payload.recipient)
     is_pdf = "PDF" in (payload.label_type or "PDF")
     service = provider_units.ShippingService.map(payload.service).value_or_key
-    sssc_count = lib.identity(
-        settings.sssc_count
-        if settings.sssc_count is not None
-        else lib.to_int(settings.connection_config.SSCC_range_start.state) or 0
-    )
-    shipment_count = lib.identity(
-        settings.shipment_count
-        if settings.shipment_count is not None
-        else lib.to_int(settings.connection_config.SHIP_range_start.state) or 0
-    )
     options = lib.to_shipping_options(
         payload.options,
         package_count=len(payload.parcels),
-        sssc_count=sssc_count,
-        shipment_count=shipment_count,
-        SSCC_GS1=settings.connection_config.SSCC_GS1.state or "",
-        SHIP_GS1=settings.connection_config.SHIP_GS1.state or "",
         initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
@@ -95,14 +81,19 @@ def shipment_request(
         package_option_type=provider_units.ShippingOption,
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
-    SSCCs = options.tge_ssc_ids.state
     payment = payload.payment or models.Payment()
 
-    now = datetime.datetime.now() + datetime.timedelta(hours=1)
+    ShipmentID, SSCCs, shipment_count, sscc_count = settings.next_shipment_identifiers(
+        options, len(packages)
+    )
+
+    now = datetime.datetime.now()
     create_time = lib.fdatetime(now, output_format="%H:%M:%S")
-    create_date = lib.fdatetime(now, output_format="%Y-%m-%d")
+    create_date = lib.fdatetime(now, output_format="%Y-%m-%dT")
     shipping_date = lib.to_date(options.shipment_date.state or now)
-    pickup_date = lib.fdatetime(shipping_date, output_format="%Y-%m-%d")
+    pickup_date = lib.fdatetime(
+        provider_utils.next_pickup_date(shipping_date), output_format="%Y-%m-%dT"
+    )
 
     request = tge.LabelRequestType(
         TollMessage=tge.TollMessageType(
@@ -186,7 +177,7 @@ def shipment_request(
                                     tge.DatePeriodType(
                                         DateTime=(
                                             options.tge_despatch_date.state
-                                            or f"{pickup_date}{create_time}.000Z"
+                                            or f"{pickup_date}10:00:00.000Z"
                                         ),
                                         DateType="DespatchDate",
                                     ),
@@ -222,7 +213,7 @@ def shipment_request(
                                     ]
                                 )
                             ),
-                            ShipmentID=options.tge_shipment_id.state,
+                            ShipmentID=ShipmentID,
                             ShipmentItemCollection=tge.ShipmentItemCollectionType(
                                 ShipmentItem=[
                                     tge.ShipmentItemType(
@@ -252,7 +243,7 @@ def shipment_request(
                                             LengthUOM="m3",
                                             Volume=package.volume.map(
                                                 provider_units.MeasurementOptions
-                                            ).cm3,
+                                            ).m3,
                                             VolumeUOM="m3",
                                             Weight=package.weight.map(
                                                 provider_units.MeasurementOptions
@@ -295,13 +286,13 @@ def shipment_request(
         lib.to_dict,
         dict(
             SSCCs=SSCCs,
+            sscc_count=sscc_count,
+            ShipmentID=ShipmentID,
+            shipment_count=shipment_count,
             label_type=("PDF" if is_pdf else "ZPL"),
-            ShipmentID=options.tge_shipment_id.state,
             SourceSystemCode=(settings.connection_config.channel or "YF73"),
             MessageSender=(
                 settings.connection_config.message_sender.state or "GOSHIPR"
             ),
-            shipment_count=shipment_count + 1,
-            sscc_count=sssc_count + len(packages),
         ),
     )

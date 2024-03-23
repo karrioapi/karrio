@@ -114,6 +114,7 @@ const sidebars = {
       label: 'CARRIER INTEGRATIONS',
       link: { type: 'doc', id: 'integrations' },
       collapsed: false,
+      collapsible: true,
       items: [
         'carriers/integrations/allied_express',
         'carriers/integrations/allied_express_local',
@@ -150,7 +151,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'SDK',
+      label: 'SHIPPING DEV KIT',
       collapsed: true,
       collapsible: true,
       link: { type: 'doc', id: 'sdk' },

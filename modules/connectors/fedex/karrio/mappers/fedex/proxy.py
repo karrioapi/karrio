@@ -58,7 +58,7 @@ class Proxy(proxy.Proxy):
                 url=f"{self.settings.server_url}/ship/v1/shipments",
                 data=lib.to_json(
                     provider_utils.process_request(
-                        self.settings, requests[0], "shipments"
+                        self.settings, requests[0], "shipments", request.ctx
                     )
                 ),
                 trace=self.trace_as("json"),

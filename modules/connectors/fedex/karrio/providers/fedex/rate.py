@@ -162,7 +162,10 @@ def rate_request(
             pickupType="DROPOFF_AT_FEDEX_LOCATION",
             requestedPackageLineItems=[
                 fedex.RequestedPackageLineItemType(
-                    subPackagingType=package.packaging_type,
+                    subPackagingType=lib.identity(
+                        provider_units.PackagingType.map(package.packaging_type).value
+                        or "YOUR_PACKAGING"
+                    ),
                     groupPackageCount=1,
                     contentRecord=[],
                     declaredValue=package.options.declared_value.state,

@@ -172,7 +172,7 @@ def shipment_request(
             mergeLabelDocOption=None,
             requestedShipment=fedex.RequestedShipmentType(
                 shipDatestamp=lib.fdate(shipment_date, "%Y-%m-%d"),
-                totalDeclaredValue=(
+                totalDeclaredValue=lib.identity(
                     fedex.TotalDeclaredValueType(
                         amount=lib.to_money(package.options.declared_value.state),
                         currency=package.options.currency.state,
@@ -306,7 +306,7 @@ def shipment_request(
                         else None
                     ),
                 ),
-                shipmentSpecialServices=(
+                shipmentSpecialServices=lib.identity(
                     fedex.ShipmentSpecialServicesType(
                         specialServiceTypes=(
                             [
@@ -366,7 +366,7 @@ def shipment_request(
                 emailNotificationDetail=None,
                 expressFreightDetail=None,
                 variableHandlingChargeDetail=None,
-                customsClearanceDetail=(
+                customsClearanceDetail=lib.identity(
                     fedex.CustomsClearanceDetailType(
                         regulatoryControls=None,
                         brokers=[],
@@ -486,7 +486,7 @@ def shipment_request(
                     if payload.customs is not None
                     else None
                 ),
-                smartPostInfoDetail=(
+                smartPostInfoDetail=lib.identity(
                     fedex.SmartPostInfoDetailType(
                         ancillaryEndorsement=None,
                         hubId=hub_id,
@@ -511,7 +511,7 @@ def shipment_request(
                     labelPrintingOrientation=None,
                     returnedDispositionDetail=None,
                 ),
-                shippingDocumentSpecification=(
+                shippingDocumentSpecification=lib.identity(
                     fedex.ShippingDocumentSpecificationType(
                         generalAgencyAgreementDetail=None,
                         returnInstructionsDetail=None,
@@ -531,7 +531,7 @@ def shipment_request(
                 rateRequestType=None,
                 preferredCurrency=package.options.currency.state,
                 totalPackageCount=len(packages),
-                masterTrackingId=(
+                masterTrackingId=lib.identity(
                     fedex.MasterTrackingIDType(
                         formId=None,
                         trackingIdType="[MASTER_ID_TYPE]",
@@ -544,7 +544,11 @@ def shipment_request(
                 requestedPackageLineItems=[
                     fedex.RequestedPackageLineItemType(
                         sequenceNumber=package_index,
-                        subPackagingType=None,
+                        subPackagingType=lib.identity(
+                            provider_units.PackagingType.map(
+                                package.packaging_type or "your_packaging"
+                            ).value
+                        ),
                         customerReferences=[],
                         declaredValue=None,
                         weight=fedex.WeightType(
@@ -610,5 +614,9 @@ def shipment_request(
     return lib.Serializable(
         requests,
         lambda __: [lib.to_dict(_) for _ in __],
-        dict(shipment_date=shipment_date),
+        dict(
+            shipment_date=shipment_date,
+            label_type=label_type,
+            label_format=label_format,
+        ),
     )
