@@ -21,6 +21,10 @@ To integrate a custom carrier at this stage, you will need:
 - Use the plugin/extension structure available
 - Read and Understand the carrier' API documentation
 
+Note that we are still iterating on the SDK to make it more user-friendly and make it easy to add custom carriers.
+Therefore, we recommend taking inspiration from the existing carrier integrations. As we discover patterns and things
+that can be abstracted, we will continue to improve the implementation process.
+
 :::
 
 ---
@@ -29,7 +33,7 @@ To integrate a custom carrier at this stage, you will need:
 
 1. Create a karrio extension package
 
-2. Generate Python data types from the carrier API schemas
+2. Generate Python data types
 
 3. Define carrier account and connection settings 
 
@@ -183,7 +187,11 @@ Note that `pickup` and `shipment` modules are directories since there are often 
 
 ###### Module convention
 
-Two modules are required to create a karrio extension.
+Three modules are required to create a karrio extension.
+
+- `karrio.mappers.[carrier_name]`
+- `karrio.providers.[carrier_name]`
+- `karrio.schemas.[carrier_name]`
 
 :::info `karrio.mappers.[carrier_name]`
 This is where the karrio abstract classes are implemented. Also, the Metadata require to identified
@@ -207,7 +215,7 @@ This is where the your carrier generated python data types are stored.
 
 ---
 
-#### 2. Generate Python data types from the carrier API schemas
+#### 2. Generate Python data types
 
 Karrio uses some cool open source projects to generate API schema datatypes.
 
@@ -242,16 +250,11 @@ If the carrier is SOAP based with `.wsdl` files, you need to extract the `<xs:sc
 
 ##### Generate Python datatypes
 
+To generate the Python data types, you need to run the `generate` script.
 
-:::info For a XML/SOAP API
-
-Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
-
-:::tip
-
-generateDS is installed along with karrio' dev dependencies. So it should already be available.
-
-:::
+```terminal
+./bin/run-generate-on modules/connectors/[carrier_name]
+```
 
 :::info For a JSON API
 
@@ -264,6 +267,16 @@ To use quicktype, you need to build a the custom docker image we have prepared f
 ```terminal
 ./bin/build-tool-image
 ```
+:::
+
+:::info For a XML/SOAP API
+
+Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
+
+:::tip
+
+generateDS is installed along with karrio' dev dependencies. So it should already be available.
+
 :::
 
 ---
