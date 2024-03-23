@@ -35,7 +35,7 @@ that can be abstracted, we will continue to improve the implementation process.
 
 2. Generate Python data types
 
-3. Define carrier account and connection settings 
+3. Define carrier connection settings 
 
 4. Set up API calls under proxy
 
@@ -60,11 +60,11 @@ Make sure that you have set up your development environment as instructed in the
 Once you have [karrio installed for development](/product/resources/development) on your machine,
 You can run the following command to scafold a karrio extension for you carrier.
 
-```terminal
+```terminal title="Terminal"
 ./bin/cli add-extension
 ```
 
-```terminal
+```terminal title="Terminal"
 Carrier slug: freight_express            # Karrio unique carrier_name
 Display name: Freight Express            # Carrier label that will be used throughout the app
 Features [tracking, rating, shipping]:   # The carrier features you wish to integrate
@@ -99,7 +99,7 @@ is exponential.
 The Mapper is the base of karrio 's abstraction. A `Metadata` declared at `karrio/mappers/[carrier_name]/__init__`
 specifies the integration classes required to define a karrio compatible extension.
 
-```text
+```text title="karrio/mappers/[carrier_name]/__init__.py"
 from karrio.core.metadata import Metadata
 
 from karrio.mappers.[carrier_name].mapper import Mapper
@@ -126,12 +126,40 @@ METADATA = Metadata(
 )
 ```
 
+###### Module convention
+
+Three modules are required to create a karrio extension.
+
+- `karrio.mappers.[carrier_name]`
+- `karrio.providers.[carrier_name]`
+- `karrio.schemas.[carrier_name]`
+
+:::info `karrio.mappers.[carrier_name]`
+This is where the karrio abstract classes are implemented. Also, the Metadata require to identified
+the extension is also provided there.
+
+> on runtime, karrio retrieves all mappers by going trought the `karrio.mappers` modules
+
+:::
+
+:::info `karrio.providers.[carrier_name]`
+
+This is where the mapping between karrio Unified API data is mapped on the carrier data type corresponding requests
+
+:::
+
+:::info `karrio.schemas.[carrier_name]`
+
+This is where the your carrier generated python data types are stored.
+
+:::
+
 ##### File structure
 
 The carrier extension package folder structure looks like this
 
-```text
-extensions/[carrier_name]/
+```text title="modules/connectors/"
+[carrier_name]/
 ├── setup.py
 ├── generate
 ├── schemas
@@ -185,34 +213,6 @@ Note that `pickup` and `shipment` modules are directories since there are often 
 **create**, **cancel**...
 :::
 
-###### Module convention
-
-Three modules are required to create a karrio extension.
-
-- `karrio.mappers.[carrier_name]`
-- `karrio.providers.[carrier_name]`
-- `karrio.schemas.[carrier_name]`
-
-:::info `karrio.mappers.[carrier_name]`
-This is where the karrio abstract classes are implemented. Also, the Metadata require to identified
-the extension is also provided there.
-
-> on runtime, karrio retrieves all mappers by going trought the `karrio.mappers` modules
-
-:::
-
-:::info `karrio.providers.[carrier_name]`
-
-This is where the mapping between karrio Unified API data is mapped on the carrier data type corresponding requests
-
-:::
-
-:::info `karrio.schemas.[carrier_name]`
-
-This is where the your carrier generated python data types are stored.
-
-:::
-
 ---
 
 #### 2. Generate Python data types
@@ -252,11 +252,7 @@ If the carrier is SOAP based with `.wsdl` files, you need to extract the `<xs:sc
 
 To generate the Python data types, you need to run the `generate` script.
 
-```terminal
-./bin/run-generate-on modules/connectors/[carrier_name]
-```
-
-:::info For a JSON API
+:::note For a JSON API
 
 Karrio uses a fork of `quicktype` to generate Python dataclasses from the `jstruct` library to turn JSON request and response
 samples.
@@ -264,12 +260,13 @@ samples.
 :::warning
 
 To use quicktype, you need to build a the custom docker image we have prepared for with our fork.
-```terminal
+
+```terminal title="Terminal"
 ./bin/build-tool-image
 ```
 :::
 
-:::info For a XML/SOAP API
+:::note For a XML/SOAP API
 
 Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
 
@@ -279,151 +276,1260 @@ generateDS is installed along with karrio' dev dependencies. So it should alread
 
 :::
 
+```terminal title="Terminal"
+./bin/run-generate-on modules/connectors/[carrier_name]
+```
+
 ---
 
-#### Mappers implementation
+#### 3. Define carrier connection settings 
 
-The mapper function implementations consists of instantiating carrier specific request data types assigning
+The settings class is where the carrier connection settings are defined.
+
+```python title="karrio/mappers/[carrier_name]/settings.py"
+"""Karrio Canada post client settings."""
+
+import attr
+from karrio.providers.canadapost import Settings as BaseSettings
+
+
+@attr.s(auto_attribs=True)
+class Settings(BaseSettings):
+    """Canada post connection settings."""
+
+    username: str
+    password: str
+    customer_number: str = None
+    contract_id: str = None
+    language: str = "en"
+
+    id: str = None
+    test_mode: bool = False
+    carrier_id: str = "canadapost"
+    account_country_code: str = "CA"
+    metadata: dict = {}
+    config: dict = {}
+
+```
+
+---
+
+#### 4. Set up API calls under proxy
+
+The proxy class is the carrier API client that makes the HTTP requests to the carrier API endpoints.
+
+```python title="[carrier_name]/karrio/mappers/[carrier_name]/proxy.py"
+"""Karrio Australia Post client proxy."""
+
+import karrio.lib as lib
+import karrio.api.proxy as proxy
+import karrio.mappers.australiapost.settings as provider_settings
+
+
+class Proxy(proxy.Proxy):
+    settings: provider_settings.Settings
+
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipping/v1/prices/items",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="POST",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Account-Number": self.settings.account_number,
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+    # ....
+
+    def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        query = request.serialize()
+        tracking_ids = ",".join(query["tracking_ids"])
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipping/v1/track?tracking_ids={tracking_ids}",
+            trace=self.trace_as("json"),
+            method="GET",
+            headers={
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "Account-Number": self.settings.account_number,
+                "Authorization": f"Basic {self.settings.authorization}",
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
+
+```
+
+---
+
+#### 5. Implement the Mapper functions
+
+The mapper function implementations consists of instantiating carrier specific request data types assigning.
+
+:::info
+The mapping function instantiates the carrier data types like a tree to offer a global view and simplify the
+mental relation between the `code` and the formatted data output based on the `schema`.
+:::
 
 <div id="tabs">
 <Tabs>
 <TabItem value="mapper" label="Mapper">
 
 ```python
-# Import karrio unified API models
-from karrio.core.models import PickupRequest
+import karrio.schemas.amazon_shipping.rate_request as amazon
+from karrio.schemas.amazon_shipping.rate_response import ServiceRate
 
-# Import requirements from the DHL generated data types library (py-dhl)
-from pydhl.book_pickup_global_req_3_0 import BookPURequest, MetaData
-from pydhl.pickupdatatypes_global_3_0 import (
-    Requestor,
-    Place,
-    Pickup,
-    WeightSeg,
-    RequestorContact,
-)
+import typing
+import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.core.errors as errors
+import karrio.providers.amazon_shipping.error as provider_error
+import karrio.providers.amazon_shipping.units as provider_units
+import karrio.providers.amazon_shipping.utils as provider_utils
 
-def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable[BookPURequest]:
-    weight = 0.00  # Total weight calculated from the sum of `payload.parcels[].weights`
-    # ...
-    request = BookPURequest(
-        Request=settings.Request(
-            MetaData=MetaData(SoftwareName="XMLPI", SoftwareVersion=3.0)
+
+def parse_rate_response(
+    _response: lib.Deserializable[dict], 
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
+    errors: typing.List[models.Message] = sum(
+        [
+            provider_error.parse_error_response(data, settings)
+            for data in response.get("errors", [])
+        ],
+        [],
+    )
+    rates = [
+        _extract_details(data, settings) for data in response.get("serviceRates", [])
+    ]
+
+    return rates, errors
+
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.RateDetails:
+    rate = lib.to_object(ServiceRate, data)
+    transit = (
+        lib.to_date(rate.promise.deliveryWindow.start, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+        - lib.to_date(rate.promise.receiveWindow.end, "%Y-%m-%dT%H:%M:%S.%fZ").date()
+    ).days
+
+    return models.RateDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        service=provider_units.Service.map(rate.serviceType).name_or_key,
+        total_charge=lib.to_decimal(rate.totalCharge.value),
+        currency=rate.totalCharge.unit,
+        transit_days=transit,
+        meta=dict(
+            service_name=rate.serviceType,
         ),
-        schemaVersion=3.0,
-        RegionCode="AM",
-        Requestor=Requestor(
-            AccountNumber=settings.account_number,
-            AccountType="D",
-            RequestorContact=RequestorContact(
-                PersonName=payload.address.person_name,
-                Phone=payload.address.phone_number,
-                PhoneExtension=None,
-            ),
-            CompanyName=payload.address.company_name,
-        ),
-        Place=Place(
-            City=payload.address.city,
-            StateCode=payload.address.state_code,
-            PostalCode=payload.address.postal_code,
-            CompanyName=payload.address.company_name,
-            CountryCode=payload.address.country_code,
-            PackageLocation=payload.package_location,
-            LocationType="R" if payload.address.residential else "B",
-            Address1=payload.address.address_line1,
-            Address2=payload.address.address_line2,
-        ),
-        PickupContact=RequestorContact(
-            PersonName=payload.address.person_name, Phone=payload.address.phone_number
-        ),
-        Pickup=Pickup(
-            Pieces=len(payload.parcels),
-            PickupDate=payload.pickup_date,
-            ReadyByTime=f"{payload.ready_time}:00",
-            CloseTime=f"{payload.closing_time}:00",
-            SpecialInstructions=[payload.instruction],
-            RemotePickupFlag="Y",
-            weight=WeightSeg(
-                Weight=sum(p.weight for p in payload.parcel),
-                WeightUnit="LB"
-            ),
-        ),
-        ShipmentDetails=None,
-        ConsigneeDetails=None,
     )
 
-    return Serializable(request)
+
+def rate_request(payload: models.RateRequest, settings: provider_utils.Settings) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(payload.parcels)
+    options = lib.to_shipping_options(payload.options)
+    services = lib.to_services(payload.services, provider_units.Service)
+
+    request = amazon.RateRequest(
+        shipFrom=amazon.Ship(
+            name=shipper.person_name,
+            city=shipper.city,
+            addressLine1=shipper.street,
+            addressLine2=shipper.address_line2,
+            stateOrRegion=shipper.state_code,
+            email=shipper.email,
+            copyEmails=lib.join(shipper.email),
+            phoneNumber=shipper.phone_number,
+        ),
+        shipTo=amazon.Ship(
+            name=recipient.person_name,
+            city=recipient.city,
+            addressLine1=recipient.street,
+            addressLine2=recipient.address_line2,
+            stateOrRegion=recipient.state_code,
+            email=recipient.email,
+            copyEmails=lib.join(recipient.email),
+            phoneNumber=recipient.phone_number,
+        ),
+        serviceTypes=list(services),
+        shipDate=lib.fdatetime(
+            options.shipment_date.state, "%Y-%m-%d", "%Y-%m-%dT%H:%M:%S.%fZ"
+        ),
+        containerSpecifications=[
+            amazon.ContainerSpecification(
+                dimensions=amazon.Dimensions(
+                    height=package.height.IN,
+                    length=package.length.IN,
+                    width=package.width.IN,
+                    unit="IN",
+                ),
+                weight=amazon.Weight(
+                    value=package.weight.LB,
+                    unit="LB",
+                ),
+            )
+            for package in packages
+        ],
+    )
+
+    return lib.Serializable(request, lib.to_dict)
+
 ```
 
 </TabItem>
 <TabItem value="request" label="Request">
 
-```xml
-<req:BookPURequest xmlns:req="http://www.dhl.com" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.dhl.com book-pickup-global-req_EA.xsd" schemaVersion="3.">
-    <Request>
-        <ServiceHeader>
+```json
+{
+  "containerSpecifications": [
+    {
+      "dimensions": {
+        "height": -11128938.315315291,
+        "length": -53992777.93301245,
+        "unit": "IN",
+        "width": -15948568.310932204
+      },
+      "weight": {
+        "unit": "oz",
+        "value": -18429960.164813638
+      }
+    },
+    {
+      "dimensions": {
+        "height": 3778128.7328606546,
+        "length": 92830895.03670138,
+        "unit": "CM",
+        "width": 64394598.26120943
+      },
+      "weight": {
+        "unit": "oz",
+        "value": 59033905.13044372
+      }
+    }
+  ],
+  "serviceTypes": [
+    "Amazon Shipping Premium",
+    "Amazon Shipping Ground"
+  ],
+  "shipFrom": {
+    "addressLine1": "consectetur dolore aliqua",
+    "city": "cillum",
+    "countryCode": "su",
+    "name": "ad mollit fugiat",
+    "postalCode": "enim",
+    "stateOrRegion": "commodo",
+    "addressLine2": "qui elit exercitation",
+    "addressLine3": "qui proident",
+    "email": "iru",
+    "copyEmails": [
+      "officia laborum Lorem",
+      "eiusmod L"
+    ],
+    "phoneNumber": "tempor pariatu"
+  },
+  "shipTo": {
+    "addressLine1": "Lorem aliquip in consequat",
+    "city": "consectetur dolor u",
+    "countryCode": "su",
+    "name": "eu ali",
+    "postalCode": "proident",
+    "stateOrRegion": "commodo sed",
+    "addressLine2": "proident",
+    "addressLine3": "laboris",
+    "email": "eu et Excepteur i",
+    "copyEmails": [
+      "dolor dolore ut ut irure",
+      "exercitation est "
+    ],
+    "phoneNumber": "id"
+  },
+  "shipDate": "1983-08-21T03:27:52.022Z"
+}
 
-            <MessageReference>1234567890123456789012345678901</MessageReference>
-            <SiteID>site_id</SiteID>
-            <Password>password</Password>
-        </ServiceHeader>
-        <MetaData>
-            <SoftwareName>XMLPI</SoftwareName>
-            <SoftwareVersion>3.0</SoftwareVersion>
-        </MetaData>
-    </Request>
-    <RegionCode>AM</RegionCode>
-    <Requestor>
-        <AccountType>D</AccountType>
-        <AccountNumber>123456789</AccountNumber>
-        <RequestorContact>
-            <PersonName>Subhayu</PersonName>
-            <Phone>4801313131</Phone>
-        </RequestorContact>
-    </Requestor>
-    <Place>
-        <City>Montreal</City>
-        <CountryCode>CA</CountryCode>
-        <PostalCode>H8Z2Z3</PostalCode>
-    </Place>
-    <Pickup>
-        <PickupDate>2013-10-19</PickupDate>
-        <ReadyByTime>10:20</ReadyByTime>
-        <CloseTime>09:20</CloseTime>
-        <Pieces>1</Pieces>
-        <RemotePickupFlag>Y</RemotePickupFlag>
-        <weight>
-            <Weight>20.</Weight>
-            <WeightUnit>L</WeightUnit>
-        </weight>
-        <SpecialInstructions>behind the front desk</SpecialInstructions>
-    </Pickup>
-    <PickupContact>
-        <PersonName>Subhayu</PersonName>
-        <Phone>4801313131</Phone>
-    </PickupContact>
-</req:BookPURequest>
 ```
 
 </TabItem>
 </Tabs>
 </div>
 
-:::info
-The mapping function instantiates the carrier data types like a tree to allow a global view and simplify the
-mental relation between the `code` and the formatted data output `schema`.
-:::
+---
 
-### Generated schema data types
+#### 6. Add a database model for karrio server
 
-To keep to robustness and simplify the maintenance of the codebase, In karrio, we use Python data types reflecting
-the schemas of carriers we want to integrate.
-That said, defining every schema object's structure can be tedious, long and unproductive. Therefore, code generators
-are used to generate Python data types based of the schema format definition.
+The database model is a Django model that represents the carrier settings in the database.
 
-- For `XML` and `SOAP` services, [generateDs](https://pypi.org/project/generateDS/) is used to generate `.xsd` files
-  into Python data types
+```python title="modules/core/karrio/server/providers/extensions/[carrier_name].py"
+import django.db.models as models
+import karrio.server.providers.models as providers
 
-- For `JSON` services, [quicktype](https://github.com/karrio/quicktype) is used to generate `.json` files
-  into Python data types. We then use [jstruct](https://github.com/karrio/jstruct) as a replacement
-  for python dataclass to add automated nested object instantiation.
+
+class CanadaPostSettings(providers.Carrier):
+    class Meta:
+        db_table = "canada-post-settings"
+        verbose_name = "Canada Post Settings"
+        verbose_name_plural = "Canada Post Settings"
+
+    username = models.CharField(max_length=200)
+    password = models.CharField(max_length=200)
+    customer_number = models.CharField(max_length=200, blank=True, null=True)
+    contract_id = models.CharField(max_length=200, blank=True, null=True)
+
+    @property
+    def carrier_name(self) -> str:
+        return "canadapost"
+
+
+SETTINGS = CanadaPostSettings
+
+```
+
+Once the model is defined, you need to run the migrations to create the database table.
+
+```terminal title="Terminal"
+# create the migration file
+karrio makemigrations
+
+# apply the migration
+karrio migrate
+```
+
+---
+
+#### 7. Add the carrier configuration to the dashboard
+
+This is the final step where you make your custom carrier configurable in the karrio dashboard.
+
+Now that we have a database model, we can regenerate karrio's API schemas and Typescript typings.
+
+- Karrio Shipping REST API schema and Typescript typings
+
+```terminal title="Terminal"
+# generate the REST OpenAPI schemas
+./bin/server gen:openapi
+```
+
+```terminal title="Terminal"
+# generate the Typescript typings for the REST API
+./bin/generate-openapi-types
+```
+
+- Karrio management GraphQL API schema and Typescript typings
+
+```terminal title="Terminal"
+# generate the GraphQL schema
+./bin/server gen:graph
+```
+
+When a GraphQL schema is generated, you need to update the carrier connections queries for typings to be generated for them.
+
+<details>
+<summary>Update the user connections query fragment</summary>
+
+```ts title="packages/types/graphql/queries.ts"
+export const GET_USER_CONNECTIONS = gql`query get_user_connections {
+  user_connections {
+    __typename
+    ... on AlliedExpressSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+      service_type
+    }
+    ... on AlliedExpressLocalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+      service_type
+    }
+    ... on AmazonShippingSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      seller_id
+      developer_id
+      mws_auth_token
+      aws_region
+      config
+    }
+    ... on AramexSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      username
+      password
+      account_pin
+      account_entity
+      account_number
+      account_country_code
+      config
+    }
+    ... on AsendiaUSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      username
+      password
+      account_number
+      api_key
+      config
+    }
+    ... on AustraliaPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      api_key
+      password
+      account_number
+      config
+    }
+    ... on BoxKnightSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      username
+      password
+      config
+      metadata
+    }
+    ... on BelgianPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      account_id
+      passphrase
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on CanadaPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      username
+      password
+      customer_number
+      contract_id
+      config
+    }
+    ... on CanparSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      config
+    }
+    ... on ChronopostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      password
+      account_number
+      account_country_code
+      config
+    }
+    ... on ColissimoSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      password
+      contract_number
+      laposte_api_key
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DHLParcelDESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      customer_number
+      dhl_api_key
+      tracking_consumer_key
+      tracking_consumer_secret
+      config
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DHLExpressSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      site_id
+      password
+      account_number
+      account_country_code
+      config
+    }
+    ... on DHLPolandSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account_number
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DHLUniversalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      consumer_key
+      consumer_secret
+      config
+    }
+    ... on DicomSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      billing_account
+      config
+    }
+    ... on DPDSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      delis_id
+      password
+      depot
+      account_country_code
+      services {
+        active
+        currency
+        description
+        dimension_unit
+        domicile
+        id
+        international
+        max_height
+        max_length
+        max_weight
+        max_width
+        service_code
+        service_name
+        carrier_service_code
+        transit_days
+        transit_time
+        weight_unit
+        zones {
+          cities
+          postal_codes
+          country_codes
+          label
+          latitude
+          longitude
+          max_weight
+          min_weight
+          radius
+          rate
+          transit_days
+          transit_time
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DPDHLSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      app_id
+      app_token
+      zt_id
+      zt_password
+      account_number
+      config
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on EShipperSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      config
+    }
+    ... on EasyPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      config
+    }
+    ... on FedexSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      account_number
+      api_key
+      secret_key
+      track_api_key
+      track_secret_key
+      account_country_code
+      config
+    }
+    ... on FedexWSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      account_number
+      password
+      meter_number
+      user_key
+      account_country_code
+      config
+    }
+    ... on FreightcomSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      config
+    }
+    ... on GenericSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      custom_carrier_name
+      account_number
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      account_country_code
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      label_template {
+        id
+        slug
+        template
+        template_type
+        shipment_sample
+        width
+        height
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on GEODISSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      identifier
+      language
+      config
+    }
+    ... on LaPosteSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      lang
+      config
+    }
+    ... on Locate2uSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      account_country_code
+      client_id
+      client_secret
+    }
+    ... on NationexSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      customer_id
+      billing_account
+      language
+      config
+    }
+    ... on PurolatorSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      account_number
+      user_token
+      config
+    }
+    ... on RoadieSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      config
+    }
+    ... on RoyalMailSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      client_id
+      client_secret
+      config
+    }
+    ... on SendleSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      sendle_id
+      api_key
+      account_country_code
+      config
+    }
+    ... on TGESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      username
+      password
+      api_key
+      toll_username
+      toll_password
+      my_toll_token
+      my_toll_identity
+      account_code
+    }
+    ... on TNTSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      account_number
+      account_country_code
+      config
+    }
+    ... on UPSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      client_id
+      client_secret
+      account_number
+      account_country_code
+      config
+    }
+    ... on USPSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      mailer_id
+      customer_registration_id
+      logistics_manager_mailer_id
+      config
+    }
+    ... on USPSInternationalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      mailer_id
+      customer_registration_id
+      logistics_manager_mailer_id
+      config
+    }
+    ... on Zoom2uSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      account_country_code
+      api_key
+    }
+  }
+}
+`;
+```
+
+</details>
+
+Only then you can generate the Typescript typings for the GraphQL API.
+
+```terminal title="Terminal"
+./bin/generate-graphql-types
+```
+
+Once the typings are updated to reflect the your new integration settings, you can now add the carrier configuration to the dashboard.
+
+```tsx title="packages/ui/modals/connect-provider-modal.tsx"
+
+function fieldState(carrier_name: CarrierNameType, property: string) {
+  const field = (
+    ({
+      [CarrierSettingsCarrierNameEnum.AlliedExpress]: [["carrier_id", true], ["username", true], ["password", true], ["account", false], ["service_type", false]],
+      [CarrierSettingsCarrierNameEnum.AmazonShipping]: [["carrier_id", true], ["seller_id", true], ["developer_id", true], ["mws_auth_token", true], ["aws_region"]],
+      // ...
+      [CarrierSettingsCarrierNameEnum.[CarrierName]]: [["carrier_id", true], ["username", true], ["password", true], /* ... */],
+      // ...
+      [CarrierSettingsCarrierNameEnum.Zoom2u]: [["carrier_id", true], ["api_key", true], ["account_country_code"]],
+      [NoneEnum.none]: [],
+    }[carrier_name] || [])
+      .find(([_, ...__]) => _ === property) || []
+  );
+  // ...
+}
+```

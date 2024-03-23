@@ -1,8 +1,8 @@
-from django.db import models
-from karrio.server.providers.models.carrier import Carrier
+import django.db.models as models
+import karrio.server.providers.models as providers
 
 
-class CanadaPostSettings(Carrier):
+class CanadaPostSettings(providers.Carrier):
     class Meta:
         db_table = "canada-post-settings"
         verbose_name = "Canada Post Settings"
