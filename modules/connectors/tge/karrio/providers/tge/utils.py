@@ -52,8 +52,8 @@ class Settings(core.Settings):
     def next_shipment_identifiers(
         self, options: lib.units.Options, package_count: int
     ) -> typing.Tuple[str, list, int, int]:
-        sscc_gs1 = lib.text(self.connection_config.SSCC_GS1.state) or ""
-        ship_gs1 = lib.text(self.connection_config.SHIP_GS1.state) or ""
+        sscc_gs1 = lib.to_int(lib.text(self.connection_config.SSCC_GS1.state) or "")
+        ship_gs1 = lib.to_int(lib.text(self.connection_config.SHIP_GS1.state) or "")
         sscc_count = (
             self.sscc_count
             if self.sscc_count is not None
@@ -69,7 +69,7 @@ class Settings(core.Settings):
             SSCCs = options.tge_ssc_ids.state
         else:
             SSCCs = [
-                f"000{sscc_gs1}{str(sscc_count + (_ * 10)).zfill(6)}"
+                f"00{calculate_sscc(sscc_gs1, sscc_count, _)}"
                 for _, __ in enumerate(range(package_count), start=1)
             ]
 
@@ -122,3 +122,13 @@ def next_pickup_date(
         return date + datetime.timedelta(days=3)
 
     return date + datetime.timedelta(days=1)
+
+
+def calculate_sscc(gs1, sscc: int, index: int) -> str:
+    _new_sscc = sscc + index
+    _current = [int(_) for _ in f"{gs1}{_new_sscc}".zfill(17)]
+    _odd_sum = sum([int(x) for _, x in enumerate(_current) if _ % 2 == 0])
+    _even_sum = sum([int(x) for _, x in enumerate(_current) if _ % 2 != 0])
+    _digit = 100 - ((_odd_sum * 3) + _even_sum)
+
+    return f"{''.join([str(_) for _ in _current])}{_digit}".zfill(18)

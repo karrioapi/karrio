@@ -196,7 +196,12 @@ def render_tags(request, APP_NAME):
         [
             {
                 "name": "API",
-                "description": """API instance metadata and authentication resources.
+                "description": """API instance metadata resources.
+                """,
+            },
+            {
+                "name": "Auth",
+                "description": """API authentication resources.
                 """,
             },
             {

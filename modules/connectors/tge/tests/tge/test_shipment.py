@@ -97,10 +97,10 @@ ParsedShipmentResponse = [
         "docs": {"label": ANY},
         "label_type": "PDF",
         "meta": {
-            "SSCCs": ["0009947510361394195"],
+            "SSCCs": ["00093275103417610023"],
             "ShipmentID": "8880419999995",
             "shipment_count": 9999995,
-            "sscc_count": 361394186,
+            "sscc_count": 341761002,
         },
         "shipment_identifier": "8880419999995",
         "tracking_number": "8880419999995",
@@ -220,7 +220,7 @@ ShipmentRequest = {
                                         "ID": [
                                             {
                                                 "SchemeName": "SSCC",
-                                                "Value": "0009947510361394195",
+                                                "Value": "00093275103417610023",
                                             }
                                         ]
                                     },
