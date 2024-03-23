@@ -131,7 +131,7 @@ class TokenObtainPair(jwt_views.TokenObtainPairView):
 
     @openapi.extend_schema(
         auth=[],
-        tags=["API"],
+        tags=["Auth"],
         operation_id=f"{ENDPOINT_ID}authenticate",
         summary="Obtain auth token pair",
         description="Authenticate the user and return a token pair",
@@ -149,7 +149,7 @@ class TokenRefresh(jwt_views.TokenRefreshView):
 
     @openapi.extend_schema(
         auth=[],
-        tags=["API"],
+        tags=["Auth"],
         operation_id=f"{ENDPOINT_ID}refresh_token",
         summary="Refresh auth token",
         description="Authenticate the user and return a token pair",
@@ -163,9 +163,10 @@ class TokenRefresh(jwt_views.TokenRefreshView):
 
 
 class TokenVerify(jwt_views.TokenVerifyView):
+
     @openapi.extend_schema(
         auth=[],
-        tags=["API"],
+        tags=["Auth"],
         operation_id=f"{ENDPOINT_ID}verify_token",
         summary="Verify token",
         description="Verify an existent authentication token",
@@ -183,7 +184,7 @@ class VerifiedTokenPair(jwt_views.TokenVerifyView):
 
     @openapi.extend_schema(
         auth=[],
-        tags=["API"],
+        tags=["Auth"],
         operation_id=f"{ENDPOINT_ID}get_verified_token",
         summary="Get verified JWT token",
         description="Get a verified JWT token pair by submitting a Two-Factor authentication code.",

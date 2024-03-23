@@ -2349,60 +2349,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function TokenObtainPairToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'email': value.email,
-            'password': value.password,
-        };
-    }
-
-    /* tslint:disable */
-    function TokenPairFromJSON(json) {
-        return TokenPairFromJSONTyped(json);
-    }
-    function TokenPairFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'access': json['access'],
-            'refresh': json['refresh'],
-        };
-    }
-
-    /* tslint:disable */
-    function TokenRefreshToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'refresh': value.refresh,
-        };
-    }
-
-    /* tslint:disable */
-    function TokenVerifyToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'token': value.token,
-        };
-    }
-
-    /* tslint:disable */
     function TrackerDetailsImagesFromJSON(json) {
         return TrackerDetailsImagesFromJSONTyped(json);
     }
@@ -2562,20 +2508,6 @@ var Karrio = (function () {
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
             'tracking': !exists(json, 'tracking') ? undefined : TrackerDetailsFromJSON(json['tracking']),
-        };
-    }
-
-    /* tslint:disable */
-    function VerifiedTokenObtainPairToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'refresh': value.refresh,
-            'otp_token': value.otp_token,
         };
     }
 
@@ -2993,54 +2925,6 @@ var Karrio = (function () {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
-         * Authenticate the user and return a token pair
-         * Obtain auth token pair
-         */
-        APIApi.prototype.authenticateRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.tokenObtainPair === null || requestParameters.tokenObtainPair === undefined) {
-                                throw new RequiredError('tokenObtainPair', 'Required parameter requestParameters.tokenObtainPair was null or undefined when calling authenticate.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenObtainPairToJSON(requestParameters.tokenObtainPair),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Authenticate the user and return a token pair
-         * Obtain auth token pair
-         */
-        APIApi.prototype.authenticate = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.authenticateRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
          * Data References
          */
         APIApi.prototype.dataRaw = function (initOverrides) {
@@ -3082,54 +2966,6 @@ var Karrio = (function () {
             });
         };
         /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * Get verified JWT token
-         */
-        APIApi.prototype.getVerifiedTokenRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.verifiedTokenObtainPair === null || requestParameters.verifiedTokenObtainPair === undefined) {
-                                throw new RequiredError('verifiedTokenObtainPair', 'Required parameter requestParameters.verifiedTokenObtainPair was null or undefined when calling getVerifiedToken.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token/verified",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: VerifiedTokenObtainPairToJSON(requestParameters.verifiedTokenObtainPair),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * Get verified JWT token
-         */
-        APIApi.prototype.getVerifiedToken = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.getVerifiedTokenRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
          * Instance Metadata
          */
         APIApi.prototype.pingRaw = function (initOverrides) {
@@ -3162,102 +2998,6 @@ var Karrio = (function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, this.pingRaw(initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Authenticate the user and return a token pair
-         * Refresh auth token
-         */
-        APIApi.prototype.refreshTokenRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.tokenRefresh === null || requestParameters.tokenRefresh === undefined) {
-                                throw new RequiredError('tokenRefresh', 'Required parameter requestParameters.tokenRefresh was null or undefined when calling refreshToken.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token/refresh",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenRefreshToJSON(requestParameters.tokenRefresh),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Authenticate the user and return a token pair
-         * Refresh auth token
-         */
-        APIApi.prototype.refreshToken = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.refreshTokenRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Verify an existent authentication token
-         * Verify token
-         */
-        APIApi.prototype.verifyTokenRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.tokenVerify === null || requestParameters.tokenVerify === undefined) {
-                                throw new RequiredError('tokenVerify', 'Required parameter requestParameters.tokenVerify was null or undefined when calling verifyToken.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token/verify",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenVerifyToJSON(requestParameters.tokenVerify),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response)];
-                    }
-                });
-            });
-        };
-        /**
-         * Verify an existent authentication token
-         * Verify token
-         */
-        APIApi.prototype.verifyToken = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.verifyTokenRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];

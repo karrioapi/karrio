@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.2`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.2.2`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2024.2
+ * The version of the OpenAPI document: 2024.2.2
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -10491,42 +10491,6 @@ export interface WebhookTestRequest {
 export const APIApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Authenticate the user and return a token pair
-         * @summary Obtain auth token pair
-         * @param {TokenObtainPair} tokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        authenticate: async (tokenObtainPair: TokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'tokenObtainPair' is not null or undefined
-            assertParamExists('authenticate', 'tokenObtainPair', tokenObtainPair)
-            const localVarPath = `/api/token`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(tokenObtainPair, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * 
          * @summary Data References
          * @param {*} [options] Override http request option.
@@ -10550,42 +10514,6 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * @summary Get verified JWT token
-         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVerifiedToken: async (verifiedTokenObtainPair: VerifiedTokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'verifiedTokenObtainPair' is not null or undefined
-            assertParamExists('getVerifiedToken', 'verifiedTokenObtainPair', verifiedTokenObtainPair)
-            const localVarPath = `/api/token/verified`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(verifiedTokenObtainPair, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10622,78 +10550,6 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * Authenticate the user and return a token pair
-         * @summary Refresh auth token
-         * @param {TokenRefresh} tokenRefresh 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        refreshToken: async (tokenRefresh: TokenRefresh, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'tokenRefresh' is not null or undefined
-            assertParamExists('refreshToken', 'tokenRefresh', tokenRefresh)
-            const localVarPath = `/api/token/refresh`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(tokenRefresh, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Verify an existent authentication token
-         * @summary Verify token
-         * @param {TokenVerify} tokenVerify 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        verifyToken: async (tokenVerify: TokenVerify, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'tokenVerify' is not null or undefined
-            assertParamExists('verifyToken', 'tokenVerify', tokenVerify)
-            const localVarPath = `/api/token/verify`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(tokenVerify, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -10705,19 +10561,6 @@ export const APIApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = APIApiAxiosParamCreator(configuration)
     return {
         /**
-         * Authenticate the user and return a token pair
-         * @summary Obtain auth token pair
-         * @param {TokenObtainPair} tokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async authenticate(tokenObtainPair: TokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticate(tokenObtainPair, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.authenticate']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
          * 
          * @summary Data References
          * @param {*} [options] Override http request option.
@@ -10727,19 +10570,6 @@ export const APIApiFp = function (configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.data(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.data']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * @summary Get verified JWT token
-         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getVerifiedToken(verifiedTokenObtainPair: VerifiedTokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getVerifiedToken(verifiedTokenObtainPair, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.getVerifiedToken']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -10754,32 +10584,6 @@ export const APIApiFp = function (configuration?: Configuration) {
             const operationBasePath = operationServerMap['APIApi.ping']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
-        /**
-         * Authenticate the user and return a token pair
-         * @summary Refresh auth token
-         * @param {TokenRefresh} tokenRefresh 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async refreshToken(tokenRefresh: TokenRefresh, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.refreshToken(tokenRefresh, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.refreshToken']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Verify an existent authentication token
-         * @summary Verify token
-         * @param {TokenVerify} tokenVerify 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async verifyToken(tokenVerify: TokenVerify, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyToken(tokenVerify, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.verifyToken']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
     }
 };
 
@@ -10791,16 +10595,6 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
     const localVarFp = APIApiFp(configuration)
     return {
         /**
-         * Authenticate the user and return a token pair
-         * @summary Obtain auth token pair
-         * @param {APIApiAuthenticateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        authenticate(requestParameters: APIApiAuthenticateRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
-            return localVarFp.authenticate(requestParameters.tokenObtainPair, options).then((request) => request(axios, basePath));
-        },
-        /**
          * 
          * @summary Data References
          * @param {*} [options] Override http request option.
@@ -10808,16 +10602,6 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
          */
         data(options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
             return localVarFp.data(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * @summary Get verified JWT token
-         * @param {APIApiGetVerifiedTokenRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVerifiedToken(requestParameters: APIApiGetVerifiedTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
-            return localVarFp.getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -10828,84 +10612,8 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
         ping(options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
             return localVarFp.ping(options).then((request) => request(axios, basePath));
         },
-        /**
-         * Authenticate the user and return a token pair
-         * @summary Refresh auth token
-         * @param {APIApiRefreshTokenRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        refreshToken(requestParameters: APIApiRefreshTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
-            return localVarFp.refreshToken(requestParameters.tokenRefresh, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Verify an existent authentication token
-         * @summary Verify token
-         * @param {APIApiVerifyTokenRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        verifyToken(requestParameters: APIApiVerifyTokenRequest, options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
-            return localVarFp.verifyToken(requestParameters.tokenVerify, options).then((request) => request(axios, basePath));
-        },
     };
 };
-
-/**
- * Request parameters for authenticate operation in APIApi.
- * @export
- * @interface APIApiAuthenticateRequest
- */
-export interface APIApiAuthenticateRequest {
-    /**
-     * 
-     * @type {TokenObtainPair}
-     * @memberof APIApiAuthenticate
-     */
-    readonly tokenObtainPair: TokenObtainPair
-}
-
-/**
- * Request parameters for getVerifiedToken operation in APIApi.
- * @export
- * @interface APIApiGetVerifiedTokenRequest
- */
-export interface APIApiGetVerifiedTokenRequest {
-    /**
-     * 
-     * @type {VerifiedTokenObtainPair}
-     * @memberof APIApiGetVerifiedToken
-     */
-    readonly verifiedTokenObtainPair: VerifiedTokenObtainPair
-}
-
-/**
- * Request parameters for refreshToken operation in APIApi.
- * @export
- * @interface APIApiRefreshTokenRequest
- */
-export interface APIApiRefreshTokenRequest {
-    /**
-     * 
-     * @type {TokenRefresh}
-     * @memberof APIApiRefreshToken
-     */
-    readonly tokenRefresh: TokenRefresh
-}
-
-/**
- * Request parameters for verifyToken operation in APIApi.
- * @export
- * @interface APIApiVerifyTokenRequest
- */
-export interface APIApiVerifyTokenRequest {
-    /**
-     * 
-     * @type {TokenVerify}
-     * @memberof APIApiVerifyToken
-     */
-    readonly tokenVerify: TokenVerify
-}
 
 /**
  * APIApi - object-oriented interface
@@ -10914,18 +10622,6 @@ export interface APIApiVerifyTokenRequest {
  * @extends {BaseAPI}
  */
 export class APIApi extends BaseAPI {
-    /**
-     * Authenticate the user and return a token pair
-     * @summary Obtain auth token pair
-     * @param {APIApiAuthenticateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public authenticate(requestParameters: APIApiAuthenticateRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
-    }
-
     /**
      * 
      * @summary Data References
@@ -10938,18 +10634,6 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-     * @summary Get verified JWT token
-     * @param {APIApiGetVerifiedTokenRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public getVerifiedToken(requestParameters: APIApiGetVerifiedTokenRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * 
      * @summary Instance Metadata
      * @param {*} [options] Override http request option.
@@ -10958,30 +10642,6 @@ export class APIApi extends BaseAPI {
      */
     public ping(options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).ping(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Authenticate the user and return a token pair
-     * @summary Refresh auth token
-     * @param {APIApiRefreshTokenRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public refreshToken(requestParameters: APIApiRefreshTokenRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).refreshToken(requestParameters.tokenRefresh, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Verify an existent authentication token
-     * @summary Verify token
-     * @param {APIApiVerifyTokenRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public verifyToken(requestParameters: APIApiVerifyTokenRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).verifyToken(requestParameters.tokenVerify, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -11499,6 +11159,385 @@ export class AddressesApi extends BaseAPI {
      */
     public update(requestParameters: AddressesApiUpdateRequest, options?: AxiosRequestConfig) {
         return AddressesApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedAddressData, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * AuthApi - axios parameter creator
+ * @export
+ */
+export const AuthApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Obtain auth token pair
+         * @param {TokenObtainPair} tokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticate: async (tokenObtainPair: TokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenObtainPair' is not null or undefined
+            assertParamExists('authenticate', 'tokenObtainPair', tokenObtainPair)
+            const localVarPath = `/api/token`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenObtainPair, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * @summary Get verified JWT token
+         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVerifiedToken: async (verifiedTokenObtainPair: VerifiedTokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'verifiedTokenObtainPair' is not null or undefined
+            assertParamExists('getVerifiedToken', 'verifiedTokenObtainPair', verifiedTokenObtainPair)
+            const localVarPath = `/api/token/verified`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(verifiedTokenObtainPair, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Refresh auth token
+         * @param {TokenRefresh} tokenRefresh 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        refreshToken: async (tokenRefresh: TokenRefresh, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenRefresh' is not null or undefined
+            assertParamExists('refreshToken', 'tokenRefresh', tokenRefresh)
+            const localVarPath = `/api/token/refresh`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenRefresh, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Verify an existent authentication token
+         * @summary Verify token
+         * @param {TokenVerify} tokenVerify 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyToken: async (tokenVerify: TokenVerify, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenVerify' is not null or undefined
+            assertParamExists('verifyToken', 'tokenVerify', tokenVerify)
+            const localVarPath = `/api/token/verify`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenVerify, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuthApi - functional programming interface
+ * @export
+ */
+export const AuthApiFp = function (configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Obtain auth token pair
+         * @param {TokenObtainPair} tokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authenticate(tokenObtainPair: TokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticate(tokenObtainPair, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.authenticate']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * @summary Get verified JWT token
+         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getVerifiedToken(verifiedTokenObtainPair: VerifiedTokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getVerifiedToken(verifiedTokenObtainPair, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.getVerifiedToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Refresh auth token
+         * @param {TokenRefresh} tokenRefresh 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async refreshToken(tokenRefresh: TokenRefresh, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.refreshToken(tokenRefresh, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.refreshToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Verify an existent authentication token
+         * @summary Verify token
+         * @param {TokenVerify} tokenVerify 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async verifyToken(tokenVerify: TokenVerify, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyToken(tokenVerify, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.verifyToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * AuthApi - factory interface
+ * @export
+ */
+export const AuthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthApiFp(configuration)
+    return {
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Obtain auth token pair
+         * @param {AuthApiAuthenticateRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticate(requestParameters: AuthApiAuthenticateRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
+            return localVarFp.authenticate(requestParameters.tokenObtainPair, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * @summary Get verified JWT token
+         * @param {AuthApiGetVerifiedTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVerifiedToken(requestParameters: AuthApiGetVerifiedTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
+            return localVarFp.getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Refresh auth token
+         * @param {AuthApiRefreshTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        refreshToken(requestParameters: AuthApiRefreshTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
+            return localVarFp.refreshToken(requestParameters.tokenRefresh, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Verify an existent authentication token
+         * @summary Verify token
+         * @param {AuthApiVerifyTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyToken(requestParameters: AuthApiVerifyTokenRequest, options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
+            return localVarFp.verifyToken(requestParameters.tokenVerify, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for authenticate operation in AuthApi.
+ * @export
+ * @interface AuthApiAuthenticateRequest
+ */
+export interface AuthApiAuthenticateRequest {
+    /**
+     * 
+     * @type {TokenObtainPair}
+     * @memberof AuthApiAuthenticate
+     */
+    readonly tokenObtainPair: TokenObtainPair
+}
+
+/**
+ * Request parameters for getVerifiedToken operation in AuthApi.
+ * @export
+ * @interface AuthApiGetVerifiedTokenRequest
+ */
+export interface AuthApiGetVerifiedTokenRequest {
+    /**
+     * 
+     * @type {VerifiedTokenObtainPair}
+     * @memberof AuthApiGetVerifiedToken
+     */
+    readonly verifiedTokenObtainPair: VerifiedTokenObtainPair
+}
+
+/**
+ * Request parameters for refreshToken operation in AuthApi.
+ * @export
+ * @interface AuthApiRefreshTokenRequest
+ */
+export interface AuthApiRefreshTokenRequest {
+    /**
+     * 
+     * @type {TokenRefresh}
+     * @memberof AuthApiRefreshToken
+     */
+    readonly tokenRefresh: TokenRefresh
+}
+
+/**
+ * Request parameters for verifyToken operation in AuthApi.
+ * @export
+ * @interface AuthApiVerifyTokenRequest
+ */
+export interface AuthApiVerifyTokenRequest {
+    /**
+     * 
+     * @type {TokenVerify}
+     * @memberof AuthApiVerifyToken
+     */
+    readonly tokenVerify: TokenVerify
+}
+
+/**
+ * AuthApi - object-oriented interface
+ * @export
+ * @class AuthApi
+ * @extends {BaseAPI}
+ */
+export class AuthApi extends BaseAPI {
+    /**
+     * Authenticate the user and return a token pair
+     * @summary Obtain auth token pair
+     * @param {AuthApiAuthenticateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public authenticate(requestParameters: AuthApiAuthenticateRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+     * @summary Get verified JWT token
+     * @param {AuthApiGetVerifiedTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public getVerifiedToken(requestParameters: AuthApiGetVerifiedTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Authenticate the user and return a token pair
+     * @summary Refresh auth token
+     * @param {AuthApiRefreshTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public refreshToken(requestParameters: AuthApiRefreshTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).refreshToken(requestParameters.tokenRefresh, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Verify an existent authentication token
+     * @summary Verify token
+     * @param {AuthApiVerifyTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public verifyToken(requestParameters: AuthApiVerifyTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).verifyToken(requestParameters.tokenVerify, options).then((request) => request(this.axios, this.basePath));
     }
 }
 

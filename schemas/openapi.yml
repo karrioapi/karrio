@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.2`.
+    The current version is `2024.2.2`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: '2024.2'
+  version: 2024.2.2
 paths:
   /:
     get:
@@ -134,7 +134,7 @@ paths:
       description: Authenticate the user and return a token pair
       summary: Obtain auth token pair
       tags:
-      - API
+      - Auth
       requestBody:
         content:
           application/json:
@@ -154,7 +154,7 @@ paths:
       description: Authenticate the user and return a token pair
       summary: Refresh auth token
       tags:
-      - API
+      - Auth
       requestBody:
         content:
           application/json:
@@ -175,7 +175,7 @@ paths:
         code.
       summary: Get verified JWT token
       tags:
-      - API
+      - Auth
       requestBody:
         content:
           application/json:
@@ -195,7 +195,7 @@ paths:
       description: Verify an existent authentication token
       summary: Verify token
       tags:
-      - API
+      - Auth
       requestBody:
         content:
           application/json:
@@ -9765,8 +9765,9 @@ components:
       description: '-u key_xxxxxxxx:'
 tags:
 - name: API
-  description: "API instance metadata and authentication resources.\n            \
-    \    "
+  description: "API instance metadata resources.\n                "
+- name: Auth
+  description: "API authentication resources.\n                "
 - name: Carriers
   description: "This is an object representing your Karrio carrier account connectsions.\n\
     \                You can retrieve all configured connections available to your\
