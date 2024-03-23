@@ -31,9 +31,25 @@ To integrate a custom carrier at this stage, you will need:
 
 2. Generate Python data types from the carrier API schemas
 
+3. Define carrier account and connection settings 
+
+4. Set up API calls under proxy
+
+5. Implement the Mapper functions
+
+6. Add a database model for karrio server
+
+7. Add the carrier configuration to the dashboard
+
 :::info
 The package naming convention for extensions is `karrio.[carrier_name]`
 :::
+
+---
+
+#### Prerequisites
+
+Make sure that you have set up your development environment as instructed in the [development guide](/product/resources/development#working-on-karrio-sdk-core-and-all-extensions).
 
 #### 1. Create a karrio extension package
 
@@ -41,60 +57,24 @@ Once you have [karrio installed for development](/product/resources/development)
 You can run the following command to scafold a karrio extension for you carrier.
 
 ```terminal
-python modules/cli add-extension
-```
-or 
-```terminal
 ./bin/cli add-extension
 ```
 
-```
-Id: usps                                # Karrio unique carrier_name
-Name: USPS                              # Carrier label that will be used throughout the app
-Features [tracking, rating, shipping]:  # The carrier features you wish to integrate
-Version [2023.1]:                       # The extension initial version
-Is XML API? [y/n]:                      # Specify whether the carrier' API data format is XML. (n - for JSON APIs)
+```terminal
+Carrier slug: freight_express            # Karrio unique carrier_name
+Display name: Freight Express            # Carrier label that will be used throughout the app
+Features [tracking, rating, shipping]:   # The carrier features you wish to integrate
+Version [2024.3]:                        # The extension initial version
+Is XML API? [y/N]:                       # Specify whether the carrier' API data format is XML. (n - for JSON APIs)
+Generate new carrier: "Freight Express" extension with id "freight_express" and features [tracking, rating, shipping] [y/N]: y
 ```
 
 This command will create a karrio compatible extension folder under `modules/connectors/[carrier_name]`
 with all the boilerplate code required for your integration.
-From there, all you have to do is implement the API data mapping from and to karrio unified interface and add API contract tests
-to ensure that karrio generates the right requests for your API.
-Additionally, you need to instruct karrio on how to parse responses returned from your carrier' API.
+From there, all you have to do is to implement the API data mapping from and to karrio unified interface.
+And add API contract tests to ensure that karrio generates the right requests for your API.
 
-#### 2. Generate Python data types from the carrier API schemas
-
-Karrio uses some cool open source projects to generate API schema datatypes.
-
-:::info
-We strongly believe in **types** because with a good IDE setup, they help you understand
-the datatypes available and makes maintenance easy.
-:::
-
-- Generate Python datatypes for an XML/SOAP API
-
-Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
-Please check the [canadapost schema package](https://github.com/karrioapi/karrio/blob/main/modules/connectors/canadapost/generate) as an example.
-
-> generateDS is installed along with karrio' dev dependencies. So it should already be available.
-
-- Generate Python datatypes for a JSON API
-
-Karrio uses a fork of `quicktype` to generate Python dataclasses from the `jstruct` library to turn JSON request and response
-samples.
-Please check the [amazon_mws schema scripting](https://github.com/karrioapi/karrio/blob/main/modules/connectors/amazon_shipping/generate) as an example.
-
-
-:::info
-To use quicktype, you need to build a the custom docker image we have prepared for our fork.
-
-```terminal
-./bin/build-tool-image
-```
-:::
----
-
-### Extension anatomy
+##### Extension anatomy
 
 Considering the vision we aimed to achieve with karrio, the codebase has been modularized with a clear separation of
 concerns to decouple the carrier integration from the interface abstraction. Additionally, each carrier
@@ -110,25 +90,9 @@ karrio makes shipping API integration easy for a single carrier and in a multi-c
 is exponential.
 :::
 
-#### Module convention
+###### Signature
 
-Two modules are required to create a karrio extension.
-
-:::info `karrio.mappers.[carrier_name]`
-This is where the karrio abstract classes are implemented. Also, the Metadata require to identified
-the extension is also provided there.
-
-> on runtime, karrio retrieves all mappers by going trought the `karrio.mappers` modules
-
-:::
-
-:::info `karrio.providers.[carrier_name]`
-This is where the mapping between karrio Unified API data is mapped on the carrier data type corresponding requests
-:::
-
-#### extension signature
-
-The Mapper is the cornerstone ofkarrio 's abstraction. A `Metadata` declared at `karrio.mappers.[carrier_name].__init__`
+The Mapper is the base of karrio 's abstraction. A `Metadata` declared at `karrio/mappers/[carrier_name]/__init__`
 specifies the integration classes required to define a karrio compatible extension.
 
 ```text
@@ -158,7 +122,7 @@ METADATA = Metadata(
 )
 ```
 
-#### file structure
+##### File structure
 
 The carrier extension package folder structure looks like this
 
@@ -166,7 +130,12 @@ The carrier extension package folder structure looks like this
 extensions/[carrier_name]/
 ├── setup.py
 ├── generate
-├── karrio
+├── schemas
+|   └── error_response.json
+|   ├── rate_response.json
+|   ├── rate_request.json
+|   └── ...
+└── karrio
 │   ├── mappers
 │   │   └── [carrier_name]
 │   │       ├── __init__.py
@@ -193,15 +162,108 @@ extensions/[carrier_name]/
 │   |       └── utils.py
 │   └── schemas
 │       └── [carrier_name]
+│           ├── __init__.py
 │           ├── error_response.py
+│           ├── rate_request.py
+│           ├── rate_response.py
 │           └── ....
-└── schemas
-    └── error_response.json
+└── tests
+    ├── __init__.py
+    └── [carrier_name]
+        ├── __init__.py
+        ├── fixture.py
+        ├── test_rate.py
+        └── ...
 ```
 
 :::info
 Note that `pickup` and `shipment` modules are directories since there are often many sub to integrate such as
 **create**, **cancel**...
+:::
+
+###### Module convention
+
+Two modules are required to create a karrio extension.
+
+:::info `karrio.mappers.[carrier_name]`
+This is where the karrio abstract classes are implemented. Also, the Metadata require to identified
+the extension is also provided there.
+
+> on runtime, karrio retrieves all mappers by going trought the `karrio.mappers` modules
+
+:::
+
+:::info `karrio.providers.[carrier_name]`
+
+This is where the mapping between karrio Unified API data is mapped on the carrier data type corresponding requests
+
+:::
+
+:::info `karrio.schemas.[carrier_name]`
+
+This is where the your carrier generated python data types are stored.
+
+:::
+
+---
+
+#### 2. Generate Python data types from the carrier API schemas
+
+Karrio uses some cool open source projects to generate API schema datatypes.
+
+:::info
+We strongly believe in **types** because with a good IDE setup, they help you understand
+the datatypes available and makes maintenance easy.
+:::
+
+##### Preapre the API schema files
+
+- For JSON APIs
+
+First, you need to create `.json` files based on carrier API documentation under the `[carrier_name]/schemas` directory. 
+Check the [amazon_mws schemas files](https://github.com/karrioapi/karrio/blob/main/modules/connectors/amazon_shipping/schemas) as examples.
+
+Then, update the `generate` script to include the schema files list.
+Check the [amazon_mws schema scripting](https://github.com/karrioapi/karrio/blob/main/modules/connectors/amazon_shipping/generate) as an example.
+
+- For XML/SOAP APIs  
+
+First, you need to collect `.xsd` files from the carrier API documentation and add them to the `[carrier_name]/schemas` directory.
+Check the [canadapost schemas files](https://github.com/karrioapi/karrio/blob/main/modules/connectors/canadapost/schemas) as examples.
+
+Then, update the `generate` script to include the schema files list.
+Please check the [canadapost schema package](https://github.com/karrioapi/karrio/blob/main/modules/connectors/canadapost/generate) as an example.
+
+:::tip
+
+If the carrier is SOAP based with `.wsdl` files, you need to extract the `<xs:schema ...>` sections into `.xsd` files.
+
+:::
+
+##### Generate Python datatypes
+
+
+:::info For a XML/SOAP API
+
+Karrio uses the `generateDS` project cli to turn XML files and XML schemas from SOAP webservices into Python classes.
+
+:::tip
+
+generateDS is installed along with karrio' dev dependencies. So it should already be available.
+
+:::
+
+:::info For a JSON API
+
+Karrio uses a fork of `quicktype` to generate Python dataclasses from the `jstruct` library to turn JSON request and response
+samples.
+
+:::warning
+
+To use quicktype, you need to build a the custom docker image we have prepared for with our fork.
+```terminal
+./bin/build-tool-image
+```
 :::
 
 ---
