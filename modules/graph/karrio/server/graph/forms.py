@@ -5,7 +5,7 @@ from django.contrib.auth.tokens import default_token_generator
 
 from karrio.server.conf import settings
 from karrio.server.user.forms import SignUpForm
-
+from django_email_verification.confirm import _get_validated_field
 
 class UserRegistrationForm(SignUpForm):
     pass
@@ -33,6 +33,7 @@ class ConfirmPasswordResetForm(auth.SetPasswordForm):
 
 class ResetPasswordRequestForm(auth.PasswordResetForm):
     redirect_url = forms.URLField()
+    from_email =  _get_validated_field("EMAIL_FROM_ADDRESS")
 
     def save(self, **kwargs):
         super().save(
@@ -43,5 +44,6 @@ class ResetPasswordRequestForm(auth.PasswordResetForm):
                     redirect_url=self.cleaned_data["redirect_url"],
                 ),
                 "email_template_name": "karrio/password_reset_email.html",
+                "from_email" : self.from_email,
             }
         )
