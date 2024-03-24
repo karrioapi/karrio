@@ -89,7 +89,7 @@ export const CreateManifestModal: React.FC<ModalFormProps<CreateManifestModalPro
           <Disclosure as='div' className="card px-0 my-3">
             <Disclosure.Button as='header' className="p-3 is-clickable">
               <header className="is-flex is-justify-content-space-between">
-                <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">RECIPIENT</span>
+                <span className="is-title is-size-7 has-text-weight-bold is-vcentered my-2">ADDRESS</span>
               </header>
 
               <AddressDescription address={manifest.address as any} />
@@ -119,7 +119,6 @@ export const CreateManifestModal: React.FC<ModalFormProps<CreateManifestModalPro
             className="is-small"
             wrapperClass="column px-0 py-2"
             fieldClass="mb-0 p-0"
-            required
           />
 
           <div className="p-3 my-5"></div>
