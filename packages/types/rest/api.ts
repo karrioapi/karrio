@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.2.2`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.2.3`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2024.2.2
+ * The version of the OpenAPI document: 2024.2.3
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -3216,37 +3216,6 @@ export type CustomsDutyBillingAddressCountryCodeEnum = typeof CustomsDutyBilling
 /**
  * 
  * @export
- * @interface CustomsList
- */
-export interface CustomsList {
-    /**
-     * 
-     * @type {number}
-     * @memberof CustomsList
-     */
-    'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Customs>}
-     * @memberof CustomsList
-     */
-    'results': Array<Customs>;
-}
-/**
- * 
- * @export
  * @interface DocumentDetails
  */
 export interface DocumentDetails {
@@ -6399,117 +6368,6 @@ export const PatchedAddressDataCountryCodeEnum = {
 } as const;
 
 export type PatchedAddressDataCountryCodeEnum = typeof PatchedAddressDataCountryCodeEnum[keyof typeof PatchedAddressDataCountryCodeEnum];
-
-/**
- * 
- * @export
- * @interface PatchedCustomsData
- */
-export interface PatchedCustomsData {
-    /**
-     * The parcel content items
-     * @type {Array<CommodityData>}
-     * @memberof PatchedCustomsData
-     */
-    'commodities'?: Array<CommodityData>;
-    /**
-     * 
-     * @type {CustomsDuty}
-     * @memberof PatchedCustomsData
-     */
-    'duty'?: CustomsDuty | null;
-    /**
-     * 
-     * @type {CustomsDataDutyBillingAddress}
-     * @memberof PatchedCustomsData
-     */
-    'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'content_type'?: PatchedCustomsDataContentTypeEnum | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'content_description'?: string | null;
-    /**
-     * The customs \'term of trade\' also known as \'incoterm\'
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'incoterm'?: PatchedCustomsDataIncotermEnum | null;
-    /**
-     * The invoice reference number
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'invoice'?: string | null;
-    /**
-     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'invoice_date'?: string | null;
-    /**
-     * Indicates if the shipment is commercial
-     * @type {boolean}
-     * @memberof PatchedCustomsData
-     */
-    'commercial_invoice'?: boolean | null;
-    /**
-     * Indicate that signer certified confirmed all
-     * @type {boolean}
-     * @memberof PatchedCustomsData
-     */
-    'certify'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'signer'?: string | null;
-    /**
-     * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         
-     * @type {{ [key: string]: any; }}
-     * @memberof PatchedCustomsData
-     */
-    'options'?: { [key: string]: any; };
-}
-
-export const PatchedCustomsDataContentTypeEnum = {
-    Documents: 'documents',
-    Gift: 'gift',
-    Sample: 'sample',
-    Merchandise: 'merchandise',
-    ReturnMerchandise: 'return_merchandise',
-    Other: 'other',
-    Empty: '',
-    Null: 'null'
-} as const;
-
-export type PatchedCustomsDataContentTypeEnum = typeof PatchedCustomsDataContentTypeEnum[keyof typeof PatchedCustomsDataContentTypeEnum];
-export const PatchedCustomsDataIncotermEnum = {
-    Cfr: 'CFR',
-    Cif: 'CIF',
-    Cip: 'CIP',
-    Cpt: 'CPT',
-    Daf: 'DAF',
-    Ddp: 'DDP',
-    Ddu: 'DDU',
-    Deq: 'DEQ',
-    Des: 'DES',
-    Exw: 'EXW',
-    Fas: 'FAS',
-    Fca: 'FCA',
-    Fob: 'FOB',
-    Null: 'null'
-} as const;
-
-export type PatchedCustomsDataIncotermEnum = typeof PatchedCustomsDataIncotermEnum[keyof typeof PatchedCustomsDataIncotermEnum];
 
 /**
  * 
@@ -12613,523 +12471,6 @@ export class CarriersApi extends BaseAPI {
 
 
 /**
- * CustomsApi - axios parameter creator
- * @export
- */
-export const CustomsApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * Create a new customs declaration.
-         * @summary Create a customs info
-         * @param {CustomsData} customsData 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create: async (customsData: CustomsData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'customsData' is not null or undefined
-            assertParamExists('create', 'customsData', customsData)
-            const localVarPath = `/v1/customs_info`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(customsData, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Discard a customs declaration.
-         * @summary Discard a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        discard: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('discard', 'id', id)
-            const localVarPath = `/v1/customs_info/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Retrieve all stored customs declarations.
-         * @summary List all customs info
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/v1/customs_info`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Retrieve customs declaration.
-         * @summary Retrieve a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('retrieve', 'id', id)
-            const localVarPath = `/v1/customs_info/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * modify an existing customs declaration.
-         * @summary Update a customs info
-         * @param {string} id 
-         * @param {PatchedCustomsData} [patchedCustomsData] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        update: async (id: string, patchedCustomsData?: PatchedCustomsData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('update', 'id', id)
-            const localVarPath = `/v1/customs_info/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedCustomsData, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * CustomsApi - functional programming interface
- * @export
- */
-export const CustomsApiFp = function (configuration?: Configuration) {
-    const localVarAxiosParamCreator = CustomsApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * Create a new customs declaration.
-         * @summary Create a customs info
-         * @param {CustomsData} customsData 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async create(customsData: CustomsData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.create(customsData, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.create']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Discard a customs declaration.
-         * @summary Discard a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async discard(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.discard(id, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.discard']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Retrieve all stored customs declarations.
-         * @summary List all customs info
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CustomsList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.list']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Retrieve customs declaration.
-         * @summary Retrieve a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.retrieve']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * modify an existing customs declaration.
-         * @summary Update a customs info
-         * @param {string} id 
-         * @param {PatchedCustomsData} [patchedCustomsData] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async update(id: string, patchedCustomsData?: PatchedCustomsData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, patchedCustomsData, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.update']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-    }
-};
-
-/**
- * CustomsApi - factory interface
- * @export
- */
-export const CustomsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = CustomsApiFp(configuration)
-    return {
-        /**
-         * Create a new customs declaration.
-         * @summary Create a customs info
-         * @param {CustomsApiCreateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create(requestParameters: CustomsApiCreateRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.create(requestParameters.customsData, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Discard a customs declaration.
-         * @summary Discard a customs info
-         * @param {CustomsApiDiscardRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        discard(requestParameters: CustomsApiDiscardRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Retrieve all stored customs declarations.
-         * @summary List all customs info
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        list(options?: AxiosRequestConfig): AxiosPromise<CustomsList> {
-            return localVarFp.list(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Retrieve customs declaration.
-         * @summary Retrieve a customs info
-         * @param {CustomsApiRetrieveRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        retrieve(requestParameters: CustomsApiRetrieveRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.retrieve(requestParameters.id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * modify an existing customs declaration.
-         * @summary Update a customs info
-         * @param {CustomsApiUpdateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        update(requestParameters: CustomsApiUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.update(requestParameters.id, requestParameters.patchedCustomsData, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * Request parameters for create operation in CustomsApi.
- * @export
- * @interface CustomsApiCreateRequest
- */
-export interface CustomsApiCreateRequest {
-    /**
-     * 
-     * @type {CustomsData}
-     * @memberof CustomsApiCreate
-     */
-    readonly customsData: CustomsData
-}
-
-/**
- * Request parameters for discard operation in CustomsApi.
- * @export
- * @interface CustomsApiDiscardRequest
- */
-export interface CustomsApiDiscardRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsApiDiscard
-     */
-    readonly id: string
-}
-
-/**
- * Request parameters for retrieve operation in CustomsApi.
- * @export
- * @interface CustomsApiRetrieveRequest
- */
-export interface CustomsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsApiRetrieve
-     */
-    readonly id: string
-}
-
-/**
- * Request parameters for update operation in CustomsApi.
- * @export
- * @interface CustomsApiUpdateRequest
- */
-export interface CustomsApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsApiUpdate
-     */
-    readonly id: string
-
-    /**
-     * 
-     * @type {PatchedCustomsData}
-     * @memberof CustomsApiUpdate
-     */
-    readonly patchedCustomsData?: PatchedCustomsData
-}
-
-/**
- * CustomsApi - object-oriented interface
- * @export
- * @class CustomsApi
- * @extends {BaseAPI}
- */
-export class CustomsApi extends BaseAPI {
-    /**
-     * Create a new customs declaration.
-     * @summary Create a customs info
-     * @param {CustomsApiCreateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public create(requestParameters: CustomsApiCreateRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).create(requestParameters.customsData, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Discard a customs declaration.
-     * @summary Discard a customs info
-     * @param {CustomsApiDiscardRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public discard(requestParameters: CustomsApiDiscardRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Retrieve all stored customs declarations.
-     * @summary List all customs info
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public list(options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Retrieve customs declaration.
-     * @summary Retrieve a customs info
-     * @param {CustomsApiRetrieveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public retrieve(requestParameters: CustomsApiRetrieveRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * modify an existing customs declaration.
-     * @summary Update a customs info
-     * @param {CustomsApiUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public update(requestParameters: CustomsApiUpdateRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedCustomsData, options).then((request) => request(this.axios, this.basePath));
-    }
-}
-
-
-
-/**
  * DocumentsApi - axios parameter creator
  * @export
  */
@@ -16884,8 +16225,12 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [hasManifest] 
+         * @param {boolean} [hasTracker] 
          * @param {string} [id] 
          * @param {string} [keyword] 
+         * @param {string} [metaKey] 
+         * @param {string} [metaValue] 
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {string} [optionKey] 
@@ -16897,7 +16242,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, id?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/shipments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -16944,12 +16289,28 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                     createdBefore;
             }
 
+            if (hasManifest !== undefined) {
+                localVarQueryParameter['has_manifest'] = hasManifest;
+            }
+
+            if (hasTracker !== undefined) {
+                localVarQueryParameter['has_tracker'] = hasTracker;
+            }
+
             if (id !== undefined) {
                 localVarQueryParameter['id'] = id;
             }
 
             if (keyword !== undefined) {
                 localVarQueryParameter['keyword'] = keyword;
+            }
+
+            if (metaKey !== undefined) {
+                localVarQueryParameter['meta_key'] = metaKey;
+            }
+
+            if (metaValue !== undefined) {
+                localVarQueryParameter['meta_value'] = metaValue;
             }
 
             if (metadataKey !== undefined) {
@@ -17244,8 +16605,12 @@ export const ShipmentsApiFp = function (configuration?: Configuration) {
          * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [hasManifest] 
+         * @param {boolean} [hasTracker] 
          * @param {string} [id] 
          * @param {string} [keyword] 
+         * @param {string} [metaKey] 
+         * @param {string} [metaValue] 
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {string} [optionKey] 
@@ -17257,8 +16622,8 @@ export const ShipmentsApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, id?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShipmentList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, id, keyword, metadataKey, metadataValue, optionKey, optionValue, reference, service, status, trackingNumber, options);
+        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShipmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, hasManifest, hasTracker, id, keyword, metaKey, metaValue, metadataKey, metadataValue, optionKey, optionValue, reference, service, status, trackingNumber, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.list']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -17356,7 +16721,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, base
          * @throws {RequiredError}
          */
         list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<ShipmentList> {
-            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.id, requestParameters.keyword, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
          * Select your preferred rates to buy a shipment label.
@@ -17465,6 +16830,20 @@ export interface ShipmentsApiListRequest {
 
     /**
      * 
+     * @type {boolean}
+     * @memberof ShipmentsApiList
+     */
+    readonly hasManifest?: boolean
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ShipmentsApiList
+     */
+    readonly hasTracker?: boolean
+
+    /**
+     * 
      * @type {string}
      * @memberof ShipmentsApiList
      */
@@ -17476,6 +16855,20 @@ export interface ShipmentsApiListRequest {
      * @memberof ShipmentsApiList
      */
     readonly keyword?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentsApiList
+     */
+    readonly metaKey?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentsApiList
+     */
+    readonly metaValue?: string
 
     /**
      * 
@@ -17651,7 +17044,7 @@ export class ShipmentsApi extends BaseAPI {
      * @memberof ShipmentsApi
      */
     public list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig) {
-        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.id, requestParameters.keyword, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**

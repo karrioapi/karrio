@@ -4,7 +4,6 @@ import {
     AddressesApi,
     APIApi,
     CarriersApi,
-    CustomsApi,
     ParcelsApi,
     PickupsApi,
     ProxyApi,
@@ -26,7 +25,6 @@ export interface KarrioClientInterface {
     API: APIApi;
     addresses: AddressesApi;
     carriers: CarriersApi;
-    customs: CustomsApi;
     parcels: ParcelsApi;
     pickups: PickupsApi;
     proxy: ProxyApi;
@@ -45,7 +43,6 @@ export class KarrioClient implements KarrioClientInterface {
     API: APIApi;
     addresses: AddressesApi;
     carriers: CarriersApi;
-    customs: CustomsApi;
     parcels: ParcelsApi;
     pickups: PickupsApi;
     proxy: ProxyApi;
@@ -70,7 +67,6 @@ export class KarrioClient implements KarrioClientInterface {
         this.API = new APIApi(config, config.basePath, axiosInstance);
         this.addresses = new AddressesApi(config, config.basePath, axiosInstance);
         this.carriers = new CarriersApi(config, config.basePath, axiosInstance);
-        this.customs = new CustomsApi(config, config.basePath, axiosInstance);
         this.parcels = new ParcelsApi(config, config.basePath, axiosInstance);
         this.pickups = new PickupsApi(config, config.basePath, axiosInstance);
         this.proxy = new ProxyApi(config, config.basePath, axiosInstance);
