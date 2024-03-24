@@ -57,6 +57,7 @@ def _extract_details(
             label_request_id=label_info.request_id,
             tracking_numbers=tracking_numbers,
             article_ids=article_ids,
+            manifest_required=True,
         ),
     )
 

@@ -296,7 +296,7 @@ ParsedShipmentResponse = [
         "label_type": "PDF",
         "docs": {"label": ANY},
         "meta": {
-            "group_id": ANY,
+            "manifest_required": False,
             "customer_request_ids": ANY,
             "carrier_tracking_link": "https://www.canadapost-postescanada.ca/track-reperage/en#/resultList?searchFor=123456789012",
         },
@@ -314,7 +314,7 @@ ParsedMultiPieceShipmentResponse = [
             "shipment_identifiers": ANY,
             "customer_request_ids": ANY,
             "tracking_numbers": ANY,
-            "group_id": ANY,
+            "manifest_required": False,
         },
         "label_type": "PDF",
         "shipment_identifier": "123456789012",

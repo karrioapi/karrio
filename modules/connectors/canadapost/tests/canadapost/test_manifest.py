@@ -23,26 +23,42 @@ class TestCanadaPostManifest(unittest.TestCase):
 
     def test_create_manifest(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
-            mock.side_effect = [ManifestResponse, ManifestFile, ManifestFile]
+            mock.side_effect = [
+                ManifestsResponse,
+                ManifestResponse,
+                ManifestResponse,
+                ManifestFile,
+                ManifestFile,
+            ]
             karrio.Manifest.create(self.ManifestRequest).from_(gateway)
 
-            create, download1, download2 = mock.call_args_list
+            create, manifest1, manifest2, download1, download2 = mock.call_args_list
             self.assertEqual(
                 create[1]["url"],
                 f"{gateway.settings.server_url}/rs/2004381/2004381/manifest",
             )
             self.assertEqual(
-                download1[1]["url"],
+                manifest1[1]["url"],
                 f"https://XX/1111111111/222222222/manifest/444444444444",
             )
             self.assertEqual(
-                download2[1]["url"],
+                manifest2[1]["url"],
                 f"https://XX/1111111111/222222222/manifest/333333333333",
+            )
+            self.assertEqual(
+                download1[1]["url"],
+                f"https://ct.soa-gw.canadapost.ca/rs/artifact/6e93d53968881714/10005457526/0",
             )
 
     def test_parse_manifest_response(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
-            mock.side_effect = [ManifestResponse, ManifestFile, ManifestFile]
+            mock.side_effect = [
+                ManifestsResponse,
+                ManifestResponse,
+                ManifestResponse,
+                ManifestFile,
+                ManifestFile,
+            ]
             parsed_response = (
                 karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
             )
@@ -54,6 +70,8 @@ class TestCanadaPostManifest(unittest.TestCase):
             mock.side_effect = [
                 ShipmentResponse1,
                 ShipmentResponse2,
+                ManifestsResponse,
+                ManifestResponse,
                 ManifestResponse,
                 ManifestFile,
                 ManifestFile,
@@ -70,7 +88,13 @@ class TestCanadaPostManifest(unittest.TestCase):
 
     def test_parse_manifest_response_from_shipments(self):
         with patch("karrio.mappers.canadapost.proxy.lib.request") as mock:
-            mock.side_effect = [ManifestResponse, ManifestFile, ManifestFile]
+            mock.side_effect = [
+                ManifestsResponse,
+                ManifestResponse,
+                ManifestResponse,
+                ManifestFile,
+                ManifestFile,
+            ]
             parsed_response = (
                 karrio.Manifest.create(self.ManifestRequestWithShipments)
                 .from_(gateway)
@@ -219,12 +243,32 @@ ManifestRequest = """<transmit-set xmlns="http://www.canadapost.ca/ws/manifest-v
 </transmit-set>
 """
 
-ManifestResponse = """<manifests>
+ManifestsResponse = """<manifests>
     <link rel="manifest" href="https://XX/1111111111/222222222/manifest/444444444444"
         media-type="application/vnd.cpc.manifest-v8+xml"></link>
     <link rel="manifest" href="https://XX/1111111111/222222222/manifest/333333333333"
         media-type="application/vnd.cpc.manifest-v8+xml"></link>
 </manifests>
+"""
+
+ManifestResponse = """<?xml version="1.0" encoding="UTF-8"?>
+<manifest xmlns="http://www.canadapost.ca/ws/manifest-v8">
+    <po-number>P123456789</po-number>
+    <links>
+        <link rel="self"
+            href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/manifest/732071711235567991"
+            media-type="application/vnd.cpc.manifest-v8+xml" />
+        <link rel="details"
+            href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/manifest/732071711235567991/details"
+            media-type="application/vnd.cpc.manifest-v8+xml" />
+        <link rel="manifestShipments"
+            href="https://ct.soa-gw.canadapost.ca/rs/0002004381/0002004381/shipment?manifestId=732071711235567991"
+            media-type="application/vnd.cpc.shipment-v8+xml" />
+        <link rel="artifact"
+            href="https://ct.soa-gw.canadapost.ca/rs/artifact/6e93d53968881714/10005457526/0"
+            media-type="application/pdf" />
+    </links>
+</manifest>
 """
 
 ShipmentResponse1 = """<shipment-details>

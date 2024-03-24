@@ -68,6 +68,7 @@ def manifest_request(
                 (
                     _.get("meta", {}).get("group_id")
                     for _ in (options.shipments.state or [])
+                    if lib.text(_.get("meta", {}).get("group_id")) is not None
                 )
             )
         ]

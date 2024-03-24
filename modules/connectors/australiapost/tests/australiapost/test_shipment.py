@@ -148,6 +148,7 @@ ParsedShipmentResponse = [
             "carrier_tracking_link": "https://auspost.com.au/mypost/beta/track/details/ABC000128",
             "label_request_id": "c2991876-9596-42ed-aed3-dd11dcfb03ba",
             "tracking_numbers": ["ABC000128", "ABC000128", "ABC000128"],
+            "manifest_required": True,
         },
         "shipment_identifier": "9lesEAOvOm4AAAFI3swaDRYB",
         "tracking_number": "ABC000128",

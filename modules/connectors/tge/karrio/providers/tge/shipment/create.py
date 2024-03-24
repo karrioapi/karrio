@@ -57,6 +57,7 @@ def _extract_details(
             sscc_count=sscc_count,
             ShipmentID=tracking_number,
             shipment_count=shipment_count,
+            manifest_required=True,
         ),
     )
 

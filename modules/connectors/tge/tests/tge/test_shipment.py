@@ -101,6 +101,7 @@ ParsedShipmentResponse = [
             "ShipmentID": "8880419999995",
             "shipment_count": 9999995,
             "sscc_count": 341761002,
+            "manifest_required": True,
         },
         "shipment_identifier": "8880419999995",
         "tracking_number": "8880419999995",
