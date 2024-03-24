@@ -44,7 +44,7 @@ def forwards_func(apps, schema_editor):
                 config={
                     "transmit_shipment_by_default": True,
                 },
-                created_by=carrier.created_by,
+                **(dict(created_by=carrier.created_by) if carrier.created_by else {}),
             )
 
 
