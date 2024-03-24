@@ -1,9 +1,12 @@
 import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, formatRef, isNone, preventPropagation, url$ } from '@karrio/lib';
 import { useSystemCarrierConnections } from '@karrio/hooks/admin/connections';
+import { CreateManifestModal } from '@karrio/ui/modals/create-manifest-modal';
 import { useCarrierConnections } from '@karrio/hooks/user-connection';
 import { CarrierImage } from '@karrio/ui/components/carrier-image';
+import { ShipmentMenu } from '@karrio/ui/components/shipment-menu';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
 import { StatusBadge } from '@karrio/ui/components/status-badge';
+import { ConfirmModal } from '@karrio/ui/modals/confirm-modal';
 import { DashboardLayout } from '@/layouts/dashboard-layout';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { AddressType, ShipmentType } from '@karrio/types';
@@ -16,11 +19,13 @@ import { Spinner } from '@karrio/ui/components';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import React from 'react';
+import { ManifestData } from '@karrio/types/rest/api';
 
 export { getServerSideProps } from "@/context/main";
 
 const ContextProviders = bundleContexts([
   ModalProvider,
+  ConfirmModal,
 ]);
 
 export default function Page(pageProps: any) {
@@ -50,6 +55,16 @@ export default function Page(pageProps: any) {
     // Helper functions            -----------------------------------------------------------
     //#region
 
+    const getRate = (shipment: any) => (
+      shipment.selected_rate
+      || (shipment?.rates || []).find(_ => _.service === shipment?.options?.preferred_service)
+      || (shipment?.rates || [])[0]
+      || shipment
+    );
+    const getCarrier = (rate?: ShipmentType['rates'][0]) => (
+      user_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
+      || system_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
+    );
     const updateFilter = (extra: Partial<any> = {}) => {
       const query = {
         ...filter,
@@ -75,16 +90,24 @@ export default function Page(pageProps: any) {
         setSelection(checked ? [...selection, name] : selection.filter(id => id !== name));
       }
     };
-    const getRate = (shipment: any) => (
-      shipment.selected_rate
-      || (shipment?.rates || []).find(_ => _.service === shipment?.options?.preferred_service)
-      || (shipment?.rates || [])[0]
-      || shipment
-    );
-    const getCarrier = (rate?: ShipmentType['rates'][0]) => (
-      user_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
-      || system_connections?.find(_ => _.id === rate?.meta?.carrier_connection_id || _.carrier_id === rate?.carrier_id)
-    );
+    const compatibleCarrierSelection = (selection: string[]) => {
+      const carrier_id = shipments?.edges?.find(({ node: shipment }) => selection.includes(shipment.id))?.node?.carrier_id;
+      return (shipments?.edges || []).filter(({ node: shipment }) => (
+        selection.includes(shipment.id) && shipment.carrier_id == carrier_id
+      )).length === selection.length;
+    };
+    const computeManifestData = (selection: string[], current: typeof shipments): ManifestData => {
+      const shipment = (current?.edges || []).find(({ node: shipment }) => selection.includes(shipment.id))?.node;
+      const { id, ...address } = shipment?.shipper || {} as any
+
+      return {
+        address,
+        shipment_ids: selection,
+        reference: shipment?.reference as string,
+        carrier_name: shipment?.carrier_name as string,
+      };
+    }
+
 
     //#endregion
 
@@ -102,11 +125,11 @@ export default function Page(pageProps: any) {
 
         <div className="tabs">
           <ul>
-            <li className={`is-capitalized has-text-weight-semibold is-active`}>
-              <a>Pending</a>
-            </li>
             <li className={`is-capitalized has-text-weight-semibold`}>
               <AppLink href="/manifests"><span>Ready</span></AppLink>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold is-active`}>
+              <a>Pending Shipments</a>
             </li>
           </ul>
         </div>
@@ -133,11 +156,16 @@ export default function Page(pageProps: any) {
 
                   {selection.length > 0 && <td className="p-1 is-vcentered" colSpan={6}>
                     <div className="buttons has-addons">
-                      <a
-                        href={url$`${metadata.HOST}/documents/shipments/manifests.pdf?shipments=${selection.join(',')}`}
-                        className={`button is-small is-default px-3`} target="_blank" rel="noreferrer">
-                        <span className="has-text-weight-semibold">Create Manifests</span>
-                      </a>
+
+                      <CreateManifestModal
+                        manifest={computeManifestData(selection, shipments)}
+                        trigger={
+                          <button type="button" className="button is-default" disabled={!compatibleCarrierSelection(selection)}>
+                            <span className="has-text-weight-semibold">Create Manifests</span>
+                          </button>
+                        }
+                      />
+
                     </div>
                   </td>}
 
@@ -164,11 +192,7 @@ export default function Page(pageProps: any) {
                       </label>
                     </td>
                     <td className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey"
-                      title={(
-                        isNone(getRate(shipment))
-                          ? "UNFULFILLED"
-                          : formatRef(((shipment.meta as any)?.service_name || getRate(shipment).service) as string)
-                      )}
+                      title={formatRef(((shipment.meta as any)?.service_name || getRate(shipment).service) as string)}
                     >
                       <div className="icon-text">
                         <CarrierImage
@@ -178,13 +202,10 @@ export default function Page(pageProps: any) {
                           background={(shipment.selected_rate_carrier || getCarrier(getRate(shipment)))?.config?.brand_color}
                         />
                         <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
-                          <span className="has-text-info has-text-weight-bold">
-                            {!isNone(shipment.tracking_number) && <span>{shipment.tracking_number}</span>}
-                            {isNone(shipment.tracking_number) && <span> - </span>}
-                          </span><br />
+                          <span className="has-text-info has-text-weight-bold">{shipment.tracking_number}</span>
+                          <br />
                           <span className="text-ellipsis">
-                            {!isNone(getRate(shipment).carrier_name) && formatRef(((getRate(shipment).meta as any)?.service_name || getRate(shipment).service) as string)}
-                            {isNone(getRate(shipment).carrier_name) && "UNFULFILLED"}
+                            {formatRef(((getRate(shipment).meta as any)?.service_name || getRate(shipment).service) as string)}
                           </span>
                         </div>
                       </div>
@@ -209,7 +230,7 @@ export default function Page(pageProps: any) {
                       </p>
                     </td>
                     <td className="action is-vcentered px-0">
-
+                      <ShipmentMenu shipment={shipment as any} className="is-fullwidth" />
                     </td>
                   </tr>
                 ))}

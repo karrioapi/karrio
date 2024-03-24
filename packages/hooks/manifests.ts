@@ -1,7 +1,7 @@
 import { ManifestFilter, GetManifests, GetManifest, GET_MANIFESTS, GET_MANIFEST } from "@karrio/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { gqlstr, handleFailure, insertUrlParam, onError } from "@karrio/lib";
-import { ManifestType } from "@karrio/types";
+import { ManifestData } from "@karrio/types/rest/api";
 import { useKarrio } from "./karrio";
 import React from "react";
 
@@ -102,13 +102,13 @@ export function useManifestMutation() {
   const queryClient = useQueryClient();
   const karrio = useKarrio();
   const invalidateCache = () => {
-    queryClient.invalidateQueries(['manifests']);
+    queryClient.invalidateQueries(['shipments']);
   };
 
   // Mutations
   // REST requests
   const createManifest = useMutation(
-    (data: ManifestType) => handleFailure(
+    (data: ManifestData) => handleFailure(
       karrio.manifests.create({ manifestData: (data as any) }).then(({ data }) => data)
     ),
     { onSuccess: invalidateCache, onError }

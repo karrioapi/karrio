@@ -213,8 +213,10 @@ def shipment_request(
                         other_reason=customs.content_type,
                         duties_and_taxes_prepaid=customs.duty.account_number,
                         certificate_number=customs.options.certificate_number.state,
-                        licence_number=customs.options.license_number.state,
-                        invoice_number=customs.invoice,
+                        licence_number=lib.text(
+                            customs.options.license_number.state, max=10
+                        ),
+                        invoice_number=lib.text(customs.invoice, max=10),
                         sku_list=(
                             (
                                 canadapost.sku_listType(

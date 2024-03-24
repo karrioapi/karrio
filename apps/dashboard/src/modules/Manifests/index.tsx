@@ -1,11 +1,11 @@
-import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, formatRef, isNone, preventPropagation, url$ } from '@karrio/lib';
+import { formatAddressLocationShort, formatAddressShort, formatCarrierSlug, formatDateTime, isNone, preventPropagation, url$ } from '@karrio/lib';
 import { useSystemCarrierConnections } from '@karrio/hooks/admin/connections';
 import { useCarrierConnections } from '@karrio/hooks/user-connection';
 import { CarrierImage } from '@karrio/ui/components/carrier-image';
 import { AuthenticatedPage } from '@/layouts/authenticated-page';
-import { StatusBadge } from '@karrio/ui/components/status-badge';
 import { DashboardLayout } from '@/layouts/dashboard-layout';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
+import { MenuComponent } from '@karrio/ui/components/menu';
 import { AddressType, ManifestType } from '@karrio/types';
 import { useLoader } from '@karrio/ui/components/loader';
 import { AppLink } from '@karrio/ui/components/app-link';
@@ -16,7 +16,6 @@ import { Spinner } from '@karrio/ui/components';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import React from 'react';
-import { MenuComponent } from '@karrio/ui/components/menu';
 
 export { getServerSideProps } from "@/context/main";
 
@@ -92,11 +91,11 @@ export default function Page(pageProps: any) {
 
         <div className="tabs">
           <ul>
-            <li className={`is-capitalized has-text-weight-semibold`}>
-              <AppLink href="/manifests/create_manifests"><span>Pending</span></AppLink>
-            </li>
             <li className={`is-capitalized has-text-weight-semibold is-active`}>
               <a>Ready</a>
+            </li>
+            <li className={`is-capitalized has-text-weight-semibold`}>
+              <AppLink href="/manifests/create_manifests"><span>Pending Shipments</span></AppLink>
             </li>
           </ul>
         </div>
