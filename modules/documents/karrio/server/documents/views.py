@@ -165,6 +165,50 @@ class OrderDocsPrinter(VirtualDownloadView):
         return ContentFile(buffer.getvalue(), name=self.name)
 
 
+class ManifestDocsPrinter(VirtualDownloadView):
+    @openapi.extend_schema(exclude=True)
+    def get(
+        self,
+        request,
+        doc: str = "manifest",
+        format: str = "pdf",
+        **kwargs,
+    ):
+        """Retrieve a shipment label."""
+        from karrio.server.manager.models import Manifest
+
+        if doc not in ["manifest"]:
+            return JsonResponse(
+                dict(error=f"Invalid document type: {doc}"),
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        query_params = request.GET.dict()
+        self.attachment = "download" in query_params
+        ids = query_params.get("manifests", "").split(",")
+
+        self.format = (format or "").lower()
+        self.name = f"{doc}s - {timezone.now()}.{self.format}"
+        queryset = Manifest.objects.filter(id__in=ids, manifest__isnull=False)
+
+        self.documents = queryset.values_list(doc, "reference")
+
+        response = super(ManifestDocsPrinter, self).get(
+            request, doc, self.format, **kwargs
+        )
+        response["X-Frame-Options"] = "ALLOWALL"
+        return response
+
+    def get_file(self):
+        content = base64.b64decode(
+            lib.bundle_base64([doc for doc, _ in self.documents], self.format.upper())
+        )
+        buffer = io.BytesIO()
+        buffer.write(content)
+
+        return ContentFile(buffer.getvalue(), name=self.name)
+
+
 urlpatterns = [
     re_path(
         r"^documents/templates/(?P<pk>\w+).(?P<slug>\w+)",
@@ -180,5 +224,10 @@ urlpatterns = [
         r"^documents/orders/(?P<doc>[a-z0-9]+).(?P<format>[a-zA-Z0-9]+)",
         OrderDocsPrinter.as_view(),
         name="orders-documents-print",
+    ),
+    re_path(
+        r"^documents/manifests/(?P<doc>[a-z0-9]+).(?P<format>[a-zA-Z0-9]+)",
+        ManifestDocsPrinter.as_view(),
+        name="manifests-documents-print",
     ),
 ]

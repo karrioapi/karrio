@@ -88,6 +88,36 @@ Karrio custom styling
   }
 }
 
+.manifests-table {
+  .selector {
+    width: 3%;
+  }
+
+  .carrier {
+    width: 25%;
+    min-width: 300px;
+  }
+
+  .address {
+    min-width: 200px;
+  }
+
+  .reference {
+    min-width: 150px;
+  }
+
+  .date {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
+
+  .action {
+    width: 35px;
+    min-width: 35px;
+  }
+}
+
 .connections-table {
   .carrier {
     width: 15%;

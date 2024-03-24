@@ -934,6 +934,10 @@ class Manifest(core.OwnedEntity):
     # Computed properties
 
     @property
+    def object_type(self):
+        return "manifest"
+
+    @property
     def carrier_id(self) -> str:
         return self.manifest_carrier.carrier_id
 

@@ -30,6 +30,7 @@ export type CustomsType = graph.get_shipment_shipment_customs & {
 export type ParcelType = graph.get_shipment_shipment_parcels & {
     items: CommodityType[];
 };
+export type ManifestType = graph.GetManifests_manifests_edges_node;
 export type TrackingEventType = graph.get_tracker_tracker_events;
 export type TrackerType = graph.get_tracker_tracker & {
     events: TrackingEventType[];

@@ -122,8 +122,9 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     query={query}
                     onReady={_ => setMaxQty(_?.unfulfilled_quantity)}
                     dropdownClass="is-small"
+                    fieldClass="mb-0 p-0"
+                    wrapperClass="column is-11 pl-2 pr-0 py-1"
                     className="is-small is-fullwidth"
-                    fieldClass="column is-11 mb-0 pl-2 pr-0 py-1"
                     placeholder="Link an order line item"
                   />
 
@@ -195,7 +196,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     label="Origin Country"
                     className="is-small"
                     dropdownClass="is-small"
-                    fieldClass="column mb-0 is-5 px-2 py-1"
+                    fieldClass="mb-0 p-0"
+                    wrapperClass="column mb-0 is-5 px-2 py-1"
                     value={commodity.origin_country}
                     onValueChange={value => dispatch({ name: "origin_country", value: value as string })}
                     disabled={!isNone(commodity?.parent_id)}

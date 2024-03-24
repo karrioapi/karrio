@@ -716,8 +716,8 @@ export default function CreateLabelPage(pageProps: any) {
                                     label={formatRef(option)}
                                     placeholder={formatRef(option)}
                                     className="is-small"
-                                    wrapperClass="pl-0 pr-2 py-1"
-                                    fieldClass="column mb-0 is-6 p-0"
+                                    fieldClass="mb-0 p-0"
+                                    wrapperClass="column is-6 pl-0 pr-2 py-1"
                                     defaultValue={shipment.options[option]}
                                     onChange={e => onChange({ options: { ...shipment.options, [option]: e.target.value } })}
                                   />

@@ -35,7 +35,6 @@ class TrackerFilter(utils.Paginated):
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[str]] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
@@ -49,11 +48,22 @@ class ShipmentFilter(utils.Paginated):
     reference: typing.Optional[str] = strawberry.UNSET
     service: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[utils.ShipmentStatusEnum]] = strawberry.UNSET
-    option_key: typing.Optional[typing.List[str]] = strawberry.UNSET
-    option_value: typing.Optional[str] = strawberry.UNSET
-    metadata_key: typing.Optional[typing.List[str]] = strawberry.UNSET
-    metadata_value: typing.Optional[str] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
+    option_key: typing.Optional[str] = strawberry.UNSET
+    option_value: typing.Optional[utils.JSON] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[utils.JSON] = strawberry.UNSET
+    meta_key: typing.Optional[str] = strawberry.UNSET
+    meta_value: typing.Optional[utils.JSON] = strawberry.UNSET
+    has_tracker: typing.Optional[bool] = strawberry.UNSET
+    has_manifest: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class ManifestFilter(utils.Paginated):
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
+    created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @strawberry.input

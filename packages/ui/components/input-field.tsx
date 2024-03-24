@@ -22,7 +22,7 @@ export const InputField: React.FC<InputFieldComponent> = ({ label, required, cla
   };
 
   return (
-    <div className={wrapperClass || ""}>
+    <div className={wrapperClass || "px-1 py-2"}>
       {label !== undefined && <label className="label is-capitalized" style={{ fontSize: ".8em" }}>
         {label}
         {required && <span className="icon is-small has-text-danger small-icon">
@@ -30,7 +30,7 @@ export const InputField: React.FC<InputFieldComponent> = ({ label, required, cla
         </span>}
       </label>}
 
-      <div className={`field ${fieldClass || ""}`}>
+      <div className={`field ${fieldClass || "p-0"}`}>
         {addonLeft ? <div className="control">{addonLeft}</div> : <></>}
 
         <div className={`control is-flex ${controlClass || ""}`}>

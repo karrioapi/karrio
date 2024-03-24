@@ -1,4 +1,4 @@
-import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, formatCarrierSlug, url$ } from "@karrio/lib";
+import { formatAddressShort, formatAddressLocationShort, formatDateTime, formatRef, getURLSearchParams, isListEqual, isNone, isNoneOrEmpty, formatCarrierSlug, url$, preventPropagation } from "@karrio/lib";
 import { ShipmentPreview, ShipmentPreviewContext } from "@/components/shipment-preview";
 import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
@@ -44,7 +44,6 @@ export default function ShipmentsPage(pageProps: any) {
       related_object: "shipment" as any, active: true,
     });
 
-    const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
     const updateFilter = (extra: Partial<any> = {}) => {
       const query = {
         ...filter,
@@ -113,10 +112,13 @@ export default function ShipmentsPage(pageProps: any) {
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Shipments</span>
           <div>
-            <ShipmentsFilter context={context} />
-            <AppLink href="/create_label?shipment_id=new" className="button is-primary is-small is-pulled-right ml-1">
+            <AppLink href="/create_label?shipment_id=new" className="button is-primary is-small mx-1">
               <span>Create Label</span>
             </AppLink>
+            <AppLink href="/manifests/create_manifests" className="button is-primary is-small mx-1">
+              <span>Manage manifests</span>
+            </AppLink>
+            <ShipmentsFilter context={context} />
           </div>
         </header>
 

@@ -14,6 +14,7 @@ import {
     WebhooksApi,
     BatchesApi,
     DocumentsApi,
+    ManifestsApi,
 } from './rest/api';
 import * as base from './base';
 
@@ -35,6 +36,7 @@ export interface KarrioClientInterface {
     webhooks: WebhooksApi;
     batches: BatchesApi;
     documents: DocumentsApi;
+    manifests: ManifestsApi;
     config: ConfigurationParameters;
     graphql: GraphQLApi
 }
@@ -52,6 +54,7 @@ export class KarrioClient implements KarrioClientInterface {
     orders: OrdersApi;
     webhooks: WebhooksApi;
     documents: DocumentsApi;
+    manifests: ManifestsApi;
     batches: BatchesApi;
     config: ConfigurationParameters;
     axios: AxiosInstance;
@@ -76,6 +79,7 @@ export class KarrioClient implements KarrioClientInterface {
         this.orders = new OrdersApi(config, config.basePath, axiosInstance);
         this.webhooks = new WebhooksApi(config, config.basePath, axiosInstance);
         this.documents = new DocumentsApi(config, config.basePath, axiosInstance);
+        this.manifests = new ManifestsApi(config, config.basePath, axiosInstance);
         this.batches = new BatchesApi(config, config.basePath, axiosInstance);
         this.graphql = new GraphQLApi(config.basePath, axiosInstance);
         this.admin = new GraphQLApi(`${config.basePath}/admin`, axiosInstance);
