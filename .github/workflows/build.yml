@@ -48,8 +48,8 @@ jobs:
 
           echo 'Pushing karrio server:${{ env.tag }}...'
           docker push karrio/server:${{ env.tag }}
-          docker tag karrio/server:${{ env.tag }} karrio/server:nightly
-          docker push karrio/server:nightly
+          docker tag karrio/server:${{ env.tag }} karrio/server:latest-rc
+          docker push karrio/server:latest-rc
 
   dashboard-build:
 
@@ -80,5 +80,5 @@ jobs:
           
           echo 'Pushing karrio dashboard:${{ env.tag }}...'
           docker push karrio/dashboard:${{ env.tag }}
-          docker tag karrio/dashboard:${{ env.tag }} karrio/dashboard:nightly
-          docker push karrio/dashboard:nightly
+          docker tag karrio/dashboard:${{ env.tag }} karrio/dashboard:latest-rc
+          docker push karrio/dashboard:latest-rc
