@@ -151,6 +151,12 @@ class Carrier(core.OwnedEntity):
                 services=[forms.model_to_dict(s) for s in self.settings.service_list]
             )
 
+        if hasattr(self.settings, "sscc_count"):
+            _computed_data.update(sscc_count=self.settings.sscc_count)
+
+        if hasattr(self.settings, "shipment_count"):
+            _computed_data.update(shipment_count=self.settings.shipment_count)
+
         if hasattr(self.settings, "cache"):
             _computed_data.update(cache=self.settings.cache)
 

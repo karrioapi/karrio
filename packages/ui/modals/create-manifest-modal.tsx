@@ -128,7 +128,7 @@ export const CreateManifestModal: React.FC<ModalFormProps<CreateManifestModalPro
               <span>Cancel</span>
             </button>
             <button className={"button is-primary m-1 is-small" + (mutation.createManifest.isLoading ? " is-loading" : "")}
-              disabled={isEqual(defaultValue, manifest) || mutation.createManifest.isLoading}
+              disabled={mutation.createManifest.isLoading}
               onClick={handleSubmit} type="button">
               <span>Create manifest{manifest.shipment_ids.length > 0 ? 's' : ''}</span>
             </button>

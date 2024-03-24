@@ -52,6 +52,10 @@ class Settings(core.Settings):
     def next_shipment_identifiers(
         self, options: lib.units.Options, package_count: int
     ) -> typing.Tuple[str, list, int, int]:
+        # get state from cache
+        cache_key = f"{self.carrier_name}|{self.api_key}"
+        state = self.cache.get(cache_key) or {}
+
         sscc_gs1 = lib.to_int(lib.text(self.connection_config.SSCC_GS1.state) or "")
         ship_gs1 = lib.to_int(lib.text(self.connection_config.SHIP_GS1.state) or "")
         sscc_count = (
@@ -80,22 +84,19 @@ class Settings(core.Settings):
         )
 
         # save in cache
-        cache_key = f"{self.carrier_name}|{self.api_key}"
-        state = self.cache.get(cache_key) or {}
-
-        sscc_count = sscc_count + package_count
-        shipment_count = shipment_count + 1
+        _sscc_count = sscc_count + package_count
+        _shipment_count = shipment_count + 1
 
         self.cache.set(
             cache_key,
-            {**state, "sscc_count": sscc_count, "shipment_count": shipment_count},
+            {**state, "sscc_count": _sscc_count, "shipment_count": _shipment_count},
         )
 
         return (
             ShipmentID,
             SSCCs,
-            shipment_count,
-            sscc_count,
+            _shipment_count,
+            _sscc_count,
         )
 
 
@@ -129,6 +130,8 @@ def calculate_sscc(gs1, sscc: int, index: int) -> str:
     _current = [int(_) for _ in f"{gs1}{_new_sscc}".zfill(17)]
     _odd_sum = sum([int(x) for _, x in enumerate(_current) if _ % 2 == 0])
     _even_sum = sum([int(x) for _, x in enumerate(_current) if _ % 2 != 0])
-    _digit = 100 - ((_odd_sum * 3) + _even_sum)
+    _sscc_sum = (_odd_sum * 3) + _even_sum
+    _nearest_multiple_of_ten = _sscc_sum + 10 - (_sscc_sum % 10)
+    _digit = _nearest_multiple_of_ten - _sscc_sum
 
     return f"{''.join([str(_) for _ in _current])}{_digit}".zfill(18)

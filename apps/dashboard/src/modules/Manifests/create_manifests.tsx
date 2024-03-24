@@ -14,12 +14,12 @@ import { useLoader } from '@karrio/ui/components/loader';
 import { AppLink } from '@karrio/ui/components/app-link';
 import { ModalProvider } from '@karrio/ui/modals/modal';
 import { useShipments } from '@karrio/hooks/shipment';
+import { ManifestData } from '@karrio/types/rest/api';
 import { bundleContexts } from '@karrio/hooks/utils';
 import { Spinner } from '@karrio/ui/components';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import React from 'react';
-import { ManifestData } from '@karrio/types/rest/api';
 
 export { getServerSideProps } from "@/context/main";
 
