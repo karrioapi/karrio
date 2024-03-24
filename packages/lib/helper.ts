@@ -17,6 +17,8 @@ const { publicRuntimeConfig } = getConfig();
 
 export const BASE_PATH = (publicRuntimeConfig?.BASE_PATH || '/').replace('//', '/');
 
+export const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
+
 export function p(strings: TemplateStringsArray, ...keys: any[]) {
   return url$`${BASE_PATH}/${url$(strings, ...keys)}`.replace("//", "/");
 }

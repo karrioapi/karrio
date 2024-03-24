@@ -116,6 +116,18 @@ class CarrierFilters(filters.FilterSet):
 
 
 class ShipmentFilters(filters.FilterSet):
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="shipment' keyword and indexes search",
+    )
+    tracking_number = filters.CharFilter(
+        field_name="tracking_number", lookup_expr="icontains"
+    )
+    id = filters.CharInFilter(
+        field_name="id",
+        lookup_expr="in",
+        help_text="id(s).",
+    )
     address = filters.CharFilter(
         method="address_filter",
         help_text="shipment recipient address line",
@@ -156,7 +168,7 @@ class ShipmentFilters(filters.FilterSet):
         Values: {', '.join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
         """,
     )
-    option_key = filters.CharInFilter(
+    option_key = filters.CharFilter(
         field_name="options",
         method="option_key_filter",
         help_text="shipment option keys.",
@@ -176,20 +188,43 @@ class ShipmentFilters(filters.FilterSet):
         method="metadata_value_filter",
         help_text="shipment metadata value",
     )
-    tracking_number = filters.CharFilter(
-        field_name="tracking_number", lookup_expr="icontains"
+    meta_key = filters.CharFilter(
+        field_name="meta",
+        method="meta_key_filter",
+        help_text="shipment meta keys.",
     )
-    keyword = filters.CharFilter(
-        method="keyword_filter",
-        help_text="shipment' keyword and indexes search",
+    meta_value = filters.CharFilter(
+        field_name="meta",
+        method="meta_value_filter",
+        help_text="shipment meta value",
     )
-    id = filters.CharInFilter(
-        field_name="id",
-        lookup_expr="in",
-        help_text="id(s).",
+    has_tracker = filters.BooleanFilter(
+        field_name="shipment_tracker",
+        help_text="shipment has tracker",
+        method="has_tracker_filter",
+    )
+    has_manifest = filters.BooleanFilter(
+        field_name="manifest",
+        help_text="shipment has manifest",
+        method="has_manifest_filter",
     )
 
     parameters = [
+        openapi.OpenApiParameter(
+            "tracking_number",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "keyword",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
         openapi.OpenApiParameter(
             "address",
             type=openapi.OpenApiTypes.STR,
@@ -254,18 +289,23 @@ class ShipmentFilters(filters.FilterSet):
             location=openapi.OpenApiParameter.QUERY,
         ),
         openapi.OpenApiParameter(
-            "tracking_number",
+            "meta_key",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
         openapi.OpenApiParameter(
-            "keyword",
+            "meta_value",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
         openapi.OpenApiParameter(
-            "id",
-            type=openapi.OpenApiTypes.STR,
+            "has_tracker",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "has_manifest",
+            type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
     ]
@@ -359,8 +399,11 @@ class ShipmentFilters(filters.FilterSet):
 
         return queryset.filter(query)
 
+    def service_filter(self, queryset, name, values):
+        return queryset.filter(models.Q(selected_rate__service__in=values))
+
     def option_key_filter(self, queryset, name, value):
-        return queryset.filter(models.Q(options__has_keys=value))
+        return queryset.filter(models.Q(options__has_key=value))
 
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(
@@ -372,7 +415,7 @@ class ShipmentFilters(filters.FilterSet):
         )
 
     def metadata_key_filter(self, queryset, name, value):
-        return queryset.filter(metadata__has_keys=value)
+        return queryset.filter(metadata__has_key=value)
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
@@ -383,8 +426,23 @@ class ShipmentFilters(filters.FilterSet):
             ]
         )
 
-    def service_filter(self, queryset, name, values):
-        return queryset.filter(models.Q(selected_rate__service__in=values))
+    def meta_key_filter(self, queryset, name, value):
+        return queryset.filter(meta__has_key=value)
+
+    def meta_value_filter(self, queryset, name, value):
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "meta")
+                if value in map(str, (o.get("meta") or {}).values())
+            ]
+        )
+
+    def has_tracker_filter(self, queryset, name, value):
+        return queryset.filter(shipment_tracker__isnull=not value)
+
+    def has_manifest_filter(self, queryset, name, value):
+        return queryset.filter(manifest__isnull=not value)
 
 
 class TrackerFilters(filters.FilterSet):
@@ -615,6 +673,11 @@ class RateSheetFilter(filters.FilterSet):
 
 
 class ManifestFilters(filters.FilterSet):
+    id = filters.CharInFilter(
+        field_name="id",
+        lookup_expr="in",
+        help_text="id(s).",
+    )
     carrier_name = filters.MultipleChoiceFilter(
         method="carrier_filter",
         choices=[(c, c) for c in dataunits.CARRIER_NAMES],

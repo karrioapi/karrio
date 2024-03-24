@@ -1,7 +1,6 @@
 import typing
 import base64
 import logging
-import datetime
 import functools
 import strawberry
 import dataclasses
@@ -32,8 +31,9 @@ JSON: typing.Any = strawberry.scalar(
 MANUAL_SHIPMENT_STATUSES = [
     (_.name, _.name)
     for _ in [
-        # serializers.ShipmentStatus.shipped,
         serializers.ShipmentStatus.in_transit,
+        serializers.ShipmentStatus.needs_attention,
+        serializers.ShipmentStatus.delivery_failed,
         serializers.ShipmentStatus.delivered,
     ]
 ]

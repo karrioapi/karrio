@@ -3623,3 +3623,100 @@ export const UPDATE_WORKSPACE_CONFIG = gql`mutation UpdateWorkspaceConfig($data:
   }
 }
 `;
+
+export const GET_MANIFESTS = gql`query GetManifests($filter: ManifestFilter) {
+  manifests(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        carrier_id
+        carrier_name
+        manifest_url
+        shipment_identifiers
+        reference
+        address {
+          id
+          postal_code
+          city
+          federal_tax_id
+          state_tax_id
+          person_name
+          company_name
+          country_code
+          email
+          phone_number
+          state_code
+          residential
+          street_number
+          address_line1
+          address_line2
+        }
+        manifest_carrier {
+          carrier_id
+          carrier_name
+          config
+        }
+        messages {
+          message
+          code
+        }
+        options
+        metadata
+        meta
+        created_at
+        updated_at
+      }
+    }
+  }
+}
+`;
+
+export const GET_MANIFEST = gql`query GetManifest($id: String!) {
+  manifest(id: $id) {
+    id
+    carrier_id
+    carrier_name
+    manifest_url
+    shipment_identifiers
+    reference
+    address {
+      id
+      postal_code
+      city
+      federal_tax_id
+      state_tax_id
+      person_name
+      company_name
+      country_code
+      email
+      phone_number
+      state_code
+      residential
+      street_number
+      address_line1
+      address_line2
+    }
+    manifest_carrier {
+      carrier_id
+      carrier_name
+      config
+    }
+    messages {
+      message
+      code
+    }
+    options
+    metadata
+    meta
+    created_at
+    updated_at
+  }
+}
+`;

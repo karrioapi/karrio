@@ -336,19 +336,38 @@ class Proxy(proxy.Proxy):
             },
         )
 
-        ctx.update(
-            files=lib.run_asynchronously(
-                lambda link: lib.request(
-                    decoder=lib.encode_base64,
-                    url=link.get("href"),
-                    method="GET",
-                    headers={
-                        "Authorization": f"Basic {self.settings.authorization}",
-                        "Accept": link.get("media"),
-                    },
-                ),
-                lib.find_element("link", lib.to_element(response)),
-            )
+        manifests = lib.run_asynchronously(
+            lambda link: lib.request(
+                url=link.get("href"),
+                trace=self.trace_as("xml"),
+                headers={
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept": (
+                        lib.text(link.get("media-type"))
+                        or "application/vnd.cpc.manifest-v8+xml"
+                    ),
+                },
+            ),
+            lib.find_element("link", lib.to_element(response)),
         )
+
+        if any(manifests):
+            ctx.update(
+                files=lib.run_asynchronously(
+                    lambda link: lib.request(
+                        decoder=lib.encode_base64,
+                        url=link.get("href"),
+                        headers={
+                            "Authorization": f"Basic {self.settings.authorization}",
+                            "Accept": link.get("media-type"),
+                        },
+                    ),
+                    [
+                        _
+                        for _ in lib.find_element("link", lib.to_element(manifests))
+                        if _.get("rel") == "artifact"
+                    ],
+                )
+            )
 
         return lib.Deserializable(response, lib.to_element, ctx)

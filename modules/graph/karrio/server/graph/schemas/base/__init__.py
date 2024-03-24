@@ -81,6 +81,13 @@ class Query:
         resolver=types.RateSheetType.resolve_list
     )
 
+    manifest: typing.Optional[types.ManifestType] = strawberry.field(
+        resolver=types.ManifestType.resolve
+    )
+    manifests: utils.Connection[types.ManifestType] = strawberry.field(
+        resolver=types.ManifestType.resolve_list
+    )
+
     carrier_connection: typing.Optional[types.CarrierConnectionType] = strawberry.field(
         resolver=types.ConnectionType.resolve
     )

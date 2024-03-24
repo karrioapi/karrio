@@ -173,10 +173,13 @@ export default function OrdersPage(pageProps: any) {
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Orders</span>
           <div>
-            <OrdersFilter context={context} />
-            <AppLink href="/draft_orders/new" className="button is-primary is-small is-pulled-right ml-1">
+            <AppLink href="/draft_orders/new" className="button is-primary is-small mx-1">
               <span>Create order</span>
             </AppLink>
+            <AppLink href="/manifests" className="button is-primary is-small mx-1">
+              <span>Manage manifests</span>
+            </AppLink>
+            <OrdersFilter context={context} />
           </div>
         </header>
 

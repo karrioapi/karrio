@@ -1,6 +1,6 @@
 import { ShipmentFilter, get_shipments, DISCARD_COMMODITY, PartialShipmentMutationInput, PARTIAL_UPDATE_SHIPMENT, DELETE_TEMPLATE, get_shipment, partial_shipment_update, discard_commodity, discard_customs, discard_parcel, GET_SHIPMENTS, GET_SHIPMENT, ChangeShipmentStatusMutationInput, CHANGE_SHIPMENT_STATUS, change_shipment_status, DISCARD_PARCEL } from "@karrio/types";
-import { gqlstr, handleFailure, insertUrlParam, isNoneOrEmpty, onError } from "@karrio/lib";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { gqlstr, handleFailure, insertUrlParam, onError } from "@karrio/lib";
 import { ShipmentType } from "@karrio/types";
 import { useKarrio } from "./karrio";
 import React from "react";
@@ -30,21 +30,31 @@ export function useShipments({ setVariablesToURL = false, isDisabled = false, pr
   function setFilter(options: ShipmentFilter) {
     const params = Object.keys(options).reduce((acc, key) => {
       if (["modal"].includes(key)) return acc;
-      return isNoneOrEmpty(options[key as keyof ShipmentFilter]) ? acc : {
+      if ((["carrier_name", "status", "service"].includes(key))) return ({
         ...acc,
-        [key]: (["carrier_name", "status", "service"].includes(key)
-          ? ([].concat(options[key as keyof ShipmentFilter]).reduce(
-            (acc, item: string) => (
-              typeof item == 'string'
-                ? [].concat(acc, item.split(',') as any)
-                : [].concat(acc, item)
-            ), []
-          ))
-          : (["offset", "first"].includes(key)
-            ? parseInt(options[key as keyof ShipmentFilter])
-            : options[key as keyof ShipmentFilter]
-          )
-        )
+        [key]: ([].concat(options[key as keyof ShipmentFilter]).reduce(
+          (acc, item: string) => (
+            typeof item == 'string'
+              ? [].concat(acc, item.split(',') as any)
+              : [].concat(acc, item)
+          ), []
+        ))
+      });
+      if (["offset", "first"].includes(key)) return ({
+        ...acc,
+        [key]: parseInt(options[key as keyof ShipmentFilter])
+      });
+      if (
+        ["has_tracker", "has_manifest"].includes(key) ||
+        ['true', 'false'].includes(options[key as keyof ShipmentFilter])
+      ) return ({
+        ...acc,
+        [key]: options[key as keyof ShipmentFilter] === 'true'
+      });
+
+      return {
+        ...acc,
+        [key]: options[key as keyof ShipmentFilter]
       };
     }, PAGINATION);
 

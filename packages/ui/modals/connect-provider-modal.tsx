@@ -776,6 +776,22 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               </div>
                             </div>}
 
+                          {"transmit_shipment_by_default" in connection_configs[carrier_name.toString()] &&
+                            <div className="field column is-6 mb-0">
+                              <div className="control">
+                                <label className="checkbox has-text-weight-bold mt-3 pt-1">
+                                  <input
+                                    type="checkbox"
+                                    checked={payload.config?.transmit_shipment_by_default}
+                                    name="transmit_shipment_by_default"
+                                    onChange={handleConfigChange}
+                                  />
+                                  {' '}
+                                  <span style={{ fontSize: '0.8em' }}>Submit shipment by default</span>
+                                </label>
+                              </div>
+                            </div>}
+
                           {"skip_service_filter" in connection_configs[carrier_name.toString()] &&
                             <div className="field column is-6 mb-0">
                               <div className="control">

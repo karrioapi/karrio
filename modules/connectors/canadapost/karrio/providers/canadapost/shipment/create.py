@@ -55,6 +55,7 @@ def _extract_shipment(
             dict(
                 carrier_tracking_link=settings.tracking_url.format(info.tracking_pin),
                 customer_request_ids=ctx["customer_request_ids"],
+                manifest_required=ctx["manifest_required"],
                 group_id=ctx["group_id"],
             )
         ),
@@ -97,11 +98,6 @@ def shipment_request(
         or (
             settings.connection_config.transmit_shipment_by_default.state
             and options.canadapost_submit_shipment.state is not False
-        )
-        # default to true if no value is set
-        or (
-            settings.connection_config.transmit_shipment_by_default.state is None
-            and options.canadapost_submit_shipment.state is None
         )
     )
 
@@ -217,8 +213,10 @@ def shipment_request(
                         other_reason=customs.content_type,
                         duties_and_taxes_prepaid=customs.duty.account_number,
                         certificate_number=customs.options.certificate_number.state,
-                        licence_number=customs.options.license_number.state,
-                        invoice_number=customs.invoice,
+                        licence_number=lib.text(
+                            customs.options.license_number.state, max=10
+                        ),
+                        invoice_number=lib.text(customs.invoice, max=10),
                         sku_list=(
                             (
                                 canadapost.sku_listType(
@@ -295,14 +293,15 @@ def shipment_request(
                 (
                     "<transmit-shipment/>"
                     if submit_shipment
-                    else f"<group-id>{group_id}<group-id>"
+                    else f"<group-id>{group_id}</group-id>"
                 ),
             )
             for request in __
         ],
         dict(
             label_type=label_encoding,
+            manifest_required=(not submit_shipment),
             customer_request_ids=customer_request_ids,
-            group_id=(group_id if submit_shipment else None),
+            group_id=(None if submit_shipment else group_id),
         ),
     )

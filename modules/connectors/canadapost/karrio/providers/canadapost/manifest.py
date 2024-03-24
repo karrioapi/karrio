@@ -68,6 +68,7 @@ def manifest_request(
                 (
                     _.get("meta", {}).get("group_id")
                     for _ in (options.shipments.state or [])
+                    if lib.text(_.get("meta", {}).get("group_id")) is not None
                 )
             )
         ]
@@ -101,7 +102,7 @@ def manifest_request(
                 postal_zip_code=address.postal_code,
             ),
         ),
-        customer_reference=payload.reference,
+        customer_reference=lib.text(payload.reference, max=12),
         excluded_shipments=lib.identity(
             canadapost.ExcludedShipmentsType(
                 shipment_id=options.excluded_shipments.state.slit(",")

@@ -4,7 +4,6 @@ import {
     AddressesApi,
     APIApi,
     CarriersApi,
-    CustomsApi,
     ParcelsApi,
     PickupsApi,
     ProxyApi,
@@ -14,6 +13,7 @@ import {
     WebhooksApi,
     BatchesApi,
     DocumentsApi,
+    ManifestsApi,
 } from './rest/api';
 import * as base from './base';
 
@@ -25,7 +25,6 @@ export interface KarrioClientInterface {
     API: APIApi;
     addresses: AddressesApi;
     carriers: CarriersApi;
-    customs: CustomsApi;
     parcels: ParcelsApi;
     pickups: PickupsApi;
     proxy: ProxyApi;
@@ -35,6 +34,7 @@ export interface KarrioClientInterface {
     webhooks: WebhooksApi;
     batches: BatchesApi;
     documents: DocumentsApi;
+    manifests: ManifestsApi;
     config: ConfigurationParameters;
     graphql: GraphQLApi
 }
@@ -43,7 +43,6 @@ export class KarrioClient implements KarrioClientInterface {
     API: APIApi;
     addresses: AddressesApi;
     carriers: CarriersApi;
-    customs: CustomsApi;
     parcels: ParcelsApi;
     pickups: PickupsApi;
     proxy: ProxyApi;
@@ -52,6 +51,7 @@ export class KarrioClient implements KarrioClientInterface {
     orders: OrdersApi;
     webhooks: WebhooksApi;
     documents: DocumentsApi;
+    manifests: ManifestsApi;
     batches: BatchesApi;
     config: ConfigurationParameters;
     axios: AxiosInstance;
@@ -67,7 +67,6 @@ export class KarrioClient implements KarrioClientInterface {
         this.API = new APIApi(config, config.basePath, axiosInstance);
         this.addresses = new AddressesApi(config, config.basePath, axiosInstance);
         this.carriers = new CarriersApi(config, config.basePath, axiosInstance);
-        this.customs = new CustomsApi(config, config.basePath, axiosInstance);
         this.parcels = new ParcelsApi(config, config.basePath, axiosInstance);
         this.pickups = new PickupsApi(config, config.basePath, axiosInstance);
         this.proxy = new ProxyApi(config, config.basePath, axiosInstance);
@@ -76,6 +75,7 @@ export class KarrioClient implements KarrioClientInterface {
         this.orders = new OrdersApi(config, config.basePath, axiosInstance);
         this.webhooks = new WebhooksApi(config, config.basePath, axiosInstance);
         this.documents = new DocumentsApi(config, config.basePath, axiosInstance);
+        this.manifests = new ManifestsApi(config, config.basePath, axiosInstance);
         this.batches = new BatchesApi(config, config.basePath, axiosInstance);
         this.graphql = new GraphQLApi(config.basePath, axiosInstance);
         this.admin = new GraphQLApi(`${config.basePath}/admin`, axiosInstance);

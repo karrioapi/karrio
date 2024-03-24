@@ -5091,6 +5091,147 @@ export interface UpdateWorkspaceConfigVariables {
   data: WorkspaceConfigMutationInput;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetManifests
+// ====================================================
+
+export interface GetManifests_manifests_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetManifests_manifests_edges_node_address {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+}
+
+export interface GetManifests_manifests_edges_node_manifest_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
+export interface GetManifests_manifests_edges_node_messages {
+  message: string | null;
+  code: string | null;
+}
+
+export interface GetManifests_manifests_edges_node {
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  manifest_url: string | null;
+  shipment_identifiers: string[];
+  reference: string | null;
+  address: GetManifests_manifests_edges_node_address;
+  manifest_carrier: GetManifests_manifests_edges_node_manifest_carrier | null;
+  messages: GetManifests_manifests_edges_node_messages[];
+  options: any;
+  metadata: any;
+  meta: any;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetManifests_manifests_edges {
+  node: GetManifests_manifests_edges_node;
+}
+
+export interface GetManifests_manifests {
+  page_info: GetManifests_manifests_page_info;
+  edges: GetManifests_manifests_edges[];
+}
+
+export interface GetManifests {
+  manifests: GetManifests_manifests;
+}
+
+export interface GetManifestsVariables {
+  filter?: ManifestFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetManifest
+// ====================================================
+
+export interface GetManifest_manifest_address {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+}
+
+export interface GetManifest_manifest_manifest_carrier {
+  carrier_id: string;
+  carrier_name: string;
+  config: any | null;
+}
+
+export interface GetManifest_manifest_messages {
+  message: string | null;
+  code: string | null;
+}
+
+export interface GetManifest_manifest {
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  manifest_url: string | null;
+  shipment_identifiers: string[];
+  reference: string | null;
+  address: GetManifest_manifest_address;
+  manifest_carrier: GetManifest_manifest_manifest_carrier | null;
+  messages: GetManifest_manifest_messages[];
+  options: any;
+  metadata: any;
+  meta: any;
+  created_at: any;
+  updated_at: any;
+}
+
+export interface GetManifest {
+  manifest: GetManifest_manifest | null;
+}
+
+export interface GetManifestVariables {
+  id: string;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -5561,7 +5702,9 @@ export enum TrackerStatusEnum {
 
 export enum ManualShipmentStatusEnum {
   delivered = "delivered",
+  delivery_failed = "delivery_failed",
   in_transit = "in_transit",
+  needs_attention = "needs_attention",
 }
 
 export enum EventTypes {
@@ -6851,11 +6994,14 @@ export interface ShipmentFilter {
   reference?: string | null;
   service?: string[] | null;
   status?: ShipmentStatusEnum[] | null;
-  option_key?: string[] | null;
-  option_value?: string | null;
-  metadata_key?: string[] | null;
-  metadata_value?: string | null;
-  test_mode?: boolean | null;
+  option_key?: string | null;
+  option_value?: any | null;
+  metadata_key?: string | null;
+  metadata_value?: any | null;
+  meta_key?: string | null;
+  meta_value?: any | null;
+  has_tracker?: boolean | null;
+  has_manifest?: boolean | null;
 }
 
 // null
@@ -6998,7 +7144,6 @@ export interface TrackerFilter {
   created_before?: any | null;
   carrier_name?: string[] | null;
   status?: string[] | null;
-  test_mode?: boolean | null;
 }
 
 // null
@@ -7325,6 +7470,16 @@ export interface WorkspaceConfigMutationInput {
   customs_certificate_number?: string | null;
   customs_nip_number?: string | null;
   customs_vat_registration_number?: string | null;
+}
+
+// null
+export interface ManifestFilter {
+  offset?: number | null;
+  first?: number | null;
+  id?: string[] | null;
+  created_after?: any | null;
+  created_before?: any | null;
+  carrier_name?: string[] | null;
 }
 
 //==============================================================

@@ -756,6 +756,59 @@ class TrackerType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
+@strawberry_django.type(manager.Manifest)
+class ManifestType:
+    id: str
+    object_type: str
+    test_mode: bool
+    metadata: utils.JSON
+    meta: utils.JSON
+    options: utils.JSON
+    address: AddressType
+    shipment_identifiers: typing.List[str]
+    manifest_url: typing.Optional[str]
+    reference: typing.Optional[str]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    @strawberry.field
+    def carrier_id(self: manager.Manifest) -> str:
+        return getattr(self.manifest_carrier, "carrier_id", None)
+
+    @strawberry.field
+    def carrier_name(self: manager.Manifest) -> str:
+        return getattr(self.manifest_carrier, "carrier_name", None)
+
+    @strawberry.field
+    def messages(self: manager.Manifest) -> typing.List[MessageType]:
+        return [MessageType.parse(msg) for msg in self.messages or []]
+
+    @strawberry.field
+    def manifest_carrier(self: manager.Manifest) -> typing.Optional["ConnectionType"]:
+        return (
+            ConnectionType.parse(self.manifest_carrier)
+            if self.manifest_carrier
+            else None
+        )
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info, id: str) -> typing.Optional["ManifestType"]:
+        return manager.Manifest.access_by(info.context.request).filter(id=id).first()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.ManifestFilter] = strawberry.UNSET,
+    ) -> utils.Connection["ManifestType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.ManifestFilter()
+        queryset = filters.ManifestFilters(
+            _filter.to_dict(), manager.Manifest.access_by(info.context.request)
+        ).qs
+        return utils.paginated_connection(queryset, **_filter.pagination())
+
+
 @strawberry.type
 class PaymentType:
     account_number: typing.Optional[str] = None

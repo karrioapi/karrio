@@ -16,7 +16,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.2.2`.
+    The current version is `2024.2.3`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -86,7 +86,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.2.2
+  version: 2024.2.3
 paths:
   /:
     get:
@@ -786,205 +786,6 @@ paths:
                 $ref: '#/components/schemas/CarrierSettings'
           description: ''
         '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-  /v1/customs_info:
-    get:
-      operationId: $$list
-      description: Retrieve all stored customs declarations.
-      summary: List all customs info
-      tags:
-      - Customs
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CustomsList'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-    post:
-      operationId: $$create
-      description: Create a new customs declaration.
-      summary: Create a customs info
-      tags:
-      - Customs
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CustomsData'
-        required: true
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '201':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customs'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-  /v1/customs_info/{id}:
-    get:
-      operationId: $$retrieve
-      description: Retrieve customs declaration.
-      summary: Retrieve a customs info
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      tags:
-      - Customs
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customs'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-    patch:
-      operationId: $$update
-      description: modify an existing customs declaration.
-      summary: Update a customs info
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      tags:
-      - Customs
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/PatchedCustomsData'
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customs'
-          description: ''
-        '400':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '409':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-    delete:
-      operationId: $$discard
-      description: Discard a customs declaration.
-      summary: Discard a customs info
-      parameters:
-      - in: path
-        name: id
-        schema:
-          type: string
-        required: true
-      tags:
-      - Customs
-      security:
-      - TokenBasic: []
-      - Token: []
-      - OAuth2: []
-      - JWT: []
-      responses:
-        '200':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Customs'
-          description: ''
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '409':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-          description: ''
-        '500':
           content:
             application/json:
               schema:
@@ -2634,11 +2435,27 @@ paths:
           type: string
           format: date-time
       - in: query
+        name: has_manifest
+        schema:
+          type: boolean
+      - in: query
+        name: has_tracker
+        schema:
+          type: boolean
+      - in: query
         name: id
         schema:
           type: string
       - in: query
         name: keyword
+        schema:
+          type: string
+      - in: query
+        name: meta_key
+        schema:
+          type: string
+      - in: query
+        name: meta_value
         schema:
           type: string
       - in: query
@@ -5623,26 +5440,6 @@ components:
             \     "
       required:
       - commodities
-    CustomsList:
-      type: object
-      properties:
-        count:
-          type: integer
-          nullable: true
-        next:
-          type: string
-          format: uri
-          nullable: true
-        previous:
-          type: string
-          format: uri
-          nullable: true
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Customs'
-      required:
-      - results
     DocumentDetails:
       type: object
       properties:
@@ -7420,94 +7217,6 @@ components:
           nullable: true
           default: false
           description: Indicate if the address should be validated
-    PatchedCustomsData:
-      type: object
-      properties:
-        commodities:
-          type: array
-          items:
-            $ref: '#/components/schemas/CommodityData'
-          description: The parcel content items
-        duty:
-          allOf:
-          - $ref: '#/components/schemas/Duty'
-          nullable: true
-          description: "The payment details.<br/>\n        **Note that this is required\
-            \ for a Dutiable parcel shipped internationally.**\n        "
-        duty_billing_address:
-          allOf:
-          - $ref: '#/components/schemas/AddressData'
-          nullable: true
-          description: The duty payor address.
-        content_type:
-          enum:
-          - documents
-          - gift
-          - sample
-          - merchandise
-          - return_merchandise
-          - other
-          - ''
-          - null
-          type: string
-          x-spec-enum-id: 8bc1717e39f37f69
-          nullable: true
-        content_description:
-          type: string
-          nullable: true
-        incoterm:
-          enum:
-          - CFR
-          - CIF
-          - CIP
-          - CPT
-          - DAF
-          - DDP
-          - DDU
-          - DEQ
-          - DES
-          - EXW
-          - FAS
-          - FCA
-          - FOB
-          - null
-          type: string
-          x-spec-enum-id: 544ac66d62cbdedb
-          nullable: true
-          description: The customs 'term of trade' also known as 'incoterm'
-        invoice:
-          type: string
-          nullable: true
-          description: The invoice reference number
-          maxLength: 50
-        invoice_date:
-          type: string
-          nullable: true
-          description: "The invoice date.<br/>\n        Date Format: `YYYY-MM-DD`\n\
-            \        "
-        commercial_invoice:
-          type: boolean
-          nullable: true
-          description: Indicates if the shipment is commercial
-        certify:
-          type: boolean
-          nullable: true
-          description: Indicate that signer certified confirmed all
-        signer:
-          type: string
-          nullable: true
-          maxLength: 50
-        options:
-          type: object
-          additionalProperties: {}
-          default: {}
-          description: "<details>\n        <summary>Customs identification options.</summary>\n\
-            \n        {\n            \"aes\": \"5218487281\",\n            \"eel_pfc\"\
-            : \"5218487281\",\n            \"license_number\": \"5218487281\",\n \
-            \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
-            : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
-            \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
-            \     "
     PatchedParcelData:
       type: object
       properties:
