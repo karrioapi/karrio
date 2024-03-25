@@ -133,7 +133,7 @@ def rate_request(
                                 lib.to_int(
                                     options.tge_extra_services_amount.state
                                     or options.declared_value.state
-                                    or 0
+                                    or 10
                                 )
                             ),
                         )

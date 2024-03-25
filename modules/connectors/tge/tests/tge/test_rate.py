@@ -147,7 +147,7 @@ RateRequest = {
                 },
                 "FreightMode": "Road",
                 "ShipmentFinancials": {
-                    "ExtraServicesAmount": {"Currency": "AUD", "Value": "0"}
+                    "ExtraServicesAmount": {"Currency": "AUD", "Value": "10"}
                 },
                 "ShipmentFlags": {"ExtraServiceFlag": "true"},
                 "ShipmentItems": {
