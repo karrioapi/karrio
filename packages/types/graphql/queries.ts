@@ -3762,6 +3762,164 @@ export const GET_MANIFEST = gql`query GetManifest($id: String!) {
 
 
 // -----------------------------------------------------------
+// Apps queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const GET_APP = gql`query GetApp($id: String!) {
+  app(id: $id) {
+    id
+    display_name
+    developer_name
+    is_public
+    is_builtin
+    is_embedded
+    is_published
+    launch_url
+    features
+    metadata
+    installation {
+      id
+      access_scopes
+      metadata
+    }
+  }
+}
+`;
+
+export const GET_APPS = gql`query GetApps($filter: AppFilter) {
+  apps(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        display_name
+        developer_name
+        is_public
+        is_builtin
+        is_embedded
+        is_published
+        launch_url
+        features
+        metadata
+        installation {
+          id
+          access_scopes
+          metadata
+        }
+      }
+    }
+  }
+}
+`;
+
+export const GET_PRIVATE_APP = gql`query GetPrivateApp($id: String!) {
+  private_app(id: $id) {
+    id
+    display_name
+    developer_name
+    is_public
+    is_builtin
+    is_embedded
+    is_published
+    launch_url
+    features
+    metadata
+    installation {
+      id
+      access_scopes
+      metadata
+    }
+  }
+}
+`;
+
+export const GET_PRIVATE_APPS = gql`query GetPrivateApps($filter: AppFilter) {
+  private_apps(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        display_name
+        developer_name
+        is_public
+        is_builtin
+        is_embedded
+        is_published
+        launch_url
+        features
+        metadata
+        installation {
+          id
+          access_scopes
+          metadata
+        }
+      }
+    }
+  }
+}
+`;
+
+export const INSTALL_APP = gql`mutation InstallApp($data: InstallAppMutationInput!) {
+  install_app(input: $data) {
+    installation {
+      id
+      access_scopes
+      created_at
+      updated_at
+      metadata
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const UNINSTALL_APP = gql`mutation UninstallApp($data: UninstallAppMutationInput!) {
+  uninstall_app(input: $data) {
+    app {
+      id
+      display_name
+      developer_name
+      is_public
+      is_builtin
+      is_embedded
+      is_published
+      launch_url
+      features
+      metadata
+      installation {
+        id
+        access_scopes
+        metadata
+      }
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+//#endregion
+
+
+// -----------------------------------------------------------
 // Shared queries and mutations
 // -----------------------------------------------------------
 //#region

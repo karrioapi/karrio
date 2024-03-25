@@ -4,213 +4,6 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: get_address_templates
-// ====================================================
-
-export interface get_address_templates_address_templates_page_info {
-  count: number;
-  has_next_page: boolean;
-  has_previous_page: boolean;
-  start_cursor: string | null;
-  end_cursor: string | null;
-}
-
-export interface get_address_templates_address_templates_edges_node_address {
-  company_name: string | null;
-  person_name: string | null;
-  street_number: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  postal_code: string | null;
-  residential: boolean | null;
-  city: string | null;
-  state_code: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
-}
-
-export interface get_address_templates_address_templates_edges_node {
-  id: string;
-  is_default: boolean | null;
-  label: string;
-  address: get_address_templates_address_templates_edges_node_address;
-}
-
-export interface get_address_templates_address_templates_edges {
-  node: get_address_templates_address_templates_edges_node;
-}
-
-export interface get_address_templates_address_templates {
-  page_info: get_address_templates_address_templates_page_info;
-  edges: get_address_templates_address_templates_edges[];
-}
-
-export interface get_address_templates {
-  address_templates: get_address_templates_address_templates;
-}
-
-export interface get_address_templatesVariables {
-  filter?: AddressFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: get_customs_info_templates
-// ====================================================
-
-export interface get_customs_info_templates_customs_templates_page_info {
-  count: number;
-  has_next_page: boolean;
-  has_previous_page: boolean;
-  start_cursor: string | null;
-  end_cursor: string | null;
-}
-
-export interface get_customs_info_templates_customs_templates_edges_node_customs_duty {
-  paid_by: PaidByEnum | null;
-  currency: CurrencyCodeEnum | null;
-  account_number: string | null;
-  declared_value: number | null;
-}
-
-export interface get_customs_info_templates_customs_templates_edges_node_customs {
-  incoterm: IncotermCodeEnum | null;
-  content_type: CustomsContentTypeEnum | null;
-  commercial_invoice: boolean | null;
-  content_description: string | null;
-  duty: get_customs_info_templates_customs_templates_edges_node_customs_duty | null;
-  invoice: string | null;
-  invoice_date: string | null;
-  signer: string | null;
-  certify: boolean | null;
-  options: any | null;
-}
-
-export interface get_customs_info_templates_customs_templates_edges_node {
-  id: string;
-  label: string;
-  is_default: boolean | null;
-  customs: get_customs_info_templates_customs_templates_edges_node_customs;
-}
-
-export interface get_customs_info_templates_customs_templates_edges {
-  node: get_customs_info_templates_customs_templates_edges_node;
-}
-
-export interface get_customs_info_templates_customs_templates {
-  page_info: get_customs_info_templates_customs_templates_page_info;
-  edges: get_customs_info_templates_customs_templates_edges[];
-}
-
-export interface get_customs_info_templates {
-  customs_templates: get_customs_info_templates_customs_templates;
-}
-
-export interface get_customs_info_templatesVariables {
-  filter?: TemplateFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: get_default_templates
-// ====================================================
-
-export interface get_default_templates_default_templates_default_address_address {
-  company_name: string | null;
-  person_name: string | null;
-  street_number: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  postal_code: string | null;
-  residential: boolean | null;
-  city: string | null;
-  state_code: string | null;
-  country_code: CountryCodeEnum;
-  email: string | null;
-  phone_number: string | null;
-  federal_tax_id: string | null;
-  state_tax_id: string | null;
-  validate_location: boolean | null;
-}
-
-export interface get_default_templates_default_templates_default_address {
-  id: string;
-  is_default: boolean | null;
-  label: string;
-  address: get_default_templates_default_templates_default_address_address;
-}
-
-export interface get_default_templates_default_templates_default_customs_customs_duty {
-  paid_by: PaidByEnum | null;
-  currency: CurrencyCodeEnum | null;
-  account_number: string | null;
-  declared_value: number | null;
-}
-
-export interface get_default_templates_default_templates_default_customs_customs {
-  incoterm: IncotermCodeEnum | null;
-  content_type: CustomsContentTypeEnum | null;
-  commercial_invoice: boolean | null;
-  content_description: string | null;
-  duty: get_default_templates_default_templates_default_customs_customs_duty | null;
-  invoice: string | null;
-  invoice_date: string | null;
-  signer: string | null;
-  certify: boolean | null;
-  options: any | null;
-}
-
-export interface get_default_templates_default_templates_default_customs {
-  id: string;
-  label: string;
-  is_default: boolean | null;
-  customs: get_default_templates_default_templates_default_customs_customs;
-}
-
-export interface get_default_templates_default_templates_default_parcel_parcel {
-  width: number | null;
-  height: number | null;
-  length: number | null;
-  dimension_unit: DimensionUnitEnum | null;
-  weight: number | null;
-  weight_unit: WeightUnitEnum | null;
-  packaging_type: string | null;
-  package_preset: string | null;
-  is_document: boolean | null;
-}
-
-export interface get_default_templates_default_templates_default_parcel {
-  id: string;
-  is_default: boolean | null;
-  label: string;
-  parcel: get_default_templates_default_templates_default_parcel_parcel;
-}
-
-export interface get_default_templates_default_templates {
-  default_address: get_default_templates_default_templates_default_address | null;
-  default_customs: get_default_templates_default_templates_default_customs | null;
-  default_parcel: get_default_templates_default_templates_default_parcel | null;
-}
-
-export interface get_default_templates {
-  default_templates: get_default_templates_default_templates;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: create_connection
 // ====================================================
 
@@ -274,6 +67,999 @@ export interface delete_connection {
 
 export interface delete_connectionVariables {
   data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_user_connections
+// ====================================================
+
+export interface get_user_connections_user_connections_AlliedExpressSettingsType {
+  __typename: "AlliedExpressSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string | null;
+  password: string | null;
+  account: string | null;
+  service_type: string | null;
+}
+
+export interface get_user_connections_user_connections_AlliedExpressLocalSettingsType {
+  __typename: "AlliedExpressLocalSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string | null;
+  password: string | null;
+  account: string | null;
+  service_type: string | null;
+}
+
+export interface get_user_connections_user_connections_AmazonShippingSettingsType {
+  __typename: "AmazonShippingSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  seller_id: string | null;
+  developer_id: string | null;
+  mws_auth_token: string | null;
+  aws_region: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_AramexSettingsType {
+  __typename: "AramexSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  username: string | null;
+  password: string | null;
+  account_pin: string | null;
+  account_entity: string | null;
+  account_number: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_AsendiaUSSettingsType {
+  __typename: "AsendiaUSSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  username: string | null;
+  password: string | null;
+  account_number: string | null;
+  api_key: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_AustraliaPostSettingsType {
+  __typename: "AustraliaPostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  api_key: string | null;
+  password: string | null;
+  account_number: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_BoxKnightSettingsType {
+  __typename: "BoxKnightSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  config: any | null;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_BelgianPostSettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface get_user_connections_user_connections_BelgianPostSettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: get_user_connections_user_connections_BelgianPostSettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_BelgianPostSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_BelgianPostSettingsType {
+  __typename: "BelgianPostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  account_id: string | null;
+  passphrase: string | null;
+  services: get_user_connections_user_connections_BelgianPostSettingsType_services[] | null;
+  rate_sheet: get_user_connections_user_connections_BelgianPostSettingsType_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_CanadaPostSettingsType {
+  __typename: "CanadaPostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  username: string | null;
+  password: string | null;
+  customer_number: string | null;
+  contract_id: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_CanparSettingsType {
+  __typename: "CanparSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_ChronopostSettingsType {
+  __typename: "ChronopostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  password: string | null;
+  account_number: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_ColissimoSettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface get_user_connections_user_connections_ColissimoSettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: get_user_connections_user_connections_ColissimoSettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_ColissimoSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_ColissimoSettingsType {
+  __typename: "ColissimoSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  password: string | null;
+  contract_number: string | null;
+  laposte_api_key: string | null;
+  services: get_user_connections_user_connections_ColissimoSettingsType_services[] | null;
+  rate_sheet: get_user_connections_user_connections_ColissimoSettingsType_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_DHLParcelDESettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface get_user_connections_user_connections_DHLParcelDESettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: get_user_connections_user_connections_DHLParcelDESettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_DHLParcelDESettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_DHLParcelDESettingsType {
+  __typename: "DHLParcelDESettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  customer_number: string | null;
+  dhl_api_key: string | null;
+  tracking_consumer_key: string | null;
+  tracking_consumer_secret: string | null;
+  config: any | null;
+  services: get_user_connections_user_connections_DHLParcelDESettingsType_services[] | null;
+  rate_sheet: get_user_connections_user_connections_DHLParcelDESettingsType_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_DHLExpressSettingsType {
+  __typename: "DHLExpressSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  site_id: string | null;
+  password: string | null;
+  account_number: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_DHLPolandSettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface get_user_connections_user_connections_DHLPolandSettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: get_user_connections_user_connections_DHLPolandSettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_DHLPolandSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_DHLPolandSettingsType {
+  __typename: "DHLPolandSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string | null;
+  password: string | null;
+  account_number: string | null;
+  services: get_user_connections_user_connections_DHLPolandSettingsType_services[] | null;
+  rate_sheet: get_user_connections_user_connections_DHLPolandSettingsType_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_DHLUniversalSettingsType {
+  __typename: "DHLUniversalSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  consumer_key: string | null;
+  consumer_secret: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_DicomSettingsType {
+  __typename: "DicomSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  billing_account: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_DPDSettingsType_services_zones {
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+  label: string | null;
+  latitude: number | null;
+  longitude: number | null;
+  max_weight: number | null;
+  min_weight: number | null;
+  radius: number | null;
+  rate: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+}
+
+export interface get_user_connections_user_connections_DPDSettingsType_services {
+  active: boolean | null;
+  currency: CurrencyCodeEnum | null;
+  description: string | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  id: string;
+  international: boolean | null;
+  max_height: number | null;
+  max_length: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  service_code: string | null;
+  service_name: string | null;
+  carrier_service_code: string | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  weight_unit: WeightUnitEnum | null;
+  zones: get_user_connections_user_connections_DPDSettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_DPDSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_DPDSettingsType {
+  __typename: "DPDSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  config: any | null;
+  capabilities: string[];
+  delis_id: string | null;
+  password: string | null;
+  depot: string | null;
+  account_country_code: string | null;
+  services: get_user_connections_user_connections_DPDSettingsType_services[] | null;
+  rate_sheet: get_user_connections_user_connections_DPDSettingsType_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_DPDHLSettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface get_user_connections_user_connections_DPDHLSettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: get_user_connections_user_connections_DPDHLSettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_DPDHLSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_DPDHLSettingsType {
+  __typename: "DPDHLSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  app_id: string | null;
+  app_token: string | null;
+  zt_id: string | null;
+  zt_password: string | null;
+  account_number: string | null;
+  config: any | null;
+  services: get_user_connections_user_connections_DPDHLSettingsType_services[] | null;
+  rate_sheet: get_user_connections_user_connections_DPDHLSettingsType_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_EShipperSettingsType {
+  __typename: "EShipperSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_EasyPostSettingsType {
+  __typename: "EasyPostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  api_key: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_FedexSettingsType {
+  __typename: "FedexSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  account_number: string | null;
+  api_key: string | null;
+  secret_key: string | null;
+  track_api_key: string | null;
+  track_secret_key: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_FedexWSSettingsType {
+  __typename: "FedexWSSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  account_number: string | null;
+  password: string | null;
+  meter_number: string | null;
+  user_key: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_FreightcomSettingsType {
+  __typename: "FreightcomSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_GenericSettingsType_services_zones {
+  label: string | null;
+  rate: number | null;
+  min_weight: number | null;
+  max_weight: number | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  radius: number | null;
+  latitude: number | null;
+  longitude: number | null;
+  cities: string[] | null;
+  postal_codes: string[] | null;
+  country_codes: CountryCodeEnum[] | null;
+}
+
+export interface get_user_connections_user_connections_GenericSettingsType_services {
+  id: string;
+  active: boolean | null;
+  service_name: string | null;
+  service_code: string | null;
+  carrier_service_code: string | null;
+  description: string | null;
+  currency: CurrencyCodeEnum | null;
+  transit_days: number | null;
+  transit_time: number | null;
+  max_weight: number | null;
+  max_width: number | null;
+  max_height: number | null;
+  max_length: number | null;
+  weight_unit: WeightUnitEnum | null;
+  dimension_unit: DimensionUnitEnum | null;
+  domicile: boolean | null;
+  international: boolean | null;
+  zones: get_user_connections_user_connections_GenericSettingsType_services_zones[];
+}
+
+export interface get_user_connections_user_connections_GenericSettingsType_label_template {
+  id: string;
+  slug: string | null;
+  template: string | null;
+  template_type: LabelTemplateTypeEnum | null;
+  shipment_sample: any | null;
+  width: number | null;
+  height: number | null;
+}
+
+export interface get_user_connections_user_connections_GenericSettingsType_rate_sheet {
+  id: string;
+  name: string;
+  slug: string;
+  carrier_name: CarrierNameEnum;
+  metadata: any | null;
+}
+
+export interface get_user_connections_user_connections_GenericSettingsType {
+  __typename: "GenericSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  custom_carrier_name: string | null;
+  account_number: string | null;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  config: any | null;
+  capabilities: string[];
+  account_country_code: string | null;
+  services: get_user_connections_user_connections_GenericSettingsType_services[] | null;
+  label_template: get_user_connections_user_connections_GenericSettingsType_label_template | null;
+  rate_sheet: get_user_connections_user_connections_GenericSettingsType_rate_sheet | null;
+}
+
+export interface get_user_connections_user_connections_GEODISSettingsType {
+  __typename: "GEODISSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  api_key: string | null;
+  identifier: string | null;
+  language: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_LaPosteSettingsType {
+  __typename: "LaPosteSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  api_key: string | null;
+  lang: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_Locate2uSettingsType {
+  __typename: "Locate2uSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  account_country_code: string | null;
+  client_id: string | null;
+  client_secret: string | null;
+}
+
+export interface get_user_connections_user_connections_NationexSettingsType {
+  __typename: "NationexSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  api_key: string | null;
+  customer_id: string | null;
+  billing_account: string | null;
+  language: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_PurolatorSettingsType {
+  __typename: "PurolatorSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  account_number: string | null;
+  user_token: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_RoadieSettingsType {
+  __typename: "RoadieSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  api_key: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_RoyalMailSettingsType {
+  __typename: "RoyalMailSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  client_id: string | null;
+  client_secret: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_SendleSettingsType {
+  __typename: "SendleSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  sendle_id: string | null;
+  api_key: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_TGESettingsType {
+  __typename: "TGESettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  config: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  api_key: string | null;
+  toll_username: string | null;
+  toll_password: string | null;
+  my_toll_token: string | null;
+  my_toll_identity: string | null;
+  account_code: string | null;
+}
+
+export interface get_user_connections_user_connections_TNTSettingsType {
+  __typename: "TNTSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  account_number: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_UPSSettingsType {
+  __typename: "UPSSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  client_id: string | null;
+  client_secret: string | null;
+  account_number: string | null;
+  account_country_code: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_USPSSettingsType {
+  __typename: "USPSSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  mailer_id: string | null;
+  customer_registration_id: string | null;
+  logistics_manager_mailer_id: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_USPSInternationalSettingsType {
+  __typename: "USPSInternationalSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  metadata: any | null;
+  capabilities: string[];
+  username: string | null;
+  password: string | null;
+  mailer_id: string | null;
+  customer_registration_id: string | null;
+  logistics_manager_mailer_id: string | null;
+  config: any | null;
+}
+
+export interface get_user_connections_user_connections_Zoom2uSettingsType {
+  __typename: "Zoom2uSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  account_country_code: string | null;
+  api_key: string | null;
+}
+
+export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLParcelDESettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FedexWSSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TGESettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
+
+export interface get_user_connections {
+  user_connections: get_user_connections_user_connections[];
 }
 
 
@@ -1778,6 +2564,213 @@ export interface get_webhooksVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: get_address_templates
+// ====================================================
+
+export interface get_address_templates_address_templates_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_address_templates_address_templates_edges_node_address {
+  company_name: string | null;
+  person_name: string | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  postal_code: string | null;
+  residential: boolean | null;
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_address_templates_address_templates_edges_node {
+  id: string;
+  is_default: boolean | null;
+  label: string;
+  address: get_address_templates_address_templates_edges_node_address;
+}
+
+export interface get_address_templates_address_templates_edges {
+  node: get_address_templates_address_templates_edges_node;
+}
+
+export interface get_address_templates_address_templates {
+  page_info: get_address_templates_address_templates_page_info;
+  edges: get_address_templates_address_templates_edges[];
+}
+
+export interface get_address_templates {
+  address_templates: get_address_templates_address_templates;
+}
+
+export interface get_address_templatesVariables {
+  filter?: AddressFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_customs_info_templates
+// ====================================================
+
+export interface get_customs_info_templates_customs_templates_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface get_customs_info_templates_customs_templates_edges_node_customs_duty {
+  paid_by: PaidByEnum | null;
+  currency: CurrencyCodeEnum | null;
+  account_number: string | null;
+  declared_value: number | null;
+}
+
+export interface get_customs_info_templates_customs_templates_edges_node_customs {
+  incoterm: IncotermCodeEnum | null;
+  content_type: CustomsContentTypeEnum | null;
+  commercial_invoice: boolean | null;
+  content_description: string | null;
+  duty: get_customs_info_templates_customs_templates_edges_node_customs_duty | null;
+  invoice: string | null;
+  invoice_date: string | null;
+  signer: string | null;
+  certify: boolean | null;
+  options: any | null;
+}
+
+export interface get_customs_info_templates_customs_templates_edges_node {
+  id: string;
+  label: string;
+  is_default: boolean | null;
+  customs: get_customs_info_templates_customs_templates_edges_node_customs;
+}
+
+export interface get_customs_info_templates_customs_templates_edges {
+  node: get_customs_info_templates_customs_templates_edges_node;
+}
+
+export interface get_customs_info_templates_customs_templates {
+  page_info: get_customs_info_templates_customs_templates_page_info;
+  edges: get_customs_info_templates_customs_templates_edges[];
+}
+
+export interface get_customs_info_templates {
+  customs_templates: get_customs_info_templates_customs_templates;
+}
+
+export interface get_customs_info_templatesVariables {
+  filter?: TemplateFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_default_templates
+// ====================================================
+
+export interface get_default_templates_default_templates_default_address_address {
+  company_name: string | null;
+  person_name: string | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  postal_code: string | null;
+  residential: boolean | null;
+  city: string | null;
+  state_code: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_default_templates_default_templates_default_address {
+  id: string;
+  is_default: boolean | null;
+  label: string;
+  address: get_default_templates_default_templates_default_address_address;
+}
+
+export interface get_default_templates_default_templates_default_customs_customs_duty {
+  paid_by: PaidByEnum | null;
+  currency: CurrencyCodeEnum | null;
+  account_number: string | null;
+  declared_value: number | null;
+}
+
+export interface get_default_templates_default_templates_default_customs_customs {
+  incoterm: IncotermCodeEnum | null;
+  content_type: CustomsContentTypeEnum | null;
+  commercial_invoice: boolean | null;
+  content_description: string | null;
+  duty: get_default_templates_default_templates_default_customs_customs_duty | null;
+  invoice: string | null;
+  invoice_date: string | null;
+  signer: string | null;
+  certify: boolean | null;
+  options: any | null;
+}
+
+export interface get_default_templates_default_templates_default_customs {
+  id: string;
+  label: string;
+  is_default: boolean | null;
+  customs: get_default_templates_default_templates_default_customs_customs;
+}
+
+export interface get_default_templates_default_templates_default_parcel_parcel {
+  width: number | null;
+  height: number | null;
+  length: number | null;
+  dimension_unit: DimensionUnitEnum | null;
+  weight: number | null;
+  weight_unit: WeightUnitEnum | null;
+  packaging_type: string | null;
+  package_preset: string | null;
+  is_document: boolean | null;
+}
+
+export interface get_default_templates_default_templates_default_parcel {
+  id: string;
+  is_default: boolean | null;
+  label: string;
+  parcel: get_default_templates_default_templates_default_parcel_parcel;
+}
+
+export interface get_default_templates_default_templates {
+  default_address: get_default_templates_default_templates_default_address | null;
+  default_customs: get_default_templates_default_templates_default_customs | null;
+  default_parcel: get_default_templates_default_templates_default_parcel | null;
+}
+
+export interface get_default_templates {
+  default_templates: get_default_templates_default_templates;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: get_parcel_templates
 // ====================================================
 
@@ -2139,30 +3132,6 @@ export interface discard_parcelVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: mutate_token
-// ====================================================
-
-export interface mutate_token_mutate_token_token {
-  key: string;
-}
-
-export interface mutate_token_mutate_token {
-  token: mutate_token_mutate_token_token | null;
-}
-
-export interface mutate_token {
-  mutate_token: mutate_token_mutate_token;
-}
-
-export interface mutate_tokenVariables {
-  data: TokenMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: GetToken
 // ====================================================
 
@@ -2184,992 +3153,23 @@ export interface GetTokenVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: get_user_connections
+// GraphQL mutation operation: mutate_token
 // ====================================================
 
-export interface get_user_connections_user_connections_AlliedExpressSettingsType {
-  __typename: "AlliedExpressSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  config: any | null;
-  username: string | null;
-  password: string | null;
-  account: string | null;
-  service_type: string | null;
+export interface mutate_token_mutate_token_token {
+  key: string;
 }
 
-export interface get_user_connections_user_connections_AlliedExpressLocalSettingsType {
-  __typename: "AlliedExpressLocalSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  config: any | null;
-  username: string | null;
-  password: string | null;
-  account: string | null;
-  service_type: string | null;
+export interface mutate_token_mutate_token {
+  token: mutate_token_mutate_token_token | null;
 }
 
-export interface get_user_connections_user_connections_AmazonShippingSettingsType {
-  __typename: "AmazonShippingSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  seller_id: string | null;
-  developer_id: string | null;
-  mws_auth_token: string | null;
-  aws_region: string | null;
-  config: any | null;
+export interface mutate_token {
+  mutate_token: mutate_token_mutate_token;
 }
 
-export interface get_user_connections_user_connections_AramexSettingsType {
-  __typename: "AramexSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  username: string | null;
-  password: string | null;
-  account_pin: string | null;
-  account_entity: string | null;
-  account_number: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_AsendiaUSSettingsType {
-  __typename: "AsendiaUSSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  username: string | null;
-  password: string | null;
-  account_number: string | null;
-  api_key: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_AustraliaPostSettingsType {
-  __typename: "AustraliaPostSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  api_key: string | null;
-  password: string | null;
-  account_number: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_BoxKnightSettingsType {
-  __typename: "BoxKnightSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  config: any | null;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_BelgianPostSettingsType_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface get_user_connections_user_connections_BelgianPostSettingsType_services {
-  id: string;
-  active: boolean | null;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  currency: CurrencyCodeEnum | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  max_weight: number | null;
-  max_width: number | null;
-  max_height: number | null;
-  max_length: number | null;
-  weight_unit: WeightUnitEnum | null;
-  dimension_unit: DimensionUnitEnum | null;
-  domicile: boolean | null;
-  international: boolean | null;
-  zones: get_user_connections_user_connections_BelgianPostSettingsType_services_zones[];
-}
-
-export interface get_user_connections_user_connections_BelgianPostSettingsType_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_BelgianPostSettingsType {
-  __typename: "BelgianPostSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  config: any | null;
-  account_id: string | null;
-  passphrase: string | null;
-  services: get_user_connections_user_connections_BelgianPostSettingsType_services[] | null;
-  rate_sheet: get_user_connections_user_connections_BelgianPostSettingsType_rate_sheet | null;
-}
-
-export interface get_user_connections_user_connections_CanadaPostSettingsType {
-  __typename: "CanadaPostSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  username: string | null;
-  password: string | null;
-  customer_number: string | null;
-  contract_id: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_CanparSettingsType {
-  __typename: "CanparSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_ChronopostSettingsType {
-  __typename: "ChronopostSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  password: string | null;
-  account_number: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_ColissimoSettingsType_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface get_user_connections_user_connections_ColissimoSettingsType_services {
-  id: string;
-  active: boolean | null;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  currency: CurrencyCodeEnum | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  max_weight: number | null;
-  max_width: number | null;
-  max_height: number | null;
-  max_length: number | null;
-  weight_unit: WeightUnitEnum | null;
-  dimension_unit: DimensionUnitEnum | null;
-  domicile: boolean | null;
-  international: boolean | null;
-  zones: get_user_connections_user_connections_ColissimoSettingsType_services_zones[];
-}
-
-export interface get_user_connections_user_connections_ColissimoSettingsType_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_ColissimoSettingsType {
-  __typename: "ColissimoSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  config: any | null;
-  password: string | null;
-  contract_number: string | null;
-  laposte_api_key: string | null;
-  services: get_user_connections_user_connections_ColissimoSettingsType_services[] | null;
-  rate_sheet: get_user_connections_user_connections_ColissimoSettingsType_rate_sheet | null;
-}
-
-export interface get_user_connections_user_connections_DHLParcelDESettingsType_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface get_user_connections_user_connections_DHLParcelDESettingsType_services {
-  id: string;
-  active: boolean | null;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  currency: CurrencyCodeEnum | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  max_weight: number | null;
-  max_width: number | null;
-  max_height: number | null;
-  max_length: number | null;
-  weight_unit: WeightUnitEnum | null;
-  dimension_unit: DimensionUnitEnum | null;
-  domicile: boolean | null;
-  international: boolean | null;
-  zones: get_user_connections_user_connections_DHLParcelDESettingsType_services_zones[];
-}
-
-export interface get_user_connections_user_connections_DHLParcelDESettingsType_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_DHLParcelDESettingsType {
-  __typename: "DHLParcelDESettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  customer_number: string | null;
-  dhl_api_key: string | null;
-  tracking_consumer_key: string | null;
-  tracking_consumer_secret: string | null;
-  config: any | null;
-  services: get_user_connections_user_connections_DHLParcelDESettingsType_services[] | null;
-  rate_sheet: get_user_connections_user_connections_DHLParcelDESettingsType_rate_sheet | null;
-}
-
-export interface get_user_connections_user_connections_DHLExpressSettingsType {
-  __typename: "DHLExpressSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  site_id: string | null;
-  password: string | null;
-  account_number: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_DHLPolandSettingsType_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface get_user_connections_user_connections_DHLPolandSettingsType_services {
-  id: string;
-  active: boolean | null;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  currency: CurrencyCodeEnum | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  max_weight: number | null;
-  max_width: number | null;
-  max_height: number | null;
-  max_length: number | null;
-  weight_unit: WeightUnitEnum | null;
-  dimension_unit: DimensionUnitEnum | null;
-  domicile: boolean | null;
-  international: boolean | null;
-  zones: get_user_connections_user_connections_DHLPolandSettingsType_services_zones[];
-}
-
-export interface get_user_connections_user_connections_DHLPolandSettingsType_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_DHLPolandSettingsType {
-  __typename: "DHLPolandSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  config: any | null;
-  username: string | null;
-  password: string | null;
-  account_number: string | null;
-  services: get_user_connections_user_connections_DHLPolandSettingsType_services[] | null;
-  rate_sheet: get_user_connections_user_connections_DHLPolandSettingsType_rate_sheet | null;
-}
-
-export interface get_user_connections_user_connections_DHLUniversalSettingsType {
-  __typename: "DHLUniversalSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  consumer_key: string | null;
-  consumer_secret: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_DicomSettingsType {
-  __typename: "DicomSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  billing_account: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_DPDSettingsType_services_zones {
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-  label: string | null;
-  latitude: number | null;
-  longitude: number | null;
-  max_weight: number | null;
-  min_weight: number | null;
-  radius: number | null;
-  rate: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-}
-
-export interface get_user_connections_user_connections_DPDSettingsType_services {
-  active: boolean | null;
-  currency: CurrencyCodeEnum | null;
-  description: string | null;
-  dimension_unit: DimensionUnitEnum | null;
-  domicile: boolean | null;
-  id: string;
-  international: boolean | null;
-  max_height: number | null;
-  max_length: number | null;
-  max_weight: number | null;
-  max_width: number | null;
-  service_code: string | null;
-  service_name: string | null;
-  carrier_service_code: string | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  weight_unit: WeightUnitEnum | null;
-  zones: get_user_connections_user_connections_DPDSettingsType_services_zones[];
-}
-
-export interface get_user_connections_user_connections_DPDSettingsType_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_DPDSettingsType {
-  __typename: "DPDSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  config: any | null;
-  capabilities: string[];
-  delis_id: string | null;
-  password: string | null;
-  depot: string | null;
-  account_country_code: string | null;
-  services: get_user_connections_user_connections_DPDSettingsType_services[] | null;
-  rate_sheet: get_user_connections_user_connections_DPDSettingsType_rate_sheet | null;
-}
-
-export interface get_user_connections_user_connections_DPDHLSettingsType_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface get_user_connections_user_connections_DPDHLSettingsType_services {
-  id: string;
-  active: boolean | null;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  currency: CurrencyCodeEnum | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  max_weight: number | null;
-  max_width: number | null;
-  max_height: number | null;
-  max_length: number | null;
-  weight_unit: WeightUnitEnum | null;
-  dimension_unit: DimensionUnitEnum | null;
-  domicile: boolean | null;
-  international: boolean | null;
-  zones: get_user_connections_user_connections_DPDHLSettingsType_services_zones[];
-}
-
-export interface get_user_connections_user_connections_DPDHLSettingsType_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_DPDHLSettingsType {
-  __typename: "DPDHLSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  app_id: string | null;
-  app_token: string | null;
-  zt_id: string | null;
-  zt_password: string | null;
-  account_number: string | null;
-  config: any | null;
-  services: get_user_connections_user_connections_DPDHLSettingsType_services[] | null;
-  rate_sheet: get_user_connections_user_connections_DPDHLSettingsType_rate_sheet | null;
-}
-
-export interface get_user_connections_user_connections_EShipperSettingsType {
-  __typename: "EShipperSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_EasyPostSettingsType {
-  __typename: "EasyPostSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  api_key: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_FedexSettingsType {
-  __typename: "FedexSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  account_number: string | null;
-  api_key: string | null;
-  secret_key: string | null;
-  track_api_key: string | null;
-  track_secret_key: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_FedexWSSettingsType {
-  __typename: "FedexWSSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  account_number: string | null;
-  password: string | null;
-  meter_number: string | null;
-  user_key: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_FreightcomSettingsType {
-  __typename: "FreightcomSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_GenericSettingsType_services_zones {
-  label: string | null;
-  rate: number | null;
-  min_weight: number | null;
-  max_weight: number | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  radius: number | null;
-  latitude: number | null;
-  longitude: number | null;
-  cities: string[] | null;
-  postal_codes: string[] | null;
-  country_codes: CountryCodeEnum[] | null;
-}
-
-export interface get_user_connections_user_connections_GenericSettingsType_services {
-  id: string;
-  active: boolean | null;
-  service_name: string | null;
-  service_code: string | null;
-  carrier_service_code: string | null;
-  description: string | null;
-  currency: CurrencyCodeEnum | null;
-  transit_days: number | null;
-  transit_time: number | null;
-  max_weight: number | null;
-  max_width: number | null;
-  max_height: number | null;
-  max_length: number | null;
-  weight_unit: WeightUnitEnum | null;
-  dimension_unit: DimensionUnitEnum | null;
-  domicile: boolean | null;
-  international: boolean | null;
-  zones: get_user_connections_user_connections_GenericSettingsType_services_zones[];
-}
-
-export interface get_user_connections_user_connections_GenericSettingsType_label_template {
-  id: string;
-  slug: string | null;
-  template: string | null;
-  template_type: LabelTemplateTypeEnum | null;
-  shipment_sample: any | null;
-  width: number | null;
-  height: number | null;
-}
-
-export interface get_user_connections_user_connections_GenericSettingsType_rate_sheet {
-  id: string;
-  name: string;
-  slug: string;
-  carrier_name: CarrierNameEnum;
-  metadata: any | null;
-}
-
-export interface get_user_connections_user_connections_GenericSettingsType {
-  __typename: "GenericSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  custom_carrier_name: string | null;
-  account_number: string | null;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  config: any | null;
-  capabilities: string[];
-  account_country_code: string | null;
-  services: get_user_connections_user_connections_GenericSettingsType_services[] | null;
-  label_template: get_user_connections_user_connections_GenericSettingsType_label_template | null;
-  rate_sheet: get_user_connections_user_connections_GenericSettingsType_rate_sheet | null;
-}
-
-export interface get_user_connections_user_connections_GEODISSettingsType {
-  __typename: "GEODISSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  api_key: string | null;
-  identifier: string | null;
-  language: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_LaPosteSettingsType {
-  __typename: "LaPosteSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  api_key: string | null;
-  lang: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_Locate2uSettingsType {
-  __typename: "Locate2uSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  config: any | null;
-  account_country_code: string | null;
-  client_id: string | null;
-  client_secret: string | null;
-}
-
-export interface get_user_connections_user_connections_NationexSettingsType {
-  __typename: "NationexSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  api_key: string | null;
-  customer_id: string | null;
-  billing_account: string | null;
-  language: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_PurolatorSettingsType {
-  __typename: "PurolatorSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  account_number: string | null;
-  user_token: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_RoadieSettingsType {
-  __typename: "RoadieSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  api_key: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_RoyalMailSettingsType {
-  __typename: "RoyalMailSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  client_id: string | null;
-  client_secret: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_SendleSettingsType {
-  __typename: "SendleSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  sendle_id: string | null;
-  api_key: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_TGESettingsType {
-  __typename: "TGESettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  config: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  api_key: string | null;
-  toll_username: string | null;
-  toll_password: string | null;
-  my_toll_token: string | null;
-  my_toll_identity: string | null;
-  account_code: string | null;
-}
-
-export interface get_user_connections_user_connections_TNTSettingsType {
-  __typename: "TNTSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  account_number: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_UPSSettingsType {
-  __typename: "UPSSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  client_id: string | null;
-  client_secret: string | null;
-  account_number: string | null;
-  account_country_code: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_USPSSettingsType {
-  __typename: "USPSSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  mailer_id: string | null;
-  customer_registration_id: string | null;
-  logistics_manager_mailer_id: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_USPSInternationalSettingsType {
-  __typename: "USPSInternationalSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  metadata: any | null;
-  capabilities: string[];
-  username: string | null;
-  password: string | null;
-  mailer_id: string | null;
-  customer_registration_id: string | null;
-  logistics_manager_mailer_id: string | null;
-  config: any | null;
-}
-
-export interface get_user_connections_user_connections_Zoom2uSettingsType {
-  __typename: "Zoom2uSettingsType";
-  id: string;
-  carrier_id: string;
-  carrier_name: string;
-  display_name: string;
-  test_mode: boolean;
-  active: boolean;
-  capabilities: string[];
-  metadata: any | null;
-  config: any | null;
-  account_country_code: string | null;
-  api_key: string | null;
-}
-
-export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLParcelDESettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FedexWSSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TGESettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
-
-export interface get_user_connections {
-  user_connections: get_user_connections_user_connections[];
+export interface mutate_tokenVariables {
+  data: TokenMutationInput;
 }
 
 
@@ -4335,26 +4335,85 @@ export interface get_ordersVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: mutate_metadata
+// GraphQL mutation operation: CreateOrder
 // ====================================================
 
-export interface mutate_metadata_mutate_metadata_errors {
+export interface CreateOrder_create_order_order {
+  id: string;
+}
+
+export interface CreateOrder_create_order_errors {
   field: string;
   messages: string[];
 }
 
-export interface mutate_metadata_mutate_metadata {
+export interface CreateOrder_create_order {
+  order: CreateOrder_create_order_order | null;
+  errors: CreateOrder_create_order_errors[] | null;
+}
+
+export interface CreateOrder {
+  create_order: CreateOrder_create_order;
+}
+
+export interface CreateOrderVariables {
+  data: CreateOrderMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateOrder
+// ====================================================
+
+export interface UpdateOrder_update_order_order {
   id: string;
-  metadata: any;
-  errors: mutate_metadata_mutate_metadata_errors[] | null;
 }
 
-export interface mutate_metadata {
-  mutate_metadata: mutate_metadata_mutate_metadata;
+export interface UpdateOrder_update_order_errors {
+  field: string;
+  messages: string[];
 }
 
-export interface mutate_metadataVariables {
-  data: MetadataMutationInput;
+export interface UpdateOrder_update_order {
+  order: UpdateOrder_update_order_order | null;
+  errors: UpdateOrder_update_order_errors[] | null;
+}
+
+export interface UpdateOrder {
+  update_order: UpdateOrder_update_order;
+}
+
+export interface UpdateOrderVariables {
+  data: UpdateOrderMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteOrder
+// ====================================================
+
+export interface DeleteOrder_delete_order_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteOrder_delete_order {
+  id: string | null;
+  errors: DeleteOrder_delete_order_errors[] | null;
+}
+
+export interface DeleteOrder {
+  delete_order: DeleteOrder_delete_order;
+}
+
+export interface DeleteOrderVariables {
+  data: DeleteOrderMutationInput;
 }
 
 
@@ -4506,99 +4565,6 @@ export interface delete_document_template {
 
 export interface delete_document_templateVariables {
   data: DeleteMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: search_data
-// ====================================================
-
-export interface search_data_shipment_results_edges_node_recipient {
-  id: string;
-  city: string | null;
-  street_number: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  country_code: CountryCodeEnum;
-  postal_code: string | null;
-  person_name: string | null;
-  phone_number: string | null;
-  company_name: string | null;
-  state_code: string | null;
-}
-
-export interface search_data_shipment_results_edges_node {
-  id: string;
-  status: ShipmentStatusEnum;
-  tracking_number: string | null;
-  recipient: search_data_shipment_results_edges_node_recipient;
-  created_at: any;
-}
-
-export interface search_data_shipment_results_edges {
-  node: search_data_shipment_results_edges_node;
-}
-
-export interface search_data_shipment_results {
-  edges: search_data_shipment_results_edges[];
-}
-
-export interface search_data_order_results_edges_node_shipping_to {
-  id: string;
-  city: string | null;
-  street_number: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  country_code: CountryCodeEnum;
-  postal_code: string | null;
-  person_name: string | null;
-  phone_number: string | null;
-  company_name: string | null;
-  state_code: string | null;
-}
-
-export interface search_data_order_results_edges_node {
-  id: string;
-  status: OrderStatus;
-  order_id: string;
-  shipping_to: search_data_order_results_edges_node_shipping_to;
-  created_at: any;
-}
-
-export interface search_data_order_results_edges {
-  node: search_data_order_results_edges_node;
-}
-
-export interface search_data_order_results {
-  edges: search_data_order_results_edges[];
-}
-
-export interface search_data_trackers_results_edges_node {
-  id: string;
-  status: TrackerStatusEnum;
-  tracking_number: string;
-  created_at: any;
-}
-
-export interface search_data_trackers_results_edges {
-  node: search_data_trackers_results_edges_node;
-}
-
-export interface search_data_trackers_results {
-  edges: search_data_trackers_results_edges[];
-}
-
-export interface search_data {
-  shipment_results: search_data_shipment_results;
-  order_results: search_data_order_results;
-  trackers_results: search_data_trackers_results;
-}
-
-export interface search_dataVariables {
-  keyword?: string | null;
 }
 
 
@@ -4835,92 +4801,6 @@ export interface GetRateSheetsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: CreateOrder
-// ====================================================
-
-export interface CreateOrder_create_order_order {
-  id: string;
-}
-
-export interface CreateOrder_create_order_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface CreateOrder_create_order {
-  order: CreateOrder_create_order_order | null;
-  errors: CreateOrder_create_order_errors[] | null;
-}
-
-export interface CreateOrder {
-  create_order: CreateOrder_create_order;
-}
-
-export interface CreateOrderVariables {
-  data: CreateOrderMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: UpdateOrder
-// ====================================================
-
-export interface UpdateOrder_update_order_order {
-  id: string;
-}
-
-export interface UpdateOrder_update_order_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface UpdateOrder_update_order {
-  order: UpdateOrder_update_order_order | null;
-  errors: UpdateOrder_update_order_errors[] | null;
-}
-
-export interface UpdateOrder {
-  update_order: UpdateOrder_update_order;
-}
-
-export interface UpdateOrderVariables {
-  data: UpdateOrderMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: DeleteOrder
-// ====================================================
-
-export interface DeleteOrder_delete_order_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface DeleteOrder_delete_order {
-  id: string | null;
-  errors: DeleteOrder_delete_order_errors[] | null;
-}
-
-export interface DeleteOrder {
-  delete_order: DeleteOrder_delete_order;
-}
-
-export interface DeleteOrderVariables {
-  data: DeleteOrderMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL query operation: get_batch_operation
 // ====================================================
 
@@ -4989,32 +4869,6 @@ export interface get_batch_operations {
 
 export interface get_batch_operationsVariables {
   filter?: BatchOperationFilter | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: deleteMetafield
-// ====================================================
-
-export interface deleteMetafield_delete_metafield_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface deleteMetafield_delete_metafield {
-  id: string;
-  errors: deleteMetafield_delete_metafield_errors[] | null;
-}
-
-export interface deleteMetafield {
-  delete_metafield: deleteMetafield_delete_metafield;
-}
-
-export interface deleteMetafieldVariables {
-  data: DeleteMutationInput;
 }
 
 
@@ -5232,12 +5086,579 @@ export interface GetManifestVariables {
   id: string;
 }
 
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetApp
+// ====================================================
+
+export interface GetApp_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetApp_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetApp_app_installation | null;
+}
+
+export interface GetApp {
+  app: GetApp_app;
+}
+
+export interface GetAppVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetApps
+// ====================================================
+
+export interface GetApps_apps_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetApps_apps_edges_node_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetApps_apps_edges_node {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetApps_apps_edges_node_installation | null;
+}
+
+export interface GetApps_apps_edges {
+  node: GetApps_apps_edges_node;
+}
+
+export interface GetApps_apps {
+  page_info: GetApps_apps_page_info;
+  edges: GetApps_apps_edges[];
+}
+
+export interface GetApps {
+  apps: GetApps_apps;
+}
+
+export interface GetAppsVariables {
+  filter?: AppFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetPrivateApp
+// ====================================================
+
+export interface GetPrivateApp_private_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetPrivateApp_private_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetPrivateApp_private_app_installation | null;
+}
+
+export interface GetPrivateApp {
+  private_app: GetPrivateApp_private_app;
+}
+
+export interface GetPrivateAppVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetPrivateApps
+// ====================================================
+
+export interface GetPrivateApps_private_apps_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetPrivateApps_private_apps_edges_node_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetPrivateApps_private_apps_edges_node {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetPrivateApps_private_apps_edges_node_installation | null;
+}
+
+export interface GetPrivateApps_private_apps_edges {
+  node: GetPrivateApps_private_apps_edges_node;
+}
+
+export interface GetPrivateApps_private_apps {
+  page_info: GetPrivateApps_private_apps_page_info;
+  edges: GetPrivateApps_private_apps_edges[];
+}
+
+export interface GetPrivateApps {
+  private_apps: GetPrivateApps_private_apps;
+}
+
+export interface GetPrivateAppsVariables {
+  filter?: AppFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: InstallApp
+// ====================================================
+
+export interface InstallApp_install_app_installation {
+  id: number;
+  access_scopes: string[];
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+}
+
+export interface InstallApp_install_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface InstallApp_install_app {
+  installation: InstallApp_install_app_installation | null;
+  errors: InstallApp_install_app_errors[] | null;
+}
+
+export interface InstallApp {
+  install_app: InstallApp_install_app;
+}
+
+export interface InstallAppVariables {
+  data: InstallAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UninstallApp
+// ====================================================
+
+export interface UninstallApp_uninstall_app_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface UninstallApp_uninstall_app_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: UninstallApp_uninstall_app_app_installation | null;
+}
+
+export interface UninstallApp_uninstall_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UninstallApp_uninstall_app {
+  app: UninstallApp_uninstall_app_app | null;
+  errors: UninstallApp_uninstall_app_errors[] | null;
+}
+
+export interface UninstallApp {
+  uninstall_app: UninstallApp_uninstall_app;
+}
+
+export interface UninstallAppVariables {
+  data: UninstallAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: search_data
+// ====================================================
+
+export interface search_data_shipment_results_edges_node_recipient {
+  id: string;
+  city: string | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  country_code: CountryCodeEnum;
+  postal_code: string | null;
+  person_name: string | null;
+  phone_number: string | null;
+  company_name: string | null;
+  state_code: string | null;
+}
+
+export interface search_data_shipment_results_edges_node {
+  id: string;
+  status: ShipmentStatusEnum;
+  tracking_number: string | null;
+  recipient: search_data_shipment_results_edges_node_recipient;
+  created_at: any;
+}
+
+export interface search_data_shipment_results_edges {
+  node: search_data_shipment_results_edges_node;
+}
+
+export interface search_data_shipment_results {
+  edges: search_data_shipment_results_edges[];
+}
+
+export interface search_data_order_results_edges_node_shipping_to {
+  id: string;
+  city: string | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  country_code: CountryCodeEnum;
+  postal_code: string | null;
+  person_name: string | null;
+  phone_number: string | null;
+  company_name: string | null;
+  state_code: string | null;
+}
+
+export interface search_data_order_results_edges_node {
+  id: string;
+  status: OrderStatus;
+  order_id: string;
+  shipping_to: search_data_order_results_edges_node_shipping_to;
+  created_at: any;
+}
+
+export interface search_data_order_results_edges {
+  node: search_data_order_results_edges_node;
+}
+
+export interface search_data_order_results {
+  edges: search_data_order_results_edges[];
+}
+
+export interface search_data_trackers_results_edges_node {
+  id: string;
+  status: TrackerStatusEnum;
+  tracking_number: string;
+  created_at: any;
+}
+
+export interface search_data_trackers_results_edges {
+  node: search_data_trackers_results_edges_node;
+}
+
+export interface search_data_trackers_results {
+  edges: search_data_trackers_results_edges[];
+}
+
+export interface search_data {
+  shipment_results: search_data_shipment_results;
+  order_results: search_data_order_results;
+  trackers_results: search_data_trackers_results;
+}
+
+export interface search_dataVariables {
+  keyword?: string | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: mutate_metadata
+// ====================================================
+
+export interface mutate_metadata_mutate_metadata_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface mutate_metadata_mutate_metadata {
+  id: string;
+  metadata: any;
+  errors: mutate_metadata_mutate_metadata_errors[] | null;
+}
+
+export interface mutate_metadata {
+  mutate_metadata: mutate_metadata_mutate_metadata;
+}
+
+export interface mutate_metadataVariables {
+  data: MetadataMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: deleteMetafield
+// ====================================================
+
+export interface deleteMetafield_delete_metafield_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface deleteMetafield_delete_metafield {
+  id: string;
+  errors: deleteMetafield_delete_metafield_errors[] | null;
+}
+
+export interface deleteMetafield {
+  delete_metafield: deleteMetafield_delete_metafield;
+}
+
+export interface deleteMetafieldVariables {
+  data: DeleteMutationInput;
+}
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
 //==============================================================
 // START Enums and Input Objects
 //==============================================================
+
+export enum CurrencyCodeEnum {
+  AED = "AED",
+  AMD = "AMD",
+  ANG = "ANG",
+  AOA = "AOA",
+  ARS = "ARS",
+  AUD = "AUD",
+  AWG = "AWG",
+  AZN = "AZN",
+  BAM = "BAM",
+  BBD = "BBD",
+  BDT = "BDT",
+  BGN = "BGN",
+  BHD = "BHD",
+  BIF = "BIF",
+  BMD = "BMD",
+  BND = "BND",
+  BOB = "BOB",
+  BRL = "BRL",
+  BSD = "BSD",
+  BTN = "BTN",
+  BWP = "BWP",
+  BYN = "BYN",
+  BZD = "BZD",
+  CAD = "CAD",
+  CDF = "CDF",
+  CHF = "CHF",
+  CLP = "CLP",
+  CNY = "CNY",
+  COP = "COP",
+  CRC = "CRC",
+  CUC = "CUC",
+  CVE = "CVE",
+  CZK = "CZK",
+  DJF = "DJF",
+  DKK = "DKK",
+  DOP = "DOP",
+  DZD = "DZD",
+  EGP = "EGP",
+  ERN = "ERN",
+  ETB = "ETB",
+  EUR = "EUR",
+  FJD = "FJD",
+  GBP = "GBP",
+  GEL = "GEL",
+  GHS = "GHS",
+  GMD = "GMD",
+  GNF = "GNF",
+  GTQ = "GTQ",
+  GYD = "GYD",
+  HKD = "HKD",
+  HNL = "HNL",
+  HRK = "HRK",
+  HTG = "HTG",
+  HUF = "HUF",
+  IDR = "IDR",
+  ILS = "ILS",
+  INR = "INR",
+  IRR = "IRR",
+  ISK = "ISK",
+  JMD = "JMD",
+  JOD = "JOD",
+  JPY = "JPY",
+  KES = "KES",
+  KGS = "KGS",
+  KHR = "KHR",
+  KMF = "KMF",
+  KPW = "KPW",
+  KRW = "KRW",
+  KWD = "KWD",
+  KYD = "KYD",
+  KZT = "KZT",
+  LAK = "LAK",
+  LKR = "LKR",
+  LRD = "LRD",
+  LSL = "LSL",
+  LYD = "LYD",
+  MAD = "MAD",
+  MDL = "MDL",
+  MGA = "MGA",
+  MKD = "MKD",
+  MMK = "MMK",
+  MNT = "MNT",
+  MOP = "MOP",
+  MRO = "MRO",
+  MUR = "MUR",
+  MVR = "MVR",
+  MWK = "MWK",
+  MXN = "MXN",
+  MYR = "MYR",
+  MZN = "MZN",
+  NAD = "NAD",
+  NGN = "NGN",
+  NIO = "NIO",
+  NOK = "NOK",
+  NPR = "NPR",
+  NZD = "NZD",
+  OMR = "OMR",
+  PEN = "PEN",
+  PGK = "PGK",
+  PHP = "PHP",
+  PKR = "PKR",
+  PLN = "PLN",
+  PYG = "PYG",
+  QAR = "QAR",
+  RSD = "RSD",
+  RUB = "RUB",
+  RWF = "RWF",
+  SAR = "SAR",
+  SBD = "SBD",
+  SCR = "SCR",
+  SDG = "SDG",
+  SEK = "SEK",
+  SGD = "SGD",
+  SHP = "SHP",
+  SLL = "SLL",
+  SOS = "SOS",
+  SRD = "SRD",
+  SSP = "SSP",
+  STD = "STD",
+  SYP = "SYP",
+  SZL = "SZL",
+  THB = "THB",
+  TJS = "TJS",
+  TND = "TND",
+  TOP = "TOP",
+  TRY = "TRY",
+  TTD = "TTD",
+  TWD = "TWD",
+  TZS = "TZS",
+  UAH = "UAH",
+  USD = "USD",
+  UYU = "UYU",
+  UZS = "UZS",
+  VEF = "VEF",
+  VND = "VND",
+  VUV = "VUV",
+  WST = "WST",
+  XAF = "XAF",
+  XCD = "XCD",
+  XOF = "XOF",
+  XPF = "XPF",
+  YER = "YER",
+  ZAR = "ZAR",
+}
+
+export enum DimensionUnitEnum {
+  CM = "CM",
+  IN = "IN",
+}
+
+export enum WeightUnitEnum {
+  G = "G",
+  KG = "KG",
+  LB = "LB",
+  OZ = "OZ",
+}
+
+export enum LabelTemplateTypeEnum {
+  SVG = "SVG",
+  ZPL = "ZPL",
+}
 
 export enum CountryCodeEnum {
   AD = "AD",
@@ -5476,258 +5897,6 @@ export enum CountryCodeEnum {
   ZW = "ZW",
 }
 
-export enum IncotermCodeEnum {
-  CFR = "CFR",
-  CIF = "CIF",
-  CIP = "CIP",
-  CPT = "CPT",
-  DAF = "DAF",
-  DDP = "DDP",
-  DDU = "DDU",
-  DEQ = "DEQ",
-  DES = "DES",
-  EXW = "EXW",
-  FAS = "FAS",
-  FCA = "FCA",
-  FOB = "FOB",
-}
-
-export enum CustomsContentTypeEnum {
-  documents = "documents",
-  gift = "gift",
-  merchandise = "merchandise",
-  other = "other",
-  return_merchandise = "return_merchandise",
-  sample = "sample",
-}
-
-export enum PaidByEnum {
-  recipient = "recipient",
-  sender = "sender",
-  third_party = "third_party",
-}
-
-export enum CurrencyCodeEnum {
-  AED = "AED",
-  AMD = "AMD",
-  ANG = "ANG",
-  AOA = "AOA",
-  ARS = "ARS",
-  AUD = "AUD",
-  AWG = "AWG",
-  AZN = "AZN",
-  BAM = "BAM",
-  BBD = "BBD",
-  BDT = "BDT",
-  BGN = "BGN",
-  BHD = "BHD",
-  BIF = "BIF",
-  BMD = "BMD",
-  BND = "BND",
-  BOB = "BOB",
-  BRL = "BRL",
-  BSD = "BSD",
-  BTN = "BTN",
-  BWP = "BWP",
-  BYN = "BYN",
-  BZD = "BZD",
-  CAD = "CAD",
-  CDF = "CDF",
-  CHF = "CHF",
-  CLP = "CLP",
-  CNY = "CNY",
-  COP = "COP",
-  CRC = "CRC",
-  CUC = "CUC",
-  CVE = "CVE",
-  CZK = "CZK",
-  DJF = "DJF",
-  DKK = "DKK",
-  DOP = "DOP",
-  DZD = "DZD",
-  EGP = "EGP",
-  ERN = "ERN",
-  ETB = "ETB",
-  EUR = "EUR",
-  FJD = "FJD",
-  GBP = "GBP",
-  GEL = "GEL",
-  GHS = "GHS",
-  GMD = "GMD",
-  GNF = "GNF",
-  GTQ = "GTQ",
-  GYD = "GYD",
-  HKD = "HKD",
-  HNL = "HNL",
-  HRK = "HRK",
-  HTG = "HTG",
-  HUF = "HUF",
-  IDR = "IDR",
-  ILS = "ILS",
-  INR = "INR",
-  IRR = "IRR",
-  ISK = "ISK",
-  JMD = "JMD",
-  JOD = "JOD",
-  JPY = "JPY",
-  KES = "KES",
-  KGS = "KGS",
-  KHR = "KHR",
-  KMF = "KMF",
-  KPW = "KPW",
-  KRW = "KRW",
-  KWD = "KWD",
-  KYD = "KYD",
-  KZT = "KZT",
-  LAK = "LAK",
-  LKR = "LKR",
-  LRD = "LRD",
-  LSL = "LSL",
-  LYD = "LYD",
-  MAD = "MAD",
-  MDL = "MDL",
-  MGA = "MGA",
-  MKD = "MKD",
-  MMK = "MMK",
-  MNT = "MNT",
-  MOP = "MOP",
-  MRO = "MRO",
-  MUR = "MUR",
-  MVR = "MVR",
-  MWK = "MWK",
-  MXN = "MXN",
-  MYR = "MYR",
-  MZN = "MZN",
-  NAD = "NAD",
-  NGN = "NGN",
-  NIO = "NIO",
-  NOK = "NOK",
-  NPR = "NPR",
-  NZD = "NZD",
-  OMR = "OMR",
-  PEN = "PEN",
-  PGK = "PGK",
-  PHP = "PHP",
-  PKR = "PKR",
-  PLN = "PLN",
-  PYG = "PYG",
-  QAR = "QAR",
-  RSD = "RSD",
-  RUB = "RUB",
-  RWF = "RWF",
-  SAR = "SAR",
-  SBD = "SBD",
-  SCR = "SCR",
-  SDG = "SDG",
-  SEK = "SEK",
-  SGD = "SGD",
-  SHP = "SHP",
-  SLL = "SLL",
-  SOS = "SOS",
-  SRD = "SRD",
-  SSP = "SSP",
-  STD = "STD",
-  SYP = "SYP",
-  SZL = "SZL",
-  THB = "THB",
-  TJS = "TJS",
-  TND = "TND",
-  TOP = "TOP",
-  TRY = "TRY",
-  TTD = "TTD",
-  TWD = "TWD",
-  TZS = "TZS",
-  UAH = "UAH",
-  USD = "USD",
-  UYU = "UYU",
-  UZS = "UZS",
-  VEF = "VEF",
-  VND = "VND",
-  VUV = "VUV",
-  WST = "WST",
-  XAF = "XAF",
-  XCD = "XCD",
-  XOF = "XOF",
-  XPF = "XPF",
-  YER = "YER",
-  ZAR = "ZAR",
-}
-
-export enum DimensionUnitEnum {
-  CM = "CM",
-  IN = "IN",
-}
-
-export enum WeightUnitEnum {
-  G = "G",
-  KG = "KG",
-  LB = "LB",
-  OZ = "OZ",
-}
-
-export enum LabelTemplateTypeEnum {
-  SVG = "SVG",
-  ZPL = "ZPL",
-}
-
-export enum ShipmentStatusEnum {
-  cancelled = "cancelled",
-  delivered = "delivered",
-  delivery_failed = "delivery_failed",
-  draft = "draft",
-  in_transit = "in_transit",
-  needs_attention = "needs_attention",
-  out_for_delivery = "out_for_delivery",
-  purchased = "purchased",
-  shipped = "shipped",
-}
-
-export enum LabelTypeEnum {
-  PDF = "PDF",
-  PNG = "PNG",
-  ZPL = "ZPL",
-}
-
-export enum TrackerStatusEnum {
-  delivered = "delivered",
-  delivery_delayed = "delivery_delayed",
-  delivery_failed = "delivery_failed",
-  in_transit = "in_transit",
-  on_hold = "on_hold",
-  out_for_delivery = "out_for_delivery",
-  pending = "pending",
-  ready_for_pickup = "ready_for_pickup",
-  unknown = "unknown",
-}
-
-export enum ManualShipmentStatusEnum {
-  delivered = "delivered",
-  delivery_failed = "delivery_failed",
-  in_transit = "in_transit",
-  needs_attention = "needs_attention",
-}
-
-export enum EventTypes {
-  all = "all",
-  batch_completed = "batch_completed",
-  batch_failed = "batch_failed",
-  batch_queued = "batch_queued",
-  batch_running = "batch_running",
-  order_cancelled = "order_cancelled",
-  order_created = "order_created",
-  order_delivered = "order_delivered",
-  order_fulfilled = "order_fulfilled",
-  order_updated = "order_updated",
-  shipment_cancelled = "shipment_cancelled",
-  shipment_delivery_failed = "shipment_delivery_failed",
-  shipment_fulfilled = "shipment_fulfilled",
-  shipment_needs_attention = "shipment_needs_attention",
-  shipment_out_for_delivery = "shipment_out_for_delivery",
-  shipment_purchased = "shipment_purchased",
-  tracker_created = "tracker_created",
-  tracker_updated = "tracker_updated",
-}
-
 export enum CarrierNameEnum {
   allied_express = "allied_express",
   allied_express_local = "allied_express_local",
@@ -5770,21 +5939,101 @@ export enum CarrierNameEnum {
   zoom2u = "zoom2u",
 }
 
+export enum ShipmentStatusEnum {
+  cancelled = "cancelled",
+  delivered = "delivered",
+  delivery_failed = "delivery_failed",
+  draft = "draft",
+  in_transit = "in_transit",
+  needs_attention = "needs_attention",
+  out_for_delivery = "out_for_delivery",
+  purchased = "purchased",
+  shipped = "shipped",
+}
+
+export enum LabelTypeEnum {
+  PDF = "PDF",
+  PNG = "PNG",
+  ZPL = "ZPL",
+}
+
+export enum CustomsContentTypeEnum {
+  documents = "documents",
+  gift = "gift",
+  merchandise = "merchandise",
+  other = "other",
+  return_merchandise = "return_merchandise",
+  sample = "sample",
+}
+
+export enum IncotermCodeEnum {
+  CFR = "CFR",
+  CIF = "CIF",
+  CIP = "CIP",
+  CPT = "CPT",
+  DAF = "DAF",
+  DDP = "DDP",
+  DDU = "DDU",
+  DEQ = "DEQ",
+  DES = "DES",
+  EXW = "EXW",
+  FAS = "FAS",
+  FCA = "FCA",
+  FOB = "FOB",
+}
+
+export enum PaidByEnum {
+  recipient = "recipient",
+  sender = "sender",
+  third_party = "third_party",
+}
+
+export enum TrackerStatusEnum {
+  delivered = "delivered",
+  delivery_delayed = "delivery_delayed",
+  delivery_failed = "delivery_failed",
+  in_transit = "in_transit",
+  on_hold = "on_hold",
+  out_for_delivery = "out_for_delivery",
+  pending = "pending",
+  ready_for_pickup = "ready_for_pickup",
+  unknown = "unknown",
+}
+
+export enum ManualShipmentStatusEnum {
+  delivered = "delivered",
+  delivery_failed = "delivery_failed",
+  in_transit = "in_transit",
+  needs_attention = "needs_attention",
+}
+
+export enum EventTypes {
+  all = "all",
+  batch_completed = "batch_completed",
+  batch_failed = "batch_failed",
+  batch_queued = "batch_queued",
+  batch_running = "batch_running",
+  order_cancelled = "order_cancelled",
+  order_created = "order_created",
+  order_delivered = "order_delivered",
+  order_fulfilled = "order_fulfilled",
+  order_updated = "order_updated",
+  shipment_cancelled = "shipment_cancelled",
+  shipment_delivery_failed = "shipment_delivery_failed",
+  shipment_fulfilled = "shipment_fulfilled",
+  shipment_needs_attention = "shipment_needs_attention",
+  shipment_out_for_delivery = "shipment_out_for_delivery",
+  shipment_purchased = "shipment_purchased",
+  tracker_created = "tracker_created",
+  tracker_updated = "tracker_updated",
+}
+
 export enum OrderStatus {
   cancelled = "cancelled",
   delivered = "delivered",
   fulfilled = "fulfilled",
   partial = "partial",
   unfulfilled = "unfulfilled",
-}
-
-export enum MetadataObjectTypeEnum {
-  app = "app",
-  carrier = "carrier",
-  commodity = "commodity",
-  order = "order",
-  shipment = "shipment",
-  tracker = "tracker",
 }
 
 export enum TemplateRelatedObject {
@@ -5808,21 +6057,13 @@ export enum BatchOperationStatus {
   running = "running",
 }
 
-// null
-export interface AddressFilter {
-  offset?: number | null;
-  first?: number | null;
-  label?: string | null;
-  keyword?: string | null;
-  address?: string | null;
-}
-
-// null
-export interface TemplateFilter {
-  offset?: number | null;
-  first?: number | null;
-  label?: string | null;
-  keyword?: string | null;
+export enum MetadataObjectTypeEnum {
+  app = "app",
+  carrier = "carrier",
+  commodity = "commodity",
+  order = "order",
+  shipment = "shipment",
+  tracker = "tracker",
 }
 
 // null
@@ -7159,6 +7400,23 @@ export interface WebhookFilter {
 }
 
 // null
+export interface AddressFilter {
+  offset?: number | null;
+  first?: number | null;
+  label?: string | null;
+  keyword?: string | null;
+  address?: string | null;
+}
+
+// null
+export interface TemplateFilter {
+  offset?: number | null;
+  first?: number | null;
+  label?: string | null;
+  keyword?: string | null;
+}
+
+// null
 export interface SystemCarrierMutationInput {
   id: string;
   enable?: boolean | null;
@@ -7356,11 +7614,33 @@ export interface OrderFilter {
 }
 
 // null
-export interface MetadataMutationInput {
+export interface CreateOrderMutationInput {
+  shipping_to: AddressInput;
+  line_items: CommodityInput[];
+  order_id?: string | null;
+  order_date?: string | null;
+  shipping_from?: AddressInput | null;
+  billing_address?: AddressInput | null;
+  metadata?: any | null;
+  options?: any | null;
+}
+
+// null
+export interface UpdateOrderMutationInput {
   id: string;
-  object_type: MetadataObjectTypeEnum;
-  added_values: any;
-  discarded_keys?: string[] | null;
+  order_id?: string | null;
+  order_date?: string | null;
+  shipping_to?: UpdateAddressInput | null;
+  shipping_from?: UpdateAddressInput | null;
+  billing_address?: UpdateAddressInput | null;
+  metadata?: any | null;
+  options?: any | null;
+  line_items?: UpdateCommodityInput[] | null;
+}
+
+// null
+export interface DeleteOrderMutationInput {
+  id: string;
 }
 
 // null
@@ -7417,36 +7697,6 @@ export interface RateSheetFilter {
 }
 
 // null
-export interface CreateOrderMutationInput {
-  shipping_to: AddressInput;
-  line_items: CommodityInput[];
-  order_id?: string | null;
-  order_date?: string | null;
-  shipping_from?: AddressInput | null;
-  billing_address?: AddressInput | null;
-  metadata?: any | null;
-  options?: any | null;
-}
-
-// null
-export interface UpdateOrderMutationInput {
-  id: string;
-  order_id?: string | null;
-  order_date?: string | null;
-  shipping_to?: UpdateAddressInput | null;
-  shipping_from?: UpdateAddressInput | null;
-  billing_address?: UpdateAddressInput | null;
-  metadata?: any | null;
-  options?: any | null;
-  line_items?: UpdateCommodityInput[] | null;
-}
-
-// null
-export interface DeleteOrderMutationInput {
-  id: string;
-}
-
-// null
 export interface BatchOperationFilter {
   offset?: number | null;
   first?: number | null;
@@ -7480,6 +7730,36 @@ export interface ManifestFilter {
   created_after?: any | null;
   created_before?: any | null;
   carrier_name?: string[] | null;
+}
+
+// null
+export interface AppFilter {
+  offset?: number | null;
+  first?: number | null;
+  features: string[];
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  created_after?: any | null;
+  created_before?: any | null;
+}
+
+// null
+export interface InstallAppMutationInput {
+  app_id: string;
+  metadata?: any | null;
+}
+
+// null
+export interface UninstallAppMutationInput {
+  app_id: string;
+}
+
+// null
+export interface MetadataMutationInput {
+  id: string;
+  object_type: MetadataObjectTypeEnum;
+  added_values: any;
+  discarded_keys?: string[] | null;
 }
 
 //==============================================================

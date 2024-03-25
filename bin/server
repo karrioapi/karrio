@@ -6,10 +6,12 @@ source "bin/activate-env" > /dev/null 2>&1
 
 # Run server commands
 if [[ "$*" == *gen:graph* ]]; then
+    # Dependencies required: npm install -g apollo graphql
 	cd "${ROOT:?}"
     npx apollo service:download --endpoint=http://0.0.0.0:5002/graphql/ "${ROOT:?}/schemas/graphql.json"
 	cd -
 elif [[ "$*" == *gen:admin* ]]; then
+    # Dependencies required: npm install -g apollo graphql
 	cd "${ROOT:?}"
     npx apollo service:download --endpoint=http://0.0.0.0:5002/admin/graphql/ "${ROOT:?}/schemas/graphql-admin.json"
 	cd -
