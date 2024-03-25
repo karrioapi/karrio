@@ -163,8 +163,8 @@ def rate_request(
             requestedPackageLineItems=[
                 fedex.RequestedPackageLineItemType(
                     subPackagingType=lib.identity(
-                        provider_units.PackagingType.map(package.packaging_type).value
-                        or "YOUR_PACKAGING"
+                        provider_units.SubPackageType.map(package.packaging_type).value
+                        or "OTHER"
                     ),
                     groupPackageCount=1,
                     contentRecord=[],

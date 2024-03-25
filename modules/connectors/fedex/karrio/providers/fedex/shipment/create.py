@@ -545,8 +545,8 @@ def shipment_request(
                     fedex.RequestedPackageLineItemType(
                         sequenceNumber=package_index,
                         subPackagingType=lib.identity(
-                            provider_units.PackagingType.map(
-                                package.packaging_type or "your_packaging"
+                            provider_units.SubPackageType.map(
+                                package.packaging_type
                             ).value
                         ),
                         customerReferences=[],
