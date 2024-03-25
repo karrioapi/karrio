@@ -2632,71 +2632,6 @@ export const DELETE_DOCUMENT_TEMPLATE = gql`
   }
 `;
 
-export const SEARCH_DATA = gql`
-  query search_data($keyword: String) {
-    shipment_results: shipments(
-      filter: { keyword: $keyword, offset: 0, first: 10 }
-    ) {
-      edges {
-        node {
-          id
-          status
-          tracking_number
-          recipient {
-            id
-            city
-            street_number
-            address_line1
-            address_line2
-            country_code
-            postal_code
-            person_name
-            phone_number
-            company_name
-            state_code
-          }
-          created_at
-        }
-      }
-    }
-    order_results: orders(filter: { keyword: $keyword, offset: 0, first: 10 }) {
-      edges {
-        node {
-          id
-          status
-          order_id
-          shipping_to {
-            id
-            city
-            street_number
-            address_line1
-            address_line2
-            country_code
-            postal_code
-            person_name
-            phone_number
-            company_name
-            state_code
-          }
-          created_at
-        }
-      }
-    }
-    trackers_results: trackers(
-      filter: { tracking_number: $keyword, offset: 0, first: 10 }
-    ) {
-      edges {
-        node {
-          id
-          status
-          tracking_number
-          created_at
-        }
-      }
-    }
-  }
-`;
-
 export const CREATE_RATE_SHEET = gql`
   mutation CreateRateSheet($data: CreateRateSheetMutationInput!) {
     create_rate_sheet(input: $data) {
@@ -3048,25 +2983,6 @@ export const GET_MANIFEST = gql`
       shipment_identifiers
       reference
       address {
-        id
-        postal_code
-        city
-        federal_tax_id
-        state_tax_id
-        person_name
-        company_name
-        country_code
-        email
-        phone_number
-        state_code
-        residential
-        street_number
-        address_line1
-        address_line2
-      }
-      manifest_carrier {
-        carrier_id
-        carrier_name
         config
       }
       messages {
@@ -3078,6 +2994,241 @@ export const GET_MANIFEST = gql`
       meta
       created_at
       updated_at
+    }
+  }
+`;
+
+//#endregion
+
+// -----------------------------------------------------------
+// Apps queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const GET_APP = gql`
+  query GetApp($id: String!) {
+    app(id: $id) {
+      id
+      display_name
+      developer_name
+      is_public
+      is_builtin
+      is_embedded
+      is_published
+      launch_url
+      features
+      metadata
+      installation {
+        id
+        access_scopes
+        metadata
+      }
+    }
+  }
+`;
+
+export const GET_APPS = gql`
+  query GetApps($filter: AppFilter) {
+    apps(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          display_name
+          developer_name
+          is_public
+          is_builtin
+          is_embedded
+          is_published
+          launch_url
+          features
+          metadata
+          installation {
+            id
+            access_scopes
+            metadata
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const GET_PRIVATE_APP = gql`
+  query GetPrivateApp($id: String!) {
+    private_app(id: $id) {
+      id
+      display_name
+      developer_name
+      is_public
+      is_builtin
+      is_embedded
+      is_published
+      launch_url
+      features
+      metadata
+      installation {
+        id
+        access_scopes
+        metadata
+      }
+    }
+  }
+`;
+
+export const GET_PRIVATE_APPS = gql`
+  query GetPrivateApps($filter: AppFilter) {
+    private_apps(filter: $filter) {
+      page_info {
+        count
+        has_next_page
+        has_previous_page
+        start_cursor
+        end_cursor
+      }
+      edges {
+        node {
+          id
+          display_name
+          developer_name
+          is_public
+          is_builtin
+          is_embedded
+          is_published
+          launch_url
+          features
+          metadata
+          installation {
+            id
+            access_scopes
+            metadata
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const INSTALL_APP = gql`
+  mutation InstallApp($data: InstallAppMutationInput!) {
+    install_app(input: $data) {
+      installation {
+        id
+        access_scopes
+        created_at
+        updated_at
+        metadata
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+export const UNINSTALL_APP = gql`
+  mutation UninstallApp($data: UninstallAppMutationInput!) {
+    uninstall_app(input: $data) {
+      app {
+        id
+        display_name
+        developer_name
+        is_public
+        is_builtin
+        is_embedded
+        is_published
+        launch_url
+        features
+        metadata
+        installation {
+          id
+          access_scopes
+          metadata
+        }
+      }
+      errors {
+        field
+        messages
+      }
+    }
+  }
+`;
+
+//#endregion
+
+// -----------------------------------------------------------
+// Shared queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const SEARCH_DATA = gql`
+  query search_data($keyword: String) {
+    shipment_results: shipments(
+      filter: { keyword: $keyword, offset: 0, first: 10 }
+    ) {
+      edges {
+        node {
+          id
+          status
+          tracking_number
+          recipient {
+            id
+            city
+            street_number
+            address_line1
+            address_line2
+            country_code
+            postal_code
+            person_name
+            phone_number
+            company_name
+            state_code
+          }
+          created_at
+        }
+      }
+    }
+    order_results: orders(filter: { keyword: $keyword, offset: 0, first: 10 }) {
+      edges {
+        node {
+          id
+          status
+          order_id
+          shipping_to {
+            id
+            city
+            street_number
+            address_line1
+            address_line2
+            country_code
+            postal_code
+            person_name
+            phone_number
+            company_name
+            state_code
+          }
+          created_at
+        }
+      }
+    }
+    trackers_results: trackers(
+      filter: { tracking_number: $keyword, offset: 0, first: 10 }
+    ) {
+      edges {
+        node {
+          id
+          status
+          tracking_number
+          created_at
+        }
+      }
     }
   }
 `;
