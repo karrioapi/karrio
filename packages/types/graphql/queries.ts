@@ -1,145 +1,10 @@
 import gql from 'graphql-tag';
 
 
-export const GET_ADDRESS_TEMPLATES = gql`query get_address_templates($filter: AddressFilter) {
-  address_templates(filter: $filter) {
-    page_info {
-      count
-      has_next_page
-      has_previous_page
-      start_cursor
-      end_cursor
-    }
-    edges {
-      node {
-        id
-        is_default
-        label
-        address {
-          company_name
-          person_name
-          street_number
-          address_line1
-          address_line2
-          postal_code
-          residential
-          city
-          state_code
-          country_code
-          email
-          phone_number
-          federal_tax_id
-          state_tax_id
-          validate_location
-        }
-      }
-    }
-  }
-}
-`;
-
-export const GET_CUSTOMS_TEMPLATES = gql`query get_customs_info_templates($filter: TemplateFilter) {
-  customs_templates(filter: $filter) {
-    page_info {
-      count
-      has_next_page
-      has_previous_page
-      start_cursor
-      end_cursor
-    }
-    edges {
-      node {
-        id
-        label
-        is_default
-        customs {
-          incoterm
-          content_type
-          commercial_invoice
-          content_description
-          duty {
-            paid_by
-            currency
-            account_number
-            declared_value
-          }
-          invoice
-          invoice_date
-          signer
-          certify
-          options
-        }
-      }
-    }
-  }
-}
-`;
-
-export const GET_DEFAULT_TEMPLATES = gql`query get_default_templates {
-  default_templates {
-    default_address {
-      id
-      is_default
-      label
-      address {
-        company_name
-        person_name
-        street_number
-        address_line1
-        address_line2
-        postal_code
-        residential
-        city
-        state_code
-        country_code
-        email
-        phone_number
-        federal_tax_id
-        state_tax_id
-        validate_location
-      }
-    }
-    default_customs {
-      id
-      label
-      is_default
-      customs {
-        incoterm
-        content_type
-        commercial_invoice
-        content_description
-        duty {
-          paid_by
-          currency
-          account_number
-          declared_value
-        }
-        invoice
-        invoice_date
-        signer
-        certify
-        options
-      }
-    }
-    default_parcel {
-      id
-      is_default
-      label
-      parcel {
-        width
-        height
-        length
-        dimension_unit
-        weight
-        weight_unit
-        packaging_type
-        package_preset
-        is_document
-      }
-    }
-  }
-}
-`;
+// -----------------------------------------------------------
+// Carrier queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const CREATE_CARRIER_CONNECTION = gql`mutation create_connection($data: CreateCarrierConnectionMutationInput!) {
   create_carrier_connection(input: $data) {
@@ -167,6 +32,878 @@ export const DELETE_CARRIER_CONNECTION = gql`mutation delete_connection($data: D
   }
 }
 `;
+
+export const GET_USER_CONNECTIONS = gql`query get_user_connections {
+  user_connections {
+    __typename
+    ... on AlliedExpressSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+      service_type
+    }
+    ... on AlliedExpressLocalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account
+      service_type
+    }
+    ... on AmazonShippingSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      seller_id
+      developer_id
+      mws_auth_token
+      aws_region
+      config
+    }
+    ... on AramexSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      username
+      password
+      account_pin
+      account_entity
+      account_number
+      account_country_code
+      config
+    }
+    ... on AsendiaUSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      username
+      password
+      account_number
+      api_key
+      config
+    }
+    ... on AustraliaPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      api_key
+      password
+      account_number
+      config
+    }
+    ... on BoxKnightSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      username
+      password
+      config
+      metadata
+    }
+    ... on BelgianPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      account_id
+      passphrase
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on CanadaPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      username
+      password
+      customer_number
+      contract_id
+      config
+    }
+    ... on CanparSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      config
+    }
+    ... on ChronopostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      password
+      account_number
+      account_country_code
+      config
+    }
+    ... on ColissimoSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      password
+      contract_number
+      laposte_api_key
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DHLParcelDESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      customer_number
+      dhl_api_key
+      tracking_consumer_key
+      tracking_consumer_secret
+      config
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DHLExpressSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      site_id
+      password
+      account_number
+      account_country_code
+      config
+    }
+    ... on DHLPolandSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      account_number
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DHLUniversalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      consumer_key
+      consumer_secret
+      config
+    }
+    ... on DicomSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      billing_account
+      config
+    }
+    ... on DPDSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      delis_id
+      password
+      depot
+      account_country_code
+      services {
+        active
+        currency
+        description
+        dimension_unit
+        domicile
+        id
+        international
+        max_height
+        max_length
+        max_weight
+        max_width
+        service_code
+        service_name
+        carrier_service_code
+        transit_days
+        transit_time
+        weight_unit
+        zones {
+          cities
+          postal_codes
+          country_codes
+          label
+          latitude
+          longitude
+          max_weight
+          min_weight
+          radius
+          rate
+          transit_days
+          transit_time
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on DPDHLSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      app_id
+      app_token
+      zt_id
+      zt_password
+      account_number
+      config
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on EShipperSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      config
+    }
+    ... on EasyPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      config
+    }
+    ... on FedexSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      account_number
+      api_key
+      secret_key
+      track_api_key
+      track_secret_key
+      account_country_code
+      config
+    }
+    ... on FedexWSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      account_number
+      password
+      meter_number
+      user_key
+      account_country_code
+      config
+    }
+    ... on FreightcomSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      config
+    }
+    ... on GenericSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      custom_carrier_name
+      account_number
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      account_country_code
+      services {
+        id
+        active
+        service_name
+        service_code
+        carrier_service_code
+        description
+        currency
+        transit_days
+        transit_time
+        max_weight
+        max_width
+        max_height
+        max_length
+        weight_unit
+        dimension_unit
+        domicile
+        international
+        zones {
+          label
+          rate
+          min_weight
+          max_weight
+          transit_days
+          transit_time
+          radius
+          latitude
+          longitude
+          cities
+          postal_codes
+          country_codes
+        }
+      }
+      label_template {
+        id
+        slug
+        template
+        template_type
+        shipment_sample
+        width
+        height
+      }
+      rate_sheet {
+        id
+        name
+        slug
+        carrier_name
+        metadata
+      }
+    }
+    ... on GEODISSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      identifier
+      language
+      config
+    }
+    ... on LaPosteSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      lang
+      config
+    }
+    ... on Locate2uSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      account_country_code
+      client_id
+      client_secret
+    }
+    ... on NationexSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      customer_id
+      billing_account
+      language
+      config
+    }
+    ... on PurolatorSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      account_number
+      user_token
+      config
+    }
+    ... on RoadieSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      api_key
+      config
+    }
+    ... on RoyalMailSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      client_id
+      client_secret
+      config
+    }
+    ... on SendleSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      sendle_id
+      api_key
+      account_country_code
+      config
+    }
+    ... on TGESettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      config
+      capabilities
+      username
+      password
+      api_key
+      toll_username
+      toll_password
+      my_toll_token
+      my_toll_identity
+      account_code
+    }
+    ... on TNTSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      account_number
+      account_country_code
+      config
+    }
+    ... on UPSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      client_id
+      client_secret
+      account_number
+      account_country_code
+      config
+    }
+    ... on USPSSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      mailer_id
+      customer_registration_id
+      logistics_manager_mailer_id
+      config
+    }
+    ... on USPSInternationalSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      metadata
+      capabilities
+      username
+      password
+      mailer_id
+      customer_registration_id
+      logistics_manager_mailer_id
+      config
+    }
+    ... on Zoom2uSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      account_country_code
+      api_key
+    }
+  }
+}
+`;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// API Logs queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_LOG = gql`query get_log($id: Int!) {
   log(id: $id) {
@@ -230,6 +967,14 @@ export const GET_LOGS = gql`query get_logs($filter: LogFilter) {
   }
 }
 `;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// Shipments queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_SHIPMENT = gql`query get_shipment($id: String!) {
   shipment(id: $id) {
@@ -1106,6 +1851,14 @@ export const CHANGE_SHIPMENT_STATUS = gql`mutation change_shipment_status($data:
 }
 `;
 
+//#endregion
+
+
+// -----------------------------------------------------------
+// Tracker queries and mutations
+// -----------------------------------------------------------
+//#region
+
 export const GET_TRACKER = gql`query get_tracker($id: String!) {
   tracker(id: $id) {
     id
@@ -1272,6 +2025,14 @@ export const GET_TRACKERS = gql`query get_trackers($filter: TrackerFilter) {
 }
 `;
 
+//#endregion
+
+
+// -----------------------------------------------------------
+// Webhook queries and mutations
+// -----------------------------------------------------------
+//#region
+
 export const GET_WEBHOOK = gql`query get_webhook($id: String!) {
   webhook(id: $id) {
     id
@@ -1315,6 +2076,154 @@ export const GET_WEBHOOKS = gql`query get_webhooks($filter: WebhookFilter) {
         description
         last_event_at
         secret
+      }
+    }
+  }
+}
+`;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// Templates queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const GET_ADDRESS_TEMPLATES = gql`query get_address_templates($filter: AddressFilter) {
+  address_templates(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        is_default
+        label
+        address {
+          company_name
+          person_name
+          street_number
+          address_line1
+          address_line2
+          postal_code
+          residential
+          city
+          state_code
+          country_code
+          email
+          phone_number
+          federal_tax_id
+          state_tax_id
+          validate_location
+        }
+      }
+    }
+  }
+}
+`;
+
+export const GET_CUSTOMS_TEMPLATES = gql`query get_customs_info_templates($filter: TemplateFilter) {
+  customs_templates(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        label
+        is_default
+        customs {
+          incoterm
+          content_type
+          commercial_invoice
+          content_description
+          duty {
+            paid_by
+            currency
+            account_number
+            declared_value
+          }
+          invoice
+          invoice_date
+          signer
+          certify
+          options
+        }
+      }
+    }
+  }
+}
+`;
+
+export const GET_DEFAULT_TEMPLATES = gql`query get_default_templates {
+  default_templates {
+    default_address {
+      id
+      is_default
+      label
+      address {
+        company_name
+        person_name
+        street_number
+        address_line1
+        address_line2
+        postal_code
+        residential
+        city
+        state_code
+        country_code
+        email
+        phone_number
+        federal_tax_id
+        state_tax_id
+        validate_location
+      }
+    }
+    default_customs {
+      id
+      label
+      is_default
+      customs {
+        incoterm
+        content_type
+        commercial_invoice
+        content_description
+        duty {
+          paid_by
+          currency
+          account_number
+          declared_value
+        }
+        invoice
+        invoice_date
+        signer
+        certify
+        options
+      }
+    }
+    default_parcel {
+      id
+      is_default
+      label
+      parcel {
+        width
+        height
+        length
+        dimension_unit
+        weight
+        weight_unit
+        packaging_type
+        package_preset
+        is_document
       }
     }
   }
@@ -1483,14 +2392,13 @@ export const DISCARD_PARCEL = gql`mutation discard_parcel($data: DeleteMutationI
 }
 `;
 
-export const MUTATE_API_TOKEN = gql`mutation mutate_token($data: TokenMutationInput!) {
-  mutate_token(input: $data) {
-    token {
-      key
-    }
-  }
-}
-`;
+//#endregion
+
+
+// -----------------------------------------------------------
+// API Token queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_API_TOKEN = gql`query GetToken($org_id: String) {
   token(org_id: $org_id) {
@@ -1500,868 +2408,22 @@ export const GET_API_TOKEN = gql`query GetToken($org_id: String) {
 }
 `;
 
-export const GET_USER_CONNECTIONS = gql`query get_user_connections {
-  user_connections {
-    __typename
-    ... on AlliedExpressSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      config
-      username
-      password
-      account
-      service_type
-    }
-    ... on AlliedExpressLocalSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      config
-      username
-      password
-      account
-      service_type
-    }
-    ... on AmazonShippingSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      seller_id
-      developer_id
-      mws_auth_token
-      aws_region
-      config
-    }
-    ... on AramexSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      username
-      password
-      account_pin
-      account_entity
-      account_number
-      account_country_code
-      config
-    }
-    ... on AsendiaUSSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      username
-      password
-      account_number
-      api_key
-      config
-    }
-    ... on AustraliaPostSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      api_key
-      password
-      account_number
-      config
-    }
-    ... on BoxKnightSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      username
-      password
-      config
-      metadata
-    }
-    ... on BelgianPostSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      config
-      account_id
-      passphrase
-      services {
-        id
-        active
-        service_name
-        service_code
-        carrier_service_code
-        description
-        currency
-        transit_days
-        transit_time
-        max_weight
-        max_width
-        max_height
-        max_length
-        weight_unit
-        dimension_unit
-        domicile
-        international
-        zones {
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          transit_time
-          radius
-          latitude
-          longitude
-          cities
-          postal_codes
-          country_codes
-        }
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-    ... on CanadaPostSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      username
-      password
-      customer_number
-      contract_id
-      config
-    }
-    ... on CanparSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      config
-    }
-    ... on ChronopostSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      password
-      account_number
-      account_country_code
-      config
-    }
-    ... on ColissimoSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      config
-      password
-      contract_number
-      laposte_api_key
-      services {
-        id
-        active
-        service_name
-        service_code
-        carrier_service_code
-        description
-        currency
-        transit_days
-        transit_time
-        max_weight
-        max_width
-        max_height
-        max_length
-        weight_unit
-        dimension_unit
-        domicile
-        international
-        zones {
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          transit_time
-          radius
-          latitude
-          longitude
-          cities
-          postal_codes
-          country_codes
-        }
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-    ... on DHLParcelDESettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      customer_number
-      dhl_api_key
-      tracking_consumer_key
-      tracking_consumer_secret
-      config
-      services {
-        id
-        active
-        service_name
-        service_code
-        carrier_service_code
-        description
-        currency
-        transit_days
-        transit_time
-        max_weight
-        max_width
-        max_height
-        max_length
-        weight_unit
-        dimension_unit
-        domicile
-        international
-        zones {
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          transit_time
-          radius
-          latitude
-          longitude
-          cities
-          postal_codes
-          country_codes
-        }
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-    ... on DHLExpressSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      site_id
-      password
-      account_number
-      account_country_code
-      config
-    }
-    ... on DHLPolandSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      config
-      username
-      password
-      account_number
-      services {
-        id
-        active
-        service_name
-        service_code
-        carrier_service_code
-        description
-        currency
-        transit_days
-        transit_time
-        max_weight
-        max_width
-        max_height
-        max_length
-        weight_unit
-        dimension_unit
-        domicile
-        international
-        zones {
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          transit_time
-          radius
-          latitude
-          longitude
-          cities
-          postal_codes
-          country_codes
-        }
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-    ... on DHLUniversalSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      consumer_key
-      consumer_secret
-      config
-    }
-    ... on DicomSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      billing_account
-      config
-    }
-    ... on DPDSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      config
-      capabilities
-      delis_id
-      password
-      depot
-      account_country_code
-      services {
-        active
-        currency
-        description
-        dimension_unit
-        domicile
-        id
-        international
-        max_height
-        max_length
-        max_weight
-        max_width
-        service_code
-        service_name
-        carrier_service_code
-        transit_days
-        transit_time
-        weight_unit
-        zones {
-          cities
-          postal_codes
-          country_codes
-          label
-          latitude
-          longitude
-          max_weight
-          min_weight
-          radius
-          rate
-          transit_days
-          transit_time
-        }
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-    ... on DPDHLSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      app_id
-      app_token
-      zt_id
-      zt_password
-      account_number
-      config
-      services {
-        id
-        active
-        service_name
-        service_code
-        carrier_service_code
-        description
-        currency
-        transit_days
-        transit_time
-        max_weight
-        max_width
-        max_height
-        max_length
-        weight_unit
-        dimension_unit
-        domicile
-        international
-        zones {
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          transit_time
-          radius
-          latitude
-          longitude
-          cities
-          postal_codes
-          country_codes
-        }
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-    ... on EShipperSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      config
-    }
-    ... on EasyPostSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      api_key
-      config
-    }
-    ... on FedexSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      account_number
-      api_key
-      secret_key
-      track_api_key
-      track_secret_key
-      account_country_code
-      config
-    }
-    ... on FedexWSSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      account_number
-      password
-      meter_number
-      user_key
-      account_country_code
-      config
-    }
-    ... on FreightcomSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      config
-    }
-    ... on GenericSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      custom_carrier_name
-      account_number
-      test_mode
-      active
-      metadata
-      config
-      capabilities
-      account_country_code
-      services {
-        id
-        active
-        service_name
-        service_code
-        carrier_service_code
-        description
-        currency
-        transit_days
-        transit_time
-        max_weight
-        max_width
-        max_height
-        max_length
-        weight_unit
-        dimension_unit
-        domicile
-        international
-        zones {
-          label
-          rate
-          min_weight
-          max_weight
-          transit_days
-          transit_time
-          radius
-          latitude
-          longitude
-          cities
-          postal_codes
-          country_codes
-        }
-      }
-      label_template {
-        id
-        slug
-        template
-        template_type
-        shipment_sample
-        width
-        height
-      }
-      rate_sheet {
-        id
-        name
-        slug
-        carrier_name
-        metadata
-      }
-    }
-    ... on GEODISSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      api_key
-      identifier
-      language
-      config
-    }
-    ... on LaPosteSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      api_key
-      lang
-      config
-    }
-    ... on Locate2uSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      config
-      account_country_code
-      client_id
-      client_secret
-    }
-    ... on NationexSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      api_key
-      customer_id
-      billing_account
-      language
-      config
-    }
-    ... on PurolatorSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      account_number
-      user_token
-      config
-    }
-    ... on RoadieSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      api_key
-      config
-    }
-    ... on RoyalMailSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      client_id
-      client_secret
-      config
-    }
-    ... on SendleSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      sendle_id
-      api_key
-      account_country_code
-      config
-    }
-    ... on TGESettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      config
-      capabilities
-      username
-      password
-      api_key
-      toll_username
-      toll_password
-      my_toll_token
-      my_toll_identity
-      account_code
-    }
-    ... on TNTSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      account_number
-      account_country_code
-      config
-    }
-    ... on UPSSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      client_id
-      client_secret
-      account_number
-      account_country_code
-      config
-    }
-    ... on USPSSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      mailer_id
-      customer_registration_id
-      logistics_manager_mailer_id
-      config
-    }
-    ... on USPSInternationalSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      metadata
-      capabilities
-      username
-      password
-      mailer_id
-      customer_registration_id
-      logistics_manager_mailer_id
-      config
-    }
-    ... on Zoom2uSettingsType {
-      id
-      carrier_id
-      carrier_name
-      display_name
-      test_mode
-      active
-      capabilities
-      metadata
-      config
-      account_country_code
-      api_key
+export const MUTATE_API_TOKEN = gql`mutation mutate_token($data: TokenMutationInput!) {
+  mutate_token(input: $data) {
+    token {
+      key
     }
   }
-}`;
+}
+`;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// User account queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_USER = gql`query GetUser {
   user {
@@ -2470,6 +2532,14 @@ export const CONFIRM_PASSWORD_RESET = gql`mutation confirm_password_reset($data:
 }
 `;
 
+//#endregion
+
+
+// -----------------------------------------------------------
+// Event queries and mutations
+// -----------------------------------------------------------
+//#region
+
 export const GET_EVENT = gql`query get_event($id: String!) {
   event(id: $id) {
     id
@@ -2504,6 +2574,14 @@ export const GET_EVENTS = gql`query get_events($filter: EventFilter) {
   }
 }
 `;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// Orders queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_ORDER = gql`query get_order($id: String!) {
   order(id: $id) {
@@ -3211,10 +3289,11 @@ export const GET_ORDERS = gql`query get_orders($filter: OrderFilter) {
 }
 `;
 
-export const MUTATE_METADATA = gql`mutation mutate_metadata($data: MetadataMutationInput!) {
-  mutate_metadata(input: $data) {
-    id
-    metadata
+export const CREATE_ORDER = gql`mutation CreateOrder($data: CreateOrderMutationInput!) {
+  create_order(input: $data) {
+    order {
+      id
+    }
     errors {
       field
       messages
@@ -3222,6 +3301,38 @@ export const MUTATE_METADATA = gql`mutation mutate_metadata($data: MetadataMutat
   }
 }
 `;
+
+export const UPDATE_ORDER = gql`mutation UpdateOrder($data: UpdateOrderMutationInput!) {
+  update_order(input: $data) {
+    order {
+      id
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_ORDER = gql`mutation DeleteOrder($data: DeleteOrderMutationInput!) {
+  delete_order(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// Document templates queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_DOCUMENT_TEMPLATE = gql`query get_document_template($id: String!) {
   document_template(id: $id) {
@@ -3295,65 +3406,13 @@ export const DELETE_DOCUMENT_TEMPLATE = gql`mutation delete_document_template($d
 }
 `;
 
-export const SEARCH_DATA = gql`query search_data($keyword: String) {
-  shipment_results: shipments(filter: { keyword: $keyword, offset: 0, first: 10 }) {
-    edges {
-      node {
-        id
-        status
-        tracking_number
-        recipient {
-          id
-          city
-          street_number
-          address_line1
-          address_line2
-          country_code
-          postal_code
-          person_name
-          phone_number
-          company_name
-          state_code
-        }
-        created_at
-      }
-    }
-  }
-  order_results: orders(filter: { keyword: $keyword, offset: 0, first: 10 }) {
-    edges {
-      node {
-        id
-        status
-        order_id
-        shipping_to {
-          id
-          city
-          street_number
-          address_line1
-          address_line2
-          country_code
-          postal_code
-          person_name
-          phone_number
-          company_name
-          state_code
-        }
-        created_at
-      }
-    }
-  }
-  trackers_results: trackers(filter: {tracking_number: $keyword, offset: 0, first: 10 }) {
-    edges {
-      node {
-        id
-        status
-        tracking_number
-        created_at
-      }
-    }
-  }
-}
-`;
+//#endregion
+
+
+// -----------------------------------------------------------
+// Rate sheets queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const CREATE_RATE_SHEET = gql`mutation CreateRateSheet($data: CreateRateSheetMutationInput!) {
   create_rate_sheet(input: $data) {
@@ -3434,7 +3493,8 @@ export const GET_RATE_SHEET = gql`query GetRateSheet($id: String!) {
       test_mode
     }
   }
-}`;
+}
+`;
 
 export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter) {
   rate_sheets(filter: $filter) {
@@ -3487,44 +3547,16 @@ export const GET_RATE_SHEETS = gql`query GetRateSheets($filter: RateSheetFilter)
       }
     }
   }
-}`;
-
-export const CREATE_ORDER = gql`mutation CreateOrder($data: CreateOrderMutationInput!) {
-  create_order(input: $data) {
-    order {
-      id
-    }
-    errors {
-      field
-      messages
-    }
-  }
 }
 `;
 
-export const UPDATE_ORDER = gql`mutation UpdateOrder($data: UpdateOrderMutationInput!) {
-  update_order(input: $data) {
-    order {
-      id
-    }
-    errors {
-      field
-      messages
-    }
-  }
-}
-`;
+//#endregion
 
-export const DELETE_ORDER = gql`mutation DeleteOrder($data: DeleteOrderMutationInput!) {
-  delete_order(input: $data) {
-    id
-    errors {
-      field
-      messages
-    }
-  }
-}
-`;
+
+// -----------------------------------------------------------
+// Batch operations queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_BATCH_OPERATION = gql`query get_batch_operation($id: String!) {
   batch_operation(id: $id) {
@@ -3565,16 +3597,13 @@ export const GET_BATCH_OPERATIONS = gql`query get_batch_operations($filter: Batc
 }
 `;
 
-export const DELETE_METAFIELD = gql`mutation deleteMetafield($data: DeleteMutationInput!) {
-  delete_metafield(input: $data) {
-    id
-    errors {
-      field
-      messages
-    }
-  }
-}
-`;
+//#endregion
+
+
+// -----------------------------------------------------------
+// Workspace config queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_WORKSPACE_CONFIG = gql`query GetWorkspaceConfig {
   workspace_config {
@@ -3623,6 +3652,14 @@ export const UPDATE_WORKSPACE_CONFIG = gql`mutation UpdateWorkspaceConfig($data:
   }
 }
 `;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// Manifests queries and mutations
+// -----------------------------------------------------------
+//#region
 
 export const GET_MANIFESTS = gql`query GetManifests($filter: ManifestFilter) {
   manifests(filter: $filter) {
@@ -3720,3 +3757,96 @@ export const GET_MANIFEST = gql`query GetManifest($id: String!) {
   }
 }
 `;
+
+//#endregion
+
+
+// -----------------------------------------------------------
+// Shared queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const SEARCH_DATA = gql`query search_data($keyword: String) {
+  shipment_results: shipments(filter: { keyword: $keyword, offset: 0, first: 10 }) {
+    edges {
+      node {
+        id
+        status
+        tracking_number
+        recipient {
+          id
+          city
+          street_number
+          address_line1
+          address_line2
+          country_code
+          postal_code
+          person_name
+          phone_number
+          company_name
+          state_code
+        }
+        created_at
+      }
+    }
+  }
+  order_results: orders(filter: { keyword: $keyword, offset: 0, first: 10 }) {
+    edges {
+      node {
+        id
+        status
+        order_id
+        shipping_to {
+          id
+          city
+          street_number
+          address_line1
+          address_line2
+          country_code
+          postal_code
+          person_name
+          phone_number
+          company_name
+          state_code
+        }
+        created_at
+      }
+    }
+  }
+  trackers_results: trackers(filter: {tracking_number: $keyword, offset: 0, first: 10 }) {
+    edges {
+      node {
+        id
+        status
+        tracking_number
+        created_at
+      }
+    }
+  }
+}
+`;
+
+export const MUTATE_METADATA = gql`mutation mutate_metadata($data: MetadataMutationInput!) {
+  mutate_metadata(input: $data) {
+    id
+    metadata
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_METAFIELD = gql`mutation deleteMetafield($data: DeleteMutationInput!) {
+  delete_metafield(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+//#endregion
