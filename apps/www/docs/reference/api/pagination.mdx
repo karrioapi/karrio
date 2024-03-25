@@ -1,0 +1,28 @@
+---
+id: pagination
+title: Pagination
+description: Navigate Karrio collections with paginated API responses.
+---
+
+# Pagination
+
+All top-level API resources have support for bulk fetches via "list" API methods. For instance, you can list addresses,
+list shipments, and list trackers. These list API methods share a common structure, taking at least these
+two parameters: limit, and offset.
+
+Karrio utilizes offset-based pagination via the offset and limit parameters.
+Both parameters take a number as value (see below) and return objects in reverse chronological order.
+The offset parameter returns objects listed after an index.
+The limit parameter take a limit on the number of objects to be returned from 1 to 100.
+
+
+```json
+{
+    "count": 100,
+    "next": "/v1/shipments?limit=25&offset=50",
+    "previous": "/v1/shipments?limit=25&offset=25",
+    "results": [
+        { ... },
+    ]
+}
+```

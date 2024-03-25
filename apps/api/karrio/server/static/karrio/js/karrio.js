@@ -545,7 +545,6 @@ var Karrio = (function () {
             'email': !exists(json, 'email') ? undefined : json['email'],
             'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
             'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
@@ -574,7 +573,6 @@ var Karrio = (function () {
             'email': value.email,
             'phone_number': value.phone_number,
             'state_code': value.state_code,
-            'suburb': value.suburb,
             'residential': value.residential,
             'street_number': value.street_number,
             'address_line1': value.address_line1,
@@ -586,6 +584,31 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function AddressDataFromJSON(json) {
+        return AddressDataFromJSONTyped(json);
+    }
+    function AddressDataFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
+            'city': !exists(json, 'city') ? undefined : json['city'],
+            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
+            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
+            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
+            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': !exists(json, 'email') ? undefined : json['email'],
+            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
+            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
+            'residential': !exists(json, 'residential') ? undefined : json['residential'],
+            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
+            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
+            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
+            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+        };
+    }
     function AddressDataToJSON(value) {
         if (value === undefined) {
             return undefined;
@@ -604,7 +627,6 @@ var Karrio = (function () {
             'email': value.email,
             'phone_number': value.phone_number,
             'state_code': value.state_code,
-            'suburb': value.suburb,
             'residential': value.residential,
             'street_number': value.street_number,
             'address_line1': value.address_line1,
@@ -722,7 +744,6 @@ var Karrio = (function () {
             'email': !exists(json, 'email') ? undefined : json['email'],
             'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
             'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
@@ -748,7 +769,6 @@ var Karrio = (function () {
             'email': value.email,
             'phone_number': value.phone_number,
             'state_code': value.state_code,
-            'suburb': value.suburb,
             'residential': value.residential,
             'street_number': value.street_number,
             'address_line1': value.address_line1,
@@ -776,7 +796,6 @@ var Karrio = (function () {
             'email': value.email,
             'phone_number': value.phone_number,
             'state_code': value.state_code,
-            'suburb': value.suburb,
             'residential': value.residential,
             'street_number': value.street_number,
             'address_line1': value.address_line1,
@@ -893,7 +912,6 @@ var Karrio = (function () {
             'email': value.email,
             'phone_number': value.phone_number,
             'state_code': value.state_code,
-            'suburb': value.suburb,
             'residential': value.residential,
             'street_number': value.street_number,
             'address_line1': value.address_line1,
@@ -921,7 +939,6 @@ var Karrio = (function () {
             'email': value.email,
             'phone_number': value.phone_number,
             'state_code': value.state_code,
-            'suburb': value.suburb,
             'residential': value.residential,
             'street_number': value.street_number,
             'address_line1': value.address_line1,
@@ -985,7 +1002,7 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentDataToJSON(value) {
+    function ShipmentDataReferenceToJSON(value) {
         if (value === undefined) {
             return undefined;
         }
@@ -1006,6 +1023,7 @@ var Karrio = (function () {
             'services': value.services,
             'carrier_ids': value.carrier_ids,
             'metadata': value.metadata,
+            'id': value.id,
         };
     }
 
@@ -1018,7 +1036,7 @@ var Karrio = (function () {
             return null;
         }
         return {
-            'shipments': (value.shipments.map(ShipmentDataToJSON)),
+            'shipments': (value.shipments.map(ShipmentDataReferenceToJSON)),
         };
     }
 
@@ -1220,7 +1238,6 @@ var Karrio = (function () {
             'email': !exists(json, 'email') ? undefined : json['email'],
             'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
             'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
@@ -1228,72 +1245,6 @@ var Karrio = (function () {
             'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
-        };
-    }
-
-    /* tslint:disable */
-    function CustomsFromJSON(json) {
-        return CustomsFromJSONTyped(json);
-    }
-    function CustomsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'commodities': !exists(json, 'commodities') ? undefined : (json['commodities'].map(CommodityFromJSON)),
-            'duty': !exists(json, 'duty') ? undefined : CustomsDutyFromJSON(json['duty']),
-            'duty_billing_address': !exists(json, 'duty_billing_address') ? undefined : CustomsDutyBillingAddressFromJSON(json['duty_billing_address']),
-            'content_type': !exists(json, 'content_type') ? undefined : json['content_type'],
-            'content_description': !exists(json, 'content_description') ? undefined : json['content_description'],
-            'incoterm': !exists(json, 'incoterm') ? undefined : json['incoterm'],
-            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
-            'invoice_date': !exists(json, 'invoice_date') ? undefined : json['invoice_date'],
-            'commercial_invoice': !exists(json, 'commercial_invoice') ? undefined : json['commercial_invoice'],
-            'certify': !exists(json, 'certify') ? undefined : json['certify'],
-            'signer': !exists(json, 'signer') ? undefined : json['signer'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-        };
-    }
-
-    /* tslint:disable */
-    function CustomsDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'commodities': (value.commodities.map(CommodityDataToJSON)),
-            'duty': CustomsDutyToJSON(value.duty),
-            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value.duty_billing_address),
-            'content_type': value.content_type,
-            'content_description': value.content_description,
-            'incoterm': value.incoterm,
-            'invoice': value.invoice,
-            'invoice_date': value.invoice_date,
-            'commercial_invoice': value.commercial_invoice,
-            'certify': value.certify,
-            'signer': value.signer,
-            'options': value.options,
-        };
-    }
-
-    /* tslint:disable */
-    function CustomsListFromJSON(json) {
-        return CustomsListFromJSONTyped(json);
-    }
-    function CustomsListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
-            'results': (json['results'].map(CustomsFromJSON)),
         };
     }
 
@@ -1422,6 +1373,127 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function ManifestFromJSON(json) {
+        return ManifestFromJSONTyped(json);
+    }
+    function ManifestFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'carrier_name': json['carrier_name'],
+            'carrier_id': json['carrier_id'],
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'test_mode': json['test_mode'],
+            'address': AddressDataFromJSON(json['address']),
+            'options': !exists(json, 'options') ? undefined : json['options'],
+            'reference': !exists(json, 'reference') ? undefined : json['reference'],
+            'shipment_identifiers': json['shipment_identifiers'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'manifest_url': !exists(json, 'manifest_url') ? undefined : json['manifest_url'],
+            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function ManifestDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'carrier_name': value.carrier_name,
+            'address': AddressDataToJSON(value.address),
+            'options': value.options,
+            'reference': value.reference,
+            'shipment_ids': value.shipment_ids,
+        };
+    }
+
+    /* tslint:disable */
+    function ManifestDetailsDocFromJSON(json) {
+        return ManifestDetailsDocFromJSONTyped(json);
+    }
+    function ManifestDetailsDocFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'manifest': !exists(json, 'manifest') ? undefined : json['manifest'],
+        };
+    }
+
+    /* tslint:disable */
+    function ManifestDetailsFromJSON(json) {
+        return ManifestDetailsFromJSONTyped(json);
+    }
+    function ManifestDetailsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'carrier_name': json['carrier_name'],
+            'carrier_id': json['carrier_id'],
+            'doc': !exists(json, 'doc') ? undefined : ManifestDetailsDocFromJSON(json['doc']),
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'test_mode': json['test_mode'],
+        };
+    }
+
+    /* tslint:disable */
+    function ManifestListFromJSON(json) {
+        return ManifestListFromJSONTyped(json);
+    }
+    function ManifestListFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'count': !exists(json, 'count') ? undefined : json['count'],
+            'next': !exists(json, 'next') ? undefined : json['next'],
+            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'results': (json['results'].map(ManifestFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function ManifestRequestToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'carrier_name': value.carrier_name,
+            'address': AddressDataToJSON(value.address),
+            'options': value.options,
+            'reference': value.reference,
+            'shipment_identifiers': value.shipment_identifiers,
+        };
+    }
+
+    /* tslint:disable */
+    function ManifestResponseFromJSON(json) {
+        return ManifestResponseFromJSONTyped(json);
+    }
+    function ManifestResponseFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'manifest': !exists(json, 'manifest') ? undefined : ManifestDetailsFromJSON(json['manifest']),
+        };
+    }
+
+    /* tslint:disable */
     function OperationFromJSON(json) {
         return OperationFromJSONTyped(json);
     }
@@ -1485,7 +1557,6 @@ var Karrio = (function () {
             'email': !exists(json, 'email') ? undefined : json['email'],
             'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
             'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
@@ -1618,7 +1689,6 @@ var Karrio = (function () {
             'email': !exists(json, 'email') ? undefined : json['email'],
             'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
             'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'suburb': !exists(json, 'suburb') ? undefined : json['suburb'],
             'residential': !exists(json, 'residential') ? undefined : json['residential'],
             'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
             'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
@@ -1815,36 +1885,11 @@ var Karrio = (function () {
             'email': value.email,
             'phone_number': value.phone_number,
             'state_code': value.state_code,
-            'suburb': value.suburb,
             'residential': value.residential,
             'street_number': value.street_number,
             'address_line1': value.address_line1,
             'address_line2': value.address_line2,
             'validate_location': value.validate_location,
-        };
-    }
-
-    /* tslint:disable */
-    function PatchedCustomsDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'commodities': value.commodities === undefined ? undefined : (value.commodities.map(CommodityDataToJSON)),
-            'duty': CustomsDutyToJSON(value.duty),
-            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value.duty_billing_address),
-            'content_type': value.content_type,
-            'content_description': value.content_description,
-            'incoterm': value.incoterm,
-            'invoice': value.invoice,
-            'invoice_date': value.invoice_date,
-            'commercial_invoice': value.commercial_invoice,
-            'certify': value.certify,
-            'signer': value.signer,
-            'options': value.options,
         };
     }
 
@@ -1924,12 +1969,13 @@ var Karrio = (function () {
             'pickup_charge': !exists(json, 'pickup_charge') ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
             'ready_time': !exists(json, 'ready_time') ? undefined : json['ready_time'],
             'closing_time': !exists(json, 'closing_time') ? undefined : json['closing_time'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
             'address': AddressFromJSON(json['address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
             'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
             'options': !exists(json, 'options') ? undefined : json['options'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
             'test_mode': json['test_mode'],
         };
     }
@@ -2126,6 +2172,31 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function ShipmentDataToJSON(value) {
+        if (value === undefined) {
+            return undefined;
+        }
+        if (value === null) {
+            return null;
+        }
+        return {
+            'shipper': AddressDataToJSON(value.shipper),
+            'recipient': AddressDataToJSON(value.recipient),
+            'parcels': (value.parcels.map(ParcelDataToJSON)),
+            'options': value.options,
+            'payment': PaymentToJSON(value.payment),
+            'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
+            'customs': ShipmentDataCustomsToJSON(value.customs),
+            'reference': value.reference,
+            'label_type': value.label_type,
+            'service': value.service,
+            'services': value.services,
+            'carrier_ids': value.carrier_ids,
+            'metadata': value.metadata,
+        };
+    }
+
+    /* tslint:disable */
     function ShipmentListFromJSON(json) {
         return ShipmentListFromJSONTyped(json);
     }
@@ -2271,83 +2342,24 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function TokenObtainPairToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'email': value.email,
-            'password': value.password,
-        };
+    function TrackerDetailsImagesFromJSON(json) {
+        return TrackerDetailsImagesFromJSONTyped(json);
     }
-
-    /* tslint:disable */
-    function TokenPairFromJSON(json) {
-        return TokenPairFromJSONTyped(json);
-    }
-    function TokenPairFromJSONTyped(json, ignoreDiscriminator) {
+    function TrackerDetailsImagesFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
         return {
-            'access': json['access'],
-            'refresh': json['refresh'],
+            'delivery_image': !exists(json, 'delivery_image') ? undefined : json['delivery_image'],
+            'signature_image': !exists(json, 'signature_image') ? undefined : json['signature_image'],
         };
     }
 
     /* tslint:disable */
-    function TokenRefreshToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'refresh': value.refresh,
-        };
+    function TrackerDetailsInfoFromJSON(json) {
+        return TrackerDetailsInfoFromJSONTyped(json);
     }
-
-    /* tslint:disable */
-    function TokenVerifyToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'token': value.token,
-        };
-    }
-
-    /* tslint:disable */
-    function TrackingEventFromJSON(json) {
-        return TrackingEventFromJSONTyped(json);
-    }
-    function TrackingEventFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
-            return json;
-        }
-        return {
-            'date': !exists(json, 'date') ? undefined : json['date'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'location': !exists(json, 'location') ? undefined : json['location'],
-            'code': !exists(json, 'code') ? undefined : json['code'],
-            'time': !exists(json, 'time') ? undefined : json['time'],
-            'latitude': !exists(json, 'latitude') ? undefined : json['latitude'],
-            'longitude': !exists(json, 'longitude') ? undefined : json['longitude'],
-        };
-    }
-
-    /* tslint:disable */
-    function TrackingStatusInfoFromJSON(json) {
-        return TrackingStatusInfoFromJSONTyped(json);
-    }
-    function TrackingStatusInfoFromJSONTyped(json, ignoreDiscriminator) {
+    function TrackerDetailsInfoFromJSONTyped(json, ignoreDiscriminator) {
         if ((json === undefined) || (json === null)) {
             return json;
         }
@@ -2375,6 +2387,52 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function TrackingEventFromJSON(json) {
+        return TrackingEventFromJSONTyped(json);
+    }
+    function TrackingEventFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'date': !exists(json, 'date') ? undefined : json['date'],
+            'description': !exists(json, 'description') ? undefined : json['description'],
+            'location': !exists(json, 'location') ? undefined : json['location'],
+            'code': !exists(json, 'code') ? undefined : json['code'],
+            'time': !exists(json, 'time') ? undefined : json['time'],
+            'latitude': !exists(json, 'latitude') ? undefined : json['latitude'],
+            'longitude': !exists(json, 'longitude') ? undefined : json['longitude'],
+        };
+    }
+
+    /* tslint:disable */
+    function TrackerDetailsFromJSON(json) {
+        return TrackerDetailsFromJSONTyped(json);
+    }
+    function TrackerDetailsFromJSONTyped(json, ignoreDiscriminator) {
+        if ((json === undefined) || (json === null)) {
+            return json;
+        }
+        return {
+            'id': !exists(json, 'id') ? undefined : json['id'],
+            'carrier_name': json['carrier_name'],
+            'carrier_id': json['carrier_id'],
+            'tracking_number': json['tracking_number'],
+            'info': !exists(json, 'info') ? undefined : TrackerDetailsInfoFromJSON(json['info']),
+            'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
+            'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
+            'test_mode': json['test_mode'],
+            'status': !exists(json, 'status') ? undefined : json['status'],
+            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
+            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'images': !exists(json, 'images') ? undefined : TrackerDetailsImagesFromJSON(json['images']),
+            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
+            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
     function TrackingStatusFromJSON(json) {
         return TrackingStatusFromJSONTyped(json);
     }
@@ -2387,7 +2445,7 @@ var Karrio = (function () {
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
-            'info': !exists(json, 'info') ? undefined : TrackingStatusInfoFromJSON(json['info']),
+            'info': !exists(json, 'info') ? undefined : TrackerDetailsInfoFromJSON(json['info']),
             'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
             'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
@@ -2397,6 +2455,8 @@ var Karrio = (function () {
             'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
             'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'delivery_image_url': !exists(json, 'delivery_image_url') ? undefined : json['delivery_image_url'],
+            'signature_image_url': !exists(json, 'signature_image_url') ? undefined : json['signature_image_url'],
         };
     }
 
@@ -2440,21 +2500,7 @@ var Karrio = (function () {
         }
         return {
             'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'tracking': !exists(json, 'tracking') ? undefined : TrackingStatusFromJSON(json['tracking']),
-        };
-    }
-
-    /* tslint:disable */
-    function VerifiedTokenObtainPairToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
-        }
-        return {
-            'refresh': value.refresh,
-            'otp_token': value.otp_token,
+            'tracking': !exists(json, 'tracking') ? undefined : TrackerDetailsFromJSON(json['tracking']),
         };
     }
 
@@ -2872,54 +2918,6 @@ var Karrio = (function () {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
-         * Authenticate the user and return a token pair
-         * Obtain auth token pair
-         */
-        APIApi.prototype.authenticateRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.tokenObtainPair === null || requestParameters.tokenObtainPair === undefined) {
-                                throw new RequiredError('tokenObtainPair', 'Required parameter requestParameters.tokenObtainPair was null or undefined when calling authenticate.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenObtainPairToJSON(requestParameters.tokenObtainPair),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Authenticate the user and return a token pair
-         * Obtain auth token pair
-         */
-        APIApi.prototype.authenticate = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.authenticateRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
          * Data References
          */
         APIApi.prototype.dataRaw = function (initOverrides) {
@@ -2961,54 +2959,6 @@ var Karrio = (function () {
             });
         };
         /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * Get verified JWT token
-         */
-        APIApi.prototype.getVerifiedTokenRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.verifiedTokenObtainPair === null || requestParameters.verifiedTokenObtainPair === undefined) {
-                                throw new RequiredError('verifiedTokenObtainPair', 'Required parameter requestParameters.verifiedTokenObtainPair was null or undefined when calling getVerifiedToken.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token/verified",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: VerifiedTokenObtainPairToJSON(requestParameters.verifiedTokenObtainPair),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * Get verified JWT token
-         */
-        APIApi.prototype.getVerifiedToken = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.getVerifiedTokenRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
          * Instance Metadata
          */
         APIApi.prototype.pingRaw = function (initOverrides) {
@@ -3041,102 +2991,6 @@ var Karrio = (function () {
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0: return [4 /*yield*/, this.pingRaw(initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Authenticate the user and return a token pair
-         * Refresh auth token
-         */
-        APIApi.prototype.refreshTokenRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.tokenRefresh === null || requestParameters.tokenRefresh === undefined) {
-                                throw new RequiredError('tokenRefresh', 'Required parameter requestParameters.tokenRefresh was null or undefined when calling refreshToken.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token/refresh",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenRefreshToJSON(requestParameters.tokenRefresh),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TokenPairFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Authenticate the user and return a token pair
-         * Refresh auth token
-         */
-        APIApi.prototype.refreshToken = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.refreshTokenRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Verify an existent authentication token
-         * Verify token
-         */
-        APIApi.prototype.verifyTokenRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            if (requestParameters.tokenVerify === null || requestParameters.tokenVerify === undefined) {
-                                throw new RequiredError('tokenVerify', 'Required parameter requestParameters.tokenVerify was null or undefined when calling verifyToken.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            return [4 /*yield*/, this.request({
-                                    path: "/api/token/verify",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TokenVerifyToJSON(requestParameters.tokenVerify),
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response)];
-                    }
-                });
-            });
-        };
-        /**
-         * Verify an existent authentication token
-         * Verify token
-         */
-        APIApi.prototype.verifyToken = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.verifyTokenRaw(requestParameters, initOverrides)];
                         case 1:
                             response = _a.sent();
                             return [4 /*yield*/, response.value()];
@@ -3239,6 +3093,12 @@ var Karrio = (function () {
                             if (requestParameters.carrierName !== undefined) {
                                 queryParameters['carrier_name'] = requestParameters.carrierName;
                             }
+                            if (requestParameters.metadataKey !== undefined) {
+                                queryParameters['metadata_key'] = requestParameters.metadataKey;
+                            }
+                            if (requestParameters.metadataValue !== undefined) {
+                                queryParameters['metadata_value'] = requestParameters.metadataValue;
+                            }
                             if (requestParameters.systemOnly !== undefined) {
                                 queryParameters['system_only'] = requestParameters.systemOnly;
                             }
@@ -3294,217 +3154,11 @@ var Karrio = (function () {
                 });
             });
         };
-        return CarriersApi;
-    }(BaseAPI));
-
-    /* tslint:disable */
-    /**
-     *
-     */
-    var CustomsApi = /** @class */ (function (_super) {
-        __extends(CustomsApi, _super);
-        function CustomsApi() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
         /**
-         * Create a new customs declaration.
-         * Create a customs info
+         * Retrieve a carrier account.
+         * Retrieve a carrier account
          */
-        CustomsApi.prototype.createRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            if (requestParameters.customsData === null || requestParameters.customsData === undefined) {
-                                throw new RequiredError('customsData', 'Required parameter requestParameters.customsData was null or undefined when calling create.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
-                            // oauth required
-                            _a = headerParameters;
-                            _b = "Authorization";
-                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
-                        case 1:
-                            // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
-                        case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: CustomsDataToJSON(requestParameters.customsData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Create a new customs declaration.
-         * Create a customs info
-         */
-        CustomsApi.prototype.create = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Discard a customs declaration.
-         * Discard a customs info
-         */
-        CustomsApi.prototype.discardRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling discard.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
-                            // oauth required
-                            _a = headerParameters;
-                            _b = "Authorization";
-                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
-                        case 1:
-                            // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
-                        case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Discard a customs declaration.
-         * Discard a customs info
-         */
-        CustomsApi.prototype.discard = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Retrieve all stored customs declarations.
-         * List all customs info
-         */
-        CustomsApi.prototype.listRaw = function (initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            queryParameters = {};
-                            headerParameters = {};
-                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
-                            // oauth required
-                            _a = headerParameters;
-                            _b = "Authorization";
-                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
-                        case 1:
-                            // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
-                        case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsListFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Retrieve all stored customs declarations.
-         * List all customs info
-         */
-        CustomsApi.prototype.list = function (initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Retrieve customs declaration.
-         * Retrieve a customs info
-         */
-        CustomsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
+        CarriersApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, _a, _b, response;
                 return __generator(this, function (_c) {
@@ -3535,23 +3189,23 @@ var Karrio = (function () {
                                 headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
                             }
                             return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    path: "/v1/carriers/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
                                     method: 'GET',
                                     headers: headerParameters,
                                     query: queryParameters,
                                 }, initOverrides)];
                         case 3:
                             response = _c.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierSettingsFromJSON(jsonValue); })];
                     }
                 });
             });
         };
         /**
-         * Retrieve customs declaration.
-         * Retrieve a customs info
+         * Retrieve a carrier account.
+         * Retrieve a carrier account
          */
-        CustomsApi.prototype.retrieve = function (requestParameters, initOverrides) {
+        CarriersApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
@@ -3565,74 +3219,7 @@ var Karrio = (function () {
                 });
             });
         };
-        /**
-         * modify an existing customs declaration.
-         * Update a customs info
-         */
-        CustomsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
-                        case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            headerParameters['Content-Type'] = 'application/json';
-                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
-                            // oauth required
-                            _a = headerParameters;
-                            _b = "Authorization";
-                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
-                        case 1:
-                            // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
-                        case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
-                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
-                            }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/customs_info/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PatchedCustomsDataToJSON(requestParameters.patchedCustomsData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CustomsFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * modify an existing customs declaration.
-         * Update a customs info
-         */
-        CustomsApi.prototype.update = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        return CustomsApi;
+        return CarriersApi;
     }(BaseAPI));
 
     /* tslint:disable */
@@ -4466,6 +4053,73 @@ var Karrio = (function () {
             });
         };
         /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment.
+         * Create a manifest
+         */
+        ProxyApi.prototype.createManifestRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.manifestRequest === null || requestParameters.manifestRequest === undefined) {
+                                throw new RequiredError('manifestRequest', 'Required parameter requestParameters.manifestRequest was null or undefined when calling createManifest.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/proxy/manifest",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: ManifestRequestToJSON(requestParameters.manifestRequest),
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestResponseFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment.
+         * Create a manifest
+         */
+        ProxyApi.prototype.createManifest = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.createManifestRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available.
          * Fetch shipment rates
          */
@@ -5052,8 +4706,23 @@ var Karrio = (function () {
                             if (requestParameters.createdBefore !== undefined) {
                                 queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
                             }
+                            if (requestParameters.hasManifest !== undefined) {
+                                queryParameters['has_manifest'] = requestParameters.hasManifest;
+                            }
+                            if (requestParameters.hasTracker !== undefined) {
+                                queryParameters['has_tracker'] = requestParameters.hasTracker;
+                            }
+                            if (requestParameters.id !== undefined) {
+                                queryParameters['id'] = requestParameters.id;
+                            }
                             if (requestParameters.keyword !== undefined) {
                                 queryParameters['keyword'] = requestParameters.keyword;
+                            }
+                            if (requestParameters.metaKey !== undefined) {
+                                queryParameters['meta_key'] = requestParameters.metaKey;
+                            }
+                            if (requestParameters.metaValue !== undefined) {
+                                queryParameters['meta_value'] = requestParameters.metaValue;
                             }
                             if (requestParameters.metadataKey !== undefined) {
                                 queryParameters['metadata_key'] = requestParameters.metadataKey;
@@ -6665,8 +6334,8 @@ var Karrio = (function () {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * Create orders
+         * Create order batch. `Beta`
+         * Create order batch
          */
         BatchesApi.prototype.createOrdersRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6714,8 +6383,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * Create orders
+         * Create order batch. `Beta`
+         * Create order batch
          */
         BatchesApi.prototype.createOrders = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6732,8 +6401,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * Create shipments
+         * Create shipment batch. `Beta`
+         * Create shipment batch
          */
         BatchesApi.prototype.createShipmentsRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6781,8 +6450,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * Create shipments
+         * Create shipment batch. `Beta`
+         * Create shipment batch
          */
         BatchesApi.prototype.createShipments = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6799,8 +6468,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * Create trackers
+         * Create tracker batch. `Beta`
+         * Create tracker batch
          */
         BatchesApi.prototype.createTrackersRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -6848,8 +6517,8 @@ var Karrio = (function () {
             });
         };
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * Create trackers
+         * Create tracker batch. `Beta`
+         * Create tracker batch
          */
         BatchesApi.prototype.createTrackers = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -7306,6 +6975,222 @@ var Karrio = (function () {
         return DocumentsApi;
     }(BaseAPI));
 
+    /* tslint:disable */
+    /**
+     *
+     */
+    var ManifestsApi = /** @class */ (function (_super) {
+        __extends(ManifestsApi, _super);
+        function ManifestsApi() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * Create a manifest
+         */
+        ManifestsApi.prototype.createRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.manifestData === null || requestParameters.manifestData === undefined) {
+                                throw new RequiredError('manifestData', 'Required parameter requestParameters.manifestData was null or undefined when calling create.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/manifests",
+                                    method: 'POST',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                    body: ManifestDataToJSON(requestParameters.manifestData),
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * Create a manifest
+         */
+        ManifestsApi.prototype.create = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all manifests.
+         * List manifests
+         */
+        ManifestsApi.prototype.listRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            queryParameters = {};
+                            if (requestParameters.carrierName !== undefined) {
+                                queryParameters['carrier_name'] = requestParameters.carrierName;
+                            }
+                            if (requestParameters.createdAfter !== undefined) {
+                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            }
+                            if (requestParameters.createdBefore !== undefined) {
+                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                            }
+                            headerParameters = {};
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/manifests",
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestListFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all manifests.
+         * List manifests
+         */
+        ManifestsApi.prototype.list = function (requestParameters, initOverrides) {
+            if (requestParameters === void 0) { requestParameters = {}; }
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.listRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a shipping manifest.
+         * Retrieve a manifest
+         */
+        ManifestsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, response;
+                return __generator(this, function (_c) {
+                    switch (_c.label) {
+                        case 0:
+                            if (requestParameters.id === null || requestParameters.id === undefined) {
+                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _c.sent();
+                            _c.label = 2;
+                        case 2:
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
+                            }
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (this.configuration && this.configuration.apiKey) {
+                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
+                            }
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/manifests/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 3:
+                            response = _c.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a shipping manifest.
+         * Retrieve a manifest
+         */
+        ManifestsApi.prototype.retrieve = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        return ManifestsApi;
+    }(BaseAPI));
+
     var KarrioClient = /** @class */ (function () {
         function KarrioClient(clientConfig) {
             var config = new Configuration(__assign({ credentials: "include", headers: {
@@ -7316,7 +7201,6 @@ var Karrio = (function () {
             this.API = new APIApi(config);
             this.addresses = new AddressesApi(config);
             this.carriers = new CarriersApi(config);
-            this.customs = new CustomsApi(config);
             this.parcels = new ParcelsApi(config);
             this.pickups = new PickupsApi(config);
             this.proxy = new ProxyApi(config);
@@ -7324,6 +7208,7 @@ var Karrio = (function () {
             this.trackers = new TrackersApi(config);
             this.webhooks = new WebhooksApi(config);
             this.orders = new OrdersApi(config);
+            this.manifest = new ManifestsApi(config);
             this.batches = new BatchesApi(config);
             this.documents = new DocumentsApi(config);
         }

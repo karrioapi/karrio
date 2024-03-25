@@ -81,7 +81,7 @@ const Component: React.FC = () => {
               label="Email"
               name="email"
               placeholder="Email"
-              fieldClass="mt-3"
+              wrapperClass="mt-3"
               onChange={handleChange}
               value={user.email}
               disabled={!isNoneOrEmpty(email)}
@@ -94,7 +94,7 @@ const Component: React.FC = () => {
 
             <InputField
               label="Full Name" name="full_name"
-              placeholder="Full Name" fieldClass="mt-3"
+              placeholder="Full Name" wrapperClass="mt-3"
               onChange={handleChange} value={user.full_name as string} required>
               {errors.filter(error => error.field === 'full_name').map(({ messages }) => (
                 messages.map((message, index) => <p key={index} className="has-text-danger is-size-7">{message}</p>)
@@ -103,7 +103,7 @@ const Component: React.FC = () => {
 
             <InputField
               label="Password" name="password1" type="password"
-              placeholder="Password" fieldClass="mt-3"
+              placeholder="Password" wrapperClass="mt-3"
               onChange={handleChange} value={user.password1} required>
               {errors.filter(error => error.field === 'password1').map(({ messages }) => (
                 messages.map((message, index) => <p key={index} className="has-text-danger is-size-7">{message}</p>)
@@ -112,7 +112,7 @@ const Component: React.FC = () => {
 
             <InputField
               label="Confirm Password" name="password2" type="password"
-              placeholder="Confirm Password" fieldClass="mt-3"
+              placeholder="Confirm Password" wrapperClass="mt-3"
               onChange={handleChange} value={user.password2} required>
               {errors.filter(error => error.field === 'password2').map(({ messages }) => (
                 messages.map((message, index) => <p key={index} className="has-text-danger is-size-7">{message}</p>)

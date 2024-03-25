@@ -1,0 +1,210 @@
+---
+id: environment
+title: Environment Variables
+---
+
+For settings that can be managed with Instance Settings, you can either set the values via environment variables or through the Instance Settings page in your instance.
+However, it is strongly **recommended to use Instance settings.** Environment variables are only loaded when there are no values in Instance settings,
+which means that environment variables could reflect outdated values.
+
+For other settings, there are various environment variables you can set to configure your instance.
+Below is a comprehensive list of all of them.
+
+karrio server is a [Django](https://www.djangoproject.com/) based project
+and most of [deployment settings](https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/)
+are relevant to configure this project with few contextual naming differences.
+
+## DEPLOYMENT
+
+- **`KARRIO_HOST`** | **default:** `localhost`
+
+The karrio server hostname
+
+- **`KARRIO_PORT`** | **default:** `5002`
+
+The karrio server port
+
+- **`KARRIO_WORKERS`** | **default:** `2`
+
+The number of parallel subprocesses for the karrio server
+
+- **`DETACHED_WORKER`** | [`True`, `False`] | **default:** `False`
+
+Indicate whether the karrio server process should be detached from the background worker process.
+
+:::caution
+Setting this option to `True` means that you intend to run the background worker process in another container
+or another runtime resource.
+:::
+
+- **`BACKGROUND_WORKERS`** | **default:** `2`
+
+The number of parallel subprocesses for the karrio server background worker
+
+- **`DEBUG_MODE`** | [`True`, `False`] | **default:** `False`
+
+It is important to set `DEBUG_MODE` to `False` in production for security and performance.
+
+:::note
+**Is the equivalent of django's `DEBUG` flag**.
+:::
+
+- **`ALLOWED_HOSTS`**
+
+Set a list of authorized host in text separated by commas.
+
+> **e.g: "test.com,example.com"**
+
+- **`SECRET_KEY`**
+
+The secret key must be a unique large value for security reason.
+
+> **Is the equivalent of django's `SECRET_KEY` flag**.
+
+- **`USE_HTTPS`** | [`True`, `False`] | **default:** `False`
+
+You should set `USE_HTTPS` to `True` when you configure your system in production with SSL.
+
+- **`TRACKING_PULSE`** | **default:** `7200`
+
+The background tracking time interval in seconds. The default is of 2 hours.
+You can set it to a lower value if you want a more frequent tracking status update.
+
+---
+
+## CACHING
+
+- **`REDIS_HOST`**
+
+The redis host name or IP address.
+
+- **`REDIS_PORT`**
+
+The redis instance port.
+
+---
+
+## PROVISIONING
+
+- **`ADMIN_EMAIL`** | **default:** `admin@example.com`
+
+The default super user admin account email to add when the system start for the first time
+
+- **`ADMIN_PASSWORD`** | **default:** `demo`
+
+The default super user password
+
+:::caution
+Make sure to change the password later
+:::
+
+---
+
+## LOGGING
+
+- **`LOG_LEVEL`** | [`DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL`]
+
+The default value is **DEBUG** when **DEBUG_MODE** is **True** else **INFO**
+
+- **`LOG_DIR`**
+
+Is the log file location.
+
+- **`WORKER_DB_DIR`**
+
+The karrio server background worker persists events to process so that
+even after a shutdown, they can recover tasks and process them.
+
+:::tip
+When you are using a container, you might want to mount this folder
+on a volume so that they can be recovered when the container shuts down.
+:::
+
+---
+
+## DATABASE
+
+Karrio uses PostgresSQL as a database.
+
+- **`DATABASE_HOST`** | **default:** `db`
+
+The database host
+
+> the database host can be an IP address or a hostname
+
+- **`DATABASE_PORT`** | **default:** `5432`
+
+The database port
+
+- **`DATABASE_NAME`** | **default:** `db`
+
+The database name
+
+- **`DATABASE_USERNAME`** | **default:** `postgres`
+
+The database connection' user
+
+- **`DATABASE_PASSWORD`** | **default:** `postgres`
+
+The database connection' password
+
+- **`DATABASE_ENGINE`** | [`postgresql`, `sqlite3`, `mysql`, `oracle`] | **default:** `postgresql`
+
+The database backend to use.
+
+- **`DATABASE_CONN_MAX_AGE`** | **default:** `0`
+
+The lifetime of a database connection. Use `0` to close database connections at the end of each request
+
+### Or connection URL
+
+- **`DATABASE_URL`**
+
+```txt title="Connection string"
+postgresql://postgres:postgres@localhost:5432/karriodb?schema=public
+```
+
+---
+
+## EMAIL
+
+- **`EMAIL_USE_TLS`** | **default:** `False`
+
+The email server use TLS
+
+- **`EMAIL_HOST_USER`** | **default:** `False`
+
+The authentication user email
+
+- **`EMAIL_HOST_PASSWORD`**
+
+The authentication user password
+
+- **`EMAIL_HOST`** | **default:** `smtp.gmail.com`
+
+The email server host
+
+- **`EMAIL_PORT`** | **default:** `587`
+
+The email server use TLS
+
+- **`EMAIL_FROM_ADDRESS`** | **default:** `noreply@karrio.io`
+
+The email address to send emails from
+
+---
+
+## APM
+
+Karrio support [Sentry](https://sentry.io/) and [PostHog] for APM and product analytics.
+
+### Sentry
+
+- **`SENTRY_DSN`**
+
+
+### PostHog
+
+- **`POSTHOG_KEY`**
+- **`POSTHOG_HOST`** | **default:** `https://app.posthog.com`
+

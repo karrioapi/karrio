@@ -95,6 +95,8 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({ children }
               <CarrierImage
                 carrier_name={(tracker?.meta as any)?.carrier || tracker?.carrier_name}
                 width={60} height={60}
+                text_color={tracker?.tracking_carrier?.config?.text_color}
+                background={tracker?.tracking_carrier?.config?.brand_color}
               />
             </div>
 
@@ -158,7 +160,7 @@ export const TrackingPreview: React.FC<TrackingPreviewComponent> = ({ children }
               <div className="columns my-0">
                 <div className="column is-3 is-size-7 py-1">Service</div>
                 <div className="column is-size-7 has-text-weight-semibold py-1">
-                  {(tracker?.shipment?.meta as any)?.service_name || tracker?.shipment?.service}
+                  {formatRef(tracker?.info?.shipment_service || tracker?.shipment?.meta?.service_name || tracker?.shipment?.service)}
                 </div>
               </div>
 

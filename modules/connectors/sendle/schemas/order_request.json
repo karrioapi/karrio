@@ -1,47 +1,71 @@
 {
-  "pickup_date": "2015-11-24",
-  "first_mile_option": "pickup",
-  "description": "Kryptonite",
-  "weight": {
-    "value": "1",
-    "units": "kg"
-  },
-  "volume": {
-    "value": "0.01",
-    "units": "m3"
-  },
-  "customer_reference": "SupBdayPressie",
-  "metadata": {},
-  "sender": {
-    "contact": {
-      "name": "Lex Luthor",
-      "phone": "0412 345 678"
+    "sender": {
+        "address": {
+            "country": "AU",
+            "address_line1": "1 Main Street",
+            "address_line2": "",
+            "suburb": "Melbourne",
+            "postcode": "3000",
+            "state_name": "VIC"
+        },
+        "contact": {
+            "name": "John Smith",
+            "email": "",
+            "phone": "0401234567",
+            "company": "Company Name"
+        },
+        "instructions": "Leave at the front door",
+        "tax_ids": {
+            "ioss": "GB123456789"
+        }
     },
-    "address": {
-      "address_line1": "123 Gotham Ln",
-      "suburb": "Sydney",
-      "state_name": "NSW",
-      "postcode": "2000",
-      "country": "Australia"
+    "receiver": {
+        "address": {
+            "country": "AU",
+            "address_line1": "1 Main Street",
+            "address_line2": "",
+            "suburb": "Melbourne",
+            "postcode": "3000",
+            "state_name": "VIC"
+        },
+        "contact": {
+            "name": "John Smith",
+            "email": "",
+            "phone": "0401234567",
+            "company": "Company Name"
+        },
+        "instructions": "Leave at the front door"
     },
-    "instructions": "Knock loudly"
-  },
-  "receiver": {
-    "contact": {
-      "name": "Clark Kent",
-      "email": "clarkissuper@dailyplanet.xyz"
+    "description": "Parcel Description",
+    "customer_reference": "Customer Reference",
+    "product_code": "AUS_PARCEL_REGULAR",
+    "first_mile_option": "DROP_OFF",
+    "pickup_date": "2019-01-01",
+    "weight": {
+        "units": "kg",
+        "value": 1.5
     },
-    "address": {
-      "address_line1": "445 Mount Eden Road",
-      "suburb": "Auckland",
-      "postcode": "2025",
-      "country": "New Zealand"
+    "volume": {
+        "units": "m3",
+        "value": 1.5
     },
-    "instructions": "Give directly to Clark"
-  },
-  "contents": {
-    "description": "T-shirt",
-    "value": "20.00",
-    "country_of_origin": "China"
-  }
+    "dimensions": {
+        "units": "m3",
+        "height": 1.5,
+        "width": 1.5,
+        "length": 1.5
+    },
+    "metadata": {},
+    "hide_pickup_address": false,
+    "parcel_contents": [
+        {
+            "description": "Parcel Contents Description",
+            "value": "100",
+            "currency": "AUD",
+            "quantity": 1,
+            "country_of_origin": "AU",
+            "hs_code": "12345678"
+        }
+    ],
+    "contents_type": "MERCHANDISE"
 }

@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistic carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2023.9.3`.  Read our API changelog and to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order—have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  ## API Reference  Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.2.5`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2023.9.3
+ * The version of the OpenAPI document: 2024.2.5
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -97,7 +97,7 @@ export interface Address {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof Address
      */
@@ -120,12 +120,6 @@ export interface Address {
      * @memberof Address
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof Address
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -452,7 +446,7 @@ export interface AddressData {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof AddressData
      */
@@ -475,12 +469,6 @@ export interface AddressData {
      * @memberof AddressData
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof AddressData
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -815,7 +803,7 @@ export interface BatchObject {
      */
     'id'?: string;
     /**
-     * The batch operation resource status  * `queued` - queued * `running` - running * `failed` - failed * `completed` - completed * `completed_with_errors` - completed_with_errors
+     * The batch operation resource status
      * @type {string}
      * @memberof BatchObject
      */
@@ -851,13 +839,13 @@ export interface BatchOperation {
      */
     'id'?: string;
     /**
-     * * `queued` - queued * `running` - running * `failed` - failed * `completed` - completed * `completed_with_errors` - completed_with_errors
+     * 
      * @type {string}
      * @memberof BatchOperation
      */
     'status': BatchOperationStatusEnum;
     /**
-     * * `orders` - orders * `shipments` - shipments * `trackers` - trackers * `billing` - billing
+     * 
      * @type {string}
      * @memberof BatchOperation
      */
@@ -958,10 +946,10 @@ export interface BatchOrderData {
 export interface BatchShipmentData {
     /**
      * The list of shipments to process.
-     * @type {Array<ShipmentData>}
+     * @type {Array<ShipmentDataReference>}
      * @memberof BatchShipmentData
      */
-    'shipments': Array<ShipmentData>;
+    'shipments': Array<ShipmentDataReference>;
 }
 /**
  * 
@@ -1032,7 +1020,7 @@ export interface CarrierSettings {
      */
     'carrier_id': string;
     /**
-     * Indicates a carrier (type)  * `amazon_shipping` - amazon_shipping * `aramex` - aramex * `asendia_us` - asendia_us * `australiapost` - australiapost * `boxknight` - boxknight * `bpost` - bpost * `canadapost` - canadapost * `canpar` - canpar * `chronopost` - chronopost * `colissimo` - colissimo * `dhl_express` - dhl_express * `dhl_poland` - dhl_poland * `dhl_universal` - dhl_universal * `dicom` - dicom * `dpd` - dpd * `dpdhl` - dpdhl * `easypost` - easypost * `eshipper` - eshipper * `fedex` - fedex * `freightcom` - freightcom * `generic` - generic * `geodis` - geodis * `laposte` - laposte * `locate2u` - locate2u * `nationex` - nationex * `purolator` - purolator * `roadie` - roadie * `royalmail` - royalmail * `sendle` - sendle * `tnt` - tnt * `ups` - ups * `usps` - usps * `usps_international` - usps_international * `zoom2u` - zoom2u
+     * Indicates a carrier (type)
      * @type {string}
      * @memberof CarrierSettings
      */
@@ -1076,6 +1064,8 @@ export interface CarrierSettings {
 }
 
 export const CarrierSettingsCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -1087,6 +1077,7 @@ export const CarrierSettingsCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
@@ -1095,6 +1086,7 @@ export const CarrierSettingsCarrierNameEnum = {
     Easypost: 'easypost',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Freightcom: 'freightcom',
     Generic: 'generic',
     Geodis: 'geodis',
@@ -1105,6 +1097,7 @@ export const CarrierSettingsCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
@@ -1158,7 +1151,7 @@ export interface Commodity {
      */
     'weight': number;
     /**
-     * The commodity\'s weight unit  * `KG` - KG * `LB` - LB * `OZ` - OZ * `G` - G
+     * The commodity\'s weight unit
      * @type {string}
      * @memberof Commodity
      */
@@ -1200,17 +1193,17 @@ export interface Commodity {
      */
     'value_amount'?: number | null;
     /**
-     * The currency of the commodity value amount  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
+     * The currency of the commodity value amount
      * @type {string}
      * @memberof Commodity
      */
-    'value_currency'?: CommodityValueCurrencyEnum;
+    'value_currency'?: CommodityValueCurrencyEnum | null;
     /**
-     * The origin or manufacture country  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The origin or manufacture country
      * @type {string}
      * @memberof Commodity
      */
-    'origin_country'?: CommodityOriginCountryEnum;
+    'origin_country'?: CommodityOriginCountryEnum | null;
     /**
      * The id of the related order line item.
      * @type {string}
@@ -1640,7 +1633,7 @@ export interface CommodityData {
      */
     'weight': number;
     /**
-     * The commodity\'s weight unit  * `KG` - KG * `LB` - LB * `OZ` - OZ * `G` - G
+     * The commodity\'s weight unit
      * @type {string}
      * @memberof CommodityData
      */
@@ -1682,17 +1675,17 @@ export interface CommodityData {
      */
     'value_amount'?: number | null;
     /**
-     * The currency of the commodity value amount  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
+     * The currency of the commodity value amount
      * @type {string}
      * @memberof CommodityData
      */
-    'value_currency'?: CommodityDataValueCurrencyEnum;
+    'value_currency'?: CommodityDataValueCurrencyEnum | null;
     /**
-     * The origin or manufacture country  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The origin or manufacture country
      * @type {string}
      * @memberof CommodityData
      */
-    'origin_country'?: CommodityDataOriginCountryEnum;
+    'origin_country'?: CommodityDataOriginCountryEnum | null;
     /**
      * The id of the related order line item.
      * @type {string}
@@ -2134,11 +2127,11 @@ export interface Customs {
      */
     'duty_billing_address'?: CustomsDutyBillingAddress | null;
     /**
-     * * `documents` - documents * `gift` - gift * `sample` - sample * `merchandise` - merchandise * `return_merchandise` - return_merchandise * `other` - other
+     * 
      * @type {string}
      * @memberof Customs
      */
-    'content_type'?: CustomsContentTypeEnum;
+    'content_type'?: CustomsContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -2146,11 +2139,11 @@ export interface Customs {
      */
     'content_description'?: string | null;
     /**
-     * The customs \'term of trade\' also known as \'incoterm\'  * `CFR` - CFR * `CIF` - CIF * `CIP` - CIP * `CPT` - CPT * `DAF` - DAF * `DDP` - DDP * `DDU` - DDU * `DEQ` - DEQ * `DES` - DES * `EXW` - EXW * `FAS` - FAS * `FCA` - FCA * `FOB` - FOB
+     * The customs \'term of trade\' also known as \'incoterm\'
      * @type {string}
      * @memberof Customs
      */
-    'incoterm'?: CustomsIncotermEnum;
+    'incoterm'?: CustomsIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -2158,7 +2151,7 @@ export interface Customs {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof Customs
      */
@@ -2251,11 +2244,11 @@ export interface CustomsData {
      */
     'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
     /**
-     * * `documents` - documents * `gift` - gift * `sample` - sample * `merchandise` - merchandise * `return_merchandise` - return_merchandise * `other` - other
+     * 
      * @type {string}
      * @memberof CustomsData
      */
-    'content_type'?: CustomsDataContentTypeEnum;
+    'content_type'?: CustomsDataContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -2263,11 +2256,11 @@ export interface CustomsData {
      */
     'content_description'?: string | null;
     /**
-     * The customs \'term of trade\' also known as \'incoterm\'  * `CFR` - CFR * `CIF` - CIF * `CIP` - CIP * `CPT` - CPT * `DAF` - DAF * `DDP` - DDP * `DDU` - DDU * `DEQ` - DEQ * `DES` - DES * `EXW` - EXW * `FAS` - FAS * `FCA` - FCA * `FOB` - FOB
+     * The customs \'term of trade\' also known as \'incoterm\'
      * @type {string}
      * @memberof CustomsData
      */
-    'incoterm'?: CustomsDataIncotermEnum;
+    'incoterm'?: CustomsDataIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -2275,7 +2268,7 @@ export interface CustomsData {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof CustomsData
      */
@@ -2380,7 +2373,7 @@ export interface CustomsDataDutyBillingAddress {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof CustomsDataDutyBillingAddress
      */
@@ -2403,12 +2396,6 @@ export interface CustomsDataDutyBillingAddress {
      * @memberof CustomsDataDutyBillingAddress
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -2687,17 +2674,17 @@ export type CustomsDataDutyBillingAddressCountryCodeEnum = typeof CustomsDataDut
  */
 export interface CustomsDuty {
     /**
-     * The duty payer  * `sender` - sender * `recipient` - recipient * `third_party` - third_party
+     * The duty payer
      * @type {string}
      * @memberof CustomsDuty
      */
-    'paid_by'?: CustomsDutyPaidByEnum;
+    'paid_by'?: CustomsDutyPaidByEnum | null;
     /**
-     * The declared value currency  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
+     * The declared value currency
      * @type {string}
      * @memberof CustomsDuty
      */
-    'currency'?: CustomsDutyCurrencyEnum;
+    'currency'?: CustomsDutyCurrencyEnum | null;
     /**
      * The package declared value
      * @type {number}
@@ -2920,7 +2907,7 @@ export interface CustomsDutyBillingAddress {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof CustomsDutyBillingAddress
      */
@@ -2943,12 +2930,6 @@ export interface CustomsDutyBillingAddress {
      * @memberof CustomsDutyBillingAddress
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -3235,37 +3216,6 @@ export type CustomsDutyBillingAddressCountryCodeEnum = typeof CustomsDutyBilling
 /**
  * 
  * @export
- * @interface CustomsList
- */
-export interface CustomsList {
-    /**
-     * 
-     * @type {number}
-     * @memberof CustomsList
-     */
-    'count'?: number | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsList
-     */
-    'next'?: string | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsList
-     */
-    'previous'?: string | null;
-    /**
-     * 
-     * @type {Array<Customs>}
-     * @memberof CustomsList
-     */
-    'results': Array<Customs>;
-}
-/**
- * 
- * @export
  * @interface DocumentDetails
  */
 export interface DocumentDetails {
@@ -3425,13 +3375,13 @@ export interface DocumentUploadRecords {
  */
 export interface Documents {
     /**
-     * The shipment label in base64 string
+     * A shipping label in base64 string
      * @type {string}
      * @memberof Documents
      */
     'label'?: string | null;
     /**
-     * The shipment invoice in base64 string
+     * A shipping invoice in base64 string
      * @type {string}
      * @memberof Documents
      */
@@ -3444,17 +3394,17 @@ export interface Documents {
  */
 export interface Duty {
     /**
-     * The duty payer  * `sender` - sender * `recipient` - recipient * `third_party` - third_party
+     * The duty payer
      * @type {string}
      * @memberof Duty
      */
-    'paid_by'?: DutyPaidByEnum;
+    'paid_by'?: DutyPaidByEnum | null;
     /**
-     * The declared value currency  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
+     * The declared value currency
      * @type {string}
      * @memberof Duty
      */
-    'currency'?: DutyCurrencyEnum;
+    'currency'?: DutyCurrencyEnum | null;
     /**
      * The package declared value
      * @type {number}
@@ -3657,6 +3607,25 @@ export interface ErrorResponse {
 /**
  * 
  * @export
+ * @interface Images
+ */
+export interface Images {
+    /**
+     * A delivery image in base64 string
+     * @type {string}
+     * @memberof Images
+     */
+    'delivery_image'?: string | null;
+    /**
+     * A signature image in base64 string
+     * @type {string}
+     * @memberof Images
+     */
+    'signature_image'?: string | null;
+}
+/**
+ * 
+ * @export
  * @interface LineItem
  */
 export interface LineItem {
@@ -3673,7 +3642,7 @@ export interface LineItem {
      */
     'weight': number;
     /**
-     * The commodity\'s weight unit  * `KG` - KG * `LB` - LB * `OZ` - OZ * `G` - G
+     * The commodity\'s weight unit
      * @type {string}
      * @memberof LineItem
      */
@@ -3715,17 +3684,17 @@ export interface LineItem {
      */
     'value_amount'?: number | null;
     /**
-     * The currency of the commodity value amount  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
+     * The currency of the commodity value amount
      * @type {string}
      * @memberof LineItem
      */
-    'value_currency'?: LineItemValueCurrencyEnum;
+    'value_currency'?: LineItemValueCurrencyEnum | null;
     /**
-     * The origin or manufacture country  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The origin or manufacture country
      * @type {string}
      * @memberof LineItem
      */
-    'origin_country'?: LineItemOriginCountryEnum;
+    'origin_country'?: LineItemOriginCountryEnum | null;
     /**
      * The id of the related order line item.
      * @type {string}
@@ -4151,6 +4120,290 @@ export type LineItemOriginCountryEnum = typeof LineItemOriginCountryEnum[keyof t
 /**
  * 
  * @export
+ * @interface Manifest
+ */
+export interface Manifest {
+    /**
+     * A unique manifest identifier
+     * @type {string}
+     * @memberof Manifest
+     */
+    'id'?: string;
+    /**
+     * Specifies the object type
+     * @type {string}
+     * @memberof Manifest
+     */
+    'object_type'?: string;
+    /**
+     * The manifest carrier
+     * @type {string}
+     * @memberof Manifest
+     */
+    'carrier_name': string;
+    /**
+     * The manifest carrier configured name
+     * @type {string}
+     * @memberof Manifest
+     */
+    'carrier_id': string;
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof Manifest
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
+     * Specified whether it was created with a carrier in test mode
+     * @type {boolean}
+     * @memberof Manifest
+     */
+    'test_mode': boolean;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof Manifest
+     */
+    'address': AddressData;
+    /**
+     * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof Manifest
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * The manifest reference
+     * @type {string}
+     * @memberof Manifest
+     */
+    'reference'?: string | null;
+    /**
+     * The list of shipment identifiers you want to add to your manifest.<br/>         shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.         
+     * @type {Array<string>}
+     * @memberof Manifest
+     */
+    'shipment_identifiers': Array<string>;
+    /**
+     * User metadata for the pickup
+     * @type {{ [key: string]: any; }}
+     * @memberof Manifest
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * The Manifest file URL
+     * @type {string}
+     * @memberof Manifest
+     */
+    'manifest_url'?: string | null;
+    /**
+     * The list of note or warning messages
+     * @type {Array<Message>}
+     * @memberof Manifest
+     */
+    'messages'?: Array<Message>;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestData
+ */
+export interface ManifestData {
+    /**
+     * The manifest\'s carrier
+     * @type {string}
+     * @memberof ManifestData
+     */
+    'carrier_name': string;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ManifestData
+     */
+    'address': AddressData;
+    /**
+     * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof ManifestData
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * The manifest reference
+     * @type {string}
+     * @memberof ManifestData
+     */
+    'reference'?: string | null;
+    /**
+     * The list of existing shipment object ids with label purchased.
+     * @type {Array<string>}
+     * @memberof ManifestData
+     */
+    'shipment_ids': Array<string>;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestDetails
+ */
+export interface ManifestDetails {
+    /**
+     * A unique manifest identifier
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'id'?: string;
+    /**
+     * Specifies the object type
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'object_type'?: string;
+    /**
+     * The manifest carrier
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'carrier_name': string;
+    /**
+     * The manifest carrier configured name
+     * @type {string}
+     * @memberof ManifestDetails
+     */
+    'carrier_id': string;
+    /**
+     * 
+     * @type {ManifestDetailsDoc}
+     * @memberof ManifestDetails
+     */
+    'doc'?: ManifestDetailsDoc | null;
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof ManifestDetails
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
+     * Specified whether it was created with a carrier in test mode
+     * @type {boolean}
+     * @memberof ManifestDetails
+     */
+    'test_mode': boolean;
+}
+/**
+ * The manifest documents
+ * @export
+ * @interface ManifestDetailsDoc
+ */
+export interface ManifestDetailsDoc {
+    /**
+     * A manifest file in base64 string
+     * @type {string}
+     * @memberof ManifestDetailsDoc
+     */
+    'manifest'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestDocument
+ */
+export interface ManifestDocument {
+    /**
+     * A manifest file in base64 string
+     * @type {string}
+     * @memberof ManifestDocument
+     */
+    'manifest'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestList
+ */
+export interface ManifestList {
+    /**
+     * 
+     * @type {number}
+     * @memberof ManifestList
+     */
+    'count'?: number | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestList
+     */
+    'next'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestList
+     */
+    'previous'?: string | null;
+    /**
+     * 
+     * @type {Array<Manifest>}
+     * @memberof ManifestList
+     */
+    'results': Array<Manifest>;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestRequest
+ */
+export interface ManifestRequest {
+    /**
+     * The manifest\'s carrier
+     * @type {string}
+     * @memberof ManifestRequest
+     */
+    'carrier_name': string;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ManifestRequest
+     */
+    'address': AddressData;
+    /**
+     * <details>         <summary>The options available for the manifest.</summary>          {             \"shipments\": [                 {                     \"tracking_number\": \"123456789\",                     ...                     \"meta\": {...}                 }             ]         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof ManifestRequest
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * The manifest reference
+     * @type {string}
+     * @memberof ManifestRequest
+     */
+    'reference'?: string | null;
+    /**
+     * The list of shipment identifiers you want to add to your manifest.<br/>         shipment_identifier is often a tracking_number or shipment_id returned when you purchase a label.         
+     * @type {Array<string>}
+     * @memberof ManifestRequest
+     */
+    'shipment_identifiers': Array<string>;
+}
+/**
+ * 
+ * @export
+ * @interface ManifestResponse
+ */
+export interface ManifestResponse {
+    /**
+     * The list of note or warning messages
+     * @type {Array<Message>}
+     * @memberof ManifestResponse
+     */
+    'messages'?: Array<Message>;
+    /**
+     * 
+     * @type {ManifestDetails}
+     * @memberof ManifestResponse
+     */
+    'manifest'?: ManifestDetails;
+}
+/**
+ * 
+ * @export
  * @interface Message
  */
 export interface Message {
@@ -4291,7 +4544,7 @@ export interface Order {
      */
     'source'?: string;
     /**
-     * The order status.  * `unfulfilled` - unfulfilled * `cancelled` - cancelled * `fulfilled` - fulfilled * `delivered` - delivered * `partial` - partial
+     * The order status.
      * @type {string}
      * @memberof Order
      */
@@ -4411,7 +4664,7 @@ export interface OrderBillingAddress {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof OrderBillingAddress
      */
@@ -4434,12 +4687,6 @@ export interface OrderBillingAddress {
      * @memberof OrderBillingAddress
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -4815,7 +5062,7 @@ export interface OrderDataShippingFrom {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof OrderDataShippingFrom
      */
@@ -4838,12 +5085,6 @@ export interface OrderDataShippingFrom {
      * @memberof OrderDataShippingFrom
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -5195,7 +5436,7 @@ export interface OrderShippingFrom {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof OrderShippingFrom
      */
@@ -5218,12 +5459,6 @@ export interface OrderShippingFrom {
      * @memberof OrderShippingFrom
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -5593,17 +5828,17 @@ export interface Parcel {
      */
     'is_document'?: boolean | null;
     /**
-     * The parcel\'s weight unit  * `KG` - KG * `LB` - LB * `OZ` - OZ * `G` - G
+     * The parcel\'s weight unit
      * @type {string}
      * @memberof Parcel
      */
     'weight_unit': ParcelWeightUnitEnum;
     /**
-     * The parcel\'s dimension unit  * `CM` - CM * `IN` - IN
+     * The parcel\'s dimension unit
      * @type {string}
      * @memberof Parcel
      */
-    'dimension_unit'?: ParcelDimensionUnitEnum;
+    'dimension_unit'?: ParcelDimensionUnitEnum | null;
     /**
      * The parcel items.
      * @type {Array<Commodity>}
@@ -5713,17 +5948,17 @@ export interface ParcelData {
      */
     'is_document'?: boolean | null;
     /**
-     * The parcel\'s weight unit  * `KG` - KG * `LB` - LB * `OZ` - OZ * `G` - G
+     * The parcel\'s weight unit
      * @type {string}
      * @memberof ParcelData
      */
     'weight_unit': ParcelDataWeightUnitEnum;
     /**
-     * The parcel\'s dimension unit  * `CM` - CM * `IN` - IN
+     * The parcel\'s dimension unit
      * @type {string}
      * @memberof ParcelData
      */
-    'dimension_unit'?: ParcelDataDimensionUnitEnum;
+    'dimension_unit'?: ParcelDataDimensionUnitEnum | null;
     /**
      * The parcel items.
      * @type {Array<CommodityData>}
@@ -5840,7 +6075,7 @@ export interface PatchedAddressData {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof PatchedAddressData
      */
@@ -5863,12 +6098,6 @@ export interface PatchedAddressData {
      * @memberof PatchedAddressData
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof PatchedAddressData
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -6143,117 +6372,6 @@ export type PatchedAddressDataCountryCodeEnum = typeof PatchedAddressDataCountry
 /**
  * 
  * @export
- * @interface PatchedCustomsData
- */
-export interface PatchedCustomsData {
-    /**
-     * The parcel content items
-     * @type {Array<CommodityData>}
-     * @memberof PatchedCustomsData
-     */
-    'commodities'?: Array<CommodityData>;
-    /**
-     * 
-     * @type {CustomsDuty}
-     * @memberof PatchedCustomsData
-     */
-    'duty'?: CustomsDuty | null;
-    /**
-     * 
-     * @type {CustomsDataDutyBillingAddress}
-     * @memberof PatchedCustomsData
-     */
-    'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
-    /**
-     * * `documents` - documents * `gift` - gift * `sample` - sample * `merchandise` - merchandise * `return_merchandise` - return_merchandise * `other` - other
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'content_type'?: PatchedCustomsDataContentTypeEnum;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'content_description'?: string | null;
-    /**
-     * The customs \'term of trade\' also known as \'incoterm\'  * `CFR` - CFR * `CIF` - CIF * `CIP` - CIP * `CPT` - CPT * `DAF` - DAF * `DDP` - DDP * `DDU` - DDU * `DEQ` - DEQ * `DES` - DES * `EXW` - EXW * `FAS` - FAS * `FCA` - FCA * `FOB` - FOB
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'incoterm'?: PatchedCustomsDataIncotermEnum;
-    /**
-     * The invoice reference number
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'invoice'?: string | null;
-    /**
-     * The invoice date
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'invoice_date'?: string | null;
-    /**
-     * Indicates if the shipment is commercial
-     * @type {boolean}
-     * @memberof PatchedCustomsData
-     */
-    'commercial_invoice'?: boolean | null;
-    /**
-     * Indicate that signer certified confirmed all
-     * @type {boolean}
-     * @memberof PatchedCustomsData
-     */
-    'certify'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof PatchedCustomsData
-     */
-    'signer'?: string | null;
-    /**
-     * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         
-     * @type {{ [key: string]: any; }}
-     * @memberof PatchedCustomsData
-     */
-    'options'?: { [key: string]: any; };
-}
-
-export const PatchedCustomsDataContentTypeEnum = {
-    Documents: 'documents',
-    Gift: 'gift',
-    Sample: 'sample',
-    Merchandise: 'merchandise',
-    ReturnMerchandise: 'return_merchandise',
-    Other: 'other',
-    Empty: '',
-    Null: 'null'
-} as const;
-
-export type PatchedCustomsDataContentTypeEnum = typeof PatchedCustomsDataContentTypeEnum[keyof typeof PatchedCustomsDataContentTypeEnum];
-export const PatchedCustomsDataIncotermEnum = {
-    Cfr: 'CFR',
-    Cif: 'CIF',
-    Cip: 'CIP',
-    Cpt: 'CPT',
-    Daf: 'DAF',
-    Ddp: 'DDP',
-    Ddu: 'DDU',
-    Deq: 'DEQ',
-    Des: 'DES',
-    Exw: 'EXW',
-    Fas: 'FAS',
-    Fca: 'FCA',
-    Fob: 'FOB',
-    Null: 'null'
-} as const;
-
-export type PatchedCustomsDataIncotermEnum = typeof PatchedCustomsDataIncotermEnum[keyof typeof PatchedCustomsDataIncotermEnum];
-
-/**
- * 
- * @export
  * @interface PatchedParcelData
  */
 export interface PatchedParcelData {
@@ -6312,17 +6430,17 @@ export interface PatchedParcelData {
      */
     'is_document'?: boolean | null;
     /**
-     * The parcel\'s weight unit  * `KG` - KG * `LB` - LB * `OZ` - OZ * `G` - G
+     * The parcel\'s weight unit
      * @type {string}
      * @memberof PatchedParcelData
      */
     'weight_unit'?: PatchedParcelDataWeightUnitEnum;
     /**
-     * The parcel\'s dimension unit  * `CM` - CM * `IN` - IN
+     * The parcel\'s dimension unit
      * @type {string}
      * @memberof PatchedParcelData
      */
-    'dimension_unit'?: PatchedParcelDataDimensionUnitEnum;
+    'dimension_unit'?: PatchedParcelDataDimensionUnitEnum | null;
     /**
      * The parcel items.
      * @type {Array<CommodityData>}
@@ -6427,17 +6545,17 @@ export type PatchedWebhookDataEnabledEventsEnum = typeof PatchedWebhookDataEnabl
  */
 export interface Payment {
     /**
-     * The payor type  * `sender` - sender * `recipient` - recipient * `third_party` - third_party
+     * The payor type
      * @type {string}
      * @memberof Payment
      */
     'paid_by'?: PaymentPaidByEnum;
     /**
-     * The payment amount currency  * `EUR` - EUR * `AED` - AED * `USD` - USD * `XCD` - XCD * `AMD` - AMD * `ANG` - ANG * `AOA` - AOA * `ARS` - ARS * `AUD` - AUD * `AWG` - AWG * `AZN` - AZN * `BAM` - BAM * `BBD` - BBD * `BDT` - BDT * `XOF` - XOF * `BGN` - BGN * `BHD` - BHD * `BIF` - BIF * `BMD` - BMD * `BND` - BND * `BOB` - BOB * `BRL` - BRL * `BSD` - BSD * `BTN` - BTN * `BWP` - BWP * `BYN` - BYN * `BZD` - BZD * `CAD` - CAD * `CDF` - CDF * `XAF` - XAF * `CHF` - CHF * `NZD` - NZD * `CLP` - CLP * `CNY` - CNY * `COP` - COP * `CRC` - CRC * `CUC` - CUC * `CVE` - CVE * `CZK` - CZK * `DJF` - DJF * `DKK` - DKK * `DOP` - DOP * `DZD` - DZD * `EGP` - EGP * `ERN` - ERN * `ETB` - ETB * `FJD` - FJD * `GBP` - GBP * `GEL` - GEL * `GHS` - GHS * `GMD` - GMD * `GNF` - GNF * `GTQ` - GTQ * `GYD` - GYD * `HKD` - HKD * `HNL` - HNL * `HRK` - HRK * `HTG` - HTG * `HUF` - HUF * `IDR` - IDR * `ILS` - ILS * `INR` - INR * `IRR` - IRR * `ISK` - ISK * `JMD` - JMD * `JOD` - JOD * `JPY` - JPY * `KES` - KES * `KGS` - KGS * `KHR` - KHR * `KMF` - KMF * `KPW` - KPW * `KRW` - KRW * `KWD` - KWD * `KYD` - KYD * `KZT` - KZT * `LAK` - LAK * `LKR` - LKR * `LRD` - LRD * `LSL` - LSL * `LYD` - LYD * `MAD` - MAD * `MDL` - MDL * `MGA` - MGA * `MKD` - MKD * `MMK` - MMK * `MNT` - MNT * `MOP` - MOP * `MRO` - MRO * `MUR` - MUR * `MVR` - MVR * `MWK` - MWK * `MXN` - MXN * `MYR` - MYR * `MZN` - MZN * `NAD` - NAD * `XPF` - XPF * `NGN` - NGN * `NIO` - NIO * `NOK` - NOK * `NPR` - NPR * `OMR` - OMR * `PEN` - PEN * `PGK` - PGK * `PHP` - PHP * `PKR` - PKR * `PLN` - PLN * `PYG` - PYG * `QAR` - QAR * `RSD` - RSD * `RUB` - RUB * `RWF` - RWF * `SAR` - SAR * `SBD` - SBD * `SCR` - SCR * `SDG` - SDG * `SEK` - SEK * `SGD` - SGD * `SHP` - SHP * `SLL` - SLL * `SOS` - SOS * `SRD` - SRD * `SSP` - SSP * `STD` - STD * `SYP` - SYP * `SZL` - SZL * `THB` - THB * `TJS` - TJS * `TND` - TND * `TOP` - TOP * `TRY` - TRY * `TTD` - TTD * `TWD` - TWD * `TZS` - TZS * `UAH` - UAH * `UYU` - UYU * `UZS` - UZS * `VEF` - VEF * `VND` - VND * `VUV` - VUV * `WST` - WST * `YER` - YER * `ZAR` - ZAR
+     * The payment amount currency
      * @type {string}
      * @memberof Payment
      */
-    'currency'?: PaymentCurrencyEnum;
+    'currency'?: PaymentCurrencyEnum | null;
     /**
      * The payor account number
      * @type {string}
@@ -6664,6 +6782,18 @@ export interface Pickup {
      */
     'closing_time'?: string | null;
     /**
+     * User metadata for the pickup
+     * @type {{ [key: string]: any; }}
+     * @memberof Pickup
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof Pickup
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
      * 
      * @type {Address}
      * @memberof Pickup
@@ -6693,12 +6823,6 @@ export interface Pickup {
      * @memberof Pickup
      */
     'options'?: { [key: string]: any; } | null;
-    /**
-     * User metadata for the pickup
-     * @type {{ [key: string]: any; }}
-     * @memberof Pickup
-     */
-    'metadata'?: { [key: string]: any; };
     /**
      * Specified whether it was created with a carrier in test mode
      * @type {boolean}
@@ -7301,11 +7425,11 @@ export interface Shipment {
      */
     'reference'?: string | null;
     /**
-     * The shipment label file type.  * `PDF` - PDF * `ZPL` - ZPL * `PNG` - PNG
+     * The shipment label file type.
      * @type {string}
      * @memberof Shipment
      */
-    'label_type'?: ShipmentLabelTypeEnum;
+    'label_type'?: ShipmentLabelTypeEnum | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
      * @type {Array<string>}
@@ -7337,7 +7461,7 @@ export interface Shipment {
      */
     'messages'?: Array<Message>;
     /**
-     * The current Shipment status  * `draft` - draft * `purchased` - purchased * `cancelled` - cancelled * `shipped` - shipped * `in_transit` - in_transit * `delivered` - delivered * `needs_attention` - needs_attention * `out_for_delivery` - out_for_delivery * `delivery_failed` - delivery_failed
+     * The current Shipment status
      * @type {string}
      * @memberof Shipment
      */
@@ -7482,7 +7606,7 @@ export interface ShipmentBillingAddress {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof ShipmentBillingAddress
      */
@@ -7505,12 +7629,6 @@ export interface ShipmentBillingAddress {
      * @memberof ShipmentBillingAddress
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -7850,11 +7968,11 @@ export interface ShipmentCustoms {
      */
     'duty_billing_address'?: CustomsDutyBillingAddress | null;
     /**
-     * * `documents` - documents * `gift` - gift * `sample` - sample * `merchandise` - merchandise * `return_merchandise` - return_merchandise * `other` - other
+     * 
      * @type {string}
      * @memberof ShipmentCustoms
      */
-    'content_type'?: ShipmentCustomsContentTypeEnum;
+    'content_type'?: ShipmentCustomsContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -7862,11 +7980,11 @@ export interface ShipmentCustoms {
      */
     'content_description'?: string | null;
     /**
-     * The customs \'term of trade\' also known as \'incoterm\'  * `CFR` - CFR * `CIF` - CIF * `CIP` - CIP * `CPT` - CPT * `DAF` - DAF * `DDP` - DDP * `DDU` - DDU * `DEQ` - DEQ * `DES` - DES * `EXW` - EXW * `FAS` - FAS * `FCA` - FCA * `FOB` - FOB
+     * The customs \'term of trade\' also known as \'incoterm\'
      * @type {string}
      * @memberof ShipmentCustoms
      */
-    'incoterm'?: ShipmentCustomsIncotermEnum;
+    'incoterm'?: ShipmentCustomsIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -7874,7 +7992,7 @@ export interface ShipmentCustoms {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof ShipmentCustoms
      */
@@ -7997,7 +8115,7 @@ export interface ShipmentData {
      */
     'reference'?: string | null;
     /**
-     * The shipment label file type.  * `PDF` - PDF * `ZPL` - ZPL * `PNG` - PNG
+     * The shipment label file type.
      * @type {string}
      * @memberof ShipmentData
      */
@@ -8079,7 +8197,7 @@ export interface ShipmentDataBillingAddress {
      */
     'company_name'?: string | null;
     /**
-     * The address country code  * `AD` - AD * `AE` - AE * `AF` - AF * `AG` - AG * `AI` - AI * `AL` - AL * `AM` - AM * `AN` - AN * `AO` - AO * `AR` - AR * `AS` - AS * `AT` - AT * `AU` - AU * `AW` - AW * `AZ` - AZ * `BA` - BA * `BB` - BB * `BD` - BD * `BE` - BE * `BF` - BF * `BG` - BG * `BH` - BH * `BI` - BI * `BJ` - BJ * `BM` - BM * `BN` - BN * `BO` - BO * `BR` - BR * `BS` - BS * `BT` - BT * `BW` - BW * `BY` - BY * `BZ` - BZ * `CA` - CA * `CD` - CD * `CF` - CF * `CG` - CG * `CH` - CH * `CI` - CI * `CK` - CK * `CL` - CL * `CM` - CM * `CN` - CN * `CO` - CO * `CR` - CR * `CU` - CU * `CV` - CV * `CY` - CY * `CZ` - CZ * `DE` - DE * `DJ` - DJ * `DK` - DK * `DM` - DM * `DO` - DO * `DZ` - DZ * `EC` - EC * `EE` - EE * `EG` - EG * `ER` - ER * `ES` - ES * `ET` - ET * `FI` - FI * `FJ` - FJ * `FK` - FK * `FM` - FM * `FO` - FO * `FR` - FR * `GA` - GA * `GB` - GB * `GD` - GD * `GE` - GE * `GF` - GF * `GG` - GG * `GH` - GH * `GI` - GI * `GL` - GL * `GM` - GM * `GN` - GN * `GP` - GP * `GQ` - GQ * `GR` - GR * `GT` - GT * `GU` - GU * `GW` - GW * `GY` - GY * `HK` - HK * `HN` - HN * `HR` - HR * `HT` - HT * `HU` - HU * `IC` - IC * `ID` - ID * `IE` - IE * `IL` - IL * `IN` - IN * `IQ` - IQ * `IR` - IR * `IS` - IS * `IT` - IT * `JE` - JE * `JM` - JM * `JO` - JO * `JP` - JP * `KE` - KE * `KG` - KG * `KH` - KH * `KI` - KI * `KM` - KM * `KN` - KN * `KP` - KP * `KR` - KR * `KV` - KV * `KW` - KW * `KY` - KY * `KZ` - KZ * `LA` - LA * `LB` - LB * `LC` - LC * `LI` - LI * `LK` - LK * `LR` - LR * `LS` - LS * `LT` - LT * `LU` - LU * `LV` - LV * `LY` - LY * `MA` - MA * `MC` - MC * `MD` - MD * `ME` - ME * `MG` - MG * `MH` - MH * `MK` - MK * `ML` - ML * `MM` - MM * `MN` - MN * `MO` - MO * `MP` - MP * `MQ` - MQ * `MR` - MR * `MS` - MS * `MT` - MT * `MU` - MU * `MV` - MV * `MW` - MW * `MX` - MX * `MY` - MY * `MZ` - MZ * `NA` - NA * `NC` - NC * `NE` - NE * `NG` - NG * `NI` - NI * `NL` - NL * `NO` - NO * `NP` - NP * `NR` - NR * `NU` - NU * `NZ` - NZ * `OM` - OM * `PA` - PA * `PE` - PE * `PF` - PF * `PG` - PG * `PH` - PH * `PK` - PK * `PL` - PL * `PR` - PR * `PT` - PT * `PW` - PW * `PY` - PY * `QA` - QA * `RE` - RE * `RO` - RO * `RS` - RS * `RU` - RU * `RW` - RW * `SA` - SA * `SB` - SB * `SC` - SC * `SD` - SD * `SE` - SE * `SG` - SG * `SH` - SH * `SI` - SI * `SK` - SK * `SL` - SL * `SM` - SM * `SN` - SN * `SO` - SO * `SR` - SR * `SS` - SS * `ST` - ST * `SV` - SV * `SY` - SY * `SZ` - SZ * `TC` - TC * `TD` - TD * `TG` - TG * `TH` - TH * `TJ` - TJ * `TL` - TL * `TN` - TN * `TO` - TO * `TR` - TR * `TT` - TT * `TV` - TV * `TW` - TW * `TZ` - TZ * `UA` - UA * `UG` - UG * `US` - US * `UY` - UY * `UZ` - UZ * `VA` - VA * `VC` - VC * `VE` - VE * `VG` - VG * `VI` - VI * `VN` - VN * `VU` - VU * `WS` - WS * `XB` - XB * `XC` - XC * `XE` - XE * `XM` - XM * `XN` - XN * `XS` - XS * `XY` - XY * `YE` - YE * `YT` - YT * `ZA` - ZA * `ZM` - ZM * `ZW` - ZW
+     * The address country code
      * @type {string}
      * @memberof ShipmentDataBillingAddress
      */
@@ -8102,12 +8220,6 @@ export interface ShipmentDataBillingAddress {
      * @memberof ShipmentDataBillingAddress
      */
     'state_code'?: string | null;
-    /**
-     * The address suburb if known
-     * @type {string}
-     * @memberof ShipmentDataBillingAddress
-     */
-    'suburb'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
@@ -8404,11 +8516,11 @@ export interface ShipmentDataCustoms {
      */
     'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
     /**
-     * * `documents` - documents * `gift` - gift * `sample` - sample * `merchandise` - merchandise * `return_merchandise` - return_merchandise * `other` - other
+     * 
      * @type {string}
      * @memberof ShipmentDataCustoms
      */
-    'content_type'?: ShipmentDataCustomsContentTypeEnum;
+    'content_type'?: ShipmentDataCustomsContentTypeEnum | null;
     /**
      * 
      * @type {string}
@@ -8416,11 +8528,11 @@ export interface ShipmentDataCustoms {
      */
     'content_description'?: string | null;
     /**
-     * The customs \'term of trade\' also known as \'incoterm\'  * `CFR` - CFR * `CIF` - CIF * `CIP` - CIP * `CPT` - CPT * `DAF` - DAF * `DDP` - DDP * `DDU` - DDU * `DEQ` - DEQ * `DES` - DES * `EXW` - EXW * `FAS` - FAS * `FCA` - FCA * `FOB` - FOB
+     * The customs \'term of trade\' also known as \'incoterm\'
      * @type {string}
      * @memberof ShipmentDataCustoms
      */
-    'incoterm'?: ShipmentDataCustomsIncotermEnum;
+    'incoterm'?: ShipmentDataCustomsIncotermEnum | null;
     /**
      * The invoice reference number
      * @type {string}
@@ -8428,7 +8540,7 @@ export interface ShipmentDataCustoms {
      */
     'invoice'?: string | null;
     /**
-     * The invoice date
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
      * @type {string}
      * @memberof ShipmentDataCustoms
      */
@@ -8493,6 +8605,106 @@ export type ShipmentDataCustomsIncotermEnum = typeof ShipmentDataCustomsIncoterm
 /**
  * 
  * @export
+ * @interface ShipmentDataReference
+ */
+export interface ShipmentDataReference {
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ShipmentDataReference
+     */
+    'shipper': AddressData;
+    /**
+     * 
+     * @type {AddressData}
+     * @memberof ShipmentDataReference
+     */
+    'recipient': AddressData;
+    /**
+     * The shipment\'s parcels
+     * @type {Array<ParcelData>}
+     * @memberof ShipmentDataReference
+     */
+    'parcels': Array<ParcelData>;
+    /**
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentDataReference
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * 
+     * @type {Payment}
+     * @memberof ShipmentDataReference
+     */
+    'payment'?: Payment;
+    /**
+     * 
+     * @type {ShipmentDataBillingAddress}
+     * @memberof ShipmentDataReference
+     */
+    'billing_address'?: ShipmentDataBillingAddress | null;
+    /**
+     * 
+     * @type {ShipmentDataCustoms}
+     * @memberof ShipmentDataReference
+     */
+    'customs'?: ShipmentDataCustoms | null;
+    /**
+     * The shipment reference
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'reference'?: string | null;
+    /**
+     * The shipment label file type.
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'label_type'?: ShipmentDataReferenceLabelTypeEnum;
+    /**
+     * **Specify a service to Buy a label in one call without rating.**
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'service'?: string;
+    /**
+     * The requested carrier service for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request         you could specify a service per carrier.**         
+     * @type {Array<string>}
+     * @memberof ShipmentDataReference
+     */
+    'services'?: Array<string> | null;
+    /**
+     * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
+     * @type {Array<string>}
+     * @memberof ShipmentDataReference
+     */
+    'carrier_ids'?: Array<string> | null;
+    /**
+     * User metadata for the shipment
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentDataReference
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * The shipment id.
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'id'?: string;
+}
+
+export const ShipmentDataReferenceLabelTypeEnum = {
+    Pdf: 'PDF',
+    Zpl: 'ZPL',
+    Png: 'PNG'
+} as const;
+
+export type ShipmentDataReferenceLabelTypeEnum = typeof ShipmentDataReferenceLabelTypeEnum[keyof typeof ShipmentDataReferenceLabelTypeEnum];
+
+/**
+ * 
+ * @export
  * @interface ShipmentList
  */
 export interface ShipmentList {
@@ -8534,7 +8746,7 @@ export interface ShipmentPurchaseData {
      */
     'selected_rate_id': string;
     /**
-     * The shipment label file type.  * `PDF` - PDF * `ZPL` - ZPL * `PNG` - PNG
+     * The shipment label file type.
      * @type {string}
      * @memberof ShipmentPurchaseData
      */
@@ -8684,7 +8896,7 @@ export interface ShipmentSelectedRate {
  */
 export interface ShipmentUpdateData {
     /**
-     * The shipment label file type.  * `PDF` - PDF * `ZPL` - ZPL * `PNG` - PNG
+     * The shipment label file type.
      * @type {string}
      * @memberof ShipmentUpdateData
      */
@@ -8778,7 +8990,7 @@ export interface ShippingRequest {
      */
     'reference'?: string | null;
     /**
-     * The shipment label file type.  * `PDF` - PDF * `ZPL` - ZPL * `PNG` - PNG
+     * The shipment label file type.
      * @type {string}
      * @memberof ShippingRequest
      */
@@ -8890,11 +9102,11 @@ export interface ShippingResponse {
      */
     'reference'?: string | null;
     /**
-     * The shipment label file type.  * `PDF` - PDF * `ZPL` - ZPL * `PNG` - PNG
+     * The shipment label file type.
      * @type {string}
      * @memberof ShippingResponse
      */
-    'label_type'?: ShippingResponseLabelTypeEnum;
+    'label_type'?: ShippingResponseLabelTypeEnum | null;
     /**
      * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
      * @type {Array<string>}
@@ -8926,7 +9138,7 @@ export interface ShippingResponse {
      */
     'messages'?: Array<Message>;
     /**
-     * The current Shipment status  * `draft` - draft * `purchased` - purchased * `cancelled` - cancelled * `shipped` - shipped * `in_transit` - in_transit * `delivered` - delivered * `needs_attention` - needs_attention * `out_for_delivery` - out_for_delivery * `delivery_failed` - delivery_failed
+     * The current Shipment status
      * @type {string}
      * @memberof ShippingResponse
      */
@@ -9023,13 +9235,13 @@ export type ShippingResponseStatusEnum = typeof ShippingResponseStatusEnum[keyof
  */
 export interface ShippingResponseDocs {
     /**
-     * The shipment label in base64 string
+     * A shipping label in base64 string
      * @type {string}
      * @memberof ShippingResponseDocs
      */
     'label'?: string | null;
     /**
-     * The shipment invoice in base64 string
+     * A shipping invoice in base64 string
      * @type {string}
      * @memberof ShippingResponseDocs
      */
@@ -9104,6 +9316,258 @@ export interface TokenVerify {
      * @memberof TokenVerify
      */
     'token': string;
+}
+/**
+ * 
+ * @export
+ * @interface TrackerDetails
+ */
+export interface TrackerDetails {
+    /**
+     * A unique identifier
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'id'?: string;
+    /**
+     * The tracking carrier
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'carrier_name': string;
+    /**
+     * The tracking carrier configured identifier
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'carrier_id': string;
+    /**
+     * The shipment tracking number
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'tracking_number': string;
+    /**
+     * 
+     * @type {TrackerDetailsInfo}
+     * @memberof TrackerDetails
+     */
+    'info'?: TrackerDetailsInfo | null;
+    /**
+     * The tracking details events
+     * @type {Array<TrackingEvent>}
+     * @memberof TrackerDetails
+     */
+    'events'?: Array<TrackingEvent> | null;
+    /**
+     * Specified whether the related shipment was delivered
+     * @type {boolean}
+     * @memberof TrackerDetails
+     */
+    'delivered'?: boolean;
+    /**
+     * Specified whether the object was created with a carrier in test mode
+     * @type {boolean}
+     * @memberof TrackerDetails
+     */
+    'test_mode': boolean;
+    /**
+     * The current tracking status
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'status'?: TrackerDetailsStatusEnum;
+    /**
+     * The delivery estimated date
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'estimated_delivery'?: string;
+    /**
+     * provider specific metadata
+     * @type {{ [key: string]: any; }}
+     * @memberof TrackerDetails
+     */
+    'meta'?: { [key: string]: any; } | null;
+    /**
+     * 
+     * @type {TrackerDetailsImages}
+     * @memberof TrackerDetails
+     */
+    'images'?: TrackerDetailsImages | null;
+    /**
+     * Specifies the object type
+     * @type {string}
+     * @memberof TrackerDetails
+     */
+    'object_type'?: string;
+    /**
+     * User metadata for the tracker
+     * @type {{ [key: string]: any; }}
+     * @memberof TrackerDetails
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * The list of note or warning messages
+     * @type {Array<Message>}
+     * @memberof TrackerDetails
+     */
+    'messages'?: Array<Message>;
+}
+
+export const TrackerDetailsStatusEnum = {
+    Pending: 'pending',
+    Unknown: 'unknown',
+    OnHold: 'on_hold',
+    Delivered: 'delivered',
+    InTransit: 'in_transit',
+    DeliveryDelayed: 'delivery_delayed',
+    OutForDelivery: 'out_for_delivery',
+    ReadyForPickup: 'ready_for_pickup',
+    DeliveryFailed: 'delivery_failed'
+} as const;
+
+export type TrackerDetailsStatusEnum = typeof TrackerDetailsStatusEnum[keyof typeof TrackerDetailsStatusEnum];
+
+/**
+ * The tracker documents
+ * @export
+ * @interface TrackerDetailsImages
+ */
+export interface TrackerDetailsImages {
+    /**
+     * A delivery image in base64 string
+     * @type {string}
+     * @memberof TrackerDetailsImages
+     */
+    'delivery_image'?: string | null;
+    /**
+     * A signature image in base64 string
+     * @type {string}
+     * @memberof TrackerDetailsImages
+     */
+    'signature_image'?: string | null;
+}
+/**
+ * The package and shipment tracking details
+ * @export
+ * @interface TrackerDetailsInfo
+ */
+export interface TrackerDetailsInfo {
+    /**
+     * The carrier tracking link
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'carrier_tracking_link'?: string | null;
+    /**
+     * The customer name
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'customer_name'?: string | null;
+    /**
+     * The expected delivery date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'expected_delivery'?: string | null;
+    /**
+     * A tracking note
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'note'?: string | null;
+    /**
+     * The package order date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'order_date'?: string | null;
+    /**
+     * The package order id or number
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'order_id'?: string | null;
+    /**
+     * The package weight
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'package_weight'?: string | null;
+    /**
+     * The package weight unit
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'package_weight_unit'?: string | null;
+    /**
+     * The package count
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_package_count'?: string | null;
+    /**
+     * The shipment pickup date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_pickup_date'?: string | null;
+    /**
+     * The shipment delivery date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_delivery_date'?: string | null;
+    /**
+     * The shipment service
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_service'?: string | null;
+    /**
+     * The shipment origin country
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_origin_country'?: string | null;
+    /**
+     * The shipment origin postal code
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_origin_postal_code'?: string | null;
+    /**
+     * The shipment destination country
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_destination_country'?: string | null;
+    /**
+     * The shipment destination postal code
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipment_destination_postal_code'?: string | null;
+    /**
+     * The shipping date
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'shipping_date'?: string | null;
+    /**
+     * The person who signed for the package
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'signed_by'?: string | null;
+    /**
+     * The tracker source
+     * @type {string}
+     * @memberof TrackerDetailsInfo
+     */
+    'source'?: string | null;
 }
 /**
  * 
@@ -9289,7 +9753,7 @@ export interface TrackingData {
      */
     'tracking_number': string;
     /**
-     * The tracking carrier  * `amazon_shipping` - amazon_shipping * `aramex` - aramex * `asendia_us` - asendia_us * `australiapost` - australiapost * `boxknight` - boxknight * `bpost` - bpost * `canadapost` - canadapost * `canpar` - canpar * `chronopost` - chronopost * `colissimo` - colissimo * `dhl_express` - dhl_express * `dhl_poland` - dhl_poland * `dhl_universal` - dhl_universal * `dicom` - dicom * `dpd` - dpd * `dpdhl` - dpdhl * `fedex` - fedex * `generic` - generic * `geodis` - geodis * `laposte` - laposte * `locate2u` - locate2u * `nationex` - nationex * `purolator` - purolator * `roadie` - roadie * `royalmail` - royalmail * `sendle` - sendle * `tnt` - tnt * `ups` - ups * `usps` - usps * `usps_international` - usps_international * `zoom2u` - zoom2u
+     * The tracking carrier
      * @type {string}
      * @memberof TrackingData
      */
@@ -9321,6 +9785,8 @@ export interface TrackingData {
 }
 
 export const TrackingDataCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -9332,12 +9798,14 @@ export const TrackingDataCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Generic: 'generic',
     Geodis: 'geodis',
     Laposte: 'laposte',
@@ -9347,6 +9815,7 @@ export const TrackingDataCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
@@ -9540,10 +10009,10 @@ export interface TrackingResponse {
     'messages'?: Array<Message>;
     /**
      * 
-     * @type {TrackingStatus}
+     * @type {TrackerDetails}
      * @memberof TrackingResponse
      */
-    'tracking'?: TrackingStatus;
+    'tracking'?: TrackerDetails;
 }
 /**
  * 
@@ -9577,10 +10046,10 @@ export interface TrackingStatus {
     'tracking_number': string;
     /**
      * 
-     * @type {TrackingStatusInfo}
+     * @type {TrackerDetailsInfo}
      * @memberof TrackingStatus
      */
-    'info'?: TrackingStatusInfo | null;
+    'info'?: TrackerDetailsInfo | null;
     /**
      * The tracking details events
      * @type {Array<TrackingEvent>}
@@ -9600,7 +10069,7 @@ export interface TrackingStatus {
      */
     'test_mode': boolean;
     /**
-     * The current tracking status  * `pending` - pending * `unknown` - unknown * `delivered` - delivered * `on_hold` - on_hold * `in_transit` - in_transit * `delivery_delayed` - delivery_delayed * `out_for_delivery` - out_for_delivery * `ready_for_pickup` - ready_for_pickup * `delivery_failed` - delivery_failed
+     * The current tracking status
      * @type {string}
      * @memberof TrackingStatus
      */
@@ -9635,13 +10104,25 @@ export interface TrackingStatus {
      * @memberof TrackingStatus
      */
     'messages'?: Array<Message>;
+    /**
+     * The shipment invoice URL
+     * @type {string}
+     * @memberof TrackingStatus
+     */
+    'delivery_image_url'?: string | null;
+    /**
+     * The shipment invoice URL
+     * @type {string}
+     * @memberof TrackingStatus
+     */
+    'signature_image_url'?: string | null;
 }
 
 export const TrackingStatusStatusEnum = {
     Pending: 'pending',
     Unknown: 'unknown',
-    Delivered: 'delivered',
     OnHold: 'on_hold',
+    Delivered: 'delivered',
     InTransit: 'in_transit',
     DeliveryDelayed: 'delivery_delayed',
     OutForDelivery: 'out_for_delivery',
@@ -9651,127 +10132,6 @@ export const TrackingStatusStatusEnum = {
 
 export type TrackingStatusStatusEnum = typeof TrackingStatusStatusEnum[keyof typeof TrackingStatusStatusEnum];
 
-/**
- * The package and shipment tracking details
- * @export
- * @interface TrackingStatusInfo
- */
-export interface TrackingStatusInfo {
-    /**
-     * The carrier tracking link
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'carrier_tracking_link'?: string | null;
-    /**
-     * The customer name
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'customer_name'?: string | null;
-    /**
-     * The expected delivery date
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'expected_delivery'?: string | null;
-    /**
-     * A tracking note
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'note'?: string | null;
-    /**
-     * The package order date
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'order_date'?: string | null;
-    /**
-     * The package order id or number
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'order_id'?: string | null;
-    /**
-     * The package weight
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'package_weight'?: string | null;
-    /**
-     * The package weight unit
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'package_weight_unit'?: string | null;
-    /**
-     * The package count
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_package_count'?: string | null;
-    /**
-     * The shipment pickup date
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_pickup_date'?: string | null;
-    /**
-     * The shipment delivery date
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_delivery_date'?: string | null;
-    /**
-     * The shipment service
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_service'?: string | null;
-    /**
-     * The shipment origin country
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_origin_country'?: string | null;
-    /**
-     * The shipment origin postal code
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_origin_postal_code'?: string | null;
-    /**
-     * The shipment destination country
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_destination_country'?: string | null;
-    /**
-     * The shipment destination postal code
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipment_destination_postal_code'?: string | null;
-    /**
-     * The shipping date
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'shipping_date'?: string | null;
-    /**
-     * The person who signed for the package
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'signed_by'?: string | null;
-    /**
-     * The tracker source
-     * @type {string}
-     * @memberof TrackingStatusInfo
-     */
-    'source'?: string | null;
-}
 /**
  * 
  * @export
@@ -9989,42 +10349,6 @@ export interface WebhookTestRequest {
 export const APIApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Authenticate the user and return a token pair
-         * @summary Obtain auth token pair
-         * @param {TokenObtainPair} tokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        authenticate: async (tokenObtainPair: TokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'tokenObtainPair' is not null or undefined
-            assertParamExists('authenticate', 'tokenObtainPair', tokenObtainPair)
-            const localVarPath = `/api/token`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(tokenObtainPair, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
          * 
          * @summary Data References
          * @param {*} [options] Override http request option.
@@ -10048,42 +10372,6 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
             setSearchParams(localVarUrlObj, localVarQueryParameter);
             let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
             localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * @summary Get verified JWT token
-         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVerifiedToken: async (verifiedTokenObtainPair: VerifiedTokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'verifiedTokenObtainPair' is not null or undefined
-            assertParamExists('getVerifiedToken', 'verifiedTokenObtainPair', verifiedTokenObtainPair)
-            const localVarPath = `/api/token/verified`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(verifiedTokenObtainPair, localVarRequestOptions, configuration)
 
             return {
                 url: toPathString(localVarUrlObj),
@@ -10120,78 +10408,6 @@ export const APIApiAxiosParamCreator = function (configuration?: Configuration) 
                 options: localVarRequestOptions,
             };
         },
-        /**
-         * Authenticate the user and return a token pair
-         * @summary Refresh auth token
-         * @param {TokenRefresh} tokenRefresh 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        refreshToken: async (tokenRefresh: TokenRefresh, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'tokenRefresh' is not null or undefined
-            assertParamExists('refreshToken', 'tokenRefresh', tokenRefresh)
-            const localVarPath = `/api/token/refresh`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(tokenRefresh, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Verify an existent authentication token
-         * @summary Verify token
-         * @param {TokenVerify} tokenVerify 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        verifyToken: async (tokenVerify: TokenVerify, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'tokenVerify' is not null or undefined
-            assertParamExists('verifyToken', 'tokenVerify', tokenVerify)
-            const localVarPath = `/api/token/verify`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(tokenVerify, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
     }
 };
 
@@ -10203,19 +10419,6 @@ export const APIApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = APIApiAxiosParamCreator(configuration)
     return {
         /**
-         * Authenticate the user and return a token pair
-         * @summary Obtain auth token pair
-         * @param {TokenObtainPair} tokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async authenticate(tokenObtainPair: TokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticate(tokenObtainPair, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.authenticate']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
          * 
          * @summary Data References
          * @param {*} [options] Override http request option.
@@ -10225,19 +10428,6 @@ export const APIApiFp = function (configuration?: Configuration) {
             const localVarAxiosArgs = await localVarAxiosParamCreator.data(options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['APIApi.data']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * @summary Get verified JWT token
-         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async getVerifiedToken(verifiedTokenObtainPair: VerifiedTokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.getVerifiedToken(verifiedTokenObtainPair, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.getVerifiedToken']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
@@ -10252,32 +10442,6 @@ export const APIApiFp = function (configuration?: Configuration) {
             const operationBasePath = operationServerMap['APIApi.ping']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
-        /**
-         * Authenticate the user and return a token pair
-         * @summary Refresh auth token
-         * @param {TokenRefresh} tokenRefresh 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async refreshToken(tokenRefresh: TokenRefresh, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.refreshToken(tokenRefresh, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.refreshToken']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Verify an existent authentication token
-         * @summary Verify token
-         * @param {TokenVerify} tokenVerify 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async verifyToken(tokenVerify: TokenVerify, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyToken(tokenVerify, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['APIApi.verifyToken']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
     }
 };
 
@@ -10289,16 +10453,6 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
     const localVarFp = APIApiFp(configuration)
     return {
         /**
-         * Authenticate the user and return a token pair
-         * @summary Obtain auth token pair
-         * @param {APIApiAuthenticateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        authenticate(requestParameters: APIApiAuthenticateRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
-            return localVarFp.authenticate(requestParameters.tokenObtainPair, options).then((request) => request(axios, basePath));
-        },
-        /**
          * 
          * @summary Data References
          * @param {*} [options] Override http request option.
@@ -10306,16 +10460,6 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
          */
         data(options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
             return localVarFp.data(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-         * @summary Get verified JWT token
-         * @param {APIApiGetVerifiedTokenRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        getVerifiedToken(requestParameters: APIApiGetVerifiedTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
-            return localVarFp.getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(axios, basePath));
         },
         /**
          * 
@@ -10326,84 +10470,8 @@ export const APIApiFactory = function (configuration?: Configuration, basePath?:
         ping(options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
             return localVarFp.ping(options).then((request) => request(axios, basePath));
         },
-        /**
-         * Authenticate the user and return a token pair
-         * @summary Refresh auth token
-         * @param {APIApiRefreshTokenRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        refreshToken(requestParameters: APIApiRefreshTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
-            return localVarFp.refreshToken(requestParameters.tokenRefresh, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Verify an existent authentication token
-         * @summary Verify token
-         * @param {APIApiVerifyTokenRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        verifyToken(requestParameters: APIApiVerifyTokenRequest, options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
-            return localVarFp.verifyToken(requestParameters.tokenVerify, options).then((request) => request(axios, basePath));
-        },
     };
 };
-
-/**
- * Request parameters for authenticate operation in APIApi.
- * @export
- * @interface APIApiAuthenticateRequest
- */
-export interface APIApiAuthenticateRequest {
-    /**
-     * 
-     * @type {TokenObtainPair}
-     * @memberof APIApiAuthenticate
-     */
-    readonly tokenObtainPair: TokenObtainPair
-}
-
-/**
- * Request parameters for getVerifiedToken operation in APIApi.
- * @export
- * @interface APIApiGetVerifiedTokenRequest
- */
-export interface APIApiGetVerifiedTokenRequest {
-    /**
-     * 
-     * @type {VerifiedTokenObtainPair}
-     * @memberof APIApiGetVerifiedToken
-     */
-    readonly verifiedTokenObtainPair: VerifiedTokenObtainPair
-}
-
-/**
- * Request parameters for refreshToken operation in APIApi.
- * @export
- * @interface APIApiRefreshTokenRequest
- */
-export interface APIApiRefreshTokenRequest {
-    /**
-     * 
-     * @type {TokenRefresh}
-     * @memberof APIApiRefreshToken
-     */
-    readonly tokenRefresh: TokenRefresh
-}
-
-/**
- * Request parameters for verifyToken operation in APIApi.
- * @export
- * @interface APIApiVerifyTokenRequest
- */
-export interface APIApiVerifyTokenRequest {
-    /**
-     * 
-     * @type {TokenVerify}
-     * @memberof APIApiVerifyToken
-     */
-    readonly tokenVerify: TokenVerify
-}
 
 /**
  * APIApi - object-oriented interface
@@ -10412,18 +10480,6 @@ export interface APIApiVerifyTokenRequest {
  * @extends {BaseAPI}
  */
 export class APIApi extends BaseAPI {
-    /**
-     * Authenticate the user and return a token pair
-     * @summary Obtain auth token pair
-     * @param {APIApiAuthenticateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public authenticate(requestParameters: APIApiAuthenticateRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
-    }
-
     /**
      * 
      * @summary Data References
@@ -10436,18 +10492,6 @@ export class APIApi extends BaseAPI {
     }
 
     /**
-     * Get a verified JWT token pair by submitting a Two-Factor authentication code.
-     * @summary Get verified JWT token
-     * @param {APIApiGetVerifiedTokenRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public getVerifiedToken(requestParameters: APIApiGetVerifiedTokenRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
      * 
      * @summary Instance Metadata
      * @param {*} [options] Override http request option.
@@ -10456,30 +10500,6 @@ export class APIApi extends BaseAPI {
      */
     public ping(options?: AxiosRequestConfig) {
         return APIApiFp(this.configuration).ping(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Authenticate the user and return a token pair
-     * @summary Refresh auth token
-     * @param {APIApiRefreshTokenRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public refreshToken(requestParameters: APIApiRefreshTokenRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).refreshToken(requestParameters.tokenRefresh, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Verify an existent authentication token
-     * @summary Verify token
-     * @param {APIApiVerifyTokenRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof APIApi
-     */
-    public verifyToken(requestParameters: APIApiVerifyTokenRequest, options?: AxiosRequestConfig) {
-        return APIApiFp(this.configuration).verifyToken(requestParameters.tokenVerify, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -11003,14 +11023,393 @@ export class AddressesApi extends BaseAPI {
 
 
 /**
+ * AuthApi - axios parameter creator
+ * @export
+ */
+export const AuthApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Obtain auth token pair
+         * @param {TokenObtainPair} tokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticate: async (tokenObtainPair: TokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenObtainPair' is not null or undefined
+            assertParamExists('authenticate', 'tokenObtainPair', tokenObtainPair)
+            const localVarPath = `/api/token`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenObtainPair, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * @summary Get verified JWT token
+         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVerifiedToken: async (verifiedTokenObtainPair: VerifiedTokenObtainPair, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'verifiedTokenObtainPair' is not null or undefined
+            assertParamExists('getVerifiedToken', 'verifiedTokenObtainPair', verifiedTokenObtainPair)
+            const localVarPath = `/api/token/verified`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(verifiedTokenObtainPair, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Refresh auth token
+         * @param {TokenRefresh} tokenRefresh 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        refreshToken: async (tokenRefresh: TokenRefresh, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenRefresh' is not null or undefined
+            assertParamExists('refreshToken', 'tokenRefresh', tokenRefresh)
+            const localVarPath = `/api/token/refresh`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenRefresh, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Verify an existent authentication token
+         * @summary Verify token
+         * @param {TokenVerify} tokenVerify 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyToken: async (tokenVerify: TokenVerify, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'tokenVerify' is not null or undefined
+            assertParamExists('verifyToken', 'tokenVerify', tokenVerify)
+            const localVarPath = `/api/token/verify`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(tokenVerify, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuthApi - functional programming interface
+ * @export
+ */
+export const AuthApiFp = function (configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Obtain auth token pair
+         * @param {TokenObtainPair} tokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authenticate(tokenObtainPair: TokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticate(tokenObtainPair, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.authenticate']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * @summary Get verified JWT token
+         * @param {VerifiedTokenObtainPair} verifiedTokenObtainPair 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async getVerifiedToken(verifiedTokenObtainPair: VerifiedTokenObtainPair, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.getVerifiedToken(verifiedTokenObtainPair, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.getVerifiedToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Refresh auth token
+         * @param {TokenRefresh} tokenRefresh 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async refreshToken(tokenRefresh: TokenRefresh, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<TokenPair>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.refreshToken(tokenRefresh, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.refreshToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Verify an existent authentication token
+         * @summary Verify token
+         * @param {TokenVerify} tokenVerify 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async verifyToken(tokenVerify: TokenVerify, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<{ [key: string]: any; }>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.verifyToken(tokenVerify, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['AuthApi.verifyToken']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * AuthApi - factory interface
+ * @export
+ */
+export const AuthApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthApiFp(configuration)
+    return {
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Obtain auth token pair
+         * @param {AuthApiAuthenticateRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticate(requestParameters: AuthApiAuthenticateRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
+            return localVarFp.authenticate(requestParameters.tokenObtainPair, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+         * @summary Get verified JWT token
+         * @param {AuthApiGetVerifiedTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        getVerifiedToken(requestParameters: AuthApiGetVerifiedTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
+            return localVarFp.getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Authenticate the user and return a token pair
+         * @summary Refresh auth token
+         * @param {AuthApiRefreshTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        refreshToken(requestParameters: AuthApiRefreshTokenRequest, options?: AxiosRequestConfig): AxiosPromise<TokenPair> {
+            return localVarFp.refreshToken(requestParameters.tokenRefresh, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Verify an existent authentication token
+         * @summary Verify token
+         * @param {AuthApiVerifyTokenRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        verifyToken(requestParameters: AuthApiVerifyTokenRequest, options?: AxiosRequestConfig): AxiosPromise<{ [key: string]: any; }> {
+            return localVarFp.verifyToken(requestParameters.tokenVerify, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for authenticate operation in AuthApi.
+ * @export
+ * @interface AuthApiAuthenticateRequest
+ */
+export interface AuthApiAuthenticateRequest {
+    /**
+     * 
+     * @type {TokenObtainPair}
+     * @memberof AuthApiAuthenticate
+     */
+    readonly tokenObtainPair: TokenObtainPair
+}
+
+/**
+ * Request parameters for getVerifiedToken operation in AuthApi.
+ * @export
+ * @interface AuthApiGetVerifiedTokenRequest
+ */
+export interface AuthApiGetVerifiedTokenRequest {
+    /**
+     * 
+     * @type {VerifiedTokenObtainPair}
+     * @memberof AuthApiGetVerifiedToken
+     */
+    readonly verifiedTokenObtainPair: VerifiedTokenObtainPair
+}
+
+/**
+ * Request parameters for refreshToken operation in AuthApi.
+ * @export
+ * @interface AuthApiRefreshTokenRequest
+ */
+export interface AuthApiRefreshTokenRequest {
+    /**
+     * 
+     * @type {TokenRefresh}
+     * @memberof AuthApiRefreshToken
+     */
+    readonly tokenRefresh: TokenRefresh
+}
+
+/**
+ * Request parameters for verifyToken operation in AuthApi.
+ * @export
+ * @interface AuthApiVerifyTokenRequest
+ */
+export interface AuthApiVerifyTokenRequest {
+    /**
+     * 
+     * @type {TokenVerify}
+     * @memberof AuthApiVerifyToken
+     */
+    readonly tokenVerify: TokenVerify
+}
+
+/**
+ * AuthApi - object-oriented interface
+ * @export
+ * @class AuthApi
+ * @extends {BaseAPI}
+ */
+export class AuthApi extends BaseAPI {
+    /**
+     * Authenticate the user and return a token pair
+     * @summary Obtain auth token pair
+     * @param {AuthApiAuthenticateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public authenticate(requestParameters: AuthApiAuthenticateRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).authenticate(requestParameters.tokenObtainPair, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Get a verified JWT token pair by submitting a Two-Factor authentication code.
+     * @summary Get verified JWT token
+     * @param {AuthApiGetVerifiedTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public getVerifiedToken(requestParameters: AuthApiGetVerifiedTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).getVerifiedToken(requestParameters.verifiedTokenObtainPair, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Authenticate the user and return a token pair
+     * @summary Refresh auth token
+     * @param {AuthApiRefreshTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public refreshToken(requestParameters: AuthApiRefreshTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).refreshToken(requestParameters.tokenRefresh, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Verify an existent authentication token
+     * @summary Verify token
+     * @param {AuthApiVerifyTokenRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthApi
+     */
+    public verifyToken(requestParameters: AuthApiVerifyTokenRequest, options?: AxiosRequestConfig) {
+        return AuthApiFp(this.configuration).verifyToken(requestParameters.tokenVerify, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
  * BatchesApi - axios parameter creator
  * @export
  */
 export const BatchesApiAxiosParamCreator = function (configuration?: Configuration) {
     return {
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * @summary Create orders
+         * Create order batch. `Beta`
+         * @summary Create order batch
          * @param {BatchOrderData} batchOrderData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11059,8 +11458,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * @summary Create shipments
+         * Create shipment batch. `Beta`
+         * @summary Create shipment batch
          * @param {BatchShipmentData} batchShipmentData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11109,8 +11508,8 @@ export const BatchesApiAxiosParamCreator = function (configuration?: Configurati
             };
         },
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * @summary Create trackers
+         * Create tracker batch. `Beta`
+         * @summary Create tracker batch
          * @param {BatchTrackerData} batchTrackerData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11339,8 +11738,8 @@ export const BatchesApiFp = function (configuration?: Configuration) {
     const localVarAxiosParamCreator = BatchesApiAxiosParamCreator(configuration)
     return {
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * @summary Create orders
+         * Create order batch. `Beta`
+         * @summary Create order batch
          * @param {BatchOrderData} batchOrderData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11352,8 +11751,8 @@ export const BatchesApiFp = function (configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * @summary Create shipments
+         * Create shipment batch. `Beta`
+         * @summary Create shipment batch
          * @param {BatchShipmentData} batchShipmentData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11365,8 +11764,8 @@ export const BatchesApiFp = function (configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * @summary Create trackers
+         * Create tracker batch. `Beta`
+         * @summary Create tracker batch
          * @param {BatchTrackerData} batchTrackerData 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11431,8 +11830,8 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
     const localVarFp = BatchesApiFp(configuration)
     return {
         /**
-         * Create multiple orders in a single batch. `Beta`
-         * @summary Create orders
+         * Create order batch. `Beta`
+         * @summary Create order batch
          * @param {BatchesApiCreateOrdersRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11441,8 +11840,8 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.createOrders(requestParameters.batchOrderData, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create multiple shipments in a single batch. `Beta`
-         * @summary Create shipments
+         * Create shipment batch. `Beta`
+         * @summary Create shipment batch
          * @param {BatchesApiCreateShipmentsRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11451,8 +11850,8 @@ export const BatchesApiFactory = function (configuration?: Configuration, basePa
             return localVarFp.createShipments(requestParameters.batchShipmentData, options).then((request) => request(axios, basePath));
         },
         /**
-         * Create multiple trackers in a single batch. `Beta`
-         * @summary Create trackers
+         * Create tracker batch. `Beta`
+         * @summary Create tracker batch
          * @param {BatchesApiCreateTrackersRequest} requestParameters Request parameters.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -11605,8 +12004,8 @@ export interface BatchesApiRetrieveRequest {
  */
 export class BatchesApi extends BaseAPI {
     /**
-     * Create multiple orders in a single batch. `Beta`
-     * @summary Create orders
+     * Create order batch. `Beta`
+     * @summary Create order batch
      * @param {BatchesApiCreateOrdersRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11617,8 +12016,8 @@ export class BatchesApi extends BaseAPI {
     }
 
     /**
-     * Create multiple shipments in a single batch. `Beta`
-     * @summary Create shipments
+     * Create shipment batch. `Beta`
+     * @summary Create shipment batch
      * @param {BatchesApiCreateShipmentsRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11629,8 +12028,8 @@ export class BatchesApi extends BaseAPI {
     }
 
     /**
-     * Create multiple trackers in a single batch. `Beta`
-     * @summary Create trackers
+     * Create tracker batch. `Beta`
+     * @summary Create tracker batch
      * @param {BatchesApiCreateTrackersRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
@@ -11697,7 +12096,7 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11746,12 +12145,14 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
          * Returns the list of configured carriers
          * @summary List all carriers
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [metadataKey] 
+         * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (active?: boolean, carrierName?: string, systemOnly?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/carriers`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -11786,9 +12187,65 @@ export const CarriersApiAxiosParamCreator = function (configuration?: Configurat
                 localVarQueryParameter['carrier_name'] = carrierName;
             }
 
+            if (metadataKey !== undefined) {
+                localVarQueryParameter['metadata_key'] = metadataKey;
+            }
+
+            if (metadataValue !== undefined) {
+                localVarQueryParameter['metadata_value'] = metadataValue;
+            }
+
             if (systemOnly !== undefined) {
                 localVarQueryParameter['system_only'] = systemOnly;
             }
+
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve a carrier account.
+         * @summary Retrieve a carrier account
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieve', 'id', id)
+            const localVarPath = `/v1/carriers/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
 
@@ -11814,7 +12271,7 @@ export const CarriersApiFp = function (configuration?: Configuration) {
         /**
          * Retrieve a carrier\'s services
          * @summary Get carrier services
-         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} carrierName The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -11828,15 +12285,30 @@ export const CarriersApiFp = function (configuration?: Configuration) {
          * Returns the list of configured carriers
          * @summary List all carriers
          * @param {boolean} [active] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [metadataKey] 
+         * @param {string} [metadataValue] 
          * @param {boolean} [systemOnly] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(active?: boolean, carrierName?: string, systemOnly?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(active, carrierName, systemOnly, options);
+        async list(active?: boolean, carrierName?: string, metadataKey?: string, metadataValue?: string, systemOnly?: boolean, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(active, carrierName, metadataKey, metadataValue, systemOnly, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['CarriersApi.list']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Retrieve a carrier account.
+         * @summary Retrieve a carrier account
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CarrierSettings>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['CarriersApi.retrieve']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
     }
@@ -11867,7 +12339,17 @@ export const CarriersApiFactory = function (configuration?: Configuration, baseP
          * @throws {RequiredError}
          */
         list(requestParameters: CarriersApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<CarrierList> {
-            return localVarFp.list(requestParameters.active, requestParameters.carrierName, requestParameters.systemOnly, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.active, requestParameters.carrierName, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.systemOnly, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve a carrier account.
+         * @summary Retrieve a carrier account
+         * @param {CarriersApiRetrieveRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve(requestParameters: CarriersApiRetrieveRequest, options?: AxiosRequestConfig): AxiosPromise<CarrierSettings> {
+            return localVarFp.retrieve(requestParameters.id, options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -11879,7 +12361,7 @@ export const CarriersApiFactory = function (configuration?: Configuration, baseP
  */
 export interface CarriersApiGetServicesRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof CarriersApiGetServices
      */
@@ -11900,7 +12382,7 @@ export interface CarriersApiListRequest {
     readonly active?: boolean
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof CarriersApiList
      */
@@ -11908,10 +12390,38 @@ export interface CarriersApiListRequest {
 
     /**
      * 
+     * @type {string}
+     * @memberof CarriersApiList
+     */
+    readonly metadataKey?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof CarriersApiList
+     */
+    readonly metadataValue?: string
+
+    /**
+     * 
      * @type {boolean}
      * @memberof CarriersApiList
      */
     readonly systemOnly?: boolean
+}
+
+/**
+ * Request parameters for retrieve operation in CarriersApi.
+ * @export
+ * @interface CarriersApiRetrieveRequest
+ */
+export interface CarriersApiRetrieveRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof CarriersApiRetrieve
+     */
+    readonly id: string
 }
 
 /**
@@ -11942,524 +12452,19 @@ export class CarriersApi extends BaseAPI {
      * @memberof CarriersApi
      */
     public list(requestParameters: CarriersApiListRequest = {}, options?: AxiosRequestConfig) {
-        return CarriersApiFp(this.configuration).list(requestParameters.active, requestParameters.carrierName, requestParameters.systemOnly, options).then((request) => request(this.axios, this.basePath));
+        return CarriersApiFp(this.configuration).list(requestParameters.active, requestParameters.carrierName, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.systemOnly, options).then((request) => request(this.axios, this.basePath));
     }
-}
-
-
-
-/**
- * CustomsApi - axios parameter creator
- * @export
- */
-export const CustomsApiAxiosParamCreator = function (configuration?: Configuration) {
-    return {
-        /**
-         * Create a new customs declaration.
-         * @summary Create a customs info
-         * @param {CustomsData} customsData 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create: async (customsData: CustomsData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'customsData' is not null or undefined
-            assertParamExists('create', 'customsData', customsData)
-            const localVarPath = `/v1/customs_info`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(customsData, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Discard a customs declaration.
-         * @summary Discard a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        discard: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('discard', 'id', id)
-            const localVarPath = `/v1/customs_info/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'DELETE', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Retrieve all stored customs declarations.
-         * @summary List all customs info
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        list: async (options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            const localVarPath = `/v1/customs_info`;
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * Retrieve customs declaration.
-         * @summary Retrieve a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('retrieve', 'id', id)
-            const localVarPath = `/v1/customs_info/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-        /**
-         * modify an existing customs declaration.
-         * @summary Update a customs info
-         * @param {string} id 
-         * @param {PatchedCustomsData} [patchedCustomsData] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        update: async (id: string, patchedCustomsData?: PatchedCustomsData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
-            // verify required parameter 'id' is not null or undefined
-            assertParamExists('update', 'id', id)
-            const localVarPath = `/v1/customs_info/{id}`
-                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
-            // use dummy base URL string because the URL constructor only accepts absolute URLs.
-            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
-            let baseOptions;
-            if (configuration) {
-                baseOptions = configuration.baseOptions;
-            }
-
-            const localVarRequestOptions = { method: 'PATCH', ...baseOptions, ...options };
-            const localVarHeaderParameter = {} as any;
-            const localVarQueryParameter = {} as any;
-
-            // authentication OAuth2 required
-            // oauth required
-            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
-
-            // authentication JWT required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-            // authentication TokenBasic required
-            // http basic authentication required
-            setBasicAuthToObject(localVarRequestOptions, configuration)
-
-            // authentication Token required
-            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
-
-
-
-            localVarHeaderParameter['Content-Type'] = 'application/json';
-
-            setSearchParams(localVarUrlObj, localVarQueryParameter);
-            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
-            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
-            localVarRequestOptions.data = serializeDataIfNeeded(patchedCustomsData, localVarRequestOptions, configuration)
-
-            return {
-                url: toPathString(localVarUrlObj),
-                options: localVarRequestOptions,
-            };
-        },
-    }
-};
-
-/**
- * CustomsApi - functional programming interface
- * @export
- */
-export const CustomsApiFp = function (configuration?: Configuration) {
-    const localVarAxiosParamCreator = CustomsApiAxiosParamCreator(configuration)
-    return {
-        /**
-         * Create a new customs declaration.
-         * @summary Create a customs info
-         * @param {CustomsData} customsData 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async create(customsData: CustomsData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.create(customsData, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.create']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Discard a customs declaration.
-         * @summary Discard a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async discard(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.discard(id, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.discard']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Retrieve all stored customs declarations.
-         * @summary List all customs info
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async list(options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<CustomsList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.list']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * Retrieve customs declaration.
-         * @summary Retrieve a customs info
-         * @param {string} id 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.retrieve']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-        /**
-         * modify an existing customs declaration.
-         * @summary Update a customs info
-         * @param {string} id 
-         * @param {PatchedCustomsData} [patchedCustomsData] 
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        async update(id: string, patchedCustomsData?: PatchedCustomsData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Customs>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.update(id, patchedCustomsData, options);
-            const index = configuration?.serverIndex ?? 0;
-            const operationBasePath = operationServerMap['CustomsApi.update']?.[index]?.url;
-            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
-        },
-    }
-};
-
-/**
- * CustomsApi - factory interface
- * @export
- */
-export const CustomsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
-    const localVarFp = CustomsApiFp(configuration)
-    return {
-        /**
-         * Create a new customs declaration.
-         * @summary Create a customs info
-         * @param {CustomsApiCreateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        create(requestParameters: CustomsApiCreateRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.create(requestParameters.customsData, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Discard a customs declaration.
-         * @summary Discard a customs info
-         * @param {CustomsApiDiscardRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        discard(requestParameters: CustomsApiDiscardRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.discard(requestParameters.id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Retrieve all stored customs declarations.
-         * @summary List all customs info
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        list(options?: AxiosRequestConfig): AxiosPromise<CustomsList> {
-            return localVarFp.list(options).then((request) => request(axios, basePath));
-        },
-        /**
-         * Retrieve customs declaration.
-         * @summary Retrieve a customs info
-         * @param {CustomsApiRetrieveRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        retrieve(requestParameters: CustomsApiRetrieveRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.retrieve(requestParameters.id, options).then((request) => request(axios, basePath));
-        },
-        /**
-         * modify an existing customs declaration.
-         * @summary Update a customs info
-         * @param {CustomsApiUpdateRequest} requestParameters Request parameters.
-         * @param {*} [options] Override http request option.
-         * @throws {RequiredError}
-         */
-        update(requestParameters: CustomsApiUpdateRequest, options?: AxiosRequestConfig): AxiosPromise<Customs> {
-            return localVarFp.update(requestParameters.id, requestParameters.patchedCustomsData, options).then((request) => request(axios, basePath));
-        },
-    };
-};
-
-/**
- * Request parameters for create operation in CustomsApi.
- * @export
- * @interface CustomsApiCreateRequest
- */
-export interface CustomsApiCreateRequest {
-    /**
-     * 
-     * @type {CustomsData}
-     * @memberof CustomsApiCreate
-     */
-    readonly customsData: CustomsData
-}
-
-/**
- * Request parameters for discard operation in CustomsApi.
- * @export
- * @interface CustomsApiDiscardRequest
- */
-export interface CustomsApiDiscardRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsApiDiscard
-     */
-    readonly id: string
-}
-
-/**
- * Request parameters for retrieve operation in CustomsApi.
- * @export
- * @interface CustomsApiRetrieveRequest
- */
-export interface CustomsApiRetrieveRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsApiRetrieve
-     */
-    readonly id: string
-}
-
-/**
- * Request parameters for update operation in CustomsApi.
- * @export
- * @interface CustomsApiUpdateRequest
- */
-export interface CustomsApiUpdateRequest {
-    /**
-     * 
-     * @type {string}
-     * @memberof CustomsApiUpdate
-     */
-    readonly id: string
 
     /**
-     * 
-     * @type {PatchedCustomsData}
-     * @memberof CustomsApiUpdate
-     */
-    readonly patchedCustomsData?: PatchedCustomsData
-}
-
-/**
- * CustomsApi - object-oriented interface
- * @export
- * @class CustomsApi
- * @extends {BaseAPI}
- */
-export class CustomsApi extends BaseAPI {
-    /**
-     * Create a new customs declaration.
-     * @summary Create a customs info
-     * @param {CustomsApiCreateRequest} requestParameters Request parameters.
+     * Retrieve a carrier account.
+     * @summary Retrieve a carrier account
+     * @param {CarriersApiRetrieveRequest} requestParameters Request parameters.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
-     * @memberof CustomsApi
+     * @memberof CarriersApi
      */
-    public create(requestParameters: CustomsApiCreateRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).create(requestParameters.customsData, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Discard a customs declaration.
-     * @summary Discard a customs info
-     * @param {CustomsApiDiscardRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public discard(requestParameters: CustomsApiDiscardRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).discard(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Retrieve all stored customs declarations.
-     * @summary List all customs info
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public list(options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).list(options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * Retrieve customs declaration.
-     * @summary Retrieve a customs info
-     * @param {CustomsApiRetrieveRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public retrieve(requestParameters: CustomsApiRetrieveRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
-    }
-
-    /**
-     * modify an existing customs declaration.
-     * @summary Update a customs info
-     * @param {CustomsApiUpdateRequest} requestParameters Request parameters.
-     * @param {*} [options] Override http request option.
-     * @throws {RequiredError}
-     * @memberof CustomsApi
-     */
-    public update(requestParameters: CustomsApiUpdateRequest, options?: AxiosRequestConfig) {
-        return CustomsApiFp(this.configuration).update(requestParameters.id, requestParameters.patchedCustomsData, options).then((request) => request(this.axios, this.basePath));
+    public retrieve(requestParameters: CarriersApiRetrieveRequest, options?: AxiosRequestConfig) {
+        return CarriersApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -12823,6 +12828,369 @@ export class DocumentsApi extends BaseAPI {
      */
     public upload(requestParameters: DocumentsApiUploadRequest, options?: AxiosRequestConfig) {
         return DocumentsApiFp(this.configuration).upload(requestParameters.documentUploadData, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
+
+/**
+ * ManifestsApi - axios parameter creator
+ * @export
+ */
+export const ManifestsApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * @summary Create a manifest
+         * @param {ManifestData} manifestData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create: async (manifestData: ManifestData, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'manifestData' is not null or undefined
+            assertParamExists('create', 'manifestData', manifestData)
+            const localVarPath = `/v1/manifests`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(manifestData, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve all manifests.
+         * @summary List manifests
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [createdAfter] 
+         * @param {string} [createdBefore] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list: async (carrierName?: string, createdAfter?: string, createdBefore?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/v1/manifests`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (carrierName !== undefined) {
+                localVarQueryParameter['carrier_name'] = carrierName;
+            }
+
+            if (createdAfter !== undefined) {
+                localVarQueryParameter['created_after'] = (createdAfter as any instanceof Date) ?
+                    (createdAfter as any).toISOString() :
+                    createdAfter;
+            }
+
+            if (createdBefore !== undefined) {
+                localVarQueryParameter['created_before'] = (createdBefore as any instanceof Date) ?
+                    (createdBefore as any).toISOString() :
+                    createdBefore;
+            }
+
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * Retrieve a shipping manifest.
+         * @summary Retrieve a manifest
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve: async (id: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'id' is not null or undefined
+            assertParamExists('retrieve', 'id', id)
+            const localVarPath = `/v1/manifests/{id}`
+                .replace(`{${"id"}}`, encodeURIComponent(String(id)));
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'GET', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * ManifestsApi - functional programming interface
+ * @export
+ */
+export const ManifestsApiFp = function (configuration?: Configuration) {
+    const localVarAxiosParamCreator = ManifestsApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * @summary Create a manifest
+         * @param {ManifestData} manifestData 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async create(manifestData: ManifestData, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.create(manifestData, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ManifestsApi.create']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Retrieve all manifests.
+         * @summary List manifests
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [createdAfter] 
+         * @param {string} [createdBefore] 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async list(carrierName?: string, createdAfter?: string, createdBefore?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(carrierName, createdAfter, createdBefore, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ManifestsApi.list']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
+         * Retrieve a shipping manifest.
+         * @summary Retrieve a manifest
+         * @param {string} id 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async retrieve(id: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Manifest>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.retrieve(id, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ManifestsApi.retrieve']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * ManifestsApi - factory interface
+ * @export
+ */
+export const ManifestsApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = ManifestsApiFp(configuration)
+    return {
+        /**
+         * Create a manifest for one or many shipments with labels already purchased.
+         * @summary Create a manifest
+         * @param {ManifestsApiCreateRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        create(requestParameters: ManifestsApiCreateRequest, options?: AxiosRequestConfig): AxiosPromise<Manifest> {
+            return localVarFp.create(requestParameters.manifestData, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve all manifests.
+         * @summary List manifests
+         * @param {ManifestsApiListRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        list(requestParameters: ManifestsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<ManifestList> {
+            return localVarFp.list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * Retrieve a shipping manifest.
+         * @summary Retrieve a manifest
+         * @param {ManifestsApiRetrieveRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        retrieve(requestParameters: ManifestsApiRetrieveRequest, options?: AxiosRequestConfig): AxiosPromise<Manifest> {
+            return localVarFp.retrieve(requestParameters.id, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * Request parameters for create operation in ManifestsApi.
+ * @export
+ * @interface ManifestsApiCreateRequest
+ */
+export interface ManifestsApiCreateRequest {
+    /**
+     * 
+     * @type {ManifestData}
+     * @memberof ManifestsApiCreate
+     */
+    readonly manifestData: ManifestData
+}
+
+/**
+ * Request parameters for list operation in ManifestsApi.
+ * @export
+ * @interface ManifestsApiListRequest
+ */
+export interface ManifestsApiListRequest {
+    /**
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+     * @type {string}
+     * @memberof ManifestsApiList
+     */
+    readonly carrierName?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestsApiList
+     */
+    readonly createdAfter?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestsApiList
+     */
+    readonly createdBefore?: string
+}
+
+/**
+ * Request parameters for retrieve operation in ManifestsApi.
+ * @export
+ * @interface ManifestsApiRetrieveRequest
+ */
+export interface ManifestsApiRetrieveRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof ManifestsApiRetrieve
+     */
+    readonly id: string
+}
+
+/**
+ * ManifestsApi - object-oriented interface
+ * @export
+ * @class ManifestsApi
+ * @extends {BaseAPI}
+ */
+export class ManifestsApi extends BaseAPI {
+    /**
+     * Create a manifest for one or many shipments with labels already purchased.
+     * @summary Create a manifest
+     * @param {ManifestsApiCreateRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ManifestsApi
+     */
+    public create(requestParameters: ManifestsApiCreateRequest, options?: AxiosRequestConfig) {
+        return ManifestsApiFp(this.configuration).create(requestParameters.manifestData, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve all manifests.
+     * @summary List manifests
+     * @param {ManifestsApiListRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ManifestsApi
+     */
+    public list(requestParameters: ManifestsApiListRequest = {}, options?: AxiosRequestConfig) {
+        return ManifestsApiFp(this.configuration).list(requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * Retrieve a shipping manifest.
+     * @summary Retrieve a manifest
+     * @param {ManifestsApiRetrieveRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ManifestsApi
+     */
+    public retrieve(requestParameters: ManifestsApiRetrieveRequest, options?: AxiosRequestConfig) {
+        return ManifestsApiFp(this.configuration).retrieve(requestParameters.id, options).then((request) => request(this.axios, this.basePath));
     }
 }
 
@@ -14617,6 +14985,56 @@ export const ProxyApiAxiosParamCreator = function (configuration?: Configuration
             };
         },
         /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+         * @summary Create a manifest
+         * @param {ManifestRequest} manifestRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createManifest: async (manifestRequest: ManifestRequest, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+            // verify required parameter 'manifestRequest' is not null or undefined
+            assertParamExists('createManifest', 'manifestRequest', manifestRequest)
+            const localVarPath = `/v1/proxy/manifest`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options };
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication OAuth2 required
+            // oauth required
+            await setOAuthToObject(localVarHeaderParameter, "OAuth2", [], configuration)
+
+            // authentication JWT required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            // authentication TokenBasic required
+            // http basic authentication required
+            setBasicAuthToObject(localVarRequestOptions, configuration)
+
+            // authentication Token required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+
+
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = { ...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers };
+            localVarRequestOptions.data = serializeDataIfNeeded(manifestRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available. 
          * @summary Fetch shipment rates
          * @param {RateRequest} rateRequest 
@@ -14979,6 +15397,19 @@ export const ProxyApiFp = function (configuration?: Configuration) {
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
         },
         /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+         * @summary Create a manifest
+         * @param {ManifestRequest} manifestRequest 
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async createManifest(manifestRequest: ManifestRequest, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ManifestResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.createManifest(manifestRequest, options);
+            const index = configuration?.serverIndex ?? 0;
+            const operationBasePath = operationServerMap['ProxyApi.createManifest']?.[index]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
+        },
+        /**
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available. 
          * @summary Fetch shipment rates
          * @param {RateRequest} rateRequest 
@@ -15094,6 +15525,16 @@ export const ProxyApiFactory = function (configuration?: Configuration, basePath
             return localVarFp.cancelPickup(requestParameters.carrierName, requestParameters.pickupCancelRequest, options).then((request) => request(axios, basePath));
         },
         /**
+         *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+         * @summary Create a manifest
+         * @param {ProxyApiCreateManifestRequest} requestParameters Request parameters.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        createManifest(requestParameters: ProxyApiCreateManifestRequest, options?: AxiosRequestConfig): AxiosPromise<ManifestResponse> {
+            return localVarFp.createManifest(requestParameters.manifestRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
          *  The Shipping process begins by fetching rates for your shipment. Use this service to fetch a shipping rates available. 
          * @summary Fetch shipment rates
          * @param {ProxyApiFetchRatesRequest} requestParameters Request parameters.
@@ -15179,7 +15620,7 @@ export interface ProxyApiBuyLabelRequest {
 export interface ProxyApiCancelPickupRequest {
     /**
      * 
-     * @type {'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
      * @memberof ProxyApiCancelPickup
      */
     readonly carrierName: CancelPickupCarrierNameEnum
@@ -15190,6 +15631,20 @@ export interface ProxyApiCancelPickupRequest {
      * @memberof ProxyApiCancelPickup
      */
     readonly pickupCancelRequest: PickupCancelRequest
+}
+
+/**
+ * Request parameters for createManifest operation in ProxyApi.
+ * @export
+ * @interface ProxyApiCreateManifestRequest
+ */
+export interface ProxyApiCreateManifestRequest {
+    /**
+     * 
+     * @type {ManifestRequest}
+     * @memberof ProxyApiCreateManifest
+     */
+    readonly manifestRequest: ManifestRequest
 }
 
 /**
@@ -15235,7 +15690,7 @@ export interface ProxyApiGetTrackingRequest {
 export interface ProxyApiSchedulePickupRequest {
     /**
      * 
-     * @type {'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
      * @memberof ProxyApiSchedulePickup
      */
     readonly carrierName: SchedulePickupCarrierNameEnum
@@ -15256,7 +15711,7 @@ export interface ProxyApiSchedulePickupRequest {
 export interface ProxyApiTrackShipmentRequest {
     /**
      * 
-     * @type {'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
      * @memberof ProxyApiTrackShipment
      */
     readonly carrierName: TrackShipmentCarrierNameEnum
@@ -15284,7 +15739,7 @@ export interface ProxyApiTrackShipmentRequest {
 export interface ProxyApiUpdatePickupRequest {
     /**
      * 
-     * @type {'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
      * @memberof ProxyApiUpdatePickup
      */
     readonly carrierName: UpdatePickupCarrierNameEnum
@@ -15305,7 +15760,7 @@ export interface ProxyApiUpdatePickupRequest {
 export interface ProxyApiVoidLabelRequest {
     /**
      * 
-     * @type {'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
      * @memberof ProxyApiVoidLabel
      */
     readonly carrierName: VoidLabelCarrierNameEnum
@@ -15347,6 +15802,18 @@ export class ProxyApi extends BaseAPI {
      */
     public cancelPickup(requestParameters: ProxyApiCancelPickupRequest, options?: AxiosRequestConfig) {
         return ProxyApiFp(this.configuration).cancelPickup(requestParameters.carrierName, requestParameters.pickupCancelRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     *  Some carriers require shipment manifests to be created for pickups and dropoff. Creating a manifest for a shipment also kicks off billing as a commitment or confirmation of the shipment. 
+     * @summary Create a manifest
+     * @param {ProxyApiCreateManifestRequest} requestParameters Request parameters.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof ProxyApi
+     */
+    public createManifest(requestParameters: ProxyApiCreateManifestRequest, options?: AxiosRequestConfig) {
+        return ProxyApiFp(this.configuration).createManifest(requestParameters.manifestRequest, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -15427,6 +15894,8 @@ export class ProxyApi extends BaseAPI {
  * @export
  */
 export const CancelPickupCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -15438,6 +15907,7 @@ export const CancelPickupCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
@@ -15446,6 +15916,7 @@ export const CancelPickupCarrierNameEnum = {
     Easypost: 'easypost',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Freightcom: 'freightcom',
     Generic: 'generic',
     Geodis: 'geodis',
@@ -15456,6 +15927,7 @@ export const CancelPickupCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
@@ -15467,6 +15939,8 @@ export type CancelPickupCarrierNameEnum = typeof CancelPickupCarrierNameEnum[key
  * @export
  */
 export const SchedulePickupCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -15478,6 +15952,7 @@ export const SchedulePickupCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
@@ -15486,6 +15961,7 @@ export const SchedulePickupCarrierNameEnum = {
     Easypost: 'easypost',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Freightcom: 'freightcom',
     Generic: 'generic',
     Geodis: 'geodis',
@@ -15496,6 +15972,7 @@ export const SchedulePickupCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
@@ -15507,6 +15984,8 @@ export type SchedulePickupCarrierNameEnum = typeof SchedulePickupCarrierNameEnum
  * @export
  */
 export const TrackShipmentCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -15518,12 +15997,14 @@ export const TrackShipmentCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Generic: 'generic',
     Geodis: 'geodis',
     Laposte: 'laposte',
@@ -15533,6 +16014,7 @@ export const TrackShipmentCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
@@ -15544,6 +16026,8 @@ export type TrackShipmentCarrierNameEnum = typeof TrackShipmentCarrierNameEnum[k
  * @export
  */
 export const UpdatePickupCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -15555,6 +16039,7 @@ export const UpdatePickupCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
@@ -15563,6 +16048,7 @@ export const UpdatePickupCarrierNameEnum = {
     Easypost: 'easypost',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Freightcom: 'freightcom',
     Generic: 'generic',
     Geodis: 'geodis',
@@ -15573,6 +16059,7 @@ export const UpdatePickupCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
@@ -15584,6 +16071,8 @@ export type UpdatePickupCarrierNameEnum = typeof UpdatePickupCarrierNameEnum[key
  * @export
  */
 export const VoidLabelCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -15595,6 +16084,7 @@ export const VoidLabelCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
@@ -15603,6 +16093,7 @@ export const VoidLabelCarrierNameEnum = {
     Easypost: 'easypost',
     Eshipper: 'eshipper',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Freightcom: 'freightcom',
     Generic: 'generic',
     Geodis: 'geodis',
@@ -15613,6 +16104,7 @@ export const VoidLabelCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',
@@ -15730,10 +16222,15 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [hasManifest] 
+         * @param {boolean} [hasTracker] 
+         * @param {string} [id] 
          * @param {string} [keyword] 
+         * @param {string} [metaKey] 
+         * @param {string} [metaValue] 
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {string} [optionKey] 
@@ -15745,7 +16242,7 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
+        list: async (address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options: AxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/v1/shipments`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -15792,8 +16289,28 @@ export const ShipmentsApiAxiosParamCreator = function (configuration?: Configura
                     createdBefore;
             }
 
+            if (hasManifest !== undefined) {
+                localVarQueryParameter['has_manifest'] = hasManifest;
+            }
+
+            if (hasTracker !== undefined) {
+                localVarQueryParameter['has_tracker'] = hasTracker;
+            }
+
+            if (id !== undefined) {
+                localVarQueryParameter['id'] = id;
+            }
+
             if (keyword !== undefined) {
                 localVarQueryParameter['keyword'] = keyword;
+            }
+
+            if (metaKey !== undefined) {
+                localVarQueryParameter['meta_key'] = metaKey;
+            }
+
+            if (metaValue !== undefined) {
+                localVarQueryParameter['meta_value'] = metaValue;
             }
 
             if (metadataKey !== undefined) {
@@ -16085,10 +16602,15 @@ export const ShipmentsApiFp = function (configuration?: Configuration) {
          * Retrieve all shipments.
          * @summary List all shipments
          * @param {string} [address] 
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
+         * @param {boolean} [hasManifest] 
+         * @param {boolean} [hasTracker] 
+         * @param {string} [id] 
          * @param {string} [keyword] 
+         * @param {string} [metaKey] 
+         * @param {string} [metaValue] 
          * @param {string} [metadataKey] 
          * @param {string} [metadataValue] 
          * @param {string} [optionKey] 
@@ -16100,8 +16622,8 @@ export const ShipmentsApiFp = function (configuration?: Configuration) {
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, keyword?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShipmentList>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, keyword, metadataKey, metadataValue, optionKey, optionValue, reference, service, status, trackingNumber, options);
+        async list(address?: string, carrierName?: string, createdAfter?: string, createdBefore?: string, hasManifest?: boolean, hasTracker?: boolean, id?: string, keyword?: string, metaKey?: string, metaValue?: string, metadataKey?: string, metadataValue?: string, optionKey?: string, optionValue?: string, reference?: string, service?: string, status?: string, trackingNumber?: string, options?: AxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<ShipmentList>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.list(address, carrierName, createdAfter, createdBefore, hasManifest, hasTracker, id, keyword, metaKey, metaValue, metadataKey, metadataValue, optionKey, optionValue, reference, service, status, trackingNumber, options);
             const index = configuration?.serverIndex ?? 0;
             const operationBasePath = operationServerMap['ShipmentsApi.list']?.[index]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, operationBasePath || basePath);
@@ -16199,7 +16721,7 @@ export const ShipmentsApiFactory = function (configuration?: Configuration, base
          * @throws {RequiredError}
          */
         list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig): AxiosPromise<ShipmentList> {
-            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
+            return localVarFp.list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(axios, basePath));
         },
         /**
          * Select your preferred rates to buy a shipment label.
@@ -16286,7 +16808,7 @@ export interface ShipmentsApiListRequest {
     readonly address?: string
 
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof ShipmentsApiList
      */
@@ -16308,10 +16830,45 @@ export interface ShipmentsApiListRequest {
 
     /**
      * 
+     * @type {boolean}
+     * @memberof ShipmentsApiList
+     */
+    readonly hasManifest?: boolean
+
+    /**
+     * 
+     * @type {boolean}
+     * @memberof ShipmentsApiList
+     */
+    readonly hasTracker?: boolean
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentsApiList
+     */
+    readonly id?: string
+
+    /**
+     * 
      * @type {string}
      * @memberof ShipmentsApiList
      */
     readonly keyword?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentsApiList
+     */
+    readonly metaKey?: string
+
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentsApiList
+     */
+    readonly metaValue?: string
 
     /**
      * 
@@ -16487,7 +17044,7 @@ export class ShipmentsApi extends BaseAPI {
      * @memberof ShipmentsApi
      */
     public list(requestParameters: ShipmentsApiListRequest = {}, options?: AxiosRequestConfig) {
-        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.keyword, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
+        return ShipmentsApiFp(this.configuration).list(requestParameters.address, requestParameters.carrierName, requestParameters.createdAfter, requestParameters.createdBefore, requestParameters.hasManifest, requestParameters.hasTracker, requestParameters.id, requestParameters.keyword, requestParameters.metaKey, requestParameters.metaValue, requestParameters.metadataKey, requestParameters.metadataValue, requestParameters.optionKey, requestParameters.optionValue, requestParameters.reference, requestParameters.service, requestParameters.status, requestParameters.trackingNumber, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
@@ -16675,10 +17232,10 @@ export const TrackersApiAxiosParamCreator = function (configuration?: Configurat
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
-         * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;delivered&#x60;, &#x60;on_hold&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
+         * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -16938,10 +17495,10 @@ export const TrackersApiFp = function (configuration?: Configuration) {
         /**
          * Retrieve all shipment trackers.
          * @summary List all package trackers
-         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+         * @param {string} [carrierName] The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
          * @param {string} [createdAfter] 
          * @param {string} [createdBefore] 
-         * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;delivered&#x60;, &#x60;on_hold&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
+         * @param {string} [status] Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
          * @param {string} [trackingNumber] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
@@ -17109,7 +17666,7 @@ export interface TrackersApiCreateRequest {
 
     /**
      * 
-     * @type {'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'zoom2u'}
      * @memberof TrackersApiCreate
      */
     readonly carrierName2: CreateCarrierNameEnum
@@ -17136,7 +17693,7 @@ export interface TrackersApiCreateRequest {
  */
 export interface TrackersApiListRequest {
     /**
-     * The unique carrier slug. &lt;br/&gt;Values: &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
+     * The unique carrier slug. &lt;br/&gt;Values: &#x60;allied_express&#x60;, &#x60;allied_express_local&#x60;, &#x60;amazon_shipping&#x60;, &#x60;aramex&#x60;, &#x60;asendia_us&#x60;, &#x60;australiapost&#x60;, &#x60;boxknight&#x60;, &#x60;bpost&#x60;, &#x60;canadapost&#x60;, &#x60;canpar&#x60;, &#x60;chronopost&#x60;, &#x60;colissimo&#x60;, &#x60;dhl_express&#x60;, &#x60;dhl_parcel_de&#x60;, &#x60;dhl_poland&#x60;, &#x60;dhl_universal&#x60;, &#x60;dicom&#x60;, &#x60;dpd&#x60;, &#x60;dpdhl&#x60;, &#x60;easypost&#x60;, &#x60;eshipper&#x60;, &#x60;fedex&#x60;, &#x60;fedex_ws&#x60;, &#x60;freightcom&#x60;, &#x60;generic&#x60;, &#x60;geodis&#x60;, &#x60;laposte&#x60;, &#x60;locate2u&#x60;, &#x60;nationex&#x60;, &#x60;purolator&#x60;, &#x60;roadie&#x60;, &#x60;royalmail&#x60;, &#x60;sendle&#x60;, &#x60;tge&#x60;, &#x60;tnt&#x60;, &#x60;ups&#x60;, &#x60;usps&#x60;, &#x60;usps_international&#x60;, &#x60;zoom2u&#x60;
      * @type {string}
      * @memberof TrackersApiList
      */
@@ -17157,7 +17714,7 @@ export interface TrackersApiListRequest {
     readonly createdBefore?: string
 
     /**
-     * Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;delivered&#x60;, &#x60;on_hold&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
+     * Valid tracker status. &lt;br/&gt;Values: &#x60;pending&#x60;, &#x60;unknown&#x60;, &#x60;on_hold&#x60;, &#x60;delivered&#x60;, &#x60;in_transit&#x60;, &#x60;delivery_delayed&#x60;, &#x60;out_for_delivery&#x60;, &#x60;ready_for_pickup&#x60;, &#x60;delivery_failed&#x60;
      * @type {string}
      * @memberof TrackersApiList
      */
@@ -17305,6 +17862,8 @@ export class TrackersApi extends BaseAPI {
  * @export
  */
 export const CreateCarrierNameEnum = {
+    AlliedExpress: 'allied_express',
+    AlliedExpressLocal: 'allied_express_local',
     AmazonShipping: 'amazon_shipping',
     Aramex: 'aramex',
     AsendiaUs: 'asendia_us',
@@ -17316,12 +17875,14 @@ export const CreateCarrierNameEnum = {
     Chronopost: 'chronopost',
     Colissimo: 'colissimo',
     DhlExpress: 'dhl_express',
+    DhlParcelDe: 'dhl_parcel_de',
     DhlPoland: 'dhl_poland',
     DhlUniversal: 'dhl_universal',
     Dicom: 'dicom',
     Dpd: 'dpd',
     Dpdhl: 'dpdhl',
     Fedex: 'fedex',
+    FedexWs: 'fedex_ws',
     Generic: 'generic',
     Geodis: 'geodis',
     Laposte: 'laposte',
@@ -17331,6 +17892,7 @@ export const CreateCarrierNameEnum = {
     Roadie: 'roadie',
     Royalmail: 'royalmail',
     Sendle: 'sendle',
+    Tge: 'tge',
     Tnt: 'tnt',
     Ups: 'ups',
     Usps: 'usps',

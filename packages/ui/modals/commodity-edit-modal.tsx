@@ -1,21 +1,16 @@
-import { CurrencyCodeEnum, MetadataObjectTypeEnum, WeightUnitEnum } from '@karrio/types';
-import { deepEqual, isNone, validationMessage, validityCheck } from '@karrio/lib';
+import { CurrencyCodeEnum, DEFAULT_COMMODITY_CONTENT, MetadataObjectTypeEnum, OrderFilter, WeightUnitEnum } from '@karrio/types';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
+import { isEqual, isNone, validationMessage, validityCheck } from '@karrio/lib';
 import { CommodityType, CURRENCY_OPTIONS, WEIGHT_UNITS } from '@karrio/types';
 import React, { useContext, useReducer, useState } from 'react';
-import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { TextAreaField } from '../components/textarea-field';
+import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { LineItemInput } from '../forms/line-item-input';
 import { InputField } from '../components/input-field';
 import { CountryInput } from '../forms/country-input';
 import { Notifier } from '../components/notifier';
 import { Loading } from '../components/loader';
-
-export const DEFAULT_COMMODITY_CONTENT: Partial<CommodityType> = {
-  weight: 1,
-  quantity: 1,
-  weight_unit: WeightUnitEnum.KG,
-};
+import { useOrders } from '@karrio/hooks/order';
 
 type OperationType = {
   commodity?: CommodityType;
@@ -30,6 +25,7 @@ export const CommodityStateContext = React.createContext<CommodityStateContextTy
 
 interface CommodityEditModalComponent {
   children?: React.ReactNode;
+  orderFilter?: OrderFilter & { isDisabled?: boolean, cacheKey?: string };
 }
 
 function reducer(state: any, { name, value }: { name: string, value: stateValue | number | boolean }) {
@@ -44,7 +40,7 @@ function reducer(state: any, { name, value }: { name: string, value: stateValue 
   }
 }
 
-export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children }) => {
+export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> = ({ children, orderFilter }) => {
   const { metadata: { ORDERS_MANAGEMENT } } = useAPIMetadata();
   const { loading, setLoading } = useContext(Loading);
   const [isActive, setIsActive] = useState<boolean>(false);
@@ -54,6 +50,11 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
   const [operation, setOperation] = useState<OperationType | undefined>();
   const [isInvalid, setIsInvalid] = useState<boolean>(false);
   const [maxQty, setMaxQty] = useState<number | null | undefined>();
+  const { query } = useOrders({
+    first: 10, status: ["unfulfilled", "partial"] as any,
+    isDisabled: !ORDERS_MANAGEMENT,
+    ...(orderFilter || {}),
+  });
 
   const editCommodity = (operation: OperationType) => {
     const commodity = (operation.commodity || DEFAULT_COMMODITY_CONTENT as CommodityType);
@@ -118,10 +119,12 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     label="Order Line Item"
                     value={commodity?.parent_id}
                     onChange={loadLineItem}
+                    query={query}
                     onReady={_ => setMaxQty(_?.unfulfilled_quantity)}
                     dropdownClass="is-small"
+                    fieldClass="mb-0 p-0"
+                    wrapperClass="column is-11 pl-2 pr-0 py-1"
                     className="is-small is-fullwidth"
-                    fieldClass="column is-11 mb-0 pl-2 pr-0 py-1"
                     placeholder="Link an order line item"
                   />
 
@@ -152,7 +155,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     onChange={handleChange}
                     value={commodity?.title}
                     className="is-small is-fullwidth"
-                    fieldClass="column mb-0 is-12 px-2 py-1"
+                    wrapperClass="column is-12 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     disabled={!isNone(commodity?.parent_id)}
                     max={35}
                   />
@@ -166,7 +170,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     onChange={handleChange}
                     value={commodity?.hs_code}
                     className="is-small is-fullwidth"
-                    fieldClass="column mb-0 is-12 px-2 py-1"
+                    wrapperClass="column is-12 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     disabled={!isNone(commodity?.parent_id)}
                     max={35}
                   />
@@ -180,7 +185,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     value={commodity?.sku}
                     onChange={handleChange}
                     className="is-small is-fullwidth"
-                    fieldClass="column is-7 mb-0 px-2 py-1"
+                    wrapperClass="column is-7 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     placeholder="0000001"
                     disabled={!isNone(commodity?.parent_id)}
                     max={35}
@@ -190,7 +196,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     label="Origin Country"
                     className="is-small"
                     dropdownClass="is-small"
-                    fieldClass="column mb-0 is-5 px-2 py-1"
+                    fieldClass="mb-0 p-0"
+                    wrapperClass="column mb-0 is-5 px-2 py-1"
                     value={commodity.origin_country}
                     onValueChange={value => dispatch({ name: "origin_country", value: value as string })}
                     disabled={!isNone(commodity?.parent_id)}
@@ -207,7 +214,8 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                     min="1"
                     step="1"
                     className="is-small"
-                    fieldClass="column mb-0 is-3 px-2 py-1"
+                    wrapperClass="column is-3 px-2 py-1"
+                    fieldClass="mb-0 p-0"
                     onChange={handleChange}
                     value={commodity?.quantity}
                     onInvalid={validityCheck(validationMessage('Please enter a valid quantity'))}
@@ -336,7 +344,7 @@ export const CommodityEditModalProvider: React.FC<CommodityEditModalComponent> =
                   <span>Cancel</span>
                 </button>
                 <button className={`button is-primary ${loading ? 'is-loading' : ''} m-1 is-small`}
-                  disabled={loading || isInvalid || deepEqual(operation?.commodity, commodity)}
+                  disabled={loading || isInvalid || isEqual(operation?.commodity, commodity)}
                   onClick={handleSubmit}>
                   <span>{isNew ? 'Add' : 'Save'}</span>
                 </button>

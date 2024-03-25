@@ -158,6 +158,7 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
     <AllowNonCleansedOriginAddr></AllowNonCleansedOriginAddr>
     <ToName>Tall Tom</ToName>
     <ToFirm>ABC Corp.</ToFirm>
+    <ToAddress1></ToAddress1>
     <ToAddress2>1098 N Fraser Street</ToAddress2>
     <ToCity>Georgetown</ToCity>
     <ToState>SC</ToState>

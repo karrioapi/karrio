@@ -135,7 +135,7 @@ def shipment_request(
                         ).value,
                         ITEMS=len(packages),
                         TOTALWEIGHT=packages.weight.KG,
-                        TOTALVOLUME=packages.volume,
+                        TOTALVOLUME=packages.volume.m3,
                         CURRENCY=options.currency.state,
                         GOODSVALUE=options.declared_value.state,
                         INSURANCEVALUE=insurance,

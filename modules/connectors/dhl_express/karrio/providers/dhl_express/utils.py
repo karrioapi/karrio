@@ -24,9 +24,9 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://xmlpitest-ea.dhl.com/XMLShippingServlet"
+            "https://xmlpitest-ea.dhl.com"
             if self.test_mode
-            else "https://xmlpi-ea.dhl.com/XMLShippingServlet"
+            else "https://xmlpi-ea.dhl.com"
         )
 
     @property

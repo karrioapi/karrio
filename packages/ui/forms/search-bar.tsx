@@ -28,13 +28,13 @@ export const SearchBar: React.FC = () => {
   return (
     <Dropdown direction={'is-center'} style={{ width: '100%' }}>
       {/* Dropdown header */}
-      <div className="field has-addons" ref={ref}>
+      <div className="field has-addons" ref={ref} style={{ width: '500px' }}>
         <p className="control has-icons-left has-icons-right is-expanded">
           <input
             type="text"
             placeholder="Search..."
             defaultValue={searchValue}
-            className="input is-small"
+            className="input is-small is-white is-hovered"
             onChange={e => setSearchValue(e.target.value)}
             ref={inputRef}
           />
@@ -44,9 +44,9 @@ export const SearchBar: React.FC = () => {
               : <i className="fas fa-search"></i>
             }
           </span>
-          <span className="icon is-small is-right is-clickable" onClick={clear}>
+          {!!searchValue && <span className="icon is-small is-right is-clickable" onClick={clear}>
             <i className="fas fa-times"></i>
-          </span>
+          </span>}
         </p>
       </div>
 

@@ -1,0 +1,11 @@
+---
+id: bpost
+title: Belgian Post
+---
+
+import integrations from "../integrations.json";
+import CarrierIntegrationDetails from "@site/src/components/CarrierIntegrationDetails";
+
+<CarrierIntegrationDetails 
+    id="bpost"
+    integration={integrations.find(i => i.id === "bpost")} />

@@ -1,0 +1,84 @@
+name: karrio-build
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.changes.outputs.version }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - uses: dorny/paths-filter@v2
+      id: changes
+      with:
+        filters: |
+          version:
+            - 'apps/api/karrio/server/VERSION'
+
+  server-build:
+
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build karrio server image
+        run: |
+          echo 'Building karrio server:${{ env.tag }}...'
+          ./bin/build-server-image-from-source ${{ env.tag }}
+
+      - name: Push karrio server image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+          echo 'Pushing karrio server:${{ env.tag }}...'
+          docker push karrio/server:${{ env.tag }}
+          docker tag karrio/server:${{ env.tag }} karrio/server:latest-rc
+          docker push karrio/server:latest-rc
+
+  dashboard-build:
+
+    needs: changes
+    if: ${{ needs.changes.outputs.version == 'true' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - id: get_tag
+        run: |
+          cat ./apps/api/karrio/server/VERSION
+          echo "tag=$(cat ./apps/api/karrio/server/VERSION)" >> "$GITHUB_ENV"
+
+      - name: Build karrio dashboard image
+        run: |
+          echo 'Building karrio dashboard:${{ env.tag }}...'
+          ./bin/build-dashboard-image ${{ env.tag }}
+
+      - name: Push karrio dashboard image
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+          
+          echo 'Pushing karrio dashboard:${{ env.tag }}...'
+          docker push karrio/dashboard:${{ env.tag }}
+          docker tag karrio/dashboard:${{ env.tag }} karrio/dashboard:latest-rc
+          docker push karrio/dashboard:latest-rc

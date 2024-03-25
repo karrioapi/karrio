@@ -1,6 +1,6 @@
 import typing
-import logging
 import tablib
+import logging
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from import_export.resources import ModelResource
@@ -64,7 +64,6 @@ def trigger_batch_saving(
         )
 
         if batch_operation is not None:
-
             batch_seriazlizer = serializers.ResourceType.get_serialiazer(
                 batch_operation.resource_type
             )

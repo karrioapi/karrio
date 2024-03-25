@@ -94,7 +94,7 @@ export const ShipmentsFilter: React.FC<ShipmentsFilterComponent> = ({ context })
         <span className="icon is-small">
           <i className="fas fa-filter"></i>
         </span>
-        <span className="is-size-6 has-text-weight-semibold">Filter</span>
+        <span className="has-text-weight-bold">Filter</span>
       </button>
 
       {/* Dropdown content  */}
@@ -126,7 +126,8 @@ export const ShipmentsFilter: React.FC<ShipmentsFilterComponent> = ({ context })
                 defaultValue={filters?.address}
                 onChange={handleChange}
                 name="address"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="e.g: 100 Main St, New York, NY"
               />
@@ -147,7 +148,8 @@ export const ShipmentsFilter: React.FC<ShipmentsFilterComponent> = ({ context })
                 onChange={handleChange}
                 type="datetime-local"
                 name="created_after"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-small"
                 addonLeft={
@@ -161,7 +163,8 @@ export const ShipmentsFilter: React.FC<ShipmentsFilterComponent> = ({ context })
                 onChange={handleChange}
                 type="datetime-local"
                 name="created_before"
-                fieldClass="has-addons mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="has-addons mb-0 p-0"
                 controlClass="is-expanded"
                 className="is-fullwidth is-small"
                 addonLeft={
@@ -186,7 +189,8 @@ export const ShipmentsFilter: React.FC<ShipmentsFilterComponent> = ({ context })
                 defaultValue={filters?.reference}
                 onChange={handleChange}
                 name="reference"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="e.g: Order #1111"
               />
@@ -206,7 +210,8 @@ export const ShipmentsFilter: React.FC<ShipmentsFilterComponent> = ({ context })
                 defaultValue={filters?.service}
                 onChange={handleChange}
                 name="service"
-                fieldClass="mb-0 py-1"
+                wrapperClass="py-1"
+                fieldClass="mb-0 p-0"
                 className="is-fullwidth is-small"
                 placeholder="e.g: fedex_first_overnight"
               />

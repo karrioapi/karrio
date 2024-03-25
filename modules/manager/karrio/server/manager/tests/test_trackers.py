@@ -1,8 +1,8 @@
 import json
 from time import sleep
-from unittest.mock import patch, ANY
 from django.urls import reverse
 from rest_framework import status
+from unittest.mock import patch, ANY
 from karrio.core.models import TrackingDetails, TrackingEvent
 from karrio.server.core.tests import APITestCase
 import karrio.server.manager.models as models
@@ -20,6 +20,7 @@ class TestTrackers(APITestCase):
             response = self.client.get(f"{url}")
             response_data = json.loads(response.content)
 
+            self.assertResponseNoErrors(response)
             self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
             self.assertDictEqual(response_data, TRACKING_RESPONSE)
 
@@ -36,6 +37,7 @@ class TestTrackers(APITestCase):
             response = self.client.get(f"{url}")
             response_data = json.loads(response.content)
 
+        self.assertResponseNoErrors(response)
         self.assertEqual(response.status_code, status.HTTP_202_ACCEPTED)
         self.assertDictEqual(response_data, TRACKING_RESPONSE)
         self.assertEqual(len(self.user.tracking_set.all()), 1)
@@ -80,6 +82,7 @@ class TestTrackersUpdate(APITestCase):
         response = self.client.put(url, data)
         response_data = json.loads(response.content)
 
+        self.assertResponseNoErrors(response)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertDictEqual(response_data, UPDATE_TRACKING_RESPONSE)
 
@@ -115,6 +118,8 @@ TRACKING_RESPONSE = {
     "delivered": False,
     "status": "in_transit",
     "estimated_delivery": ANY,
+    "delivery_image_url": None,
+    "signature_image_url": None,
     "events": [
         {
             "code": "KB",
@@ -181,6 +186,8 @@ UPDATE_TRACKING_RESPONSE = {
     "test_mode": True,
     "status": "in_transit",
     "estimated_delivery": ANY,
+    "delivery_image_url": None,
+    "signature_image_url": None,
     "messages": [],
     "meta": {},
     "metadata": {},

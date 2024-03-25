@@ -1,0 +1,321 @@
+---
+id: development
+title: Dev setup
+---
+
+# Developing Karrio
+
+Documentation for developers contributing to the Karrio code base.
+
+## Prerequisites
+
+- [Git](https://git-scm.com/downloads)
+- [Docker](https://www.docker.com/products/docker-desktop) & [Docker Compose](https://docs.docker.com/compose/install/)
+- [Node v16.15.1 +](https://nodejs.org/en/download/)
+- [Python 3.8 +](https://www.python.org/downloads/)
+
+## Server
+
+The following steps need to be performed inside a terminal window
+(Windows user may prefer to use the [Windows WSL](https://docs.microsoft.com/en-us/windows/wsl/install)).
+
+- Fork [karrio](https://github.com/karrioapi/karrio.git) on Github.
+
+- Clone the repository:
+
+```terminal title="Terminal"
+git clone https://github.com/[YOUR_USERNAME]/karrio.git
+cd karrio
+```
+
+### Installation
+
+- Install system dependencies:
+
+```terminal title="Terminal"
+./bin/install-binaries
+```
+
+:::info
+The `install-binaries` script will install the following binaries: `gcc`, `pango`, `libffi`, `ghostscript`
+
+They are required for the following Python packages: `weasyprint and treepoem` used by the document generation
+feature for HTML to PDF document generation and barcode image rendering.
+:::
+
+- Setup a Python environment with all dependencies:
+
+```terminal title="Terminal"
+source ./bin/setup-server-env
+```
+
+or
+
+```terminal title="Terminal"
+# installation
+./bin/setup-server-env
+
+# activate environment
+source ./bin/activate-env
+```
+
+- Apply database migrations, collect static assets:
+
+:::info
+
+Karrio uses SQLite by default to simplify the development setup.
+
+<details>
+<summary>If you want to use Postgres instead</summary>
+
+- Change the database config:
+
+```diff
+...
+- DATABASE_ENGINE=sqlite3
+- # DATABASE_ENGINE=postgresql_psycopg2
+- # DATABASE_USERNAME=postgres
+- # DATABASE_PASSWORD=postgres
+- # DATABASE_NAME=db
++ # DATABASE_ENGINE=sqlite3
++ DATABASE_ENGINE=postgresql_psycopg2
++ DATABASE_USERNAME=postgres
++ DATABASE_PASSWORD=postgres
++ DATABASE_NAME=db
+...
+
+```
+
+- Start the database using:
+
+```terminal title="Terminal"
+docker compose -f docker/docker-compose.yml up -d db
+```
+
+- Destroy the database using:
+
+```terminal title="Terminal"
+docker compose -f docker/docker-compose.yml down
+```
+
+</details>
+:::
+
+```terminal title="Terminal"
+karrio migrate
+karrio collectstatic --noinput
+```
+
+- Finally, create yourself an admin account:
+
+```terminal title="Terminal"
+karrio createsuperuser
+```
+
+- Start the server:
+
+```terminal title="Terminal"
+./bin/start
+```
+
+## Dashboard
+
+The Karrio dashboard codebase is now in the same repository as we move towards a monorepo structure.
+You can simply setup the dashboard by following the steps below. 
+
+- Install node dependencies:
+
+Run this at the root of the repository. `cd karrio`
+
+```terminal title="Terminal"
+npm i
+```
+
+- Setup environment variables:
+
+```terminal title="Terminal"
+cp apps/dashboard/.env.sample apps/dashboard/.env
+```
+
+- Start the dashboard:
+
+```terminal title="Terminal"
+npm run dev
+```
+
+## Scripts
+
+### Working on Karrio SDK core and all extensions
+
+- Setting up Karrio SDK and all carrier extensions
+
+```terminal title="Terminal"
+cd karrio
+. ./bin/setup-sdk-env
+```
+
+- Running all SDK tests
+
+```terminal title="Terminal"
+cd karrio
+./bin/run-sdk-tests
+```
+
+### Working on a single carrier
+
+- Setup a Python environment with the dev dependencies
+
+```terminal title="Terminal"
+cd karrio
+./bin/create-new-env
+```
+
+_This will create and activate an isolated Python environment with the dev dependencies required to work on karrio._
+
+- Install an extension in dev mode
+
+```terminal title="Terminal"
+cd karrio
+# install karrio core SDK
+pip install -e modules/sdk
+
+# pip install -e modules/connectors/[carrier_extension]
+pip install -e modules/connectors/fedex
+```
+
+- Running tests for a single extension
+
+```terminal title="Terminal"
+cd karrio
+# python -m unittest discover -v -f modules/connectors/[carrier_extension]/tests
+python -m unittest discover -v -f modules/connectors/fedex/tests
+```
+
+### Working on karrio server
+
+- Setting up Karrio server
+
+```terminal title="Terminal"
+cd karrio
+. ./bin/setup-server-env
+```
+
+- Running all server tests
+
+```terminal title="Terminal"
+cd karrio
+./bin/run-server-tests
+```
+
+- Running tests on a single karrio server module
+
+```terminal title="Terminal"
+cd karrio
+# karrio test --failfast karrio.server.[module].tests
+karrio test --failfast karrio.server.manager.tests
+```
+
+### Reset Karrio database for a fresh reinstall
+
+```terminal title="Terminal"
+cd karrio
+# stop and remove the database container
+docker-compose -f docker/docker-compose.yml down
+
+# start a fresh Postgres container
+docker-compose -f docker/docker-compose.yml up -d db
+```
+
+### Backup your data
+
+```terminal title="Terminal"
+cd karrio
+karrio dumpdata --natural-foreign --natural-primary -o [BACKUP_LOCATION_PATH]/data[VERSION].json
+# e.g: karrio dumpdata --natural-foreign --natural-primary -o ../backup/data2024.1.json
+```
+
+### Load dev data
+
+```terminal title="Terminal"
+cd karrio
+karrio loaddata [BACKUP_LOCATION_PATH]/data[VERSION].json
+# e.g: karrio loaddata ../backup/data2024.1.json
+```
+
+## Developing with docker
+
+You can use a docker development environment power by docker compose that comes with all the required dependencies installed for you.
+
+- Fork [karrio](https://github.com/karrioapi/karrio.git) on Github.
+
+- Clone the repository:
+
+```terminal title="Terminal"
+git clone https://github.com/[YOUR_USERNAME]/karrio.git
+cd karrio
+```
+
+- Setup karrio
+
+```terminal title="Terminal"
+./bin/docker-env create
+```
+
+- Start karrio
+
+```terminal title="Terminal"
+./bin/docker-env exec './bin/start-server'
+```
+
+Once ready, karrio should be up and running at localhost:5002
+
+:::info
+Developing with the docker environment simplifies the installation step.
+You can run the same helper scripts on the docker dev environment container.
+
+```terminal title="Terminal"
+./bin/docker-env
+```
+
+```
+Help: You can pass any the following commands to the './bin/docker-env' scripts
+-----
+create     Create and setup docker dev environment.
+           ./bin/docker-env create
+
+destroy    Destroy docker dev environment.
+           ./bin/docker-env destroy
+
+on:        Start docker dev environment.
+           ./bin/docker-env on
+
+off:       Stop docker dev environment.
+           ./bin/docker-env off
+
+shell:     Start docker dev environment shell.
+           ./bin/docker-env shell
+
+exec:      Execute command in docker dev environment.
+           ./bin/docker-env exec '<command>'
+
+
+# examples:
+
+# to run server tests.
+./bin/docker-env exec './bin/run-server-tests'
+
+# to run a carrier integration tests.
+./bin/docker-env exec 'python -m unittest discover -v -f modules/connectors/dhl_express/tests'
+```
+
+:::
+
+## Troubleshooting
+
+Make sure Docker and Docker Compose work before attempting to run Karrio.
+We won't be able to assist with your Docker installation.
+
+Make sure you've read the warning about Windows 10 Home.
+Windows versions before Windows 10 are not officially supported.
+
+If you encounter other problems, see [Support](/product/resources/support).

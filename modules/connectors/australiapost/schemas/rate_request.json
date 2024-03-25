@@ -1,0 +1,31 @@
+{
+    "from": {
+        "postcode": "3207",
+        "country": "AU"
+    },
+    "to": {
+        "postcode": "2001",
+        "country": "AU"
+    },
+    "items": [
+        {
+            "item_reference": "string",
+            "product_id": "7D55",
+            "length": 5.0,
+            "height": 1.0,
+            "width": 10.0,
+            "weight": 2.0,
+            "packaging_type": "BOX",
+            "product_ids": [
+                "7D55"
+            ],
+            "features": {
+                "TRANSIT_COVER": {
+                    "attributes": {
+                        "cover_amount": 1000.0
+                    }
+                }
+            }
+        }
+    ]
+}

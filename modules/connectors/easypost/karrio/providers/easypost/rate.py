@@ -15,11 +15,7 @@ def parse_rate_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.RateDetails, typing.List[models.Message]]:
     response = _response.deserialize()
-    errors = (
-        [provider_error.parse_error_response(response, settings)]
-        if "error" in response
-        else []
-    )
+    errors = provider_error.parse_error_response(response, settings)
     rates = _extract_details(response, settings) if "error" not in response else []
 
     return rates, errors

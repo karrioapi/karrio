@@ -89,7 +89,7 @@ def shipment_request(
         sourceReference=payload.reference,
         load=locate2u.Load(
             quantity=package.items.quantity,
-            volume=package.volume.value,
+            volume=package.volume.m3,
             weight=package.weight.KG,
             length=package.length.CM,
             width=package.width.CM,

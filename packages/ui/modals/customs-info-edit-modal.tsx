@@ -1,7 +1,7 @@
-import { CreateCustomsTemplateInput, UpdateCustomsTemplateInput } from '@karrio/types';
-import { CustomsInfoForm, DEFAULT_CUSTOMS_CONTENT } from '../forms/customs-info-form';
+import { CreateCustomsTemplateInput, DEFAULT_CUSTOMS_CONTENT, UpdateCustomsTemplateInput } from '@karrio/types';
 import { CustomsTemplateType, CustomsType, NotificationType } from '@karrio/types';
 import { useCustomsTemplateMutation } from '@karrio/hooks/customs';
+import { CustomsInfoForm } from '../forms/customs-info-form';
 import { CheckBoxField } from '../components/checkbox-field';
 import { Notifier, Notify } from '../components/notifier';
 import { InputField } from '../components/input-field';
@@ -127,8 +127,10 @@ export const CustomsInfoEditModal: React.FC<CustomsInfoEditModalComponent> = ({ 
                     onChange={handleChange}
                     defaultValue={template?.label}
                     className="is-small"
-                    fieldClass="column mb-0 px-2 py-2"
-                    required />
+                    wrapperClass="px-2 py-2"
+                    fieldClass="column mb-0 p-0"
+                    required
+                  />
                 </div>
 
                 <div className="columns mb-1">

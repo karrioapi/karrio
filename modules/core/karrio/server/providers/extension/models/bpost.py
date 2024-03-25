@@ -1,8 +1,8 @@
 import django.db.models as models
-import karrio.lib as lib
 import karrio.server.providers.models as providers
 
 
+@providers.has_rate_sheet("bpost")
 class BelgianPostSettings(providers.Carrier):
     class Meta:
         db_table = "bpost-settings"
@@ -16,12 +16,6 @@ class BelgianPostSettings(providers.Carrier):
     @property
     def carrier_name(self) -> str:
         return "bpost"
-
-    @property
-    def default_services(self):
-        from karrio.providers.bpost.units import DEFAULT_SERVICES
-
-        return lib.to_dict(DEFAULT_SERVICES)
 
 
 SETTINGS = BelgianPostSettings

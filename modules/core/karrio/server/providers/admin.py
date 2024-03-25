@@ -22,6 +22,8 @@ SUPPORTED_CONNECTION_CONFIGS = [
     "label_type",
     "shipping_options",
     "shipping_services",
+    "transmit_shipment_by_default",
+    "smart_post_hub_id",
 ]
 
 
@@ -54,6 +56,10 @@ def model_admin(ext: str, carrier):
                 service_suffix = forms.CharField(
                     required=False,
                 )
+            if key == "smart_post_hub_id":
+                smart_post_hub_id = forms.CharField(
+                    required=False,
+                )
             if key == "language_code":
                 language_code = forms.ChoiceField(
                     choices=[("en", "EN"), ("fr", "FR")],
@@ -80,6 +86,11 @@ def model_admin(ext: str, carrier):
                 )
             if key == "skip_service_filter":
                 skip_service_filter = forms.NullBooleanField(
+                    required=False,
+                    initial=None,
+                )
+            if key == "transmit_shipment_by_default":
+                transmit_shipment_by_default = forms.NullBooleanField(
                     required=False,
                     initial=None,
                 )
@@ -228,11 +239,9 @@ def model_admin(ext: str, carrier):
                             if "settings" in field.name
                         }
                     )
-                    formset.form.base_fields[
-                        "servicelevel"
-                    ].queryset = carriers.ServiceLevel.objects.filter(
-                        _filter
-                    ).distinct()
+                    formset.form.base_fields["servicelevel"].queryset = (
+                        carriers.ServiceLevel.objects.filter(_filter).distinct()
+                    )
                     return formset
 
             inlines += [_ServiceInline]

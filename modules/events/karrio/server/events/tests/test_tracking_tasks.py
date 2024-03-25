@@ -143,6 +143,8 @@ TRACKERS_LIST = {
             "carrier_name": "dhl_universal",
             "carrier_id": "dhl_universal",
             "tracking_number": "00340434292135100124",
+            "delivery_image_url": None,
+            "signature_image_url": None,
             "estimated_delivery": ANY,
             "events": [
                 {
@@ -169,6 +171,8 @@ TRACKERS_LIST = {
             "carrier_name": "ups",
             "carrier_id": "ups_package",
             "tracking_number": "1Z12345E6205277936",
+            "delivery_image_url": None,
+            "signature_image_url": None,
             "estimated_delivery": ANY,
             "events": [
                 {
@@ -262,6 +266,8 @@ UPDATED_TRACKERS_LIST = {
             "test_mode": True,
             "status": "in_transit",
             "estimated_delivery": ANY,
+            "delivery_image_url": None,
+            "signature_image_url": None,
             "messages": [],
             "meta": {},
             "metadata": {},
@@ -308,6 +314,8 @@ UPDATED_TRACKERS_LIST = {
             "test_mode": True,
             "status": "in_transit",
             "estimated_delivery": ANY,
+            "delivery_image_url": None,
+            "signature_image_url": None,
             "messages": [],
             "meta": {},
             "metadata": {},

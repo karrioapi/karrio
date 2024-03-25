@@ -1,1 +1,1 @@
-export { default, getServerSideProps } from "@/modules/Orders/create_shipment";
+export { default, getServerSideProps } from "@/modules/Orders/create_label";

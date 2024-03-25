@@ -1,8 +1,10 @@
 django-debug-toolbar
-Django==4.2.8
+Django==4.2.11
 
 # Carrier Extentions modules
 -e ./modules/sdk
+-e ./modules/connectors/allied_express
+-e ./modules/connectors/allied_express_local
 -e ./modules/connectors/amazon_shipping
 -e ./modules/connectors/aramex
 -e ./modules/connectors/asendia_us
@@ -14,12 +16,14 @@ Django==4.2.8
 -e ./modules/connectors/chronopost
 -e ./modules/connectors/colissimo
 -e ./modules/connectors/dhl_express
+-e ./modules/connectors/dhl_parcel_de
 -e ./modules/connectors/dhl_poland
 -e ./modules/connectors/dhl_universal
 -e ./modules/connectors/dicom
 -e ./modules/connectors/dpd
 -e ./modules/connectors/dpdhl
 -e ./modules/connectors/fedex
+-e ./modules/connectors/fedex_ws
 -e ./modules/connectors/generic
 -e ./modules/connectors/geodis
 -e ./modules/connectors/laposte
@@ -28,6 +32,7 @@ Django==4.2.8
 -e ./modules/connectors/roadie
 -e ./modules/connectors/royalmail
 -e ./modules/connectors/sendle
+-e ./modules/connectors/tge
 -e ./modules/connectors/tnt
 -e ./modules/connectors/ups
 -e ./modules/connectors/usps
@@ -42,10 +47,10 @@ Django==4.2.8
 
 
 # karrio server modules
--e ./modules/iam
 -e ./modules/core
 -e ./apps/api
 -e ./modules/graph
+-e ./modules/admin
 -e ./modules/apps
 -e ./modules/data
 -e ./modules/events

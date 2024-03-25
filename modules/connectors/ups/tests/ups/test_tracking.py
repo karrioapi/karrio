@@ -89,6 +89,10 @@ ParsedTrackingResponse = [
             "carrier_id": "ups",
             "carrier_name": "ups",
             "delivered": False,
+            "images": {
+                "delivery_image": "encoding Base64",
+                "signature_image": "encoding Base64",
+            },
             "events": [
                 {
                     "code": "SR",
@@ -103,6 +107,7 @@ ParsedTrackingResponse = [
                 "package_weight": "string",
                 "package_weight_unit": "string",
                 "shipment_service": "UPS Ground",
+                "signed_by": "163000",
             },
             "status": "on_hold",
             "tracking_number": "string",
@@ -223,10 +228,16 @@ TrackingResponseJSON = """{
               }
             ],
             "deliveryInformation": {
-              "location": "Front Door",
-              "receivedBy": "",
+              "location": "DEL",
+              "receivedBy": "163000",
               "signature": {
                 "image": "encoding Base64"
+              },
+              "deliveryPhoto": {
+                "isNonPostalCodeCountry": false,
+                "photo": "encoding Base64",
+                "photoCaptureInd": "string",
+                "photoDispositionCode": "string"
               }
             },
             "deliveryTime": {

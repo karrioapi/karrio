@@ -5,14 +5,14 @@ import React, { useContext, useEffect, useRef, useState } from 'react';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useAPIToken } from '@karrio/hooks/api-token';
 import { isNoneOrEmpty } from '@karrio/lib';
-import { Loading } from './loader';
 import { useRouter } from 'next/router';
+import { Loading } from './loader';
 import { p } from '@karrio/lib';
 import Image from 'next/image';
 
 
 export const OrganizationDropdown: React.FC = () => {
-  const trigger = useRef<HTMLInputElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const router = useRouter();
   const { query } = useAPIToken();
   const mutation = useOrganizationMutation();
@@ -73,24 +73,19 @@ export const OrganizationDropdown: React.FC = () => {
   return (
     <>
       {((organizations || []).length > 0) &&
-        <div className={`dropdown ${isActive ? 'is-active' : ''}`} style={{ width: '100%' }}>
-          <div className="dropdown-trigger control has-icons-left" style={{ width: '100%' }}>
-            <div className="select is-fullwidth" aria-haspopup="true" aria-controls="dropdown-menu" onClick={handleOnClick} ref={trigger}>
-              <input
-                type="text"
-                className="input is-clickable has-text-grey has-text-weight-semibold"
-                value={selected?.name || "All Organizations"}
-                onChange={_ => _}
-                readOnly
-              />
-            </div>
+        <div className={`dropdown ${isActive ? 'is-active' : ''}`} style={{ widows: '100%' }}>
+          <div className="dropdown-trigger">
 
-            <span className="icon is-left">
-              <i className="fas fa-store"></i>
-            </span>
+            <button className="button is-white has-text-weight-bold has-text-grey select pr-4" aria-haspopup="true" aria-controls="dropdown-menu" onClick={handleOnClick} ref={trigger}>
+              <span className="icon">
+                <i className="fas fa-store"></i>
+              </span>
+              <span className='mr-4'>{selected?.name || ""}</span>
+            </button>
+
           </div>
 
-          <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{ width: '100%' }}>
+          <div className="dropdown-menu" id="dropdown-menu" role="menu" style={{ minWidth: 'calc(100%)' }}>
             <div className="dropdown-content is-menu">
               {/* Organization list */}
               {(organizations || []).map(org => (

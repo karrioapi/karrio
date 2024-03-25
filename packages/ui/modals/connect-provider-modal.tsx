@@ -1,7 +1,7 @@
 import { Collection, LABEL_TYPES, NoneEnum, NotificationType, CarrierSettingsCarrierNameEnum } from '@karrio/types';
-import { CarrierConnectionType, useCarrierConnectionMutation } from '@karrio/hooks/user-connection';
-import { isEqual, isNone, useLocation, validationMessage, validityCheck } from '@karrio/lib';
+import { isEqual, isNone, isNoneOrEmpty, useLocation, validationMessage, validityCheck } from '@karrio/lib';
 import { MetadataEditor, MetadataEditorContext } from '../forms/metadata-editor';
+import { CarrierConnectionType } from '@karrio/hooks/user-connection';
 import React, { useContext, useReducer, useState } from 'react';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { Notifier, Notify } from '../components/notifier';
@@ -12,10 +12,13 @@ import { CountryInput } from '../forms/country-input';
 import { useAppMode } from '@karrio/hooks/app-mode';
 import { Disclosure } from '@headlessui/react';
 import { Loading } from '../components/loader';
+import { TextAreaField } from '../components';
 
 type CarrierNameType = CarrierSettingsCarrierNameEnum | NoneEnum;
 type OperationType = {
   connection?: CarrierConnectionType;
+  create?: (data: any) => Promise<any>;
+  update?: (data: any) => Promise<any>;
   onConfirm?: () => Promise<any>;
 };
 type ConnectProviderModalContextType = {
@@ -46,10 +49,9 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
   const { references: { carriers, connection_configs, service_names, option_names } } = useAPIMetadata();
   const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
-  const mutation = useCarrierConnectionMutation();
   const { loading, setLoading } = useContext(Loading);
   const { addUrlParam, removeUrlParam } = useLocation();
-  const DEFAULT_STATE = (): Partial<CarrierConnectionType> => ({ carrier_name: NoneEnum.none, test_mode: testMode });
+  const DEFAULT_STATE = (): Partial<CarrierConnectionType> => ({ carrier_name: NoneEnum.none });
   const [key, setKey] = useState<string>(`connection-${Date.now()}`);
   const [isNew, setIsNew] = useState<boolean>(true);
   const [payload, dispatch] = useReducer(reducer, DEFAULT_STATE());
@@ -87,15 +89,15 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
     return fieldState(carrier_name as CarrierNameType, property);
   };
   const directChange = (property: string) => (value: any) => {
-    dispatch({ name: property, value });
+    dispatch({ name: property, value: value === 'none' || isNoneOrEmpty(value) ? null : value });
   };
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: React.ChangeEvent<any>) => {
     const target = event.target;
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name: string = target.name;
 
-    dispatch({ name, value: value === 'none' ? null : value });
+    dispatch({ name, value: value === 'none' || isNoneOrEmpty(value) ? null : value });
   };
   const handleCarrierChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const target = event.target;
@@ -106,7 +108,6 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
       }
       return acc;
     }, {
-      test_mode: testMode,
       carrier_id: `${value.toLocaleLowerCase()}${testMode ? '-test' : ''}`
     });
 
@@ -122,19 +123,19 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
       value = Array.from(target.selectedOptions).map((o: any) => o.value) as any
     }
 
-    const config = { ...payload.config, [name]: value === 'none' ? null : value };
+    const config = { ...payload.config, [name]: value === 'none' || isNoneOrEmpty(value) ? null : value };
     dispatch({ name: "config", value: config });
   };
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
     evt.preventDefault();
     setLoading(true);
     try {
-      const { carrier_name: _, __typename, capabilities, display_name, ...content } = payload;
+      const { carrier_name: _, __typename, capabilities, display_name, rate_sheet, services, test_mode, ...content } = payload;
       const data = { [carrier_name]: carrier_name.includes('generic') ? { ...content, display_name } : content };
       if (isNew) {
-        await mutation.createCarrierConnection.mutateAsync(data);
+        operation.create && await operation.create(data);
       } else {
-        await mutation.updateCarrierConnection.mutateAsync(data);
+        operation.update && await operation.update(data);
         dispatch({ name: "partial", value: payload });
       }
       notify({
@@ -188,6 +189,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                 {field("display_name").exists &&
                   <InputField label="Display Name" value={payload.display_name}
                     name="display_name"
+                    wrapperClass="pt-2"
                     onChange={handleChange}
                     className="is-small"
                     required={field("display_name").required}
@@ -205,6 +207,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 <InputField label="Carrier Id" value={payload.carrier_id}
                   name="carrier_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("carrier_id").required}
@@ -216,6 +219,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("site_id").exists && <InputField label="Site Id" value={payload.site_id}
                   name="site_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("site_id").required}
@@ -223,6 +227,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("sendle_id").exists && <InputField label="Sendle ID" value={payload.sendle_id}
                   name="sendle_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("sendle_id").required}
@@ -230,6 +235,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("seller_id").exists && <InputField label="Seller ID" value={payload.seller_id}
                   name="seller_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("seller_id").required}
@@ -237,6 +243,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("customer_id").exists && <InputField label="Customer ID" value={payload.customer_id}
                   name="customer_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("customer_id").required}
@@ -244,6 +251,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("identifier").exists && <InputField label="Identifier" value={payload.identifier}
                   name="identifier"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("identifier").required}
@@ -251,13 +259,23 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("api_key").exists && <InputField label="API Key" value={payload.api_key}
                   name="api_key"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("api_key").required}
                 />}
 
+                {field("dhl_api_key").exists && <InputField label="DHL API Key (Consumer Key)" value={payload.dhl_api_key}
+                  name="dhl_api_key"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("dhl_api_key").required}
+                />}
+
                 {field("laposte_api_key").exists && <InputField label="La Poste API Key" value={payload.laposte_api_key}
                   name="laposte_api_key"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("laposte_api_key").required}
@@ -265,6 +283,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("client_id").exists && <InputField label="Client ID" value={payload.client_id}
                   name="client_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("client_id").required}
@@ -272,6 +291,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("partner_id").exists && <InputField label="Partner ID" value={payload.partner_id}
                   name="partner_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("partner_id").required}
@@ -279,6 +299,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("developer_id").exists && <InputField label="Developer ID" value={payload.developer_id}
                   name="developer_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("developer_id").required}
@@ -287,6 +308,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                 {field("check_word").exists && <InputField label="Check Word" value={payload.check_word}
                   type="text"
                   name="check_word"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("check_word").required}
@@ -294,6 +316,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("delis_id").exists && <InputField label="Delis ID" value={payload.delis_id}
                   name="delis_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("delis_id").required}
@@ -301,6 +324,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("username").exists && <InputField label="Username" value={payload.username}
                   name="username"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("username").required}
@@ -309,6 +333,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                 {field("password").exists && <InputField label="Password" value={payload.password}
                   type="text"
                   name="password"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("password").required}
@@ -316,6 +341,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("zt_id").exists && <InputField label="ZT ID" value={payload.zt_id}
                   name="zt_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={!testMode}
@@ -323,6 +349,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("zt_password").exists && <InputField label="ZT Password" value={payload.zt_password}
                   name="zt_password"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={!testMode}
@@ -330,6 +357,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("app_id").exists && <InputField label="App Id" value={payload.app_id}
                   name="app_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={!testMode}
@@ -337,6 +365,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("app_token").exists && <InputField label="App Token" value={payload.app_token}
                   name="app_token"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={!testMode}
@@ -345,13 +374,41 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                 {field("client_secret").exists && <InputField label="Client Secret" value={payload.client_secret}
                   type="text"
                   name="client_secret"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("client_secret").required}
                 />}
 
+                {field("secret_key").exists && <InputField label="Secret Key" value={payload.secret_key}
+                  type="text"
+                  name="secret_key"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("secret_key").required}
+                />}
+
+                {field("track_api_key").exists && <InputField label="Track API Key" value={payload.track_api_key}
+                  name="track_api_key"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("track_api_key").required}
+                />}
+
+                {field("track_secret_key").exists && <InputField label="Track API secret Key" value={payload.track_secret_key}
+                  type="text"
+                  name="track_secret_key"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("track_secret_key").required}
+                />}
+
                 {field("customer_number").exists && <InputField label="Customer Number" value={payload.customer_number}
                   name="customer_number"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("customer_number").required}
@@ -359,6 +416,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("license_key").exists && <InputField label="License Key" value={payload.license_key}
                   name="license_key"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("license_key").required}
@@ -366,21 +424,41 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("consumer_key").exists && <InputField label="Consumer Key" value={payload.consumer_key}
                   name="consumer_key"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("consumer_key").required}
                 />}
 
+                {field("tracking_consumer_key").exists && <InputField label="Tracking API consumer key" value={payload.tracking_consumer_key}
+                  name="tracking_consumer_key"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("tracking_consumer_key").required}
+                />}
+
                 {field("consumer_secret").exists && <InputField label="Consumer Secret" value={payload.consumer_secret}
                   type="text"
                   name="consumer_secret"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("consumer_secret").required}
                 />}
 
+                {field("tracking_consumer_secret").exists && <InputField label="Tracking API consumer secret" value={payload.tracking_consumer_secret}
+                  type="text"
+                  name="tracking_consumer_secret"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("tracking_consumer_secret").required}
+                />}
+
                 {field("contract_id").exists && <InputField label="Contract Id" value={payload.contract_id}
                   name="contract_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("contract_id").required}
@@ -389,6 +467,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                 {field("api_secret").exists && <InputField label="API Secret" value={payload.api_secret}
                   type="text"
                   name="api_secret"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("api_secret").required}
@@ -396,13 +475,31 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("account_number").exists && <InputField label="Account Number" value={payload.account_number}
                   name="account_number"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("account_number").required}
                 />}
 
+                {field("account").exists && <InputField label="Account" value={payload.account}
+                  name="account"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("account").required}
+                />}
+
+                {field("service_type").exists && <InputField label="Service type" value={payload.service_type}
+                  name="service_type"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("service_type").required}
+                />}
+
                 {field("billing_account").exists && <InputField label="Billing Account" value={payload.billing_account}
                   name="billing_account"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("billing_account").required}
@@ -410,6 +507,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("meter_number").exists && <InputField label="Meter Number" value={payload.meter_number}
                   name="meter_number"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("meter_number").required}
@@ -417,6 +515,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("user_key").exists && <InputField label="User Key" value={payload.user_key}
                   name="user_key"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("user_key").required}
@@ -424,6 +523,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("user_token").exists && <InputField label="User Token" value={payload.user_token}
                   name="user_token"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("user_token").required}
@@ -431,6 +531,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("account_pin").exists && <InputField label="Account Pin" value={payload.account_pin}
                   name="account_pin"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("account_pin").required}
@@ -438,6 +539,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("account_entity").exists && <InputField label="Account Entity" value={payload.account_entity}
                   name="account_entity"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("account_entity").required}
@@ -445,6 +547,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("depot").exists && <InputField label="Depot" value={payload.depot}
                   name="depot"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("depot").required}
@@ -452,6 +555,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("mailer_id").exists && <InputField label="Mailer ID" value={payload.mailer_id}
                   name="mailer_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("mailer_id").required}
@@ -459,6 +563,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("customer_registration_id").exists && <InputField label="Customer Registration ID" value={payload.customer_registration_id}
                   name="customer_registration_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("customer_registration_id").required}
@@ -466,6 +571,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("logistics_manager_mailer_id").exists && <InputField label="Logistics Manager Mailer ID" value={payload.logistics_manager_mailer_id}
                   name="logistics_manager_mailer_id"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("logistics_manager_mailer_id").required}
@@ -473,6 +579,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("access_key").exists && <InputField label="Access Key" value={payload.access_key}
                   name="access_key"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("access_key").required}
@@ -480,6 +587,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("aws_region").exists && <InputField label="AWS Region" value={payload.aws_region}
                   name="aws_region"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("aws_region").required}
@@ -487,14 +595,57 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 
                 {field("mws_auth_token").exists && <InputField label="MWS Auth Token" value={payload.mws_auth_token}
                   name="mws_auth_token"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small"
                   required={field("mws_auth_token").required}
                 />}
 
+                {field("account_code").exists && <InputField label="Account code" value={payload.account_code}
+                  name="account_code"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("account_code").required}
+                />}
+
+                {field("toll_username").exists && <InputField label="TOLL username" value={payload.toll_username}
+                  name="toll_username"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("toll_username").required}
+                />}
+
+                {field("toll_password").exists && <InputField label="TOLL password" value={payload.toll_password}
+                  name="toll_password"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("toll_password").required}
+                />}
+
+                {field("my_toll_identity").exists && <InputField label="My TOLL identity" value={payload.my_toll_identity}
+                  name="my_toll_identity"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("my_toll_identity").required}
+                />}
+
+                {field("my_toll_token").exists && <TextAreaField label="My TOLL token" value={payload.my_toll_token}
+                  rows={2}
+                  name="my_toll_token"
+                  onChange={handleChange}
+                  className="is-small"
+                  fieldClass="pt-2"
+                  required={field("my_toll_token").required}
+                />}
+
                 {field("lang").exists && <SelectField value={payload.lang}
                   label="Lang"
                   name="lang"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small is-fullwidth"
                   required={field("lang").required}
@@ -507,6 +658,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                 {field("language").exists && <SelectField value={payload.language}
                   label="Language"
                   name="language"
+                  wrapperClass="pt-2"
                   onChange={handleChange}
                   className="is-small is-fullwidth"
                   required={field("language").required}
@@ -521,12 +673,13 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   value={payload.account_country_code}
                   className="is-small"
                   dropdownClass="is-small"
+                  wrapperClass="pt-2"
                   required={field("account_country_code").required}
                 />}
 
                 {/* Carrier config section */}
 
-                {carrier_name.toString() in connection_configs && <div className='mt-4'>
+                {carrier_name.toString() in (connection_configs || {}) && <div className='mt-4'>
 
                   <Disclosure>
                     {({ open }) => (
@@ -545,7 +698,28 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               name="cost_center"
                               label="Cost center"
                               onChange={handleConfigChange}
-                              fieldClass="column is-6 mb-0"
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"sub_account" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.sub_account || ""}
+                              name="sub_account"
+                              label="Sub account"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"processing_location" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.cost_center || ""}
+                              name="processing_location"
+                              label="Processing location"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
                               className="is-small is-fullwidth"
                             />}
 
@@ -555,7 +729,8 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               label="language code"
                               onChange={handleConfigChange}
                               className="is-small is-fullwidth"
-                              fieldClass="column is-6 mb-0"
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
                             >
                               <option value='none'></option>
                               <option value='en'>en</option>
@@ -568,11 +743,22 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               label="Default label type"
                               onChange={handleConfigChange}
                               className="is-small is-fullwidth"
-                              fieldClass="column is-6 mb-0"
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
                             >
                               <option value='none'></option>
                               {LABEL_TYPES.map(_ => <option key={_} value={_}>{_}</option>)}
                             </SelectField>}
+
+                          {"smart_post_hub_id" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.smart_post_hub_id || ""}
+                              name="smart_post_hub_id"
+                              label="Smart Post Hub ID"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
 
                           {"enforce_zpl" in connection_configs[carrier_name.toString()] &&
                             <div className="field column is-6 mb-0">
@@ -586,6 +772,22 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                                   />
                                   {' '}
                                   <span style={{ fontSize: '0.8em' }}>Always use ZPL</span>
+                                </label>
+                              </div>
+                            </div>}
+
+                          {"transmit_shipment_by_default" in connection_configs[carrier_name.toString()] &&
+                            <div className="field column is-6 mb-0">
+                              <div className="control">
+                                <label className="checkbox has-text-weight-bold mt-3 pt-1">
+                                  <input
+                                    type="checkbox"
+                                    checked={payload.config?.transmit_shipment_by_default}
+                                    name="transmit_shipment_by_default"
+                                    onChange={handleConfigChange}
+                                  />
+                                  {' '}
+                                  <span style={{ fontSize: '0.8em' }}>Submit shipment by default</span>
                                 </label>
                               </div>
                             </div>}
@@ -611,8 +813,170 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               name="service_suffix"
                               label="Fixed service suffix"
                               onChange={handleConfigChange}
-                              fieldClass="column is-6 mb-0"
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
                               className="is-small is-fullwidth"
+                            />}
+
+                          {"business_id" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.business_id || ""}
+                              name="business_id"
+                              label="Business ID"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SYSID" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SYSID || ""}
+                              name="SYSID"
+                              label="TOLL SYSID"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SHIP_GS1" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SHIP_GS1 || ""}
+                              name="SHIP_GS1"
+                              label="TOLL SHIP_GS1"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SHIP_range_start" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SHIP_range_start || ""}
+                              type="number"
+                              step={1}
+                              name="SHIP_range_start"
+                              label="TOLL SHIP range start"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SHIP_range_end" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SHIP_range_end || ""}
+                              type="number"
+                              step={1}
+                              name="SHIP_range_end"
+                              label="TOLL SHIP range end"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SSCC_GS1" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SSCC_GS1 || ""}
+                              name="SSCC_GS1"
+                              label="TOLL SSCC_GS1"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SSCC_range_start" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SSCC_range_start || ""}
+                              type="number"
+                              step={1}
+                              name="SSCC_range_start"
+                              label="TOLL SSCC range start"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"SSCC_range_end" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.SSCC_range_end || ""}
+                              type="number"
+                              step={1}
+                              name="SSCC_range_end"
+                              label="TOLL SSCC range end"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"channel" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.channel || ""}
+                              name="channel"
+                              label="Channel"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"freight_mode" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.freight_mode || ""}
+                              name="freight_mode"
+                              label="Freight mode"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"message_sender" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.message_sender || ""}
+                              name="message_sender"
+                              label="Message sender"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"brand_color" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.brand_color || ""}
+                              type="color"
+                              name="brand_color"
+                              label="Brand color"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"text_color" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.text_color || ""}
+                              type="color"
+                              name="text_color"
+                              label="Text color"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"account_service_type" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.account_service_type}
+                              name="account_service_type"
+                              label="Account service type"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                            />}
+
+                          {"server_url" in connection_configs[carrier_name.toString()] &&
+                            <InputField value={payload.config?.server_url || ""}
+                              name="server_url"
+                              label="Custom server URL"
+                              onChange={handleConfigChange}
+                              wrapperClass="column is-12 pt-1"
+                              fieldClass="mb-0"
+                              className="is-small is-fullwidth"
+                              placeholder='https://your-instance.api.com.au'
                             />}
 
                           {"shipping_services" in connection_configs[carrier_name.toString()] &&
@@ -620,7 +984,8 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               name="shipping_services"
                               label="Preferred shipping services"
                               className="is-small is-multiple is-fullwidth"
-                              fieldClass="column is-12 mb-0"
+                              wrapperClass="column is-12 pt-1"
+                              fieldClass="mb-0"
                               onChange={handleConfigChange}
                               size={6}
                               multiple
@@ -634,7 +999,8 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               name="shipping_options"
                               label={`Enable carrier specific shipping options`}
                               className="is-small is-multiple is-fullwidth"
-                              fieldClass="column is-12 mb-0"
+                              wrapperClass="column is-12 pt-1"
+                              fieldClass="mb-0"
                               onChange={handleConfigChange}
                               size={6}
                               multiple
@@ -705,18 +1071,21 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
 function fieldState(carrier_name: CarrierNameType, property: string) {
   const field = (
     ({
+      [CarrierSettingsCarrierNameEnum.AlliedExpress]: [["carrier_id", true], ["username", true], ["password", true], ["account", false], ["service_type", false]],
+      [CarrierSettingsCarrierNameEnum.AlliedExpressLocal]: [["carrier_id", true], ["username", true], ["password", true], ["account", false], ["service_type", false]],
       [CarrierSettingsCarrierNameEnum.AmazonShipping]: [["carrier_id", true], ["seller_id", true], ["developer_id", true], ["mws_auth_token", true], ["aws_region"]],
       [CarrierSettingsCarrierNameEnum.Aramex]: [["carrier_id", true], ["username", true], ["password", true], ["account_pin", true], ["account_entity", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Australiapost]: [["carrier_id", true], ["api_key", true], ["password", true], ["account_number", true]],
-      [CarrierSettingsCarrierNameEnum.AsendiaUs]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true]],
+      [CarrierSettingsCarrierNameEnum.AsendiaUs]: [["carrier_id", true], ["username", true], ["password", true], ["api_key", true], ["account_number", true]],
       [CarrierSettingsCarrierNameEnum.Boxknight]: [["carrier_id", true], ["username", true], ["password", true]],
       [CarrierSettingsCarrierNameEnum.Bpost]: [["carrier_id", true], ["account_id", true], ["passphrase", true]],
-      [CarrierSettingsCarrierNameEnum.Canadapost]: [["carrier_id", true], ["username", true], ["password", true], ["customer_number", true], ["contract_id"]],
+      [CarrierSettingsCarrierNameEnum.Canadapost]: [["carrier_id", true], ["username", true], ["password", true], ["customer_number"], ["contract_id"]],
       [CarrierSettingsCarrierNameEnum.Canpar]: [["carrier_id", true], ["username", true], ["password", true]],
       [CarrierSettingsCarrierNameEnum.Chronopost]: [["carrier_id", true], ["account_number", true], ["password", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Colissimo]: [["carrier_id", true], ["contract_number", true], ["password", true], ["laposte_api_key"]],
       [CarrierSettingsCarrierNameEnum.Dicom]: [["carrier_id", true], ["username", true], ["password", true], ["billing_account"]],
       [CarrierSettingsCarrierNameEnum.Dpd]: [["carrier_id", true], ["delis_id", true], ["password", true], ["depot"], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.DhlParcelDe]: [["carrier_id", true], ["username", true], ["password", true], ["dhl_api_key", true], ["customer_number"], ["tracking_consumer_key"], ["tracking_consumer_secret"]],
       [CarrierSettingsCarrierNameEnum.Dpdhl]: [["carrier_id", true], ["username", true], ["password", true], ["app_id"], ["app_token"], ["zt_id"], ["zt_password"], ["account_number"]],
       [CarrierSettingsCarrierNameEnum.DhlExpress]: [["carrier_id", true], ["site_id", true], ["password", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.DhlPoland]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true]],
@@ -730,10 +1099,12 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Locate2u]: [["carrier_id", true], ["client_id", true], ["client_secret", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Nationex]: [["carrier_id", true], ["api_key", true], ["customer_id", true], ["billing_account"], ["language", false, "en"]],
       [CarrierSettingsCarrierNameEnum.Roadie]: [["carrier_id", true], ["api_key", true]],
-      [CarrierSettingsCarrierNameEnum.Fedex]: [["carrier_id", true], ["user_key"], ["password", true], ["meter_number", true], ["account_number", true], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.Fedex]: [["carrier_id", true], ["api_key"], ["secret_key"], ["track_api_key"], ["track_secret_key"], ["account_number"], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.FedexWs]: [["carrier_id", true], ["user_key"], ["password", true], ["meter_number", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Purolator]: [["carrier_id", true], ["username", true], ["password", true], ["account_number", true], ["user_token"]],
       [CarrierSettingsCarrierNameEnum.Royalmail]: [["carrier_id", true], ["client_id", true], ["client_secret", true]],
-      [CarrierSettingsCarrierNameEnum.Sendle]: [["carrier_id", true], ["sendle_id", true], ["api_key", true]],
+      [CarrierSettingsCarrierNameEnum.Sendle]: [["carrier_id", true], ["sendle_id", true], ["api_key", true], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.Tge]: [["carrier_id", true], ["username", true], ["password", true], ["api_key", true], ["toll_username", true], ["toll_password", true], ["account_code", true], ["my_toll_token", true], ["my_toll_identity", true]],
       [CarrierSettingsCarrierNameEnum.Tnt]: [["carrier_id", true], ["username", true], ["password", true], ["account_number"], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Ups]: [["carrier_id", true], ["client_id", true], ["client_secret", true], ["account_number", true], ["account_country_code"]],
       [CarrierSettingsCarrierNameEnum.Usps]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],
@@ -749,4 +1120,8 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
     get required() { return field[1] === true; },
     get default() { return field[2]; }
   }
+}
+
+export function useConnectCarrierModal() {
+  return useContext(ConnectProviderModalContext);
 }

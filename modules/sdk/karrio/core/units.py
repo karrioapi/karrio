@@ -24,20 +24,20 @@ class PackagePreset:
     packaging_type: str = None
 
 
-class LabelType(utils.Enum):
+class LabelType(utils.StrEnum):
     PDF = "PDF"
     ZPL = "ZPL"
     PNG = "PNG"
 
 
-class DocFormat(utils.Enum):
+class DocFormat(utils.StrEnum):
     gif = "GIF"
     jpg = "JPG"
     pdf = "PDF"
     png = "PNG"
 
 
-class PackagingUnit(utils.Enum):
+class PackagingUnit(utils.StrEnum):
     envelope = "Small Envelope"
     pak = "Pak"
     tube = "Tube"
@@ -47,19 +47,19 @@ class PackagingUnit(utils.Enum):
     your_packaging = "Your Packaging"
 
 
-class PaymentType(utils.Enum):
+class PaymentType(utils.StrEnum):
     sender = "SENDER"
     recipient = "RECIPIENT"
     third_party = "THIRD_PARTY"
 
 
-class CreditCardType(utils.Enum):
+class CreditCardType(utils.StrEnum):
     visa = "Visa"
     mastercard = "Mastercard"
     american_express = "AmericanExpress"
 
 
-class CustomsContentType(utils.Enum):
+class CustomsContentType(utils.StrEnum):
     documents = "DOCUMENTS"
     gift = "GIFT"
     sample = "SAMPLE"
@@ -68,7 +68,7 @@ class CustomsContentType(utils.Enum):
     other = "OTHER"
 
 
-class Incoterm(utils.Enum):
+class Incoterm(utils.StrEnum):
     """universal international shipment incoterm (term of trades)"""
 
     CFR = "Cost and Freight"
@@ -86,7 +86,7 @@ class Incoterm(utils.Enum):
     FOB = "Free On Board"
 
 
-class WeightUnit(utils.Enum):
+class WeightUnit(utils.StrEnum):
     """universal weight units"""
 
     KG = "KG"
@@ -95,11 +95,25 @@ class WeightUnit(utils.Enum):
     G = "G"
 
 
-class DimensionUnit(utils.Enum):
+class DimensionUnit(utils.StrEnum):
     """universal dimension units"""
 
     CM = "CM"
     IN = "IN"
+
+
+class VolumeUnit(utils.StrEnum):
+    """universal dimension units"""
+
+    l = "l"
+    m3 = "m3"
+    i3 = "i3"
+    ft3 = "ft3"
+    cm3 = "cm3"
+
+    """ mapping from dimension units to volume units """
+    CM = "cm3"
+    IN = "i3"
 
 
 class FreightClass(utils.Enum):
@@ -125,7 +139,7 @@ class FreightClass(utils.Enum):
     freight_class_400 = 400
 
 
-class UploadDocumentType(utils.Enum):
+class UploadDocumentType(utils.StrEnum):
     """universal upload document types"""
 
     certificate_of_origin = "certificate_of_origin"
@@ -136,6 +150,8 @@ class UploadDocumentType(utils.Enum):
 
 
 class MeasurementOptionsType(typing.NamedTuple):
+    quant: typing.Optional[float] = None
+
     min_in: typing.Optional[float] = None
     min_cm: typing.Optional[float] = None
     min_lb: typing.Optional[float] = None
@@ -148,7 +164,9 @@ class MeasurementOptionsType(typing.NamedTuple):
     max_kg: typing.Optional[float] = None
     max_oz: typing.Optional[float] = None
     max_g: typing.Optional[float] = None
-    quant: typing.Optional[float] = None
+
+    min_volume: typing.Optional[float] = None
+    max_volume: typing.Optional[float] = None
 
 
 class CarrierCapabilities(utils.Enum):
@@ -157,6 +175,7 @@ class CarrierCapabilities(utils.Enum):
     shipping = "shipping"
     tracking = "tracking"
     paperless = "paperless"
+    manifest = "manifest"
 
     @classmethod
     def get_capabilities(cls):
@@ -176,6 +195,8 @@ class CarrierCapabilities(utils.Enum):
             return "shipping"
         elif "document" in method_name:
             return "paperless"
+        elif "manifest" in method_name:
+            return "manifest"
 
         return None
 
@@ -260,24 +281,148 @@ class Volume:
     """The volume common processing helper"""
 
     def __init__(
-        self, side1: Dimension = None, side2: Dimension = None, side3: Dimension = None
+        self,
+        side1: Dimension = None,
+        side2: Dimension = None,
+        side3: Dimension = None,
+        value: float = None,
+        unit: typing.Union[VolumeUnit, str] = VolumeUnit.cm3,
+        options: MeasurementOptionsType = MeasurementOptionsType(),
     ):
         self._side1 = side1
         self._side2 = side2
         self._side3 = side3
 
+        self._value = value
+        self._unit = VolumeUnit[unit] if isinstance(unit, str) else unit
+
+        self._quant = 0.01
+        self._min_volume = options.min_volume
+
+    def __getitem__(self, item):
+        return getattr(self, item)
+
+    def _compute(self, value: float):
+        below_min = self._min_volume is not None and value < self._min_volume
+        return utils.NF.decimal(
+            value=(self._min_volume if below_min else value),
+            quant=self._quant,
+        )
+
     @property
-    def value(self):
-        if not all([self._side1.value, self._side2.value, self._side3.value]):
+    def unit(self) -> str:
+        if self._unit is None:
             return None
 
-        return utils.NF.decimal(self._side1.M * self._side2.M * self._side3.M)
+        return self._unit.value
+
+    @property
+    def value(self):
+        missing_side_value = not all(
+            [
+                getattr(self._side1, "value", None),
+                getattr(self._side2, "value", None),
+                getattr(self._side3, "value", None),
+            ]
+        )
+        missing_value = self._unit is None or self._value is None
+
+        if missing_side_value and missing_value:
+            return None
+
+        if not missing_value:
+            return self._value
+
+        return self._compute(self._side1.value * self._side2.value * self._side3.value)
+
+    @property
+    def l(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.m3:
+            return self._compute(self.value * 1000)
+        elif self._unit == VolumeUnit.i3:
+            return self._compute(self.value / 61.024)
+        elif self._unit == VolumeUnit.ft3:
+            return self._compute(self.value * 28.317)
+        if self._unit == VolumeUnit.cm3:
+            return self._compute(self.value / 1000)
+        else:
+            return self.value
+
+    @property
+    def m3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return self._compute(self.value / 1000)
+        if self._unit == VolumeUnit.cm3:
+            return self._compute(self.value / 1e6)
+        elif self._unit == VolumeUnit.i3:
+            return self._compute(self.value / 61020)
+        elif self._unit == VolumeUnit.ft3:
+            return self._compute(self.value / 35.315)
+        else:
+            return self.value
+
+    @property
+    def i3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return self._compute(self.value * 61.024)
+        if self._unit == VolumeUnit.m3:
+            return self._compute(self.value * 1000000)
+        elif self._unit == VolumeUnit.cm3:
+            return self._compute(self.value / 16.387)
+        elif self._unit == VolumeUnit.ft3:
+            return self._compute(self.value * 1728)
+        else:
+            return self.value
+
+    @property
+    def ft3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return self._compute(self.value / 28.317)
+        if self._unit == VolumeUnit.m3:
+            return self._compute(self.value * 35.315)
+        elif self._unit == VolumeUnit.i3:
+            return self._compute(self.value / 1728)
+        elif self._unit == VolumeUnit.cm3:
+            return self._compute(self.value / 28320)
+        else:
+            return self.value
+
+    @property
+    def cm3(self):
+        if self.value is None:
+            return None
+        if self._unit == VolumeUnit.l:
+            return self._compute(self.value * 1000)
+        if self._unit == VolumeUnit.m3:
+            return self._compute(self.value * 1e6)
+        elif self._unit == VolumeUnit.i3:
+            return self._compute(self.value * 16.387)
+        elif self._unit == VolumeUnit.ft3:
+            return self._compute(self.value * 28320)
+        else:
+            return self.value
 
     @property
     def cubic_meter(self):
-        if self.value is None:
-            return None
-        return utils.NF.decimal(self.value * 250)
+        return self.m3
+
+    def map(self, options: MeasurementOptionsType):
+        return Volume(
+            side1=self._side1,
+            side2=self._side2,
+            side3=self._side3,
+            value=self._value,
+            unit=self._unit,
+            options=options,
+        )
 
 
 class Girth:
@@ -565,7 +710,9 @@ class Package:
 
     @property
     def volume(self) -> Volume:
-        return Volume(self.width, self.length, self.height)
+        return Volume(
+            self.width, self.length, self.height, unit=self.dimension_unit.value
+        )
 
     @property
     def thickness(self) -> Dimension:
@@ -695,11 +842,22 @@ class Packages(typing.Iterable[Package]):
         return Weight(unit=unit, value=value)
 
     @property
-    def volume(self) -> typing.Optional[float]:
+    def volume(self) -> Volume:
         if not any([pkg.volume.value for pkg in self._items]):
-            return None
+            return Volume(value=None)
 
-        return sum([pkg.volume.value or 0.0 for pkg in self._items], 0.0)
+        _, _dimension_unit = self._compatible_units
+        _volume_unit = VolumeUnit[_dimension_unit.name]
+        _total_volume = sum(
+            [
+                pkg.volume[_volume_unit.name]
+                for pkg in self._items
+                if pkg.volume is not None
+            ],
+            0.0,
+        )
+
+        return Volume(value=_total_volume, unit=_volume_unit)
 
     @property
     def package_type(self) -> str:
@@ -1294,6 +1452,7 @@ class ComputedDocumentFile(models.DocumentFile):
 
 class TrackingStatus(utils.Enum):
     on_hold = ["on_hold"]
+    pending = ["pending"]
     delivered = ["delivered"]
     in_transit = ["in_transit"]
     delivery_failed = ["delivery_failed"]
@@ -2419,3 +2578,240 @@ class EUCountry(utils.Enum):
     SK = "Slovakia"
     ES = "Spain"
     SE = "Sweden"
+
+
+class CountryCode(utils.Enum):
+    AD = "AND"  # Andorra
+    AE = "ARE"  # United Arab Emirates
+    AF = "AFG"  # Afghanistan
+    AG = "ATG"  # Antigua
+    AI = "AIA"  # Anguilla
+    AL = "ALB"  # Albania
+    AM = "ARM"  # Armenia
+    AN = "ANT"  # Netherlands Antilles
+    AO = "AGO"  # Angola
+    AR = "ARG"  # Argentina
+    AS = "ASM"  # American Samoa
+    AT = "AUT"  # Austria
+    AU = "AUS"  # Australia
+    AW = "ABW"  # Aruba
+    AZ = "AZE"  # Azerbaijan
+    BA = "BIH"  # Bosnia And Herzegovina
+    BB = "BRB"  # Barbados
+    BD = "BGD"  # Bangladesh
+    BE = "BEL"  # Belgium
+    BF = "BFA"  # Burkina Faso
+    BG = "BGR"  # Bulgaria
+    BH = "BHR"  # Bahrain
+    BI = "BDI"  # Burundi
+    BJ = "BEN"  # Benin
+    BM = "BMU"  # Bermuda
+    BN = "BRN"  # Brunei
+    BO = "BOL"  # Bolivia
+    BR = "BRA"  # Brazil
+    BS = "BHS"  # Bahamas
+    BT = "BTN"  # Bhutan
+    BW = "BWA"  # Botswana
+    BY = "BLR"  # Belarus
+    BZ = "BLZ"  # Belize
+    CA = "CAN"  # Canada
+    CD = "COD"  # Congo, Democratic Republic of the
+    CF = "CAF"  # Central African Republic
+    CG = "COG"  # Congo
+    CH = "CHE"  # Switzerland
+    CI = "CIV"  # Cote D Ivoire
+    CK = "COK"  # Cook Islands
+    CL = "CHL"  # Chile
+    CM = "CMR"  # Cameroon
+    CN = "CHN"  # China
+    CO = "COL"  # Colombia
+    CR = "CRI"  # Costa Rica
+    CU = "CUB"  # Cuba
+    CV = "CPV"  # Cape Verde
+    CY = "CYP"  # Cyprus
+    CZ = "CZE"  # Czech Republic
+    DE = "DEU"  # Germany
+    DJ = "DJI"  # Djibouti
+    DK = "DNK"  # Denmark
+    DM = "DMA"  # Dominica
+    DO = "DOM"  # Dominican Republic
+    DZ = "DZA"  # Algeria
+    EC = "ECU"  # Ecuador
+    EE = "EST"  # Estonia
+    EG = "EGY"  # Egypt
+    ER = "ERI"  # Eritrea
+    ES = "ESP"  # Spain
+    ET = "ETH"  # Ethiopia
+    FI = "FIN"  # Finland
+    FJ = "FJI"  # Fiji
+    FK = "FLK"  # Falkland Islands
+    FM = "FSM"  # Micronesia, Federated States Of
+    FO = "FRO"  # Faroe Islands
+    FR = "FRA"  # France
+    GA = "GAB"  # Gabon
+    GB = "GBR"  # United Kingdom
+    GD = "GRD"  # Grenada
+    GE = "GEO"  # Georgia
+    GF = "GUF"  # French Guyana
+    GG = "GGY"  # Guernsey
+    GH = "GHA"  # Ghana
+    GI = "GIB"  # Gibraltar
+    GL = "GRL"  # Greenland
+    GM = "GMB"  # Gambia
+    GN = "GIN"  # Guinea Republic
+    GP = "GLP"  # Guadeloupe
+    GQ = "GNQ"  # Guinea-equatorial
+    GR = "GRC"  # Greece
+    GT = "GTM"  # Guatemala
+    GU = "GUM"  # Guam
+    GW = "GNB"  # Guinea-bissau
+    GY = "GUY"  # Guyana (british)
+    HK = "HKG"  # Hong Kong
+    HN = "HND"  # Honduras
+    HR = "HRV"  # Croatia
+    HT = "HTI"  # Haiti
+    HU = "HUN"  # Hungary
+    IC = "ICA"  # Canary Islands
+    ID = "IDN"  # Indonesia
+    IE = "IRL"  # Ireland
+    IL = "ISR"  # Israel
+    IN = "IND"  # India
+    IQ = "IRQ"  # Iraq
+    IR = "IRN"  # Iran
+    IS = "ISL"  # Iceland
+    IT = "ITA"  # Italy
+    JE = "JEY"  # Jersey
+    JM = "JAM"  # Jamaica
+    JO = "JOR"  # Jordan
+    JP = "JPN"  # Japan
+    KE = "KEN"  # Kenya
+    KG = "KGZ"  # Kyrgyzstan
+    KH = "KHM"  # Cambodia
+    KI = "KIR"  # Kiribati
+    KM = "COM"  # Comoros
+    KN = "KNA"  # St. Kitts
+    KP = "PRK"  # Korea, The D.p.r Of (north K.)
+    KR = "KOR"  # Korea, Republic of (South Korea)
+    KV = "XKX"  # Kosovo
+    KW = "KWT"  # Kuwait
+    KY = "CYM"  # Cayman Islands
+    KZ = "KAZ"  # Kazakhstan
+    LA = "LAO"  # Lao Peoples Democratic Republic
+    LB = "LBN"  # Lebanon
+    LC = "LCA"  # St. Lucia
+    LI = "LIE"  # Liechtenstein
+    LK = "LKA"  # Sri Lanka
+    LR = "LBR"  # Liberia
+    LS = "LSO"  # Lesotho
+    LT = "LTU"  # Lithuania
+    LU = "LUX"  # Luxembourg
+    LV = "LVA"  # Latvia
+    LY = "LBY"  # Libya
+    MA = "MAR"  # Morocco
+    MC = "MCO"  # Monaco
+    MD = "MDA"  # Moldova
+    ME = "MNE"  # Montenegro
+    MG = "MDG"  # Madagascar
+    MH = "MHL"  # Marshall Islands
+    MK = "MKD"  # Macedonia
+    ML = "MLI"  # Mali
+    MM = "MMR"  # Myanmar
+    MN = "MNG"  # Mongolia
+    MO = "MAC"  # Macau
+    MP = "MNP"  # Nothern Mariana Islands, Commonwealth of
+    MQ = "MTQ"  # Martinique
+    MR = "MRT"  # Mauritania
+    MS = "MSR"  # Montserrat
+    MT = "MLT"  # Malta
+    MU = "MUS"  # Mauritius
+    MV = "MDV"  # Maldives
+    MW = "MWI"  # Malawi
+    MX = "MEX"  # Mexico
+    MY = "MYS"  # Malaysia
+    MZ = "MOZ"  # Mozambique
+    NA = "NAM"  # Namibia
+    NC = "NCL"  # New Caledonia
+    NE = "NER"  # Niger
+    NG = "NGA"  # Nigeria
+    NI = "NIC"  # Nicaragua
+    NL = "NLD"  # Netherlands
+    NO = "NOR"  # Norway
+    NP = "NPL"  # Nepal
+    NR = "NRU"  # Nauru
+    NU = "NIU"  # Niue
+    NZ = "NZL"  # New Zealand
+    OM = "OMN"  # Oman
+    PA = "PAN"  # Panama
+    PE = "PER"  # Peru
+    PF = "PYF"  # Tahiti
+    PG = "PNG"  # Papua New Guinea
+    PH = "PHL"  # Philippines
+    PK = "PAK"  # Pakistan
+    PL = "POL"  # Poland
+    PR = "PRI"  # Puerto Rico
+    PT = "PRT"  # Portugal
+    PW = "PLW"  # Palau
+    PY = "PRY"  # Paraguay
+    QA = "QAT"  # Qatar
+    RE = "REU"  # Reunion
+    RO = "ROU"  # Romania
+    RS = "SRB"  # Serbia
+    RU = "RUS"  # Russia
+    RW = "RWA"  # Rwanda
+    SA = "SAU"  # Saudi Arabia
+    SB = "SLB"  # Solomon Islands
+    SC = "SYC"  # Seychelles
+    SD = "SDN"  # Sudan
+    SE = "SWE"  # Sweden
+    SG = "SGP"  # Singapore
+    SH = "SHN"  # Saint Helena
+    SI = "SVN"  # Slovenia
+    SK = "SVK"  # Slovakia
+    SL = "SLE"  # Sierra Leone
+    SM = "SMR"  # San Marino
+    SN = "SEN"  # Senegal
+    SO = "SOM"  # Somalia
+    SR = "SUR"  # Suriname
+    SS = "SSD"  # South Sudan
+    ST = "STP"  # Sao Tome And Principe
+    SV = "SLV"  # El Salvador
+    SY = "SYR"  # Syria
+    SZ = "SWZ"  # Swaziland
+    TC = "TCA"  # Turks And Caicos Islands
+    TD = "TCD"  # Chad
+    TG = "TGO"  # Togo
+    TH = "THA"  # Thailand
+    TJ = "TJK"  # Tajikistan
+    TL = "TLS"  # Timor Leste
+    TN = "TUN"  # Tunisia
+    TO = "TON"  # Tonga
+    TR = "TUR"  # Turkey
+    TT = "TTO"  # Trinidad And Tobago
+    TV = "TUV"  # Tuvalu
+    TW = "TWN"  # Taiwan
+    TZ = "TZA"  # Tanzania
+    UA = "UKR"  # Ukraine
+    UG = "UGA"  # Uganda
+    US = "USA"  # United States
+    UY = "URY"  # Uruguay
+    UZ = "UZB"  # Uzbekistan
+    VA = "VAT"  # Vatican City
+    VC = "VCT"  # St. Vincent
+    VE = "VEN"  # Venezuela
+    VG = "VGB"  # British Virgin Islands
+    VI = "VIR"  # U.S. Virgin Islands
+    VN = "VNM"  # Vietnam
+    VU = "VUT"  # Vanuatu
+    WS = "WSM"  # Samoa
+    XB = "BES"  # Bonaire
+    XC = "CUW"  # Curacao
+    XE = "EUX"  # St. Eustatius
+    XM = "SXM"  # St. Maarten
+    XN = "KNA"  # Nevis
+    XS = "SOM"  # Somaliland, Rep Of (north Somalia)
+    XY = "BLM"  # St. Barthelemy
+    YE = "YEM"  # Yemen
+    YT = "MYT"  # Mayotte
+    ZA = "ZAF"  # South Africa
+    ZM = "ZMB"  # Zambia
+    ZW = "ZWE"  # Zimbabwe

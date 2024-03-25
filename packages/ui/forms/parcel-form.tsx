@@ -1,25 +1,14 @@
-import { deepEqual, findPreset, formatDimension, formatRef, isNone, validationMessage, validityCheck } from '@karrio/lib';
-import { DIMENSION_UNITS, ParcelType, PresetCollection, ShipmentType, WEIGHT_UNITS } from '@karrio/types';
-import { DimensionUnitEnum, WeightUnitEnum } from '@karrio/types';
+import { DEFAULT_PARCEL_CONTENT, DIMENSION_UNITS, ParcelType, PresetCollection, ShipmentType, WEIGHT_UNITS } from '@karrio/types';
+import { isEqual, findPreset, formatDimension, formatRef, isNone, validationMessage, validityCheck } from '@karrio/lib';
 import React, { useEffect, useReducer, useState } from 'react';
+import { CheckBoxField } from '../components/checkbox-field';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useParcelTemplates } from '@karrio/hooks/parcel';
-import { CheckBoxField } from '../components/checkbox-field';
 import { SelectField } from '../components/select-field';
 import { InputField } from '../components/input-field';
+import { WeightUnitEnum } from '@karrio/types';
 
 type stateValue = string | number | boolean | Partial<ParcelType>;
-export const DEFAULT_PARCEL_CONTENT: Partial<ParcelType> = {
-  weight: 1.0,
-  width: 33.7,
-  height: 18.2,
-  length: 10.0,
-  is_document: false,
-  packaging_type: "your_packaging",
-  weight_unit: WeightUnitEnum.KG,
-  dimension_unit: DimensionUnitEnum.CM,
-  items: [],
-};
 
 interface ParcelFormComponent {
   value?: ParcelType;
@@ -96,7 +85,7 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
   };
 
   useEffect(() => {
-    if (onChange && !deepEqual(value, parcel)) {
+    if (onChange && !isEqual(value, parcel)) {
       const { validation, ...changes } = parcel;
       onChange(changes);
     }
@@ -111,13 +100,17 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
       {/* Default parcel form content */}
       <div className="columns m-0">
 
-        <CheckBoxField name="is_document" onChange={handleChange} defaultChecked={parcel.is_document} fieldClass="column mb-0 is-12 px-0 py-2">
+        <CheckBoxField name="is_document" onChange={handleChange}
+          defaultChecked={parcel.is_document}
+          fieldClass="column mb-0 is-12 px-1 py-2">
           <span>Document Only</span>
         </CheckBoxField>
 
       </div>
 
-      <SelectField name="parcel_type" onChange={handleChange} value={parcel_type} className="is-small is-fullwidth" required>
+      <SelectField name="parcel_type" onChange={handleChange} value={parcel_type}
+        className="is-small is-fullwidth"
+        required>
         <optgroup label="New">
           <option value='custom'>Custom Measurements</option>
           <option value='preset'>Carrier Parcel Presets</option>
@@ -130,7 +123,10 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
 
       {(parcel_type === 'preset') && <>
 
-        <SelectField name="package_preset" onChange={handleChange} value={parcel.package_preset} className="is-small is-fullwidth is-capitalized" required>
+        <SelectField name="package_preset" onChange={handleChange} value={parcel.package_preset}
+          wrapperClass="mt-3"
+          className="is-small is-fullwidth is-capitalized"
+          required>
           <option value="">Select a Carrier Provided Parcel</option>
 
           {Object
@@ -154,7 +150,12 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
 
         <div className="columns mb-0 px-2">
 
-          <SelectField name="packaging_type" onChange={handleChange} value={parcel.packaging_type} className="is-small is-fullwidth" fieldClass="column is-4 mb-0 px-1 py-2" required>
+          <SelectField name="packaging_type" onChange={handleChange} value={parcel.packaging_type}
+            className="is-small is-fullwidth"
+            wrapperClass="column is-4 px-1 py-2"
+            fieldClass="mb-0 p-0"
+            required
+          >
             {packaging_types && Object
               .entries(packaging_types)
               .map(([key, value]) => (
@@ -174,7 +175,8 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
             onChange={validityCheck(handleChange)}
             value={parcel.length}
             className="is-small"
-            fieldClass="column mb-0 px-1 py-2"
+            wrapperClass="px-1 py-2"
+            fieldClass="column mb-0 p-0"
             required={isDimensionRequired(parcel)}
             onInvalid={validityCheck(validationMessage('Please enter a valid length'))}
           />
@@ -186,7 +188,8 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
             onChange={validityCheck(handleChange)}
             value={parcel.width}
             className="is-small"
-            fieldClass="column mb-0 px-1 py-2"
+            wrapperClass="px-1 py-2"
+            fieldClass="column mb-0 p-0"
             required={isDimensionRequired(parcel)}
             onInvalid={validityCheck(validationMessage('Please enter a valid width'))}
           />
@@ -198,12 +201,19 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
             onChange={validityCheck(handleChange)}
             value={parcel.height}
             className="is-small"
-            fieldClass="column mb-0 px-1 py-2"
+            wrapperClass="px-1 py-2"
+            fieldClass="column mb-0 p-0"
             required={isDimensionRequired(parcel)}
             onInvalid={validityCheck(validationMessage('Please enter a valid height'))}
           />
 
-          <SelectField name="dimension_unit" onChange={handleChange} value={parcel.dimension_unit} className="is-small is-fullwidth" fieldClass="column mb-0 px-1 py-2" required={isDimensionRequired(parcel)}>
+          <SelectField name="dimension_unit"
+            onChange={handleChange}
+            value={parcel.dimension_unit}
+            className="is-small is-fullwidth"
+            wrapperClass="column is-2 px-1 py-2"
+            fieldClass="mb-0 p-0"
+            required={isDimensionRequired(parcel)}>
             {DIMENSION_UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
           </SelectField>
 
@@ -220,7 +230,8 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
           name="weight"
           value={parcel.weight || ""}
           className="is-small"
-          fieldClass="column is-2 mb-0 px-1 py-2"
+          wrapperClass="column is-2 px-1 py-2"
+          fieldClass="mb-0 p-0"
           onChange={validityCheck(handleChange)}
           onInvalid={validityCheck(validationMessage('Please enter a valid weight'))}
           required
@@ -231,7 +242,8 @@ export const ParcelForm: React.FC<ParcelFormComponent> = ({ value, shipment, chi
           onChange={handleChange}
           value={parcel.weight_unit || WeightUnitEnum.KG}
           className="is-small is-fullwidth"
-          fieldClass="column is-2 mb-0 px-1 py-2"
+          wrapperClass="column is-2 px-1 py-2"
+          fieldClass="mb-0 p-0"
           required>
           {WEIGHT_UNITS.map(unit => <option key={unit} value={unit}>{unit}</option>)}
         </SelectField>

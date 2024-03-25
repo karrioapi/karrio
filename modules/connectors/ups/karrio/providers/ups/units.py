@@ -452,6 +452,7 @@ class UploadDocumentType(utils.StrEnum):
 
 class TrackingStatus(utils.Enum):
     on_hold = ["X"]
+    pending = ["MP"]
     delivered = ["D"]
     in_transit = [""]
     delivery_failed = ["RS"]

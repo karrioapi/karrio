@@ -84,6 +84,10 @@ KARRIO_CONF = [
             "urls": "karrio.server.core.urls",
         },
         {
+            "app": "karrio.server.iam",
+            "module": "karrio.server.iam",
+        },
+        {
             "app": "karrio.server.providers",
             "module": "karrio.server.providers",
             "urls": "karrio.server.providers.urls",
@@ -127,8 +131,14 @@ KARRIO_CONF = [
             "module": "karrio.server.admin",
             "urls": "karrio.server.admin.urls",
         },
-        {"app": "karrio.server.pricing", "module": "karrio.server.pricing"},
-        {"app": "karrio.server.apps", "module": "karrio.server.apps"},
+        {
+            "app": "karrio.server.pricing",
+            "module": "karrio.server.pricing",
+        },
+        {
+            "app": "karrio.server.apps",
+            "module": "karrio.server.apps",
+        },
     ]
     if importlib.util.find_spec(app["module"]) is not None  # type:ignore
 ]
@@ -147,6 +157,9 @@ MULTI_ORGANIZATIONS = (
 )
 ALLOW_MULTI_ACCOUNT = config(
     "ALLOW_MULTI_ACCOUNT", default=MULTI_ORGANIZATIONS, cast=bool
+)
+ADMIN_DASHBOARD = (
+    importlib.util.find_spec("karrio.server.admin") is not None  # type:ignore
 )
 ORDERS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.orders") is not None  # type:ignore
@@ -170,6 +183,9 @@ AUDIT_LOGGING = importlib.util.find_spec(  # type:ignore
     "karrio.server.audit"
 ) is not None and config("AUDIT_LOGGING", default=True, cast=bool)
 PERSIST_SDK_TRACING = config("PERSIST_SDK_TRACING", default=True, cast=bool)
+WORKFLOW_MANAGEMENT = (
+    importlib.util.find_spec("karrio.server.automation") is not None  # type:ignore
+)
 
 
 # Feature flags
@@ -178,6 +194,7 @@ FEATURE_FLAGS = [
     ("ALLOW_SIGNUP", bool),
     ("ALLOW_ADMIN_APPROVED_SIGNUP", bool),
     ("ALLOW_MULTI_ACCOUNT", bool),
+    ("ADMIN_DASHBOARD", bool),
     ("MULTI_ORGANIZATIONS", bool),
     ("ORDERS_MANAGEMENT", bool),
     ("APPS_MANAGEMENT", bool),
@@ -189,6 +206,7 @@ FEATURE_FLAGS = [
     ("TRACKER_DATA_RETENTION", int),
     ("SHIPMENT_DATA_RETENTION", int),
     ("API_LOGS_DATA_RETENTION", int),
+    ("WORKFLOW_MANAGEMENT", bool),
 ]
 
 
@@ -430,7 +448,7 @@ SIMPLE_JWT = {
     ),
     "ROTATE_REFRESH_TOKENS": False,
     "BLACKLIST_AFTER_ROTATION": False,
-    "UPDATE_LAST_LOGIN": False,
+    "UPDATE_LAST_LOGIN": True,
     "ALGORITHM": "HS256",
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": None,
@@ -468,6 +486,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": VERSION,
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE": True,
+    "ENUM_GENERATE_CHOICE_DESCRIPTION": False,
     "ENUM_NAME_OVERRIDES": {
         "CountryEnum": "karrio.server.core.serializers.COUNTRIES",
         "CurrencyEnum": "karrio.server.core.serializers.CURRENCIES",

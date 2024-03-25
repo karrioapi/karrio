@@ -1,36 +1,43 @@
 import typing
-import datetime
 import strawberry
 
 import karrio.server.graph.utils as utils
 import karrio.server.graph.schemas.base as base
 import karrio.server.orders.serializers as serializers
 
-OrderStatusEnum: typing.Any = strawberry.enum(serializers.OrderStatus)
+OrderStatusEnum: typing.Any = strawberry.enum(serializers.OrderStatus)  # type: ignore
+
 
 @strawberry.input
 class CreateOrderMutationInput(utils.BaseInput):
-    order_date: datetime.date
     shipping_to: base.inputs.AddressInput
     line_items: typing.List[base.inputs.CommodityInput]
+    order_id: typing.Optional[str] = strawberry.UNSET
+    order_date: typing.Optional[str] = strawberry.UNSET
     shipping_from: typing.Optional[base.inputs.AddressInput] = strawberry.UNSET
     billing_address: typing.Optional[base.inputs.AddressInput] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
-class PartialOrderUpdateMutationInput(utils.BaseInput):
+class UpdateOrderMutationInput(utils.BaseInput):
     id: str
-    order_date: datetime.date = strawberry.UNSET
-    shipping_to: base.inputs.AddressInput = strawberry.UNSET
-    line_items: typing.Optional[base.inputs.UpdateCommodityInput] = strawberry.UNSET
-    shipping_from: typing.Optional[base.inputs.AddressInput] = strawberry.UNSET
-    billing_address: typing.Optional[base.inputs.AddressInput] = strawberry.UNSET
+    order_id: typing.Optional[str] = strawberry.UNSET
+    order_date: typing.Optional[str] = strawberry.UNSET
+    shipping_to: typing.Optional[base.inputs.UpdateAddressInput] = strawberry.UNSET
+    shipping_from: typing.Optional[base.inputs.UpdateAddressInput] = strawberry.UNSET
+    billing_address: typing.Optional[base.inputs.UpdateAddressInput] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
+    line_items: typing.Optional[typing.List[base.inputs.UpdateCommodityInput]] = (
+        strawberry.UNSET
+    )
+
+
+@strawberry.input
+class DeleteOrderMutationInput(utils.BaseInput):
+    id: str
 
 
 @strawberry.input

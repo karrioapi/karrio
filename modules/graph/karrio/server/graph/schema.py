@@ -1,7 +1,9 @@
 import pkgutil
 import logging
 import strawberry
+import strawberry
 import strawberry.schema.config as config
+import strawberry_django.optimizer as optimizer
 
 import karrio.server.graph.schemas as schemas
 
@@ -12,7 +14,7 @@ MUTATIONS: list = []
 EXTRA_TYPES: list = []
 
 # Register karrio graphql schemas
-for _, name, _ in pkgutil.iter_modules(schemas.__path__): # type: ignore
+for _, name, _ in pkgutil.iter_modules(schemas.__path__):  # type: ignore
     try:
         schema = __import__(f"{schemas.__name__}.{name}", fromlist=[name])
         if hasattr(schema, "Query"):
@@ -27,18 +29,21 @@ for _, name, _ in pkgutil.iter_modules(schemas.__path__): # type: ignore
 
 
 @strawberry.type
-class Query(*QUERIES): # type: ignore
+class Query(*QUERIES):  # type: ignore
     pass
 
 
 @strawberry.type
-class Mutation(*MUTATIONS): # type: ignore
+class Mutation(*MUTATIONS):  # type: ignore
     pass
 
 
-schema = strawberry.Schema( # type: ignore
+schema = strawberry.Schema(  # type: ignore
     query=Query,
     mutation=Mutation,
     types=[*EXTRA_TYPES],
     config=config.StrawberryConfig(auto_camel_case=False),
+    extensions=[
+        optimizer.DjangoOptimizerExtension,
+    ],
 )

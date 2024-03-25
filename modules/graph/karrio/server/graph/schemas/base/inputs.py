@@ -35,34 +35,54 @@ class TrackerFilter(utils.Paginated):
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[str]] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
 
 
 @strawberry.input
 class ShipmentFilter(utils.Paginated):
     keyword: typing.Optional[str] = strawberry.UNSET
     address: typing.Optional[str] = strawberry.UNSET
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
     created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
     created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
     carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
     reference: typing.Optional[str] = strawberry.UNSET
     service: typing.Optional[typing.List[str]] = strawberry.UNSET
     status: typing.Optional[typing.List[utils.ShipmentStatusEnum]] = strawberry.UNSET
-    option_key: typing.Optional[typing.List[str]] = strawberry.UNSET
-    option_value: typing.Optional[str] = strawberry.UNSET
-    metadata_key: typing.Optional[typing.List[str]] = strawberry.UNSET
-    metadata_value: typing.Optional[str] = strawberry.UNSET
-    test_mode: typing.Optional[bool] = strawberry.UNSET
+    option_key: typing.Optional[str] = strawberry.UNSET
+    option_value: typing.Optional[utils.JSON] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[utils.JSON] = strawberry.UNSET
+    meta_key: typing.Optional[str] = strawberry.UNSET
+    meta_value: typing.Optional[utils.JSON] = strawberry.UNSET
+    has_tracker: typing.Optional[bool] = strawberry.UNSET
+    has_manifest: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class ManifestFilter(utils.Paginated):
+    id: typing.Optional[typing.List[str]] = strawberry.UNSET
+    created_after: typing.Optional[datetime.datetime] = strawberry.UNSET
+    created_before: typing.Optional[datetime.datetime] = strawberry.UNSET
+    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @strawberry.input
 class TemplateFilter(utils.Paginated):
     label: typing.Optional[str] = strawberry.UNSET
+    keyword: typing.Optional[str] = strawberry.UNSET
 
 
 @strawberry.input
 class AddressFilter(TemplateFilter):
     address: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
+class CarrierFilter(utils.BaseInput):
+    active: typing.Optional[bool] = strawberry.UNSET
+    metadata_key: typing.Optional[str] = strawberry.UNSET
+    metadata_value: typing.Optional[str] = strawberry.UNSET
+    carrier_name: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @strawberry.input
@@ -72,9 +92,44 @@ class UpdateUserInput(utils.BaseInput):
 
 
 @strawberry.input
+class WorkspaceConfigMutationInput(utils.BaseInput):
+    default_currency: typing.Optional[utils.CurrencyCodeEnum] = strawberry.UNSET
+    default_country_code: typing.Optional[utils.CountryCodeEnum] = strawberry.UNSET
+    default_label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
+
+    default_weight_unit: typing.Optional[utils.WeightUnitEnum] = strawberry.UNSET
+    default_dimension_unit: typing.Optional[utils.DimensionUnitEnum] = strawberry.UNSET
+
+    state_tax_id: typing.Optional[str] = strawberry.UNSET
+    federal_tax_id: typing.Optional[str] = strawberry.UNSET
+
+    customs_aes: typing.Optional[str] = strawberry.UNSET
+    customs_eel_pfc: typing.Optional[str] = strawberry.UNSET
+    customs_eori_number: typing.Optional[str] = strawberry.UNSET
+    customs_license_number: typing.Optional[str] = strawberry.UNSET
+    customs_certificate_number: typing.Optional[str] = strawberry.UNSET
+    customs_nip_number: typing.Optional[str] = strawberry.UNSET
+    customs_vat_registration_number: typing.Optional[str] = strawberry.UNSET
+
+
+@strawberry.input
 class TokenMutationInput(utils.BaseInput):
+    key: str
     password: typing.Optional[str] = strawberry.UNSET
     refresh: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class CreateAPIKeyMutationInput(utils.BaseInput):
+    password: str
+    label: str
+    permissions: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class DeleteAPIKeyMutationInput(utils.BaseInput):
+    password: str
+    key: str
 
 
 @strawberry.input
@@ -365,6 +420,7 @@ class ServiceZoneInput(utils.BaseInput):
     longitude: typing.Optional[float] = strawberry.UNSET
 
     cities: typing.Optional[typing.List[str]] = strawberry.UNSET
+    postal_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
     country_codes: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
@@ -380,6 +436,7 @@ class CreateServiceLevelInput(utils.BaseInput):
     currency: utils.CurrencyCodeEnum
     zones: typing.List[ServiceZoneInput]
 
+    carrier_service_code: typing.Optional[str] = strawberry.UNSET
     description: typing.Optional[str] = strawberry.UNSET
     active: typing.Optional[bool] = strawberry.UNSET
 
@@ -398,6 +455,8 @@ class CreateServiceLevelInput(utils.BaseInput):
     domicile: typing.Optional[bool] = strawberry.UNSET
     international: typing.Optional[bool] = strawberry.UNSET
 
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+
 
 @strawberry.input
 class UpdateServiceLevelInput(CreateServiceLevelInput):
@@ -408,12 +467,41 @@ class UpdateServiceLevelInput(CreateServiceLevelInput):
     zones: typing.Optional[typing.List[UpdateServiceZoneInput]] = strawberry.UNSET
 
 
+@strawberry.input
+class CreateRateSheetMutationInput(utils.BaseInput):
+    name: str
+    carrier_name: utils.CarrierNameEnum
+    services: typing.Optional[typing.List[CreateServiceLevelInput]] = strawberry.UNSET
+    carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateRateSheetMutationInput(utils.BaseInput):
+    id: str
+    name: typing.Optional[str] = strawberry.UNSET
+    services: typing.Optional[typing.List[UpdateServiceLevelInput]] = strawberry.UNSET
+    carriers: typing.Optional[typing.List[str]] = strawberry.UNSET
+
+
+@strawberry.input
+class RateSheetFilter(utils.Paginated):
+    keyword: typing.Optional[str] = strawberry.UNSET
+
+
 def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.Type]:
     def carrier_settings_input(name: str, model):
         _name = f"{'Update' if is_update else ''}{model.__name__}Input"
         _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-        _excluded = ["services", "id", "cache"]
-        _optionals = ["account_country_code", "label_template", "test_mode"]
+        _excluded = [
+            "services",
+            "id",
+            "cache",
+            "test_mode",
+            "rate_sheet",
+            "sscc_count",
+            "shipment_count",
+        ]
+        _optionals = ["account_country_code", "label_template"]
         _template_type: typing.Any = "LabelTemplateInput"
         _service_type: typing.Any = typing.List[  # type: ignore
             "UpdateServiceLevelInput" if is_update else "CreateServiceLevelInput"
@@ -512,3 +600,29 @@ class SystemCarrierMutationInput(utils.BaseInput):
     id: str
     enable: typing.Optional[bool] = strawberry.UNSET
     config: typing.Optional[utils.JSON] = strawberry.UNSET
+
+
+@strawberry.input
+class CreateMetafieldInput(utils.BaseInput):
+    key: str
+    type: utils.MetafieldTypeEnum
+    value: typing.Optional[str] = strawberry.UNSET
+    namespace: typing.Optional[str] = strawberry.UNSET
+    is_required: typing.Optional[bool] = strawberry.UNSET
+
+
+@strawberry.input
+class UpdateMetafieldInput(CreateMetafieldInput):
+    id: str
+    key: typing.Optional[str] = strawberry.UNSET
+    type: typing.Optional[utils.MetafieldTypeEnum] = strawberry.UNSET
+
+
+@strawberry.input
+class MetafieldInput(utils.BaseInput):
+    key: str
+    type: utils.MetafieldTypeEnum
+    value: typing.Optional[str] = strawberry.UNSET
+    namespace: typing.Optional[str] = strawberry.UNSET
+    is_required: typing.Optional[bool] = strawberry.UNSET
+    id: typing.Optional[str] = strawberry.UNSET

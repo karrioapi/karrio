@@ -100,6 +100,7 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(
             responses,
             lambda __: [(lib.to_element(_["shipment"]), _["label"]) for _ in __],
+            requests.ctx,
         )
 
     def cancel_shipment(self, requests: lib.Serializable) -> lib.Deserializable:
@@ -126,20 +127,22 @@ class Proxy(proxy.Proxy):
         refunds: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
             lambda payload: (
                 payload["id"],
-                lib.request(
-                    url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{payload['id']}/refund",
-                    trace=self.trace_as("xml"),
-                    data=payload["data"],
-                    method="POST",
-                    headers={
-                        "Content-Type": "application/vnd.cpc.shipment-v8+xml",
-                        "Accept": "application/vnd.cpc.shipment-v8+xml",
-                        "Authorization": f"Basic {self.settings.authorization}",
-                        "Accept-language": f"{self.settings.language}-CA",
-                    },
-                )
-                if payload["data"] is not None
-                else payload["info"],
+                (
+                    lib.request(
+                        url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{payload['id']}/refund",
+                        trace=self.trace_as("xml"),
+                        data=payload["data"],
+                        method="POST",
+                        headers={
+                            "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                            "Accept": "application/vnd.cpc.shipment-v8+xml",
+                            "Authorization": f"Basic {self.settings.authorization}",
+                            "Accept-language": f"{self.settings.language}-CA",
+                        },
+                    )
+                    if payload["data"] is not None
+                    else payload["info"]
+                ),
             ),
             [
                 dict(
@@ -155,19 +158,21 @@ class Proxy(proxy.Proxy):
         responses: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
             lambda payload: (
                 payload["id"],
-                lib.request(
-                    url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{payload['id']}",
-                    trace=self.trace_as("xml"),
-                    method="DELETE",
-                    headers={
-                        "Content-Type": "application/vnd.cpc.shipment-v8+xml",
-                        "Accept": "application/vnd.cpc.shipment-v8+xml",
-                        "Authorization": f"Basic {self.settings.authorization}",
-                        "Accept-language": f"{self.settings.language}-CA",
-                    },
-                )
-                if payload["refunded"]
-                else payload["response"],
+                (
+                    lib.request(
+                        url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{payload['id']}",
+                        trace=self.trace_as("xml"),
+                        method="DELETE",
+                        headers={
+                            "Content-Type": "application/vnd.cpc.shipment-v8+xml",
+                            "Accept": "application/vnd.cpc.shipment-v8+xml",
+                            "Authorization": f"Basic {self.settings.authorization}",
+                            "Accept-language": f"{self.settings.language}-CA",
+                        },
+                    )
+                    if payload["refunded"]
+                    else payload["response"]
+                ),
             ),
             [
                 dict(
@@ -290,3 +295,79 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response or "<wrapper></wrapper>", lib.to_element)
+
+    def create_manifest(self, request: lib.Serializable) -> lib.Deserializable:
+        ctx = request.ctx.copy()
+        data = request.serialize()
+
+        if ctx["retrieve_shipments"]:
+            shipments = lib.run_asynchronously(
+                lambda pin: lib.request(
+                    url=f"{self.settings.server_url}/{self.settings.customer_number}/{self.settings.customer_number}/shipment/{pin}/details",
+                    trace=self.trace_as("xml"),
+                    method="GET",
+                    headers={
+                        "Accept": "application/vnd.cpc.shipment-v8+xml",
+                        "Authorization": f"Basic {self.settings.authorization}",
+                        "Accept-language": f"{self.settings.language}-CA",
+                    },
+                ),
+                ctx["shipment_identifiers"],
+            )
+
+            group_ids = [
+                _.text for _ in lib.find_element("group-id", lib.to_element(shipments))
+            ]
+            ctx.update(group_ids=[*set([*ctx["group_ids"], *group_ids])])
+
+        response = lib.request(
+            url=f"{self.settings.server_url}/rs/{self.settings.customer_number}/{self.settings.customer_number}/manifest",
+            data=data.replace(
+                "<group-id>[GROUP_IDS]</group-id>",
+                "".join(f"<group-id>{_}</group-id>" for _ in ctx["group_ids"]),
+            ),
+            trace=self.trace_as("xml"),
+            method="POST",
+            headers={
+                "Content-Type": "application/vnd.cpc.manifest-v8+xml",
+                "Accept": "application/vnd.cpc.manifest-v8+xml",
+                "Authorization": f"Basic {self.settings.authorization}",
+                "Accept-language": f"{self.settings.language}-CA",
+            },
+        )
+
+        manifests = lib.run_asynchronously(
+            lambda link: lib.request(
+                url=link.get("href"),
+                trace=self.trace_as("xml"),
+                headers={
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Accept": (
+                        lib.text(link.get("media-type"))
+                        or "application/vnd.cpc.manifest-v8+xml"
+                    ),
+                },
+            ),
+            lib.find_element("link", lib.to_element(response)),
+        )
+
+        if any(manifests):
+            ctx.update(
+                files=lib.run_asynchronously(
+                    lambda link: lib.request(
+                        decoder=lib.encode_base64,
+                        url=link.get("href"),
+                        headers={
+                            "Authorization": f"Basic {self.settings.authorization}",
+                            "Accept": link.get("media-type"),
+                        },
+                    ),
+                    [
+                        _
+                        for _ in lib.find_element("link", lib.to_element(manifests))
+                        if _.get("rel") == "artifact"
+                    ],
+                )
+            )
+
+        return lib.Deserializable(response, lib.to_element, ctx)

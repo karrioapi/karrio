@@ -181,6 +181,7 @@ ShipmentRequestXML = """<eVSPriorityMailIntlRequest USERID="username">
     <FromPhone>1234567890</FromPhone>
     <ToFirstName>John</ToFirstName>
     <ToFirm>Coffee Five</ToFirm>
+    <ToAddress1></ToAddress1>
     <ToAddress2>01 R. da Quitanda, 86 - quiosque</ToAddress2>
     <ToCity>Centro</ToCity>
     <ToProvince>Rio de Janeiro</ToProvince>

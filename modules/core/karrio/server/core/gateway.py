@@ -83,6 +83,21 @@ class Carriers:
                 capabilities__icontains=list_filter["capability"]
             )
 
+        # Check if a metadata key is provided, to add it to the query
+        if "metadata_key" in list_filter:
+            _queryset = _queryset.filter(metadata__has_key=list_filter["metadata_key"])
+
+        # Check if a metadata value is provided, to add it to the query
+        if "metadata_value" in list_filter:
+            _value = list_filter["metadata_value"]
+            _queryset = _queryset.filter(
+                id__in=[
+                    _["id"]
+                    for _ in _queryset.values("id", "metadata")
+                    if _value in (_.get("metadata") or {}).values()
+                ]
+            )
+
         # Check if a list of carrier_ids are provided, to add the list to the query
         if any(list_filter.get("carrier_ids", [])):
             _queryset = _queryset.filter(carrier_id__in=list_filter["carrier_ids"])
@@ -173,6 +188,10 @@ class Shipments:
             test_mode=selected_rate.test_mode,
             services=[selected_rate.service],
         )
+
+        if carrier is None:
+            raise NotFound("No active carrier connection found to process the request")
+
         request = lib.to_object(
             datatypes.ShipmentRequest,
             {**lib.to_dict(payload), "service": selected_rate.service},
@@ -432,6 +451,12 @@ class Pickups:
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
             )
 
+        def process_meta(parent) -> dict:
+            return {
+                **(parent.meta or {}),
+                "ext": carrier.ext,
+            }
+
         return datatypes.PickupResponse(
             pickup=datatypes.Pickup(
                 **{
@@ -439,6 +464,8 @@ class Pickups:
                     **lib.to_dict(pickup),
                     "id": f"pck_{uuid.uuid4().hex}",
                     "test_mode": carrier.test_mode,
+                    "meta": process_meta(pickup),
+                    "messages": messages,
                 }
             ),
             messages=messages,
@@ -536,24 +563,27 @@ class Rates:
     def fetch(
         payload: dict,
         carriers: typing.List[providers.Carrier] = None,
+        raise_on_error: bool = True,
         **carrier_filters,
     ) -> datatypes.RateResponse:
         services = payload.get("services", [])
         carrier_ids = payload.get("carrier_ids", [])
         shipper_country_code = payload["shipper"].get("country_code")
         carriers = carriers or Carriers.list(
-            active=True,
-            capability="rating",
-            carrier_ids=carrier_ids,
-            services=services,
-            **carrier_filters,
+            **{
+                "active": True,
+                "capability": "rating",
+                "carrier_ids": carrier_ids,
+                "services": services,
+                **carrier_filters,
+            }
         )
 
         gateways = utils.filter_rate_carrier_compatible_gateways(
             carriers, carrier_ids, shipper_country_code
         )
 
-        if len(gateways) == 0:
+        if raise_on_error and len(gateways) == 0:
             raise NotFound("No active carrier connection found to process the request")
 
         request = karrio.Rating.fetch(lib.to_object(datatypes.RateRequest, payload))
@@ -561,7 +591,7 @@ class Rates:
         # The request call is wrapped in utils.identity to simplify mocking in tests
         rates, messages = utils.identity(lambda: request.from_(*gateways).parse())
 
-        if not any(rates) and any(messages):
+        if raise_on_error and not any(rates) and any(messages):
             raise exceptions.APIException(
                 detail=messages,
                 status_code=status.HTTP_424_FAILED_DEPENDENCY,
@@ -650,4 +680,55 @@ class Documents:
                 "id": f"sdoc_{uuid.uuid4().hex}",
                 "messages": lib.to_dict(messages),
             },
+        )
+
+
+class Manifests:
+    @staticmethod
+    def create(
+        payload: dict, carrier: providers.Carrier = None, **carrier_filters
+    ) -> datatypes.ManifestResponse:
+        carrier = carrier or Carriers.first(
+            **{
+                **dict(active=True, capability="manifest", raise_not_found=True),
+                **carrier_filters,
+            }
+        )
+
+        if carrier is None:
+            raise NotFound("No active carrier connection found to process the request")
+
+        request = karrio.Manifest.create(
+            lib.to_object(datatypes.ManifestRequest, lib.to_dict(payload))
+        )
+
+        # The request call is wrapped in utils.identity to simplify mocking in tests
+        manifest, messages = utils.identity(
+            lambda: request.from_(carrier.gateway).parse()
+        )
+
+        if manifest is None:
+            raise exceptions.APIException(
+                detail=messages,
+                status_code=status.HTTP_424_FAILED_DEPENDENCY,
+            )
+
+        def process_meta(parent) -> dict:
+            return {
+                **(parent.meta or {}),
+                "ext": carrier.ext,
+            }
+
+        return datatypes.ManifestResponse(
+            manifest=datatypes.Manifest(
+                **{
+                    **payload,
+                    **lib.to_dict(manifest),
+                    "id": f"manf_{uuid.uuid4().hex}",
+                    "test_mode": carrier.test_mode,
+                    "meta": process_meta(manifest),
+                    "messages": messages,
+                }
+            ),
+            messages=messages,
         )

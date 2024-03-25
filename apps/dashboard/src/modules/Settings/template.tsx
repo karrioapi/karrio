@@ -95,18 +95,18 @@ export default function DocumentTemplatePage(pageProps: any) {
     return (
       <form onSubmit={handleSubmit} className="p-4">
 
-        <div className="py-4 is-flex is-justify-content-space-between has-background-white">
-          <div className="is-vcentered">
-            <AppLink className="button is-small is-white" href="/settings/templates">
+        <div className="columns">
+          <div className="column is-vcentered">
+            <AppLink className="button is-small is-white" href="/settings/templates" style={{ borderRadius: '50%' }}>
               <span className="icon is-large">
                 <i className="fas fa-lg fa-times"></i>
               </span>
             </AppLink>
-            <span className="title is-6 has-text-weight-semibold p-3">Edit document template</span>
+            <span className="title is-6 has-text-weight-semibold px-2 py-3">Edit document template</span>
           </div>
-          <div>
+          <div className="column is-flex is-justify-content-end">
             <a className={`button is-small is-primary mx-1 ${isNoneOrEmpty(template.id) ? 'is-static' : ''}`}
-              href={url$`${references.HOST}/documents/${template.id}.${template.slug}${computeParams(template)}`}
+              href={url$`${references.HOST}/documents/templates/${template.id}.${template.slug}${computeParams(template)}`}
               target="_blank" rel="noreferrer">
               Preview Template
             </a>

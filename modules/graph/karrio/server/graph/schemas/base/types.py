@@ -2,34 +2,47 @@ import pydoc
 import typing
 import datetime
 import strawberry
+import strawberry_django
+from django.db import models
 from strawberry.types import Info
 from django.forms.models import model_to_dict
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
-from karrio.server.core import gateway
 import karrio.lib as lib
-import karrio.server.core.filters as filters
-import karrio.server.serializers as serializers
-import karrio.server.user.serializers as user_serializers
-import karrio.server.providers.models as providers
-import karrio.server.manager.models as manager
-import karrio.server.tracing.models as tracing
-import karrio.server.graph.models as graph
+import karrio.server.user.models as auth
 import karrio.server.core.models as core
 import karrio.server.graph.utils as utils
+import karrio.server.graph.models as graph
+import karrio.server.core.filters as filters
+import karrio.server.manager.models as manager
+import karrio.server.tracing.models as tracing
+import karrio.server.serializers as serializers
+import karrio.server.providers.models as providers
+import karrio.server.user.serializers as user_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 
 User = get_user_model()
 
 
-@strawberry.type
+@strawberry_django.type(User)
 class UserType:
     email: str
     full_name: str
     is_staff: bool
+    is_active: bool
     date_joined: datetime.datetime
+    is_superuser: typing.Optional[bool] = strawberry.UNSET
     last_login: typing.Optional[datetime.datetime] = strawberry.UNSET
+
+    @strawberry.field
+    def permissions(self: User, info) -> typing.Optional[typing.List[str]]:
+        # Return permissions from token if exists
+        if hasattr(getattr(info.context.request, "token", None), "permissions"):
+            return info.context.request.token.permissions
+
+        # Return permissions from user
+        return info.context.request.user.permissions
 
     @staticmethod
     @utils.authentication_required
@@ -37,7 +50,112 @@ class UserType:
         return User.objects.get(id=info.context.request.user.id)
 
 
-@strawberry.type
+@strawberry_django.type(auth.WorkspaceConfig)
+class WorkspaceConfigType:
+    object_type: str
+
+    @property
+    def config(self: auth.WorkspaceConfig) -> dict:
+        try:
+            return lib.to_dict(self.config)
+        except:
+            return self.config
+
+    # general preferences
+    # region
+
+    @strawberry.field
+    def default_currency(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.CurrencyCodeEnum]:
+        return self.config.get("default_currency")
+
+    @strawberry.field
+    def default_country_code(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.CountryCodeEnum]:
+        return self.config.get("default_country_code")
+
+    @strawberry.field
+    def default_weight_unit(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.WeightUnitEnum]:
+        return self.config.get("default_weight_unit")
+
+    @strawberry.field
+    def default_dimension_unit(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.DimensionUnitEnum]:
+        return self.config.get("default_dimension_unit")
+
+    @strawberry.field
+    def state_tax_id(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("state_tax_id")
+
+    @strawberry.field
+    def federal_tax_id(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("federal_tax_id")
+
+    @strawberry.field
+    def default_label_type(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[utils.LabelTypeEnum]:
+        return self.config.get("default_label_type")
+
+    # endregion
+
+    # customs identifiers
+    # region
+
+    @strawberry.field
+    def customs_aes(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_aes")
+
+    @strawberry.field
+    def customs_eel_pfc(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_eel_pfc")
+
+    @strawberry.field
+    def customs_license_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_license_number")
+
+    @strawberry.field
+    def customs_certificate_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_certificate_number")
+
+    @strawberry.field
+    def customs_nip_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_nip_number")
+
+    @strawberry.field
+    def customs_eori_number(self: auth.WorkspaceConfig) -> typing.Optional[str]:
+        return self.config.get("customs_eori_number")
+
+    @strawberry.field
+    def customs_vat_registration_number(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[str]:
+        return self.config.get("customs_vat_registration_number")
+
+    # endregion
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info) -> typing.Optional["WorkspaceConfigType"]:
+        return auth.WorkspaceConfig.access_by(info.context.request).first()
+
+
+@strawberry_django.type(core.Metafield)
+class MetafieldType:
+    object_type: str
+    id: str
+    key: str
+    is_required: bool
+    type: utils.MetafieldTypeEnum
+    value: typing.Optional[str] = None
+
+
+@strawberry_django.type(core.APILog)
 class LogType:
     object_type: str
     id: int
@@ -76,9 +194,7 @@ class LogType:
     def records(
         self: tracing.TracingRecord, info: Info
     ) -> typing.List["TracingRecordType"]:
-        queryset = tracing.TracingRecord.objects.filter(
-            meta__request_log_id__icontains=self.id
-        )
+        queryset = tracing.TracingRecord.objects.filter(meta__request_log_id=self.id)
 
         if User.objects.filter(
             id=info.context.request.user.id, is_staff=False
@@ -110,7 +226,7 @@ class LogType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(tracing.TracingRecord)
 class TracingRecordType:
     object_type: str
     id: typing.Optional[str]
@@ -155,11 +271,17 @@ class TracingRecordType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(auth.Token)
 class TokenType:
     object_type: str
     key: str
+    label: str
+    test_mode: bool
     created: datetime.datetime
+
+    @strawberry.field
+    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+        return self.permissions
 
     @staticmethod
     @utils.authentication_required
@@ -168,6 +290,44 @@ class TokenType:
             info.context.request,
             **({"org_id": org_id} if org_id is not strawberry.UNSET else {}),
         )
+
+
+@strawberry_django.type(auth.Token)
+class APIKeyType:
+    object_type: str
+    key: str
+    label: str
+    test_mode: bool
+    created: datetime.datetime
+
+    @strawberry.field
+    def permissions(self: auth.Token, info) -> typing.Optional[typing.List[str]]:
+        return self.permissions
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+    ) -> typing.List["APIKeyType"]:
+        _filters = {
+            "user__id": info.context.request.user.id,
+            "test_mode": info.context.request.test_mode,
+            **(
+                {"org__id": info.context.request.org.id}
+                if getattr(info.context.request, "org", None) is not None
+                else {}
+            ),
+        }
+        keys = auth.Token.objects.filter(**_filters)
+
+        if keys.exists():
+            return keys
+
+        user_serializers.TokenSerializer.map(
+            data={}, context=info.context.request
+        ).save()
+
+        return auth.Token.objects.filter(**_filters)
 
 
 @strawberry.type
@@ -310,7 +470,7 @@ class DutyType:
     bill_to: typing.Optional[AddressType] = None
 
 
-@strawberry.type
+@strawberry_django.type(manager.Customs)
 class CustomsType:
     id: str
     object_type: str
@@ -320,7 +480,7 @@ class CustomsType:
     content_description: typing.Optional[str] = strawberry.UNSET
     incoterm: typing.Optional[utils.IncotermCodeEnum] = strawberry.UNSET
     invoice: typing.Optional[str] = strawberry.UNSET
-    invoice_date: typing.Optional[datetime.date] = strawberry.UNSET
+    invoice_date: typing.Optional[str] = strawberry.UNSET
     signer: typing.Optional[str] = strawberry.UNSET
     created_at: typing.Optional[datetime.datetime] = strawberry.UNSET
     updated_at: typing.Optional[datetime.datetime] = strawberry.UNSET
@@ -340,7 +500,7 @@ class CustomsType:
         return self.commodities.all()
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class AddressTemplateType:
     id: str
     object_type: str
@@ -355,26 +515,52 @@ class AddressTemplateType:
         filter: typing.Optional[inputs.AddressFilter] = strawberry.UNSET,
     ) -> utils.Connection["AddressTemplateType"]:
         _filter = inputs.AddressFilter() if utils.is_unset(filter) else filter
-        _query = {
-            **(  # type: ignore
-                {"label__icontain": _filter.label}
-                if _filter.label != strawberry.UNSET
-                else {}
-            ),
-            **(
-                {"address__icontain": _filter.address}
-                if _filter.address != strawberry.UNSET
-                else {}
-            ),
-        }
-        queryset = graph.Template.access_by(info.context.request).filter(
-            address__isnull=False, **_query
+        _search = _filter.to_dict()
+        _query = models.Q()
+
+        if any(_search.get("label") or ""):
+            _value = _search.get("label")
+            _query = _query | models.Q(label__icontains=_value)
+
+        if any(_search.get("address") or ""):
+            _value = _search.get("address")
+            _query = (
+                _query
+                | models.Q(address__address_line1__icontains=_value)
+                | models.Q(address__address_line2__icontains=_value)
+                | models.Q(address__postal_code__icontains=_value)
+                | models.Q(address__person_name__icontains=_value)
+                | models.Q(address__company_name__icontains=_value)
+                | models.Q(address__country_code__icontains=_value)
+                | models.Q(address__city__icontains=_value)
+                | models.Q(address__email__icontains=_value)
+                | models.Q(address__phone_number__icontains=_value)
+            )
+
+        if any(_search.get("keyword") or ""):
+            _value = _search.get("keyword")
+            _query = (
+                _query
+                | models.Q(label__icontains=_value)
+                | models.Q(address__address_line1__icontains=_value)
+                | models.Q(address__address_line2__icontains=_value)
+                | models.Q(address__postal_code__icontains=_value)
+                | models.Q(address__person_name__icontains=_value)
+                | models.Q(address__company_name__icontains=_value)
+                | models.Q(address__country_code__icontains=_value)
+                | models.Q(address__city__icontains=_value)
+                | models.Q(address__email__icontains=_value)
+                | models.Q(address__phone_number__icontains=_value)
+            )
+
+        _queryset = graph.Template.access_by(info.context.request).filter(
+            _query, address__isnull=False
         )
 
-        return utils.paginated_connection(queryset, **_filter.pagination())
+        return utils.paginated_connection(_queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class ParcelTemplateType:
     id: str
     object_type: str
@@ -389,19 +575,26 @@ class ParcelTemplateType:
         filter: typing.Optional[inputs.TemplateFilter] = strawberry.UNSET,
     ) -> utils.Connection["ParcelTemplateType"]:
         _filter = inputs.TemplateFilter() if filter == strawberry.UNSET else filter
+        _search = _filter.to_dict()
+        _query = models.Q()
+
+        if any(_search.get("label") or ""):
+            _value = _search.get("label")
+            _query = _query | models.Q(label__icontains=_value)
+
+        if any(_search.get("keyword") or ""):
+            _value = _search.get("keyword")
+            _query = _query | models.Q(label__icontains=_value)
 
         queryset = graph.Template.access_by(info.context.request).filter(
+            _query,
             parcel__isnull=False,
-            **(
-                {"label__icontain": _filter.label}
-                if _filter.label != strawberry.UNSET
-                else {}
-            ),
         )
+
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class CustomsTemplateType:
     id: str
     object_type: str
@@ -428,7 +621,7 @@ class CustomsTemplateType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.type
+@strawberry_django.type(graph.Template)
 class DefaultTemplatesType:
     default_address: typing.Optional[AddressTemplateType] = None
     default_customs: typing.Optional[CustomsTemplateType] = None
@@ -498,7 +691,7 @@ class TrackingInfoType:
         )
 
 
-@strawberry.type
+@strawberry_django.type(manager.Tracking)
 class TrackerType:
     id: str
     object_type: str
@@ -508,6 +701,8 @@ class TrackerType:
     status: utils.TrackerStatusEnum
     delivered: typing.Optional[bool]
     estimated_delivery: typing.Optional[datetime.date]
+    document_image_url: typing.Optional[str]
+    signature_image_url: typing.Optional[str]
     options: typing.Optional[utils.JSON]
     meta: typing.Optional[utils.JSON]
     shipment: typing.Optional["ShipmentType"]
@@ -535,6 +730,14 @@ class TrackerType:
     def messages(self: manager.Tracking) -> typing.List[MessageType]:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
+    @strawberry.field
+    def tracking_carrier(self: manager.Tracking) -> typing.Optional["ConnectionType"]:
+        return (
+            ConnectionType.parse(self.tracking_carrier)
+            if self.tracking_carrier
+            else None
+        )
+
     @staticmethod
     @utils.authentication_required
     def resolve(info, id: str) -> typing.Optional["TrackerType"]:
@@ -553,6 +756,59 @@ class TrackerType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
+@strawberry_django.type(manager.Manifest)
+class ManifestType:
+    id: str
+    object_type: str
+    test_mode: bool
+    metadata: utils.JSON
+    meta: utils.JSON
+    options: utils.JSON
+    address: AddressType
+    shipment_identifiers: typing.List[str]
+    manifest_url: typing.Optional[str]
+    reference: typing.Optional[str]
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+    @strawberry.field
+    def carrier_id(self: manager.Manifest) -> str:
+        return getattr(self.manifest_carrier, "carrier_id", None)
+
+    @strawberry.field
+    def carrier_name(self: manager.Manifest) -> str:
+        return getattr(self.manifest_carrier, "carrier_name", None)
+
+    @strawberry.field
+    def messages(self: manager.Manifest) -> typing.List[MessageType]:
+        return [MessageType.parse(msg) for msg in self.messages or []]
+
+    @strawberry.field
+    def manifest_carrier(self: manager.Manifest) -> typing.Optional["ConnectionType"]:
+        return (
+            ConnectionType.parse(self.manifest_carrier)
+            if self.manifest_carrier
+            else None
+        )
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info, id: str) -> typing.Optional["ManifestType"]:
+        return manager.Manifest.access_by(info.context.request).filter(id=id).first()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.ManifestFilter] = strawberry.UNSET,
+    ) -> utils.Connection["ManifestType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.ManifestFilter()
+        queryset = filters.ManifestFilters(
+            _filter.to_dict(), manager.Manifest.access_by(info.context.request)
+        ).qs
+        return utils.paginated_connection(queryset, **_filter.pagination())
+
+
 @strawberry.type
 class PaymentType:
     account_number: typing.Optional[str] = None
@@ -560,7 +816,7 @@ class PaymentType:
     currency: typing.Optional[utils.CurrencyCodeEnum] = None
 
 
-@strawberry.type
+@strawberry_django.type(manager.Shipment)
 class ShipmentType:
     id: str
     object_type: str
@@ -611,11 +867,21 @@ class ShipmentType:
         return RateType.parse(self.selected_rate) if self.selected_rate else None
 
     @strawberry.field
+    def selected_rate_carrier(
+        self: manager.Shipment,
+    ) -> typing.Optional["ConnectionType"]:
+        return (
+            ConnectionType.parse(self.selected_rate_carrier)
+            if self.selected_rate_carrier
+            else None
+        )
+
+    @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
         return PaymentType(**self.payment) if self.payment else None
 
     @strawberry.field
-    def messages(self: manager.Tracking) -> typing.List[MessageType]:
+    def messages(self: manager.Shipment) -> typing.List[MessageType]:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
     @staticmethod
@@ -653,6 +919,7 @@ class ServiceZoneType:
     longitude: typing.Optional[float] = None
 
     cities: typing.Optional[typing.List[str]] = None
+    postal_codes: typing.Optional[typing.List[str]] = None
     country_codes: typing.Optional[typing.List[utils.CountryCodeEnum]] = None
 
     @staticmethod
@@ -675,6 +942,7 @@ class ServiceLevelType:
     object_type: str
     service_name: typing.Optional[str]
     service_code: typing.Optional[str]
+    carrier_service_code: typing.Optional[str]
     description: typing.Optional[str]
     active: typing.Optional[bool]
 
@@ -697,6 +965,13 @@ class ServiceLevelType:
     def zones(self: providers.ServiceLevel) -> typing.List[ServiceZoneType]:
         return [ServiceZoneType.parse(zone) for zone in self.zones or []]
 
+    @strawberry.field
+    def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+        try:
+            return lib.to_dict(self.metadata)
+        except:
+            return self.metadata
+
 
 @strawberry.type
 class LabelTemplateType:
@@ -710,7 +985,48 @@ class LabelTemplateType:
     shipment_sample: typing.Optional[utils.JSON]
 
 
-@strawberry.type
+@strawberry_django.type(providers.RateSheet)
+class RateSheetType:
+    object_type: str
+    id: str
+    name: str
+    slug: str
+    carrier_name: utils.CarrierNameEnum
+
+    @strawberry.field
+    def metadata(self: providers.RateSheet) -> typing.Optional[utils.JSON]:
+        try:
+            return lib.to_dict(self.metadata)
+        except:
+            return self.metadata
+
+    @strawberry.field
+    def carriers(self: providers.RateSheet) -> typing.List["ConnectionType"]:
+        return list(map(ConnectionType.parse, self.carriers))
+
+    @strawberry.field
+    def services(self: providers.RateSheet) -> typing.List[ServiceLevelType]:
+        return self.services.all()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(info, id: str) -> typing.Optional["RateSheetType"]:
+        return providers.RateSheet.access_by(info.context.request).filter(id=id).first()
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.RateSheetFilter] = strawberry.UNSET,
+    ) -> utils.Connection["RateSheetType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.RateSheetFilter()
+        queryset = filters.RateSheetFilter(
+            _filter.to_dict(), providers.RateSheet.access_by(info.context.request)
+        ).qs
+        return utils.paginated_connection(queryset, **_filter.pagination())
+
+
+@strawberry_django.type(providers.Carrier)
 class SystemConnectionType:
     id: str
     active: bool
@@ -743,11 +1059,17 @@ class SystemConnectionType:
     @utils.authentication_required
     def resolve_list(
         info,
+        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
     ) -> typing.List["SystemConnectionType"]:
-        return providers.Carrier.system_carriers.filter(
-            active=True,
-            test_mode=getattr(info.context.request, "test_mode", False),
-        )
+        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        connections = filters.CarrierFilters(
+            _filter.to_dict(),
+            providers.Carrier.system_carriers.filter(
+                active=True,
+                test_mode=getattr(info.context.request, "test_mode", False),
+            ),
+        ).qs
+        return connections
 
 
 @strawberry.interface
@@ -760,18 +1082,19 @@ class ConnectionType:
     capabilities: typing.List[str]
     test_mode: bool
 
-    @staticmethod
-    @utils.authentication_required
-    def resolve_list(info) -> typing.List["CarrierConnectionType"]:
-        connections = providers.Carrier.access_by(info.context.request).filter(
-            is_system=False,
-            test_mode=getattr(info.context.request, "test_mode", False),
-        )
+    @strawberry.field
+    def metadata(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+        return getattr(self.metadata, "metadata", None)
 
-        return list(map(ConnectionType.parse, connections))
+    @strawberry.field
+    def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
+        return getattr(self.config, "config", None)
 
     @staticmethod
-    def parse(carrier: providers.Carrier) -> "CarrierConnectionType":
+    def parse(
+        carrier: providers.Carrier,
+        settings_types: dict = None,
+    ) -> "CarrierConnectionType":
         carrier_name = (
             carrier.carrier_name
             if carrier.carrier_name in providers.MODELS
@@ -789,20 +1112,78 @@ class ConnectionType:
             else {}
         )
         display_name = dict(display_name=carrier.carrier_display_name)
+        rate_sheet = (
+            dict(rate_sheet=carrier.settings.rate_sheet)
+            if "rate_sheet" in settings
+            else {}
+        )
 
-        return CarrierSettings[carrier_name](
+        return (settings_types or CarrierSettings)[carrier_name](
             id=carrier.id,
             active=carrier.active,
             carrier_name=carrier_name,
             capabilities=carrier.capabilities,
             config=getattr(carrier.config, "config", None),
-            **{**settings, **services, **display_name},
+            **{**settings, **services, **display_name, **rate_sheet},
+        )
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list_legacy(
+        info,
+        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
+    ) -> typing.List["CarrierConnectionType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        connections = filters.CarrierFilters(
+            _filter.to_dict(),
+            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+        ).qs
+
+        return list(map(ConnectionType.parse, connections))
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve(
+        info,
+        id: str,
+    ) -> typing.Optional["CarrierConnectionType"]:
+        connection = (
+            providers.Carrier.access_by(info.context.request).filter(id=id).first()
+        )
+        return ConnectionType.parse(connection) if connection else None
+
+    @staticmethod
+    @utils.authentication_required
+    def resolve_list(
+        info,
+        filter: typing.Optional[inputs.CarrierFilter] = strawberry.UNSET,
+    ) -> utils.Connection["CarrierConnectionType"]:
+        _filter = filter if not utils.is_unset(filter) else inputs.CarrierFilter()
+        queryset = filters.CarrierFilters(
+            _filter.to_dict(),
+            providers.Carrier.access_by(info.context.request).filter(is_system=False),
+        ).qs
+        connections = utils.paginated_connection(queryset, **_filter.pagination())
+
+        return utils.Connection(
+            page_info=connections.page_info,
+            edges=[
+                utils.Edge(
+                    node=ConnectionType.parse(edge.node),
+                    cursor=edge.cursor,
+                )
+                for edge in connections.edges
+            ],
         )
 
 
 def create_carrier_settings_type(name: str, model):
     _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-    EXCLUDED_FIELDS = ["cache"]
+    EXCLUDED_FIELDS = [
+        "cache",
+        "sscc_count",
+        "shipment_count",
+    ]
 
     @strawberry.type
     class _Settings(ConnectionType):
@@ -810,13 +1191,13 @@ def create_carrier_settings_type(name: str, model):
         config: typing.Optional[utils.JSON] = None
 
         if hasattr(model, "account_number"):
-            account_number: typing.Optional[str] = strawberry.UNSET
+            account_number: typing.Optional[str] = None
 
         if hasattr(model, "account_country_code"):
-            account_country_code: typing.Optional[str] = strawberry.UNSET
+            account_country_code: typing.Optional[str] = None
 
         if hasattr(model, "label_template"):
-            label_template: typing.Optional[LabelTemplateType] = strawberry.UNSET
+            label_template: typing.Optional[LabelTemplateType] = None
 
         if hasattr(model, "services"):
 
@@ -825,6 +1206,9 @@ def create_carrier_settings_type(name: str, model):
                 self: providers.Carrier,
             ) -> typing.Optional[typing.List[ServiceLevelType]]:
                 return self.services.all()
+
+        if hasattr(model, "rate_sheet"):
+            rate_sheet: typing.Optional[RateSheetType] = None
 
     annotations = {
         **getattr(_RawSettings, "__annotations__", {}),
@@ -849,7 +1233,10 @@ def create_carrier_settings_type(name: str, model):
                 "__annotations__": {
                     k: (
                         typing.Optional[v]
-                        if serializers.is_field_optional(model, k)
+                        if (
+                            k not in ConnectionType.__annotations__
+                            or serializers.is_field_optional(model, k)
+                        )
                         else v
                     )
                     for k, v in annotations.items()

@@ -1,75 +1,46 @@
-from typing import List, Tuple
-from karrio.schemas.fedex.ship_service_v26 import (
-    DeleteShipmentRequest,
-    TrackingId,
-    TransactionDetail,
-    VersionId,
-    DeletionControlType,
-    TrackingIdType,
-)
-from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
-from karrio.core.utils import (
-    Element,
-    Serializable,
-    create_envelope,
-)
-from karrio.providers.fedex.error import parse_error_response
-from karrio.providers.fedex.utils import Settings, default_request_serializer
+import karrio.schemas.fedex.cancel_request as fedex
+import typing
 import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.fedex.error as error
+import karrio.providers.fedex.utils as provider_utils
+import karrio.providers.fedex.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    _response: lib.Deserializable[Element],
-    settings: Settings,
-) -> Tuple[ConfirmationDetails, List[Message]]:
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
-    errors = parse_error_response(response, settings)
-    success = len(errors) == 0
-    confirmation: ConfirmationDetails = (
-        ConfirmationDetails(
+    messages = error.parse_error_response(response, settings)
+    success = lib.failsafe(lambda: response["output"]["cancelledShipment"])
+
+    confirmation = (
+        models.ConfirmationDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            success=success,
             operation="Cancel Shipment",
+            success=success,
         )
-        if success
+        if success is True
         else None
     )
 
-    return confirmation, errors
+    return confirmation, messages
 
 
 def shipment_cancel_request(
-    payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable:
-    tracking_type = next(
-        (t for t in list(TrackingIdType) if t.name.lower() in payload.service),
-        TrackingIdType.EXPRESS,
-    ).value
-    deletion_type = DeletionControlType[
-        payload.options.get("deletion_type", "DELETE_ALL_PACKAGES")
-    ].value
-
-    request = create_envelope(
-        body_content=DeleteShipmentRequest(
-            WebAuthenticationDetail=settings.webAuthenticationDetail,
-            ClientDetail=settings.clientDetail,
-            TransactionDetail=TransactionDetail(
-                CustomerTransactionId="Delete Shipment"
-            ),
-            Version=VersionId(ServiceId="ship", Major=23, Intermediate=0, Minor=0),
-            ShipTimestamp=None,
-            TrackingId=TrackingId(
-                TrackingIdType=tracking_type,
-                FormId=None,
-                UspsApplicationId=None,
-                TrackingNumber=payload.shipment_identifier,
-            ),
-            DeletionControl=deletion_type,
-        )
+    payload: models.ShipmentCancelRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    request = fedex.CancelRequestType(
+        accountNumber=fedex.AccountNumberType(
+            value=settings.account_number,
+        ),
+        emailShipment=None,
+        senderCountryCode=None,
+        deletionControl="DELETE_ALL_PACKAGES",
+        trackingNumber=payload.shipment_identifier,
     )
 
-    return Serializable(
-        request,
-        default_request_serializer("v23", 'xmlns:v23="http://fedex.com/ws/ship/v23"'),
-    )
+    return lib.Serializable(request, lib.to_dict)

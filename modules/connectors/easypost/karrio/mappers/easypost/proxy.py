@@ -1,28 +1,27 @@
-from typing import List, Tuple
-from karrio.core.utils import DP, request as http
-from karrio.api.proxy import Proxy as BaseProxy
-from karrio.core.utils.helpers import exec_async
-from karrio.mappers.easypost.settings import Settings
-from karrio.core.utils.serializable import Serializable, Deserializable
+import typing
+import karrio.lib as lib
+import karrio.api.proxy as base
+import karrio.mappers.easypost.settings as provider_settings
 
 
-class Proxy(BaseProxy):
-    settings: Settings
+class Proxy(base.Proxy):
+    settings: provider_settings.Settings
 
-    def get_rates(self, request: Serializable) -> Deserializable:
+    def get_rates(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(
-            path="/shipments", request=Serializable(request.serialize(), DP.jsonify)
+            path="/shipments",
+            request=lib.Serializable(request.serialize(), lib.to_json),
         )
 
-        return Deserializable(response, DP.to_dict)
+        return lib.Deserializable(response, lib.to_dict)
 
-    def create_shipment(self, request: Serializable) -> Deserializable:
+    def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         payload = request.serialize()
 
         def create(request) -> str:
-            response = DP.to_dict(
+            response = lib.to_dict(
                 self._send_request(
-                    path="/shipments", request=Serializable(request, DP.jsonify)
+                    path="/shipments", request=lib.Serializable(request, lib.to_json)
                 )
             )
 
@@ -38,7 +37,7 @@ class Proxy(BaseProxy):
                 ),
                 None,
             )
-            data = DP.to_dict(
+            data = lib.to_dict(
                 {
                     "rate": {"id": rate_id},
                     "insurance": payload.get("insurance"),
@@ -50,40 +49,44 @@ class Proxy(BaseProxy):
 
             return self._send_request(
                 path=f"/shipments/{response['id']}/buy",
-                request=Serializable(data, DP.jsonify),
+                request=lib.Serializable(data, lib.to_json),
             )
 
         response = create(payload["data"])
-        return Deserializable(response, DP.to_dict)
+        return lib.Deserializable(response, lib.to_dict)
 
-    def cancel_shipment(self, request: Serializable) -> Deserializable:
+    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = self._send_request(path=f"/shipments/{request.serialize()}/refund")
 
-        return Deserializable(response, DP.to_dict)
+        return lib.Deserializable(response, lib.to_dict)
 
-    def get_tracking(self, requests: Serializable) -> Deserializable:
+    def get_tracking(self, requests: lib.Serializable) -> lib.Deserializable:
         track = lambda request: (
             request["tracking_code"],
             self._send_request(
                 **(
-                    dict(path="/trackers", request=Serializable(request, DP.jsonify))
+                    dict(
+                        path="/trackers", request=lib.Serializable(request, lib.to_json)
+                    )
                     if request.get("tracker_id") is None
                     else dict(path=f"/trackers/{request['tracker_id']}", method="GET")
                 )
             ),
         )
 
-        responses: List[Tuple[str, str]] = exec_async(track, requests.serialize())
-        return Deserializable(
+        responses: typing.List[typing.Tuple[str, str]] = lib.run_asynchronously(
+            track, requests.serialize()
+        )
+        return lib.Deserializable(
             responses,
-            lambda res: [(key, DP.to_dict(response)) for key, response in res],
+            lambda res: [(key, lib.to_dict(response)) for key, response in res],
         )
 
     def _send_request(
-        self, path: str, request: Serializable = None, method: str = "POST"
+        self, path: str, request: lib.Serializable = None, method: str = "POST"
     ) -> str:
         data: dict = dict(data=request.serialize()) if request is not None else dict()
-        return http(
+        return lib.request(
             **{
                 "url": f"{self.settings.server_url}{path}",
                 "trace": self.trace_as("json"),

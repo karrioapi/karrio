@@ -5,6 +5,7 @@ import karrio.core.units as units
 from karrio.core.models import (
     DocumentDetails,
     Documents,
+    Images,
     Parcel,
     Message,
     Address as BaseAddress,
@@ -26,6 +27,9 @@ from karrio.core.models import (
     TrackingInfo,
     DocumentFile,
     DocumentUploadRequest,
+    ManifestRequest,
+    ManifestDetails,
+    ManifestDocument,
 )
 
 
@@ -99,7 +103,6 @@ class Address(BaseAddress):
     phone_number: str = None
 
     state_code: str = None
-    suburb: str = None
     residential: bool = False
 
     address_line1: str = ""
@@ -122,6 +125,7 @@ class PickupRequest(BasePickupRequest):
     parcels: typing.List[Parcel] = jstruct.JList[Parcel]
     instruction: str = None
     package_location: str = None
+    metadata: typing.Dict = {}
     options: typing.Dict = {}
 
 
@@ -226,13 +230,13 @@ class Shipment:
     tracking_url: str = None
     tracker_id: str = None
     status: str = ""
+    metadata: typing.Dict = {}
     meta: dict = {}
     id: str = None
 
-    metadata: typing.Dict = {}
+    messages: typing.List[Message] = jstruct.JList[Message]
     created_at: str = None
     test_mode: bool = None
-    messages: typing.List[Message] = jstruct.JList[Message]
 
 
 @attr.s(auto_attribs=True)
@@ -250,8 +254,12 @@ class Pickup:
     pickup_charge: ChargeDetails = jstruct.JStruct[ChargeDetails]
     instruction: str = None
     package_location: str = None
+    metadata: typing.Dict = {}
     options: typing.Dict = {}
+    meta: dict = {}
     id: str = None
+
+    messages: typing.List[Message] = jstruct.JList[Message]
     test_mode: bool = None
 
 
@@ -272,7 +280,8 @@ class Tracking:
     events: typing.List[TrackingEvent] = jstruct.JList[TrackingEvent]
 
     status: str = "unknown"
-    info: TrackingInfo = None
+    info: TrackingInfo = jstruct.JStruct[TrackingInfo]
+    images: Images = jstruct.JStruct[Images]
     estimated_delivery: str = None
     delivered: bool = None
     test_mode: bool = None
@@ -293,6 +302,25 @@ class DocumentUploadResponse:
     meta: dict = None
     id: str = None
     messages: typing.List[Message] = jstruct.JList[Message]
+
+
+@attr.s(auto_attribs=True)
+class Manifest:
+    carrier_id: str
+    carrier_name: str
+
+    shipment_identifiers: typing.List[str]
+    address: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
+    doc: ManifestDocument = jstruct.JStruct[ManifestDocument]
+
+    reference: str = None
+    metadata: typing.Dict = {}
+    options: typing.Dict = {}
+    meta: dict = {}
+    id: str = None
+
+    messages: typing.List[Message] = jstruct.JList[Message]
+    test_mode: bool = None
 
 
 @attr.s(auto_attribs=True)
@@ -317,6 +345,12 @@ class RateResponse:
 class TrackingResponse:
     messages: typing.List[Message] = jstruct.JList[Message]
     tracking: Tracking = jstruct.JStruct[Tracking]
+
+
+@attr.s(auto_attribs=True)
+class ManifestResponse:
+    messages: typing.List[Message] = jstruct.JList[Message]
+    manifest: Manifest = jstruct.JStruct[Manifest]
 
 
 @attr.s(auto_attribs=True)

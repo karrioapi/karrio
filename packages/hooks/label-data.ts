@@ -1,11 +1,10 @@
-import { commodityMatch, errorToMessages, getShipmentCommodities, gqlstr, isEqual, isNone, isNoneOrEmpty, toNumber, useLocation } from "@karrio/lib";
-import { AddressType, Collection, CommodityType, CustomsType, NotificationType, ParcelType, ShipmentType } from "@karrio/types";
+import { AddressType, Collection, CommodityType, CustomsType, DEFAULT_CUSTOMS_CONTENT, NotificationType, ParcelType, ShipmentType } from "@karrio/types";
+import { commodityMatch, errorToMessages, getShipmentCommodities, getURLSearchParams, gqlstr, isEqual, isNone, isNoneOrEmpty, toNumber, useLocation } from "@karrio/lib";
 import { get_shipment_data, GET_SHIPMENT_DATA, LabelTypeEnum, PaidByEnum } from "@karrio/types";
-import { DEFAULT_CUSTOMS_CONTENT } from "@karrio/ui/forms/customs-info-form";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { useLoader } from "@karrio/ui/components/loader";
 import { useShipmentMutation } from "./shipment";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAppMode } from "./app-mode";
 import { useKarrio } from "./karrio";
 import moment from "moment";
@@ -42,30 +41,39 @@ function reducer(state: any, { name, value }: { name: string, value: Partial<Shi
 }
 
 
-export function useLabelData(id: string) {
+export function useLabelData(id: string, initialData?: ShipmentType) {
   const karrio = useKarrio();
   const mutation = useShipmentMutation();
-  const [shipment, dispatch] = React.useReducer(reducer, DEFAULT_SHIPMENT_DATA);
+  const [shipment, dispatch] = React.useReducer(reducer, (initialData || DEFAULT_SHIPMENT_DATA), () => (initialData || DEFAULT_SHIPMENT_DATA));
 
   // Queries
   const query = useQuery({
     queryKey: ['label', id],
-    queryFn: () => (
-      id === 'new'
-        ? { shipment }
-        : karrio.graphql.request<get_shipment_data>(gqlstr(GET_SHIPMENT_DATA), { variables: { id } })
-    ),
+    queryFn: async () => {
+      const response = await (
+        id === 'new'
+          ? Promise.resolve({ shipment })
+          : karrio.graphql.request<get_shipment_data>(gqlstr(GET_SHIPMENT_DATA), { variables: { id } })
+      );
+
+      return response;
+    },
+    initialData: !!initialData ? { shipment: initialData } : undefined,
+    staleTime: 150000,
     enabled: !!id,
   });
+
   const updateLabelData = (data: Partial<ShipmentType> = {}) => {
     dispatch({ name: "partial", value: data });
+    if (id === 'new') query.refetch();
   };
 
   React.useEffect(() => {
     if (id !== 'new' && isEqual(shipment, DEFAULT_SHIPMENT_DATA) && !isNone(query.data?.shipment)) {
       dispatch({ name: "full", value: query!.data!.shipment as ShipmentType })
     }
-  }, [query.data?.shipment])
+  }, [query.data?.shipment]);
+  React.useEffect(() => { if (!query.isFetched || !query.isLoading) query.refetch(); }, [id]);
 
   return {
     query,
@@ -76,12 +84,12 @@ export function useLabelData(id: string) {
 }
 
 
-export function useLabelDataMutation(id: string) {
+export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   const loader = useLoader();
   const router = useLocation();
   const notifier = useNotifier();
   const { basePath } = useAppMode();
-  const { mutation, ...state } = useLabelData(id);
+  const { mutation, ...state } = useLabelData(id, initialData);
   const [updateRate, setUpdateRate] = React.useState<boolean>(false);
 
   // state checks
@@ -245,7 +253,7 @@ export function useLabelDataMutation(id: string) {
     }
 
     // if it is not a draft and hasn't been manually updated already
-    if (uptateServerState) {
+    if (uptateServerState && !mutation.updateShipment.isLoading) {
       try {
         const invalidCustoms = (
           "customs" in changes && [
@@ -268,8 +276,9 @@ export function useLabelDataMutation(id: string) {
             }
           });
       } catch (error: any) {
-        updateShipment({ messages: errorToMessages(error) });
+        state.updateLabelData({ messages: errorToMessages(error) });
       }
+      // invalidateCache();
     }
   };
   const addParcel = async (data: ParcelType) => {
@@ -416,7 +425,8 @@ export function useLabelDataMutation(id: string) {
   };
 
   // requests
-  const fetchRates = async () => {
+  const fetchRates = useMutation(async () => {
+    if (mutation.fetchRates.isLoading) return;
     const { messages, rates, ...data } = state.shipment;
 
     try {
@@ -424,11 +434,12 @@ export function useLabelDataMutation(id: string) {
       const { rates, messages } = await mutation.fetchRates.mutateAsync(data as ShipmentType);
       updateShipment({ rates, messages } as Partial<ShipmentType>);
     } catch (error: any) {
-      updateShipment({ rates: [], messages: errorToMessages(error) } as Partial<ShipmentType>);
+      updateShipment({ rates: [], messages: errorToMessages(error) });
     }
-    setTimeout(() => loader.setLoading(false), 100);
-  };
-  const buyLabel = async (rate: ShipmentType['rates'][0]) => {
+    loader.setLoading(false);
+  });
+  const buyLabel = useMutation(async (rate: ShipmentType['rates'][0], action: { redirect: boolean } = { redirect: true }) => {
+    if (mutation.buyLabel.isLoading) return;
     const { messages, rates, ...data } = state.shipment;
     const selection = (
       isLocalDraft(state.shipment.id)
@@ -440,13 +451,16 @@ export function useLabelDataMutation(id: string) {
       loader.setLoading(true);
       const { id } = await mutation.buyLabel.mutateAsync({ ...data, ...selection } as any);
       notifier.notify({ type: NotificationType.success, message: 'Label successfully purchased!' });
-      router.push(`${basePath}/shipments/${id}`);
+
+      !!action.redirect && router.push(`${basePath}/shipments/${id}`);
     } catch (error: any) {
       loader.setLoading(false);
-      updateShipment({ messages: errorToMessages(error) }, { manuallyUpdated: true });
+      updateShipment({ messages: errorToMessages(error) });
     }
-  };
-  const saveDraft = async () => {
+    loader.setLoading(false);
+  });
+  const saveDraft = useMutation(async (action: { redirect?: boolean, notify?: boolean } = { redirect: true, notify: true }) => {
+    if (mutation.createShipment.isLoading) return;
     const { ...data } = state.shipment;
 
     try {
@@ -456,28 +470,36 @@ export function useLabelDataMutation(id: string) {
           ? await mutation.createShipment.mutateAsync(data as ShipmentType)
           : state.shipment
       );
-      notifier.notify({ type: NotificationType.success, message: 'Draft successfully saved!' });
-      router.push(`${basePath}/create_label?shipment_id=${id}`);
+
+      if (action.notify) {
+        notifier.notify({ type: NotificationType.success, message: 'Draft successfully saved!' });
+      }
+      if (!!action.redirect) {
+        const query = (new URLSearchParams({ ...getURLSearchParams(), shipment_id: id })).toString();
+        router.push(`${location.pathname}?${query}`);
+      }
     } catch (error: any) {
       updateShipment({ messages: errorToMessages(error) } as Partial<ShipmentType>);
       loader.setLoading(false);
     }
-  };
+    loader.setLoading(false);
+  });
 
   React.useEffect(() => {
-    if (updateRate && hasRateRequirements(state.shipment)) {
+    if (!state.query.isFetching && !mutation.fetchRates.isLoading && updateRate && hasRateRequirements(state.shipment)) {
       setUpdateRate(false);
-      fetchRates();
+      fetchRates.mutateAsync();
     }
-  }, [state.shipment]);
+  }, [state.query]);
 
   return {
     state,
+    buyLabel,
+    saveDraft,
+    fetchRates,
     addItems,
     addParcel,
     addCommodities,
-    buyLabel,
-    fetchRates,
     updateItem,
     updateParcel,
     updateShipment,
@@ -486,6 +508,5 @@ export function useLabelDataMutation(id: string) {
     removeCommodity,
     removeParcel,
     removeItem,
-    saveDraft,
   };
 }

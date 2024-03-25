@@ -159,6 +159,15 @@ def add_extension(
                 f"{PROVIDERS_DIR.substitute(id=id)}/document.py"
             )
 
+        if "manifest" in features:
+            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_manifest.py"
+            )
+
+            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/manifest.py"
+            )
+
         if "shipping" in features:
             templates.TEST_SHIPMENT_TEMPLATE.stream(**context).dump(
                 f"{TESTS_DIR.substitute(id=id)}/test_shipment.py"
@@ -268,6 +277,15 @@ def add_features(
 
             templates.PROVIDER_DOCUMENT_UPLOAD_TEMPLATE.stream(**context).dump(
                 f"{PROVIDERS_DIR.substitute(id=id)}/document.py"
+            )
+
+        if "manifest" in features:
+            templates.TEST_MANIFEST_TEMPLATE.stream(**context).dump(
+                f"{TESTS_DIR.substitute(id=id)}/test_manifest.py"
+            )
+
+            templates.PROVIDER_MANIFEST_TEMPLATE.stream(**context).dump(
+                f"{PROVIDERS_DIR.substitute(id=id)}/manifest.py"
             )
 
         if "shipping" in features:

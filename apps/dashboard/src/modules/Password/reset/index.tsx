@@ -80,14 +80,14 @@ const Component: React.FC<{}> = () => {
 
             <InputField
               label="Password" name="new_password1" type="password"
-              placeholder="New Password" fieldClass="mt-3"
+              placeholder="New Password" wrapperClass="mt-3"
               onChange={handleChange} value={data.new_password1} required>
               {renderFieldError((_: string) => _ === 'new_password1', error)}
             </InputField>
 
             <InputField
               label="Confirm Password" name="new_password2" type="password"
-              placeholder="Confirm Password" fieldClass="mt-3"
+              placeholder="Confirm Password" wrapperClass="mt-3"
               onChange={handleChange} value={data.new_password2} required>
               {renderFieldError((_: string) => _ === 'new_password2', error)}
             </InputField>

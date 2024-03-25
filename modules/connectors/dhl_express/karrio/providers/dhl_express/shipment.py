@@ -1,3 +1,4 @@
+from karrio.schemas.fedex.rating_request import NumberType
 import karrio.schemas.dhl_express.ship_val_global_req_10_0 as dhl
 import karrio.schemas.dhl_express.ship_val_global_res_10_0 as dhl_res
 import karrio.schemas.dhl_express.datatypes_global_v10 as dhl_global
@@ -102,19 +103,16 @@ def shipment_request(
     is_international = shipper.country_code != recipient.country_code
     is_from_EU = payload.shipper.country_code in units.EUCountry
     is_to_EU = payload.recipient.country_code in units.EUCountry
-    is_dutiable = (
-        is_international
-        and not is_document
-        and not (is_from_EU and is_to_EU)
-    )
+    is_dutiable = is_international and not is_document and not (is_from_EU and is_to_EU)
     options = lib.to_shipping_options(
         payload.options,
-        is_dutiable=is_dutiable,
         package_options=packages.options,
-        shipper_country=payload.shipper.country_code,
+        origin_country=shipper.country_code,
         initializer=provider_units.shipping_options_initializer,
     )
-
+    option_items = [
+        option for _, option in options.items() if option.state is not False
+    ]
     duty = customs.duty or models.Duty(paid_by="sender")
     content = packages[0].parcel.content or customs.content_description or "N/A"
     reference = payload.reference or getattr(payload, "id", None)
@@ -159,13 +157,25 @@ def shipment_request(
             StreetName=recipient.street_name,
             BuildingName=None,
             StreetNumber=recipient.street_number,
-            RegistrationNumbers=None,
+            RegistrationNumbers=(
+                dhl.RegistrationNumbers(
+                    RegistrationNumber=[
+                        dhl.RegistrationNumber(
+                            Number=recipient.tax_id,
+                            NumberTypeCode="VAT",
+                            NumberIssuerCountryCode=None,
+                        )
+                    ]
+                )
+                if recipient.tax_id is not None
+                else None
+            ),
             BusinessPartyTypeCode=None,
         ),
         Commodity=(
             [
                 dhl.Commodity(
-                    CommodityCode=c.sku or "N/A",
+                    CommodityCode=c.hs_code or c.sku or "N/A",
                     CommodityName=lib.text(c.title or c.description, max=35),
                 )
                 for c in customs.commodities
@@ -187,7 +197,16 @@ def shipment_request(
                 ShipperIDType=None,
                 TermsOfTrade=customs.incoterm or "DDP",
                 CommerceLicensed=None,
-                Filing=None,
+                Filing=(
+                    dhl_global.Filing(
+                        FilingType=dhl_global.FilingType.AES_4.value,
+                        FTSR=None,
+                        ITN=None,
+                        AES4EIN=customs.options.aes.state,
+                    )
+                    if customs.options.aes.state is not None
+                    else None
+                ),
             )
             if is_dutiable
             else None
@@ -216,7 +235,10 @@ def shipment_request(
                 Remarks=customs.content_description,
                 DestinationPort=None,
                 TermsOfPayment=None,
-                PayerGSTVAT=customs.duty_billing_address.state_tax_id,
+                PayerGSTVAT=(
+                    customs.options.vat_registration_number.state
+                    or customs.duty_billing_address.state_tax_id
+                ),
                 SignatureImage=None,
                 ReceiverReference=None,
                 ExporterId=None,
@@ -231,7 +253,7 @@ def shipment_request(
                         ),
                         Value=item.value_amount or 0.0,
                         IsDomestic=None,
-                        CommodityCode=item.sku or "N/A",
+                        CommodityCode=item.hs_code,
                         ScheduleB=None,
                         ECCN=None,
                         Weight=dhl.WeightType(
@@ -281,7 +303,7 @@ def shipment_request(
                         ]
                     )
                     if (
-                        options.dhl_paperless_trade.state
+                        options.dhl_paperless_trade.state == True
                         and any(options.doc_references.state or [])
                     )
                     else None
@@ -386,8 +408,21 @@ def shipment_request(
             StreetName=shipper.street_name,
             BuildingName=None,
             StreetNumber=shipper.street_number,
-            RegistrationNumbers=None,
+            RegistrationNumbers=(
+                dhl.RegistrationNumbers(
+                    RegistrationNumber=[
+                        dhl.RegistrationNumber(
+                            Number=shipper.tax_id,
+                            NumberTypeCode="VAT",
+                            NumberIssuerCountryCode=None,
+                        )
+                    ]
+                )
+                if shipper.tax_id is not None
+                else None
+            ),
             BusinessPartyTypeCode=None,
+            EORI_No=customs.options.eori_number.state,
         ),
         SpecialService=[
             dhl.SpecialService(
@@ -397,7 +432,7 @@ def shipment_request(
                     currency if lib.to_money(svc.state) is not None else None
                 ),
             )
-            for _, svc in options.items()
+            for svc in option_items
         ],
         Notification=(
             dhl.Notification(
@@ -426,7 +461,8 @@ def shipment_request(
                 ]
             )
             if (
-                options.dhl_paperless_trade.state and any(options.doc_files.state or [])
+                options.dhl_paperless_trade.state == True
+                and any(options.doc_files.state or [])
             )
             else None
         ),

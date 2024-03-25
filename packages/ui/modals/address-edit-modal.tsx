@@ -1,10 +1,10 @@
-import { AddressTemplateType, AddressType, NotificationType } from '@karrio/types';
-import { AddressForm, DEFAULT_ADDRESS_CONTENT } from '../forms/address-form';
+import { AddressTemplateType, AddressType, DEFAULT_ADDRESS_CONTENT, NotificationType } from '@karrio/types';
 import { useAddressTemplateMutation } from '@karrio/hooks/address';
 import { CheckBoxField } from '../components/checkbox-field';
 import { Notifier, Notify } from '../components/notifier';
 import { InputField } from '../components/input-field';
 import React, { useContext, useState } from 'react';
+import { AddressForm } from '../forms/address-form';
 import { isNone, useLocation } from '@karrio/lib';
 import { Loading } from '../components/loader';
 
@@ -124,7 +124,8 @@ export const AddressEditModal: React.FC<AddressEditModalComponent> = ({ children
                     onChange={handleChange}
                     defaultValue={template?.label}
                     className="is-small"
-                    fieldClass="column mb-0 px-2 py-2"
+                    wrapperClass="px-2 py-2"
+                    fieldClass="column mb-0 p-0"
                     required />
                 </div>
                 <div className="columns mb-1">

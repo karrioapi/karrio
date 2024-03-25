@@ -1,12 +1,12 @@
-import { CreateParcelTemplateInput, UpdateParcelTemplateInput } from '@karrio/types';
-import { ParcelForm, DEFAULT_PARCEL_CONTENT } from '../forms/parcel-form';
+import { CreateParcelTemplateInput, DEFAULT_PARCEL_CONTENT, UpdateParcelTemplateInput } from '@karrio/types';
 import { NotificationType, ParcelTemplateType } from '@karrio/types';
 import { useParcelTemplateMutation } from '@karrio/hooks/parcel';
-import { deepEqual, isNone, useLocation } from '@karrio/lib';
+import { isEqual, isNone, useLocation } from '@karrio/lib';
 import { CheckBoxField } from '../components/checkbox-field';
 import { Notifier, Notify } from '../components/notifier';
 import { InputField } from '../components/input-field';
 import React, { useContext, useState } from 'react';
+import { ParcelForm } from '../forms/parcel-form';
 import { Loading } from '../components/loader';
 
 const DEFAULT_TEMPLATE_CONTENT = {
@@ -47,7 +47,7 @@ export const ParcelEditModal: React.FC<ParcelEditModalComponent> = ({ children }
     return !isValid || (
       template.label === defaultValue.label &&
       template.is_default === defaultValue.is_default &&
-      deepEqual(template?.parcel, defaultValue.parcel)
+      isEqual(template?.parcel, defaultValue.parcel)
     );
   };
 
@@ -121,7 +121,8 @@ export const ParcelEditModal: React.FC<ParcelEditModalComponent> = ({ children }
                       onChange={e => setTemplate({ ...template, label: e.target.value })}
                       defaultValue={template.label}
                       className="is-small"
-                      fieldClass="column mb-0 px-1 py-2"
+                      wrapperClass="px-1 py-2"
+                      fieldClass="column mb-0 p-0"
                       required
                     />
                   </div>

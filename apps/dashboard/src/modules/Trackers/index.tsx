@@ -1,10 +1,10 @@
 import { TrackerModalProvider, TrackerModalContext } from "@karrio/ui/modals/track-shipment-modal";
 import { TrackingPreview, TrackingPreviewContext } from "@/components/tracking-preview";
 import { ConfirmModal, ConfirmModalContext } from "@karrio/ui/modals/confirm-modal";
-import { getURLSearchParams, isNone, isNoneOrEmpty } from "@karrio/lib";
+import { formatRef, getURLSearchParams, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/filters/trackers-filter";
-import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
+import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { DashboardLayout } from "@/layouts/dashboard-layout";
@@ -28,7 +28,7 @@ export default function TrackersPage(pageProps: any) {
     const { previewTracker } = useContext(TrackingPreviewContext);
     const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
     const [initialized, setInitialized] = React.useState(false);
-    const context = useTrackers({ setVariablesToURL: true });
+    const context = useTrackers({ setVariablesToURL: true, preloadNextPage: true });
     const { query: { data: { trackers } = {}, ...query }, filter, setFilter } = context;
 
     const remove = (id: string) => async () => {
@@ -57,7 +57,7 @@ export default function TrackersPage(pageProps: any) {
 
     return (
       <>
-        <header className="px-0 pb-3 pt-6 is-flex is-justify-content-space-between">
+        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
           <span className="title is-4">Trackers</span>
           <div>
             <TrackersFilter context={context} />
@@ -98,8 +98,7 @@ export default function TrackersPage(pageProps: any) {
 
               <tbody className="trackers-table">
                 <tr>
-                  <td className="carrier is-size-7 has-text-centered">CARRIER</td>
-                  <td className="tracking-number is-size-7">TRACKING #</td>
+                  <td className="service is-size-7">SHIPPING SERVICE</td>
                   <td className="status"></td>
                   <td className="last-event is-size-7">LAST EVENT</td>
                   <td className="date is-size-7"></td>
@@ -108,14 +107,22 @@ export default function TrackersPage(pageProps: any) {
 
                 {(trackers?.edges || []).map(({ node: tracker }) => (
                   <tr key={tracker.id} className="items" onClick={() => previewTracker(tracker)}>
-                    <td className="carrier is-vcentered has-text-centered p-2">
-                      <CarrierBadge
-                        className="has-background-primary has-text-weight-bold has-text-white-bis is-size-7"
-                        carrier_name={tracker.meta.carrier || tracker.carrier_name}
-                      />
-                    </td>
-                    <td className="tracking-number is-vcentered p-1">
-                      <p className="is-subtitle is-size-7 has-text-weight-semibold has-text-info">{tracker.tracking_number}</p>
+                    <td className="service is-vcentered py-1 px-0 is-size-7 has-text-weight-bold has-text-grey">
+                      <div className="icon-text">
+                        <CarrierImage
+                          carrier_name={tracker.meta?.carrier || tracker.carrier_name}
+                          containerClassName="mt-1 ml-1 mr-2" height={28} width={28}
+                          text_color={tracker.tracking_carrier?.config?.text_color}
+                          background={tracker.tracking_carrier?.config?.brand_color}
+                        />
+                        <div className="text-ellipsis" style={{ maxWidth: '190px', lineHeight: '16px' }}>
+                          <span className="has-text-info has-text-weight-bold">{tracker.tracking_number}</span>
+                          <br />
+                          <span className="text-ellipsis">
+                            {formatRef(tracker.info?.shipment_service || tracker.shipment?.meta?.service_name || tracker.shipment?.service || `SERVICE UNKNOWN`)}
+                          </span>
+                        </div>
+                      </div>
                     </td>
                     <td className="status is-vcentered">
                       <StatusBadge status={tracker.status as string} style={{ width: '100%' }} />

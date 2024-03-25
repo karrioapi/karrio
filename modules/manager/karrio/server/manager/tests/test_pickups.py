@@ -24,7 +24,6 @@ class TestFixture(TestShipmentFixture):
                 "email": "john@a.com",
                 "phone_number": "514 000 0000",
                 "state_code": "NB",
-                "suburb": None,
                 "street_number": None,
                 "residential": False,
                 "address_line1": "125 Church St",
@@ -192,7 +191,6 @@ PICKUP_RESPONSE = {
         "email": "john@a.com",
         "phone_number": "+1 514-000-0000",
         "state_code": "NB",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "125 Church St",
@@ -225,6 +223,7 @@ PICKUP_RESPONSE = {
     "package_location": "At the main entrance hall",
     "options": {},
     "metadata": {},
+    "meta": ANY,
 }
 
 PICKUP_UPDATE_RESPONSE = {
@@ -251,7 +250,6 @@ PICKUP_UPDATE_RESPONSE = {
         "email": "john@a.com",
         "phone_number": "514 000 0000",
         "state_code": "NB",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "125 Church St",
@@ -284,6 +282,7 @@ PICKUP_UPDATE_RESPONSE = {
     "package_location": "At the main entrance hall next to the distributor",
     "options": {},
     "metadata": {},
+    "meta": ANY,
 }
 
 PICKUP_CANCEL_RESPONSE = {
@@ -308,7 +307,6 @@ PICKUP_CANCEL_RESPONSE = {
         "email": "john@a.com",
         "phone_number": "514 000 0000",
         "state_code": "NB",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "125 Church St",
@@ -343,4 +341,5 @@ PICKUP_CANCEL_RESPONSE = {
     "options": {},
     "metadata": {},
     "test_mode": True,
+    "meta": ANY,
 }

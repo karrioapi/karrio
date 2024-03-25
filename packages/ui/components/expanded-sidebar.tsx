@@ -2,8 +2,9 @@ import { OrganizationDropdown } from './organization-dropdown';
 import { useAPIMetadata } from '@karrio/hooks/api-metadata';
 import { useRouter } from 'next/dist/client/router';
 import { useAppMode } from '@karrio/hooks/app-mode';
-import { AppLink } from './app-link';
+import { useUser } from '@karrio/hooks/user';
 import React, { useRef } from 'react';
+import { AppLink } from './app-link';
 import getConfig from 'next/config';
 import { p } from '@karrio/lib';
 import Image from 'next/image';
@@ -15,13 +16,16 @@ interface ExpandedSidebarComponent { }
 export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
   const router = useRouter();
   const sidebar = useRef<HTMLDivElement>(null);
+  const dismissAction = useRef<HTMLButtonElement>(null);
+  const { query: { data: { user } = {} } } = useUser();
   const { testMode, basePath, switchMode } = useAppMode();
-  const { metadata: { MULTI_ORGANIZATIONS, ORDERS_MANAGEMENT, DOCUMENTS_MANAGEMENT } } = useAPIMetadata();
-  const [showSettingsMenus, setShowSettingsMenus] = React.useState(false);
+  const { metadata } = useAPIMetadata();
+  const [showResourcesMenus, setShowResourcesMenus] = React.useState(false);
 
   const dismiss = (e: React.MouseEvent) => {
     e.preventDefault();
     sidebar.current?.classList.remove('is-mobile-active');
+    dismissAction.current?.classList.remove('is-mobile-active');
   };
   const isActive = (path: string) => {
     if (path === basePath) return path === router.pathname;
@@ -31,102 +35,116 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
 
   return (
     <div className="plex-sidebar" ref={sidebar}>
-      <div className="sidebar-header pl-5 mb-4">
-        {MULTI_ORGANIZATIONS
+      <div className="sidebar-header pl-5 mb-2">
+        {metadata?.MULTI_ORGANIZATIONS
           ? <OrganizationDropdown />
           : <Image src={p`/icon.svg`} className="mt-1" width="30" height="100" alt="logo" />}
-        <button className="menu-icon v-5 is-open mobile-item is-block mobile-sidebar-trigger ml-2" onClick={dismiss}>
-          <span></span>
+
+        <button className="button sidebar-menu-button" onClick={dismiss} ref={dismissAction}>
+          <span className="icon is-small">
+            <i className="fas fa-times"></i>
+          </span>
         </button>
       </div>
       <div className="sidebar-menu has-slimscroll py-2" style={{ height: "calc(100% - 60px)" }}>
         <AppLink href="/" className={"menu-item " + activeClass(basePath)} shallow={false} prefetch={false}>
-          <i className={`fa fa-truck pr-3 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
-          <span className="has-text-weight-semibold">Shipments</span>
+          <i className={`fa fa-house pr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Home</span>
+        </AppLink>
+
+        <AppLink href="/shipments" className={"menu-item " + activeClass("/shipments")} shallow={false} prefetch={false}>
+          <i className={`fa fa-truck pr-2 ${isActive("/shipments") ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Shipments</span>
         </AppLink>
 
         <AppLink href="/trackers" className={"menu-item " + activeClass("/trackers")} shallow={false} prefetch={false}>
-          <i className={`fa fa-location-arrow pr-3 ${isActive("/trackers") ? "" : 'has-text-grey'}`}></i>
-          <span className="has-text-weight-semibold">Trackers</span>
+          <i className={`fa fa-location-arrow pr-2 ${isActive("/trackers") ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Trackers</span>
         </AppLink>
 
-        {ORDERS_MANAGEMENT &&
+        {metadata?.ORDERS_MANAGEMENT && <>
           <AppLink href="/orders" className={"menu-item " + activeClass("/orders")} shallow={false} prefetch={false}>
-            <i className={`fa fa-inbox pr-3 ${isActive("/orders") ? "" : 'has-text-grey'}`}></i>
-            <span className="has-text-weight-semibold">Orders</span>
-          </AppLink>}
-
-        <AppLink href="/connections" className={"menu-item " + activeClass("/connections")} shallow={false} prefetch={false}>
-          <i className={`fa fa-th-list pr-3 ${isActive("/connections") ? "" : 'has-text-grey'}`}></i>
-          <span className="has-text-weight-semibold">Carriers</span>
-        </AppLink>
-
-        {/* Settings */}
-        <a className="menu-item menu-item my-0" onClick={() => setShowSettingsMenus(!showSettingsMenus)}>
-          <i className={`fa fa-cog pr-3 has-text-grey`}></i>
-          <span className="has-text-weight-semibold">Settings</span>
-        </a>
-
-        {(showSettingsMenus || window.location.pathname.includes('/settings')) && <>
-          <AppLink href="/settings/account" className={"menu-item ml-5 " + activeClass("/settings/account")}>
-            <span>Account</span>
+            <i className={`fa fa-inbox pr-2 ${isActive("/orders") ? "" : 'has-text-grey'}`}></i>
+            <span className="has-text-weight-bold">Orders</span>
           </AppLink>
-
-          <AppLink href="/settings/addresses" className={"menu-item ml-5 " + activeClass("/settings/addresses")} shallow={false} prefetch={false}>
-            <span>Addresses</span>
-          </AppLink>
-
-          <AppLink href="/settings/parcels" className={"menu-item ml-5 " + activeClass("/settings/parcels")} shallow={false} prefetch={false}>
-            <span>Parcels</span>
-          </AppLink>
-
-          {DOCUMENTS_MANAGEMENT && <>
-            <AppLink href="/settings/templates" className={"menu-item ml-5 " + activeClass("/settings/templates")} shallow={false} prefetch={false}>
-              <span>Templates</span>
-            </AppLink>
-          </>}
         </>}
 
-        <hr className="my-3 mx-5" style={{ height: '1px' }} />
+        <AppLink href="/connections" className={"menu-item " + activeClass("/connections")} shallow={false} prefetch={false}>
+          <i className={`fa fa-th-list pr-2 ${isActive("/connections") ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Carriers</span>
+        </AppLink>
+
+        {metadata?.WORKFLOW_MANAGEMENT && <>
+          <AppLink href="/workflows" className={"menu-item " + activeClass("/workflows")} shallow={false} prefetch={false}>
+            <i className={`fa fa-bolt pr-2 ${isActive("/workflows") ? "" : 'has-text-grey'}`}></i>
+            <span className="has-text-weight-bold">Automation</span>
+          </AppLink>
+        </>}
+
+        {/* Settings */}
+        <AppLink href="/settings/account" className={"menu-item " + activeClass("/settings")} shallow={false} prefetch={false}>
+          <i className={`fa fa-cog pr-2 ${isActive("/settings") ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Settings</span>
+        </AppLink>
+
+        <hr className="my-3 mx-3" style={{ height: '1px' }} />
 
         {testMode ?
           <a className="menu-item mode-menu-item" onClick={switchMode}>
-            <i className="fas fa-toggle-on pr-3"></i>
-            <span className="mode-menu-item has-text-weight-semibold">Viewing test data</span>
+            <i className="fas fa-toggle-on pr-2"></i>
+            <span className="mode-menu-item has-text-weight-bold">Viewing test data</span>
           </a>
           :
           <a className="menu-item has-text-grey" onClick={switchMode}>
-            <i className="fas fa-toggle-off pr-3"></i>
-            <span className="has-text-weight-semibold">View test data</span>
+            <i className="fas fa-toggle-off pr-2"></i>
+            <span className="has-text-weight-bold">View test data</span>
           </a>
         }
 
         {/* Developers */}
-        <AppLink href="/developers/api" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
-          <i className={`fa fa-terminal pr-3 has-text-grey`}></i>
-          <span className="has-text-weight-semibold">Developers</span>
+        <AppLink href="/developers" className={"menu-item " + activeClass("/developers")} shallow={false} prefetch={false}>
+          <i className={`fa fa-terminal pr-2 ${isActive("/developers") ? "" : 'has-text-grey'}`}></i>
+          <span className="has-text-weight-bold">Developers</span>
         </AppLink>
 
-        {window.location.pathname.includes('/developers') && <>
-          <AppLink href="/developers/api" className={"menu-item ml-5 " + activeClass("/developers/api")} shallow={false} prefetch={false}>
-            <span>API</span>
+        {/* Resources */}
+        <a className="menu-item menu-item my-0" onClick={() => setShowResourcesMenus(!showResourcesMenus)}>
+          <i className={`fa fa-book pr-2 has-text-grey`}></i>
+          <span className="has-text-weight-bold">Resources</span>
+        </a>
+
+        {(showResourcesMenus || window.location.pathname.includes('/resources')) && <>
+
+          <AppLink href="/resources/reference" className={"menu-item ml-5 " + activeClass("/resources/reference")} shallow={false} prefetch={false}>
+            <span className="has-text-weight-semibold">API Reference</span>
           </AppLink>
 
-          <AppLink href="/developers/webhooks" className={"menu-item ml-5 " + activeClass("/developers/webhooks")} shallow={false} prefetch={false}>
-            <span>Webhooks</span>
+          <AppLink href="/resources/graphiql" className={"menu-item ml-5 " + activeClass("/resources/graphiql")} shallow={false} prefetch={false}>
+            <span className="has-text-weight-semibold">GraphQL</span>
           </AppLink>
 
-          <AppLink href="/developers/events" className={"menu-item ml-5 " + activeClass("/developers/events")} shallow={false} prefetch={false}>
-            <span>Events</span>
-          </AppLink>
+          <a className="menu-item ml-5"
+            target="_blank"
+            rel="noreferrer"
+            href="https://docs.karrio.io">
+            <span>Guides</span>
+            <span className="icon is-small is-size-7 mx-2">
+              <i className="fas fa-external-link-alt"></i>
+            </span>
+          </a>
+        </>}
 
-          <AppLink href="/developers/logs" className={"menu-item ml-5 " + activeClass("/developers/logs")} shallow={false} prefetch={false}>
-            <span>Logs</span>
+        {/* Administration */}
+        {(metadata?.ADMIN_DASHBOARD && user?.is_staff) && <>
+          <AppLink href="/admin" className="menu-item menu-item my-0" shallow={false} prefetch={false}>
+            <i className={`fa fa-tools pr-2 has-text-grey`}></i>
+            <span className="has-text-weight-bold">Administration</span>
           </AppLink>
         </>}
+
       </div>
-      <div style={{ position: 'absolute', bottom: 10, left: 30, right: 10 }}>
-        <span className="menu-item has-text-grey-light">
+      <div style={{ position: 'absolute', bottom: 10, left: 20, right: 20 }}>
+        <span className="menu-item has-text-weight-semibold has-text-grey-light">
           Version: {publicRuntimeConfig.DASHBOARD_VERSION}
         </span>
       </div>

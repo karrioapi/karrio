@@ -1,10 +1,8 @@
 import django.db.models as models
-import django.core.cache as caching
-
-import karrio.lib as lib
-import karrio.server.providers.models.carrier as providers
+import karrio.server.providers.models as providers
 
 
+@providers.has_auth_cache
 class UPSSettings(providers.Carrier):
     class Meta:
         db_table = "ups-settings"
@@ -21,10 +19,6 @@ class UPSSettings(providers.Carrier):
     @property
     def carrier_name(self) -> str:
         return "ups"
-
-    @property
-    def cache(self):
-        return lib.Cache(cache=caching.cache)
 
 
 SETTINGS = UPSSettings

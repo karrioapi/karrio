@@ -1,0 +1,16 @@
+{
+    "soapenv:Body": {
+        "ns1:getShipmentsStatusResponse": {
+            "@xmlns:ns1": "http://neptune.alliedexpress.com.au/ttws-ejb",
+            "result": {
+                "statusBarcodesList": {
+                    "consignmentNote": "AOE10060817R",
+                    "depotLocation": "NOWRA",
+                    "scannedBarcode": "AOE10060817R",
+                    "scannedStatus": "Freight has been delivered",
+                    "scannnedTimestamp": "2023-10-26T14:03:55.000+11:00"
+                }
+            }
+        }
+    }
+}

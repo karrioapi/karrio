@@ -176,7 +176,7 @@ def shipment_request(
                                 customerReferenceNumber3=None,
                                 customerReferenceNumber4=None,
                                 swap=None,
-                                volume=pkg.volume.value,
+                                volume=pkg.volume.m3,
                                 weight=pkg.weight.KG,
                                 hazardousLimitedQuantities=None,
                                 higherInsurance=None,

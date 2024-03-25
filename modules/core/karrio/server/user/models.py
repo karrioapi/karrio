@@ -1,16 +1,14 @@
 import os
 import binascii
+import functools
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import models as auth
 from rest_framework.authtoken import models as authtoken
+from django.contrib.contenttypes.models import ContentType
 from django.utils.translation import gettext_lazy as _
 
-from karrio.server.core.models import (
-    ControlledAccessModel,
-    register_model,
-    field_default,
-)
+import karrio.server.core.models as core
 
 
 class UserManager(auth.UserManager):
@@ -43,7 +41,7 @@ class UserManager(auth.UserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-@register_model
+@core.register_model
 class User(auth.AbstractUser):
     full_name = models.CharField(_("full name"), max_length=150, blank=True)
     email = models.EmailField(_("email address"), unique=True)
@@ -68,13 +66,49 @@ class User(auth.AbstractUser):
     def object_type(self):
         return "user"
 
+    @property
+    def permissions(self):
+        import karrio.server.conf as conf
+        import karrio.server.iam.models as iam
+        import karrio.server.core.middleware as middleware
 
-@register_model
-class Token(authtoken.Token, ControlledAccessModel):
+        ctx = middleware.SessionContext.get_current_request()
+        _permissions = []
+
+        if conf.settings.MULTI_ORGANIZATIONS and ctx.org is not None:
+            org_user = ctx.org.organization_users.filter(user_id=self.pk)
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=org_user.first().pk,
+                    content_type=ContentType.objects.get_for_model(org_user.first()),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+                if org_user.exists()
+                else []
+            )
+
+        if not any(_permissions):
+            _permissions = self.groups.all().values_list("name", flat=True)
+
+        if not any(_permissions) and self.is_superuser:
+            return Group.objects.all().values_list("name", flat=True)
+
+        if not any(_permissions) and self.is_staff:
+            return Group.objects.exclude(
+                name__in=["manage_system", "manage_team", "manage_org_owner"]
+            ).values_list("name", flat=True)
+
+        return _permissions
+
+
+@core.register_model
+class Token(authtoken.Token, core.ControlledAccessModel):
+    label = models.CharField(_("label"), max_length=50)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="tokens"
     )
-    test_mode = models.BooleanField(null=False, default=field_default(False))
+    test_mode = models.BooleanField(null=False, default=core.field_default(False))
 
     class Meta:
         verbose_name = _("Token")
@@ -96,7 +130,74 @@ class Token(authtoken.Token, ControlledAccessModel):
     def object_type(self):
         return "token"
 
+    @property
+    def permissions(self):
+        import karrio.server.conf as conf
+        import karrio.server.iam.models as iam
 
-@register_model
+        _permissions = []
+
+        if iam.ContextPermission.objects.filter(object_pk=self.pk).exists():
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=self.pk,
+                    content_type=ContentType.objects.get_for_model(Token),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+            )
+
+        if (
+            not any(_permissions)
+            and conf.settings.MULTI_ORGANIZATIONS
+            and self.org.exists()
+        ):
+            org_user = self.org.first().organization_users.filter(user_id=self.user_id)
+            _permissions = (
+                iam.ContextPermission.objects.get(
+                    object_pk=org_user.first().pk,
+                    content_type=ContentType.objects.get_for_model(org_user.first()),
+                )
+                .groups.all()
+                .values_list("name", flat=True)
+                if org_user.exists()
+                else []
+            )
+
+        return _permissions if any(_permissions) else self.user.permissions
+
+
+@core.register_model
 class Group(auth.Group):
     pass
+
+
+@core.register_model
+class WorkspaceConfig(core.OwnedEntity):
+    class Meta:
+        db_table = "workspace-config"
+        verbose_name = "Workspace Config"
+        verbose_name_plural = "Workspace Configs"
+
+    id = models.CharField(
+        max_length=50,
+        editable=False,
+        primary_key=True,
+        default=functools.partial(core.uuid, prefix="wcfg_"),
+    )
+    config = models.JSONField(
+        null=False,
+        blank=False,
+        default=core.field_default({}),
+    )
+    created_by = models.ForeignKey(
+        User,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        editable=False,
+    )
+
+    @property
+    def object_type(self):
+        return "workspace-config"

@@ -2,6 +2,11 @@ import karrio.lib as lib
 import karrio.core.models as models
 
 
+class ConnectionConfig(lib.Enum):
+    text_color = lib.OptionEnum("text_color")
+    brand_color = lib.OptionEnum("brand_color")
+
+
 class Service(lib.Enum):
     standard_service = "standard"
 

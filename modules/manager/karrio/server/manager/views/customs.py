@@ -32,6 +32,7 @@ class CustomsList(GenericAPIView):
     serializer_class = CustomsInfoList
 
     @openapi.extend_schema(
+        exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}list",
         summary="List all customs info",
@@ -57,6 +58,7 @@ class CustomsList(GenericAPIView):
         return self.get_paginated_response(response)
 
     @openapi.extend_schema(
+        exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}create",
         summary="Create a customs info",
@@ -72,15 +74,15 @@ class CustomsList(GenericAPIView):
         Create a new customs declaration.
         """
         customs = (
-            CustomsSerializer.map(data=request.data, context=request)
-            .save()
-            .instance
+            CustomsSerializer.map(data=request.data, context=request).save().instance
         )
         return Response(Customs(customs).data, status=status.HTTP_201_CREATED)
 
 
 class CustomsDetail(APIView):
+
     @openapi.extend_schema(
+        exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         summary="Retrieve a customs info",
@@ -98,6 +100,7 @@ class CustomsDetail(APIView):
         return Response(Customs(address).data)
 
     @openapi.extend_schema(
+        exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}update",
         summary="Update a customs info",
@@ -117,13 +120,12 @@ class CustomsDetail(APIView):
         customs = models.Customs.access_by(request).get(pk=pk)
         can_mutate_customs(customs)
 
-        CustomsSerializer.map(
-            customs, data=request.data, context=request
-        ).save()
+        CustomsSerializer.map(customs, data=request.data, context=request).save()
 
         return Response(Customs(customs).data)
 
     @openapi.extend_schema(
+        exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}discard",
         summary="Discard a customs info",

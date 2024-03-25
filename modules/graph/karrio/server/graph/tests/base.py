@@ -2,8 +2,8 @@ import json
 import logging
 import dataclasses
 from django.urls import reverse
-from django.contrib.auth import get_user_model
 from rest_framework import status
+from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 
 from karrio.server.providers.models import MODELS
@@ -50,7 +50,7 @@ class GraphTestCase(BaseAPITestCase):
             account_number="000000",
             created_by=self.user,
         )
-        self.fedex_carrier = MODELS["fedex"].objects.create(
+        self.fedex_carrier = MODELS["fedex_ws"].objects.create(
             carrier_id="fedex_express",
             test_mode=False,
             user_key="test",

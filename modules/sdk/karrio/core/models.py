@@ -1,4 +1,5 @@
 """Karrio Unified model definitions module."""
+
 import attr
 from typing import List, Dict, Any, Union
 from jstruct import JList, JStruct, REQUIRED
@@ -181,6 +182,8 @@ class PickupRequest:
     package_location: str = None
     options: Dict = {}
 
+    metadata: Dict = {}
+
 
 @attr.s(auto_attribs=True)
 class PickupUpdateRequest:
@@ -214,6 +217,18 @@ class AddressValidationRequest:
     """address validation request unified data type."""
 
     address: Address = JStruct[Address, REQUIRED]
+
+
+@attr.s(auto_attribs=True)
+class ManifestRequest:
+    """manifest request unified data type."""
+
+    shipment_identifiers: List[str]
+    address: Address = JStruct[Address, REQUIRED]
+
+    reference: str = None
+    metadata: Dict = {}
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
@@ -303,6 +318,14 @@ class TrackingInfo:
 
 
 @attr.s(auto_attribs=True)
+class Images:
+    """Karrio unified tracker images data type."""
+
+    delivery_image: str = None
+    signature_image: str = None
+
+
+@attr.s(auto_attribs=True)
 class TrackingDetails:
     """Karrio unified tracking details data type."""
 
@@ -310,6 +333,7 @@ class TrackingDetails:
     carrier_id: str
     tracking_number: str
     events: List[TrackingEvent] = JList[TrackingEvent, REQUIRED]
+    images: Images = JStruct[Images]
     estimated_delivery: str = None
     info: TrackingInfo = None
     delivered: bool = None
@@ -319,13 +343,13 @@ class TrackingDetails:
 
 @attr.s(auto_attribs=True)
 class Documents:
-    """Karrio unified shipment details data type."""
+    """Karrio unified shipment documents details data type."""
 
     label: str
-    zpl_label: str = None
-    pdf_label: str = None
 
     invoice: str = None
+    zpl_label: str = None
+    pdf_label: str = None
 
 
 @attr.s(auto_attribs=True)
@@ -354,6 +378,25 @@ class PickupDetails:
     pickup_charge: ChargeDetails = JStruct[ChargeDetails]
     ready_time: str = None
     closing_time: str = None
+    meta: dict = None
+    id: str = None
+
+
+@attr.s(auto_attribs=True)
+class ManifestDocument:
+    """Karrio unified manifest document details data type."""
+
+    manifest: str = None
+
+
+@attr.s(auto_attribs=True)
+class ManifestDetails:
+    """Karrio unified manifest details data type."""
+
+    carrier_name: str
+    carrier_id: str
+    doc: ManifestDocument = JStruct[ManifestDocument]
+    meta: dict = None
     id: str = None
 
 
@@ -390,6 +433,7 @@ class ServiceZone:
 
     # Location
     cities: List[str] = []
+    postal_codes: List[str] = []
     country_codes: List[str] = []
 
 
@@ -399,6 +443,7 @@ class ServiceLevel:
 
     service_name: str
     service_code: str
+    carrier_service_code: str = None
     description: str = ""
     active: bool = True
     id: str = None
@@ -425,6 +470,8 @@ class ServiceLevel:
     # Estimated delivery
     transit_days: int = None
     transit_time: float = None
+
+    metadata: Dict = {}
 
 
 @attr.s(auto_attribs=True)

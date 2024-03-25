@@ -21,21 +21,21 @@
           {
             "rateType": "ACCOUNT",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 403.2,
             "totalNetCharge": 445.54,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 445.54,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 445.54,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 42.34,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -47,11 +47,11 @@
               "currencyExchangeRate": {
                 "fromCurrency": "CAD",
                 "intoCurrency": "CAD",
-                "rate": 1
+                "rate": 1.0
               },
               "totalBillingWeight": {
                 "units": "LB",
-                "valu": 22
+                "value": 22.0
               },
               "currency": "CAD"
             },
@@ -60,21 +60,21 @@
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 403.2,
             "totalNetCharge": 445.54,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 445.54,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 445.54,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 42.34,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -86,11 +86,11 @@
               "currencyExchangeRate": {
                 "fromCurrency": "CAD",
                 "intoCurrency": "CAD",
-                "rate": 1
+                "rate": 1.0
               },
               "totalBillingWeight": {
                 "units": "LB",
-                "value": 22
+                "value": 22.0
               },
               "currency": "CAD"
             },
@@ -99,21 +99,21 @@
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 308.71,
             "totalNetCharge": 341.13,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 341.13,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 341.13,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 32.42,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -129,7 +129,7 @@
               },
               "totalBillingWeight": {
                 "units": "LB",
-                "value": 22
+                "value": 22.0
               },
               "currency": "USD"
             },
@@ -138,21 +138,21 @@
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 308.71,
             "totalNetCharge": 341.13,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 341.13,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 341.13,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 32.42,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -281,21 +281,21 @@
           {
             "rateType": "ACCOUNT",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 312.35,
             "totalNetCharge": 345.15,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 345.15,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 345.15,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 32.8,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -320,21 +320,21 @@
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 78.99,
             "totalNetCharge": 87.28,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 87.28,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 87.28,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 8.29,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -359,21 +359,21 @@
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 60.48,
             "totalNetCharge": 66.83,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 66.83,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 66.83,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 6.3,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -398,21 +398,21 @@
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 239.15,
             "totalNetCharge": 264.26,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 264.26,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 264.26,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 25.11,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -501,7 +501,7 @@
             {
               "type": "short",
               "encoding": "ascii",
-              "value\"": "IP"
+              "value": "IP"
             },
             {
               "type": "abbrv",
@@ -541,21 +541,21 @@
           {
             "rateType": "ACCOUNT",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 189.65,
             "totalNetCharge": 209.56,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 209.56,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 209.56,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 19.91,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -580,21 +580,21 @@
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 48.56,
             "totalNetCharge": 53.66,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 53.66,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 53.66,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 5.1,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -619,21 +619,21 @@
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 37.18,
             "totalNetCharge": 41.08,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 41.08,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 41.08,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA1520",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 3.9,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -658,21 +658,21 @@
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 145.21,
             "totalNetCharge": 160.45,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 160.45,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 160.45,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "CA003O",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 10.5,
               "totalSurcharges": 15.24,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -790,18 +790,18 @@
             "totalDiscounts": 2.79,
             "totalBaseCharge": 49.85,
             "totalNetCharge": 53.59,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 53.59,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 53.59,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 3.74,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -818,7 +818,7 @@
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
+                "groupNumber": 0.0,
                 "effectiveNetDiscount": 2.79,
                 "packageRateDetail": {
                   "rateType": "PAYOR_ACCOUNT_PACKAGE",
@@ -827,14 +827,14 @@
                   "netFreight": 49.85,
                   "totalSurcharges": 3.74,
                   "netFedExCharge": 53.59,
-                  "totalTaxes": 0,
+                  "totalTaxes": 0.0,
                   "netCharge": 53.59,
-                  "totalRebates": 0,
+                  "totalRebates": 0.0,
                   "billingWeight": {
                     "units": "LB",
                     "value": 22
                   },
-                  "totalFreightDiscounts": 0,
+                  "totalFreightDiscounts": 0.0,
                   "surcharges": [
                     {
                       "type": "FUEL",
@@ -852,21 +852,21 @@
           {
             "rateType": "PREFERRED_INCENTIVE",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 40.16,
             "totalNetCharge": 43.17,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 43.17,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 43.17,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 3.01,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -888,8 +888,8 @@
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
-                "effectiveNetDiscount": 0,
+                "groupNumber": 0.0,
+                "effectiveNetDiscount": 0.0,
                 "packageRateDetail": {
                   "rateType": "PREFERRED_LIST_PACKAGE",
                   "ratedWeightMethod": "ACTUAL",
@@ -897,20 +897,20 @@
                   "netFreight": 40.16,
                   "totalSurcharges": 3.01,
                   "netFedExCharge": 43.17,
-                  "totalTaxes": 0,
+                  "totalTaxes": 0.0,
                   "netCharge": 43.17,
-                  "totalRebates": 0,
+                  "totalRebates": 0.0,
                   "billingWeight": {
                     "units": "LB",
                     "value": 22
                   },
-                  "totalFreightDiscounts": 0,
+                  "totalFreightDiscounts": 0.0,
                   "surcharges": [
                     {
                       "type": "FUEL",
                       "description": "Fuel Surcharge",
                       "level": "PACKAGE",
-                      "amount\"": 3.01
+                      "amount": 3.01
                     }
                   ],
                   "currency": "USD"
@@ -921,21 +921,21 @@
           {
             "rateType": "PREFERRED_CURRENCY",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 38.17,
             "totalNetCharge": 41.03,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 41.03,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 41.03,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 2.86,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -957,32 +957,33 @@
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
-                "effectiveNetDiscount": 0,
-                "packageRateDetail": null,
-                "rateType": "PREFERRED_ACCOUNT_PACKAGE",
-                "ratedWeightMethod": "ACTUAL",
-                "baseCharge": 38.17,
-                "netFreight": 38.17,
-                "totalSurcharges": 2.86,
-                "netFedExCharge": 41.03,
-                "totalTaxes": 0,
-                "netCharge": 41.03,
-                "totalRebates": 0,
-                "billingWeight\"": {
-                  "units": "LB",
-                  "value": 22
-                },
-                "totalFreightDiscounts": 0,
-                "surcharges": [
-                  {
-                    "type": "FUEL",
-                    "description": "Fuel Surcharge",
-                    "level": "PACKAGE",
-                    "amount": 2.86
-                  }
-                ],
-                "currency": "USD"
+                "groupNumber": 0.0,
+                "effectiveNetDiscount": 0.0,
+                "packageRateDetail": {
+                  "rateType": "PREFERRED_ACCOUNT_PACKAGE",
+                  "ratedWeightMethod": "ACTUAL",
+                  "baseCharge": 38.17,
+                  "netFreight": 38.17,
+                  "totalSurcharges": 2.86,
+                  "netFedExCharge": 41.03,
+                  "totalTaxes": 0.0,
+                  "netCharge": 41.03,
+                  "totalRebates": 0.0,
+                  "billingWeight": {
+                    "units": "LB",
+                    "value": 22
+                  },
+                  "totalFreightDiscounts": 0.0,
+                  "surcharges": [
+                    {
+                      "type": "FUEL",
+                      "description": "Fuel Surcharge",
+                      "level": "PACKAGE",
+                      "amount": 2.86
+                    }
+                  ],
+                  "currency": "USD"
+                }
               }
             ],
             "currency": "USD"
@@ -990,21 +991,21 @@
           {
             "rateType": "LIST",
             "ratedWeightMethod": "ACTUAL",
-            "totalDiscounts": 0,
+            "totalDiscounts": 0.0,
             "totalBaseCharge": 52.45,
             "totalNetCharge": 56.38,
-            "totalVatCharge": 0,
+            "totalVatCharge": 0.0,
             "totalNetFedExCharge": 56.38,
-            "totalDutiesAndTaxes": 0,
+            "totalDutiesAndTaxes": 0.0,
             "totalNetChargeWithDutiesAndTaxes": 56.38,
-            "totalDutiesTaxesAndFees": 0,
-            "totalAncillaryFeesAndTaxes": 0,
+            "totalDutiesTaxesAndFees": 0.0,
+            "totalAncillaryFeesAndTaxes": 0.0,
             "shipmentRateDetail": {
               "rateZone": "52",
-              "dimDivisor": 0,
+              "dimDivisor": 0.0,
               "fuelSurchargePercent": 7.5,
               "totalSurcharges": 3.93,
-              "totalFreightDiscount": 0,
+              "totalFreightDiscount": 0.0,
               "surCharges": [
                 {
                   "type": "FUEL",
@@ -1013,7 +1014,7 @@
                   "amount": 3.93
                 }
               ],
-              "totalBillingWeight\"": {
+              "totalBillingWeight": {
                 "units": "LB",
                 "value": 2
               },
@@ -1021,32 +1022,33 @@
             },
             "ratedPackages": [
               {
-                "groupNumber": 0,
-                "effectiveNetDiscount": 0,
-                "packageRateDetail": null,
-                "rateType": "PAYOR_LIST_PACKAGE",
-                "ratedWeightMethod": "ACTUAL",
-                "baseCharge": 52.45,
-                "netFreight": 52.45,
-                "totalSurcharges": 3.93,
-                "netFedExCharge": 56.38,
-                "totalTaxes": 0,
-                "netCharge": 56.38,
-                "totalRebates": 0,
-                "billingWeight": {
-                  "units": "LB",
-                  "value": 22
-                },
-                "totalFreightDiscounts": 0,
-                "surcharges": [
-                  {
-                    "type": "FUEL",
-                    "description": "Fuel Surcharge",
-                    "level": "PACKAGE",
-                    "amount": 3.93
-                  }
-                ],
-                "currency": "CAD"
+                "groupNumber": 0.0,
+                "effectiveNetDiscount": 0.0,
+                "packageRateDetail": {
+                  "rateType": "PAYOR_LIST_PACKAGE",
+                  "ratedWeightMethod": "ACTUAL",
+                  "baseCharge": 52.45,
+                  "netFreight": 52.45,
+                  "totalSurcharges": 3.93,
+                  "netFedExCharge": 56.38,
+                  "totalTaxes": 0.0,
+                  "netCharge": 56.38,
+                  "totalRebates": 0.0,
+                  "billingWeight": {
+                    "units": "LB",
+                    "value": 22
+                  },
+                  "totalFreightDiscounts": 0.0,
+                  "surcharges": [
+                    {
+                      "type": "FUEL",
+                      "description": "Fuel Surcharge",
+                      "level": "PACKAGE",
+                      "amount": 3.93
+                    }
+                  ],
+                  "currency": "CAD"
+                }
               }
             ],
             "currency": "CAD",

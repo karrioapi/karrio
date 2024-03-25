@@ -1,0 +1,225 @@
+---
+id: local-development
+title: Local Development
+---
+
+import VideoWrapper from "@site/src/components/VideoWrapper";
+
+With the ability to self-host karrio, it is easier than ever to setup your shipping service for local development.
+This guide will walk you through the steps to setup karrio for local development.
+
+<VideoWrapper>
+  <iframe
+    width="560"
+    height="315"
+    src="https://www.youtube.com/embed/SPKYZJn8AGo"
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    allowfullscreen
+  ></iframe>
+</VideoWrapper>
+
+## Prerequisites
+
+- [Docker](https://docs.docker.com/engine/install/)
+
+## Initialize your project
+
+Create a new folder for your project and start a new git repository:
+
+```bash title="Terminal"
+# create your project folder
+mkdir your-project
+
+# move into the new folder
+cd your-project
+```
+
+## Download the latest version of karrio:
+
+```bash title="Terminal"
+# download the latest version of karrio
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/docker-compose.yml -o docker-compose.yml
+
+# download the latest version of karrio's .env file
+curl https://raw.githubusercontent.com/karrioapi/karrio/HEAD/docker/.env -o .env
+```
+
+```shell title="Terminal"
+➜  tree -a
+.
+├── docker-compose.yml
+└── .env
+```
+
+:::tip[Cloud deployment]
+
+If you are deploying on a cloud virtual environment (e.g: AWS EC2 or Digital Ocean droplet),
+you need to update `KARRIO_PUBLIC_URL` in the `.env` file to your server's `IP address` instead of `localhost`.
+
+````diff
+
+...
+- KARRIO_PUBLIC_URL=http://localhost:5002
++ KARRIO_PUBLIC_URL=http://[YOUR-VM-IP-ADDRESS]:5002
+...
+
+````
+
+:::
+
+
+## Start karrio services
+
+```bash title="Terminal"
+docker compose up
+```
+
+:::note "Ensure all the services are up"
+
+<details>
+<summary>Click to expand</summary>
+
+```bash title="Terminal"
+...
+[+] Running 7/7
+ ✔ Network karrio_default      Created                                                                             0.1s
+ ✔ Container karrio.redis      Created                                                                             0.1s
+ ✔ Container karrio.db         Created                                                                             0.1s
+ ✔ Container karrio.mail       Created                                                                             0.1s
+ ✔ Container karrio.api        Created                                                                             0.1s
+ ✔ Container karrio.dashboard  Created                                                                             0.1s
+ ✔ Container karrio.worker     Created                                                                             0.1s
+
+...
+karrio.api        | INFO signals.py 14 karrio.core signals registered...
+karrio.api        | INFO signals.py 15 karrio.providers signals registered...
+karrio.api        | INFO signals.py 34 karrio.manager signals registered...
+karrio.api        | INFO signals.py 19 karrio.events signals registered...
+karrio.api        | INFO signals.py 14 karrio.documents signals registered...
+karrio.api        | INFO signals.py 16 karrio.data signals registered...
+karrio.api        | INFO signals.py 15 karrio.pricing signals registered...
+karrio.api        | INFO signals.py 26 karrio.order signals registered...
+karrio.api        | Redis connection initialized at: redis://redis:6379/1
+karrio.api        | [2023-04-24 07:59:42 +0000] [37] [DEBUG] Current configuration:
+karrio.api        |   config: gunicorn-cfg.py
+karrio.api        |   wsgi_app: None
+karrio.api        |   bind: ['0.0.0.0:5002']
+karrio.api        |   backlog: 2048
+karrio.api        |   workers: 2
+karrio.api        |   worker_class: karrio.server.workers.UvicornWorker
+karrio.api        |   threads: 1
+karrio.api        |   worker_connections: 1000
+karrio.api        |   max_requests: 0
+karrio.api        |   max_requests_jitter: 0
+karrio.api        |   timeout: 30
+karrio.api        |   graceful_timeout: 30
+karrio.api        |   keepalive: 2
+karrio.api        |   limit_request_line: 4094
+karrio.api        |   limit_request_fields: 100
+karrio.api        |   limit_request_field_size: 8190
+karrio.api        |   reload: False
+karrio.api        |   reload_engine: auto
+karrio.api        |   reload_extra_files: []
+karrio.api        |   spew: False
+karrio.api        |   check_config: False
+karrio.api        |   print_config: False
+karrio.api        |   preload_app: False
+karrio.api        |   sendfile: None
+karrio.api        |   reuse_port: False
+karrio.api        |   chdir: /karrio/app
+karrio.api        |   daemon: False
+karrio.api        |   raw_env: []
+karrio.api        |   pidfile: None
+karrio.api        |   worker_tmp_dir: None
+karrio.api        |   user: 1000
+karrio.api        |   group: 1000
+karrio.api        |   umask: 0
+karrio.api        |   initgroups: False
+karrio.api        |   tmp_upload_dir: None
+karrio.api        |   secure_scheme_headers: {'X-FORWARDED-PROTOCOL': 'ssl', 'X-FORWARDED-PROTO': 'https', 'X-FORWARDED-SSL': 'on'}
+karrio.api        |   forwarded_allow_ips: ['127.0.0.1']
+karrio.api        |   accesslog: -
+karrio.api        |   disable_redirect_access_to_syslog: False
+karrio.api        |   access_log_format: %(h)s %(l)s %(u)s %(t)s "%(r)s" %(s)s %(b)s "%(f)s" "%(a)s"
+karrio.api        |   errorlog: -
+karrio.api        |   loglevel: debug
+karrio.api        |   capture_output: True
+karrio.api        |   logger_class: gunicorn.glogging.Logger
+karrio.api        |   logconfig: None
+karrio.api        |   logconfig_dict: {}
+karrio.api        |   syslog_addr: udp://localhost:514
+karrio.api        |   syslog: False
+karrio.api        |   syslog_prefix: None
+karrio.api        |   syslog_facility: user
+karrio.api        |   enable_stdio_inheritance: True
+karrio.api        |   statsd_host: None
+karrio.api        |   dogstatsd_tags:
+karrio.api        |   statsd_prefix:
+karrio.api        |   proc_name: None
+karrio.api        |   default_proc_name: karrio.server.asgi
+karrio.api        |   pythonpath: None
+karrio.api        |   paste: None
+karrio.api        |   on_starting: <function OnStarting.on_starting at 0x7fd3c83a2cb0>
+karrio.api        |   on_reload: <function OnReload.on_reload at 0x7fd3c83a2dd0>
+karrio.api        |   when_ready: <function WhenReady.when_ready at 0x7fd3c83a2ef0>
+karrio.api        |   pre_fork: <function Prefork.pre_fork at 0x7fd3c83a3010>
+karrio.api        |   post_fork: <function Postfork.post_fork at 0x7fd3c83a3130>
+karrio.api        |   post_worker_init: <function PostWorkerInit.post_worker_init at 0x7fd3c83a3250>
+karrio.api        |   worker_int: <function WorkerInt.worker_int at 0x7fd3c83a3370>
+karrio.api        |   worker_abort: <function WorkerAbort.worker_abort at 0x7fd3c83a3490>
+karrio.api        |   pre_exec: <function PreExec.pre_exec at 0x7fd3c83a35b0>
+karrio.api        |   pre_request: <function PreRequest.pre_request at 0x7fd3c83a36d0>
+karrio.api        |   post_request: <function PostRequest.post_request at 0x7fd3c83a3760>
+karrio.api        |   child_exit: <function ChildExit.child_exit at 0x7fd3c83a3880>
+karrio.api        |   worker_exit: <function WorkerExit.worker_exit at 0x7fd3c83a39a0>
+karrio.api        |   nworkers_changed: <function NumWorkersChanged.nworkers_changed at 0x7fd3c83a3ac0>
+karrio.api        |   on_exit: <function OnExit.on_exit at 0x7fd3c83a3be0>
+karrio.api        |   proxy_protocol: False
+karrio.api        |   proxy_allow_ips: ['127.0.0.1']
+karrio.api        |   keyfile: None
+karrio.api        |   certfile: None
+karrio.api        |   ssl_version: 2
+karrio.api        |   cert_reqs: 0
+karrio.api        |   ca_certs: None
+karrio.api        |   suppress_ragged_eofs: True
+karrio.api        |   do_handshake_on_connect: False
+karrio.api        |   ciphers: None
+karrio.api        |   raw_paste_global_conf: []
+karrio.api        |   strip_header_spaces: False
+karrio.api        | [2023-04-24 07:59:42 +0000] [37] [INFO] Starting gunicorn 20.1.0
+karrio.api        | [2023-04-24 07:59:42 +0000] [37] [DEBUG] Arbiter booted
+karrio.api        | [2023-04-24 07:59:42 +0000] [37] [INFO] Listening at: http://0.0.0.0:5002 (37)
+karrio.api        | [2023-04-24 07:59:42 +0000] [37] [INFO] Using worker: karrio.server.workers.UvicornWorker
+karrio.api        | [2023-04-24 07:59:42 +0000] [38] [INFO] Booting worker with pid: 38
+karrio.api        | [2023-04-24 07:59:42 +0000] [39] [INFO] Booting worker with pid: 39
+karrio.api        | [2023-04-24 07:59:42 +0000] [37] [DEBUG] 2 workers
+karrio.api        | Redis connection initialized at: redis://redis:6379/1
+karrio.api        | Redis connection initialized at: redis://redis:6379/1
+
+...
+# docker ps
+
+karrio.api          karrio.docker.scarf.sh/karrio/server:2023.4.2     0.0.0.0:5002->5002/tcp, :::5002->5002/tcp
+karrio.dashboard    karrio.docker.scarf.sh/karrio/dashboard:2023.4.2  0.0.0.0:3000->3000/tcp, :::3000->3000/tcp
+karrio.db           postgres                                          0.0.0.0:5432->5432/tcp, :::5432->5432/tcp
+karrio.mail         maildev/maildev                                   0.0.0.0:1025->1025/tcp, :::1025->1025/tcp, 0.0.0.0:1080->1080/tcp, :::1080->1080/tcp
+karrio.redis        redis                                             0.0.0.0:6379->6379/tcp, :::6379->6379/tcp
+karrio.worker       karrio.docker.scarf.sh/karrio/server:2023.4.2
+```
+
+</details>
+:::
+
+- The server should be be accessible at http://localhost:5002
+- And the dashboard accessible at http://localhost:3000
+
+By default your login credentials will be: `admin@example.com` | `demo`
+
+
+**You can stop karrio with:**
+
+```bash title="Terminal"
+docker compose down
+```

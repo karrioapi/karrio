@@ -184,7 +184,6 @@ PICKUP_RESPONSE = {
             "email": "john@a.com",
             "phone_number": "+1 514-000-0000",
             "state_code": "NB",
-            "suburb": None,
             "street_number": None,
             "residential": False,
             "address_line1": "125 Church St",
@@ -217,6 +216,7 @@ PICKUP_RESPONSE = {
         "package_location": "At the main entrance hall",
         "options": {},
         "metadata": {},
+        "meta": {"ext": "canadapost"},
     },
 }
 
@@ -246,7 +246,6 @@ PICKUP_UPDATE_RESPONSE = {
             "email": "john@a.com",
             "phone_number": "+1 514-000-0000",
             "state_code": "NB",
-            "suburb": None,
             "street_number": None,
             "residential": False,
             "address_line1": "125 Church St",
@@ -279,6 +278,7 @@ PICKUP_UPDATE_RESPONSE = {
         "package_location": "At the main entrance hall",
         "options": {},
         "metadata": {},
+        "meta": {},
     },
 }
 

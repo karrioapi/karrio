@@ -1,8 +1,8 @@
+import { SessionType, KarrioClient, Metadata, UserType, GetWorkspaceConfig_workspace_config } from "@karrio/types";
+import { get_organizations_organizations } from "@karrio/types/graphql/ee";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { SessionType, KarrioClient } from "@karrio/types";
 import { useSyncedSession } from "@karrio/hooks/session";
-import { logger, url$ } from "@karrio/lib";
-import { AxiosRequestConfig } from "axios";
+import { getCookie, logger, url$ } from "@karrio/lib";
 import getConfig from 'next/config';
 import React from "react";
 
@@ -18,16 +18,30 @@ export const KARRIO_API = (
 
 logger.debug("API clients initialized for Server: " + KARRIO_API);
 
-export const APIClientsContext = React.createContext<KarrioClient>({} as any);
+type ClientProviderProps = {
+  children?: React.ReactNode,
+};
+type APIClientsContextProps = KarrioClient & {
+  pageData?: {
+    orgId?: string,
+    user?: UserType,
+    pathname?: string,
+    metadata?: Metadata,
+    organizations?: get_organizations_organizations[],
+    workspace_config?: GetWorkspaceConfig_workspace_config,
+  }
+};
 
-export const ClientProvider: React.FC<{ authenticated?: boolean, children?: React.ReactNode }> = ({ children, authenticated }) => {
+export const APIClientsContext = React.createContext<APIClientsContextProps>({} as any);
+
+export const ClientProvider: React.FC<ClientProviderProps> = ({ children, ...pageData }) => {
   const { host } = useAPIMetadata();
   const { query: { data: session } } = useSyncedSession();
 
-  if (authenticated && !host) return <></>;
+  if (!host) return <></>;
 
   return (
-    <APIClientsContext.Provider value={setupRestClient(host, session)}>
+    <APIClientsContext.Provider value={{ ...setupRestClient(host, session), pageData }}>
       {children}
     </APIClientsContext.Provider>
   );
@@ -38,10 +52,10 @@ export function useKarrio() {
 }
 
 function requestInterceptor(session?: SessionType) {
-  return (config: AxiosRequestConfig<any> = { headers: {} }) => {
-    const orgHeader: any = !!session?.orgId ? { 'x-org-id': session.orgId } : {};
+  return (config: any = { headers: {} }) => {
     const testHeader: any = !!session?.testMode ? { 'x-test-mode': session.testMode } : {};
     const authHeader: any = !!session?.accessToken ? { 'authorization': `Bearer ${session.accessToken}` } : {};
+    const orgHeader: any = !!session?.orgId ? { 'x-org-id': getCookie("orgId") } : {};
 
     config.headers = {
       ...config.headers,

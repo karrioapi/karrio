@@ -3,7 +3,6 @@ from django.db.models import Q
 from import_export import resources
 
 import karrio.lib as lib
-from karrio.server import serializers
 from karrio.core.units import Packages
 from karrio.server.manager import models
 from karrio.server.core import serializers as core
@@ -108,10 +107,9 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
             def dehydrate_carrier(self, row):
                 carrier = getattr(row, "selected_rate_carrier", None)
                 settings = getattr(carrier, "settings", None)
-                return (
-                    getattr(settings, "display_name", None) or
-                    units.REFERENCE_MODELS["carriers"].get(carrier.carrier_name)
-                )
+                return getattr(
+                    settings, "display_name", None
+                ) or units.REFERENCE_MODELS["carriers"].get(carrier.carrier_name)
 
         if "pieces" not in _exclude:
             pieces = resources.Field()
@@ -341,7 +339,13 @@ def shipment_export_resource(query_params: dict, context, **kwargs):
     return Resource()
 
 
-def shipment_import_resource(query_params: dict, context, data_fields: dict = None, batch_id: str = None, **kwargs):
+def shipment_import_resource(
+    query_params: dict,
+    context,
+    data_fields: dict = None,
+    batch_id: str = None,
+    **kwargs
+):
     queryset = models.Shipment.access_by(context)
     field_headers = data_fields if data_fields is not None else DEFAULT_HEADERS
     _exclude = query_params.get("exclude", "").split(",")
@@ -376,11 +380,15 @@ def shipment_import_resource(query_params: dict, context, data_fields: dict = No
         "options",
     )
 
-    _Base = type("ResourceFields", (resources.ModelResource,), {
-        k: resources.Field(readonly=(k not in models.Shipment.__dict__))
-        for k in field_headers.keys()
-        if k not in _exclude
-    })
+    _Base = type(
+        "ResourceFields",
+        (resources.ModelResource,),
+        {
+            k: resources.Field(readonly=(k not in models.Shipment.__dict__))
+            for k in field_headers.keys()
+            if k not in _exclude
+        },
+    )
 
     class Resource(_Base, resources.ModelResource):
         class Meta:
@@ -397,55 +405,65 @@ def shipment_import_resource(query_params: dict, context, data_fields: dict = No
             return [field_headers.get(k, k) for k in headers]
 
         def init_instance(self, row=None):
-            service = row.get(field_headers['service'])
-            svc = ({} if service is None else dict(service=service))
-            batch = ({} if batch_id is None else dict(batch_id=batch_id))
+            service = row.get(field_headers["service"])
+            svc = {} if service is None else dict(perferred_service=service)
+            batch = {} if batch_id is None else dict(batch_id=batch_id)
+            options = {
+                **lib.to_dict(row.get(field_headers["options"]) or "{}"),
+                **svc,
+            }
 
-            data = lib.to_dict(dict(
-                status="draft",
-                test_mode=context.test_mode,
-                created_by_id=context.user.id,
-                services=([service] if service else []),
-                meta={**svc, **batch},
-                options=lib.to_dict(row.get(field_headers['options']) or "{}"),
-                shipper=dict(
-                    person_name=row.get(field_headers['shipper_name']),
-                    company_name=row.get(field_headers['shipper_company']),
-                    address_line1=row.get(field_headers['shipper_address1']),
-                    address_line2=row.get(field_headers['shipper_address2']),
-                    city=row.get(field_headers['shipper_city']),
-                    state_code=row.get(field_headers['shipper_state']),
-                    postal_code=row.get(field_headers['shipper_postal_code']),
-                    country_code=row.get(field_headers['shipper_country']),
-                    residential=row.get(field_headers['shipper_residential']),
-                ),
-                recipient=dict(
-                    person_name=row.get(field_headers['recipient_name']),
-                    company_name=row.get(field_headers['recipient_company']),
-                    address_line1=row.get(field_headers['recipient_address1']),
-                    address_line2=row.get(field_headers['recipient_address2']),
-                    city=row.get(field_headers['recipient_city']),
-                    state_code=row.get(field_headers['recipient_state']),
-                    postal_code=row.get(field_headers['recipient_postal_code']),
-                    country_code=row.get(field_headers['recipient_country']),
-                    residential=row.get(field_headers['recipient_residential']),
-                ),
-                parcels=[
-                    dict(
-                        weight=row.get(field_headers['parcel_weight']),
-                        weight_unit=row.get(field_headers['parcel_weight_unit']) or 'KG',
-                        width=row.get(field_headers['parcel_width']),
-                        height=row.get(field_headers['parcel_height']),
-                        length=row.get(field_headers['parcel_length']),
-                        dimension_unit=row.get(field_headers['parcel_dimension_unit']) or 'CM',
-                        package_preset=row.get(field_headers['parcel_package_preset']),
-                    )
-                ],
-            ))
+            data = lib.to_dict(
+                dict(
+                    status="draft",
+                    test_mode=context.test_mode,
+                    created_by_id=context.user.id,
+                    meta={**svc, **batch},
+                    options=options,
+                    shipper=dict(
+                        person_name=row.get(field_headers["shipper_name"]),
+                        company_name=row.get(field_headers["shipper_company"]),
+                        address_line1=row.get(field_headers["shipper_address1"]),
+                        address_line2=row.get(field_headers["shipper_address2"]),
+                        city=row.get(field_headers["shipper_city"]),
+                        state_code=row.get(field_headers["shipper_state"]),
+                        postal_code=row.get(field_headers["shipper_postal_code"]),
+                        country_code=row.get(field_headers["shipper_country"]),
+                        residential=row.get(field_headers["shipper_residential"]),
+                    ),
+                    recipient=dict(
+                        person_name=row.get(field_headers["recipient_name"]),
+                        company_name=row.get(field_headers["recipient_company"]),
+                        address_line1=row.get(field_headers["recipient_address1"]),
+                        address_line2=row.get(field_headers["recipient_address2"]),
+                        city=row.get(field_headers["recipient_city"]),
+                        state_code=row.get(field_headers["recipient_state"]),
+                        postal_code=row.get(field_headers["recipient_postal_code"]),
+                        country_code=row.get(field_headers["recipient_country"]),
+                        residential=row.get(field_headers["recipient_residential"]),
+                    ),
+                    parcels=[
+                        dict(
+                            weight=row.get(field_headers["parcel_weight"]),
+                            weight_unit=row.get(field_headers["parcel_weight_unit"])
+                            or "KG",
+                            width=row.get(field_headers["parcel_width"]),
+                            height=row.get(field_headers["parcel_height"]),
+                            length=row.get(field_headers["parcel_length"]),
+                            dimension_unit=row.get(
+                                field_headers["parcel_dimension_unit"]
+                            )
+                            or "CM",
+                            package_preset=row.get(
+                                field_headers["parcel_package_preset"]
+                            ),
+                        )
+                    ],
+                )
+            )
 
             instance = (
-                ShipmentSerializer
-                .map(data=data, context=context)
+                ShipmentSerializer.map(data=data, context=context)
                 .save(fetch_rates=False)
                 .instance
             )

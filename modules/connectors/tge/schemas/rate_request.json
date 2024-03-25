@@ -1,0 +1,75 @@
+{
+    "TollMessage": {
+        "Header": {
+            "MessageVersion": "1.0",
+            "MessageIdentifier": "a255d5b1-e395-450f-b61f-f20baa673818",
+            "CreateTimestamp": "2024-02-24T15:03:28.787+11:00",
+            "DocumentType": "RateEnquiry",
+            "Environment": "PRD",
+            "SourceSystemCode": "XP41",
+            "MessageSender": "GOSHIPR",
+            "MessageReceiver": "TOLL"
+        },
+        "RateEnquiry": {
+            "Request": {
+                "BusinessID": "IPEC",
+                "SystemFields": {
+                    "PickupDateTime": "2024-03-12T13:26:02.000+00:00"
+                },
+                "ShipmentService": {
+                    "ServiceCode": "X",
+                    "ShipmentProductCode": ""
+                },
+                "ShipmentFlags": {
+                    "ExtraServiceFlag": "true"
+                },
+                "ShipmentFinancials": {
+                    "ExtraServicesAmount": {
+                        "Currency": "AUD",
+                        "Value": "5000.00"
+                    }
+                },
+                "FreightMode": "Road",
+                "BillToParty": {
+                    "AccountCode": "80502494"
+                },
+                "ConsignorParty": {
+                    "PhysicalAddress": {
+                        "Suburb": "MELBOURNE",
+                        "StateCode": "VIC",
+                        "PostalCode": "3000",
+                        "CountryCode": "AU"
+                    }
+                },
+                "ConsigneeParty": {
+                    "PhysicalAddress": {
+                        "Suburb": "Ballajura",
+                        "StateCode": "WA",
+                        "PostalCode": "6066",
+                        "CountryCode": "AU"
+                    }
+                },
+                "ShipmentItems": {
+                    "ShipmentItem": [
+                        {
+                            "Commodity": {
+                                "CommodityCode": "Z",
+                                "CommodityDescription": "ALL FREIGHT"
+                            },
+                            "ShipmentItemTotals": {
+                                "ShipmentItemCount": "1"
+                            },
+                            "Dimensions": {
+                                "Width": "10",
+                                "Length": "10",
+                                "Height": "10",
+                                "Volume": "0.001",
+                                "Weight": "2.0"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

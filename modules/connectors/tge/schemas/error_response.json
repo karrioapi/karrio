@@ -1,0 +1,30 @@
+{
+    "TollMessage": {
+        "ErrorMessages": {
+            "ErrorMessage": [
+                {
+                    "ErrorMessage": "The combination of MessageSender, SourceSystemCode, Shipment Number or SSCC ID was invalid.",
+                    "ErrorNumber": {
+                        "Value": "PRINT00400"
+                    }
+                }
+            ]
+        },
+        "Header": {
+            "ApplicationID": null,
+            "AsynchronousMessageFlag": null,
+            "CreateTimestamp": "2024-02-07T08:20:11.518Z",
+            "DocumentType": "ErrorMessage",
+            "Environment": "PRD",
+            "MessageIdentifier": "d734c5d2-28ce-11e1-b467-0ed5f894f718b",
+            "MessageReceiver": null,
+            "MessageSender": "GOSHIPR",
+            "MessageVersion": "2.5",
+            "References": null,
+            "SourceSystemCode": "XP41"
+        }
+    },
+    "Exception": "The combination of MessageSender, SourceSystemCode, Shipment Number or SSCC ID was invalid.",
+    "ExceptionMessage": "The combination of MessageSender, SourceSystemCode, Shipment Number or SSCC ID was invalid.",
+    "message": "The combination of MessageSender, SourceSystemCode, Shipment Number or SSCC ID was invalid."
+}

@@ -279,7 +279,7 @@ class ShipmentDocs(VirtualDownloadView):
         buffer = io.BytesIO()
 
         if self.preview and "ZPL" in self.shipment.label_type or "":
-            width, height, dpmm = (4, 6, 8)
+            width, height, dpmm = (4, 6, 12)
 
             if "8" in self.shipment.label_type:
                 width, height, dpmm = (8, 4, 12)

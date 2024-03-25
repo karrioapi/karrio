@@ -1,0 +1,263 @@
+---
+id: carriers
+title: Carriers
+description: Retrieve the list of carrier accounts configured for your account.
+tags:
+  - REST API
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Carrier connections allow you to perform live rates fetching, label generation,
+shipment tracking and any other carrier supported operations. The API allow you to
+retrieve the list of carrier accounts configured and accessible from your account.
+
+<div id="tailwind">
+  <table className="table-auto">
+    <thead>
+      <tr>
+        <th>ENDPOINTS</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>GET</td>
+        <td>/v1/carriers</td>
+      </tr>
+      <tr>
+        <td>GET</td>
+        <td>
+          /v1/carriers/<strong>[carrier_name]</strong>/services
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+:::info
+This API is read-only and does not allow you to create, update or delete carrier connections.
+To programmatically create, update or delete carrier connections, use the [GraphQL management API](/reference/management/connections).
+:::
+
+
+## Get carrier connections
+
+<div id="tabs">
+<Tabs>
+<TabItem value="curl" label="Curl">
+
+```bash
+curl --request GET \
+  --url https://api.karrio.io/v1/carriers \
+  --header 'Authorization: Token [API_KEY]'
+```
+
+</TabItem>
+<TabItem value="javascript" label="Javascript">
+
+```javascript
+(async () => {
+  const carriers = await karrio.carriers.list();
+})();
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+Karrio returns a list for carrier settings object in response to your API request.
+
+
+<div id="tabs">
+
+```json
+{
+	"count": 8,
+	"next": null,
+	"previous": null,
+	"results": [
+		{
+			"id": "car_98de788aec7a4a3eb9ad0df0cb894b26",
+			"object_type": "carrier",
+			"carrier_id": "easypost",
+			"carrier_name": "easypost",
+			"display_name": "EasyPost",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"rating",
+				"tracking",
+				"shipping"
+			],
+			"metadata": {},
+			"config": null
+		},
+		{
+			"id": "car_6c2400cf0b3643eebb334abdc0bcfdbc",
+			"object_type": "carrier",
+			"carrier_id": "karrio-usps-tracking-live",
+			"carrier_name": "usps",
+			"display_name": "USPS",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"tracking"
+			],
+			"metadata": {},
+			"config": null
+		},
+		{
+			"id": "car_11365468e02c43d2b6762346aed9b719",
+			"object_type": "carrier",
+			"carrier_id": "karrio-ups-tracking-live",
+			"carrier_name": "ups",
+			"display_name": "UPS",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"tracking",
+				"paperless"
+			],
+			"metadata": {},
+			"config": null
+		},
+		{
+			"id": "car_9eaf80b210b14174a66ad19c0cf6d648",
+			"object_type": "carrier",
+			"carrier_id": "karrio-sendle-tracking-live",
+			"carrier_name": "sendle",
+			"display_name": "Sendle",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"tracking"
+			],
+			"metadata": {},
+			"config": null
+		},
+		{
+			"id": "car_1fc2fdd3b09748babb88d771ec72195c",
+			"object_type": "carrier",
+			"carrier_id": "karrio-purolator-tracking-live",
+			"carrier_name": "purolator",
+			"display_name": "Purolator",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"tracking"
+			],
+			"metadata": {},
+			"config": null
+		},
+		{
+			"id": "car_febf9f693736434b89e76fb12e416c28",
+			"object_type": "carrier",
+			"carrier_id": "karrio_dhl_tracking_account",
+			"carrier_name": "dhl_universal",
+			"display_name": "DHL Universal",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"tracking"
+			],
+			"metadata": {},
+			"config": null
+		},
+		{
+			"id": "car_c822ae6fa88e4f9cb4e13ecd23ebffec",
+			"object_type": "carrier",
+			"carrier_id": "karrio_canadapost_live_tracking_acccount",
+			"carrier_name": "canadapost",
+			"display_name": "Canada Post",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"tracking"
+			],
+			"metadata": {},
+			"config": null
+		},
+		{
+			"id": "car_c93e8b3139a7462cbcb5a0b7c3bfad6f",
+			"object_type": "carrier",
+			"carrier_id": "karrio-fedex-tracking-live",
+			"carrier_name": "fedex",
+			"display_name": "FedEx",
+			"test_mode": false,
+			"active": true,
+			"capabilities": [
+				"tracking",
+				"paperless"
+			],
+			"metadata": {},
+			"config": null
+		}
+	]
+}
+```
+
+</div>
+
+## Get carrier services
+
+
+<div id="tabs">
+<Tabs>
+<TabItem value="curl" label="Curl">
+
+```bash
+curl --request GET \
+  --url https://api.karrio.io/v1/carriers/canadapost/services \
+  --header 'Authorization: Token [API_KEY]'
+```
+
+</TabItem>
+<TabItem value="javascript" label="Javascript">
+
+```javascript
+(async () => {
+  const services = await karrio.carriers.get_services("canadapost");
+})();
+```
+
+</TabItem>
+</Tabs>
+</div>
+
+Karrio returns a dictionary of carrier service_code as key and
+service_name as values.
+
+<div id="tabs">
+
+```json
+{
+	"canadapost_regular_parcel": "DOM.RP",
+	"canadapost_expedited_parcel": "DOM.EP",
+	"canadapost_xpresspost": "DOM.XP",
+	"canadapost_xpresspost_certified": "DOM.XP.CERT",
+	"canadapost_priority": "DOM.PC",
+	"canadapost_library_books": "DOM.LIB",
+	"canadapost_expedited_parcel_usa": "USA.EP",
+	"canadapost_priority_worldwide_envelope_usa": "USA.PW.ENV",
+	"canadapost_priority_worldwide_pak_usa": "USA.PW.PAK",
+	"canadapost_priority_worldwide_parcel_usa": "USA.PW.PARCEL",
+	"canadapost_small_packet_usa_air": "USA.SP.AIR",
+	"canadapost_tracked_packet_usa": "USA.TP",
+	"canadapost_tracked_packet_usa_lvm": "USA.TP.LVM",
+	"canadapost_xpresspost_usa": "USA.XP",
+	"canadapost_xpresspost_international": "INT.XP",
+	"canadapost_international_parcel_air": "INT.IP.AIR",
+	"canadapost_international_parcel_surface": "INT.IP.SURF",
+	"canadapost_priority_worldwide_envelope_intl": "INT.PW.ENV",
+	"canadapost_priority_worldwide_pak_intl": "INT.PW.PAK",
+	"canadapost_priority_worldwide_parcel_intl": "INT.PW.PARCEL",
+	"canadapost_small_packet_international_air": "INT.SP.AIR",
+	"canadapost_small_packet_international_surface": "INT.SP.SURF",
+	"canadapost_tracked_packet_international": "INT.TP"
+}
+```
+
+</div>

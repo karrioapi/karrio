@@ -10,6 +10,7 @@ from karrio.core.models import (
 )
 from karrio.server.core.tests import APITestCase
 import karrio.server.manager.models as models
+import karrio.server.providers.models as providers
 
 
 class TestShipmentFixture(APITestCase):
@@ -28,7 +29,6 @@ class TestShipmentFixture(APITestCase):
                 "email": None,
                 "phone_number": "514 000 0000",
                 "state_code": "NB",
-                "suburb": None,
                 "street_number": None,
                 "residential": False,
                 "address_line1": "125 Church St",
@@ -50,7 +50,6 @@ class TestShipmentFixture(APITestCase):
                 "email": None,
                 "phone_number": "514 000 9999",
                 "state_code": "BC",
-                "suburb": None,
                 "street_number": None,
                 "residential": False,
                 "address_line1": "5840 Oak St",
@@ -125,7 +124,7 @@ class TestShipmentDetails(TestShipmentFixture):
 class TestShipmentPurchase(TestShipmentFixture):
     def setUp(self) -> None:
         super().setUp()
-        carrier = models.Carrier.objects.get(carrier_id="canadapost")
+        carrier = providers.Carrier.objects.get(carrier_id="canadapost")
         self.shipment.rates = [
             {
                 "id": "rat_f5c1317021cb4b3c8a5d3b7369ed99e4",
@@ -310,7 +309,6 @@ SHIPMENT_RESPONSE = {
         "email": None,
         "phone_number": "+1 514-000-9999",
         "state_code": "BC",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "5840 Oak St",
@@ -331,7 +329,6 @@ SHIPMENT_RESPONSE = {
         "email": None,
         "phone_number": "+1 514-000-0000",
         "state_code": "NB",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "125 Church St",
@@ -461,7 +458,6 @@ PURCHASED_SHIPMENT = {
         "email": None,
         "phone_number": "514 000 0000",
         "state_code": "NB",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "125 Church St",
@@ -482,7 +478,6 @@ PURCHASED_SHIPMENT = {
         "email": None,
         "phone_number": "514 000 9999",
         "state_code": "BC",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "5840 Oak St",
@@ -610,7 +605,6 @@ CANCEL_RESPONSE = {
         "email": None,
         "phone_number": "514 000 0000",
         "state_code": "NB",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "125 Church St",
@@ -631,7 +625,6 @@ CANCEL_RESPONSE = {
         "email": None,
         "phone_number": "514 000 9999",
         "state_code": "BC",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "5840 Oak St",
@@ -729,7 +722,6 @@ CANCEL_PURCHASED_RESPONSE = {
         "email": None,
         "phone_number": "514 000 0000",
         "state_code": "NB",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "125 Church St",
@@ -750,7 +742,6 @@ CANCEL_PURCHASED_RESPONSE = {
         "email": None,
         "phone_number": "514 000 9999",
         "state_code": "BC",
-        "suburb": None,
         "street_number": None,
         "residential": False,
         "address_line1": "5840 Oak St",

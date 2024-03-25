@@ -155,7 +155,7 @@ def rate_request(
                 priceBreakDown=True,
                 consignmentDetails=tnt.consignmentDetails(
                     totalWeight=packages.weight.KG,
-                    totalVolume=packages.volume,
+                    totalVolume=packages.volume.m3,
                     totalNumberOfPieces=len(packages),
                 ),
                 pieceLine=[

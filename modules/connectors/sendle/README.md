@@ -1,3 +1,4 @@
+
 # karrio.sendle
 
 This package is a Sendle extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
@@ -20,7 +21,7 @@ from karrio.mappers.sendle.settings import Settings
 
 
 # Initialize a carrier gateway
-canadapost = karrio.gateway["sendle"].create(
+sendle = karrio.gateway["sendle"].create(
     Settings(
         ...
     )

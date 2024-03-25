@@ -1,6 +1,6 @@
-import { UserType, useUser, useUserMutation } from '@karrio/hooks/user';
+import { useUser, useUserMutation } from '@karrio/hooks/user';
+import { NotificationType, UserType } from '@karrio/types';
 import React, { useContext, useState } from 'react';
-import { NotificationType } from '@karrio/types';
 import { Notify } from '../components/notifier';
 
 interface ProfileUpdateInputComponent {
@@ -50,7 +50,8 @@ export const ProfileUpdateInput: React.FC<ProfileUpdateInputComponent> = ({ labe
           onChange={handleOnChange}
           defaultValue={((user || {}) as any)[propertyKey] || ""}
           type={inputType}
-          style={{ maxWidth: "60%" }} required />
+          required
+        />
 
         <input className="button is-success is-small mr-1" type="submit" value="Save"
           style={{ visibility: (hasChanged ? "visible" : "hidden") }} />

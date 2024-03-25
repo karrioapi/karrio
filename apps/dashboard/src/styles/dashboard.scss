@@ -13,6 +13,10 @@ Karrio custom styling
     box-shadow: none;
     border: 1px solid #e5e5e5;
   }
+
+  &.is-clickable:hover {
+    background-color: #fafafa;
+  }
 }
 
 .options-item,
@@ -41,32 +45,38 @@ Karrio custom styling
 }
 
 .shipments-table {
-  .carrier {
-    width: 8%;
-    min-width: 50px;
+  .selector {
+    width: 3%;
   }
 
   .service {
-    min-width: 10vw;
-    max-width: 160px;
+    width: 15%;
+    min-width: 250px;
   }
 
   .status {
-    width: 10%;
+    width: 100px;
+    min-width: 100px;
+    max-width: 120px;
   }
 
   .recipient {
-    min-width: 10vw;
-    max-width: 200px;
+    min-width: 200px;
+  }
+
+  .reference {
+    min-width: 150px;
   }
 
   .date {
-    width: 15%;
+    width: 120px;
     min-width: 120px;
+    max-width: 120px;
   }
 
   .action {
-    width: 2%;
+    width: 35px;
+    min-width: 35px;
   }
 
   tbody>tr.items {
@@ -78,14 +88,44 @@ Karrio custom styling
   }
 }
 
+.manifests-table {
+  .selector {
+    width: 3%;
+  }
+
+  .carrier {
+    width: 25%;
+    min-width: 300px;
+  }
+
+  .address {
+    min-width: 200px;
+  }
+
+  .reference {
+    min-width: 150px;
+  }
+
+  .date {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
+
+  .action {
+    width: 35px;
+    min-width: 35px;
+  }
+}
+
 .connections-table {
   .carrier {
-    width: 24%;
+    width: 15%;
     text-align: center !important;
   }
 
   .mode {
-    width: 6%;
+    width: 5%;
   }
 
   .active {
@@ -100,9 +140,31 @@ Karrio custom styling
   }
 }
 
+.admin-connections-table {
+  .carrier {
+    width: 160px;
+    min-width: 160px;
+  }
+
+  .mode {
+    width: 6%;
+  }
+
+  .active {
+    width: 5%;
+  }
+
+  .details {}
+
+  .action {
+    width: 20%;
+    min-width: 180px;
+  }
+}
+
 .system-connections-table {
   .carrier {
-    width: 24%;
+    width: 15%;
     text-align: center !important;
   }
 
@@ -119,6 +181,20 @@ Karrio custom styling
   }
 }
 
+.rate-sheets-table {
+  .carrier {
+    width: 15%;
+    text-align: center !important;
+  }
+
+  .details {}
+
+  .action {
+    width: 20%;
+    min-width: 180px;
+  }
+}
+
 .templates-table {
   .template {}
 
@@ -127,7 +203,55 @@ Karrio custom styling
   }
 
   .action {
-    width: 15%;
+    width: 150px;
+    min-width: 150px;
+  }
+}
+
+.address-templates-table {
+  .template {
+    width: 20%;
+    min-width: 10vw;
+  }
+
+  .address {
+    width: 40%;
+    min-width: 10vw;
+  }
+
+  .email {
+    min-width: 10vw;
+  }
+
+  .default {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .action {
+    width: 90px;
+    min-width: 90px;
+  }
+}
+
+.parcel-templates-table {
+  .template {
+    width: 30%;
+    min-width: 10vw;
+  }
+
+  .parcel {
+    min-width: 250px;
+  }
+
+  .default {
+    width: 100px;
+    min-width: 100px;
+  }
+
+  .action {
+    width: 90px;
+    min-width: 90px;
   }
 }
 
@@ -144,7 +268,10 @@ Karrio custom styling
     width: 8%;
   }
 
-  .description {}
+  .description {
+    min-width: 200px;
+    max-width: 200px;
+  }
 
   .date {
     width: 20%;
@@ -161,15 +288,43 @@ Karrio custom styling
 }
 
 .events-table {
-  .event {}
-
-  .id {
-    width: 20%;
+  .description {
+    width: 80%;
+    min-width: 200px;
+    max-width: 200px;
   }
 
   .date {
     width: 20%;
-    min-width: 185px;
+    min-width: 190px;
+    max-width: 190px;
+  }
+
+  tbody>tr.items {
+    cursor: pointer;
+  }
+
+  tbody>tr.items:hover {
+    background-color: #fafafa;
+  }
+}
+
+.workflow-events-table {
+  .status {
+    width: 6%;
+    min-width: 60px;
+    max-width: 60px;
+  }
+
+  .description {
+    min-width: 200px;
+    max-width: 200px;
+  }
+
+  .date {
+    width: 20%;
+    min-width: 190px;
+    max-width: 190px;
   }
 
   tbody>tr.items {
@@ -182,14 +337,9 @@ Karrio custom styling
 }
 
 .trackers-table {
-  .carrier {
-    width: 8%;
-    min-width: 50px;
-  }
-
-  .tracking-number {
-    min-width: 10vw;
-    max-width: 160px;
+  .service {
+    width: 15%;
+    min-width: 250px;
   }
 
   .status {
@@ -197,13 +347,14 @@ Karrio custom styling
   }
 
   .last-event {
-    min-width: 10vw;
+    min-width: 200px;
     max-width: 200px;
   }
 
   .date {
     width: 15%;
     min-width: 130px;
+    max-width: 130px;
   }
 
   .action {
@@ -232,7 +383,6 @@ Karrio custom styling
   }
 
   .last-event {
-    width: 10%;
     min-width: 150px;
     max-width: 150px;
   }
@@ -250,33 +400,83 @@ Karrio custom styling
 
   .order {
     width: 15%;
+    min-width: 130px;
   }
 
-  .items {
-    min-width: 10vw;
-    max-width: 150px;
+  .line-items {
+    min-width: 140px;
   }
 
   .status {
-    width: 10%;
+    width: 100px;
+    min-width: 100px;
+    max-width: 120px;
   }
 
   .customer {
-    min-width: 10vw;
-    max-width: 200px;
+    min-width: 150px;
+  }
+
+  .total {
+    width: 100px;
+    min-width: 100px;
+    max-width: 100px;
   }
 
   .date {
-    width: 15%;
+    width: 120px;
     min-width: 120px;
+    max-width: 120px;
+  }
+
+  .service {
+    width: 20%;
+    min-width: 240px;
   }
 
   .action {
-    width: 2%;
+    width: 35px;
+    min-width: 35px;
   }
 
   tbody>tr.items {
     cursor: pointer;
+  }
+
+  tbody>tr.items:hover {
+    background-color: #fafafa;
+  }
+}
+
+.batch-labels-table {
+  .selector {
+    width: 3%;
+  }
+
+  .order {
+    width: 20%;
+    min-width: 160px;
+  }
+
+  .items {
+    min-width: 150px;
+    max-width: 150px;
+  }
+
+  .package {
+    min-width: 150px;
+    max-width: 150px;
+  }
+
+  .total {
+    width: 120px;
+    min-width: 120px;
+    max-width: 120px;
+  }
+
+  .service {
+    width: 20%;
+    min-width: 280px;
   }
 
   tbody>tr.items:hover {
@@ -289,7 +489,7 @@ Karrio custom styling
   border-bottom: 2px solid #eee;
 
   .status {
-    width: 8%;
+    width: 3%;
   }
 
   .description {
@@ -299,25 +499,42 @@ Karrio custom styling
   .date {
     width: 15%;
     min-width: 130px;
+    max-width: 130px;
   }
 }
 
 .members-table {
   .member {
     width: 40%;
+    min-width: 150px;
   }
 
   .role {
-    width: 30%;
+    width: 25%;
+    min-width: 150px;
   }
 
   .last-login {
-    width: 20%;
-    min-width: 130px;
+    width: 180px;
+    min-width: 180px;
   }
 
   .action {
     width: 10%;
+  }
+}
+
+.surcharges-table {
+  .surcharge {
+    width: 20%;
+  }
+
+  .name {
+    width: 60%;
+  }
+
+  .action {
+    width: 20%;
   }
 }
 
@@ -373,9 +590,10 @@ hr {
 }
 
 .mode-indicator {
-  position: absolute;
-  top: 60px;
-  border-top: 1px solid rgb(196, 76, 52);
+  position: fixed;
+  top: 0;
+  z-index: 40;
+  border-top: 2px solid rgb(196, 76, 52);
   padding: 0;
   text-align: center;
   width: 100%;
@@ -385,10 +603,10 @@ hr {
     margin: 0 auto;
     background: rgb(196, 76, 52);
     display: inline;
-    padding: 2px 14px;
+    padding: 0 10px;
     border-radius: 0 0 5px 5px;
     color: white;
-    font-size: 0.55em;
+    font-size: 0.60em;
     font-weight: bold;
   }
 }
@@ -423,6 +641,19 @@ td>div.dropdown.is-active .dropdown-menu {
 .small-icon>svg {
   width: 0.8em !important;
   height: 0.8em !important;
+}
+
+.tabs>ul {
+  scrollbar-width: none;
+  /* Firefox */
+  -ms-overflow-style: none;
+  /* Internet Explorer 10+ */
+}
+
+.tabs>ul::-webkit-scrollbar {
+  /* WebKit */
+  width: 0;
+  height: 0;
 }
 
 .tab-content {
@@ -468,8 +699,49 @@ td>div.dropdown.is-active .dropdown-menu {
   background-color: #f9f9f9;
 }
 
+.side-modal {
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: auto;
+  border-left: solid #ddd;
+  width: 400px;
+}
+
+.side-modal-body {
+  max-height: 100vh;
+  height: 100vh;
+  width: 400px;
+}
+
 pre.code {
   border: 1px solid #f2f2f2;
+}
+
+.admin-wrapper {
+  margin: auto;
+  max-width: 1080px;
+  padding: 0 20px;
+}
+
+.admin-sidebar {
+  width: 260px !important;
+}
+
+.admin-sidebar-header {
+  border-radius: 6px;
+}
+
+.sidebar-menu-button {
+  position: fixed;
+  top: 10px;
+  right: -40px;
+  display: none;
+}
+
+.admin-modal {
+  width: calc(100%);
+  max-height: 90vh !important;
 }
 
 @media screen and (min-width: 1080px) {
@@ -477,11 +749,36 @@ pre.code {
     overflow: unset;
     overflow-y: unset;
   }
+
+  .admin-modal {
+    margin: 1.5rem;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .admin-sidebar {
+    position: absolute !important;
+    z-index: 0 !important;
+  }
 }
 
 @media screen and (max-width: 768px) {
   .table-container {
     overflow-y: visible;
+  }
+
+  .admin-modal {
+    margin: 0;
+    max-height: 95vh !important;
+  }
+
+  .admin-sidebar-menu {
+    height: calc(100%);
+    margin: 0 !important;
+  }
+
+  .sidebar-menu-button.is-mobile-active {
+    display: block !important;
   }
 }
 
@@ -489,6 +786,7 @@ pre.code {
 /* width */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 /* Track */

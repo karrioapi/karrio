@@ -1,0 +1,13 @@
+[build]
+# This is the directory to change to before starting a build.
+# NOTE: This is where we will look for package.json/.nvmrc/etc, not root.
+  base    = "./apps"
+
+# This is the directory that you are publishing from (relative to root of your repo)
+  publish = "./www/build/"
+
+# This will be your default build command
+  command = "cd ../ && npm i && npm run build -w apps/www"
+
+# Ignore build
+  ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF apps/www"

@@ -170,7 +170,7 @@ ShipmentRequest = {
         "height": 2.0,
         "length": 7.0,
         "quantity": 1,
-        "volume": 0.0,
+        "volume": 7e-05,
         "weight": 10.0,
         "width": 5.0,
     },

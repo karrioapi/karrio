@@ -1,5 +1,6 @@
 import * as api from './rest/api';
 import * as graph from './graphql/index';
+import * as ee from './graphql/ee/index';
 
 export {
     CarrierSettingsCarrierNameEnum,
@@ -29,6 +30,7 @@ export type CustomsType = graph.get_shipment_shipment_customs & {
 export type ParcelType = graph.get_shipment_shipment_parcels & {
     items: CommodityType[];
 };
+export type ManifestType = graph.GetManifests_manifests_edges_node;
 export type TrackingEventType = graph.get_tracker_tracker_events;
 export type TrackerType = graph.get_tracker_tracker & {
     events: TrackingEventType[];
@@ -116,6 +118,11 @@ export const PAYOR_OPTIONS = Array.from(new Set(
 export const CURRENCY_OPTIONS = Array.from(new Set(
     Object
         .values(graph.CurrencyCodeEnum)
+));
+
+export const COUNTRY_OPTIONS = Array.from(new Set(
+    Object
+        .values(graph.CountryCodeEnum)
 ));
 
 export const DIMENSION_UNITS = Array.from(new Set(
@@ -243,14 +250,15 @@ export const HTTP_METHODS = [
 export enum NoneEnum { none = "none" };
 
 export type dataT<T> = { data?: T };
-export type UserContextDataType = {
+export type AccountContextDataType = {
     data: {
         user: graph.GetUser_user,
+        workspace_config: graph.GetWorkspaceConfig_workspace_config,
     }
 };
 export type OrgContextDataType = {
     data: {
-        organizations?: graph.get_organizations_organizations[]
+        organizations?: ee.get_organizations_organizations[]
     }
 };
 
@@ -265,6 +273,8 @@ export type PortalSessionType = {
     url: string;
 }
 
+export type UserType = graph.GetUser_user;
+
 export interface Metadata {
     HOST: string;
     ADMIN: string;
@@ -277,6 +287,7 @@ export interface Metadata {
     ALLOW_SIGNUP: boolean;
     ALLOW_ADMIN_APPROVED_SIGNUP: boolean;
     ALLOW_MULTI_ACCOUNT: boolean;
+    ADMIN_DASHBOARD: boolean;
     ORDERS_MANAGEMENT: boolean;
     APPS_MANAGEMENT: boolean;
     DOCUMENTS_MANAGEMENT: boolean;
@@ -286,6 +297,7 @@ export interface Metadata {
     PERSIST_SDK_TRACING: boolean;
     ORG_LEVEL_BILLING: boolean;
     TENANT_LEVEL_BILLING: boolean;
+    WORKFLOW_MANAGEMENT: boolean;
 };
 
 export interface References {
@@ -301,6 +313,7 @@ export interface References {
     ALLOW_SIGNUP: boolean;
     ALLOW_ADMIN_APPROVED_SIGNUP: boolean;
     ALLOW_MULTI_ACCOUNT: boolean;
+    ADMIN_DASHBOARD: boolean;
     ORDERS_MANAGEMENT: boolean;
     APPS_MANAGEMENT: boolean;
     DOCUMENTS_MANAGEMENT: boolean;
@@ -310,6 +323,7 @@ export interface References {
     PERSIST_SDK_TRACING: boolean;
     ORG_LEVEL_BILLING: boolean;
     TENANT_LEVEL_BILLING: boolean;
+    WORKFLOW_MANAGEMENT: boolean;
 
     ADDRESS_AUTO_COMPLETE: Collection;
     countries: Collection;
@@ -317,7 +331,7 @@ export interface References {
     carriers: Collection;
     custom_carriers: Collection;
     states: Collection<Collection>;
-    options: Collection<Collection>;
+    options: Collection<Collection<{ code: string, type: string }>>;
     services: Collection<Collection>;
     option_names: Collection<Collection>;
     service_names: Collection<Collection>;
@@ -347,12 +361,14 @@ export const CARRIER_THEMES: Collection = {
     'dhl_universal': 'is-dhl',
     'dpd': 'is-dpd',
     'dpdhl': 'is-dhl',
+    'dhl_parcel_de': 'is-dhl',
     'eshipper': 'is-eshipper',
     'easypost': 'is-easypost',
     'geodis': 'is-geodis',
     'laposte': 'is-laposte',
     'nationex': 'is-nationex',
     'fedex': 'is-fedex',
+    'fedex_ws': 'is-fedex',
     'freightcom': 'is-freightcom',
     'generic': 'is-generic',
     'purolator': 'is-purolator',
@@ -394,6 +410,7 @@ export const CARRIER_IMAGES: Collection = {
     'dhl_express': 'dhl_express',
     'dhl_poland': 'dhl_express',
     'dpdhl': 'dhl_express',
+    'dhl_parcel_de': 'dhl_express',
     'dhl_universal': 'dhl_universal',
     'dpd': 'dpd',
     'dpd_uk': 'dpd',
@@ -401,6 +418,7 @@ export const CARRIER_IMAGES: Collection = {
     'estafeta': 'generic',
     'fastway': 'generic',
     'fedex': 'fedex',
+    'fedex_ws': 'fedex',
     'fedex_mail': 'fedex',
     'fedex_sameday_city': 'fedex',
     'fedex_smartpost': 'fedex',
@@ -436,9 +454,9 @@ export const CARRIER_IMAGES: Collection = {
     'usps': 'usps',
     'veho': 'generic',
     'yanwen': 'yanwen',
-    'eshipper': 'eshipper',
+    'eshipper': 'generic',
     'easypost': 'generic',
-    'freightcom': 'freightcom',
+    'freightcom': 'generic',
     'generic': 'generic',
     'sf_express': 'sf_express',
     'tnt': 'tnt',
@@ -457,3 +475,36 @@ export const IMAGES = (
         .filter(([_, val]) => val !== 'generic')
         .map(([key, _]) => key)
 );
+
+export const DEFAULT_ADDRESS_CONTENT = {
+    address_line1: '',
+    address_line2: '',
+    residential: false
+} as Partial<AddressType>;
+
+export const DEFAULT_PARCEL_CONTENT: Partial<ParcelType> = {
+    weight: 1.0,
+    width: 33.7,
+    height: 18.2,
+    length: 10.0,
+    is_document: false,
+    packaging_type: "your_packaging",
+    weight_unit: graph.WeightUnitEnum.KG,
+    dimension_unit: graph.DimensionUnitEnum.CM,
+    items: [],
+};
+
+export const DEFAULT_COMMODITY_CONTENT: Partial<CommodityType> = {
+    weight: 1,
+    quantity: 1,
+    weight_unit: graph.WeightUnitEnum.KG,
+};
+
+export const DEFAULT_CUSTOMS_CONTENT: Partial<CustomsType> = {
+    duty: { paid_by: graph.PaidByEnum.recipient } as any,
+    certify: true,
+    commodities: [DEFAULT_COMMODITY_CONTENT as CommodityType],
+    incoterm: graph.IncotermCodeEnum.DDU,
+    content_type: graph.CustomsContentTypeEnum.merchandise,
+    options: {}
+};

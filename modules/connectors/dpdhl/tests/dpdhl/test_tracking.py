@@ -24,7 +24,7 @@ class TestDPDHLTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/rest/sendungsverfolgung",
+                f"{gateway.settings.server_url}/rest/sendungsverfolgung?xml=%3C%3Fxml+version%3D%221.0%22+encoding%3D%22UTF-8%22+standalone%3D%22no%22%3F%3E%0A%3Cdata+appname%3D%22zt12345%22+password%3D%22geheim%22+request%3D%22d-get-piece-detail%22+language-code%3D%22en%22+piece-code%3D%2200340434161094042557%22%2F%3E%0A",
             )
 
     def test_parse_tracking_response(self):

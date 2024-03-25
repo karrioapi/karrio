@@ -12,11 +12,14 @@ def parse_tracking_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     responses = _responses.deserialize()
-    errors = [
-        error.parse_error_response(response, settings, dict(tracking_number=code))
-        for code, response in responses
-        if "error" in response
-    ]
+    errors: typing.List[models.Message] = sum(
+        [
+            error.parse_error_response(response, settings, tracking_number=code)
+            for code, response in responses
+            if "error" in response
+        ],
+        start=[],
+    )
     trackers = [
         _extract_details(response, settings)
         for _, response in responses
@@ -71,7 +74,7 @@ def _extract_details(
             carrier=provider_units.CarrierId.map(tracker.carrier).name_or_key,
             shipment_id=tracker.shipment_id,
             tracker_id=tracker.id,
-            fees=tracker.fees,
+            fees=lib.to_dict(tracker.fees),
         ),
     )
 

@@ -3,7 +3,6 @@ import functools
 import django.conf as conf
 import django.forms as forms
 import django.db.models as models
-import django.core.validators as validators
 
 import karrio
 import karrio.lib as lib
@@ -34,8 +33,6 @@ class Manager(models.Manager):
                 *[Model.__name__.lower() for Model in MODELS.values()],
             )
         )
-
-        return queryset.filter(is_system=False)
 
 
 class CarrierManager(Manager):
@@ -151,8 +148,14 @@ class Carrier(core.OwnedEntity):
 
         if hasattr(self.settings, "services"):
             _computed_data.update(
-                services=[forms.model_to_dict(s) for s in self.settings.services.all()]
+                services=[forms.model_to_dict(s) for s in self.settings.service_list]
             )
+
+        if hasattr(self.settings, "sscc_count"):
+            _computed_data.update(sscc_count=self.settings.sscc_count)
+
+        if hasattr(self.settings, "shipment_count"):
+            _computed_data.update(shipment_count=self.settings.shipment_count)
 
         if hasattr(self.settings, "cache"):
             _computed_data.update(cache=self.settings.cache)
@@ -224,7 +227,9 @@ class Carrier(core.OwnedEntity):
             if (_ctx.user or _ctx.org)
             else lib.failsafe(lambda: middleware.SessionContext.get_current_request())
         )
-        has_ctx_user = ctx and ((ctx.user and not isinstance(ctx.user, AnonymousUser)) or ctx.org)
+        has_ctx_user = ctx and (
+            (ctx.user and not isinstance(ctx.user, AnonymousUser)) or ctx.org
+        )
 
         queryset = (
             CarrierConfig.objects.filter(carrier=carrier)

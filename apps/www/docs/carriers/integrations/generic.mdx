@@ -1,0 +1,21 @@
+---
+id: generic
+title: Generic Carrier
+---
+
+import integrations from "../integrations.json";
+import CarrierIntegrationDetails from "@site/src/components/CarrierIntegrationDetails";
+
+<CarrierIntegrationDetails 
+    id="generic"
+    integration={{
+    "id": "generic",
+    "name": "Generic Carrier",
+    "status": "production",
+    "features": [
+      "Rating",
+      "Shipping"
+    ],
+    "description": "An abstraction to create define a custom carrier API compatible with the open karrio shipping API.",
+  }} 
+/>

@@ -1,467 +1,596 @@
 import unittest
-import logging
-from unittest.mock import patch
-from karrio.core.utils import DP
-from karrio.core.models import TrackingRequest
-from karrio import Tracking
+from unittest.mock import patch, ANY
 from .fixture import gateway
 
+import karrio
+import karrio.lib as lib
+import karrio.core.models as models
 
-logger = logging.getLogger(__name__)
 
-
-class TestFeDexTracking(unittest.TestCase):
+class TestFedExTracking(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.TrackRequest = TrackingRequest(tracking_numbers=["794887075005"])
+        self.TrackingRequest = models.TrackingRequest(**TrackingPayload)
 
     def test_create_tracking_request(self):
-        request = gateway.mapper.create_tracking_request(self.TrackRequest)
+        request = gateway.mapper.create_tracking_request(self.TrackingRequest)
 
-        self.assertEqual(request.serialize(), TrackingRequestXML)
+        self.assertEqual(request.serialize(), TrackingRequest)
 
-    @patch("karrio.mappers.fedex.proxy.lib.request", return_value="<a></a>")
-    def test_get_tracking(self, http_mock):
-        Tracking.fetch(self.TrackRequest).from_(gateway)
+    def test_get_tracking(self):
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
-        url = http_mock.call_args[1]["url"]
-        self.assertEqual(url, f"{gateway.settings.server_url}/track")
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/track/v1/trackingnumbers",
+            )
 
     def test_parse_tracking_response(self):
         with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
-            mock.return_value = TrackingResponseXML
-            parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
-
-            self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
-
-    def test_tracking_auth_error_parsing(self):
-        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
-            mock.return_value = TrackingAuthErrorXML
-            parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
-
-            self.assertEqual(DP.to_dict(parsed_response), DP.to_dict(ParsedAuthError))
-
-    def test_parse_error_tracking_response(self):
-        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
-            mock.return_value = TrackingErrorResponseXML
-            parsed_response = Tracking.fetch(self.TrackRequest).from_(gateway).parse()
-
-            self.assertEqual(
-                DP.to_dict(parsed_response), DP.to_dict(ParsedTrackingResponseError)
+            mock.return_value = TrackingResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
+
+    def test_parse_error_response(self):
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
+            mock.return_value = ErrorResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
-ParsedAuthError = [
-    [],
-    [
-        {
-            "carrier_name": "fedex",
-            "carrier_id": "carrier_id",
-            "code": "1000",
-            "message": "Authentication Failed",
-        }
-    ],
-]
+TrackingPayload = {"tracking_numbers": ["399368623212", "39936862321"]}
 
 ParsedTrackingResponse = [
     [
         {
-            "carrier_id": "carrier_id",
+            "carrier_id": "fedex",
             "carrier_name": "fedex",
             "delivered": False,
-            "estimated_delivery": "2016-11-17",
+            "estimated_delivery": "2021-10-01",
             "events": [
                 {
-                    "code": "AE",
-                    "date": "2022-12-02",
-                    "description": "Shipment arriving early",
-                    "location": "LETHBRIDGE, AB, T1H5K9, CA",
-                    "time": "14:24",
-                },
-                {
                     "code": "PU",
-                    "date": "2022-12-02",
-                    "description": "Picked up",
-                    "location": "LETHBRIDGE, AB, T1H5K9, CA",
-                    "time": "14:21",
-                },
-                {
-                    "code": "OC",
-                    "date": "2022-12-02",
-                    "description": "Shipment information sent to FedEx",
-                    "location": "CUSTOMER",
-                    "time": "09:56",
-                },
+                    "date": "2018-02-02",
+                    "description": "Package available for clearance",
+                    "location": "SEATTLE, WA, 98101, US",
+                    "time": "12:01",
+                }
             ],
             "info": {
-                "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=794887075005",
-                "package_weight": 60.0,
+                "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=123456789012",
+                "package_weight": 22222.0,
                 "package_weight_unit": "LB",
                 "shipment_destination_country": "US",
                 "shipment_origin_country": "US",
-                "shipment_service": "FedEx Priority Overnight",
+                "shipment_service": "FedEx Freight Economy.",
             },
             "status": "in_transit",
-            "tracking_number": "794887075005",
+            "tracking_number": "123456789012",
         }
     ],
-    [],
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "code": "TRACKING.TRACKINGNUMBER.EMPTY",
+            "details": {"tracking_number": "128667043726"},
+            "message": "Please provide tracking number.",
+        },
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "code": "TRACKING.TRACKINGNUMBER.NOTFOUND",
+            "details": {"tracking_number": "39936862321"},
+            "message": "Tracking number cannot be found. Please correct the tracking "
+            "number and try again.",
+        },
+    ],
 ]
 
-ParsedTrackingResponseError = [
+ParsedErrorResponse = [
     [],
     [
         {
+            "carrier_id": "fedex",
             "carrier_name": "fedex",
-            "carrier_id": "carrier_id",
-            "code": "6035",
-            "message": "Invalid tracking numbers.   Please check the following numbers "
-            "and resubmit.",
+            "code": "TRACKING.TRACKINGNUMBER.EMPTY",
+            "details": {},
+            "message": "Please provide tracking number.",
         }
     ],
 ]
 
-TrackingErrorResponseXML = """<?xml version="1.0" encoding="UTF-8"?>
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-   <SOAP-ENV:Header />
-   <SOAP-ENV:Body>
-      <TrackReply xmlns="http://fedex.com/ws/track/v14">
-         <HighestSeverity>SUCCESS</HighestSeverity>
-         <Notifications>
-            <Severity>SUCCESS</Severity>
-            <Source>trck</Source>
-            <Code>0</Code>
-            <Message>Request was successfully processed.</Message>
-            <LocalizedMessage>Request was successfully processed.</LocalizedMessage>
-         </Notifications>
-         <TransactionDetail>
-            <CustomerTransactionId>Track By Number_v14</CustomerTransactionId>
-            <Localization>
-               <LanguageCode>en</LanguageCode>
-            </Localization>
-         </TransactionDetail>
-         <Version>
-            <ServiceId>trck</ServiceId>
-            <Major>14</Major>
-            <Intermediate>0</Intermediate>
-            <Minor>0</Minor>
-         </Version>
-         <CompletedTrackDetails>
-            <HighestSeverity>SUCCESS</HighestSeverity>
-            <Notifications>
-               <Severity>SUCCESS</Severity>
-               <Source>trck</Source>
-               <Code>0</Code>
-               <Message>Request was successfully processed.</Message>
-               <LocalizedMessage>Request was successfully processed.</LocalizedMessage>
-            </Notifications>
-            <DuplicateWaybill>false</DuplicateWaybill>
-            <MoreData>false</MoreData>
-            <TrackDetailsCount>0</TrackDetailsCount>
-            <TrackDetails>
-               <Notification>
-                  <Severity>ERROR</Severity>
-                  <Source>trck</Source>
-                  <Code>6035</Code>
-                  <Message>Invalid tracking numbers.   Please check the following numbers and resubmit.</Message>
-                  <LocalizedMessage>Invalid tracking numbers.   Please check the following numbers and resubmit.</LocalizedMessage>
-               </Notification>
-               <TrackingNumber>1Z12345E1305277940</TrackingNumber>
-               <StatusDetail>
-                  <Location>
-                     <Residential>false</Residential>
-                  </Location>
-               </StatusDetail>
-               <PackageSequenceNumber>0</PackageSequenceNumber>
-               <PackageCount>0</PackageCount>
-               <DeliveryAttempts>0</DeliveryAttempts>
-               <TotalUniqueAddressCountInConsolidation>0</TotalUniqueAddressCountInConsolidation>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>INDIRECT_SIGNATURE_RELEASE</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>REDIRECT_TO_HOLD_AT_LOCATION</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>REROUTE</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>RESCHEDULE</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-            </TrackDetails>
-         </CompletedTrackDetails>
-      </TrackReply>
-   </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+
+TrackingRequest = {
+    "trackingInfo": [
+        {"trackingNumberInfo": {"trackingNumber": "399368623212"}},
+        {"trackingNumberInfo": {"trackingNumber": "39936862321"}},
+    ],
+    "includeDetailedScans": True,
+}
+
+
+TrackingResponse = """{
+  "transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+  "customerTransactionId": "AnyCo_order123456789",
+  "output": {
+    "completeTrackResults": [
+      {
+        "trackingNumber": "123456789012",
+        "trackResults": [
+          {
+            "trackingNumberInfo": {
+              "trackingNumber": "128667043726",
+              "carrierCode": "FDXE",
+              "trackingNumberUniqueId": "245822~123456789012~FDEG"
+            },
+            "additionalTrackingInfo": {
+              "hasAssociatedShipments": false,
+              "nickname": "shipment nickname",
+              "packageIdentifiers": [
+                {
+                  "type": "SHIPPER_REFERENCE",
+                  "value": "ASJFGVAS",
+                  "trackingNumberUniqueId": "245822~123456789012~FDEG"
+                }
+              ],
+              "shipmentNotes": "shipment notes"
+            },
+            "distanceToDestination": {
+              "units": "KM",
+              "value": 685.7
+            },
+            "consolidationDetail": [
+              {
+                "timeStamp": "2020-10-13T03:54:44-06:00",
+                "consolidationID": "47936927",
+                "reasonDetail": {
+                  "description": "Wrong color",
+                  "type": "REJECTED"
+                },
+                "packageCount": 25,
+                "eventType": "PACKAGE_ADDED_TO_CONSOLIDATION"
+              }
+            ],
+            "meterNumber": "8468376",
+            "returnDetail": {
+              "authorizationName": "Sammy Smith",
+              "reasonDetail": [
+                {
+                  "description": "Wrong color",
+                  "type": "REJECTED"
+                }
+              ]
+            },
+            "serviceDetail": {
+              "description": "FedEx Freight Economy.",
+              "shortDescription": "FL",
+              "type": "FEDEX_FREIGHT_ECONOMY"
+            },
+            "destinationLocation": {
+              "locationId": "SEA",
+              "locationContactAndAddress": {
+                "contact": {
+                  "personName": "John Taylor",
+                  "phoneNumber": "1234567890",
+                  "companyName": "Fedex"
+                },
+                "address": {
+                  "addressClassification": "BUSINESS",
+                  "residential": false,
+                  "streetLines": [
+                    "1043 North Easy Street",
+                    "Suite 999"
+                  ],
+                  "city": "SEATTLE",
+                  "urbanizationCode": "RAFAEL",
+                  "stateOrProvinceCode": "WA",
+                  "postalCode": "98101",
+                  "countryCode": "US",
+                  "countryName": "United States"
+                }
+              },
+              "locationType": "PICKUP_LOCATION"
+            },
+            "latestStatusDetail": {
+              "scanLocation": {
+                "addressClassification": "BUSINESS",
+                "residential": false,
+                "streetLines": [
+                  "1043 North Easy Street",
+                  "Suite 999"
+                ],
+                "city": "SEATTLE",
+                "urbanizationCode": "RAFAEL",
+                "stateOrProvinceCode": "WA",
+                "postalCode": "98101",
+                "countryCode": "US",
+                "countryName": "United States"
+              },
+              "code": "PU",
+              "derivedCode": "PU",
+              "ancillaryDetails": [
+                {
+                  "reason": "15",
+                  "reasonDescription": "Customer not available or business closed",
+                  "action": "Contact us at <http://www.fedex.com/us/customersupport/call/index.html> to discuss possible delivery or pickup alternatives.",
+                  "actionDescription": "Customer not Available or Business Closed"
+                }
+              ],
+              "statusByLocale": "Picked up",
+              "description": "Picked up",
+              "delayDetail": {
+                "type": "WEATHER",
+                "subType": "SNOW",
+                "status": "DELAYED"
+              }
+            },
+            "serviceCommitMessage": {
+              "message": "No scheduled delivery date available at this time.",
+              "type": "ESTIMATED_DELIVERY_DATE_UNAVAILABLE"
+            },
+            "informationNotes": [
+              {
+                "code": "CLEARANCE_ENTRY_FEE_APPLIES",
+                "description": "this is an informational message"
+              }
+            ],
+            "error": {
+              "code": "TRACKING.TRACKINGNUMBER.EMPTY",
+              "parameterList": [
+                {
+                  "value": "value",
+                  "key": "key"
+                }
+              ],
+              "message": "Please provide tracking number."
+            },
+            "specialHandlings": [
+              {
+                "description": "Deliver Weekday",
+                "type": "DELIVER_WEEKDAY",
+                "paymentType": "OTHER"
+              }
+            ],
+            "availableImages": [
+              {
+                "size": "LARGE",
+                "type": "BILL_OF_LADING"
+              }
+            ],
+            "deliveryDetails": {
+              "receivedByName": "Reciever",
+              "destinationServiceArea": "EDDUNAVAILABLE",
+              "destinationServiceAreaDescription": "Appointment required",
+              "locationDescription": "Receptionist/Front Desk",
+              "actualDeliveryAddress": {
+                "addressClassification": "BUSINESS",
+                "residential": false,
+                "streetLines": [
+                  "1043 North Easy Street",
+                  "Suite 999"
+                ],
+                "city": "SEATTLE",
+                "urbanizationCode": "RAFAEL",
+                "stateOrProvinceCode": "WA",
+                "postalCode": "98101",
+                "countryCode": "US",
+                "countryName": "United States"
+              },
+              "deliveryToday": false,
+              "locationType": "FEDEX_EXPRESS_STATION",
+              "signedByName": "Reciever",
+              "officeOrderDeliveryMethod": "Courier",
+              "deliveryAttempts": "0",
+              "deliveryOptionEligibilityDetails": [
+                {
+                  "option": "INDIRECT_SIGNATURE_RELEASE",
+                  "eligibility": "INELIGIBLE"
+                }
+              ]
+            },
+            "scanEvents": [
+              {
+                "date": "2018-02-02T12:01:00-07:00",
+                "derivedStatus": "Picked Up",
+                "scanLocation": {
+                  "addressClassification": "BUSINESS",
+                  "residential": false,
+                  "streetLines": [
+                    "1043 North Easy Street",
+                    "Suite 999"
+                  ],
+                  "city": "SEATTLE",
+                  "urbanizationCode": "RAFAEL",
+                  "stateOrProvinceCode": "WA",
+                  "postalCode": "98101",
+                  "countryCode": "US",
+                  "countryName": "United States"
+                },
+                "locationId": "SEA",
+                "locationType": "PICKUP_LOCATION",
+                "exceptionDescription": "Package available for clearance",
+                "eventDescription": "Picked Up",
+                "eventType": "PU",
+                "derivedStatusCode": "PU",
+                "exceptionCode": "A25",
+                "delayDetail": {
+                  "type": "WEATHER",
+                  "subType": "SNOW",
+                  "status": "DELAYED"
+                }
+              }
+            ],
+            "dateAndTimes": [
+              {
+                "dateTime": "2007-09-27T00:00:00",
+                "type": "ACTUAL_DELIVERY"
+              }
+            ],
+            "packageDetails": {
+              "physicalPackagingType": "BARREL",
+              "sequenceNumber": "45",
+              "undeliveredCount": "7",
+              "packagingDescription": {
+                "description": "FedEx Pak",
+                "type": "FEDEX_PAK"
+              },
+              "count": "1",
+              "weightAndDimensions": {
+                "weight": [
+                  {
+                    "unit": "LB",
+                    "value": "22222.0"
+                  }
+                ],
+                "dimensions": [
+                  {
+                    "length": 100,
+                    "width": 50,
+                    "height": 30,
+                    "units": "CM"
+                  }
+                ]
+              },
+              "packageContent": [
+                "wire hangers",
+                "buttons"
+              ],
+              "contentPieceCount": "100",
+              "declaredValue": {
+                "currency": "USD",
+                "value": 56.8
+              }
+            },
+            "goodsClassificationCode": "goodsClassificationCode",
+            "holdAtLocation": {
+              "locationId": "SEA",
+              "locationContactAndAddress": {
+                "contact": {
+                  "personName": "John Taylor",
+                  "phoneNumber": "1234567890",
+                  "companyName": "Fedex"
+                },
+                "address": {
+                  "addressClassification": "BUSINESS",
+                  "residential": false,
+                  "streetLines": [
+                    "1043 North Easy Street",
+                    "Suite 999"
+                  ],
+                  "city": "SEATTLE",
+                  "urbanizationCode": "RAFAEL",
+                  "stateOrProvinceCode": "WA",
+                  "postalCode": "98101",
+                  "countryCode": "US",
+                  "countryName": "United States"
+                }
+              },
+              "locationType": "PICKUP_LOCATION"
+            },
+            "customDeliveryOptions": [
+              {
+                "requestedAppointmentDetail": {
+                  "date": "2019-05-07",
+                  "window": [
+                    {
+                      "description": "Description field",
+                      "window": {
+                        "begins": "2021-10-01T08:00:00",
+                        "ends": "2021-10-15T00:00:00-06:00"
+                      },
+                      "type": "ESTIMATED_DELIVERY"
+                    }
+                  ]
+                },
+                "description": "Redirect the package to the hold location.",
+                "type": "REDIRECT_TO_HOLD_AT_LOCATION",
+                "status": "HELD"
+              }
+            ],
+            "estimatedDeliveryTimeWindow": {
+              "description": "Description field",
+              "window": {
+                "begins": "2021-10-01T08:00:00",
+                "ends": "2021-10-15T00:00:00-06:00"
+              },
+              "type": "ESTIMATED_DELIVERY"
+            },
+            "pieceCounts": [
+              {
+                "count": "35",
+                "description": "picec count description",
+                "type": "ORIGIN"
+              }
+            ],
+            "originLocation": {
+              "locationId": "SEA",
+              "locationContactAndAddress": {
+                "contact": {
+                  "personName": "John Taylor",
+                  "phoneNumber": "1234567890",
+                  "companyName": "Fedex"
+                },
+                "address": {
+                  "addressClassification": "BUSINESS",
+                  "residential": false,
+                  "streetLines": [
+                    "1043 North Easy Street",
+                    "Suite 999"
+                  ],
+                  "city": "SEATTLE",
+                  "urbanizationCode": "RAFAEL",
+                  "stateOrProvinceCode": "WA",
+                  "postalCode": "98101",
+                  "countryCode": "US",
+                  "countryName": "United States"
+                }
+              },
+              "locationType": "PICKUP_LOCATION"
+            },
+            "recipientInformation": {
+              "contact": {
+                "personName": "John Taylor",
+                "phoneNumber": "1234567890",
+                "companyName": "Fedex"
+              },
+              "address": {
+                "addressClassification": "BUSINESS",
+                "residential": false,
+                "streetLines": [
+                  "1043 North Easy Street",
+                  "Suite 999"
+                ],
+                "city": "SEATTLE",
+                "urbanizationCode": "RAFAEL",
+                "stateOrProvinceCode": "WA",
+                "postalCode": "98101",
+                "countryCode": "US",
+                "countryName": "United States"
+              }
+            },
+            "standardTransitTimeWindow": {
+              "description": "Description field",
+              "window": {
+                "begins": "2021-10-01T08:00:00",
+                "ends": "2021-10-15T00:00:00-06:00"
+              },
+              "type": "ESTIMATED_DELIVERY"
+            },
+            "shipmentDetails": {
+              "contents": [
+                {
+                  "itemNumber": "RZ5678",
+                  "receivedQuantity": "13",
+                  "description": "pulyurethane rope",
+                  "partNumber": "RK1345"
+                }
+              ],
+              "beforePossessionStatus": false,
+              "weight": [
+                {
+                  "unit": "LB",
+                  "value": "22222.0"
+                }
+              ],
+              "contentPieceCount": "3333",
+              "splitShipments": [
+                {
+                  "pieceCount": "10",
+                  "statusDescription": "status",
+                  "timestamp": "2019-05-07T08:00:07",
+                  "statusCode": "statuscode"
+                }
+              ]
+            },
+            "reasonDetail": {
+              "description": "Wrong color",
+              "type": "REJECTED"
+            },
+            "availableNotifications": [
+              "ON_DELIVERY",
+              "ON_EXCEPTION"
+            ],
+            "shipperInformation": {
+              "contact": {
+                "personName": "John Taylor",
+                "phoneNumber": "1234567890",
+                "companyName": "Fedex"
+              },
+              "address": {
+                "addressClassification": "BUSINESS",
+                "residential": false,
+                "streetLines": [
+                  "1043 North Easy Street",
+                  "Suite 999"
+                ],
+                "city": "SEATTLE",
+                "urbanizationCode": "RAFAEL",
+                "stateOrProvinceCode": "WA",
+                "postalCode": "98101",
+                "countryCode": "US",
+                "countryName": "United States"
+              }
+            },
+            "lastUpdatedDestinationAddress": {
+              "addressClassification": "BUSINESS",
+              "residential": false,
+              "streetLines": [
+                "1043 North Easy Street",
+                "Suite 999"
+              ],
+              "city": "SEATTLE",
+              "urbanizationCode": "RAFAEL",
+              "stateOrProvinceCode": "WA",
+              "postalCode": "98101",
+              "countryCode": "US",
+              "countryName": "United States"
+            }
+          }
+        ]
+      },
+      {
+        "trackingNumber": "39936862321",
+        "trackResults": [
+          {
+            "trackingNumberInfo": {
+              "trackingNumber": "39936862321",
+              "trackingNumberUniqueId": "",
+              "carrierCode": ""
+            },
+            "error": {
+              "code": "TRACKING.TRACKINGNUMBER.NOTFOUND",
+              "message": "Tracking number cannot be found. Please correct the tracking number and try again."
+            }
+          }
+        ]
+      }
+    ],
+    "alerts": "TRACKING.DATA.NOTFOUND -  Tracking data unavailable"
+  }
+}
 """
 
-TrackingAuthErrorXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-    <SOAP-ENV:Header/>
-    <SOAP-ENV:Body>
-        <v14:TrackReply xmlns:v14="http://fedex.com/ws/track/v14">
-            <v14:HighestSeverity xmlns:v14="http://fedex.com/ws/track/v14">ERROR</v14:HighestSeverity>
-            <v14:Notifications xmlns:v14="http://fedex.com/ws/track/v14">
-                <v14:Severity xmlns:v14="http://fedex.com/ws/track/v14">ERROR</v14:Severity>
-                <v14:Source xmlns:v14="http://fedex.com/ws/track/v14">prof</v14:Source>
-                <v14:Code xmlns:v14="http://fedex.com/ws/track/v14">1000</v14:Code>
-                <v14:Message xmlns:v14="http://fedex.com/ws/track/v14">Authentication Failed</v14:Message>
-            </v14:Notifications>
-            <v14:TransactionDetail xmlns:v14="http://fedex.com/ws/track/v14">
-                <v14:CustomerTransactionId xmlns:v14="http://fedex.com/ws/track/v14">Track By Number_v14</v14:CustomerTransactionId>
-                <v14:Localization xmlns:v14="http://fedex.com/ws/track/v14">
-                    <v14:LanguageCode xmlns:v14="http://fedex.com/ws/track/v14">EN</v14:LanguageCode>
-                    <v14:LocaleCode xmlns:v14="http://fedex.com/ws/track/v14">US</v14:LocaleCode>
-                </v14:Localization>
-            </v14:TransactionDetail>
-            <v14:Version xmlns:v14="http://fedex.com/ws/track/v14">
-                <v14:ServiceId xmlns:v14="http://fedex.com/ws/track/v14">trck</v14:ServiceId>
-                <v14:Major xmlns:v14="http://fedex.com/ws/track/v14">14</v14:Major>
-                <v14:Intermediate xmlns:v14="http://fedex.com/ws/track/v14">0</v14:Intermediate>
-                <v14:Minor xmlns:v14="http://fedex.com/ws/track/v14">0</v14:Minor>
-            </v14:Version>
-        </v14:TrackReply>
-    </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
-"""
-
-TrackingRequestXML = """<tns:Envelope xmlns:tns="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v18="http://fedex.com/ws/track/v18">
-    <tns:Body>
-        <v18:TrackRequest>
-            <v18:WebAuthenticationDetail>
-                <v18:UserCredential>
-                    <v18:Key>user_key</v18:Key>
-                    <v18:Password>password</v18:Password>
-                </v18:UserCredential>
-            </v18:WebAuthenticationDetail>
-            <v18:ClientDetail>
-                <v18:AccountNumber>2349857</v18:AccountNumber>
-                <v18:MeterNumber>1293587</v18:MeterNumber>
-            </v18:ClientDetail>
-            <v18:TransactionDetail>
-                <v18:CustomerTransactionId>Track By Number_v18</v18:CustomerTransactionId>
-                <v18:Localization>
-                    <v18:LanguageCode>en</v18:LanguageCode>
-                </v18:Localization>
-            </v18:TransactionDetail>
-            <v18:Version>
-                <v18:ServiceId>trck</v18:ServiceId>
-                <v18:Major>18</v18:Major>
-                <v18:Intermediate>0</v18:Intermediate>
-                <v18:Minor>0</v18:Minor>
-            </v18:Version>
-            <v18:SelectionDetails>
-                <v18:CarrierCode>FDXE</v18:CarrierCode>
-                <v18:PackageIdentifier>
-                    <v18:Type>TRACKING_NUMBER_OR_DOORTAG</v18:Type>
-                    <v18:Value>794887075005</v18:Value>
-                </v18:PackageIdentifier>
-            </v18:SelectionDetails>
-            <v18:ProcessingOptions>INCLUDE_DETAILED_SCANS</v18:ProcessingOptions>
-        </v18:TrackRequest>
-    </tns:Body>
-</tns:Envelope>
-"""
-
-TrackingResponseXML = """<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-   <SOAP-ENV:Header/>
-   <SOAP-ENV:Body>
-      <TrackReply xmlns="http://fedex.com/ws/track/v14">
-         <HighestSeverity>SUCCESS</HighestSeverity>
-         <Notifications>
-            <Severity>SUCCESS</Severity>
-            <Source>trck</Source>
-            <Code>0</Code>
-            <Message>Request was successfully processed.</Message>
-            <LocalizedMessage>Request was successfully processed.</LocalizedMessage>
-         </Notifications>
-         <TransactionDetail>
-            <CustomerTransactionId>Track By Number_v14</CustomerTransactionId>
-            <Localization>
-               <LanguageCode>EN</LanguageCode>
-               <LocaleCode>US</LocaleCode>
-            </Localization>
-         </TransactionDetail>
-         <Version>
-            <ServiceId>trck</ServiceId>
-            <Major>14</Major>
-            <Intermediate>0</Intermediate>
-            <Minor>0</Minor>
-         </Version>
-         <CompletedTrackDetails>
-            <HighestSeverity>SUCCESS</HighestSeverity>
-            <Notifications>
-               <Severity>SUCCESS</Severity>
-               <Source>trck</Source>
-               <Code>0</Code>
-               <Message>Request was successfully processed.</Message>
-               <LocalizedMessage>Request was successfully processed.</LocalizedMessage>
-            </Notifications>
-            <DuplicateWaybill>false</DuplicateWaybill>
-            <MoreData>false</MoreData>
-            <TrackDetailsCount>0</TrackDetailsCount>
-            <TrackDetails>
-               <Notification>
-                  <Severity>SUCCESS</Severity>
-                  <Source>trck</Source>
-                  <Code>0</Code>
-                  <Message>Request was successfully processed.</Message>
-                  <LocalizedMessage>Request was successfully processed.</LocalizedMessage>
-               </Notification>
-               <TrackingNumber>794887075005</TrackingNumber>
-               <TrackingNumberUniqueIdentifier>2457710000~794887075005~FX</TrackingNumberUniqueIdentifier>
-               <StatusDetail>
-                  <CreationTime>2016-11-17T00:00:00</CreationTime>
-                  <Code>OC</Code>
-                  <Description>Shipment information sent to FedEx</Description>
-                  <Location>
-                     <Residential>false</Residential>
-                  </Location>
-                  <AncillaryDetails>
-                     <Reason>IN001</Reason>
-                     <ReasonDescription>Please check back later for shipment status or subscribe for e-mail notifications</ReasonDescription>
-                  </AncillaryDetails>
-               </StatusDetail>
-               <ServiceCommitMessage>Shipping label has been created. The status will be updated when shipment begins to travel.</ServiceCommitMessage>
-               <DestinationServiceArea>OC</DestinationServiceArea>
-               <CarrierCode>FDXE</CarrierCode>
-               <OperatingCompanyOrCarrierDescription>FedEx Express</OperatingCompanyOrCarrierDescription>
-               <OtherIdentifiers>
-                  <PackageIdentifier>
-                     <Type>INVOICE</Type>
-                     <Value>IO10570705</Value>
-                  </PackageIdentifier>
-               </OtherIdentifiers>
-               <OtherIdentifiers>
-                  <PackageIdentifier>
-                     <Type>PURCHASE_ORDER</Type>
-                     <Value>PO10570705</Value>
-                  </PackageIdentifier>
-               </OtherIdentifiers>
-               <OtherIdentifiers>
-                  <PackageIdentifier>
-                     <Type>SHIPPER_REFERENCE</Type>
-                     <Value>CUSTREF10570705</Value>
-                  </PackageIdentifier>
-               </OtherIdentifiers>
-               <Service>
-                  <Type>PRIORITY_OVERNIGHT</Type>
-                  <Description>FedEx Priority Overnight</Description>
-                  <ShortDescription>PO</ShortDescription>
-               </Service>
-               <PackageWeight>
-                  <Units>LB</Units>
-                  <Value>60.0</Value>
-               </PackageWeight>
-               <PackageDimensions>
-                  <Length>12</Length>
-                  <Width>12</Width>
-                  <Height>12</Height>
-                  <Units>IN</Units>
-               </PackageDimensions>
-               <ShipmentWeight>
-                  <Units>LB</Units>
-                  <Value>60.0</Value>
-               </ShipmentWeight>
-               <Packaging>Your Packaging</Packaging>
-               <PackagingType>YOUR_PACKAGING</PackagingType>
-               <PackageSequenceNumber>1</PackageSequenceNumber>
-               <PackageCount>1</PackageCount>
-               <SpecialHandlings>
-                  <Type>DELIVER_WEEKDAY</Type>
-                  <Description>Deliver Weekday</Description>
-                  <PaymentType>OTHER</PaymentType>
-               </SpecialHandlings>
-               <Payments>
-                  <Classification>TRANSPORTATION</Classification>
-                  <Type>SHIPPER_ACCOUNT</Type>
-                  <Description>Shipper</Description>
-               </Payments>
-               <ShipperAddress>
-                  <City>COLORADO SPRINGS</City>
-                  <StateOrProvinceCode>CO</StateOrProvinceCode>
-                  <CountryCode>US</CountryCode>
-                  <Residential>false</Residential>
-               </ShipperAddress>
-               <DatesOrTimes>
-                  <Type>ANTICIPATED_TENDER</Type>
-                  <DateOrTimestamp>2016-11-17T00:00:00</DateOrTimestamp>
-               </DatesOrTimes>
-               <DestinationAddress>
-                  <City>DENVER</City>
-                  <StateOrProvinceCode>CO</StateOrProvinceCode>
-                  <CountryCode>US</CountryCode>
-                  <Residential>false</Residential>
-               </DestinationAddress>
-               <DeliveryAttempts>0</DeliveryAttempts>
-               <TotalUniqueAddressCountInConsolidation>0</TotalUniqueAddressCountInConsolidation>
-               <NotificationEventsAvailable>ON_DELIVERY</NotificationEventsAvailable>
-               <NotificationEventsAvailable>ON_EXCEPTION</NotificationEventsAvailable>
-               <NotificationEventsAvailable>ON_ESTIMATED_DELIVERY</NotificationEventsAvailable>
-               <NotificationEventsAvailable>ON_TENDER</NotificationEventsAvailable>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>INDIRECT_SIGNATURE_RELEASE</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>REDIRECT_TO_HOLD_AT_LOCATION</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>REROUTE</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-               <DeliveryOptionEligibilityDetails>
-                  <Option>RESCHEDULE</Option>
-                  <Eligibility>INELIGIBLE</Eligibility>
-               </DeliveryOptionEligibilityDetails>
-               <Events>
-                  <Timestamp>2022-12-02T14:24:00-07:00</Timestamp>
-                  <EventType>AE</EventType>
-                  <EventDescription>Shipment arriving early</EventDescription>
-                  <Address>
-                        <City>LETHBRIDGE</City>
-                        <StateOrProvinceCode>AB</StateOrProvinceCode>
-                        <PostalCode>T1H5K9</PostalCode>
-                        <CountryCode>CA</CountryCode>
-                        <CountryName>Canada</CountryName>
-                        <Residential>false</Residential>
-                  </Address>
-                  <ArrivalLocation>PICKUP_LOCATION</ArrivalLocation>
-               </Events>
-               <Events>
-                  <Timestamp>2022-12-02T14:21:00-07:00</Timestamp>
-                  <EventType>PU</EventType>
-                  <EventDescription>Picked up</EventDescription>
-                  <Address>
-                        <City>LETHBRIDGE</City>
-                        <StateOrProvinceCode>AB</StateOrProvinceCode>
-                        <PostalCode>T1H5K9</PostalCode>
-                        <CountryCode>CA</CountryCode>
-                        <CountryName>Canada</CountryName>
-                        <Residential>false</Residential>
-                  </Address>
-                  <ArrivalLocation>PICKUP_LOCATION</ArrivalLocation>
-               </Events>
-               <Events>
-                  <Timestamp>2022-12-02T09:56:11-06:00</Timestamp>
-                  <EventType>OC</EventType>
-                  <EventDescription>Shipment information sent to FedEx</EventDescription>
-                  <Address>
-                        <Residential>false</Residential>
-                  </Address>
-                  <ArrivalLocation>CUSTOMER</ArrivalLocation>
-               </Events>
-            </TrackDetails>
-         </CompletedTrackDetails>
-      </TrackReply>
-   </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+ErrorResponse = """{
+  "transactionId": "624deea6-b709-470c-8c39-4b5511281492",
+  "customerTransactionId": "AnyCo_order123456789",
+  "errors": [
+    {
+      "code": "TRACKING.TRACKINGNUMBER.EMPTY",
+      "message": "Please provide tracking number."
+    }
+  ]
+}
 """

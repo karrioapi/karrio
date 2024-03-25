@@ -84,6 +84,8 @@ class TrackingSerializer(TrackingDetails):
             options=response.tracking.options,
             reference=reference,
             metadata=metadata,
+            delivery_image=getattr(response.tracking.images, "delivery_image", None),
+            signature_image=getattr(response.tracking.images, "signature_image", None),
         )
 
     def update(
@@ -121,11 +123,10 @@ class TrackingSerializer(TrackingDetails):
             )
             # update values only if changed; This is important for webhooks notification
             changes = []
-            info = lib.to_dict(response.tracking.info or {})
+            details = response.tracking
+            info = lib.to_dict(details.info or {})
             events = (
-                lib.to_dict(response.tracking.events)
-                if any(response.tracking.events)
-                else instance.events
+                lib.to_dict(details.events) if any(details.events) else instance.events
             )
 
             if events != instance.events:
@@ -136,20 +137,20 @@ class TrackingSerializer(TrackingDetails):
                 instance.messages = lib.to_dict(response.messages)
                 changes.append("messages")
 
-            if response.tracking.delivered != instance.delivered:
-                instance.delivered = response.tracking.delivered
+            if details.delivered != instance.delivered:
+                instance.delivered = details.delivered
                 changes.append("delivered")
 
-            if response.tracking.status != instance.status:
-                instance.status = response.tracking.status
+            if details.status != instance.status:
+                instance.status = details.status
                 changes.append("status")
 
-            if response.tracking.estimated_delivery != instance.estimated_delivery:
-                instance.estimated_delivery = response.tracking.estimated_delivery
+            if details.estimated_delivery != instance.estimated_delivery:
+                instance.estimated_delivery = details.estimated_delivery
                 changes.append("estimated_delivery")
 
-            if response.tracking.options != instance.options:
-                instance.options = response.tracking.options
+            if details.options != instance.options:
+                instance.options = details.options
                 changes.append("options")
 
             if any(info.keys()) and info != instance.info:
@@ -161,6 +162,19 @@ class TrackingSerializer(TrackingDetails):
             if carrier.id != instance.tracking_carrier.id:
                 instance.carrier = carrier
                 changes.append("tracking_carrier")
+
+            if details.images is not None and (
+                details.images.delivery_image != instance.delivery_image
+                or details.images.signature_image != instance.signature_image
+            ):
+                changes.append("delivery_image")
+                changes.append("signature_image")
+                instance.delivery_image = (
+                    details.images.delivery_image or instance.delivery_image
+                )
+                instance.signature_image = (
+                    details.images.signature_image or instance.signature_image
+                )
 
             if any(changes):
                 instance.save(update_fields=changes)

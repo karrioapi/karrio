@@ -7,6 +7,8 @@ import karrio.server.core.validators as validators
 import karrio.server.providers.models as providers
 import karrio.server.manager.models as manager
 import karrio.server.graph.models as graph
+import karrio.server.core.models as core
+import karrio.server.user.models as auth
 
 
 class UserModelSerializer(serializers.ModelSerializer):
@@ -35,6 +37,36 @@ class UserModelSerializer(serializers.ModelSerializer):
             user.save(update_fields=["is_active"])
 
         return user
+
+
+@serializers.owned_model_serializer
+class WorkspaceConfigModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = auth.WorkspaceConfig
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
+        exclude = ["created_at", "updated_at", "created_by"]
+
+    def create(
+        self, validated_data: dict, context: serializers.Context = None, **kwargs
+    ):
+        instance = super().create(validated_data, context=context, **kwargs)
+
+        if (
+            hasattr(auth.WorkspaceConfig, "org")
+            and getattr(context, "org", None) is not None
+        ):
+            context.org.config = instance
+            context.org.save()
+
+        return instance
+
+
+@serializers.owned_model_serializer
+class MetafieldModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = core.Metafield
+        extra_kwargs = {field: {"read_only": True} for field in ["id"]}
+        exclude = ["created_at", "updated_at", "created_by"]
 
 
 @serializers.owned_model_serializer
@@ -232,6 +264,14 @@ class LabelTemplateModelSerializer(serializers.ModelSerializer):
 
 
 @serializers.owned_model_serializer
+class RateSheetModelSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = providers.RateSheet
+        exclude = ["created_at", "updated_at", "created_by"]
+        extra_kwargs = {field: {"read_only": True} for field in ["id", "services"]}
+
+
+@serializers.owned_model_serializer
 class CarrierConfigModelSerializer(serializers.ModelSerializer):
     class Meta:
         model = providers.CarrierConfig
@@ -314,7 +354,6 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             "updated_at",
             "created_by",
             "carrier_id",
-            "test_mode",
             "active",
             "capabilities",
             "active_users",
@@ -326,7 +365,10 @@ class ConnectionModelSerializerBase(serializers.ModelSerializer):
             (k for k in validated_data.keys() if k in CARRIER_MODEL_SERIALIZERS.keys()),
             "",
         )
-        settings_data = validated_data.get(name, {})
+        settings_data = {
+            **validated_data.get(name, {}),
+            "test_mode": context.test_mode,
+        }
         serializer = CARRIER_MODEL_SERIALIZERS.get(name)
         settings_name = serializer.Meta.model.__name__.lower()
 

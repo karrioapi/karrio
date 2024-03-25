@@ -1,10 +1,11 @@
-import { CreateOrganizationMutationInput, NotificationType } from '@karrio/types';
+import { CreateOrganizationMutationInput } from '@karrio/types/graphql/ee';
 import { useOrganizationMutation } from '@karrio/hooks/organization';
 import React, { useContext, useReducer, useState } from 'react';
 import { Notifier, useNotifier } from '../components/notifier';
 import { InputField } from '../components/input-field';
-import { deepEqual, isNone } from '@karrio/lib';
+import { NotificationType } from '@karrio/types';
 import { useLoader } from '../components/loader';
+import { isEqual, isNone } from '@karrio/lib';
 
 type OperationType = {
   onChange: (orgId: string) => Promise<any>;
@@ -97,7 +98,8 @@ export const CreateOrganizationModalProvider: React.FC<{ children?: React.ReactN
                   onChange={handleChange}
                   defaultValue={organization.name}
                   className="is-small"
-                  fieldClass="column mb-0 px-2 py-2"
+                  wrapperClass="px-2 py-2"
+                  fieldClass="column mb-0 p-0"
                   required
                 />
 
@@ -109,7 +111,7 @@ export const CreateOrganizationModalProvider: React.FC<{ children?: React.ReactN
                   <span>Cancel</span>
                 </button>
                 <button className={`button is-primary ${loading ? 'is-loading' : ''} m-1 is-small`}
-                  disabled={loading || deepEqual(organization, DEFAULT_ORGANIZATION)}
+                  disabled={loading || isEqual(organization, DEFAULT_ORGANIZATION)}
                   onClick={handleSubmit}
                   type="button">
                   <span>Create organization</span>

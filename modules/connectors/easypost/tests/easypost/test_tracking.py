@@ -17,7 +17,7 @@ class TestEasyPostTracking(unittest.TestCase):
         self.assertEqual(request.serialize(), TrackingRequestJSON)
 
     def test_get_tracking(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mocks:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mocks:
             mocks.side_effect = ["{}", "{}"]
             Tracking.fetch(self.TrackingRequest).from_(gateway)
 
@@ -33,7 +33,7 @@ class TestEasyPostTracking(unittest.TestCase):
             )
 
     def test_parse_tracking_response(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mocks:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mocks:
             mocks.side_effect = [TrackingResponseJSON, TrackingResponseJSON]
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
@@ -42,7 +42,7 @@ class TestEasyPostTracking(unittest.TestCase):
             self.assertListEqual(DP.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mocks:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mocks:
             mocks.side_effect = [ErrorResponseJSON, ErrorResponseJSON]
             parsed_response = (
                 Tracking.fetch(self.TrackingRequest).from_(gateway).parse()

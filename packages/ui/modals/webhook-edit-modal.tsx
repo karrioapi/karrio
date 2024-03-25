@@ -1,6 +1,6 @@
 import { NotificationType, EVENT_TYPES, WebhookType } from '@karrio/types';
 import React, { useContext, useReducer, useState } from 'react';
-import { deepEqual, isNone, useLocation } from '@karrio/lib';
+import { isEqual, isNone, useLocation } from '@karrio/lib';
 import { TextAreaField } from '../components/textarea-field';
 import { useWebhookMutation } from '@karrio/hooks/webhook';
 import { InputField } from '../components/input-field';
@@ -144,7 +144,7 @@ export const WebhookEditModal: React.FC<{ children?: React.ReactNode }> = ({ chi
                 <span>Cancel</span>
               </button>
               <button className={`button is-primary ${loading ? 'is-loading' : ''} m-1 is-small`}
-                disabled={deepEqual(payload, operation?.webhook) || loading}
+                disabled={isEqual(payload, operation?.webhook) || loading}
                 type="submit">
                 <span>Submit</span>
               </button>

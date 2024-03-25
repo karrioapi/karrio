@@ -17,7 +17,7 @@ class TestEasyPostRating(unittest.TestCase):
         self.assertEqual(request.serialize(), RateRequestJSON)
 
     def test_get_rate(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mock:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mock:
             mock.return_value = "{}"
             Rating.fetch(self.RateRequest).from_(gateway)
 
@@ -27,14 +27,14 @@ class TestEasyPostRating(unittest.TestCase):
             )
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mock:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mock:
             mock.return_value = RateResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 
             self.assertListEqual(DP.to_dict(parsed_response), ParsedRateResponse)
 
     def test_parse_error_response(self):
-        with patch("karrio.mappers.easypost.proxy.http") as mock:
+        with patch("karrio.mappers.easypost.proxy.lib.request") as mock:
             mock.return_value = ErrorResponseJSON
             parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
 

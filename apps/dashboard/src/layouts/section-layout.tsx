@@ -18,7 +18,7 @@ export const SectionLayout: React.FC<SectionLayoutProps> = ({ metadata, error, c
 
         <div className="container">
           <div className="has-text-centered my-6 pt-5">
-            <a href={p`/`} className="is-size-4 has-text-primary has-text-weight-bold is-lowercase">
+            <a href={p`/`} className="is-size-4 has-text-primary has-text-weight-bold">
               {metadata?.APP_NAME}
             </a>
           </div>

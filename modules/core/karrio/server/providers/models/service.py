@@ -1,10 +1,7 @@
-import typing
 import functools
 import django.db.models as models
 import django.core.validators as validators
 
-import karrio
-import karrio.core.units as units
 import karrio.server.core.models as core
 import karrio.server.core.datatypes as datatypes
 
@@ -27,6 +24,7 @@ class ServiceLevel(core.OwnedEntity):
     service_code = models.CharField(
         max_length=50, validators=[validators.RegexValidator(r"^[a-z0-9_]+$")]
     )
+    carrier_service_code = models.CharField(max_length=50, null=True, blank=True)
     description = models.CharField(max_length=250, null=True, blank=True)
     active = models.BooleanField(null=True, default=True)
 
@@ -54,6 +52,7 @@ class ServiceLevel(core.OwnedEntity):
     international = models.BooleanField(null=True)
 
     zones = models.JSONField(blank=True, null=True, default=core.field_default([]))
+    metadata = models.JSONField(blank=True, null=True, default=core.field_default({}))
 
     def __str__(self):
         return f"{self.id} | {self.service_name}"

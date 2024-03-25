@@ -19,6 +19,12 @@ const SENTRY_DSN = (
 const MULTI_TENANT = (
   Boolean(JSON.parse(process.env.MULTI_TENANT || 'false'))
 );
+const POSTHOG_KEY = (
+  process.env.POSTHOG_KEY || process.env.NEXT_PUBLIC_POSTHOG_KEY
+);
+const POSTHOG_HOST = (
+  process.env.POSTHOG_HOST || process.env.NEXT_PUBLIC_POSTHOG_HOST
+);
 
 const moduleExports = {
   swcMinify: true,
@@ -41,7 +47,10 @@ const moduleExports = {
     MULTI_TENANT: MULTI_TENANT,
     KARRIO_PUBLIC_URL: KARRIO_PUBLIC_URL,
     NEXTAUTH_URL: process.env.DASHBOARD_URL,
+    DASHBOARD_URL: process.env.DASHBOARD_URL,
     DASHBOARD_VERSION: process.env.DASHBOARD_VERSION,
+    POSTHOG_KEY: POSTHOG_KEY,
+    POSTHOG_HOST: POSTHOG_HOST,
   },
   sentry: {
     disableServerWebpackPlugin: true,

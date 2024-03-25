@@ -1,6 +1,7 @@
 import typing
-from django.db.models import Q
-from django.conf import settings
+import django.conf as conf
+import django.db.models as models
+import django.contrib.auth as auth
 
 import karrio.server.core.serializers as serializers
 import karrio.server.core.dataunits as dataunits
@@ -8,6 +9,35 @@ import karrio.server.tracing.models as tracing
 import karrio.server.core.models as core
 import karrio.server.filters as filters
 import karrio.server.openapi as openapi
+
+User = auth.get_user_model()
+
+
+class UserFilter(filters.FilterSet):
+    id = filters.CharFilter(field_name="id", help_text="user id")
+    email = filters.CharFilter(field_name="email", help_text="user email")
+    is_active = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    is_staff = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    is_superuser = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    order_by = filters.OrderingFilter(
+        fields=(
+            ("is_active", "is_active"),
+            ("is_staff", "is_staff"),
+            ("is_superuser", "is_superuser"),
+            ("date_joined", "date_joined"),
+            ("last_login", "last_login"),
+        ),
+    )
+
+    class Meta:
+        model = User
+        fields: list = []
 
 
 class CarrierFilters(filters.FilterSet):
@@ -22,6 +52,16 @@ class CarrierFilters(filters.FilterSet):
     )
     system_only = filters.BooleanFilter(
         help_text="This flag indicates that only system carriers should be returned",
+    )
+    metadata_key = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_key_filter",
+        help_text="connection metadata keys.",
+    )
+    metadata_value = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_value_filter",
+        help_text="connection metadata value.",
     )
 
     parameters = [
@@ -44,6 +84,16 @@ class CarrierFilters(filters.FilterSet):
             type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
+        openapi.OpenApiParameter(
+            "metadata_key",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
     ]
 
     class Meta:
@@ -52,8 +102,32 @@ class CarrierFilters(filters.FilterSet):
         model = providers.Carrier
         fields: typing.List[str] = []
 
+    def metadata_key_filter(self, queryset, name, value):
+        return queryset.filter(metadata__has_key=value)
+
+    def metadata_value_filter(self, queryset, name, value):
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "metadata")
+                if value in (o.get("metadata") or {}).values()
+            ]
+        )
+
 
 class ShipmentFilters(filters.FilterSet):
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="shipment' keyword and indexes search",
+    )
+    tracking_number = filters.CharFilter(
+        field_name="tracking_number", lookup_expr="icontains"
+    )
+    id = filters.CharInFilter(
+        field_name="id",
+        lookup_expr="in",
+        help_text="id(s).",
+    )
     address = filters.CharFilter(
         method="address_filter",
         help_text="shipment recipient address line",
@@ -94,7 +168,7 @@ class ShipmentFilters(filters.FilterSet):
         Values: {', '.join([f"`{s.name}`" for s in list(serializers.ShipmentStatus)])}
         """,
     )
-    option_key = filters.CharInFilter(
+    option_key = filters.CharFilter(
         field_name="options",
         method="option_key_filter",
         help_text="shipment option keys.",
@@ -104,7 +178,7 @@ class ShipmentFilters(filters.FilterSet):
         method="option_value_filter",
         help_text="shipment option value",
     )
-    metadata_key = filters.CharInFilter(
+    metadata_key = filters.CharFilter(
         field_name="metadata",
         method="metadata_key_filter",
         help_text="shipment metadata keys.",
@@ -114,15 +188,43 @@ class ShipmentFilters(filters.FilterSet):
         method="metadata_value_filter",
         help_text="shipment metadata value",
     )
-    tracking_number = filters.CharFilter(
-        field_name="tracking_number", lookup_expr="icontains"
+    meta_key = filters.CharFilter(
+        field_name="meta",
+        method="meta_key_filter",
+        help_text="shipment meta keys.",
     )
-    keyword = filters.CharFilter(
-        method="keyword_filter",
-        help_text="shipment' keyword and indexes search",
+    meta_value = filters.CharFilter(
+        field_name="meta",
+        method="meta_value_filter",
+        help_text="shipment meta value",
+    )
+    has_tracker = filters.BooleanFilter(
+        field_name="shipment_tracker",
+        help_text="shipment has tracker",
+        method="has_tracker_filter",
+    )
+    has_manifest = filters.BooleanFilter(
+        field_name="manifest",
+        help_text="shipment has manifest",
+        method="has_manifest_filter",
     )
 
     parameters = [
+        openapi.OpenApiParameter(
+            "tracking_number",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "keyword",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "id",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
         openapi.OpenApiParameter(
             "address",
             type=openapi.OpenApiTypes.STR,
@@ -187,18 +289,23 @@ class ShipmentFilters(filters.FilterSet):
             location=openapi.OpenApiParameter.QUERY,
         ),
         openapi.OpenApiParameter(
-            "metadata_value",
+            "meta_key",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
         openapi.OpenApiParameter(
-            "tracking_number",
+            "meta_value",
             type=openapi.OpenApiTypes.STR,
             location=openapi.OpenApiParameter.QUERY,
         ),
         openapi.OpenApiParameter(
-            "keyword",
-            type=openapi.OpenApiTypes.STR,
+            "has_tracker",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "has_manifest",
+            type=openapi.OpenApiTypes.BOOL,
             location=openapi.OpenApiParameter.QUERY,
         ),
     ]
@@ -210,7 +317,7 @@ class ShipmentFilters(filters.FilterSet):
         fields: typing.List[str] = []
 
     def address_filter(self, queryset, name, value):
-        if "postgres" in settings.DB_ENGINE:
+        if "postgres" in conf.settings.DB_ENGINE:
             from django.contrib.postgres.search import SearchVector
 
             return queryset.annotate(
@@ -228,24 +335,25 @@ class ShipmentFilters(filters.FilterSet):
             ).filter(search=value)
 
         return queryset.filter(
-            Q(id__icontains=value)
-            | Q(recipient__address_line1__icontains=value)
-            | Q(recipient__address_line2__icontains=value)
-            | Q(recipient__postal_code__icontains=value)
-            | Q(recipient__person_name__icontains=value)
-            | Q(recipient__company_name__icontains=value)
-            | Q(recipient__country_code__icontains=value)
-            | Q(recipient__city__icontains=value)
-            | Q(recipient__email__icontains=value)
-            | Q(recipient__phone_number__icontains=value)
+            models.Q(id__icontains=value)
+            | models.Q(recipient__address_line1__icontains=value)
+            | models.Q(recipient__address_line2__icontains=value)
+            | models.Q(recipient__postal_code__icontains=value)
+            | models.Q(recipient__person_name__icontains=value)
+            | models.Q(recipient__company_name__icontains=value)
+            | models.Q(recipient__country_code__icontains=value)
+            | models.Q(recipient__city__icontains=value)
+            | models.Q(recipient__email__icontains=value)
+            | models.Q(recipient__phone_number__icontains=value)
         )
 
     def keyword_filter(self, queryset, name, value):
-        if "postgres" in settings.DB_ENGINE:
+        if "postgres" in conf.settings.DB_ENGINE:
             from django.contrib.postgres.search import SearchVector
 
             return queryset.annotate(
                 search=SearchVector(
+                    "id",
                     "reference",
                     "tracking_number",
                     "recipient__address_line1",
@@ -261,38 +369,41 @@ class ShipmentFilters(filters.FilterSet):
             ).filter(search=value)
 
         return queryset.filter(
-            Q(id__icontains=value)
-            | Q(recipient__address_line1__icontains=value)
-            | Q(recipient__address_line2__icontains=value)
-            | Q(recipient__postal_code__icontains=value)
-            | Q(recipient__person_name__icontains=value)
-            | Q(recipient__company_name__icontains=value)
-            | Q(recipient__country_code__icontains=value)
-            | Q(recipient__city__icontains=value)
-            | Q(recipient__email__icontains=value)
-            | Q(recipient__phone_number__icontains=value)
-            | Q(tracking_number__icontains=value)
-            | Q(reference__icontains=value)
+            models.Q(id__icontains=value)
+            | models.Q(recipient__address_line1__icontains=value)
+            | models.Q(recipient__address_line2__icontains=value)
+            | models.Q(recipient__postal_code__icontains=value)
+            | models.Q(recipient__person_name__icontains=value)
+            | models.Q(recipient__company_name__icontains=value)
+            | models.Q(recipient__country_code__icontains=value)
+            | models.Q(recipient__city__icontains=value)
+            | models.Q(recipient__email__icontains=value)
+            | models.Q(recipient__phone_number__icontains=value)
+            | models.Q(tracking_number__icontains=value)
+            | models.Q(reference__icontains=value)
         )
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
-            Q(
+            models.Q(
                 **{
                     f"selected_rate_carrier__{value.replace('_', '')}settings__isnull": False
                 }
             )
             for value in values
         ]
-        query = Q(meta__rate_provider__in=values)
+        query = models.Q(meta__rate_provider__in=values)
 
         for item in _filters:
             query |= item
 
         return queryset.filter(query)
 
+    def service_filter(self, queryset, name, values):
+        return queryset.filter(models.Q(selected_rate__service__in=values))
+
     def option_key_filter(self, queryset, name, value):
-        return queryset.filter(Q(options__has_keys=value))
+        return queryset.filter(models.Q(options__has_key=value))
 
     def option_value_filter(self, queryset, name, value):
         return queryset.filter(
@@ -304,7 +415,7 @@ class ShipmentFilters(filters.FilterSet):
         )
 
     def metadata_key_filter(self, queryset, name, value):
-        return queryset.filter(metadata__has_keys=value)
+        return queryset.filter(metadata__has_key=value)
 
     def metadata_value_filter(self, queryset, name, value):
         return queryset.filter(
@@ -315,8 +426,23 @@ class ShipmentFilters(filters.FilterSet):
             ]
         )
 
-    def service_filter(self, queryset, name, values):
-        return queryset.filter(Q(selected_rate__service__in=values))
+    def meta_key_filter(self, queryset, name, value):
+        return queryset.filter(meta__has_key=value)
+
+    def meta_value_filter(self, queryset, name, value):
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "meta")
+                if value in map(str, (o.get("meta") or {}).values())
+            ]
+        )
+
+    def has_tracker_filter(self, queryset, name, value):
+        return queryset.filter(shipment_tracker__isnull=not value)
+
+    def has_manifest_filter(self, queryset, name, value):
+        return queryset.filter(manifest__isnull=not value)
 
 
 class TrackerFilters(filters.FilterSet):
@@ -396,7 +522,9 @@ class TrackerFilters(filters.FilterSet):
 
     def carrier_filter(self, queryset, name, values):
         _filters = [
-            Q(**{f"tracking_carrier__{value.replace('_', '')}settings__isnull": False})
+            models.Q(
+                **{f"tracking_carrier__{value.replace('_', '')}settings__isnull": False}
+            )
             for value in values
         ]
         query = _filters.pop()
@@ -464,7 +592,7 @@ class TracingRecordFilter(filters.FilterSet):
         fields: list = []
 
     def request_log_id_filter(self, queryset, name, value):
-        return queryset.filter(meta__request_log_id__icontains=value)
+        return queryset.filter(meta__request_log_id=value)
 
 
 class UploadRecordFilter(filters.FilterSet):
@@ -509,3 +637,104 @@ class PickupFilters(filters.FilterSet):
 
         model = manager.Pickup
         fields: list = []
+
+
+class RateSheetFilter(filters.FilterSet):
+    keyword = filters.CharFilter(
+        method="keyword_filter",
+        help_text="rate sheet keyword and indexes search",
+    )
+
+    class Meta:
+        import karrio.server.providers.models as providers
+
+        model = providers.RateSheet
+        fields: typing.List[str] = []
+
+    def keyword_filter(self, queryset, name, value):
+        if "postgres" in conf.settings.DB_ENGINE:
+            from django.contrib.postgres.search import SearchVector
+
+            return queryset.annotate(
+                search=SearchVector(
+                    "id",
+                    "name",
+                    "slug",
+                    "carrier_name",
+                )
+            ).filter(search=value)
+
+        return queryset.filter(
+            models.Q(id__icontains=value)
+            | models.Q(name__icontains=value)
+            | models.Q(slug__icontains=value)
+            | models.Q(carrier_name__icontains=value)
+        )
+
+
+class ManifestFilters(filters.FilterSet):
+    id = filters.CharInFilter(
+        field_name="id",
+        lookup_expr="in",
+        help_text="id(s).",
+    )
+    carrier_name = filters.MultipleChoiceFilter(
+        method="carrier_filter",
+        choices=[(c, c) for c in dataunits.CARRIER_NAMES],
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
+    )
+    created_after = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="gte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+    created_before = filters.DateTimeFilter(
+        field_name="created_at",
+        lookup_expr="lte",
+        help_text="DateTime in format `YYYY-MM-DD H:M:S.fz`",
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            description=(
+                "The unique carrier slug. <br/>"
+                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+            ),
+        ),
+        openapi.OpenApiParameter(
+            "created_after",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "created_before",
+            type=openapi.OpenApiTypes.DATETIME,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
+
+    class Meta:
+        import karrio.server.manager.models as manager
+
+        model = manager.Manifest
+        fields: typing.List[str] = []
+
+    def carrier_filter(self, queryset, name, values):
+        _filters = [
+            models.Q(
+                **{f"manifest_carrier__{value.replace('_', '')}settings__isnull": False}
+            )
+            for value in values
+        ]
+        query = _filters.pop()
+
+        for item in _filters:
+            query |= item
+
+        return queryset.filter(query)

@@ -2,6 +2,7 @@ import typing
 import strawberry
 from strawberry.types import Info
 
+import karrio.server.core.models as core
 import karrio.server.graph.models as graph
 import karrio.server.manager.models as manager
 import karrio.server.providers.models as providers
@@ -18,9 +19,15 @@ extra_types = [*types.CarrierSettings.values()]
 class Query:
     user: types.UserType = strawberry.field(resolver=types.UserType.resolve)
     token: types.TokenType = strawberry.field(resolver=types.TokenType.resolve)
+    api_keys: typing.List[types.APIKeyType] = strawberry.field(
+        resolver=types.APIKeyType.resolve_list
+    )
+    workspace_config: typing.Optional[types.WorkspaceConfigType] = strawberry.field(
+        resolver=types.WorkspaceConfigType.resolve
+    )
 
     user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
-        resolver=types.ConnectionType.resolve_list
+        resolver=types.ConnectionType.resolve_list_legacy
     )
     system_connections: typing.List[types.SystemConnectionType] = strawberry.field(
         resolver=types.SystemConnectionType.resolve_list
@@ -45,23 +52,47 @@ class Query:
     logs: utils.Connection[types.LogType] = strawberry.field(
         resolver=types.LogType.resolve_list
     )
-    tracingrecord: typing.Optional[types.TracingRecordType] = strawberry.field(
+
+    tracing_record: typing.Optional[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve
     )
-    tracingrecords: utils.Connection[types.TracingRecordType] = strawberry.field(
+    tracing_records: utils.Connection[types.TracingRecordType] = strawberry.field(
         resolver=types.TracingRecordType.resolve_list
     )
+
     shipment: typing.Optional[types.ShipmentType] = strawberry.field(
         resolver=types.ShipmentType.resolve
     )
     shipments: utils.Connection[types.ShipmentType] = strawberry.field(
         resolver=types.ShipmentType.resolve_list
     )
+
     tracker: typing.Optional[types.TrackerType] = strawberry.field(
         resolver=types.TrackerType.resolve
     )
     trackers: utils.Connection[types.TrackerType] = strawberry.field(
         resolver=types.TrackerType.resolve_list
+    )
+
+    rate_sheet: typing.Optional[types.RateSheetType] = strawberry.field(
+        resolver=types.RateSheetType.resolve
+    )
+    rate_sheets: utils.Connection[types.RateSheetType] = strawberry.field(
+        resolver=types.RateSheetType.resolve_list
+    )
+
+    manifest: typing.Optional[types.ManifestType] = strawberry.field(
+        resolver=types.ManifestType.resolve
+    )
+    manifests: utils.Connection[types.ManifestType] = strawberry.field(
+        resolver=types.ManifestType.resolve_list
+    )
+
+    carrier_connection: typing.Optional[types.CarrierConnectionType] = strawberry.field(
+        resolver=types.ConnectionType.resolve
+    )
+    carrier_connections: utils.Connection[types.CarrierConnectionType] = (
+        strawberry.field(resolver=types.ConnectionType.resolve_list)
     )
 
 
@@ -80,10 +111,28 @@ class Mutation:
         return mutations.RegisterUserMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
+    def update_workspace_config(
+        self, info: Info, input: inputs.WorkspaceConfigMutationInput
+    ) -> mutations.WorkspaceConfigMutation:
+        return mutations.WorkspaceConfigMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
     def mutate_token(
         self, info: Info, input: inputs.TokenMutationInput
     ) -> mutations.TokenMutation:
         return mutations.TokenMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def create_api_key(
+        self, info: Info, input: inputs.CreateAPIKeyMutationInput
+    ) -> mutations.CreateAPIKeyMutation:
+        return mutations.CreateAPIKeyMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_api_key(
+        self, info: Info, input: inputs.DeleteAPIKeyMutationInput
+    ) -> mutations.DeleteAPIKeyMutation:
+        return mutations.DeleteAPIKeyMutation.mutate(info, **input.to_dict())
 
     @strawberry.mutation
     def request_email_change(
@@ -258,4 +307,32 @@ class Mutation:
             model=manager.Parcel,
             validator=manager_serializers.can_mutate_parcel,
             **input.to_dict()
+        )
+
+    @strawberry.mutation
+    def create_rate_sheet(
+        self, info: Info, input: inputs.CreateRateSheetMutationInput
+    ) -> mutations.CreateRateSheetMutation:
+        return mutations.CreateRateSheetMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def update_rate_sheet(
+        self, info: Info, input: inputs.UpdateRateSheetMutationInput
+    ) -> mutations.UpdateRateSheetMutation:
+        return mutations.UpdateRateSheetMutation.mutate(info, **input.to_dict())
+
+    @strawberry.mutation
+    def delete_rate_sheet(
+        self, info: Info, input: inputs.DeleteMutationInput
+    ) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(
+            info, model=providers.RateSheet, **input.to_dict()
+        )
+
+    @strawberry.mutation
+    def delete_metafield(
+        self, info: Info, input: inputs.DeleteMutationInput
+    ) -> mutations.DeleteMutation:
+        return mutations.DeleteMutation.mutate(
+            info, model=core.Metafield, **input.to_dict()
         )

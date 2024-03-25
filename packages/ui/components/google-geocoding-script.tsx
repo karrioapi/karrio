@@ -12,7 +12,7 @@ export const GoogleGeocodingScript: React.FC = () => {
   return (
     <>
       {(ADDRESS_AUTO_COMPLETE?.provider === 'google') &&
-        <Script src={`https://maps.googleapis.com/maps/api/js?key=${ADDRESS_AUTO_COMPLETE.key}&libraries=places&callback=initMap`}></Script>
+        <Script strategy='lazyOnload' src={`https://maps.googleapis.com/maps/api/js?key=${ADDRESS_AUTO_COMPLETE.key}&libraries=places&callback=initMap`}></Script>
       }
     </>
   )

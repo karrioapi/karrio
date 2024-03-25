@@ -2,29 +2,24 @@ import io
 import base64
 import logging
 from django.conf import settings
+from rest_framework import status
 from django.http import JsonResponse
 from django.urls import path, re_path
-from django.core.files.base import ContentFile
-from django_downloadview import VirtualDownloadView
-from rest_framework import status
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
+from django.core.files.base import ContentFile
+from django_downloadview import VirtualDownloadView
+from rest_framework.pagination import LimitOffsetPagination
 
-import karrio.lib as lib
+import karrio.server.openapi as openapi
+import karrio.server.core.filters as filters
+import karrio.server.providers.models as models
+from karrio.server.core.gateway import Carriers
+from karrio.server.providers.router import router
+from karrio.server.core import datatypes, dataunits
 from karrio.server.serializers import PaginatedResult
 from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.core.gateway import Carriers
-from karrio.server.core import datatypes, dataunits
-from karrio.server.providers import models
-from karrio.server.core.serializers import (
-    CarrierSettings,
-    ErrorResponse,
-    CARRIERS,
-)
-from karrio.server.providers.router import router
-import karrio.server.core.filters as filters
-import karrio.server.openapi as openapi
+from karrio.server.core.serializers import CarrierSettings, ErrorResponse
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
@@ -55,6 +50,24 @@ class CarrierList(GenericAPIView):
         carriers = [carrier.data for carrier in Carriers.list(**filter)]
         response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
         return self.get_paginated_response(response)
+
+
+class CarrierDetails(APIView):
+    @openapi.extend_schema(
+        tags=["Carriers"],
+        operation_id=f"{ENDPOINT_ID}retrieve",
+        summary="Retrieve a carrier account",
+        responses={
+            200: CarrierSettings(),
+            404: ErrorResponse(),
+        },
+    )
+    def get(self, request: Request, pk: str):
+        """
+        Retrieve a carrier account.
+        """
+        carrier = Carriers.list(request).get(pk=pk)
+        return Response(CarrierSettings(carrier.data).data)
 
 
 class CarrierServices(APIView):
@@ -160,7 +173,10 @@ class CarrierLabelPreview(VirtualDownloadView):
         return shipment.docs.label
 
 
-router.urls.append(path("carriers", CarrierList.as_view()))
+router.urls.append(path("carriers", CarrierList.as_view(), name="carrier-list"))
+router.urls.append(
+    path("carriers/<str:pk>", CarrierDetails.as_view(), name="carrier-details")
+)
 router.urls.append(
     path(
         "carriers/<str:carrier_name>/services",
@@ -173,6 +189,6 @@ if settings.CUSTOM_CARRIER_DEFINITION:
         re_path(
             r"^carriers/(?P<pk>\w+)/label.(?P<format>[a-z0-9]+)",
             CarrierLabelPreview.as_view(),
-            name="carrier-label-preview",
+            name="carrier-label",
         )
     )

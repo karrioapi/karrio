@@ -1,0 +1,16 @@
+[
+    {
+        "messages": {},
+        "error": "unprocessable_entity",
+        "error_description": "The data you supplied is invalid. Error messages are in the messages section. Please fix those fields and try again."
+    },
+    {
+        "messages": "Order can not be cancelled. Get in touch with Sendle support if you need more help with this.",
+        "error": "unprocessable_entity",
+        "error_description": "The data you supplied is invalid. Error messages are in the messages section. Please fix those fields and try again."
+    },
+    {
+        "error": "unprocessable_entity",
+        "error_description": "The data you supplied is invalid. Error messages are in the messages section. Please fix those fields and try again."
+    }
+]

@@ -1,33 +1,22 @@
+import typing
 import logging
-from typing import cast
-from functools import partial
+import functools
+import django.db.models as models
+import django.core.validators as validators
 
-from django.db import models
-from django.core.validators import MinValueValidator
-
-from karrio.core.models import ChargeDetails
-from karrio.core.utils import DP, NF
-from karrio.server.core.fields import MultiChoiceField
-from karrio.server.core.models import Entity, uuid, register_model
-from karrio.server.core.dataunits import REFERENCE_MODELS
-from karrio.server.core.datatypes import RateResponse, Rate
-from karrio.server.core.serializers import CARRIERS
-from karrio.server.providers.models import Carrier
+import karrio.lib as lib
+import karrio.core.models as karrio
+import karrio.server.core.models as core
+import karrio.server.core.fields as fields
+import karrio.server.core.datatypes as datatypes
+import karrio.server.providers.models as providers
+import karrio.server.pricing.serializers as serializers
 
 logger = logging.getLogger(__name__)
-CARRIER_SERVICES = [
-    REFERENCE_MODELS["services"][name]
-    for name in sorted(REFERENCE_MODELS["services"].keys())
-]
-SERVICES = [(code, code) for services in CARRIER_SERVICES for code in services]
-SURCHAGE_TYPE = (
-    ("AMOUNT", "$"),
-    ("PERCENTAGE", "%"),
-)
 
 
-@register_model
-class Surcharge(Entity):
+@core.register_model
+class Surcharge(core.Entity):
     class Meta:
         db_table = "surcharge"
         verbose_name = "Markup"
@@ -36,7 +25,7 @@ class Surcharge(Entity):
     id = models.CharField(
         max_length=50,
         primary_key=True,
-        default=partial(uuid, prefix="chrg_"),
+        default=functools.partial(core.uuid, prefix="chrg_"),
         editable=False,
     )
     active = models.BooleanField(default=True)
@@ -47,7 +36,7 @@ class Surcharge(Entity):
         help_text="The surcharge name (label) that will appear in the rate (quote)",
     )
     amount = models.FloatField(
-        validators=[MinValueValidator(0.1)],
+        validators=[validators.MinValueValidator(0.1)],
         default=0.0,
         help_text="""
         The surcharge amount or percentage to add to the quote
@@ -55,8 +44,8 @@ class Surcharge(Entity):
     )
     surcharge_type = models.CharField(
         max_length=25,
-        choices=SURCHAGE_TYPE,
-        default=SURCHAGE_TYPE[0][0],
+        choices=serializers.SURCHAGE_TYPE,
+        default=serializers.SURCHAGE_TYPE[0][0],
         help_text="""
         Determine whether the surcharge is in percentage or net amount
         <br/><br/>
@@ -65,8 +54,8 @@ class Surcharge(Entity):
         For <strong>PERCENTAGE</strong>: rate ($22) and amount (5) will result in a new total_charge of ($23.10)
         """,
     )
-    carriers = MultiChoiceField(
-        choices=CARRIERS,
+    carriers = fields.MultiChoiceField(
+        choices=serializers.CARRIERS,
         null=True,
         blank=True,
         help_text="""
@@ -76,7 +65,7 @@ class Surcharge(Entity):
         """,
     )
     carrier_accounts = models.ManyToManyField(
-        Carrier,
+        providers.Carrier,
         blank=True,
         help_text="""
         The list of carrier accounts you want to apply the surcharge to.
@@ -84,8 +73,8 @@ class Surcharge(Entity):
         Note that by default, the surcharge is applied to all carrier accounts
         """,
     )
-    services = MultiChoiceField(
-        choices=SERVICES,
+    services = fields.MultiChoiceField(
+        choices=serializers.SERVICES,
         null=True,
         blank=True,
         help_text="""
@@ -95,12 +84,16 @@ class Surcharge(Entity):
         """,
     )
 
+    @property
+    def object_type(self):
+        return "surcharge"
+
     def __str__(self):
         type_ = "$" if self.surcharge_type == "AMOUNT" else "%"
         return f"{self.id} ({self.amount} {type_})"
 
-    def apply_charge(self, response: RateResponse) -> RateResponse:
-        def apply(rate: Rate) -> Rate:
+    def apply_charge(self, response: datatypes.RateResponse) -> datatypes.RateResponse:
+        def apply(rate: datatypes.Rate) -> datatypes.Rate:
             applicable = []
             carrier_ids = [c.carrier_id for c in self.carrier_accounts.all()]
             charges = getattr(rate, "extra_charges", None) or []
@@ -117,21 +110,23 @@ class Surcharge(Entity):
             if any(applicable) and all(applicable):
                 logger.debug("applying broker surcharge to rate")
 
-                amount = NF.decimal(
+                amount = lib.to_decimal(
                     self.amount
                     if self.surcharge_type == "AMOUNT"
-                    else (rate.total_charge * (cast(float, self.amount) / 100))
+                    else (rate.total_charge * (typing.cast(float, self.amount) / 100))
                 )
-                total_charge = NF.decimal(rate.total_charge + amount)
+                total_charge = lib.to_decimal(rate.total_charge + amount)
                 extra_charges = rate.extra_charges + [
-                    ChargeDetails(
-                        name=cast(str, self.name), amount=amount, currency=rate.currency
+                    karrio.ChargeDetails(
+                        name=typing.cast(str, self.name),
+                        amount=amount,
+                        currency=rate.currency,
                     )
                 ]
 
-                return Rate(
+                return datatypes.Rate(
                     **{
-                        **DP.to_dict(rate),
+                        **lib.to_dict(rate),
                         "total_charge": total_charge,
                         "extra_charges": extra_charges,
                     }
@@ -139,7 +134,7 @@ class Surcharge(Entity):
 
             return rate
 
-        return RateResponse(
+        return datatypes.RateResponse(
             messages=response.messages,
             rates=sorted(
                 [apply(rate) for rate in response.rates],

@@ -26,10 +26,13 @@ export const StatusBadge: React.FC<StatusBadgeComponent> = ({ status, className,
     "delivery_delayed": "is-warning is-light",
     "needs_attention": "is-warning is-light",
     "delivery_failed": "is-danger is-light",
+    "success": "is-success is-light",
+    "failed": "is-danger is-light",
+    "running": "is-info is-light",
   }[status || ""] || "is-light";
 
   return (
-    <span className={`tag is-size-7 is-capitalized has-text-weight-semibold ${color} ${className}`} {...props}>
+    <span className={`tag is-size-7 has-text-weight-semibold ${color} ${className}`} {...props}>
       {formatRef(status || "").toLocaleLowerCase()}
     </span>
   )

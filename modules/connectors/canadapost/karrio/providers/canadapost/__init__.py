@@ -19,4 +19,7 @@ from karrio.providers.canadapost.tracking import (
     parse_tracking_response,
     tracking_request,
 )
-
+from karrio.providers.canadapost.manifest import (
+    parse_manifest_response,
+    manifest_request,
+)
