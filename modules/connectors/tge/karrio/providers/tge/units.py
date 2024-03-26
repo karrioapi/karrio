@@ -10,16 +10,16 @@ MeasurementOptions = lib.units.MeasurementOptionsType(
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
-    PACKAGE = "PACKAGE"
+    BAG = "BG"
 
     """ Unified Packaging type mapping """
-    envelope = PACKAGE
-    pak = PACKAGE
-    tube = PACKAGE
-    pallet = PACKAGE
-    small_box = PACKAGE
-    medium_box = PACKAGE
-    your_packaging = PACKAGE
+    envelope = BAG
+    pak = BAG
+    tube = BAG
+    pallet = BAG
+    small_box = BAG
+    medium_box = BAG
+    your_packaging = BAG
 
 
 class ConnectionConfig(lib.Enum):
