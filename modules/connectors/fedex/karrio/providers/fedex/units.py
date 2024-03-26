@@ -175,6 +175,51 @@ class PackagingType(lib.Enum):
     extra_large_box = fedex_extra_large_box
 
 
+class SubPackageType(lib.Enum):
+    fedex_bag = "BAG"
+    fedex_barrel = "BARREL"
+    fedex_basket = "BASKET"
+    fedex_box = "BOX"
+    fedex_bucket = "BUCKET"
+    fedex_bundle = "BUNDLE"
+    fedex_cage = "CAGE"
+    fedex_carton = "CARTON"
+    fedex_case = "CASE"
+    fedex_chest = "CHEST"
+    fedex_container = "CONTAINER"
+    fedex_crate = "CRATE"
+    fedex_cylinder = "CYLINDER"
+    fedex_drum = "DRUM"
+    fedex_envelope = "ENVELOPE"
+    fedex_hamper = "HAMPER"
+    fedex_other = "OTHER"
+    fedex_package = "PACKAGE"
+    fedex_pail = "PAIL"
+    fedex_pallet = "PALLET"
+    fedex_parcel = "PARCEL"
+    fedex_piece = "PIECE"
+    fedex_reel = "REEL"
+    fedex_roll = "ROLL"
+    fedex_sack = "SACK"
+    fedex_shrinkwrapped = "SHRINKWRAPPED"
+    fedex_skid = "SKID"
+    fedex_tank = "TANK"
+    fedex_totebin = "TOTEBIN"
+    fedex_tube = "TUBE"
+    fedex_unit = "UNIT"
+
+    """ Unified Packaging type mapping """
+    envelope = fedex_envelope
+    pak = fedex_other
+    tube = fedex_tube
+    pallet = fedex_pallet
+    small_box = fedex_parcel
+    medium_box = fedex_parcel
+    large_box = fedex_parcel
+    extra_large_box = fedex_parcel
+    your_packaging = fedex_other
+
+
 class PaymentType(lib.Enum):
     account = "ACCOUNT"
     collect = "COLLECT"

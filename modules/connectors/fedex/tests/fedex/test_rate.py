@@ -173,7 +173,7 @@ RateRequest = {
                     "width": 3.0,
                 },
                 "groupPackageCount": 1,
-                "subPackagingType": "YOUR_PACKAGING",
+                "subPackagingType": "OTHER",
                 "weight": {"units": "LB", "value": 4.0},
             }
         ],
