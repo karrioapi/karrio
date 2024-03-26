@@ -102,12 +102,17 @@ def rate_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
+
     request_types = lib.identity(
-        options.fedex_rate_request_types.state
-        or lib.text(settings.connection_config.rate_request_types.state)
-        or ["LIST", "ACCOUNT"] + ([] if "currency" not in options else ["PREFERRED"])
+        settings.connection_config.rate_request_types.state
+        if any(settings.connection_config.rate_request_types.state or [])
+        else ["LIST", "ACCOUNT", *([] if "currency" not in options else ["PREFERRED"])]
     )
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
+    hub_id = lib.identity(
+        lib.text(options.fedex_smart_post_hub_id.state)
+        or lib.text(settings.connection_config.smart_post_hub_id.state)
+    )
     rate_options = lambda _options: [
         option
         for _, option in _options.items()
@@ -119,10 +124,6 @@ def rate_request(
         if _options.state is not False
         and option.code in provider_units.SHIPMENT_OPTIONS
     ]
-    hub_id = lib.identity(
-        lib.text(options.fedex_smart_post_hub_id.state)
-        or lib.text(settings.connection_config.smart_post_hub_id.state)
-    )
 
     request = fedex.RatingRequestType(
         accountNumber=fedex.RatingRequestAccountNumberType(
@@ -212,7 +213,7 @@ def rate_request(
                 packages.package_type or "your_packaging"
             ).value,
             totalWeight=packages.weight.LB,
-            shipmentSpecialServices=(
+            shipmentSpecialServices=lib.identity(
                 fedex.ShipmentSpecialServicesType(
                     returnShipmentDetail=None,
                     deliveryOnInvoiceAcceptanceDetail=None,
@@ -235,7 +236,7 @@ def rate_request(
             customsClearanceDetail=None,
             groupShipment=None,
             serviceTypeDetail=None,
-            smartPostInfoDetail=(
+            smartPostInfoDetail=lib.identity(
                 fedex.SmartPostInfoDetailType(
                     ancillaryEndorsement=None,
                     hubId=hub_id,
