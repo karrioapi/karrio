@@ -171,8 +171,10 @@ export default function OrdersPage(pageProps: any) {
       <>
 
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Orders</span>
-          <div>
+          <div className="column">
+            <span className="title is-4">Orders</span>
+          </div>
+          <div className="column has-text-right">
             <AppLink href="/draft_orders/new" className="button is-primary is-small mx-1">
               <span>Create order</span>
             </AppLink>

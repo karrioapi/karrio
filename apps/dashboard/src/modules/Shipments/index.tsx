@@ -109,9 +109,11 @@ export default function ShipmentsPage(pageProps: any) {
     return (
       <>
 
-        <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
-          <span className="title is-4">Shipments</span>
-          <div>
+        <header className="columns px-0 pb-0 pt-4">
+          <div className="column">
+            <span className="title is-4">Shipments</span>
+          </div>
+          <div className="column has-text-right">
             <AppLink href="/create_label?shipment_id=new" className="button is-primary is-small mx-1">
               <span>Create Label</span>
             </AppLink>

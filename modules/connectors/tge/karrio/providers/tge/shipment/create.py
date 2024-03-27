@@ -232,7 +232,7 @@ def shipment_request(
                                                 or "BAG"
                                             ),
                                         ),
-                                        Description=package.description,
+                                        Description=(package.description or "N/A"),
                                         Dimensions=tge.DimensionsType(
                                             Height=package.height.map(
                                                 provider_units.MeasurementOptions

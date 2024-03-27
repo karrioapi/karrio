@@ -156,7 +156,7 @@ RateRequest = {
         "packagingType": "YOUR_PACKAGING",
         "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
         "preferredCurrency": "USD",
-        "rateRequestType": ["LIST", "PREFERRED"],
+        "rateRequestType": ["LIST", "ACCOUNT", "PREFERRED"],
         "recipient": {
             "address": {
                 "city": "Lome",
