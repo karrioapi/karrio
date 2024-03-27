@@ -3872,6 +3872,104 @@ export const GET_PRIVATE_APPS = gql`query GetPrivateApps($filter: AppFilter) {
 }
 `;
 
+export const GET_INSTALLATIONS = gql`query GetInstallations($filter: AppInstallationFilter) {
+  installations(filter: $filter) {
+    page_info {
+      count
+      has_next_page
+      has_previous_page
+      start_cursor
+      end_cursor
+    }
+    edges {
+      node {
+        id
+        access_scopes
+        created_at
+        updated_at
+        metadata
+        app {
+          id
+          display_name
+          developer_name
+          is_public
+          is_builtin
+          is_embedded
+          is_published
+          launch_url
+          features
+        }
+      }
+    }
+  }
+}
+`;
+
+export const CREATE_APP = gql`mutation CreateApp($data: CreateAppMutationInput!) {
+  create_app(input: $data) {
+    app {
+      id
+      display_name
+      developer_name
+      is_public
+      is_builtin
+      is_embedded
+      is_published
+      launch_url
+      features
+      metadata
+      installation {
+        id
+        access_scopes
+        metadata
+      }
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const UPDATE_APP = gql`mutation UpdateApp($data: UpdateAppMutationInput!) {
+  update_app(input: $data) {
+    app {
+      id
+      display_name
+      developer_name
+      is_public
+      is_builtin
+      is_embedded
+      is_published
+      launch_url
+      features
+      metadata
+      installation {
+        id
+        access_scopes
+        metadata
+      }
+    }
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
+export const DELETE_APP = gql`mutation DeleteApp($data: DeleteMutationInput!) {
+  delete_app(input: $data) {
+    id
+    errors {
+      field
+      messages
+    }
+  }
+}
+`;
+
 export const INSTALL_APP = gql`mutation InstallApp($data: InstallAppMutationInput!) {
   install_app(input: $data) {
     installation {

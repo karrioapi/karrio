@@ -5269,6 +5269,178 @@ export interface GetPrivateAppsVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetInstallations
+// ====================================================
+
+export interface GetInstallations_installations_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetInstallations_installations_edges_node_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+}
+
+export interface GetInstallations_installations_edges_node {
+  id: number;
+  access_scopes: string[];
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+  app: GetInstallations_installations_edges_node_app;
+}
+
+export interface GetInstallations_installations_edges {
+  node: GetInstallations_installations_edges_node;
+}
+
+export interface GetInstallations_installations {
+  page_info: GetInstallations_installations_page_info;
+  edges: GetInstallations_installations_edges[];
+}
+
+export interface GetInstallations {
+  installations: GetInstallations_installations;
+}
+
+export interface GetInstallationsVariables {
+  filter?: AppInstallationFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: CreateApp
+// ====================================================
+
+export interface CreateApp_create_app_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface CreateApp_create_app_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: CreateApp_create_app_app_installation | null;
+}
+
+export interface CreateApp_create_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface CreateApp_create_app {
+  app: CreateApp_create_app_app | null;
+  errors: CreateApp_create_app_errors[] | null;
+}
+
+export interface CreateApp {
+  create_app: CreateApp_create_app;
+}
+
+export interface CreateAppVariables {
+  data: CreateAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UpdateApp
+// ====================================================
+
+export interface UpdateApp_update_app_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface UpdateApp_update_app_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: UpdateApp_update_app_app_installation | null;
+}
+
+export interface UpdateApp_update_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UpdateApp_update_app {
+  app: UpdateApp_update_app_app | null;
+  errors: UpdateApp_update_app_errors[] | null;
+}
+
+export interface UpdateApp {
+  update_app: UpdateApp_update_app;
+}
+
+export interface UpdateAppVariables {
+  data: UpdateAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: DeleteApp
+// ====================================================
+
+export interface DeleteApp_delete_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface DeleteApp_delete_app {
+  id: string;
+  errors: DeleteApp_delete_app_errors[] | null;
+}
+
+export interface DeleteApp {
+  delete_app: DeleteApp_delete_app;
+}
+
+export interface DeleteAppVariables {
+  data: DeleteMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL mutation operation: InstallApp
 // ====================================================
 
@@ -7736,11 +7908,46 @@ export interface ManifestFilter {
 export interface AppFilter {
   offset?: number | null;
   first?: number | null;
-  features: string[];
+  features?: string[] | null;
   metadata_key?: string | null;
   metadata_value?: string | null;
   created_after?: any | null;
   created_before?: any | null;
+}
+
+// null
+export interface AppInstallationFilter {
+  offset?: number | null;
+  first?: number | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  created_after?: any | null;
+  created_before?: any | null;
+}
+
+// null
+export interface CreateAppMutationInput {
+  display_name: string;
+  developer_name: string;
+  launch_url: string;
+  is_embedded: boolean;
+  features?: string[] | null;
+  redirect_uris: string;
+  is_public?: boolean | null;
+  metadata?: any | null;
+}
+
+// null
+export interface UpdateAppMutationInput {
+  id: string;
+  display_name?: string | null;
+  developer_name?: string | null;
+  launch_url?: string | null;
+  is_embedded?: boolean | null;
+  features?: string[] | null;
+  redirect_uris?: string | null;
+  is_public?: boolean | null;
+  metadata?: any | null;
 }
 
 // null

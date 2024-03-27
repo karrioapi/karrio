@@ -46,6 +46,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           </span>
         </button>
       </div>
+
       <div className="sidebar-menu has-slimscroll py-2" style={{ height: "calc(100% - 60px)" }}>
         <AppLink href="/" className={"menu-item " + activeClass(basePath)} shallow={false} prefetch={false}>
           <i className={`fa fa-house pr-2 ${isActive(basePath) ? "" : 'has-text-grey'}`}></i>
@@ -81,11 +82,12 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           </AppLink>
         </>}
 
-        {/* Settings */}
-        <AppLink href="/settings/account" className={"menu-item " + activeClass("/settings")} shallow={false} prefetch={false}>
-          <i className={`fa fa-cog pr-2 ${isActive("/settings") ? "" : 'has-text-grey'}`}></i>
-          <span className="has-text-weight-bold">Settings</span>
-        </AppLink>
+        {metadata?.APPS_MANAGEMENT && <>
+          <AppLink href="/apps" className={"menu-item " + activeClass("/apps")} shallow={false} prefetch={false}>
+            <i className={`fa fa-table-cells pr-2 ${isActive("/apps") ? "" : 'has-text-grey'}`}></i>
+            <span className="has-text-weight-bold">Apps</span>
+          </AppLink>
+        </>}
 
         <hr className="my-3 mx-3" style={{ height: '1px' }} />
 
@@ -143,10 +145,21 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
         </>}
 
       </div>
-      <div style={{ position: 'absolute', bottom: 10, left: 20, right: 20 }}>
-        <span className="menu-item has-text-weight-semibold has-text-grey-light">
-          Version: {publicRuntimeConfig.DASHBOARD_VERSION}
-        </span>
+
+      <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0 }}>
+        <aside className="sidebar-menu">
+          {/* Settings */}
+          <AppLink href="/settings/account" className={"menu-item " + activeClass("/settings")} shallow={false} prefetch={false}>
+            <i className={`fa fa-cog pr-2 ${isActive("/settings") ? "" : 'has-text-grey'}`}></i>
+            <span className="has-text-weight-bold">Settings</span>
+          </AppLink>
+
+          {/* Version */}
+          <p className="has-text-weight-semibold has-text-grey-light is-size-7"
+            style={{ padding: "0 10px 0 20px" }}>
+            <span>Version: {publicRuntimeConfig.DASHBOARD_VERSION}</span>
+          </p>
+        </aside>
       </div>
     </div>
   );

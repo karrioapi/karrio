@@ -35,7 +35,7 @@ class CreateAppMutation(utils.BaseMutation):
 
         serializer = serializers.AppModelSerializer(
             data={**input, "registration": registration.pk},
-            context=info.context,
+            context=info.context.request,
         )
         serializer.is_valid(raise_exception=True)
 
