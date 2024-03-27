@@ -83,11 +83,11 @@ class PrivateAppType:
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-
 @strawberry.type
 class AppInstallationType:
     object_type: str
     id: int
+    app: AppType
     access_scopes: typing.List[str]
     created_at: datetime.datetime
     updated_at: datetime.datetime

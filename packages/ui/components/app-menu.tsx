@@ -1,18 +1,18 @@
-import { useWorkflowMutation, WorkflowType } from '@karrio/hooks/workflows';
+import { useAppMutation, AppType } from '@karrio/hooks/apps';
 import { ConfirmModalWrapper } from '../modals/form-modals';
 import { MenuComponent } from './menu';
 import { AppLink } from './app-link';
 import React from 'react';
 
 
-interface WorkflowMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
-  workflow: WorkflowType;
+interface AppMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
+  app: AppType;
   isViewing?: boolean;
 }
 
 
-export const WorkflowMenu: React.FC<WorkflowMenuComponent> = ({ workflow, isViewing }) => {
-  const mutation = useWorkflowMutation();
+export const AppMenu: React.FC<AppMenuComponent> = ({ app, isViewing }) => {
+  const mutation = useAppMutation();
 
   return (
     <>
@@ -25,24 +25,24 @@ export const WorkflowMenu: React.FC<WorkflowMenuComponent> = ({ workflow, isView
           </button>
         }
       >
-        <AppLink href={`/workflows/${workflow.id}`} className="dropdown-item">
+        <AppLink href={`/apps/${app.id}`} className="dropdown-item">
           <div className="icon-text is-size-7 has-text-grey">
             <span className="icon">
               <i className="fas fa-pen"></i>
             </span>
-            <span>Edit</span>
+            <span>View app</span>
           </div>
         </AppLink>
         <ConfirmModalWrapper
-          header='Confirm workflow deletion'
-          onSubmit={() => mutation.deleteWorkflow.mutateAsync({ id: workflow.id })}
+          header='Uninstall app'
+          onSubmit={() => mutation.deleteApp.mutateAsync({ id: app.id })}
           trigger={
             <MenuComponent.Item as='a' className={'dropdown-item'}>
               <div className="icon-text is-size-7 has-text-grey">
                 <span className="icon">
                   <i className="fas fa-trash"></i>
                 </span>
-                <span>Delete</span>
+                <span>Uninstall app</span>
               </div>
             </MenuComponent.Item>
           }
