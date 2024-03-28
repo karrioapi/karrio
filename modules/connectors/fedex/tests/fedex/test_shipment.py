@@ -301,7 +301,7 @@ ShipmentRequest = [
                         "width": 12.0,
                     },
                     "packageSpecialServices": {
-                        "signatureOptionType": True,
+                        "signatureOptionType": "SERVICE_DEFAULT",
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
                     },
                     "sequenceNumber": 1,
@@ -450,7 +450,7 @@ MultiPieceShipmentRequest = [
                         "width": 12.0,
                     },
                     "packageSpecialServices": {
-                        "signatureOptionType": True,
+                        "signatureOptionType": "SERVICE_DEFAULT",
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
                     },
                     "sequenceNumber": 1,
@@ -610,7 +610,7 @@ MultiPieceShipmentRequest = [
                         "width": 11.0,
                     },
                     "packageSpecialServices": {
-                        "signatureOptionType": True,
+                        "signatureOptionType": "SERVICE_DEFAULT",
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
                     },
                     "sequenceNumber": 2,
