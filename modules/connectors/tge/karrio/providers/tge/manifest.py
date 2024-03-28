@@ -249,9 +249,13 @@ def manifest_request(
                                             Reference=[
                                                 tge.ReferenceType(
                                                     ReferenceType="ShipmentReference1",
-                                                    ReferenceValue=shipment_payload.reference
-                                                    or getattr(
-                                                        shipment_payload, "id", "N/A"
+                                                    ReferenceValue=(
+                                                        shipment_payload.reference
+                                                        or getattr(
+                                                            shipment_payload,
+                                                            "id",
+                                                            "N/A",
+                                                        )
                                                     ),
                                                 ),
                                             ]
@@ -275,7 +279,9 @@ def manifest_request(
                                                         or "BAG"
                                                     ),
                                                 ),
-                                                Description=package.description,
+                                                Description=(
+                                                    package.description or "N/A"
+                                                ),
                                                 Dimensions=tge.DimensionsType(
                                                     Height=package.height.map(
                                                         provider_units.MeasurementOptions

@@ -194,7 +194,7 @@ def shipment_request(
                                     ),
                                 ]
                             ),
-                            FreightMode=(
+                            FreightMode=lib.identity(
                                 lib.text(options.tge_freight_mode.state)
                                 or lib.text(
                                     settings.connection_config.freight_mode.state
