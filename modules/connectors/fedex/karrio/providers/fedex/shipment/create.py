@@ -555,7 +555,7 @@ def shipment_request(
                             units=package.weight.unit,
                             value=package.weight.value,
                         ),
-                        dimensions=(
+                        dimensions=lib.identity(
                             fedex.DimensionsType(
                                 length=package.length.value,
                                 width=package.width.value,
@@ -584,7 +584,9 @@ def shipment_request(
                             ],
                             priorityAlertDetail=None,
                             signatureOptionType=(
-                                package.options.fedex_signature_option.state
+                                provider_units.SignatureOptionType.map(
+                                    package.options.fedex_signature_option.state
+                                ).value
                                 or "SERVICE_DEFAULT"
                             ),
                             signatureOptionDetail=None,

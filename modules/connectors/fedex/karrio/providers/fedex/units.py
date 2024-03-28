@@ -333,7 +333,7 @@ class ShippingOption(lib.Enum):
     fedex_priority_alert_plus = lib.OptionEnum("PRIORITY_ALERT_PLUS", bool)
     fedex_non_standard_container = lib.OptionEnum("NON_STANDARD_CONTAINER", bool)
     fedex_piece_count_verification = lib.OptionEnum("PIECE_COUNT_VERIFICATION", bool)
-    fedex_signature_option = lib.OptionEnum("SIGNATURE_OPTION", bool)
+    fedex_signature_option = lib.OptionEnum("SIGNATURE_OPTION")
     fedex_evening = lib.OptionEnum("EVENING", bool)
     fedex_date_certain = lib.OptionEnum("DATE_CERTAIN", bool)
 
@@ -451,6 +451,14 @@ class RateType(lib.Enum):
     preferred_account_shipment = "PREFERRED_ACCOUNT_SHIPMENT"
     preferred_list_package = "PREFERRED_LIST_PACKAGE"
     preferred_list_shipment = "PREFERRED_LIST_SHIPMENT"
+
+
+class SignatureOptionType(lib.Enum):
+    adult = "ADULT"
+    direct = "DIRECT"
+    indirect = "INDIRECT"
+    no_signature_required = "NO_SIGNATURE_REQUIRED"
+    service_default = "SERVICE_DEFAULT"
 
 
 class UploadDocumentType(lib.Enum):
