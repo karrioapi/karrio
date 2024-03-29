@@ -312,7 +312,6 @@ ShipmentRequest = [
             "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
             "shipDatestamp": "2024-02-15",
             "shipper": {
-                "accountNumber": "2349857",
                 "address": {
                     "city": "MEMPHIS",
                     "countryCode": "US",
@@ -334,22 +333,6 @@ ShipmentRequest = [
             },
             "shippingDocumentSpecification": {
                 "shippingDocumentTypes": ["COMMERCIAL_INVOICE"]
-            },
-            "soldTo": {
-                "address": {
-                    "city": "RICHMOND",
-                    "countryCode": "CA",
-                    "postalCode": "V7C4v7",
-                    "residential": False,
-                    "stateOrProvinceCode": "BC",
-                    "streetLines": ["Input Your Information", "Input Your Information"],
-                },
-                "contact": {
-                    "companyName": "Input Your Information",
-                    "emailAddress": "Input Your Information",
-                    "personName": "Input Your Information",
-                    "phoneNumber": "Input Your Information",
-                },
             },
             "totalPackageCount": 1,
             "totalWeight": 20.0,
@@ -468,7 +451,6 @@ MultiPieceShipmentRequest = [
                 "specialServiceTypes": ["ELECTRONIC_TRADE_DOCUMENTS"],
             },
             "shipper": {
-                "accountNumber": "2349857",
                 "address": {
                     "city": "MEMPHIS",
                     "countryCode": "US",
@@ -490,25 +472,6 @@ MultiPieceShipmentRequest = [
             "shippingChargesPayment": {
                 "paymentType": "THIRD_PARTY",
                 "payor": {"responsibleParty": {"accountNumber": "2349857"}},
-            },
-            "soldTo": {
-                "address": {
-                    "city": "RICHMOND",
-                    "countryCode": "CA",
-                    "postalCode": "V7C4v7",
-                    "residential": False,
-                    "stateOrProvinceCode": "BC",
-                    "streetLines": [
-                        "Input Your Information",
-                        "Input Your Information",
-                    ],
-                },
-                "contact": {
-                    "companyName": "Input Your Information",
-                    "emailAddress": "Input Your Information",
-                    "personName": "Input Your Information",
-                    "phoneNumber": "Input Your Information",
-                },
             },
             "totalPackageCount": 2,
             "totalWeight": 1.0,
@@ -628,7 +591,6 @@ MultiPieceShipmentRequest = [
                 "specialServiceTypes": ["ELECTRONIC_TRADE_DOCUMENTS"],
             },
             "shipper": {
-                "accountNumber": "2349857",
                 "address": {
                     "city": "MEMPHIS",
                     "countryCode": "US",
@@ -650,25 +612,6 @@ MultiPieceShipmentRequest = [
             "shippingChargesPayment": {
                 "paymentType": "THIRD_PARTY",
                 "payor": {"responsibleParty": {"accountNumber": "2349857"}},
-            },
-            "soldTo": {
-                "address": {
-                    "city": "RICHMOND",
-                    "countryCode": "CA",
-                    "postalCode": "V7C4v7",
-                    "residential": False,
-                    "stateOrProvinceCode": "BC",
-                    "streetLines": [
-                        "Input Your Information",
-                        "Input Your Information",
-                    ],
-                },
-                "contact": {
-                    "companyName": "Input Your Information",
-                    "emailAddress": "Input Your Information",
-                    "personName": "Input Your Information",
-                    "phoneNumber": "Input Your Information",
-                },
             },
             "totalPackageCount": 2,
             "totalWeight": 2.0,

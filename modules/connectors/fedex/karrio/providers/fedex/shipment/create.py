@@ -181,7 +181,6 @@ def shipment_request(
                     else None
                 ),
                 shipper=fedex.ShipperType(
-                    accountNumber=settings.account_number,
                     address=fedex.AddressType(
                         streetLines=shipper.address_lines,
                         city=shipper.city,
@@ -193,7 +192,7 @@ def shipment_request(
                     contact=fedex.ResponsiblePartyContactType(
                         personName=shipper.contact,
                         emailAddress=shipper.email,
-                        phoneNumber=shipper.phone_number,
+                        phoneNumber=(shipper.phone_number or "000-000-0000"),
                         phoneExtension=None,
                         companyName=shipper.company_name,
                         faxNumber=None,
@@ -205,30 +204,7 @@ def shipment_request(
                     ),
                     deliveryInstructions=None,
                 ),
-                soldTo=fedex.ShipperType(
-                    address=fedex.AddressType(
-                        streetLines=recipient.address_lines,
-                        city=recipient.city,
-                        stateOrProvinceCode=recipient.state_code,
-                        postalCode=recipient.postal_code,
-                        countryCode=recipient.country_code,
-                        residential=recipient.residential,
-                    ),
-                    contact=fedex.ResponsiblePartyContactType(
-                        personName=recipient.contact,
-                        emailAddress=recipient.email,
-                        phoneNumber=recipient.phone_number,
-                        phoneExtension=None,
-                        companyName=recipient.company_name,
-                        faxNumber=None,
-                    ),
-                    tins=(
-                        fedex.TinType(number=recipient.tax_id)
-                        if recipient.has_tax_info
-                        else []
-                    ),
-                    deliveryInstructions=None,
-                ),
+                soldTo=None,
                 recipients=[
                     fedex.ShipperType(
                         address=fedex.AddressType(
@@ -242,7 +218,11 @@ def shipment_request(
                         contact=fedex.ResponsiblePartyContactType(
                             personName=recipient.contact,
                             emailAddress=recipient.email,
-                            phoneNumber=recipient.phone_number,
+                            phoneNumber=(
+                                recipient.phone_number
+                                or shipper.phone_number
+                                or "000-000-0000"
+                            ),
                             phoneExtension=None,
                             companyName=recipient.company_name,
                             faxNumber=None,
