@@ -255,7 +255,20 @@ def rate_request(
                     brokers=[],
                     commercialInvoice=None,
                     freightOnValue=None,
-                    dutiesPayment=None,
+                    dutiesPayment=fedex.DutiesPaymentType(
+                        payor=fedex.PayorType(
+                            responsibleParty=fedex.ResponsiblePartyType(
+                                address=None,
+                                contact=None,
+                                accountNumber=fedex.RatingRequestAccountNumberType(
+                                    value=settings.account_number,
+                                ),
+                            ),
+                        ),
+                        paymentType=provider_units.PaymentType.map(
+                            getattr(customs.duty, "paid_by", None) or "sender"
+                        ).value,
+                    ),
                     commodities=[
                         fedex.CommodityType(
                             description=lib.text(
@@ -285,9 +298,10 @@ def rate_request(
                             partNumber=item.sku,
                         )
                         for item in customs.commodities
-                    ]
+                    ],
                 )
-                if is_intl else None
+                if is_intl
+                else None
             ),
             groupShipment=None,
             serviceTypeDetail=None,

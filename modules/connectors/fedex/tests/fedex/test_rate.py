@@ -165,6 +165,12 @@ RateRequest = {
             }
         },
         "customsClearanceDetail": {
+            "dutiesPayment": {
+                "paymentType": "SENDER",
+                "payor": {
+                    "responsibleParty": {"accountNumber": {"value": "2349857"}},
+                },
+            },
             "commodities": [
                 {
                     "description": "N/A",
@@ -175,7 +181,7 @@ RateRequest = {
                     "unitPrice": {"amount": 1.0, "currency": "USD"},
                     "weight": {"units": "LB", "value": 4.0},
                 }
-            ]
+            ],
         },
         "requestedPackageLineItems": [
             {
