@@ -437,10 +437,6 @@ var Karrio = (function () {
         }
         return RequiredError;
     }(Error));
-    function exists(json, key) {
-        var value = json[key];
-        return value !== null && value !== undefined;
-    }
     function querystring(params, prefix) {
         if (prefix === void 0) { prefix = ''; }
         return Object.keys(params)
@@ -504,24 +500,21 @@ var Karrio = (function () {
         return AddressValidationFromJSONTyped(json);
     }
     function AddressValidationFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
             'success': json['success'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
         };
     }
     function AddressValidationToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'success': value.success,
-            'meta': value.meta,
+            'success': value['success'],
+            'meta': value['meta'],
         };
     }
 
@@ -530,56 +523,53 @@ var Karrio = (function () {
         return AddressFromJSONTyped(json);
     }
     function AddressFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
             'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
     function AddressToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'id': value.id,
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
-            'object_type': value.object_type,
-            'validation': AddressValidationToJSON(value.validation),
+            'id': value['id'],
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
+            'object_type': value['object_type'],
+            'validation': AddressValidationToJSON(value['validation']),
         };
     }
 
@@ -588,50 +578,47 @@ var Karrio = (function () {
         return AddressDataFromJSONTyped(json);
     }
     function AddressDataFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
             'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
         };
     }
     function AddressDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
         };
     }
 
@@ -640,13 +627,13 @@ var Karrio = (function () {
         return AddressListFromJSONTyped(json);
     }
     function AddressListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(AddressFromJSON)),
         };
     }
@@ -656,13 +643,13 @@ var Karrio = (function () {
         return BatchObjectFromJSONTyped(json);
     }
     function BatchObjectFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'status': json['status'],
-            'errors': !exists(json, 'errors') ? undefined : json['errors'],
+            'errors': json['errors'] == null ? undefined : json['errors'],
         };
     }
 
@@ -671,11 +658,11 @@ var Karrio = (function () {
         return BatchOperationFromJSONTyped(json);
     }
     function BatchOperationFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'status': json['status'],
             'resource_type': json['resource_type'],
             'resources': (json['resources'].map(BatchObjectFromJSON)),
@@ -690,38 +677,35 @@ var Karrio = (function () {
         return BatchOperationsFromJSONTyped(json);
     }
     function BatchOperationsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(BatchOperationFromJSON)),
         };
     }
 
     /* tslint:disable */
     function CommodityDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'weight': value.weight,
-            'weight_unit': value.weight_unit,
-            'title': value.title,
-            'description': value.description,
-            'quantity': value.quantity,
-            'sku': value.sku,
-            'hs_code': value.hs_code,
-            'value_amount': value.value_amount,
-            'value_currency': value.value_currency,
-            'origin_country': value.origin_country,
-            'parent_id': value.parent_id,
-            'metadata': value.metadata,
+            'weight': value['weight'],
+            'weight_unit': value['weight_unit'],
+            'title': value['title'],
+            'description': value['description'],
+            'quantity': value['quantity'],
+            'sku': value['sku'],
+            'hs_code': value['hs_code'],
+            'value_amount': value['value_amount'],
+            'value_currency': value['value_currency'],
+            'origin_country': value['origin_country'],
+            'parent_id': value['parent_id'],
+            'metadata': value['metadata'],
         };
     }
 
@@ -730,138 +714,123 @@ var Karrio = (function () {
         return OrderBillingAddressFromJSONTyped(json);
     }
     function OrderBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
             'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
         };
     }
     function OrderBillingAddressToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
         };
     }
 
     /* tslint:disable */
     function OrderDataShippingFromToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
         };
     }
 
     /* tslint:disable */
     function OrderDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'order_id': value.order_id,
-            'order_date': value.order_date,
-            'source': value.source,
-            'shipping_to': AddressDataToJSON(value.shipping_to),
-            'shipping_from': OrderDataShippingFromToJSON(value.shipping_from),
-            'billing_address': OrderBillingAddressToJSON(value.billing_address),
-            'line_items': (value.line_items.map(CommodityDataToJSON)),
-            'options': value.options,
-            'metadata': value.metadata,
+            'order_id': value['order_id'],
+            'order_date': value['order_date'],
+            'source': value['source'],
+            'shipping_to': AddressDataToJSON(value['shipping_to']),
+            'shipping_from': OrderDataShippingFromToJSON(value['shipping_from']),
+            'billing_address': OrderBillingAddressToJSON(value['billing_address']),
+            'line_items': (value['line_items'].map(CommodityDataToJSON)),
+            'options': value['options'],
+            'metadata': value['metadata'],
         };
     }
 
     /* tslint:disable */
     function BatchOrderDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'orders': (value.orders.map(OrderDataToJSON)),
+            'orders': (value['orders'].map(OrderDataToJSON)),
         };
     }
 
     /* tslint:disable */
     function ParcelDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'weight': value.weight,
-            'width': value.width,
-            'height': value.height,
-            'length': value.length,
-            'packaging_type': value.packaging_type,
-            'package_preset': value.package_preset,
-            'description': value.description,
-            'content': value.content,
-            'is_document': value.is_document,
-            'weight_unit': value.weight_unit,
-            'dimension_unit': value.dimension_unit,
-            'items': value.items === undefined ? undefined : (value.items.map(CommodityDataToJSON)),
-            'reference_number': value.reference_number,
-            'freight_class': value.freight_class,
-            'options': value.options,
+            'weight': value['weight'],
+            'width': value['width'],
+            'height': value['height'],
+            'length': value['length'],
+            'packaging_type': value['packaging_type'],
+            'package_preset': value['package_preset'],
+            'description': value['description'],
+            'content': value['content'],
+            'is_document': value['is_document'],
+            'weight_unit': value['weight_unit'],
+            'dimension_unit': value['dimension_unit'],
+            'items': value['items'] == null ? undefined : (value['items'].map(CommodityDataToJSON)),
+            'reference_number': value['reference_number'],
+            'freight_class': value['freight_class'],
+            'options': value['options'],
         };
     }
 
@@ -870,80 +839,71 @@ var Karrio = (function () {
         return PaymentFromJSONTyped(json);
     }
     function PaymentFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
-            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
+            'paid_by': json['paid_by'] == null ? undefined : json['paid_by'],
+            'currency': json['currency'] == null ? undefined : json['currency'],
+            'account_number': json['account_number'] == null ? undefined : json['account_number'],
         };
     }
     function PaymentToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'paid_by': value.paid_by,
-            'currency': value.currency,
-            'account_number': value.account_number,
+            'paid_by': value['paid_by'],
+            'currency': value['currency'],
+            'account_number': value['account_number'],
         };
     }
 
     /* tslint:disable */
     function ShipmentDataBillingAddressToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
         };
     }
 
     /* tslint:disable */
     function CustomsDataDutyBillingAddressToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
         };
     }
 
@@ -952,153 +912,132 @@ var Karrio = (function () {
         return CustomsDutyFromJSONTyped(json);
     }
     function CustomsDutyFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'paid_by': !exists(json, 'paid_by') ? undefined : json['paid_by'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
-            'declared_value': !exists(json, 'declared_value') ? undefined : json['declared_value'],
-            'account_number': !exists(json, 'account_number') ? undefined : json['account_number'],
+            'paid_by': json['paid_by'] == null ? undefined : json['paid_by'],
+            'currency': json['currency'] == null ? undefined : json['currency'],
+            'declared_value': json['declared_value'] == null ? undefined : json['declared_value'],
+            'account_number': json['account_number'] == null ? undefined : json['account_number'],
         };
     }
     function CustomsDutyToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'paid_by': value.paid_by,
-            'currency': value.currency,
-            'declared_value': value.declared_value,
-            'account_number': value.account_number,
+            'paid_by': value['paid_by'],
+            'currency': value['currency'],
+            'declared_value': value['declared_value'],
+            'account_number': value['account_number'],
         };
     }
 
     /* tslint:disable */
     function ShipmentDataCustomsToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'commodities': (value.commodities.map(CommodityDataToJSON)),
-            'duty': CustomsDutyToJSON(value.duty),
-            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value.duty_billing_address),
-            'content_type': value.content_type,
-            'content_description': value.content_description,
-            'incoterm': value.incoterm,
-            'invoice': value.invoice,
-            'invoice_date': value.invoice_date,
-            'commercial_invoice': value.commercial_invoice,
-            'certify': value.certify,
-            'signer': value.signer,
-            'options': value.options,
+            'commodities': (value['commodities'].map(CommodityDataToJSON)),
+            'duty': CustomsDutyToJSON(value['duty']),
+            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value['duty_billing_address']),
+            'content_type': value['content_type'],
+            'content_description': value['content_description'],
+            'incoterm': value['incoterm'],
+            'invoice': value['invoice'],
+            'invoice_date': value['invoice_date'],
+            'commercial_invoice': value['commercial_invoice'],
+            'certify': value['certify'],
+            'signer': value['signer'],
+            'options': value['options'],
         };
     }
 
     /* tslint:disable */
     function ShipmentDataReferenceToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'shipper': AddressDataToJSON(value.shipper),
-            'recipient': AddressDataToJSON(value.recipient),
-            'parcels': (value.parcels.map(ParcelDataToJSON)),
-            'options': value.options,
-            'payment': PaymentToJSON(value.payment),
-            'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
-            'customs': ShipmentDataCustomsToJSON(value.customs),
-            'reference': value.reference,
-            'label_type': value.label_type,
-            'service': value.service,
-            'services': value.services,
-            'carrier_ids': value.carrier_ids,
-            'metadata': value.metadata,
-            'id': value.id,
+            'shipper': AddressDataToJSON(value['shipper']),
+            'recipient': AddressDataToJSON(value['recipient']),
+            'parcels': (value['parcels'].map(ParcelDataToJSON)),
+            'options': value['options'],
+            'payment': PaymentToJSON(value['payment']),
+            'billing_address': ShipmentDataBillingAddressToJSON(value['billing_address']),
+            'customs': ShipmentDataCustomsToJSON(value['customs']),
+            'reference': value['reference'],
+            'label_type': value['label_type'],
+            'service': value['service'],
+            'services': value['services'],
+            'carrier_ids': value['carrier_ids'],
+            'metadata': value['metadata'],
+            'id': value['id'],
         };
     }
 
     /* tslint:disable */
     function BatchShipmentDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'shipments': (value.shipments.map(ShipmentDataReferenceToJSON)),
+            'shipments': (value['shipments'].map(ShipmentDataReferenceToJSON)),
         };
     }
 
     /* tslint:disable */
     function TrackerUpdateDataInfoToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'carrier_tracking_link': value.carrier_tracking_link,
-            'customer_name': value.customer_name,
-            'expected_delivery': value.expected_delivery,
-            'note': value.note,
-            'order_date': value.order_date,
-            'order_id': value.order_id,
-            'package_weight': value.package_weight,
-            'package_weight_unit': value.package_weight_unit,
-            'shipment_package_count': value.shipment_package_count,
-            'shipment_pickup_date': value.shipment_pickup_date,
-            'shipment_delivery_date': value.shipment_delivery_date,
-            'shipment_service': value.shipment_service,
-            'shipment_origin_country': value.shipment_origin_country,
-            'shipment_origin_postal_code': value.shipment_origin_postal_code,
-            'shipment_destination_country': value.shipment_destination_country,
-            'shipment_destination_postal_code': value.shipment_destination_postal_code,
-            'shipping_date': value.shipping_date,
-            'signed_by': value.signed_by,
-            'source': value.source,
+            'carrier_tracking_link': value['carrier_tracking_link'],
+            'customer_name': value['customer_name'],
+            'expected_delivery': value['expected_delivery'],
+            'note': value['note'],
+            'order_date': value['order_date'],
+            'order_id': value['order_id'],
+            'package_weight': value['package_weight'],
+            'package_weight_unit': value['package_weight_unit'],
+            'shipment_package_count': value['shipment_package_count'],
+            'shipment_pickup_date': value['shipment_pickup_date'],
+            'shipment_delivery_date': value['shipment_delivery_date'],
+            'shipment_service': value['shipment_service'],
+            'shipment_origin_country': value['shipment_origin_country'],
+            'shipment_origin_postal_code': value['shipment_origin_postal_code'],
+            'shipment_destination_country': value['shipment_destination_country'],
+            'shipment_destination_postal_code': value['shipment_destination_postal_code'],
+            'shipping_date': value['shipping_date'],
+            'signed_by': value['signed_by'],
+            'source': value['source'],
         };
     }
 
     /* tslint:disable */
     function TrackingDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'tracking_number': value.tracking_number,
-            'carrier_name': value.carrier_name,
-            'account_number': value.account_number,
-            'reference': value.reference,
-            'info': TrackerUpdateDataInfoToJSON(value.info),
-            'metadata': value.metadata,
+            'tracking_number': value['tracking_number'],
+            'carrier_name': value['carrier_name'],
+            'account_number': value['account_number'],
+            'reference': value['reference'],
+            'info': TrackerUpdateDataInfoToJSON(value['info']),
+            'metadata': value['metadata'],
         };
     }
 
     /* tslint:disable */
     function BatchTrackerDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'trackers': (value.trackers.map(TrackingDataToJSON)),
+            'trackers': (value['trackers'].map(TrackingDataToJSON)),
         };
     }
 
@@ -1107,20 +1046,20 @@ var Karrio = (function () {
         return CarrierSettingsFromJSONTyped(json);
     }
     function CarrierSettingsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
             'id': json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'carrier_id': json['carrier_id'],
             'carrier_name': json['carrier_name'],
-            'display_name': !exists(json, 'display_name') ? undefined : json['display_name'],
+            'display_name': json['display_name'] == null ? undefined : json['display_name'],
             'test_mode': json['test_mode'],
             'active': json['active'],
-            'capabilities': !exists(json, 'capabilities') ? undefined : json['capabilities'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'config': !exists(json, 'config') ? undefined : json['config'],
+            'capabilities': json['capabilities'] == null ? undefined : json['capabilities'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'config': json['config'] == null ? undefined : json['config'],
         };
     }
 
@@ -1129,13 +1068,13 @@ var Karrio = (function () {
         return CarrierListFromJSONTyped(json);
     }
     function CarrierListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(CarrierSettingsFromJSON)),
         };
     }
@@ -1145,26 +1084,23 @@ var Karrio = (function () {
         return ChargeFromJSONTyped(json);
     }
     function ChargeFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'name': !exists(json, 'name') ? undefined : json['name'],
-            'amount': !exists(json, 'amount') ? undefined : json['amount'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
+            'name': json['name'] == null ? undefined : json['name'],
+            'amount': json['amount'] == null ? undefined : json['amount'],
+            'currency': json['currency'] == null ? undefined : json['currency'],
         };
     }
     function ChargeToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'name': value.name,
-            'amount': value.amount,
-            'currency': value.currency,
+            'name': value['name'],
+            'amount': value['amount'],
+            'currency': value['currency'],
         };
     }
 
@@ -1173,48 +1109,45 @@ var Karrio = (function () {
         return CommodityFromJSONTyped(json);
     }
     function CommodityFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'weight': json['weight'],
             'weight_unit': json['weight_unit'],
-            'title': !exists(json, 'title') ? undefined : json['title'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
-            'sku': !exists(json, 'sku') ? undefined : json['sku'],
-            'hs_code': !exists(json, 'hs_code') ? undefined : json['hs_code'],
-            'value_amount': !exists(json, 'value_amount') ? undefined : json['value_amount'],
-            'value_currency': !exists(json, 'value_currency') ? undefined : json['value_currency'],
-            'origin_country': !exists(json, 'origin_country') ? undefined : json['origin_country'],
-            'parent_id': !exists(json, 'parent_id') ? undefined : json['parent_id'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'title': json['title'] == null ? undefined : json['title'],
+            'description': json['description'] == null ? undefined : json['description'],
+            'quantity': json['quantity'] == null ? undefined : json['quantity'],
+            'sku': json['sku'] == null ? undefined : json['sku'],
+            'hs_code': json['hs_code'] == null ? undefined : json['hs_code'],
+            'value_amount': json['value_amount'] == null ? undefined : json['value_amount'],
+            'value_currency': json['value_currency'] == null ? undefined : json['value_currency'],
+            'origin_country': json['origin_country'] == null ? undefined : json['origin_country'],
+            'parent_id': json['parent_id'] == null ? undefined : json['parent_id'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
         };
     }
     function CommodityToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'id': value.id,
-            'weight': value.weight,
-            'weight_unit': value.weight_unit,
-            'title': value.title,
-            'description': value.description,
-            'quantity': value.quantity,
-            'sku': value.sku,
-            'hs_code': value.hs_code,
-            'value_amount': value.value_amount,
-            'value_currency': value.value_currency,
-            'origin_country': value.origin_country,
-            'parent_id': value.parent_id,
-            'metadata': value.metadata,
-            'object_type': value.object_type,
+            'id': value['id'],
+            'weight': value['weight'],
+            'weight_unit': value['weight_unit'],
+            'title': value['title'],
+            'description': value['description'],
+            'quantity': value['quantity'],
+            'sku': value['sku'],
+            'hs_code': value['hs_code'],
+            'value_amount': value['value_amount'],
+            'value_currency': value['value_currency'],
+            'origin_country': value['origin_country'],
+            'parent_id': value['parent_id'],
+            'metadata': value['metadata'],
+            'object_type': value['object_type'],
         };
     }
 
@@ -1223,28 +1156,28 @@ var Karrio = (function () {
         return CustomsDutyBillingAddressFromJSONTyped(json);
     }
     function CustomsDutyBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
             'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
 
@@ -1253,43 +1186,37 @@ var Karrio = (function () {
         return DocumentDetailsFromJSONTyped(json);
     }
     function DocumentDetailsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'doc_id': !exists(json, 'doc_id') ? undefined : json['doc_id'],
-            'file_name': !exists(json, 'file_name') ? undefined : json['file_name'],
+            'doc_id': json['doc_id'] == null ? undefined : json['doc_id'],
+            'file_name': json['file_name'] == null ? undefined : json['file_name'],
         };
     }
 
     /* tslint:disable */
     function DocumentFileDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'doc_file': value.doc_file,
-            'doc_name': value.doc_name,
-            'doc_format': value.doc_format,
-            'doc_type': value.doc_type,
+            'doc_file': value['doc_file'],
+            'doc_name': value['doc_name'],
+            'doc_format': value['doc_format'],
+            'doc_type': value['doc_type'],
         };
     }
 
     /* tslint:disable */
     function DocumentUploadDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'shipment_id': value.shipment_id,
-            'document_files': (value.document_files.map(DocumentFileDataToJSON)),
-            'reference': value.reference,
+            'shipment_id': value['shipment_id'],
+            'document_files': (value['document_files'].map(DocumentFileDataToJSON)),
+            'reference': value['reference'],
         };
     }
 
@@ -1298,15 +1225,15 @@ var Karrio = (function () {
         return MessageFromJSONTyped(json);
     }
     function MessageFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'message': !exists(json, 'message') ? undefined : json['message'],
-            'code': !exists(json, 'code') ? undefined : json['code'],
-            'details': !exists(json, 'details') ? undefined : json['details'],
-            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
-            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
+            'message': json['message'] == null ? undefined : json['message'],
+            'code': json['code'] == null ? undefined : json['code'],
+            'details': json['details'] == null ? undefined : json['details'],
+            'carrier_name': json['carrier_name'] == null ? undefined : json['carrier_name'],
+            'carrier_id': json['carrier_id'] == null ? undefined : json['carrier_id'],
         };
     }
 
@@ -1315,17 +1242,17 @@ var Karrio = (function () {
         return DocumentUploadRecordFromJSONTyped(json);
     }
     function DocumentUploadRecordFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
-            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
-            'documents': !exists(json, 'documents') ? undefined : (json['documents'].map(DocumentDetailsFromJSON)),
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'id': json['id'] == null ? undefined : json['id'],
+            'carrier_name': json['carrier_name'] == null ? undefined : json['carrier_name'],
+            'carrier_id': json['carrier_id'] == null ? undefined : json['carrier_id'],
+            'documents': json['documents'] == null ? undefined : (json['documents'].map(DocumentDetailsFromJSON)),
+            'meta': json['meta'] == null ? undefined : json['meta'],
+            'reference': json['reference'] == null ? undefined : json['reference'],
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
         };
     }
 
@@ -1334,13 +1261,13 @@ var Karrio = (function () {
         return DocumentUploadRecordsFromJSONTyped(json);
     }
     function DocumentUploadRecordsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(DocumentUploadRecordFromJSON)),
         };
     }
@@ -1350,25 +1277,25 @@ var Karrio = (function () {
         return LineItemFromJSONTyped(json);
     }
     function LineItemFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'weight': json['weight'],
             'weight_unit': json['weight_unit'],
-            'title': !exists(json, 'title') ? undefined : json['title'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'quantity': !exists(json, 'quantity') ? undefined : json['quantity'],
-            'sku': !exists(json, 'sku') ? undefined : json['sku'],
-            'hs_code': !exists(json, 'hs_code') ? undefined : json['hs_code'],
-            'value_amount': !exists(json, 'value_amount') ? undefined : json['value_amount'],
-            'value_currency': !exists(json, 'value_currency') ? undefined : json['value_currency'],
-            'origin_country': !exists(json, 'origin_country') ? undefined : json['origin_country'],
-            'parent_id': !exists(json, 'parent_id') ? undefined : json['parent_id'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'unfulfilled_quantity': !exists(json, 'unfulfilled_quantity') ? undefined : json['unfulfilled_quantity'],
+            'title': json['title'] == null ? undefined : json['title'],
+            'description': json['description'] == null ? undefined : json['description'],
+            'quantity': json['quantity'] == null ? undefined : json['quantity'],
+            'sku': json['sku'] == null ? undefined : json['sku'],
+            'hs_code': json['hs_code'] == null ? undefined : json['hs_code'],
+            'value_amount': json['value_amount'] == null ? undefined : json['value_amount'],
+            'value_currency': json['value_currency'] == null ? undefined : json['value_currency'],
+            'origin_country': json['origin_country'] == null ? undefined : json['origin_country'],
+            'parent_id': json['parent_id'] == null ? undefined : json['parent_id'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'unfulfilled_quantity': json['unfulfilled_quantity'] == null ? undefined : json['unfulfilled_quantity'],
         };
     }
 
@@ -1377,40 +1304,37 @@ var Karrio = (function () {
         return ManifestFromJSONTyped(json);
     }
     function ManifestFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'test_mode': json['test_mode'],
             'address': AddressDataFromJSON(json['address']),
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
+            'options': json['options'] == null ? undefined : json['options'],
+            'reference': json['reference'] == null ? undefined : json['reference'],
             'shipment_identifiers': json['shipment_identifiers'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'manifest_url': !exists(json, 'manifest_url') ? undefined : json['manifest_url'],
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'manifest_url': json['manifest_url'] == null ? undefined : json['manifest_url'],
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
         };
     }
 
     /* tslint:disable */
     function ManifestDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'carrier_name': value.carrier_name,
-            'address': AddressDataToJSON(value.address),
-            'options': value.options,
-            'reference': value.reference,
-            'shipment_ids': value.shipment_ids,
+            'carrier_name': value['carrier_name'],
+            'address': AddressDataToJSON(value['address']),
+            'options': value['options'],
+            'reference': value['reference'],
+            'shipment_ids': value['shipment_ids'],
         };
     }
 
@@ -1419,11 +1343,11 @@ var Karrio = (function () {
         return ManifestDetailsDocFromJSONTyped(json);
     }
     function ManifestDetailsDocFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'manifest': !exists(json, 'manifest') ? undefined : json['manifest'],
+            'manifest': json['manifest'] == null ? undefined : json['manifest'],
         };
     }
 
@@ -1432,16 +1356,16 @@ var Karrio = (function () {
         return ManifestDetailsFromJSONTyped(json);
     }
     function ManifestDetailsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
-            'doc': !exists(json, 'doc') ? undefined : ManifestDetailsDocFromJSON(json['doc']),
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'doc': json['doc'] == null ? undefined : ManifestDetailsDocFromJSON(json['doc']),
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'test_mode': json['test_mode'],
         };
     }
@@ -1451,31 +1375,28 @@ var Karrio = (function () {
         return ManifestListFromJSONTyped(json);
     }
     function ManifestListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(ManifestFromJSON)),
         };
     }
 
     /* tslint:disable */
     function ManifestRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'carrier_name': value.carrier_name,
-            'address': AddressDataToJSON(value.address),
-            'options': value.options,
-            'reference': value.reference,
-            'shipment_identifiers': value.shipment_identifiers,
+            'carrier_name': value['carrier_name'],
+            'address': AddressDataToJSON(value['address']),
+            'options': value['options'],
+            'reference': value['reference'],
+            'shipment_identifiers': value['shipment_identifiers'],
         };
     }
 
@@ -1484,12 +1405,12 @@ var Karrio = (function () {
         return ManifestResponseFromJSONTyped(json);
     }
     function ManifestResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'manifest': !exists(json, 'manifest') ? undefined : ManifestDetailsFromJSON(json['manifest']),
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
+            'manifest': json['manifest'] == null ? undefined : ManifestDetailsFromJSON(json['manifest']),
         };
     }
 
@@ -1498,7 +1419,7 @@ var Karrio = (function () {
         return OperationFromJSONTyped(json);
     }
     function OperationFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
@@ -1512,7 +1433,7 @@ var Karrio = (function () {
         return OperationConfirmationFromJSONTyped(json);
     }
     function OperationConfirmationFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
@@ -1528,12 +1449,12 @@ var Karrio = (function () {
         return OperationResponseFromJSONTyped(json);
     }
     function OperationResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'confirmation': !exists(json, 'confirmation') ? undefined : OperationConfirmationFromJSON(json['confirmation']),
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
+            'confirmation': json['confirmation'] == null ? undefined : OperationConfirmationFromJSON(json['confirmation']),
         };
     }
 
@@ -1542,28 +1463,28 @@ var Karrio = (function () {
         return OrderShippingFromFromJSONTyped(json);
     }
     function OrderShippingFromFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
             'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
 
@@ -1572,54 +1493,51 @@ var Karrio = (function () {
         return ParcelFromJSONTyped(json);
     }
     function ParcelFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'weight': json['weight'],
-            'width': !exists(json, 'width') ? undefined : json['width'],
-            'height': !exists(json, 'height') ? undefined : json['height'],
-            'length': !exists(json, 'length') ? undefined : json['length'],
-            'packaging_type': !exists(json, 'packaging_type') ? undefined : json['packaging_type'],
-            'package_preset': !exists(json, 'package_preset') ? undefined : json['package_preset'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'content': !exists(json, 'content') ? undefined : json['content'],
-            'is_document': !exists(json, 'is_document') ? undefined : json['is_document'],
+            'width': json['width'] == null ? undefined : json['width'],
+            'height': json['height'] == null ? undefined : json['height'],
+            'length': json['length'] == null ? undefined : json['length'],
+            'packaging_type': json['packaging_type'] == null ? undefined : json['packaging_type'],
+            'package_preset': json['package_preset'] == null ? undefined : json['package_preset'],
+            'description': json['description'] == null ? undefined : json['description'],
+            'content': json['content'] == null ? undefined : json['content'],
+            'is_document': json['is_document'] == null ? undefined : json['is_document'],
             'weight_unit': json['weight_unit'],
-            'dimension_unit': !exists(json, 'dimension_unit') ? undefined : json['dimension_unit'],
-            'items': !exists(json, 'items') ? undefined : (json['items'].map(CommodityFromJSON)),
-            'reference_number': !exists(json, 'reference_number') ? undefined : json['reference_number'],
-            'freight_class': !exists(json, 'freight_class') ? undefined : json['freight_class'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'dimension_unit': json['dimension_unit'] == null ? undefined : json['dimension_unit'],
+            'items': json['items'] == null ? undefined : (json['items'].map(CommodityFromJSON)),
+            'reference_number': json['reference_number'] == null ? undefined : json['reference_number'],
+            'freight_class': json['freight_class'] == null ? undefined : json['freight_class'],
+            'options': json['options'] == null ? undefined : json['options'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
         };
     }
     function ParcelToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'id': value.id,
-            'weight': value.weight,
-            'width': value.width,
-            'height': value.height,
-            'length': value.length,
-            'packaging_type': value.packaging_type,
-            'package_preset': value.package_preset,
-            'description': value.description,
-            'content': value.content,
-            'is_document': value.is_document,
-            'weight_unit': value.weight_unit,
-            'dimension_unit': value.dimension_unit,
-            'items': value.items === undefined ? undefined : (value.items.map(CommodityToJSON)),
-            'reference_number': value.reference_number,
-            'freight_class': value.freight_class,
-            'options': value.options,
-            'object_type': value.object_type,
+            'id': value['id'],
+            'weight': value['weight'],
+            'width': value['width'],
+            'height': value['height'],
+            'length': value['length'],
+            'packaging_type': value['packaging_type'],
+            'package_preset': value['package_preset'],
+            'description': value['description'],
+            'content': value['content'],
+            'is_document': value['is_document'],
+            'weight_unit': value['weight_unit'],
+            'dimension_unit': value['dimension_unit'],
+            'items': value['items'] == null ? undefined : (value['items'].map(CommodityToJSON)),
+            'reference_number': value['reference_number'],
+            'freight_class': value['freight_class'],
+            'options': value['options'],
+            'object_type': value['object_type'],
         };
     }
 
@@ -1628,44 +1546,41 @@ var Karrio = (function () {
         return RateFromJSONTyped(json);
     }
     function RateFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
-            'service': !exists(json, 'service') ? undefined : json['service'],
-            'total_charge': !exists(json, 'total_charge') ? undefined : json['total_charge'],
-            'transit_days': !exists(json, 'transit_days') ? undefined : json['transit_days'],
-            'extra_charges': !exists(json, 'extra_charges') ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
-            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'currency': json['currency'] == null ? undefined : json['currency'],
+            'service': json['service'] == null ? undefined : json['service'],
+            'total_charge': json['total_charge'] == null ? undefined : json['total_charge'],
+            'transit_days': json['transit_days'] == null ? undefined : json['transit_days'],
+            'extra_charges': json['extra_charges'] == null ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
+            'estimated_delivery': json['estimated_delivery'] == null ? undefined : json['estimated_delivery'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'test_mode': json['test_mode'],
         };
     }
     function RateToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'id': value.id,
-            'object_type': value.object_type,
-            'carrier_name': value.carrier_name,
-            'carrier_id': value.carrier_id,
-            'currency': value.currency,
-            'service': value.service,
-            'total_charge': value.total_charge,
-            'transit_days': value.transit_days,
-            'extra_charges': value.extra_charges === undefined ? undefined : (value.extra_charges.map(ChargeToJSON)),
-            'estimated_delivery': value.estimated_delivery,
-            'meta': value.meta,
-            'test_mode': value.test_mode,
+            'id': value['id'],
+            'object_type': value['object_type'],
+            'carrier_name': value['carrier_name'],
+            'carrier_id': value['carrier_id'],
+            'currency': value['currency'],
+            'service': value['service'],
+            'total_charge': value['total_charge'],
+            'transit_days': value['transit_days'],
+            'extra_charges': value['extra_charges'] == null ? undefined : (value['extra_charges'].map(ChargeToJSON)),
+            'estimated_delivery': value['estimated_delivery'],
+            'meta': value['meta'],
+            'test_mode': value['test_mode'],
         };
     }
 
@@ -1674,28 +1589,28 @@ var Karrio = (function () {
         return ShipmentBillingAddressFromJSONTyped(json);
     }
     function ShipmentBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'postal_code': !exists(json, 'postal_code') ? undefined : json['postal_code'],
-            'city': !exists(json, 'city') ? undefined : json['city'],
-            'federal_tax_id': !exists(json, 'federal_tax_id') ? undefined : json['federal_tax_id'],
-            'state_tax_id': !exists(json, 'state_tax_id') ? undefined : json['state_tax_id'],
-            'person_name': !exists(json, 'person_name') ? undefined : json['person_name'],
-            'company_name': !exists(json, 'company_name') ? undefined : json['company_name'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
             'country_code': json['country_code'],
-            'email': !exists(json, 'email') ? undefined : json['email'],
-            'phone_number': !exists(json, 'phone_number') ? undefined : json['phone_number'],
-            'state_code': !exists(json, 'state_code') ? undefined : json['state_code'],
-            'residential': !exists(json, 'residential') ? undefined : json['residential'],
-            'street_number': !exists(json, 'street_number') ? undefined : json['street_number'],
-            'address_line1': !exists(json, 'address_line1') ? undefined : json['address_line1'],
-            'address_line2': !exists(json, 'address_line2') ? undefined : json['address_line2'],
-            'validate_location': !exists(json, 'validate_location') ? undefined : json['validate_location'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'validation': !exists(json, 'validation') ? undefined : AddressValidationFromJSON(json['validation']),
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
 
@@ -1704,24 +1619,24 @@ var Karrio = (function () {
         return ShipmentCustomsFromJSONTyped(json);
     }
     function ShipmentCustomsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'commodities': !exists(json, 'commodities') ? undefined : (json['commodities'].map(CommodityFromJSON)),
-            'duty': !exists(json, 'duty') ? undefined : CustomsDutyFromJSON(json['duty']),
-            'duty_billing_address': !exists(json, 'duty_billing_address') ? undefined : CustomsDutyBillingAddressFromJSON(json['duty_billing_address']),
-            'content_type': !exists(json, 'content_type') ? undefined : json['content_type'],
-            'content_description': !exists(json, 'content_description') ? undefined : json['content_description'],
-            'incoterm': !exists(json, 'incoterm') ? undefined : json['incoterm'],
-            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
-            'invoice_date': !exists(json, 'invoice_date') ? undefined : json['invoice_date'],
-            'commercial_invoice': !exists(json, 'commercial_invoice') ? undefined : json['commercial_invoice'],
-            'certify': !exists(json, 'certify') ? undefined : json['certify'],
-            'signer': !exists(json, 'signer') ? undefined : json['signer'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'commodities': json['commodities'] == null ? undefined : (json['commodities'].map(CommodityFromJSON)),
+            'duty': json['duty'] == null ? undefined : CustomsDutyFromJSON(json['duty']),
+            'duty_billing_address': json['duty_billing_address'] == null ? undefined : CustomsDutyBillingAddressFromJSON(json['duty_billing_address']),
+            'content_type': json['content_type'] == null ? undefined : json['content_type'],
+            'content_description': json['content_description'] == null ? undefined : json['content_description'],
+            'incoterm': json['incoterm'] == null ? undefined : json['incoterm'],
+            'invoice': json['invoice'] == null ? undefined : json['invoice'],
+            'invoice_date': json['invoice_date'] == null ? undefined : json['invoice_date'],
+            'commercial_invoice': json['commercial_invoice'] == null ? undefined : json['commercial_invoice'],
+            'certify': json['certify'] == null ? undefined : json['certify'],
+            'signer': json['signer'] == null ? undefined : json['signer'],
+            'options': json['options'] == null ? undefined : json['options'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
         };
     }
 
@@ -1730,21 +1645,21 @@ var Karrio = (function () {
         return ShipmentSelectedRateFromJSONTyped(json);
     }
     function ShipmentSelectedRateFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
-            'service': !exists(json, 'service') ? undefined : json['service'],
-            'total_charge': !exists(json, 'total_charge') ? undefined : json['total_charge'],
-            'transit_days': !exists(json, 'transit_days') ? undefined : json['transit_days'],
-            'extra_charges': !exists(json, 'extra_charges') ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
-            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'currency': json['currency'] == null ? undefined : json['currency'],
+            'service': json['service'] == null ? undefined : json['service'],
+            'total_charge': json['total_charge'] == null ? undefined : json['total_charge'],
+            'transit_days': json['transit_days'] == null ? undefined : json['transit_days'],
+            'extra_charges': json['extra_charges'] == null ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
+            'estimated_delivery': json['estimated_delivery'] == null ? undefined : json['estimated_delivery'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'test_mode': json['test_mode'],
         };
     }
@@ -1754,41 +1669,41 @@ var Karrio = (function () {
         return ShipmentFromJSONTyped(json);
     }
     function ShipmentFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
-            'services': !exists(json, 'services') ? undefined : json['services'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
-            'billing_address': !exists(json, 'billing_address') ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
-            'customs': !exists(json, 'customs') ? undefined : ShipmentCustomsFromJSON(json['customs']),
-            'rates': !exists(json, 'rates') ? undefined : (json['rates'].map(RateFromJSON)),
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-            'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
-            'carrier_ids': !exists(json, 'carrier_ids') ? undefined : json['carrier_ids'],
-            'tracker_id': !exists(json, 'tracker_id') ? undefined : json['tracker_id'],
+            'services': json['services'] == null ? undefined : json['services'],
+            'options': json['options'] == null ? undefined : json['options'],
+            'payment': json['payment'] == null ? undefined : PaymentFromJSON(json['payment']),
+            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
+            'customs': json['customs'] == null ? undefined : ShipmentCustomsFromJSON(json['customs']),
+            'rates': json['rates'] == null ? undefined : (json['rates'].map(RateFromJSON)),
+            'reference': json['reference'] == null ? undefined : json['reference'],
+            'label_type': json['label_type'] == null ? undefined : json['label_type'],
+            'carrier_ids': json['carrier_ids'] == null ? undefined : json['carrier_ids'],
+            'tracker_id': json['tracker_id'] == null ? undefined : json['tracker_id'],
             'created_at': json['created_at'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'status': !exists(json, 'status') ? undefined : json['status'],
-            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
-            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
-            'tracking_number': !exists(json, 'tracking_number') ? undefined : json['tracking_number'],
-            'shipment_identifier': !exists(json, 'shipment_identifier') ? undefined : json['shipment_identifier'],
-            'selected_rate': !exists(json, 'selected_rate') ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
-            'service': !exists(json, 'service') ? undefined : json['service'],
-            'selected_rate_id': !exists(json, 'selected_rate_id') ? undefined : json['selected_rate_id'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
+            'status': json['status'] == null ? undefined : json['status'],
+            'carrier_name': json['carrier_name'] == null ? undefined : json['carrier_name'],
+            'carrier_id': json['carrier_id'] == null ? undefined : json['carrier_id'],
+            'tracking_number': json['tracking_number'] == null ? undefined : json['tracking_number'],
+            'shipment_identifier': json['shipment_identifier'] == null ? undefined : json['shipment_identifier'],
+            'selected_rate': json['selected_rate'] == null ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
+            'meta': json['meta'] == null ? undefined : json['meta'],
+            'service': json['service'] == null ? undefined : json['service'],
+            'selected_rate_id': json['selected_rate_id'] == null ? undefined : json['selected_rate_id'],
             'test_mode': json['test_mode'],
-            'label_url': !exists(json, 'label_url') ? undefined : json['label_url'],
-            'invoice_url': !exists(json, 'invoice_url') ? undefined : json['invoice_url'],
+            'label_url': json['label_url'] == null ? undefined : json['label_url'],
+            'invoice_url': json['invoice_url'] == null ? undefined : json['invoice_url'],
         };
     }
 
@@ -1797,24 +1712,24 @@ var Karrio = (function () {
         return OrderFromJSONTyped(json);
     }
     function OrderFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'order_id': json['order_id'],
-            'order_date': !exists(json, 'order_date') ? undefined : json['order_date'],
-            'source': !exists(json, 'source') ? undefined : json['source'],
-            'status': !exists(json, 'status') ? undefined : json['status'],
+            'order_date': json['order_date'] == null ? undefined : json['order_date'],
+            'source': json['source'] == null ? undefined : json['source'],
+            'status': json['status'] == null ? undefined : json['status'],
             'shipping_to': AddressFromJSON(json['shipping_to']),
-            'shipping_from': !exists(json, 'shipping_from') ? undefined : OrderShippingFromFromJSON(json['shipping_from']),
-            'billing_address': !exists(json, 'billing_address') ? undefined : OrderBillingAddressFromJSON(json['billing_address']),
+            'shipping_from': json['shipping_from'] == null ? undefined : OrderShippingFromFromJSON(json['shipping_from']),
+            'billing_address': json['billing_address'] == null ? undefined : OrderBillingAddressFromJSON(json['billing_address']),
             'line_items': (json['line_items'].map(LineItemFromJSON)),
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'shipments': !exists(json, 'shipments') ? undefined : (json['shipments'].map(ShipmentFromJSON)),
+            'options': json['options'] == null ? undefined : json['options'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'shipments': json['shipments'] == null ? undefined : (json['shipments'].map(ShipmentFromJSON)),
             'test_mode': json['test_mode'],
             'created_at': json['created_at'],
         };
@@ -1825,28 +1740,25 @@ var Karrio = (function () {
         return OrderListFromJSONTyped(json);
     }
     function OrderListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(OrderFromJSON)),
         };
     }
 
     /* tslint:disable */
     function OrderUpdateDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'options': value.options,
-            'metadata': value.metadata,
+            'options': value['options'],
+            'metadata': value['metadata'],
         };
     }
 
@@ -1855,84 +1767,75 @@ var Karrio = (function () {
         return ParcelListFromJSONTyped(json);
     }
     function ParcelListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(ParcelFromJSON)),
         };
     }
 
     /* tslint:disable */
     function PatchedAddressDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'postal_code': value.postal_code,
-            'city': value.city,
-            'federal_tax_id': value.federal_tax_id,
-            'state_tax_id': value.state_tax_id,
-            'person_name': value.person_name,
-            'company_name': value.company_name,
-            'country_code': value.country_code,
-            'email': value.email,
-            'phone_number': value.phone_number,
-            'state_code': value.state_code,
-            'residential': value.residential,
-            'street_number': value.street_number,
-            'address_line1': value.address_line1,
-            'address_line2': value.address_line2,
-            'validate_location': value.validate_location,
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
         };
     }
 
     /* tslint:disable */
     function PatchedParcelDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'weight': value.weight,
-            'width': value.width,
-            'height': value.height,
-            'length': value.length,
-            'packaging_type': value.packaging_type,
-            'package_preset': value.package_preset,
-            'description': value.description,
-            'content': value.content,
-            'is_document': value.is_document,
-            'weight_unit': value.weight_unit,
-            'dimension_unit': value.dimension_unit,
-            'items': value.items === undefined ? undefined : (value.items.map(CommodityDataToJSON)),
-            'reference_number': value.reference_number,
-            'freight_class': value.freight_class,
-            'options': value.options,
+            'weight': value['weight'],
+            'width': value['width'],
+            'height': value['height'],
+            'length': value['length'],
+            'packaging_type': value['packaging_type'],
+            'package_preset': value['package_preset'],
+            'description': value['description'],
+            'content': value['content'],
+            'is_document': value['is_document'],
+            'weight_unit': value['weight_unit'],
+            'dimension_unit': value['dimension_unit'],
+            'items': value['items'] == null ? undefined : (value['items'].map(CommodityDataToJSON)),
+            'reference_number': value['reference_number'],
+            'freight_class': value['freight_class'],
+            'options': value['options'],
         };
     }
 
     /* tslint:disable */
     function PatchedWebhookDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'url': value.url,
-            'description': value.description,
-            'enabled_events': value.enabled_events,
-            'disabled': value.disabled,
+            'url': value['url'],
+            'description': value['description'],
+            'enabled_events': value['enabled_events'],
+            'disabled': value['disabled'],
         };
     }
 
@@ -1941,13 +1844,13 @@ var Karrio = (function () {
         return PickupPickupChargeFromJSONTyped(json);
     }
     function PickupPickupChargeFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'name': !exists(json, 'name') ? undefined : json['name'],
-            'amount': !exists(json, 'amount') ? undefined : json['amount'],
-            'currency': !exists(json, 'currency') ? undefined : json['currency'],
+            'name': json['name'] == null ? undefined : json['name'],
+            'amount': json['amount'] == null ? undefined : json['amount'],
+            'currency': json['currency'] == null ? undefined : json['currency'],
         };
     }
 
@@ -1956,77 +1859,68 @@ var Karrio = (function () {
         return PickupFromJSONTyped(json);
     }
     function PickupFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'confirmation_number': json['confirmation_number'],
-            'pickup_date': !exists(json, 'pickup_date') ? undefined : json['pickup_date'],
-            'pickup_charge': !exists(json, 'pickup_charge') ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
-            'ready_time': !exists(json, 'ready_time') ? undefined : json['ready_time'],
-            'closing_time': !exists(json, 'closing_time') ? undefined : json['closing_time'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
+            'pickup_date': json['pickup_date'] == null ? undefined : json['pickup_date'],
+            'pickup_charge': json['pickup_charge'] == null ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
+            'ready_time': json['ready_time'] == null ? undefined : json['ready_time'],
+            'closing_time': json['closing_time'] == null ? undefined : json['closing_time'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
             'address': AddressFromJSON(json['address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
-            'instruction': !exists(json, 'instruction') ? undefined : json['instruction'],
-            'package_location': !exists(json, 'package_location') ? undefined : json['package_location'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
+            'instruction': json['instruction'] == null ? undefined : json['instruction'],
+            'package_location': json['package_location'] == null ? undefined : json['package_location'],
+            'options': json['options'] == null ? undefined : json['options'],
             'test_mode': json['test_mode'],
         };
     }
 
     /* tslint:disable */
     function PickupCancelDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'reason': value.reason,
+            'reason': value['reason'],
         };
     }
 
     /* tslint:disable */
     function PickupCancelRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'confirmation_number': value.confirmation_number,
-            'address': AddressDataToJSON(value.address),
-            'pickup_date': value.pickup_date,
-            'reason': value.reason,
+            'confirmation_number': value['confirmation_number'],
+            'address': AddressDataToJSON(value['address']),
+            'pickup_date': value['pickup_date'],
+            'reason': value['reason'],
         };
     }
 
     /* tslint:disable */
     function PickupDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'pickup_date': value.pickup_date,
-            'address': AddressDataToJSON(value.address),
-            'ready_time': value.ready_time,
-            'closing_time': value.closing_time,
-            'instruction': value.instruction,
-            'package_location': value.package_location,
-            'options': value.options,
-            'tracking_numbers': value.tracking_numbers,
-            'metadata': value.metadata,
+            'pickup_date': value['pickup_date'],
+            'address': AddressDataToJSON(value['address']),
+            'ready_time': value['ready_time'],
+            'closing_time': value['closing_time'],
+            'instruction': value['instruction'],
+            'package_location': value['package_location'],
+            'options': value['options'],
+            'tracking_numbers': value['tracking_numbers'],
+            'metadata': value['metadata'],
         };
     }
 
@@ -2035,34 +1929,31 @@ var Karrio = (function () {
         return PickupListFromJSONTyped(json);
     }
     function PickupListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(PickupFromJSON)),
         };
     }
 
     /* tslint:disable */
     function PickupRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'pickup_date': value.pickup_date,
-            'address': AddressDataToJSON(value.address),
-            'parcels': (value.parcels.map(ParcelDataToJSON)),
-            'ready_time': value.ready_time,
-            'closing_time': value.closing_time,
-            'instruction': value.instruction,
-            'package_location': value.package_location,
-            'options': value.options,
+            'pickup_date': value['pickup_date'],
+            'address': AddressDataToJSON(value['address']),
+            'parcels': (value['parcels'].map(ParcelDataToJSON)),
+            'ready_time': value['ready_time'],
+            'closing_time': value['closing_time'],
+            'instruction': value['instruction'],
+            'package_location': value['package_location'],
+            'options': value['options'],
         };
     }
 
@@ -2071,74 +1962,65 @@ var Karrio = (function () {
         return PickupResponseFromJSONTyped(json);
     }
     function PickupResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'pickup': !exists(json, 'pickup') ? undefined : PickupFromJSON(json['pickup']),
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
+            'pickup': json['pickup'] == null ? undefined : PickupFromJSON(json['pickup']),
         };
     }
 
     /* tslint:disable */
     function PickupUpdateDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'pickup_date': value.pickup_date,
-            'address': AddressDataToJSON(value.address),
-            'ready_time': value.ready_time,
-            'closing_time': value.closing_time,
-            'instruction': value.instruction,
-            'package_location': value.package_location,
-            'options': value.options,
-            'tracking_numbers': value.tracking_numbers,
-            'metadata': value.metadata,
-            'confirmation_number': value.confirmation_number,
+            'pickup_date': value['pickup_date'],
+            'address': AddressDataToJSON(value['address']),
+            'ready_time': value['ready_time'],
+            'closing_time': value['closing_time'],
+            'instruction': value['instruction'],
+            'package_location': value['package_location'],
+            'options': value['options'],
+            'tracking_numbers': value['tracking_numbers'],
+            'metadata': value['metadata'],
+            'confirmation_number': value['confirmation_number'],
         };
     }
 
     /* tslint:disable */
     function PickupUpdateRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'pickup_date': value.pickup_date,
-            'address': AddressToJSON(value.address),
-            'parcels': (value.parcels.map(ParcelToJSON)),
-            'confirmation_number': value.confirmation_number,
-            'ready_time': value.ready_time,
-            'closing_time': value.closing_time,
-            'instruction': value.instruction,
-            'package_location': value.package_location,
-            'options': value.options,
+            'pickup_date': value['pickup_date'],
+            'address': AddressToJSON(value['address']),
+            'parcels': (value['parcels'].map(ParcelToJSON)),
+            'confirmation_number': value['confirmation_number'],
+            'ready_time': value['ready_time'],
+            'closing_time': value['closing_time'],
+            'instruction': value['instruction'],
+            'package_location': value['package_location'],
+            'options': value['options'],
         };
     }
 
     /* tslint:disable */
     function RateRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'shipper': AddressDataToJSON(value.shipper),
-            'recipient': AddressDataToJSON(value.recipient),
-            'parcels': (value.parcels.map(ParcelDataToJSON)),
-            'services': value.services,
-            'options': value.options,
-            'reference': value.reference,
-            'carrier_ids': value.carrier_ids,
+            'shipper': AddressDataToJSON(value['shipper']),
+            'recipient': AddressDataToJSON(value['recipient']),
+            'parcels': (value['parcels'].map(ParcelDataToJSON)),
+            'services': value['services'],
+            'options': value['options'],
+            'reference': value['reference'],
+            'carrier_ids': value['carrier_ids'],
         };
     }
 
@@ -2147,52 +2029,46 @@ var Karrio = (function () {
         return RateResponseFromJSONTyped(json);
     }
     function RateResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
             'rates': (json['rates'].map(RateFromJSON)),
         };
     }
 
     /* tslint:disable */
     function ShipmentCancelRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'shipment_identifier': value.shipment_identifier,
-            'service': value.service,
-            'options': value.options,
+            'shipment_identifier': value['shipment_identifier'],
+            'service': value['service'],
+            'options': value['options'],
         };
     }
 
     /* tslint:disable */
     function ShipmentDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'shipper': AddressDataToJSON(value.shipper),
-            'recipient': AddressDataToJSON(value.recipient),
-            'parcels': (value.parcels.map(ParcelDataToJSON)),
-            'options': value.options,
-            'payment': PaymentToJSON(value.payment),
-            'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
-            'customs': ShipmentDataCustomsToJSON(value.customs),
-            'reference': value.reference,
-            'label_type': value.label_type,
-            'service': value.service,
-            'services': value.services,
-            'carrier_ids': value.carrier_ids,
-            'metadata': value.metadata,
+            'shipper': AddressDataToJSON(value['shipper']),
+            'recipient': AddressDataToJSON(value['recipient']),
+            'parcels': (value['parcels'].map(ParcelDataToJSON)),
+            'options': value['options'],
+            'payment': PaymentToJSON(value['payment']),
+            'billing_address': ShipmentDataBillingAddressToJSON(value['billing_address']),
+            'customs': ShipmentDataCustomsToJSON(value['customs']),
+            'reference': value['reference'],
+            'label_type': value['label_type'],
+            'service': value['service'],
+            'services': value['services'],
+            'carrier_ids': value['carrier_ids'],
+            'metadata': value['metadata'],
         };
     }
 
@@ -2201,87 +2077,75 @@ var Karrio = (function () {
         return ShipmentListFromJSONTyped(json);
     }
     function ShipmentListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(ShipmentFromJSON)),
         };
     }
 
     /* tslint:disable */
     function ShipmentPurchaseDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'selected_rate_id': value.selected_rate_id,
-            'label_type': value.label_type,
-            'payment': PaymentToJSON(value.payment),
-            'reference': value.reference,
-            'metadata': value.metadata,
+            'selected_rate_id': value['selected_rate_id'],
+            'label_type': value['label_type'],
+            'payment': PaymentToJSON(value['payment']),
+            'reference': value['reference'],
+            'metadata': value['metadata'],
         };
     }
 
     /* tslint:disable */
     function ShipmentRateDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'services': value.services,
-            'carrier_ids': value.carrier_ids,
-            'reference': value.reference,
-            'metadata': value.metadata,
+            'services': value['services'],
+            'carrier_ids': value['carrier_ids'],
+            'reference': value['reference'],
+            'metadata': value['metadata'],
         };
     }
 
     /* tslint:disable */
     function ShipmentUpdateDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'label_type': value.label_type,
-            'payment': PaymentToJSON(value.payment),
-            'options': value.options,
-            'reference': value.reference,
-            'metadata': value.metadata,
+            'label_type': value['label_type'],
+            'payment': PaymentToJSON(value['payment']),
+            'options': value['options'],
+            'reference': value['reference'],
+            'metadata': value['metadata'],
         };
     }
 
     /* tslint:disable */
     function ShippingRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'shipper': AddressDataToJSON(value.shipper),
-            'recipient': AddressDataToJSON(value.recipient),
-            'parcels': (value.parcels.map(ParcelDataToJSON)),
-            'options': value.options,
-            'payment': PaymentToJSON(value.payment),
-            'billing_address': ShipmentDataBillingAddressToJSON(value.billing_address),
-            'customs': ShipmentDataCustomsToJSON(value.customs),
-            'reference': value.reference,
-            'label_type': value.label_type,
-            'selected_rate_id': value.selected_rate_id,
-            'rates': (value.rates.map(RateToJSON)),
+            'shipper': AddressDataToJSON(value['shipper']),
+            'recipient': AddressDataToJSON(value['recipient']),
+            'parcels': (value['parcels'].map(ParcelDataToJSON)),
+            'options': value['options'],
+            'payment': PaymentToJSON(value['payment']),
+            'billing_address': ShipmentDataBillingAddressToJSON(value['billing_address']),
+            'customs': ShipmentDataCustomsToJSON(value['customs']),
+            'reference': value['reference'],
+            'label_type': value['label_type'],
+            'selected_rate_id': value['selected_rate_id'],
+            'rates': (value['rates'].map(RateToJSON)),
         };
     }
 
@@ -2290,12 +2154,12 @@ var Karrio = (function () {
         return ShippingResponseDocsFromJSONTyped(json);
     }
     function ShippingResponseDocsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'label': !exists(json, 'label') ? undefined : json['label'],
-            'invoice': !exists(json, 'invoice') ? undefined : json['invoice'],
+            'label': json['label'] == null ? undefined : json['label'],
+            'invoice': json['invoice'] == null ? undefined : json['invoice'],
         };
     }
 
@@ -2304,39 +2168,39 @@ var Karrio = (function () {
         return ShippingResponseFromJSONTyped(json);
     }
     function ShippingResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'tracking_url': !exists(json, 'tracking_url') ? undefined : json['tracking_url'],
+            'id': json['id'] == null ? undefined : json['id'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
-            'services': !exists(json, 'services') ? undefined : json['services'],
-            'options': !exists(json, 'options') ? undefined : json['options'],
-            'payment': !exists(json, 'payment') ? undefined : PaymentFromJSON(json['payment']),
-            'billing_address': !exists(json, 'billing_address') ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
-            'customs': !exists(json, 'customs') ? undefined : ShipmentCustomsFromJSON(json['customs']),
-            'rates': !exists(json, 'rates') ? undefined : (json['rates'].map(RateFromJSON)),
-            'reference': !exists(json, 'reference') ? undefined : json['reference'],
-            'label_type': !exists(json, 'label_type') ? undefined : json['label_type'],
-            'carrier_ids': !exists(json, 'carrier_ids') ? undefined : json['carrier_ids'],
-            'tracker_id': !exists(json, 'tracker_id') ? undefined : json['tracker_id'],
+            'services': json['services'] == null ? undefined : json['services'],
+            'options': json['options'] == null ? undefined : json['options'],
+            'payment': json['payment'] == null ? undefined : PaymentFromJSON(json['payment']),
+            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
+            'customs': json['customs'] == null ? undefined : ShipmentCustomsFromJSON(json['customs']),
+            'rates': json['rates'] == null ? undefined : (json['rates'].map(RateFromJSON)),
+            'reference': json['reference'] == null ? undefined : json['reference'],
+            'label_type': json['label_type'] == null ? undefined : json['label_type'],
+            'carrier_ids': json['carrier_ids'] == null ? undefined : json['carrier_ids'],
+            'tracker_id': json['tracker_id'] == null ? undefined : json['tracker_id'],
             'created_at': json['created_at'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'status': !exists(json, 'status') ? undefined : json['status'],
-            'carrier_name': !exists(json, 'carrier_name') ? undefined : json['carrier_name'],
-            'carrier_id': !exists(json, 'carrier_id') ? undefined : json['carrier_id'],
-            'tracking_number': !exists(json, 'tracking_number') ? undefined : json['tracking_number'],
-            'shipment_identifier': !exists(json, 'shipment_identifier') ? undefined : json['shipment_identifier'],
-            'selected_rate': !exists(json, 'selected_rate') ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
-            'docs': !exists(json, 'docs') ? undefined : ShippingResponseDocsFromJSON(json['docs']),
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
-            'service': !exists(json, 'service') ? undefined : json['service'],
-            'selected_rate_id': !exists(json, 'selected_rate_id') ? undefined : json['selected_rate_id'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
+            'status': json['status'] == null ? undefined : json['status'],
+            'carrier_name': json['carrier_name'] == null ? undefined : json['carrier_name'],
+            'carrier_id': json['carrier_id'] == null ? undefined : json['carrier_id'],
+            'tracking_number': json['tracking_number'] == null ? undefined : json['tracking_number'],
+            'shipment_identifier': json['shipment_identifier'] == null ? undefined : json['shipment_identifier'],
+            'selected_rate': json['selected_rate'] == null ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
+            'docs': json['docs'] == null ? undefined : ShippingResponseDocsFromJSON(json['docs']),
+            'meta': json['meta'] == null ? undefined : json['meta'],
+            'service': json['service'] == null ? undefined : json['service'],
+            'selected_rate_id': json['selected_rate_id'] == null ? undefined : json['selected_rate_id'],
             'test_mode': json['test_mode'],
         };
     }
@@ -2346,12 +2210,12 @@ var Karrio = (function () {
         return TrackerDetailsImagesFromJSONTyped(json);
     }
     function TrackerDetailsImagesFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'delivery_image': !exists(json, 'delivery_image') ? undefined : json['delivery_image'],
-            'signature_image': !exists(json, 'signature_image') ? undefined : json['signature_image'],
+            'delivery_image': json['delivery_image'] == null ? undefined : json['delivery_image'],
+            'signature_image': json['signature_image'] == null ? undefined : json['signature_image'],
         };
     }
 
@@ -2360,29 +2224,29 @@ var Karrio = (function () {
         return TrackerDetailsInfoFromJSONTyped(json);
     }
     function TrackerDetailsInfoFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'carrier_tracking_link': !exists(json, 'carrier_tracking_link') ? undefined : json['carrier_tracking_link'],
-            'customer_name': !exists(json, 'customer_name') ? undefined : json['customer_name'],
-            'expected_delivery': !exists(json, 'expected_delivery') ? undefined : json['expected_delivery'],
-            'note': !exists(json, 'note') ? undefined : json['note'],
-            'order_date': !exists(json, 'order_date') ? undefined : json['order_date'],
-            'order_id': !exists(json, 'order_id') ? undefined : json['order_id'],
-            'package_weight': !exists(json, 'package_weight') ? undefined : json['package_weight'],
-            'package_weight_unit': !exists(json, 'package_weight_unit') ? undefined : json['package_weight_unit'],
-            'shipment_package_count': !exists(json, 'shipment_package_count') ? undefined : json['shipment_package_count'],
-            'shipment_pickup_date': !exists(json, 'shipment_pickup_date') ? undefined : json['shipment_pickup_date'],
-            'shipment_delivery_date': !exists(json, 'shipment_delivery_date') ? undefined : json['shipment_delivery_date'],
-            'shipment_service': !exists(json, 'shipment_service') ? undefined : json['shipment_service'],
-            'shipment_origin_country': !exists(json, 'shipment_origin_country') ? undefined : json['shipment_origin_country'],
-            'shipment_origin_postal_code': !exists(json, 'shipment_origin_postal_code') ? undefined : json['shipment_origin_postal_code'],
-            'shipment_destination_country': !exists(json, 'shipment_destination_country') ? undefined : json['shipment_destination_country'],
-            'shipment_destination_postal_code': !exists(json, 'shipment_destination_postal_code') ? undefined : json['shipment_destination_postal_code'],
-            'shipping_date': !exists(json, 'shipping_date') ? undefined : json['shipping_date'],
-            'signed_by': !exists(json, 'signed_by') ? undefined : json['signed_by'],
-            'source': !exists(json, 'source') ? undefined : json['source'],
+            'carrier_tracking_link': json['carrier_tracking_link'] == null ? undefined : json['carrier_tracking_link'],
+            'customer_name': json['customer_name'] == null ? undefined : json['customer_name'],
+            'expected_delivery': json['expected_delivery'] == null ? undefined : json['expected_delivery'],
+            'note': json['note'] == null ? undefined : json['note'],
+            'order_date': json['order_date'] == null ? undefined : json['order_date'],
+            'order_id': json['order_id'] == null ? undefined : json['order_id'],
+            'package_weight': json['package_weight'] == null ? undefined : json['package_weight'],
+            'package_weight_unit': json['package_weight_unit'] == null ? undefined : json['package_weight_unit'],
+            'shipment_package_count': json['shipment_package_count'] == null ? undefined : json['shipment_package_count'],
+            'shipment_pickup_date': json['shipment_pickup_date'] == null ? undefined : json['shipment_pickup_date'],
+            'shipment_delivery_date': json['shipment_delivery_date'] == null ? undefined : json['shipment_delivery_date'],
+            'shipment_service': json['shipment_service'] == null ? undefined : json['shipment_service'],
+            'shipment_origin_country': json['shipment_origin_country'] == null ? undefined : json['shipment_origin_country'],
+            'shipment_origin_postal_code': json['shipment_origin_postal_code'] == null ? undefined : json['shipment_origin_postal_code'],
+            'shipment_destination_country': json['shipment_destination_country'] == null ? undefined : json['shipment_destination_country'],
+            'shipment_destination_postal_code': json['shipment_destination_postal_code'] == null ? undefined : json['shipment_destination_postal_code'],
+            'shipping_date': json['shipping_date'] == null ? undefined : json['shipping_date'],
+            'signed_by': json['signed_by'] == null ? undefined : json['signed_by'],
+            'source': json['source'] == null ? undefined : json['source'],
         };
     }
 
@@ -2391,17 +2255,17 @@ var Karrio = (function () {
         return TrackingEventFromJSONTyped(json);
     }
     function TrackingEventFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'date': !exists(json, 'date') ? undefined : json['date'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
-            'location': !exists(json, 'location') ? undefined : json['location'],
-            'code': !exists(json, 'code') ? undefined : json['code'],
-            'time': !exists(json, 'time') ? undefined : json['time'],
-            'latitude': !exists(json, 'latitude') ? undefined : json['latitude'],
-            'longitude': !exists(json, 'longitude') ? undefined : json['longitude'],
+            'date': json['date'] == null ? undefined : json['date'],
+            'description': json['description'] == null ? undefined : json['description'],
+            'location': json['location'] == null ? undefined : json['location'],
+            'code': json['code'] == null ? undefined : json['code'],
+            'time': json['time'] == null ? undefined : json['time'],
+            'latitude': json['latitude'] == null ? undefined : json['latitude'],
+            'longitude': json['longitude'] == null ? undefined : json['longitude'],
         };
     }
 
@@ -2410,25 +2274,25 @@ var Karrio = (function () {
         return TrackerDetailsFromJSONTyped(json);
     }
     function TrackerDetailsFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
-            'info': !exists(json, 'info') ? undefined : TrackerDetailsInfoFromJSON(json['info']),
-            'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
-            'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
+            'info': json['info'] == null ? undefined : TrackerDetailsInfoFromJSON(json['info']),
+            'events': json['events'] == null ? undefined : (json['events'].map(TrackingEventFromJSON)),
+            'delivered': json['delivered'] == null ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
-            'status': !exists(json, 'status') ? undefined : json['status'],
-            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
-            'images': !exists(json, 'images') ? undefined : TrackerDetailsImagesFromJSON(json['images']),
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
+            'status': json['status'] == null ? undefined : json['status'],
+            'estimated_delivery': json['estimated_delivery'] == null ? undefined : json['estimated_delivery'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
+            'images': json['images'] == null ? undefined : TrackerDetailsImagesFromJSON(json['images']),
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
         };
     }
 
@@ -2437,26 +2301,26 @@ var Karrio = (function () {
         return TrackingStatusFromJSONTyped(json);
     }
     function TrackingStatusFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
-            'info': !exists(json, 'info') ? undefined : TrackerDetailsInfoFromJSON(json['info']),
-            'events': !exists(json, 'events') ? undefined : (json['events'] === null ? null : json['events'].map(TrackingEventFromJSON)),
-            'delivered': !exists(json, 'delivered') ? undefined : json['delivered'],
+            'info': json['info'] == null ? undefined : TrackerDetailsInfoFromJSON(json['info']),
+            'events': json['events'] == null ? undefined : (json['events'].map(TrackingEventFromJSON)),
+            'delivered': json['delivered'] == null ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
-            'status': !exists(json, 'status') ? undefined : json['status'],
-            'estimated_delivery': !exists(json, 'estimated_delivery') ? undefined : json['estimated_delivery'],
-            'meta': !exists(json, 'meta') ? undefined : json['meta'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'metadata': !exists(json, 'metadata') ? undefined : json['metadata'],
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'delivery_image_url': !exists(json, 'delivery_image_url') ? undefined : json['delivery_image_url'],
-            'signature_image_url': !exists(json, 'signature_image_url') ? undefined : json['signature_image_url'],
+            'status': json['status'] == null ? undefined : json['status'],
+            'estimated_delivery': json['estimated_delivery'] == null ? undefined : json['estimated_delivery'],
+            'meta': json['meta'] == null ? undefined : json['meta'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
+            'delivery_image_url': json['delivery_image_url'] == null ? undefined : json['delivery_image_url'],
+            'signature_image_url': json['signature_image_url'] == null ? undefined : json['signature_image_url'],
         };
     }
 
@@ -2465,28 +2329,25 @@ var Karrio = (function () {
         return TrackerListFromJSONTyped(json);
     }
     function TrackerListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(TrackingStatusFromJSON)),
         };
     }
 
     /* tslint:disable */
     function TrackerUpdateDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'info': TrackerUpdateDataInfoToJSON(value.info),
-            'metadata': value.metadata,
+            'info': TrackerUpdateDataInfoToJSON(value['info']),
+            'metadata': value['metadata'],
         };
     }
 
@@ -2495,12 +2356,12 @@ var Karrio = (function () {
         return TrackingResponseFromJSONTyped(json);
     }
     function TrackingResponseFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'messages': !exists(json, 'messages') ? undefined : (json['messages'].map(MessageFromJSON)),
-            'tracking': !exists(json, 'tracking') ? undefined : TrackerDetailsFromJSON(json['tracking']),
+            'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
+            'tracking': json['tracking'] == null ? undefined : TrackerDetailsFromJSON(json['tracking']),
         };
     }
 
@@ -2509,17 +2370,17 @@ var Karrio = (function () {
         return WebhookFromJSONTyped(json);
     }
     function WebhookFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'id': !exists(json, 'id') ? undefined : json['id'],
+            'id': json['id'] == null ? undefined : json['id'],
             'url': json['url'],
-            'description': !exists(json, 'description') ? undefined : json['description'],
+            'description': json['description'] == null ? undefined : json['description'],
             'enabled_events': json['enabled_events'],
-            'disabled': !exists(json, 'disabled') ? undefined : json['disabled'],
-            'object_type': !exists(json, 'object_type') ? undefined : json['object_type'],
-            'last_event_at': !exists(json, 'last_event_at') ? undefined : (json['last_event_at'] === null ? null : new Date(json['last_event_at'])),
+            'disabled': json['disabled'] == null ? undefined : json['disabled'],
+            'object_type': json['object_type'] == null ? undefined : json['object_type'],
+            'last_event_at': json['last_event_at'] == null ? undefined : (new Date(json['last_event_at'])),
             'secret': json['secret'],
             'test_mode': json['test_mode'],
         };
@@ -2527,17 +2388,14 @@ var Karrio = (function () {
 
     /* tslint:disable */
     function WebhookDataToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'url': value.url,
-            'description': value.description,
-            'enabled_events': value.enabled_events,
-            'disabled': value.disabled,
+            'url': value['url'],
+            'description': value['description'],
+            'enabled_events': value['enabled_events'],
+            'disabled': value['disabled'],
         };
     }
 
@@ -2546,27 +2404,24 @@ var Karrio = (function () {
         return WebhookListFromJSONTyped(json);
     }
     function WebhookListFromJSONTyped(json, ignoreDiscriminator) {
-        if ((json === undefined) || (json === null)) {
+        if (json == null) {
             return json;
         }
         return {
-            'count': !exists(json, 'count') ? undefined : json['count'],
-            'next': !exists(json, 'next') ? undefined : json['next'],
-            'previous': !exists(json, 'previous') ? undefined : json['previous'],
+            'count': json['count'] == null ? undefined : json['count'],
+            'next': json['next'] == null ? undefined : json['next'],
+            'previous': json['previous'] == null ? undefined : json['previous'],
             'results': (json['results'].map(WebhookFromJSON)),
         };
     }
 
     /* tslint:disable */
     function WebhookTestRequestToJSON(value) {
-        if (value === undefined) {
-            return undefined;
-        }
-        if (value === null) {
-            return null;
+        if (value == null) {
+            return value;
         }
         return {
-            'payload': value.payload,
+            'payload': value['payload'],
         };
     }
 
@@ -2585,12 +2440,12 @@ var Karrio = (function () {
          */
         AddressesApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.addressData === null || requestParameters.addressData === undefined) {
-                                throw new RequiredError('addressData', 'Required parameter requestParameters.addressData was null or undefined when calling create.');
+                            if (requestParameters['addressData'] == null) {
+                                throw new RequiredError('addressData', 'Required parameter "addressData" was null or undefined when calling create().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2602,27 +2457,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: AddressDataToJSON(requestParameters.addressData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/addresses",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: AddressDataToJSON(requestParameters['addressData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -2652,12 +2516,12 @@ var Karrio = (function () {
          */
         AddressesApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling discard.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling discard().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2668,26 +2532,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -2717,9 +2590,9 @@ var Karrio = (function () {
          */
         AddressesApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
@@ -2730,26 +2603,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/addresses",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressListFromJSON(jsonValue); })];
                     }
                 });
@@ -2779,12 +2661,12 @@ var Karrio = (function () {
          */
         AddressesApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2795,26 +2677,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -2844,12 +2735,12 @@ var Karrio = (function () {
          */
         AddressesApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling update().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -2861,27 +2752,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PatchedAddressDataToJSON(requestParameters.patchedAddressData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/addresses/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PatchedAddressDataToJSON(requestParameters['patchedAddressData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return AddressFromJSON(jsonValue); })];
                     }
                 });
@@ -3017,12 +2917,12 @@ var Karrio = (function () {
          */
         CarriersApi.prototype.getServicesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling getServices.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling getServices().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3033,26 +2933,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/carriers/{carrier_name}/services".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/carriers/{carrier_name}/services".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response)];
                     }
                 });
@@ -3082,25 +2991,25 @@ var Karrio = (function () {
          */
         CarriersApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.active !== undefined) {
-                                queryParameters['active'] = requestParameters.active;
+                            if (requestParameters['active'] != null) {
+                                queryParameters['active'] = requestParameters['active'];
                             }
-                            if (requestParameters.carrierName !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName;
+                            if (requestParameters['carrierName'] != null) {
+                                queryParameters['carrier_name'] = requestParameters['carrierName'];
                             }
-                            if (requestParameters.metadataKey !== undefined) {
-                                queryParameters['metadata_key'] = requestParameters.metadataKey;
+                            if (requestParameters['metadataKey'] != null) {
+                                queryParameters['metadata_key'] = requestParameters['metadataKey'];
                             }
-                            if (requestParameters.metadataValue !== undefined) {
-                                queryParameters['metadata_value'] = requestParameters.metadataValue;
+                            if (requestParameters['metadataValue'] != null) {
+                                queryParameters['metadata_value'] = requestParameters['metadataValue'];
                             }
-                            if (requestParameters.systemOnly !== undefined) {
-                                queryParameters['system_only'] = requestParameters.systemOnly;
+                            if (requestParameters['systemOnly'] != null) {
+                                queryParameters['system_only'] = requestParameters['systemOnly'];
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -3110,26 +3019,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/carriers",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/carriers",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierListFromJSON(jsonValue); })];
                     }
                 });
@@ -3160,12 +3078,12 @@ var Karrio = (function () {
          */
         CarriersApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3176,26 +3094,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/carriers/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/carriers/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierSettingsFromJSON(jsonValue); })];
                     }
                 });
@@ -3237,12 +3164,12 @@ var Karrio = (function () {
          */
         ParcelsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.parcelData === null || requestParameters.parcelData === undefined) {
-                                throw new RequiredError('parcelData', 'Required parameter requestParameters.parcelData was null or undefined when calling create.');
+                            if (requestParameters['parcelData'] == null) {
+                                throw new RequiredError('parcelData', 'Required parameter "parcelData" was null or undefined when calling create().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3254,27 +3181,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ParcelDataToJSON(requestParameters.parcelData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/parcels",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ParcelDataToJSON(requestParameters['parcelData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3304,12 +3240,12 @@ var Karrio = (function () {
          */
         ParcelsApi.prototype.discardRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling discard.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling discard().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3320,26 +3256,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3369,9 +3314,9 @@ var Karrio = (function () {
          */
         ParcelsApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
@@ -3382,26 +3327,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/parcels",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelListFromJSON(jsonValue); })];
                     }
                 });
@@ -3431,12 +3385,12 @@ var Karrio = (function () {
          */
         ParcelsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3447,26 +3401,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3496,12 +3459,12 @@ var Karrio = (function () {
          */
         ParcelsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling update().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3513,27 +3476,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PatchedParcelDataToJSON(requestParameters.patchedParcelData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/parcels/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PatchedParcelDataToJSON(requestParameters['patchedParcelData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ParcelFromJSON(jsonValue); })];
                     }
                 });
@@ -3575,12 +3547,12 @@ var Karrio = (function () {
          */
         PickupsApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling cancel.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling cancel().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3592,27 +3564,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupCancelDataToJSON(requestParameters.pickupCancelData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/pickups/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupCancelDataToJSON(requestParameters['pickupCancelData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3642,9 +3623,9 @@ var Karrio = (function () {
          */
         PickupsApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
@@ -3655,26 +3636,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/pickups",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupListFromJSON(jsonValue); })];
                     }
                 });
@@ -3704,12 +3694,12 @@ var Karrio = (function () {
          */
         PickupsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3720,26 +3710,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3769,15 +3768,15 @@ var Karrio = (function () {
          */
         PickupsApi.prototype.scheduleRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling schedule.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling schedule().');
                             }
-                            if (requestParameters.pickupData === null || requestParameters.pickupData === undefined) {
-                                throw new RequiredError('pickupData', 'Required parameter requestParameters.pickupData was null or undefined when calling schedule.');
+                            if (requestParameters['pickupData'] == null) {
+                                throw new RequiredError('pickupData', 'Required parameter "pickupData" was null or undefined when calling schedule().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3789,27 +3788,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{carrier_name}/schedule".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupDataToJSON(requestParameters.pickupData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/pickups/{carrier_name}/schedule".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupDataToJSON(requestParameters['pickupData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3839,15 +3847,15 @@ var Karrio = (function () {
          */
         PickupsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling update().');
                             }
-                            if (requestParameters.pickupUpdateData === null || requestParameters.pickupUpdateData === undefined) {
-                                throw new RequiredError('pickupUpdateData', 'Required parameter requestParameters.pickupUpdateData was null or undefined when calling update.');
+                            if (requestParameters['pickupUpdateData'] == null) {
+                                throw new RequiredError('pickupUpdateData', 'Required parameter "pickupUpdateData" was null or undefined when calling update().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3859,27 +3867,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupUpdateDataToJSON(requestParameters.pickupUpdateData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/pickups/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupUpdateDataToJSON(requestParameters['pickupUpdateData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupFromJSON(jsonValue); })];
                     }
                 });
@@ -3921,12 +3938,12 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.buyLabelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.shippingRequest === null || requestParameters.shippingRequest === undefined) {
-                                throw new RequiredError('shippingRequest', 'Required parameter requestParameters.shippingRequest was null or undefined when calling buyLabel.');
+                            if (requestParameters['shippingRequest'] == null) {
+                                throw new RequiredError('shippingRequest', 'Required parameter "shippingRequest" was null or undefined when calling buyLabel().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -3938,27 +3955,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/shipping",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShippingRequestToJSON(requestParameters.shippingRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/shipping",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShippingRequestToJSON(requestParameters['shippingRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShippingResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -3988,15 +4014,15 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.cancelPickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling cancelPickup.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling cancelPickup().');
                             }
-                            if (requestParameters.pickupCancelRequest === null || requestParameters.pickupCancelRequest === undefined) {
-                                throw new RequiredError('pickupCancelRequest', 'Required parameter requestParameters.pickupCancelRequest was null or undefined when calling cancelPickup.');
+                            if (requestParameters['pickupCancelRequest'] == null) {
+                                throw new RequiredError('pickupCancelRequest', 'Required parameter "pickupCancelRequest" was null or undefined when calling cancelPickup().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4008,27 +4034,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupCancelRequestToJSON(requestParameters.pickupCancelRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/pickups/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupCancelRequestToJSON(requestParameters['pickupCancelRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4058,12 +4093,12 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.createManifestRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.manifestRequest === null || requestParameters.manifestRequest === undefined) {
-                                throw new RequiredError('manifestRequest', 'Required parameter requestParameters.manifestRequest was null or undefined when calling createManifest.');
+                            if (requestParameters['manifestRequest'] == null) {
+                                throw new RequiredError('manifestRequest', 'Required parameter "manifestRequest" was null or undefined when calling createManifest().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4075,27 +4110,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/manifest",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ManifestRequestToJSON(requestParameters.manifestRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/manifest",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ManifestRequestToJSON(requestParameters['manifestRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4125,12 +4169,12 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.fetchRatesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.rateRequest === null || requestParameters.rateRequest === undefined) {
-                                throw new RequiredError('rateRequest', 'Required parameter requestParameters.rateRequest was null or undefined when calling fetchRates.');
+                            if (requestParameters['rateRequest'] == null) {
+                                throw new RequiredError('rateRequest', 'Required parameter "rateRequest" was null or undefined when calling fetchRates().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4142,27 +4186,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/rates",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: RateRequestToJSON(requestParameters.rateRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/rates",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: RateRequestToJSON(requestParameters['rateRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return RateResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4192,16 +4245,16 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.getTrackingRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.trackingData === null || requestParameters.trackingData === undefined) {
-                                throw new RequiredError('trackingData', 'Required parameter requestParameters.trackingData was null or undefined when calling getTracking.');
+                            if (requestParameters['trackingData'] == null) {
+                                throw new RequiredError('trackingData', 'Required parameter "trackingData" was null or undefined when calling getTracking().');
                             }
                             queryParameters = {};
-                            if (requestParameters.hub !== undefined) {
-                                queryParameters['hub'] = requestParameters.hub;
+                            if (requestParameters['hub'] != null) {
+                                queryParameters['hub'] = requestParameters['hub'];
                             }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
@@ -4212,27 +4265,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/tracking",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TrackingDataToJSON(requestParameters.trackingData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/tracking",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: TrackingDataToJSON(requestParameters['trackingData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4262,15 +4324,15 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.schedulePickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling schedulePickup.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling schedulePickup().');
                             }
-                            if (requestParameters.pickupRequest === null || requestParameters.pickupRequest === undefined) {
-                                throw new RequiredError('pickupRequest', 'Required parameter requestParameters.pickupRequest was null or undefined when calling schedulePickup.');
+                            if (requestParameters['pickupRequest'] == null) {
+                                throw new RequiredError('pickupRequest', 'Required parameter "pickupRequest" was null or undefined when calling schedulePickup().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4282,27 +4344,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupRequestToJSON(requestParameters.pickupRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/pickups/{carrier_name}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupRequestToJSON(requestParameters['pickupRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4333,19 +4404,19 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.trackShipmentRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling trackShipment.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling trackShipment().');
                             }
-                            if (requestParameters.trackingNumber === null || requestParameters.trackingNumber === undefined) {
-                                throw new RequiredError('trackingNumber', 'Required parameter requestParameters.trackingNumber was null or undefined when calling trackShipment.');
+                            if (requestParameters['trackingNumber'] == null) {
+                                throw new RequiredError('trackingNumber', 'Required parameter "trackingNumber" was null or undefined when calling trackShipment().');
                             }
                             queryParameters = {};
-                            if (requestParameters.hub !== undefined) {
-                                queryParameters['hub'] = requestParameters.hub;
+                            if (requestParameters['hub'] != null) {
+                                queryParameters['hub'] = requestParameters['hub'];
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -4355,26 +4426,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/tracking/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters['trackingNumber']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4405,15 +4485,15 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.updatePickupRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling updatePickup.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling updatePickup().');
                             }
-                            if (requestParameters.pickupUpdateRequest === null || requestParameters.pickupUpdateRequest === undefined) {
-                                throw new RequiredError('pickupUpdateRequest', 'Required parameter requestParameters.pickupUpdateRequest was null or undefined when calling updatePickup.');
+                            if (requestParameters['pickupUpdateRequest'] == null) {
+                                throw new RequiredError('pickupUpdateRequest', 'Required parameter "pickupUpdateRequest" was null or undefined when calling updatePickup().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4425,27 +4505,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/pickups/{carrier_name}/update".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PickupUpdateRequestToJSON(requestParameters.pickupUpdateRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/pickups/{carrier_name}/update".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PickupUpdateRequestToJSON(requestParameters['pickupUpdateRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return PickupResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4475,15 +4564,15 @@ var Karrio = (function () {
          */
         ProxyApi.prototype.voidLabelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling voidLabel.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling voidLabel().');
                             }
-                            if (requestParameters.shipmentCancelRequest === null || requestParameters.shipmentCancelRequest === undefined) {
-                                throw new RequiredError('shipmentCancelRequest', 'Required parameter requestParameters.shipmentCancelRequest was null or undefined when calling voidLabel.');
+                            if (requestParameters['shipmentCancelRequest'] == null) {
+                                throw new RequiredError('shipmentCancelRequest', 'Required parameter "shipmentCancelRequest" was null or undefined when calling voidLabel().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4495,27 +4584,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentCancelRequestToJSON(requestParameters.shipmentCancelRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/proxy/shipping/{carrier_name}/cancel".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentCancelRequestToJSON(requestParameters['shipmentCancelRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationResponseFromJSON(jsonValue); })];
                     }
                 });
@@ -4557,12 +4655,12 @@ var Karrio = (function () {
          */
         ShipmentsApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling cancel.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling cancel().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4573,26 +4671,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/shipments/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4622,12 +4729,12 @@ var Karrio = (function () {
          */
         ShipmentsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.shipmentData === null || requestParameters.shipmentData === undefined) {
-                                throw new RequiredError('shipmentData', 'Required parameter requestParameters.shipmentData was null or undefined when calling create.');
+                            if (requestParameters['shipmentData'] == null) {
+                                throw new RequiredError('shipmentData', 'Required parameter "shipmentData" was null or undefined when calling create().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4639,27 +4746,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentDataToJSON(requestParameters.shipmentData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/shipments",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentDataToJSON(requestParameters['shipmentData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4689,64 +4805,64 @@ var Karrio = (function () {
          */
         ShipmentsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.address !== undefined) {
-                                queryParameters['address'] = requestParameters.address;
+                            if (requestParameters['address'] != null) {
+                                queryParameters['address'] = requestParameters['address'];
                             }
-                            if (requestParameters.carrierName !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName;
+                            if (requestParameters['carrierName'] != null) {
+                                queryParameters['carrier_name'] = requestParameters['carrierName'];
                             }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            if (requestParameters['createdAfter'] != null) {
+                                queryParameters['created_after'] = requestParameters['createdAfter'].toISOString();
                             }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                            if (requestParameters['createdBefore'] != null) {
+                                queryParameters['created_before'] = requestParameters['createdBefore'].toISOString();
                             }
-                            if (requestParameters.hasManifest !== undefined) {
-                                queryParameters['has_manifest'] = requestParameters.hasManifest;
+                            if (requestParameters['hasManifest'] != null) {
+                                queryParameters['has_manifest'] = requestParameters['hasManifest'];
                             }
-                            if (requestParameters.hasTracker !== undefined) {
-                                queryParameters['has_tracker'] = requestParameters.hasTracker;
+                            if (requestParameters['hasTracker'] != null) {
+                                queryParameters['has_tracker'] = requestParameters['hasTracker'];
                             }
-                            if (requestParameters.id !== undefined) {
-                                queryParameters['id'] = requestParameters.id;
+                            if (requestParameters['id'] != null) {
+                                queryParameters['id'] = requestParameters['id'];
                             }
-                            if (requestParameters.keyword !== undefined) {
-                                queryParameters['keyword'] = requestParameters.keyword;
+                            if (requestParameters['keyword'] != null) {
+                                queryParameters['keyword'] = requestParameters['keyword'];
                             }
-                            if (requestParameters.metaKey !== undefined) {
-                                queryParameters['meta_key'] = requestParameters.metaKey;
+                            if (requestParameters['metaKey'] != null) {
+                                queryParameters['meta_key'] = requestParameters['metaKey'];
                             }
-                            if (requestParameters.metaValue !== undefined) {
-                                queryParameters['meta_value'] = requestParameters.metaValue;
+                            if (requestParameters['metaValue'] != null) {
+                                queryParameters['meta_value'] = requestParameters['metaValue'];
                             }
-                            if (requestParameters.metadataKey !== undefined) {
-                                queryParameters['metadata_key'] = requestParameters.metadataKey;
+                            if (requestParameters['metadataKey'] != null) {
+                                queryParameters['metadata_key'] = requestParameters['metadataKey'];
                             }
-                            if (requestParameters.metadataValue !== undefined) {
-                                queryParameters['metadata_value'] = requestParameters.metadataValue;
+                            if (requestParameters['metadataValue'] != null) {
+                                queryParameters['metadata_value'] = requestParameters['metadataValue'];
                             }
-                            if (requestParameters.optionKey !== undefined) {
-                                queryParameters['option_key'] = requestParameters.optionKey;
+                            if (requestParameters['optionKey'] != null) {
+                                queryParameters['option_key'] = requestParameters['optionKey'];
                             }
-                            if (requestParameters.optionValue !== undefined) {
-                                queryParameters['option_value'] = requestParameters.optionValue;
+                            if (requestParameters['optionValue'] != null) {
+                                queryParameters['option_value'] = requestParameters['optionValue'];
                             }
-                            if (requestParameters.reference !== undefined) {
-                                queryParameters['reference'] = requestParameters.reference;
+                            if (requestParameters['reference'] != null) {
+                                queryParameters['reference'] = requestParameters['reference'];
                             }
-                            if (requestParameters.service !== undefined) {
-                                queryParameters['service'] = requestParameters.service;
+                            if (requestParameters['service'] != null) {
+                                queryParameters['service'] = requestParameters['service'];
                             }
-                            if (requestParameters.status !== undefined) {
-                                queryParameters['status'] = requestParameters.status;
+                            if (requestParameters['status'] != null) {
+                                queryParameters['status'] = requestParameters['status'];
                             }
-                            if (requestParameters.trackingNumber !== undefined) {
-                                queryParameters['tracking_number'] = requestParameters.trackingNumber;
+                            if (requestParameters['trackingNumber'] != null) {
+                                queryParameters['tracking_number'] = requestParameters['trackingNumber'];
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -4756,26 +4872,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/shipments",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentListFromJSON(jsonValue); })];
                     }
                 });
@@ -4806,15 +4931,15 @@ var Karrio = (function () {
          */
         ShipmentsApi.prototype.purchaseRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling purchase.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling purchase().');
                             }
-                            if (requestParameters.shipmentPurchaseData === null || requestParameters.shipmentPurchaseData === undefined) {
-                                throw new RequiredError('shipmentPurchaseData', 'Required parameter requestParameters.shipmentPurchaseData was null or undefined when calling purchase.');
+                            if (requestParameters['shipmentPurchaseData'] == null) {
+                                throw new RequiredError('shipmentPurchaseData', 'Required parameter "shipmentPurchaseData" was null or undefined when calling purchase().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4826,27 +4951,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}/purchase".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentPurchaseDataToJSON(requestParameters.shipmentPurchaseData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/shipments/{id}/purchase".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentPurchaseDataToJSON(requestParameters['shipmentPurchaseData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4876,12 +5010,12 @@ var Karrio = (function () {
          */
         ShipmentsApi.prototype.ratesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling rates.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling rates().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4893,27 +5027,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}/rates".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentRateDataToJSON(requestParameters.shipmentRateData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/shipments/{id}/rates".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentRateDataToJSON(requestParameters['shipmentRateData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -4943,12 +5086,12 @@ var Karrio = (function () {
          */
         ShipmentsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -4959,26 +5102,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -5008,12 +5160,12 @@ var Karrio = (function () {
          */
         ShipmentsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling update().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5025,27 +5177,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PUT',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ShipmentUpdateDataToJSON(requestParameters.shipmentUpdateData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/shipments/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'PUT',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ShipmentUpdateDataToJSON(requestParameters['shipmentUpdateData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ShipmentFromJSON(jsonValue); })];
                     }
                 });
@@ -5087,19 +5248,19 @@ var Karrio = (function () {
          */
         TrackersApi.prototype.addRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.trackingData === null || requestParameters.trackingData === undefined) {
-                                throw new RequiredError('trackingData', 'Required parameter requestParameters.trackingData was null or undefined when calling add.');
+                            if (requestParameters['trackingData'] == null) {
+                                throw new RequiredError('trackingData', 'Required parameter "trackingData" was null or undefined when calling add().');
                             }
                             queryParameters = {};
-                            if (requestParameters.hub !== undefined) {
-                                queryParameters['hub'] = requestParameters.hub;
+                            if (requestParameters['hub'] != null) {
+                                queryParameters['hub'] = requestParameters['hub'];
                             }
-                            if (requestParameters.pendingPickup !== undefined) {
-                                queryParameters['pending_pickup'] = requestParameters.pendingPickup;
+                            if (requestParameters['pendingPickup'] != null) {
+                                queryParameters['pending_pickup'] = requestParameters['pendingPickup'];
                             }
                             headerParameters = {};
                             headerParameters['Content-Type'] = 'application/json';
@@ -5110,27 +5271,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TrackingDataToJSON(requestParameters.trackingData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/trackers",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: TrackingDataToJSON(requestParameters['trackingData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
@@ -5161,25 +5331,25 @@ var Karrio = (function () {
          */
         TrackersApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.carrierName === null || requestParameters.carrierName === undefined) {
-                                throw new RequiredError('carrierName', 'Required parameter requestParameters.carrierName was null or undefined when calling create.');
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling create().');
                             }
-                            if (requestParameters.carrierName2 === null || requestParameters.carrierName2 === undefined) {
-                                throw new RequiredError('carrierName2', 'Required parameter requestParameters.carrierName2 was null or undefined when calling create.');
+                            if (requestParameters['carrierName2'] == null) {
+                                throw new RequiredError('carrierName2', 'Required parameter "carrierName2" was null or undefined when calling create().');
                             }
-                            if (requestParameters.trackingNumber === null || requestParameters.trackingNumber === undefined) {
-                                throw new RequiredError('trackingNumber', 'Required parameter requestParameters.trackingNumber was null or undefined when calling create.');
+                            if (requestParameters['trackingNumber'] == null) {
+                                throw new RequiredError('trackingNumber', 'Required parameter "trackingNumber" was null or undefined when calling create().');
                             }
                             queryParameters = {};
-                            if (requestParameters.carrierName2 !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName2;
+                            if (requestParameters['carrierName2'] != null) {
+                                queryParameters['carrier_name'] = requestParameters['carrierName2'];
                             }
-                            if (requestParameters.hub !== undefined) {
-                                queryParameters['hub'] = requestParameters.hub;
+                            if (requestParameters['hub'] != null) {
+                                queryParameters['hub'] = requestParameters['hub'];
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -5189,26 +5359,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters.carrierName))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters.trackingNumber))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/trackers/{carrier_name}/{tracking_number}".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))).replace("{".concat("tracking_number", "}"), encodeURIComponent(String(requestParameters['trackingNumber']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
@@ -5239,25 +5418,25 @@ var Karrio = (function () {
          */
         TrackersApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.carrierName !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName;
+                            if (requestParameters['carrierName'] != null) {
+                                queryParameters['carrier_name'] = requestParameters['carrierName'];
                             }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            if (requestParameters['createdAfter'] != null) {
+                                queryParameters['created_after'] = requestParameters['createdAfter'].toISOString();
                             }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                            if (requestParameters['createdBefore'] != null) {
+                                queryParameters['created_before'] = requestParameters['createdBefore'].toISOString();
                             }
-                            if (requestParameters.status !== undefined) {
-                                queryParameters['status'] = requestParameters.status;
+                            if (requestParameters['status'] != null) {
+                                queryParameters['status'] = requestParameters['status'];
                             }
-                            if (requestParameters.trackingNumber !== undefined) {
-                                queryParameters['tracking_number'] = requestParameters.trackingNumber;
+                            if (requestParameters['trackingNumber'] != null) {
+                                queryParameters['tracking_number'] = requestParameters['trackingNumber'];
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -5267,26 +5446,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/trackers",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackerListFromJSON(jsonValue); })];
                     }
                 });
@@ -5317,12 +5505,12 @@ var Karrio = (function () {
          */
         TrackersApi.prototype.removeRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.idOrTrackingNumber === null || requestParameters.idOrTrackingNumber === undefined) {
-                                throw new RequiredError('idOrTrackingNumber', 'Required parameter requestParameters.idOrTrackingNumber was null or undefined when calling remove.');
+                            if (requestParameters['idOrTrackingNumber'] == null) {
+                                throw new RequiredError('idOrTrackingNumber', 'Required parameter "idOrTrackingNumber" was null or undefined when calling remove().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5333,26 +5521,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters['idOrTrackingNumber']))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
@@ -5382,12 +5579,12 @@ var Karrio = (function () {
          */
         TrackersApi.prototype.retrievesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.idOrTrackingNumber === null || requestParameters.idOrTrackingNumber === undefined) {
-                                throw new RequiredError('idOrTrackingNumber', 'Required parameter requestParameters.idOrTrackingNumber was null or undefined when calling retrieves.');
+                            if (requestParameters['idOrTrackingNumber'] == null) {
+                                throw new RequiredError('idOrTrackingNumber', 'Required parameter "idOrTrackingNumber" was null or undefined when calling retrieves().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5398,26 +5595,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters['idOrTrackingNumber']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
@@ -5447,12 +5653,12 @@ var Karrio = (function () {
          */
         TrackersApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.idOrTrackingNumber === null || requestParameters.idOrTrackingNumber === undefined) {
-                                throw new RequiredError('idOrTrackingNumber', 'Required parameter requestParameters.idOrTrackingNumber was null or undefined when calling update.');
+                            if (requestParameters['idOrTrackingNumber'] == null) {
+                                throw new RequiredError('idOrTrackingNumber', 'Required parameter "idOrTrackingNumber" was null or undefined when calling update().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5464,27 +5670,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters.idOrTrackingNumber))),
-                                    method: 'PUT',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: TrackerUpdateDataToJSON(requestParameters.trackerUpdateData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/trackers/{id_or_tracking_number}".replace("{".concat("id_or_tracking_number", "}"), encodeURIComponent(String(requestParameters['idOrTrackingNumber']))),
+                                method: 'PUT',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: TrackerUpdateDataToJSON(requestParameters['trackerUpdateData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return TrackingStatusFromJSON(jsonValue); })];
                     }
                 });
@@ -5526,12 +5741,12 @@ var Karrio = (function () {
          */
         WebhooksApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.webhookData === null || requestParameters.webhookData === undefined) {
-                                throw new RequiredError('webhookData', 'Required parameter requestParameters.webhookData was null or undefined when calling create.');
+                            if (requestParameters['webhookData'] == null) {
+                                throw new RequiredError('webhookData', 'Required parameter "webhookData" was null or undefined when calling create().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5543,27 +5758,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: WebhookDataToJSON(requestParameters.webhookData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/webhooks",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: WebhookDataToJSON(requestParameters['webhookData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
                     }
                 });
@@ -5593,9 +5817,9 @@ var Karrio = (function () {
          */
         WebhooksApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
@@ -5606,26 +5830,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/webhooks",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookListFromJSON(jsonValue); })];
                     }
                 });
@@ -5655,12 +5888,12 @@ var Karrio = (function () {
          */
         WebhooksApi.prototype.removeRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling remove.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling remove().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5671,26 +5904,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
                     }
                 });
@@ -5720,12 +5962,12 @@ var Karrio = (function () {
          */
         WebhooksApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5736,26 +5978,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
                     }
                 });
@@ -5785,15 +6036,15 @@ var Karrio = (function () {
          */
         WebhooksApi.prototype.testRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling test.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling test().');
                             }
-                            if (requestParameters.webhookTestRequest === null || requestParameters.webhookTestRequest === undefined) {
-                                throw new RequiredError('webhookTestRequest', 'Required parameter requestParameters.webhookTestRequest was null or undefined when calling test.');
+                            if (requestParameters['webhookTestRequest'] == null) {
+                                throw new RequiredError('webhookTestRequest', 'Required parameter "webhookTestRequest" was null or undefined when calling test().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5805,27 +6056,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}/test".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: WebhookTestRequestToJSON(requestParameters.webhookTestRequest),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/webhooks/{id}/test".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: WebhookTestRequestToJSON(requestParameters['webhookTestRequest']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OperationFromJSON(jsonValue); })];
                     }
                 });
@@ -5855,12 +6115,12 @@ var Karrio = (function () {
          */
         WebhooksApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling update().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5872,27 +6132,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PATCH',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: PatchedWebhookDataToJSON(requestParameters.patchedWebhookData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/webhooks/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PatchedWebhookDataToJSON(requestParameters['patchedWebhookData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return WebhookFromJSON(jsonValue); })];
                     }
                 });
@@ -5934,12 +6203,12 @@ var Karrio = (function () {
          */
         OrdersApi.prototype.cancelRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling cancel.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling cancel().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -5950,26 +6219,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/orders/{id}/cancel".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -5999,12 +6277,12 @@ var Karrio = (function () {
          */
         OrdersApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.orderData === null || requestParameters.orderData === undefined) {
-                                throw new RequiredError('orderData', 'Required parameter requestParameters.orderData was null or undefined when calling create.');
+                            if (requestParameters['orderData'] == null) {
+                                throw new RequiredError('orderData', 'Required parameter "orderData" was null or undefined when calling create().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6016,27 +6294,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/orders",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: OrderDataToJSON(requestParameters.orderData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/orders",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: OrderDataToJSON(requestParameters['orderData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -6067,12 +6354,12 @@ var Karrio = (function () {
          */
         OrdersApi.prototype.dismissRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling dismiss.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling dismiss().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6083,26 +6370,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'DELETE',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -6133,9 +6429,9 @@ var Karrio = (function () {
          */
         OrdersApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
@@ -6146,26 +6442,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/orders",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/orders",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderListFromJSON(jsonValue); })];
                     }
                 });
@@ -6195,12 +6500,12 @@ var Karrio = (function () {
          */
         OrdersApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6211,26 +6516,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -6260,12 +6574,12 @@ var Karrio = (function () {
          */
         OrdersApi.prototype.updateRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling update.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling update().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6277,27 +6591,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'PUT',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: OrderUpdateDataToJSON(requestParameters.orderUpdateData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/orders/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'PUT',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: OrderUpdateDataToJSON(requestParameters['orderUpdateData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return OrderFromJSON(jsonValue); })];
                     }
                 });
@@ -6339,12 +6662,12 @@ var Karrio = (function () {
          */
         BatchesApi.prototype.createOrdersRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.batchOrderData === null || requestParameters.batchOrderData === undefined) {
-                                throw new RequiredError('batchOrderData', 'Required parameter requestParameters.batchOrderData was null or undefined when calling createOrders.');
+                            if (requestParameters['batchOrderData'] == null) {
+                                throw new RequiredError('batchOrderData', 'Required parameter "batchOrderData" was null or undefined when calling createOrders().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6356,27 +6679,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/batches/orders",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: BatchOrderDataToJSON(requestParameters.batchOrderData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/batches/orders",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: BatchOrderDataToJSON(requestParameters['batchOrderData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
                     }
                 });
@@ -6406,12 +6738,12 @@ var Karrio = (function () {
          */
         BatchesApi.prototype.createShipmentsRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.batchShipmentData === null || requestParameters.batchShipmentData === undefined) {
-                                throw new RequiredError('batchShipmentData', 'Required parameter requestParameters.batchShipmentData was null or undefined when calling createShipments.');
+                            if (requestParameters['batchShipmentData'] == null) {
+                                throw new RequiredError('batchShipmentData', 'Required parameter "batchShipmentData" was null or undefined when calling createShipments().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6423,27 +6755,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/batches/shipments",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: BatchShipmentDataToJSON(requestParameters.batchShipmentData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/batches/shipments",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: BatchShipmentDataToJSON(requestParameters['batchShipmentData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
                     }
                 });
@@ -6473,12 +6814,12 @@ var Karrio = (function () {
          */
         BatchesApi.prototype.createTrackersRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.batchTrackerData === null || requestParameters.batchTrackerData === undefined) {
-                                throw new RequiredError('batchTrackerData', 'Required parameter requestParameters.batchTrackerData was null or undefined when calling createTrackers.');
+                            if (requestParameters['batchTrackerData'] == null) {
+                                throw new RequiredError('batchTrackerData', 'Required parameter "batchTrackerData" was null or undefined when calling createTrackers().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6490,27 +6831,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/batches/trackers",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: BatchTrackerDataToJSON(requestParameters.batchTrackerData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/batches/trackers",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: BatchTrackerDataToJSON(requestParameters['batchTrackerData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
                     }
                 });
@@ -6540,19 +6890,19 @@ var Karrio = (function () {
          */
         BatchesApi.prototype.importFileRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, consumes, canConsumeForm$1, formParams, useForm, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, consumes, canConsumeForm$1, formParams, useForm, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.dataFile !== undefined) {
-                                queryParameters['data_file'] = requestParameters.dataFile;
+                            if (requestParameters['dataFile'] != null) {
+                                queryParameters['data_file'] = requestParameters['dataFile'];
                             }
-                            if (requestParameters.dataTemplate !== undefined) {
-                                queryParameters['data_template'] = requestParameters.dataTemplate;
+                            if (requestParameters['dataTemplate'] != null) {
+                                queryParameters['data_template'] = requestParameters['dataTemplate'];
                             }
-                            if (requestParameters.resourceType !== undefined) {
-                                queryParameters['resource_type'] = requestParameters.resourceType;
+                            if (requestParameters['resourceType'] != null) {
+                                queryParameters['resource_type'] = requestParameters['resourceType'];
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -6562,18 +6912,28 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6:
                             consumes = [
                                 { contentType: 'multipart/form-data' },
                             ];
@@ -6587,14 +6947,14 @@ var Karrio = (function () {
                             else {
                                 formParams = new URLSearchParams();
                             }
-                            if (requestParameters.resourceType2 !== undefined) {
-                                formParams.append('resource_type', requestParameters.resourceType2);
+                            if (requestParameters['resourceType2'] != null) {
+                                formParams.append('resource_type', requestParameters['resourceType2']);
                             }
-                            if (requestParameters.dataTemplate2 !== undefined) {
-                                formParams.append('data_template', requestParameters.dataTemplate2);
+                            if (requestParameters['dataTemplate2'] != null) {
+                                formParams.append('data_template', requestParameters['dataTemplate2']);
                             }
-                            if (requestParameters.dataFile2 !== undefined) {
-                                formParams.append('data_file', requestParameters.dataFile2);
+                            if (requestParameters['dataFile2'] != null) {
+                                formParams.append('data_file', requestParameters['dataFile2']);
                             }
                             return [4 /*yield*/, this.request({
                                     path: "/v1/batches/data/import",
@@ -6603,8 +6963,8 @@ var Karrio = (function () {
                                     query: queryParameters,
                                     body: formParams,
                                 }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
                     }
                 });
@@ -6635,9 +6995,9 @@ var Karrio = (function () {
          */
         BatchesApi.prototype.listRaw = function (initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
                             headerParameters = {};
@@ -6648,26 +7008,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/batches/operations",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/batches/operations",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationsFromJSON(jsonValue); })];
                     }
                 });
@@ -6697,12 +7066,12 @@ var Karrio = (function () {
          */
         BatchesApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6713,26 +7082,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/batches/operations/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/batches/operations/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return BatchOperationFromJSON(jsonValue); })];
                     }
                 });
@@ -6774,19 +7152,19 @@ var Karrio = (function () {
          */
         DocumentsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            if (requestParameters['createdAfter'] != null) {
+                                queryParameters['created_after'] = requestParameters['createdAfter'].toISOString();
                             }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                            if (requestParameters['createdBefore'] != null) {
+                                queryParameters['created_before'] = requestParameters['createdBefore'].toISOString();
                             }
-                            if (requestParameters.shipmentId !== undefined) {
-                                queryParameters['shipment_id'] = requestParameters.shipmentId;
+                            if (requestParameters['shipmentId'] != null) {
+                                queryParameters['shipment_id'] = requestParameters['shipmentId'];
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -6796,26 +7174,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/documents",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/documents",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordsFromJSON(jsonValue); })];
                     }
                 });
@@ -6846,12 +7233,12 @@ var Karrio = (function () {
          */
         DocumentsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6862,26 +7249,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/documents/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/documents/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
                     }
                 });
@@ -6911,12 +7307,12 @@ var Karrio = (function () {
          */
         DocumentsApi.prototype.uploadRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.documentUploadData === null || requestParameters.documentUploadData === undefined) {
-                                throw new RequiredError('documentUploadData', 'Required parameter requestParameters.documentUploadData was null or undefined when calling upload.');
+                            if (requestParameters['documentUploadData'] == null) {
+                                throw new RequiredError('documentUploadData', 'Required parameter "documentUploadData" was null or undefined when calling upload().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -6928,27 +7324,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/documents",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: DocumentUploadDataToJSON(requestParameters.documentUploadData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/documents",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: DocumentUploadDataToJSON(requestParameters['documentUploadData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
                     }
                 });
@@ -6990,12 +7395,12 @@ var Karrio = (function () {
          */
         ManifestsApi.prototype.createRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.manifestData === null || requestParameters.manifestData === undefined) {
-                                throw new RequiredError('manifestData', 'Required parameter requestParameters.manifestData was null or undefined when calling create.');
+                            if (requestParameters['manifestData'] == null) {
+                                throw new RequiredError('manifestData', 'Required parameter "manifestData" was null or undefined when calling create().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -7007,27 +7412,36 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/manifests",
-                                    method: 'POST',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                    body: ManifestDataToJSON(requestParameters.manifestData),
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/manifests",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: ManifestDataToJSON(requestParameters['manifestData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestFromJSON(jsonValue); })];
                     }
                 });
@@ -7057,19 +7471,19 @@ var Karrio = (function () {
          */
         ManifestsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
                             queryParameters = {};
-                            if (requestParameters.carrierName !== undefined) {
-                                queryParameters['carrier_name'] = requestParameters.carrierName;
+                            if (requestParameters['carrierName'] != null) {
+                                queryParameters['carrier_name'] = requestParameters['carrierName'];
                             }
-                            if (requestParameters.createdAfter !== undefined) {
-                                queryParameters['created_after'] = requestParameters.createdAfter.toISOString();
+                            if (requestParameters['createdAfter'] != null) {
+                                queryParameters['created_after'] = requestParameters['createdAfter'].toISOString();
                             }
-                            if (requestParameters.createdBefore !== undefined) {
-                                queryParameters['created_before'] = requestParameters.createdBefore.toISOString();
+                            if (requestParameters['createdBefore'] != null) {
+                                queryParameters['created_before'] = requestParameters['createdBefore'].toISOString();
                             }
                             headerParameters = {};
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
@@ -7079,26 +7493,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/manifests",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/manifests",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestListFromJSON(jsonValue); })];
                     }
                 });
@@ -7129,12 +7552,12 @@ var Karrio = (function () {
          */
         ManifestsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, response;
-                return __generator(this, function (_c) {
-                    switch (_c.label) {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
                         case 0:
-                            if (requestParameters.id === null || requestParameters.id === undefined) {
-                                throw new RequiredError('id', 'Required parameter requestParameters.id was null or undefined when calling retrieve.');
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
                             }
                             queryParameters = {};
                             headerParameters = {};
@@ -7145,26 +7568,35 @@ var Karrio = (function () {
                             return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
                         case 1:
                             // oauth required
-                            _a[_b] = _c.sent();
-                            _c.label = 2;
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
                         case 2:
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // JWT authentication
-                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
                             if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
                                 headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
                             }
-                            if (this.configuration && this.configuration.apiKey) {
-                                headerParameters["Authorization"] = this.configuration.apiKey("Authorization"); // Token authentication
-                            }
-                            return [4 /*yield*/, this.request({
-                                    path: "/v1/manifests/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters.id))),
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 3:
-                            response = _c.sent();
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/manifests/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
                             return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return ManifestFromJSON(jsonValue); })];
                     }
                 });

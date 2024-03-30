@@ -164,6 +164,25 @@ RateRequest = {
                 "residential": False,
             }
         },
+        "customsClearanceDetail": {
+            "dutiesPayment": {
+                "paymentType": "SENDER",
+                "payor": {
+                    "responsibleParty": {"accountNumber": {"value": "2349857"}},
+                },
+            },
+            "commodities": [
+                {
+                    "description": "N/A",
+                    "numberOfPieces": 1,
+                    "partNumber": "0000",
+                    "quantity": 1,
+                    "quantityUnits": "PCS",
+                    "unitPrice": {"amount": 1.0, "currency": "USD"},
+                    "weight": {"units": "LB", "value": 4.0},
+                }
+            ],
+        },
         "requestedPackageLineItems": [
             {
                 "dimensions": {
