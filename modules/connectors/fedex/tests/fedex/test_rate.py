@@ -177,7 +177,7 @@ RateRequest = {
                     "numberOfPieces": 1,
                     "partNumber": "0000",
                     "quantity": 1,
-                    "quantityUnits": "EA",
+                    "quantityUnits": "PCS",
                     "unitPrice": {"amount": 1.0, "currency": "USD"},
                     "weight": {"units": "LB", "value": 4.0},
                 }

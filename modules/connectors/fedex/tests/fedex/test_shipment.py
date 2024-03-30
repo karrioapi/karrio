@@ -232,7 +232,7 @@ ShipmentRequest = [
                         "harmonizedCode": "00339BB",
                         "numberOfPieces": 1,
                         "quantity": 1,
-                        "quantityUnits": "EA",
+                        "quantityUnits": "PCS",
                         "weight": {"units": "LB", "value": 10.0},
                     }
                 ],
@@ -364,7 +364,7 @@ MultiPieceShipmentRequest = [
                         "harmonizedCode": "00339BB",
                         "numberOfPieces": 1,
                         "quantity": 1,
-                        "quantityUnits": "EA",
+                        "quantityUnits": "PCS",
                         "weight": {"units": "LB", "value": 10.0},
                     }
                 ],
@@ -500,7 +500,7 @@ MultiPieceShipmentRequest = [
                         "harmonizedCode": "00339BB",
                         "numberOfPieces": 1,
                         "quantity": 1,
-                        "quantityUnits": "EA",
+                        "quantityUnits": "PCS",
                         "weight": {"units": "LB", "value": 10.0},
                     }
                 ],

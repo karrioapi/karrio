@@ -429,7 +429,7 @@ def shipment_request(
                                 additionalMeasures=[],
                                 numberOfPieces=item.quantity,
                                 quantity=item.quantity,
-                                quantityUnits="EA",
+                                quantityUnits="PCS",
                                 customsValue=None,
                                 countryOfManufacture=(
                                     item.origin_country or shipper.country_code

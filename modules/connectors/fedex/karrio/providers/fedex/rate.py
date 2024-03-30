@@ -292,7 +292,7 @@ def rate_request(
                             ),
                             quantity=item.quantity,
                             numberOfPieces=item.quantity,
-                            quantityUnits="EA",
+                            quantityUnits="PCS",
                             harmonizedCode=item.hs_code,
                             name=None,
                             partNumber=item.sku,
