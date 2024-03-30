@@ -103,6 +103,7 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
 
+    is_intl = shipper.country_code != recipient.country_code
     request_types = lib.identity(
         settings.connection_config.rate_request_types.state
         if any(settings.connection_config.rate_request_types.state or [])
@@ -124,6 +125,22 @@ def rate_request(
         if _options.state is not False
         and option.code in provider_units.SHIPMENT_OPTIONS
     ]
+    customs = models.Customs(
+        commodities=(
+            packages.items
+            if any(packages.items)
+            else [
+                models.Commodity(
+                    sku="0000",
+                    quantity=1,
+                    weight=packages.weight.value,
+                    weight_unit=packages.weight_unit,
+                    value_amount=options.declared_value.state or 1.0,
+                    value_currency=options.currency.state or "USD",
+                )
+            ]
+        )
+    )
 
     request = fedex.RatingRequestType(
         accountNumber=fedex.RatingRequestAccountNumberType(
@@ -233,7 +250,45 @@ def rate_request(
                 if any(shipment_options(packages.options))
                 else None
             ),
-            customsClearanceDetail=None,
+            customsClearanceDetail=lib.identity(
+                fedex.CustomsClearanceDetailType(
+                    brokers=[],
+                    commercialInvoice=None,
+                    freightOnValue=None,
+                    dutiesPayment=None,
+                    commodities=[
+                        fedex.CommodityType(
+                            description=lib.text(
+                                item.title or item.description or "N/A", max=35
+                            ),
+                            weight=fedex.WeightType(
+                                units=packages.weight_unit,
+                                value=item.weight,
+                            ),
+                            unitPrice=(
+                                fedex.FixedValueType(
+                                    amount=lib.to_money(item.value_amount),
+                                    currency=(
+                                        item.value_currency
+                                        or packages.options.currency.state
+                                        or customs.duty.currency
+                                    ),
+                                )
+                                if item.value_amount
+                                else None
+                            ),
+                            quantity=item.quantity,
+                            numberOfPieces=item.quantity,
+                            quantityUnits="EA",
+                            harmonizedCode=item.hs_code,
+                            name=None,
+                            partNumber=item.sku,
+                        )
+                        for item in customs.commodities
+                    ]
+                )
+                if is_intl else None
+            ),
             groupShipment=None,
             serviceTypeDetail=None,
             smartPostInfoDetail=lib.identity(
