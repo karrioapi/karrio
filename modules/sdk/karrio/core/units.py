@@ -620,6 +620,15 @@ class Products(typing.Iterable[Product]):
     @property
     def value_amount(self):
         return sum((item.value_amount or 0.0 for item in self._items), 0.0)
+    
+    @property
+    def description(self) -> typing.Optional[str]:
+        descriptions = set([item.description for item in self._items])
+        description: typing.Optional[str] = utils.SF.concat_str(
+            *list(descriptions), join=True
+        )  # type:ignore
+
+        return description
 
 
 class Package:
