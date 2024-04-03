@@ -111,7 +111,7 @@ odfpy==1.4.1
 openpyxl==3.1.2
 packaging==24.0
 phonenumbers==8.13.32
-pillow==10.2.0
+pillow==10.3.0
 posthog==3.5.0
 psutil==5.9.8
 psycopg2-binary==2.9.9
