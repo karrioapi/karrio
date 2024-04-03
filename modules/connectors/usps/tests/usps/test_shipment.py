@@ -28,6 +28,8 @@ class TestUSPSShipment(unittest.TestCase):
         karrio.Shipment.create(self.ShipmentRequest).from_(gateway)
 
         url = http_mock.call_args[1]["url"]
+        # print(urllib.parse.unquote(url))
+        # print(urllib.parse.unquote(f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}"))
         self.assertEqual(
             url,
             f"{gateway.settings.server_url}?{urllib.parse.urlencode(ShipmentRequestQuery)}",
@@ -83,7 +85,7 @@ shipment_data = {
         "postal_code": "73108",
         "country_code": "US",
         "person_name": "Lina Smith",
-        "phone_number": "1234567890",
+        "phone_number": "+1 123 456 7890",
         "state_code": "OK",
     },
     "recipient": {
@@ -110,6 +112,9 @@ shipment_data = {
         }
     ],
     "service": "usps_priority_mail_express_flat_rate_boxes",
+    "options": {
+        "shipment_date": "2024-04-02"
+    }
 }
 
 
@@ -155,7 +160,7 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
     <FromZip5>73108</FromZip5>
     <FromZip4></FromZip4>
     <FromPhone>1234567890</FromPhone>
-    <AllowNonCleansedOriginAddr></AllowNonCleansedOriginAddr>
+    <AllowNonCleansedOriginAddr>true</AllowNonCleansedOriginAddr>
     <ToName>Tall Tom</ToName>
     <ToFirm>ABC Corp.</ToFirm>
     <ToAddress1></ToAddress1>
@@ -165,7 +170,7 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
     <ToZip5>29440</ToZip5>
     <ToZip4></ToZip4>
     <ToPhone>8005554526</ToPhone>
-    <AllowNonCleansedDestAddr>false</AllowNonCleansedDestAddr>
+    <AllowNonCleansedDestAddr>true</AllowNonCleansedDestAddr>
     <WeightInOunces>705.48</WeightInOunces>
     <ServiceType>PRIORITY EXPRESS</ServiceType>
     <Container>VARIABLE</Container>
@@ -173,9 +178,7 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
     <Length>2.36</Length>
     <Height>3.54</Height>
     <InsuredAmount>75</InsuredAmount>
-    <ExtraServices>
-        <ExtraService>100</ExtraService>
-    </ExtraServices>
+    <ShipDate>04/02/2024</ShipDate>
     <MID>847654321</MID>
     <SenderName>Lina Smith</SenderName>
     <RecipientName>Tall Tom</RecipientName>

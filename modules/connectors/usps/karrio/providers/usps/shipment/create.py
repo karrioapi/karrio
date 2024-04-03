@@ -1,6 +1,7 @@
 import karrio.schemas.usps.evs_request as usps
 import karrio.schemas.usps.evs_response as shipping
 
+import time
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -95,9 +96,13 @@ def shipment_request(
         FromState=shipper.state_code,
         FromZip5=lib.to_zip5(shipper.postal_code) or "",
         FromZip4=lib.to_zip4(shipper.postal_code) or "",
-        FromPhone=shipper.phone_number,
+        FromPhone=provider_utils.parse_phone_number(shipper.phone_number),
         POZipCode=None,
-        AllowNonCleansedOriginAddr=False,
+        AllowNonCleansedOriginAddr=(
+            options.usps_option_allow_non_cleansed_origin_addr.state
+            if options.usps_option_allow_non_cleansed_origin_addr.state is not None
+            else True
+        ),
         ToName=recipient.person_name,
         ToFirm=recipient.company_name or "N/A",
         ToAddress1=recipient.address_line2 or "",
@@ -106,12 +111,16 @@ def shipment_request(
         ToState=recipient.state_code,
         ToZip5=lib.to_zip5(recipient.postal_code) or "",
         ToZip4=lib.to_zip4(recipient.postal_code) or "",
-        ToPhone=recipient.phone_number,
+        ToPhone=provider_utils.parse_phone_number(recipient.phone_number),
         POBox=None,
         ToContactPreference=None,
         ToContactMessaging=recipient.email,
         ToContactEmail=recipient.email,
-        AllowNonCleansedDestAddr=False,
+        AllowNonCleansedDestAddr=(
+            lib.to_json(options.usps_option_allow_non_cleansed_dest_addr.state)
+            if options.usps_option_allow_non_cleansed_dest_addr.state is not None
+            else True
+        ),
         WeightInOunces=package.weight.OZ,
         ServiceType=service,
         Container=provider_units.PackagingType[
@@ -127,15 +136,19 @@ def shipment_request(
         InsuredAmount=provider_units.ShippingOption.insurance_from(options),
         AddressServiceRequested=None,
         ExpressMailOptions=None,
-        ShipDate=options.shipment_date.state,
-        CustomerRefNo=None,
-        ExtraServices=(
-            usps.ExtraServicesType(
-                ExtraService=[option.code for _, option in options.items()]
-            )
-            if any(options.items())
-            else None
+        ShipDate=lib.fdatetime(
+            (options.shipment_date.state or time.strftime("%Y-%m-%d")),
+            current_format="%Y-%m-%d",
+            output_format="%m/%d/%Y",
         ),
+        CustomerRefNo=None,
+        # ExtraServices=(
+        #     usps.ExtraServicesType(
+        #         ExtraService=[option.code for _, option in options.items()]
+        #     )
+        #     if any(options.items())
+        #     else None
+        # ),
         CRID=settings.customer_registration_id,
         MID=settings.mailer_id,
         LogisticsManagerMID=settings.logistics_manager_mailer_id,

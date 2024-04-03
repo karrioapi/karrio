@@ -31,7 +31,7 @@
                 <xs:element type="xs:string" name="FromZip4" />
                 <xs:element type="xs:string" name="FromPhone" />
                 <xs:element type="xs:string" name="POZipCode" />
-                <xs:element type="xs:string" name="AllowNonCleansedOriginAddr" />
+                <xs:element type="xs:boolean" name="AllowNonCleansedOriginAddr" />
                 <xs:element type="xs:string" name="ToName" minLength="0" maxLength="100" />
                 <xs:element type="xs:string" name="ToFirm" />
                 <xs:element type="xs:string" name="ToAddress1" />
