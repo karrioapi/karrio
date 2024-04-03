@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Oct 14 00:22:16 2023 by generateDS.py version 2.43.2.
-# Python 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
+# Generated Wed Apr  3 18:16:48 2024 by generateDS.py version 2.43.3.
+# Python 3.10.13 (main, Mar 21 2024, 17:51:02) [GCC 9.4.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/eVSRequest.xsd
 #
 # Command line:
-#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps/evs_request.py" ./schemas/eVSRequest.xsd
+#   /workspaces/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps/evs_request.py" ./schemas/eVSRequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps
@@ -1887,7 +1887,7 @@ class eVSRequest(GeneratedsSuper):
         if self.AllowNonCleansedOriginAddr is not None:
             namespaceprefix_ = self.AllowNonCleansedOriginAddr_nsprefix_ + ':' if (UseCapturedNS_ and self.AllowNonCleansedOriginAddr_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAllowNonCleansedOriginAddr>%s</%sAllowNonCleansedOriginAddr>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AllowNonCleansedOriginAddr), input_name='AllowNonCleansedOriginAddr')), namespaceprefix_ , eol_))
+            outfile.write('<%sAllowNonCleansedOriginAddr>%s</%sAllowNonCleansedOriginAddr>%s' % (namespaceprefix_ , self.gds_format_boolean(self.AllowNonCleansedOriginAddr, input_name='AllowNonCleansedOriginAddr'), namespaceprefix_ , eol_))
         if self.ToName is not None:
             namespaceprefix_ = self.ToName_nsprefix_ + ':' if (UseCapturedNS_ and self.ToName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -2347,10 +2347,10 @@ class eVSRequest(GeneratedsSuper):
             self.POZipCode = value_
             self.POZipCode_nsprefix_ = child_.prefix
         elif nodeName_ == 'AllowNonCleansedOriginAddr':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AllowNonCleansedOriginAddr')
-            value_ = self.gds_validate_string(value_, node, 'AllowNonCleansedOriginAddr')
-            self.AllowNonCleansedOriginAddr = value_
+            sval_ = child_.text
+            ival_ = self.gds_parse_boolean(sval_, node, 'AllowNonCleansedOriginAddr')
+            ival_ = self.gds_validate_boolean(ival_, node, 'AllowNonCleansedOriginAddr')
+            self.AllowNonCleansedOriginAddr = ival_
             self.AllowNonCleansedOriginAddr_nsprefix_ = child_.prefix
         elif nodeName_ == 'ToName':
             value_ = child_.text

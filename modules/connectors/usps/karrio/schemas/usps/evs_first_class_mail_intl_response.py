@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Oct 14 00:22:17 2023 by generateDS.py version 2.43.2.
-# Python 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
+# Generated Wed Apr  3 18:16:49 2024 by generateDS.py version 2.43.3.
+# Python 3.10.13 (main, Mar 21 2024, 17:51:02) [GCC 9.4.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/eVSFirstClassMailIntlResponse.xsd
 #
 # Command line:
-#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps/evs_first_class_mail_intl_response.py" ./schemas/eVSFirstClassMailIntlResponse.xsd
+#   /workspaces/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps/evs_first_class_mail_intl_response.py" ./schemas/eVSFirstClassMailIntlResponse.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps

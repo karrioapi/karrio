@@ -163,7 +163,7 @@ def shipment_request(
                         dhl.RegistrationNumber(
                             Number=recipient.tax_id,
                             NumberTypeCode="VAT",
-                            NumberIssuerCountryCode=None,
+                            NumberIssuerCountryCode=recipient.country_code,
                         )
                     ]
                 )
@@ -414,7 +414,7 @@ def shipment_request(
                         dhl.RegistrationNumber(
                             Number=shipper.tax_id,
                             NumberTypeCode="VAT",
-                            NumberIssuerCountryCode=None,
+                            NumberIssuerCountryCode=shipper.country_code,
                         )
                     ]
                 )
