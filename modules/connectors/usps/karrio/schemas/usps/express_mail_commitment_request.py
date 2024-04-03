@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  3 18:16:40 2024 by generateDS.py version 2.43.3.
+# Generated Wed Apr  3 21:08:41 2024 by generateDS.py version 2.43.3.
 # Python 3.10.13 (main, Mar 21 2024, 17:51:02) [GCC 9.4.0]
 #
 # Command line options:
@@ -1011,7 +1011,7 @@ class ExpressMailCommitmentRequest(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, USERID=None, OriginZip=None, DestinationZip=None, Date=None, DropOffTime=None, ReturnDates=None, PMGuarantee=None, ClientType=None, gds_collector_=None, **kwargs_):
+    def __init__(self, USERID=None, PASSWORD=None, OriginZip=None, DestinationZip=None, Date=None, DropOffTime=None, ReturnDates=None, PMGuarantee=None, ClientType=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1019,6 +1019,8 @@ class ExpressMailCommitmentRequest(GeneratedsSuper):
         self.ns_prefix_ = None
         self.USERID = _cast(None, USERID)
         self.USERID_nsprefix_ = None
+        self.PASSWORD = _cast(None, PASSWORD)
+        self.PASSWORD_nsprefix_ = None
         self.OriginZip = OriginZip
         self.OriginZip_nsprefix_ = None
         self.DestinationZip = DestinationZip
@@ -1080,6 +1082,10 @@ class ExpressMailCommitmentRequest(GeneratedsSuper):
         return self.USERID
     def set_USERID(self, USERID):
         self.USERID = USERID
+    def get_PASSWORD(self):
+        return self.PASSWORD
+    def set_PASSWORD(self, PASSWORD):
+        self.PASSWORD = PASSWORD
     def has__content(self):
         if (
             self.OriginZip is not None or
@@ -1120,6 +1126,9 @@ class ExpressMailCommitmentRequest(GeneratedsSuper):
         if self.USERID is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             outfile.write(' USERID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.USERID), input_name='USERID')), ))
+        if self.PASSWORD is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            outfile.write(' PASSWORD=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PASSWORD), input_name='PASSWORD')), ))
     def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='ExpressMailCommitmentRequest', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1169,6 +1178,10 @@ class ExpressMailCommitmentRequest(GeneratedsSuper):
         if value is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             self.USERID = value
+        value = find_attr_value_('PASSWORD', node)
+        if value is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            self.PASSWORD = value
     def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'OriginZip' and child_.text:
             sval_ = child_.text

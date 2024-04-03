@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  3 18:16:42 2024 by generateDS.py version 2.43.3.
+# Generated Wed Apr  3 21:08:42 2024 by generateDS.py version 2.43.3.
 # Python 3.10.13 (main, Mar 21 2024, 17:51:02) [GCC 9.4.0]
 #
 # Command line options:
@@ -1011,7 +1011,7 @@ class MRSV4_0Request(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, USERID=None, Option=None, CustomerName=None, CustomerAddress1=None, CustomerAddress2=None, CustomerCity=None, CustomerState=None, CustomerZip5=None, CustomerZip4=None, RetailerName=None, RetailerAddress=None, PermitNumber=None, PermitIssuingPOCity=None, PermitIssuingPOState=None, PermitIssuingPOZip5=None, PDUFirmName=None, PDUPOBox=None, PDUCity=None, PDUState=None, PDUZip5=None, PDUZip4=None, ServiceType=None, DeliveryConfirmation=None, InsuranceValue=None, MailingAckPackageID=None, WeightInPounds=None, WeightInOunces=None, RMA=None, RMAPICFlag=None, ImageType=None, RMABarcode=None, gds_collector_=None, **kwargs_):
+    def __init__(self, USERID=None, PASSWORD=None, Option=None, CustomerName=None, CustomerAddress1=None, CustomerAddress2=None, CustomerCity=None, CustomerState=None, CustomerZip5=None, CustomerZip4=None, RetailerName=None, RetailerAddress=None, PermitNumber=None, PermitIssuingPOCity=None, PermitIssuingPOState=None, PermitIssuingPOZip5=None, PDUFirmName=None, PDUPOBox=None, PDUCity=None, PDUState=None, PDUZip5=None, PDUZip4=None, ServiceType=None, DeliveryConfirmation=None, InsuranceValue=None, MailingAckPackageID=None, WeightInPounds=None, WeightInOunces=None, RMA=None, RMAPICFlag=None, ImageType=None, RMABarcode=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1019,6 +1019,8 @@ class MRSV4_0Request(GeneratedsSuper):
         self.ns_prefix_ = None
         self.USERID = _cast(None, USERID)
         self.USERID_nsprefix_ = None
+        self.PASSWORD = _cast(None, PASSWORD)
+        self.PASSWORD_nsprefix_ = None
         self.Option = Option
         self.Option_nsprefix_ = None
         self.CustomerName = CustomerName
@@ -1218,6 +1220,10 @@ class MRSV4_0Request(GeneratedsSuper):
         return self.USERID
     def set_USERID(self, USERID):
         self.USERID = USERID
+    def get_PASSWORD(self):
+        return self.PASSWORD
+    def set_PASSWORD(self, PASSWORD):
+        self.PASSWORD = PASSWORD
     def has__content(self):
         if (
             self.Option is not None or
@@ -1281,6 +1287,9 @@ class MRSV4_0Request(GeneratedsSuper):
         if self.USERID is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             outfile.write(' USERID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.USERID), input_name='USERID')), ))
+        if self.PASSWORD is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            outfile.write(' PASSWORD=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PASSWORD), input_name='PASSWORD')), ))
     def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='MRSV4.0Request', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1422,6 +1431,10 @@ class MRSV4_0Request(GeneratedsSuper):
         if value is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             self.USERID = value
+        value = find_attr_value_('PASSWORD', node)
+        if value is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            self.PASSWORD = value
     def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Option':
             value_ = child_.text

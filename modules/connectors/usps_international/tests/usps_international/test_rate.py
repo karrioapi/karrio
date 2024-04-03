@@ -122,7 +122,7 @@ ERROR_XML = """<?xml version="1.0" encoding="UTF-8"?>
 </IntlRateV2Response>
 """
 
-RATE_REQUEST_XML = """<IntlRateV2Request USERID="username">
+RATE_REQUEST_XML = """<IntlRateV2Request USERID="username" PASSWORD="password">
     <Revision>2</Revision>
     <Package ID="0">
         <Pounds>0</Pounds>

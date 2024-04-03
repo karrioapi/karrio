@@ -33,6 +33,7 @@ def pickup_request(payload: PickupRequest, settings: Settings) -> Serializable:
 
     request = CarrierPickupScheduleRequest(
         USERID=settings.username,
+        PASSWORD=settings.password,
         FirstName=payload.address.person_name,
         LastName=None,
         FirmName=payload.address.company_name,

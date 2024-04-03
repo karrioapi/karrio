@@ -82,6 +82,7 @@ def shipment_request(
 
     request = usps.eVSRequest(
         USERID=settings.username,
+        PASSWORD=settings.password,
         Option=None,
         Revision="1",
         ImageParameters=usps.ImageParametersType(

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Wed Apr  3 18:16:37 2024 by generateDS.py version 2.43.3.
+# Generated Wed Apr  3 21:08:39 2024 by generateDS.py version 2.43.3.
 # Python 3.10.13 (main, Mar 21 2024, 17:51:02) [GCC 9.4.0]
 #
 # Command line options:
@@ -1011,7 +1011,7 @@ class CarrierPickupChangeRequest(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, USERID=None, FirstName=None, LastName=None, FirmName=None, SuiteOrApt=None, Address2=None, Urbanization=None, City=None, State=None, ZIP5=None, ZIP4=None, Phone=None, Extension=None, Package=None, EstimatedWeight=None, PackageLocation=None, SpecialInstructions=None, ConfirmationNumber=None, EmailAddress=None, gds_collector_=None, **kwargs_):
+    def __init__(self, USERID=None, PASSWORD=None, FirstName=None, LastName=None, FirmName=None, SuiteOrApt=None, Address2=None, Urbanization=None, City=None, State=None, ZIP5=None, ZIP4=None, Phone=None, Extension=None, Package=None, EstimatedWeight=None, PackageLocation=None, SpecialInstructions=None, ConfirmationNumber=None, EmailAddress=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1019,6 +1019,8 @@ class CarrierPickupChangeRequest(GeneratedsSuper):
         self.ns_prefix_ = None
         self.USERID = _cast(None, USERID)
         self.USERID_nsprefix_ = None
+        self.PASSWORD = _cast(None, PASSWORD)
+        self.PASSWORD_nsprefix_ = None
         self.FirstName = FirstName
         self.FirstName_nsprefix_ = None
         self.LastName = LastName
@@ -1155,6 +1157,10 @@ class CarrierPickupChangeRequest(GeneratedsSuper):
         return self.USERID
     def set_USERID(self, USERID):
         self.USERID = USERID
+    def get_PASSWORD(self):
+        return self.PASSWORD
+    def set_PASSWORD(self, PASSWORD):
+        self.PASSWORD = PASSWORD
     def has__content(self):
         if (
             self.FirstName is not None or
@@ -1206,6 +1212,9 @@ class CarrierPickupChangeRequest(GeneratedsSuper):
         if self.USERID is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             outfile.write(' USERID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.USERID), input_name='USERID')), ))
+        if self.PASSWORD is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            outfile.write(' PASSWORD=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PASSWORD), input_name='PASSWORD')), ))
     def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='CarrierPickupChangeRequest', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1298,6 +1307,10 @@ class CarrierPickupChangeRequest(GeneratedsSuper):
         if value is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             self.USERID = value
+        value = find_attr_value_('PASSWORD', node)
+        if value is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            self.PASSWORD = value
     def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'FirstName':
             value_ = child_.text

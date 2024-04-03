@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Oct 14 00:23:42 2023 by generateDS.py version 2.43.2.
-# Python 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
+# Generated Wed Apr  3 21:09:07 2024 by generateDS.py version 2.43.3.
+# Python 3.10.13 (main, Mar 21 2024, 17:51:02) [GCC 9.4.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/PriorityMailRequest.xsd
 #
 # Command line:
-#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps_international/priority_mail_request.py" ./schemas/PriorityMailRequest.xsd
+#   /workspaces/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps_international/priority_mail_request.py" ./schemas/PriorityMailRequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps_international
@@ -1011,7 +1011,7 @@ class PriorityMailRequest(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, USERID=None, OriginZip=None, DestinationZip=None, DestinationType=None, PMGuarantee=None, ClientType=None, gds_collector_=None, **kwargs_):
+    def __init__(self, USERID=None, PASSWORD=None, OriginZip=None, DestinationZip=None, DestinationType=None, PMGuarantee=None, ClientType=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1019,6 +1019,8 @@ class PriorityMailRequest(GeneratedsSuper):
         self.ns_prefix_ = None
         self.USERID = _cast(None, USERID)
         self.USERID_nsprefix_ = None
+        self.PASSWORD = _cast(None, PASSWORD)
+        self.PASSWORD_nsprefix_ = None
         self.OriginZip = OriginZip
         self.OriginZip_nsprefix_ = None
         self.DestinationZip = DestinationZip
@@ -1068,6 +1070,10 @@ class PriorityMailRequest(GeneratedsSuper):
         return self.USERID
     def set_USERID(self, USERID):
         self.USERID = USERID
+    def get_PASSWORD(self):
+        return self.PASSWORD
+    def set_PASSWORD(self, PASSWORD):
+        self.PASSWORD = PASSWORD
     def has__content(self):
         if (
             self.OriginZip is not None or
@@ -1106,6 +1112,9 @@ class PriorityMailRequest(GeneratedsSuper):
         if self.USERID is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             outfile.write(' USERID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.USERID), input_name='USERID')), ))
+        if self.PASSWORD is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            outfile.write(' PASSWORD=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PASSWORD), input_name='PASSWORD')), ))
     def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='PriorityMailRequest', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1147,6 +1156,10 @@ class PriorityMailRequest(GeneratedsSuper):
         if value is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             self.USERID = value
+        value = find_attr_value_('PASSWORD', node)
+        if value is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            self.PASSWORD = value
     def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'OriginZip' and child_.text:
             sval_ = child_.text

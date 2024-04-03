@@ -33,6 +33,7 @@ def pickup_cancel_request(
 ) -> Serializable:
     request = CarrierPickupCancelRequest(
         UserID=settings.username,
+        PASSWORD=settings.password,
         FirmName=payload.address.company_name,
         SuiteOrApt=payload.address.address_line1,
         Address2=SF.concat_str(

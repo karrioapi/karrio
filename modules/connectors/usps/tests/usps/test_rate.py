@@ -159,7 +159,7 @@ ERROR_XML = """<?xml version="1.0" encoding="UTF-8"?>
 </Error>
 """
 
-RATE_REQUEST_XML = """<RateV4Request USERID="username">
+RATE_REQUEST_XML = """<RateV4Request USERID="username" PASSWORD="password">
     <Revision>2</Revision>
     <Package ID="0">
         <Service>Priority</Service>

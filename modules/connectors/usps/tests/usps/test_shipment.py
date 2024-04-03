@@ -142,7 +142,7 @@ ParsedShipmentCancelResponse = [
     [],
 ]
 
-ShipmentRequestXML = """<eVSRequest USERID="username">
+ShipmentRequestXML = """<eVSRequest USERID="username" PASSWORD="password">
     <Revision>1</Revision>
     <ImageParameters>
         <ImageParameter>6X4LABEL</ImageParameter>
@@ -191,7 +191,7 @@ ShipmentRequestXML = """<eVSRequest USERID="username">
 
 ShipmentRequestQuery = {"API": "eVS", "XML": ShipmentRequestXML}
 
-ShipmentCancelRequestXML = """<eVSCancelRequest USERID="username">
+ShipmentCancelRequestXML = """<eVSCancelRequest USERID="username" PASSWORD="password">
     <BarcodeNumber>123456789012</BarcodeNumber>
 </eVSCancelRequest>
 """
