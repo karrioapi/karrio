@@ -403,15 +403,22 @@ export function toSingleItem(collection: CommodityType[]) {
     }, [] as typeof collection[]);
 }
 
-export function createShipmentFromOrders(orderList: OrderType[], templates: any, customsOptions?: any): Partial<ShipmentType> {
+export function createShipmentFromOrders(orderList: OrderType[], templates: any, workspace_config?: any): Partial<ShipmentType> {
 
   const default_parcel = templates.data?.default_templates.default_parcel?.parcel;
-  const default_address = templates.data?.default_templates.default_address?.address;
+  const default_address = templates.data?.default_templates.default_address?.address || {};
 
   const order_ids = orderList.map(({ order_id }) => order_id).join(',');
   const { id: _, ...recipient } = orderList[0].shipping_to || {};
   const { id: __, ...shipper } = (orderList[0]!.shipping_from || default_address || {} as any);
   const billing_address = orderList[0].billing_address ? orderList[0].billing_address : undefined;
+
+  if (!!workspace_config.query.data?.workspace_config?.federal_tax_id && !shipper.federal_tax_id) {
+    shipper.federal_tax_id = workspace_config.query.data?.workspace_config?.federal_tax_id;
+  }
+  if (!!workspace_config.query.data?.workspace_config?.state_tax_id && !shipper.state_tax_id) {
+    shipper.state_tax_id = workspace_config.query.data?.workspace_config?.state_tax_id;
+  }
 
   // Collect orders merged options
   const order_options: any = orderList.reduce((acc, { options }) => ({ ...acc, ...options }), {});
@@ -468,7 +475,7 @@ export function createShipmentFromOrders(orderList: OrderType[], templates: any,
       declared_value,
     },
     duty_billing_address: billing_address,
-    options: customsOptions || {},
+    options: workspace_config?.customsOptions || {},
   });
 
   return {

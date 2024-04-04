@@ -282,6 +282,7 @@ export interface Metadata {
     GRAPHQL: string;
     VERSION: string;
     APP_NAME: string;
+    APP_WEBSITE: string;
 
     AUDIT_LOGGING: boolean;
     ALLOW_SIGNUP: boolean;

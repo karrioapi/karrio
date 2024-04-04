@@ -1,4 +1,5 @@
 """Karrio USPS client settings."""
+
 import typing
 import karrio.core.settings as settings
 
@@ -33,12 +34,6 @@ class Settings(settings.Settings):
 
 def parse_phone_number(number: str) -> typing.Optional[str]:
     if number is None:
-        None
-        
-    return (
-        number
-        .replace(" ", "")
-        .replace("-", "")
-        .replace("+", "")
-        [-10:]
-    )
+        return None
+
+    return number.replace(" ", "").replace("-", "").replace("+", "")[-10:]

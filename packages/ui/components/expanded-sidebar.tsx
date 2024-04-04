@@ -123,7 +123,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
             <span className="has-text-weight-semibold">GraphQL</span>
           </AppLink>
 
-          <a className="menu-item ml-5"
+          {metadata?.APP_NAME.includes("Karrio") && <a className="menu-item ml-5"
             target="_blank"
             rel="noreferrer"
             href="https://docs.karrio.io">
@@ -131,7 +131,7 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
             <span className="icon is-small is-size-7 mx-2">
               <i className="fas fa-external-link-alt"></i>
             </span>
-          </a>
+          </a>}
         </>}
 
         {/* Administration */}
