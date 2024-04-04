@@ -134,8 +134,15 @@ export default function CreateLabelPage(pageProps: any) {
       return parent_quantity - packed_quantity;
     };
     const setInitialData = () => {
-      const shipper = templates.data?.default_templates.default_address?.address || {};
+      const shipper = templates.data?.default_templates.default_address?.address || {} as any;
       const parcel = { ...(templates.data?.default_templates.default_parcel?.parcel || DEFAULT_PARCEL_CONTENT) };
+
+      if (!!workspace_config.query.data?.workspace_config?.federal_tax_id && !shipper.federal_tax_id) {
+        shipper.federal_tax_id = workspace_config.query.data?.workspace_config?.federal_tax_id;
+      }
+      if (!!workspace_config.query.data?.workspace_config?.state_tax_id && !shipper.state_tax_id) {
+        shipper.state_tax_id = workspace_config.query.data?.workspace_config?.state_tax_id;
+      }
 
       onChange({
         ...(shipper ? { shipper: (shipper as typeof shipment['shipper']) } : {}),
