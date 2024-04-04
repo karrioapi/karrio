@@ -17,6 +17,7 @@ Metadata = openapi.OpenApiResponse(
             value={
                 "VERSION": "",
                 "APP_NAME": "",
+                "APP_WEBSITE": "",
                 "HOST": "",
                 "ADMIN": "",
                 "OPENAPI": "",
