@@ -112,9 +112,7 @@ shipment_data = {
         }
     ],
     "service": "usps_priority_mail_express_flat_rate_boxes",
-    "options": {
-        "shipment_date": "2024-04-02"
-    }
+    "options": {"shipment_date": "2024-04-02"},
 }
 
 
