@@ -125,11 +125,11 @@ def rate_request(
         if _options.state is not False
         and option.code in provider_units.SHIPMENT_OPTIONS
     ]
-    customs = models.Customs(
-        commodities=(
-            packages.items
-            if any(packages.items)
-            else [
+    commodities = lib.identity(
+        packages.items
+        if any(packages.items)
+        else units.Products(
+            [
                 models.Commodity(
                     sku="0000",
                     quantity=1,
@@ -265,9 +265,7 @@ def rate_request(
                                 ),
                             ),
                         ),
-                        paymentType=provider_units.PaymentType.map(
-                            getattr(customs.duty, "paid_by", None) or "sender"
-                        ).value,
+                        paymentType=provider_units.PaymentType.map("sender").value,
                     ),
                     commodities=[
                         fedex.CommodityType(
@@ -284,7 +282,6 @@ def rate_request(
                                     currency=(
                                         item.value_currency
                                         or packages.options.currency.state
-                                        or customs.duty.currency
                                     ),
                                 )
                                 if item.value_amount
@@ -297,7 +294,7 @@ def rate_request(
                             name=None,
                             partNumber=item.sku,
                         )
-                        for item in customs.commodities
+                        for item in commodities
                     ],
                 )
                 if is_intl
