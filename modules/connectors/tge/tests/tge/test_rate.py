@@ -15,7 +15,7 @@ class TestAlliedExpressRating(unittest.TestCase):
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
 
-        self.assertEqual(lib.to_dict(request.serialize()), RateRequest)
+        self.assertEqual(lib.to_dict(request.serialize()[0]), RateRequest)
 
     def test_get_rate(self):
         with patch("karrio.mappers.tge.proxy.lib.request") as mock:

@@ -36,6 +36,7 @@ def _extract_details(
     shipment = lib.to_object(shipping.TollMessageType, data)
 
     SSCCs = ctx["SSCCs"]
+    ShipmentIDs = ctx["ShipmentIDs"]
     sscc_count = ctx["sscc_count"]
     label_type = ctx["label_type"]
     tracking_number = ctx["ShipmentID"]
@@ -55,6 +56,7 @@ def _extract_details(
         meta=dict(
             SSCCs=SSCCs,
             sscc_count=sscc_count,
+            ShipmentIDs=ShipmentIDs,
             ShipmentID=tracking_number,
             shipment_count=shipment_count,
             manifest_required=True,
@@ -73,7 +75,6 @@ def shipment_request(
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        package_count=len(payload.parcels),
         initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
@@ -84,7 +85,7 @@ def shipment_request(
     )
     payment = payload.payment or models.Payment()
 
-    ShipmentID, SSCCs, shipment_count, sscc_count = settings.next_shipment_identifiers(
+    ShipmentIDs, SSCCs, shipment_count, sscc_count = settings.next_shipment_identifiers(
         options, len(packages)
     )
 
@@ -114,7 +115,7 @@ def shipment_request(
                 PrintSettings=tge.PrintSettingsType(
                     IsLabelThermal="false" if is_pdf else "true",
                     IsZPLRawResponseRequired="false" if is_pdf else "true",
-                    PDF=(
+                    PDF=lib.identity(
                         tge.PDFType(
                             IsPDFA4="true",
                             PDFSettings=tge.PDFSettingsType(StartQuadrant="1"),
@@ -214,7 +215,7 @@ def shipment_request(
                                     ]
                                 )
                             ),
-                            ShipmentID=ShipmentID,
+                            ShipmentID=ShipmentIDs[index],
                             ShipmentItemCollection=tge.ShipmentItemCollectionType(
                                 ShipmentItem=[
                                     tge.ShipmentItemType(
@@ -271,11 +272,11 @@ def shipment_request(
                                             ShipmentProductCode="",
                                         ),
                                     )
-                                    for index, package in enumerate(packages)
                                 ],
                             ),
                             SpecialInstruction=options.tge_special_instruction.state,
                         )
+                        for index, package in enumerate(packages)
                     ]
                 ),
             ),
@@ -288,7 +289,8 @@ def shipment_request(
         dict(
             SSCCs=SSCCs,
             sscc_count=sscc_count,
-            ShipmentID=ShipmentID,
+            ShipmentIDs=ShipmentIDs,
+            ShipmentID=ShipmentIDs[0],
             shipment_count=shipment_count,
             label_type=("PDF" if is_pdf else "ZPL"),
             SourceSystemCode=(settings.connection_config.channel or "YF73"),
