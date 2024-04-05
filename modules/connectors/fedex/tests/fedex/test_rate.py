@@ -44,7 +44,18 @@ if __name__ == "__main__":
 RatePayload = {
     "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
     "recipient": {"city": "Lome", "country_code": "TG"},
-    "parcels": [{"id": "1", "height": 3, "length": 10, "width": 3, "weight": 4.0}],
+    "parcels": [
+        {
+            "id": "1",
+            "height": 3,
+            "length": 10,
+            "width": 3,
+            "weight": 4.0,
+            "items": [
+                {"weight": "10", "title": "test", "hs_code": "00339BB"},
+            ],
+        },
+    ],
     "options": {
         "currency": "USD",
         "fedex_one_rate": True,
@@ -152,36 +163,29 @@ RateRequest = {
         "variableOptions": ["SMART_POST_HUB_ID", "SMART_POST_ALLOWED_INDICIA"],
     },
     "requestedShipment": {
+        "customsClearanceDetail": {
+            "commodities": [
+                {
+                    "description": "test",
+                    "harmonizedCode": "00339BB",
+                    "numberOfPieces": 1,
+                    "quantity": 1,
+                    "quantityUnits": "PCS",
+                    "weight": {"units": "LB", "value": 10.0},
+                }
+            ],
+            "dutiesPayment": {
+                "paymentType": "SENDER",
+                "payor": {"responsibleParty": {"accountNumber": {"value": "2349857"}}},
+            },
+        },
         "documentShipment": False,
         "packagingType": "YOUR_PACKAGING",
         "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
         "preferredCurrency": "USD",
         "rateRequestType": ["LIST", "ACCOUNT", "PREFERRED"],
         "recipient": {
-            "address": {
-                "city": "Lome",
-                "countryCode": "TG",
-                "residential": False,
-            }
-        },
-        "customsClearanceDetail": {
-            "dutiesPayment": {
-                "paymentType": "SENDER",
-                "payor": {
-                    "responsibleParty": {"accountNumber": {"value": "2349857"}},
-                },
-            },
-            "commodities": [
-                {
-                    "description": "N/A",
-                    "numberOfPieces": 1,
-                    "partNumber": "0000",
-                    "quantity": 1,
-                    "quantityUnits": "PCS",
-                    "unitPrice": {"amount": 1.0, "currency": "USD"},
-                    "weight": {"units": "LB", "value": 4.0},
-                }
-            ],
+            "address": {"city": "Lome", "countryCode": "TG", "residential": False}
         },
         "requestedPackageLineItems": [
             {

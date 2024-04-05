@@ -12,24 +12,32 @@ import karrio.providers.tge.units as provider_units
 
 
 def parse_rate_response(
-    _response: lib.Deserializable[dict],
+    _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response = _response.deserialize()
+    responses = _response.deserialize()
 
-    messages = error.parse_error_response(response, settings)
-    rates = (
-        [
-            _extract_details(
-                response["TollMessage"]["RateEnquiry"]["Response"],
-                settings,
-                _response.ctx,
-            )
-        ]
-        if response.get("TollMessage", {}).get("RateEnquiry", {}).get("Response")
-        is not None
-        else []
-    )
+    package_rates: typing.List[typing.Tuple[str, typing.List[models.RateDetails]]] = [
+        (
+            f"{_}",
+            [
+                _extract_details(
+                    response["TollMessage"]["RateEnquiry"]["Response"],
+                    settings,
+                    _response.ctx,
+                )
+                for rate in (response if isinstance(response, list) else [response])
+                if response.get("TollMessage", {})
+                .get("RateEnquiry", {})
+                .get("Response")
+                is not None
+            ],
+        )
+        for _, response in enumerate(responses, start=1)
+    ]
+
+    messages = error.parse_error_response(responses, settings)
+    rates = lib.to_multi_piece_rates(package_rates)
 
     return rates, messages
 
@@ -97,121 +105,123 @@ def rate_request(
         provider_utils.next_pickup_date(shipping_date), output_format="%Y-%m-%dT"
     )
 
-    request = tge.RateRequestType(
-        TollMessage=tge.TollMessageType(
-            Header=tge.HeaderType(
-                MessageVersion="1.0",
-                DocumentType="RateEnquiry",
-                MessageIdentifier=str(uuid.uuid4()),
-                CreateTimestamp=f"{create_date}{create_time}.000+00:00",
-                Environment="prd",
-                SourceSystemCode=(
-                    settings.connection_config.source_system_code.state or "XP41"
-                ),
-                MessageSender=(
-                    settings.connection_config.message_sender.state or "GOSHIPR"
-                ),
-                MessageReceiver="TOLL",
-            ),
-            RateEnquiry=tge.RateEnquiryType(
-                Request=tge.RequestType(
-                    BusinessID=options.tge_business_id.state or "IPEC",
-                    SystemFields=tge.SystemFieldsType(
-                        PickupDateTime=(
-                            options.pickup_datetime.state
-                            or f"{pickup_date}{create_time}.000+00:00"
-                        ),
+    request = [
+        tge.RateRequestType(
+            TollMessage=tge.TollMessageType(
+                Header=tge.HeaderType(
+                    MessageVersion="1.0",
+                    DocumentType="RateEnquiry",
+                    MessageIdentifier=str(uuid.uuid4()),
+                    CreateTimestamp=f"{create_date}{create_time}.000+00:00",
+                    Environment="prd",
+                    SourceSystemCode=(
+                        settings.connection_config.source_system_code.state or "XP41"
                     ),
-                    ShipmentService=tge.ShipmentServiceType(
-                        ServiceCode=service,
+                    MessageSender=(
+                        settings.connection_config.message_sender.state or "GOSHIPR"
                     ),
-                    ShipmentFlags=tge.ShipmentFlagsType(ExtraServiceFlag="true"),
-                    ShipmentFinancials=tge.ShipmentFinancialsType(
-                        ExtraServicesAmount=tge.ExtraServicesAmountType(
-                            Currency=options.currency.state or "AUD",
-                            Value=str(
-                                lib.to_int(
-                                    options.tge_extra_services_amount.state
-                                    or options.declared_value.state
-                                    or 10
-                                )
+                    MessageReceiver="TOLL",
+                ),
+                RateEnquiry=tge.RateEnquiryType(
+                    Request=tge.RequestType(
+                        BusinessID=options.tge_business_id.state or "IPEC",
+                        SystemFields=tge.SystemFieldsType(
+                            PickupDateTime=(
+                                options.pickup_datetime.state
+                                or f"{pickup_date}{create_time}.000+00:00"
                             ),
-                        )
-                    ),
-                    FreightMode=(
-                        lib.text(options.tge_freight_mode.state)
-                        or lib.text(settings.connection_config.freight_mode.state)
-                        or "Road"
-                    ),
-                    BillToParty=tge.BillToPartyType(
-                        AccountCode=settings.account_code,
-                    ),
-                    ConsignorParty=tge.ConsignPartyType(
-                        PhysicalAddress=tge.PhysicalAddressType(
-                            Suburb=shipper.city,
-                            StateCode=shipper.state_code,
-                            PostalCode=shipper.postal_code,
-                            CountryCode=shipper.country_code,
                         ),
-                    ),
-                    ConsigneeParty=tge.ConsignPartyType(
-                        PhysicalAddress=tge.PhysicalAddressType(
-                            Suburb=recipient.city,
-                            StateCode=recipient.state_code,
-                            PostalCode=recipient.postal_code,
-                            CountryCode=recipient.country_code,
+                        ShipmentService=tge.ShipmentServiceType(
+                            ServiceCode=service,
                         ),
-                    ),
-                    ShipmentItems=tge.ShipmentItemsType(
-                        ShipmentItem=[
-                            tge.ShipmentItemType(
-                                Commodity=tge.CommodityType(
-                                    CommodityCode="Z",
-                                    CommodityDescription="ALL FREIGHT",
-                                ),
-                                ShipmentItemTotals=tge.ShipmentItemTotalsType(
-                                    ShipmentItemCount=str(len(packages)),
-                                ),
-                                Dimensions=tge.DimensionsType(
-                                    Width=str(
-                                        lib.to_int(
-                                            package.width.map(
-                                                provider_units.MeasurementOptions
-                                            ).CM
-                                        )
-                                    ),
-                                    Length=str(
-                                        lib.to_int(
-                                            package.length.map(
-                                                provider_units.MeasurementOptions
-                                            ).CM
-                                        )
-                                    ),
-                                    Height=str(
-                                        lib.to_int(
-                                            package.height.map(
-                                                provider_units.MeasurementOptions
-                                            ).CM
-                                        )
-                                    ),
-                                    Volume=str(
-                                        package.volume.map(
-                                            provider_units.MeasurementOptions
-                                        ).m3
-                                    ),
-                                    Weight=str(
-                                        package.weight.map(
-                                            provider_units.MeasurementOptions
-                                        ).KG
-                                    ),
+                        ShipmentFlags=tge.ShipmentFlagsType(ExtraServiceFlag="true"),
+                        ShipmentFinancials=tge.ShipmentFinancialsType(
+                            ExtraServicesAmount=tge.ExtraServicesAmountType(
+                                Currency=options.currency.state or "AUD",
+                                Value=str(
+                                    lib.to_int(
+                                        options.tge_extra_services_amount.state
+                                        or options.declared_value.state
+                                        or 10
+                                    )
                                 ),
                             )
-                            for package in packages
-                        ]
-                    ),
-                )
-            ),
+                        ),
+                        FreightMode=lib.identity(
+                            lib.text(options.tge_freight_mode.state)
+                            or lib.text(settings.connection_config.freight_mode.state)
+                            or "Road"
+                        ),
+                        BillToParty=tge.BillToPartyType(
+                            AccountCode=settings.account_code,
+                        ),
+                        ConsignorParty=tge.ConsignPartyType(
+                            PhysicalAddress=tge.PhysicalAddressType(
+                                Suburb=shipper.city,
+                                StateCode=shipper.state_code,
+                                PostalCode=shipper.postal_code,
+                                CountryCode=shipper.country_code,
+                            ),
+                        ),
+                        ConsigneeParty=tge.ConsignPartyType(
+                            PhysicalAddress=tge.PhysicalAddressType(
+                                Suburb=recipient.city,
+                                StateCode=recipient.state_code,
+                                PostalCode=recipient.postal_code,
+                                CountryCode=recipient.country_code,
+                            ),
+                        ),
+                        ShipmentItems=tge.ShipmentItemsType(
+                            ShipmentItem=[
+                                tge.ShipmentItemType(
+                                    Commodity=tge.CommodityType(
+                                        CommodityCode="Z",
+                                        CommodityDescription="ALL FREIGHT",
+                                    ),
+                                    ShipmentItemTotals=tge.ShipmentItemTotalsType(
+                                        ShipmentItemCount=str(len(packages)),
+                                    ),
+                                    Dimensions=tge.DimensionsType(
+                                        Width=str(
+                                            lib.to_int(
+                                                package.width.map(
+                                                    provider_units.MeasurementOptions
+                                                ).CM
+                                            )
+                                        ),
+                                        Length=str(
+                                            lib.to_int(
+                                                package.length.map(
+                                                    provider_units.MeasurementOptions
+                                                ).CM
+                                            )
+                                        ),
+                                        Height=str(
+                                            lib.to_int(
+                                                package.height.map(
+                                                    provider_units.MeasurementOptions
+                                                ).CM
+                                            )
+                                        ),
+                                        Volume=str(
+                                            package.volume.map(
+                                                provider_units.MeasurementOptions
+                                            ).m3
+                                        ),
+                                        Weight=str(
+                                            package.weight.map(
+                                                provider_units.MeasurementOptions
+                                            ).KG
+                                        ),
+                                    ),
+                                )
+                            ]
+                        ),
+                    )
+                ),
+            )
         )
-    )
+        for package in packages
+    ]
 
     return lib.Serializable(request, lib.to_dict, dict(service=service))

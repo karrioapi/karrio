@@ -52,7 +52,7 @@ class ShippingOption(lib.Enum):
     """Carrier specific options"""
 
     tge_ssc_ids = lib.OptionEnum("tge_ssc_ids", list)
-    tge_shipment_id = lib.OptionEnum("tge_shipment_id")
+    tge_shipment_ids = lib.OptionEnum("tge_shipment_ids", list)
     tge_freight_mode = lib.OptionEnum("tge_freight_mode")
     tge_despatch_date = lib.OptionEnum("tge_despatch_date")
     tge_special_instruction = lib.OptionEnum("tge_special_instruction")
@@ -64,11 +64,6 @@ class ShippingOption(lib.Enum):
 def shipping_options_initializer(
     options: dict,
     package_options: units.ShippingOptions = None,
-    shipment_count: int = 0,
-    package_count: int = 0,
-    sscc_count: int = 0,
-    SSCC_GS1: str = "",
-    SHIP_GS1: str = "",
 ) -> units.ShippingOptions:
     """
     Apply default values to the given options.
