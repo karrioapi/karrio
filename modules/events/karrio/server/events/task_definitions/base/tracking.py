@@ -16,6 +16,7 @@ from karrio.core.models import TrackingDetails, Message, TrackingEvent
 
 import karrio.server.core.utils as utils
 import karrio.server.manager.models as models
+import karrio.server.tracing.utils as tracing
 import karrio.server.core.datatypes as datatypes
 import karrio.server.manager.serializers as serializers
 
@@ -39,7 +40,7 @@ def update_trackers(
 ):
     logger.info("> starting scheduled trackers update")
 
-    active_trackers = (
+    active_trackers = lib.identity(
         models.Tracking.objects.filter(id__in=tracker_ids)
         if any(tracker_ids)
         else models.Tracking.objects.filter(
@@ -57,6 +58,7 @@ def update_trackers(
         )
 
         responses = lib.run_concurently(fetch_tracking_info, request_batches, 2)
+        save_tracing_records(request_batches)
         save_updated_trackers(responses, active_trackers)
     else:
         logger.info("no active trackers found needing update")
@@ -64,9 +66,7 @@ def update_trackers(
     logger.info("> ending scheduled trackers update")
 
 
-def create_request_batches(
-    trackers: typing.List[models.Tracking],
-) -> typing.List[RequestBatches]:
+def create_request_batches(trackers: typing.List[models.Tracking]) -> typing.List[RequestBatches]:
     start = 0
     end = 10
     batches = []
@@ -120,13 +120,31 @@ def fetch_tracking_info(request_batch: RequestBatches) -> BatchResponse:
     return []
 
 
+@utils.error_wrapper
+def save_tracing_records(request_batches: typing.List[RequestBatches]):
+    logger.info("> saving tracing records...")
+
+    try:
+        for request_batch in request_batches:
+            gateway, _, __, trackers = request_batch
+
+            if not any(trackers): continue
+
+            context = serializers.get_object_context(trackers[0])
+            tracing.bulk_save_tracing_records(gateway.tracer, context=context)
+    except Exception as error:
+        print(error)
+        logger.warning("Failed failed saving tracing record...")
+        logger.error(error, exc_info=True)
+
+
 def save_updated_trackers(
     responses: typing.List[BatchResponse], trackers: typing.List[models.Tracking]
 ):
     logger.info("> saving updated trackers")
 
     for tracking_details, _ in responses:
-        for details in tracking_details:
+        for details in tracking_details or []:
             try:
                 logger.debug(f"update tracking info for {details.tracking_number}")
                 related_trackers = [

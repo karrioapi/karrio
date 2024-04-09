@@ -759,6 +759,12 @@ class Package:
 
         return Products(_items, self.weight_unit.value)
 
+    @property
+    def total_value(self) -> typing.Optional[float]:
+        if not any(self.parcel.items or []):
+            return None
+
+        return self.items.value_amount
 
 class Packages(typing.Iterable[Package]):
     """The parcel collection common processing helper"""
@@ -942,6 +948,16 @@ class Packages(typing.Iterable[Package]):
         )
 
         return Products(_items, _weight_unit.value)
+
+    @property
+    def total_value(self) -> typing.Optional[float]:
+        if not any([_.total_value for _ in self._items]):
+            return None
+
+        return sum(
+            [pkg.total_value for pkg in self._items if pkg.total_value is not None],
+            0.0
+        )
 
     def validate(self, required: typing.List[str] = None, max_weight: Weight = None):
         required = required or self._required

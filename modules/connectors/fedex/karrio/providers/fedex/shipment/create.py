@@ -414,13 +414,12 @@ def shipment_request(
                         ),
                         commodities=[
                             fedex.CommodityType(
-                                unitPrice=(
+                                unitPrice=lib.identity(
                                     fedex.TotalDeclaredValueType(
                                         amount=lib.to_money(item.value_amount),
                                         currency=(
                                             item.value_currency
                                             or packages.options.currency.state
-                                            or customs.duty.currency
                                         ),
                                     )
                                     if item.value_amount
@@ -430,16 +429,27 @@ def shipment_request(
                                 numberOfPieces=item.quantity,
                                 quantity=item.quantity,
                                 quantityUnits="PCS",
-                                customsValue=None,
+                                customsValue=fedex.CustomsValueType(
+                                    amount=lib.identity(
+                                        lib.to_money(
+                                            item.value_amount or 1.0 * item.quantity
+                                        )
+                                    ),
+                                    currency=lib.identity(
+                                        item.value_currency
+                                        or packages.options.currency.state
+                                        or "USD"
+                                    ),
+                                ),
                                 countryOfManufacture=(
                                     item.origin_country or shipper.country_code
                                 ),
                                 cIMarksAndNumbers=None,
                                 harmonizedCode=item.hs_code,
                                 description=lib.text(
-                                    item.title or item.description or "N/A", max=35
+                                    item.description or item.title or "N/A", max=35
                                 ),
-                                name=None,
+                                name=lib.text(item.title, max=35),
                                 weight=fedex.WeightType(
                                     units=weight_unit.value,
                                     value=item.weight,
@@ -458,7 +468,19 @@ def shipment_request(
                         importerOfRecord=None,
                         generatedDocumentLocale=None,
                         exportDetail=None,
-                        totalCustomsValue=None,
+                        totalCustomsValue=lib.identity(
+                            fedex.TotalDeclaredValueType(
+                                amount=lib.to_money(
+                                    packages.options.declared_value.state
+                                ),
+                                currency=lib.identity(
+                                    packages.options.currency.state or "USD"
+                                ),
+                            )
+                            if lib.to_money(packages.options.declared_value.state)
+                            is not None
+                            else None
+                        ),
                         partiesToTransactionAreRelated=None,
                         declarationStatementDetail=None,
                         insuranceCharge=None,
@@ -479,7 +501,7 @@ def shipment_request(
                     if hub_id and service == "SMART_POST"
                     else None
                 ),
-                blockInsightVisibility=None,
+                blockInsightVisibility=False,
                 labelSpecification=fedex.LabelSpecificationType(
                     labelFormatType="COMMON2D",
                     labelOrder="SHIPPING_LABEL_FIRST",
@@ -530,7 +552,16 @@ def shipment_request(
                             ).value
                         ),
                         customerReferences=[],
-                        declaredValue=None,
+                        declaredValue=fedex.TotalDeclaredValueType(
+                            amount=lib.identity(
+                                lib.to_money(package.total_value)
+                                or lib.to_money(packages.options.declared_value.state)
+                                or 1.0
+                            ),
+                            currency=lib.identity(
+                                packages.options.currency.state or "USD"
+                            ),
+                        ),
                         weight=fedex.WeightType(
                             units=package.weight.unit,
                             value=package.weight.value,
@@ -552,7 +583,7 @@ def shipment_request(
                             )
                             else None
                         ),
-                        groupPackageCount=None,
+                        groupPackageCount=1,
                         itemDescriptionForClearance=None,
                         contentRecord=[],
                         itemDescription=package.parcel.description,

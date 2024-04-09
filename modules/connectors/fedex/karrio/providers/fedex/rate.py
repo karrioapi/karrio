@@ -270,13 +270,13 @@ def rate_request(
                     commodities=[
                         fedex.CommodityType(
                             description=lib.text(
-                                item.title or item.description or "N/A", max=35
+                                item.description or item.title or "N/A", max=35
                             ),
                             weight=fedex.WeightType(
                                 units=packages.weight_unit,
                                 value=item.weight,
                             ),
-                            unitPrice=(
+                            unitPrice=lib.identity(
                                 fedex.FixedValueType(
                                     amount=lib.to_money(item.value_amount),
                                     currency=(
@@ -287,11 +287,21 @@ def rate_request(
                                 if item.value_amount
                                 else None
                             ),
+                            customsValue=fedex.FixedValueType(
+                                amount=lib.identity(
+                                    lib.to_money(item.value_amount or 1.0 * item.quantity)
+                                ),
+                                currency=lib.identity(
+                                    item.value_currency
+                                    or packages.options.currency.state
+                                    or "USD"
+                                ),
+                            ),
                             quantity=item.quantity,
                             numberOfPieces=item.quantity,
                             quantityUnits="PCS",
                             harmonizedCode=item.hs_code,
-                            name=None,
+                            name=item.title,
                             partNumber=item.sku,
                         )
                         for item in commodities
