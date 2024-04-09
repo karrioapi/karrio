@@ -15,8 +15,9 @@
   </picture>
 </a>
 
-[![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
+[![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
+[![karrio-build](https://github.com/karrioapi/karrio/actions/workflows/build.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/build.yml)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/cc2ac4fcb6004bca84e42a90d8acfe41)](https://www.codacy.com/gh/karrioapi/karrio/dashboard?utm_source=github.com&utm_medium=referral&utm_content=karrioapi/karrio&utm_campaign=Badge_Grade)
 [![Discord](https://img.shields.io/static/v1?label=Discord&message=chat&color=738adb&logo=discord)](https://discord.gg/gS88uE7sEx)
 [![Docker pulls](https://img.shields.io/docker/pulls/karrio/server)](https://hub.docker.com/r/karrio/server)
@@ -44,7 +45,7 @@ Default Login: `admin@example.com` | `demo`
 -   **Extensible**: Build anything with webhooks, APIs and metadata.
 -   **Multi-carrier SDK**: Use the karrio SDK to integrate with custom carrier APIs.
 -   **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
--   **Tracking**: Create package trackers, get real time tracking status and deliver a great shopping experience.
+-   **Tracking**: Create package trackers, get real-time tracking status and deliver a great shopping experience.
 -   **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
 -   **Cloud**: Optimized for deployments using Docker.
 -   **Dashboard**: Use the karrio dashboard to orchestrate your logistics operations.
