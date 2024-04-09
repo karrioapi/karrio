@@ -214,6 +214,7 @@ ShipmentRequest = [
         "accountNumber": {"value": "2349857"},
         "labelResponseOptions": "LABEL",
         "requestedShipment": {
+            "blockInsightVisibility": False,
             "customsClearanceDetail": {
                 "commercialInvoice": {
                     "customerReferences": [
@@ -229,11 +230,13 @@ ShipmentRequest = [
                     {
                         "countryOfManufacture": "US",
                         "description": "test",
+                        "name": "test",
                         "harmonizedCode": "00339BB",
                         "numberOfPieces": 1,
                         "quantity": 1,
                         "quantityUnits": "PCS",
                         "weight": {"units": "LB", "value": 10.0},
+                        "customsValue": {"amount": 1.0, "currency": "USD"},
                     }
                 ],
                 "dutiesPayment": {
@@ -294,12 +297,14 @@ ShipmentRequest = [
             ],
             "requestedPackageLineItems": [
                 {
+                    "declaredValue": {"amount": 1.0, "currency": "USD"},
                     "dimensions": {
                         "height": 12.0,
                         "length": 12.0,
                         "units": "IN",
                         "width": 12.0,
                     },
+                    "groupPackageCount": 1,
                     "packageSpecialServices": {
                         "signatureOptionType": "SERVICE_DEFAULT",
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
@@ -346,6 +351,7 @@ MultiPieceShipmentRequest = [
         "accountNumber": {"value": "2349857"},
         "labelResponseOptions": "LABEL",
         "requestedShipment": {
+            "blockInsightVisibility": False,
             "customsClearanceDetail": {
                 "commercialInvoice": {
                     "customerReferences": [
@@ -361,11 +367,13 @@ MultiPieceShipmentRequest = [
                     {
                         "countryOfManufacture": "US",
                         "description": "test",
+                        "name": "test",
                         "harmonizedCode": "00339BB",
                         "numberOfPieces": 1,
                         "quantity": 1,
                         "quantityUnits": "PCS",
                         "weight": {"units": "LB", "value": 10.0},
+                        "customsValue": {"amount": 1.0, "currency": "USD"},
                     }
                 ],
                 "dutiesPayment": {
@@ -426,12 +434,14 @@ MultiPieceShipmentRequest = [
             ],
             "requestedPackageLineItems": [
                 {
+                    "declaredValue": {"amount": 1.0, "currency": "USD"},
                     "dimensions": {
                         "height": 12.0,
                         "length": 12.0,
                         "units": "IN",
                         "width": 12.0,
                     },
+                    "groupPackageCount": 1,
                     "packageSpecialServices": {
                         "signatureOptionType": "SERVICE_DEFAULT",
                         "specialServiceTypes": ["SIGNATURE_OPTION"],
@@ -482,6 +492,7 @@ MultiPieceShipmentRequest = [
         "accountNumber": {"value": "2349857"},
         "labelResponseOptions": "LABEL",
         "requestedShipment": {
+            "blockInsightVisibility": False,
             "customsClearanceDetail": {
                 "commercialInvoice": {
                     "customerReferences": [
@@ -497,11 +508,13 @@ MultiPieceShipmentRequest = [
                     {
                         "countryOfManufacture": "US",
                         "description": "test",
+                        "name": "test",
                         "harmonizedCode": "00339BB",
                         "numberOfPieces": 1,
                         "quantity": 1,
                         "quantityUnits": "PCS",
                         "weight": {"units": "LB", "value": 10.0},
+                        "customsValue": {"amount": 1.0, "currency": "USD"},
                     }
                 ],
                 "dutiesPayment": {
@@ -566,12 +579,14 @@ MultiPieceShipmentRequest = [
             ],
             "requestedPackageLineItems": [
                 {
+                    "declaredValue": {"amount": 1.0, "currency": "USD"},
                     "dimensions": {
                         "height": 11.0,
                         "length": 11.0,
                         "units": "IN",
                         "width": 11.0,
                     },
+                    "groupPackageCount": 1,
                     "packageSpecialServices": {
                         "signatureOptionType": "SERVICE_DEFAULT",
                         "specialServiceTypes": ["SIGNATURE_OPTION"],

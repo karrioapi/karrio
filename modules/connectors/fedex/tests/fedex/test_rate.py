@@ -166,12 +166,14 @@ RateRequest = {
         "customsClearanceDetail": {
             "commodities": [
                 {
+                    "name": "test",
                     "description": "test",
                     "harmonizedCode": "00339BB",
                     "numberOfPieces": 1,
                     "quantity": 1,
                     "quantityUnits": "PCS",
                     "weight": {"units": "LB", "value": 10.0},
+                    "customsValue": {"amount": 1.0, "currency": "USD"},
                 }
             ],
             "dutiesPayment": {
