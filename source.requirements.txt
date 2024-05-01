@@ -134,7 +134,7 @@ requests==2.31.0
 rpds-py==0.18.0
 sentry-sdk==1.40.5
 six==1.16.0
-sqlparse==0.4.4
+sqlparse==0.5.0
 strawberry-graphql==0.219.2
 strawberry-graphql-django==0.32.1
 tablib==3.5.0
