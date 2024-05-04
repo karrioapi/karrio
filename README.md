@@ -69,16 +69,6 @@ You can deploy a hobby instance in one line on Linux with Docker (recommended 4G
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/karrioapi/karrio/HEAD/bin/deploy-hobby)"
 ```
 
-### Karrio Cloud
-
-The simplest way to set up Karrio and take the front row in helping improve the platform is to request access to our managed deployment on [Karrio Cloud](https://www.karrio.io/get-started).
-
-## Contact us
-
-Chat with us for any commercial inquiries.
-
-<a href="https://cal.com/karrio/discovery?utm_source=banner&utm_campaign=oss"><img src="https://cal.com/book-with-cal-dark.svg" alt="Book us with Cal.com"></a>
-
 ## The problem: Shipping integration is still painful
 
 -   Lack of documentation.
@@ -132,13 +122,11 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
 
 ## License
 
-This project uses the [Apache v2 license](LICENSE). The core Karrio platform will always remain open and free.
-
-Any other questions, mail us at hello@karrio.io We’d love to meet you!
+This project uses the [Apache v2 license](LICENSE)
 
 ## Sponsors
 
-We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using and building on top of open source software. 
+We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using open source software. 
 Thanks for sponsoring and backing us.
 
 <a href="https://appsandbrains.com/" target="_blank"><img alt="Cheques Plus" src="screenshots/apps-&-brains.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
