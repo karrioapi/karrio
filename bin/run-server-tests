@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Activate python env
-source "bin/activate-env" > /dev/null 2>&1
+source "bin/activate-env" >/dev/null 2>&1
 
 echo 'run server tests...'
 karrio test --failfast karrio.server.proxy.tests || exit 1
@@ -11,8 +11,7 @@ karrio test --failfast karrio.server.events.tests || exit 1
 karrio test --failfast karrio.server.graph.tests || exit 1
 karrio test --failfast karrio.server.orders.tests || exit 1
 
-if [[ "$*" == *--cloud* ]];
-then
+if [[ "${HAS_INSIDERS}" == "true" && ! "$*" == *--exclude-insiders* ]]; then
     karrio test --failfast karrio.server.orgs.tests || exit 1
     karrio test --failfast karrio.server.automation.tests || exit 1
 fi

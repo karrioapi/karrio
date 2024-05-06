@@ -6,9 +6,15 @@ BASE_DIR="${ROOT##*/}"
 ENV_DIR=".venv"
 LOG_DIR=".karrio"
 DIST="${ROOT:?}/${ENV_DIR}/dist"
-EE_DIST="${ROOT:?}/${ENV_DIR}/ee-dist"
+INSIDERS_DIR="${ROOT:?}/../karrio-insiders"
 
-mkdir -p "${DIST}" "${EE_DIST}" "${LOG_DIR}"
+if [ -d "$INSIDERS_DIR" ]; then
+    HAS_INSIDERS="true"
+else
+    HAS_INSIDERS="false"
+fi
+
+mkdir -p "${DIST}" "${LOG_DIR}"
 
 ## icon vars
 cross=$'\u274c'
