@@ -41,18 +41,17 @@ Default Login: `admin@example.com` | `demo`
 
 ## Features
 
--   **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
--   **Extensible**: Build anything with webhooks, APIs and metadata.
--   **Multi-carrier SDK**: Use the karrio SDK to integrate with custom carrier APIs.
--   **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
--   **Tracking**: Create package trackers, get real-time tracking status and deliver a great shopping experience.
--   **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
--   **Cloud**: Optimized for deployments using Docker.
--   **Dashboard**: Use the karrio dashboard to orchestrate your logistics operations.
+- **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
+- **Extensible**: Build anything with webhooks, APIs and metadata.
+- **Multi-carrier SDK**: Use the karrio SDK to integrate with custom carrier APIs.
+- **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
+- **Tracking**: Create package trackers, get real-time tracking status and deliver a great shopping experience.
+- **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
+- **Cloud**: Optimized for deployments using Docker.
+- **Dashboard**: Use the karrio dashboard to orchestrate your logistics operations.
 
 <p align="center">
-  <img alt="Karrio Dashboard" src="screenshots/dashboard-home.png" width="400" />
-  <img alt="Karrio Dashboard" src="screenshots/shipments.png" width="400" />
+  <img alt="Karrio Dashboard" src="screenshots/shipments.png" width="700" style="max-width: 100%;" />
 </p>
 
 ## Get started
@@ -104,7 +103,7 @@ If you have general questions about Karrio, want to say hello or just follow alo
 
 If you run into any problems or issues, please create a Github issue and we'll try our best to help.
 
-We strive to provide good support through our issue trackers on Github. 
+We strive to provide good support through our issue trackers on Github.
 
 ## Contributing
 
@@ -126,10 +125,10 @@ This project uses the [Apache v2 license](LICENSE)
 
 ## Sponsors
 
-We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using open source software. 
+We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using open source software.
 Thanks for sponsoring and backing us.
 
-<a href="https://appsandbrains.com/" target="_blank"><img alt="Cheques Plus" src="screenshots/apps-&-brains.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
+<a href="https://appsandbrains.com/" target="_blank"><img alt="Apps & Brains" src="screenshots/apps-&-brains.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
 
 ### Past sponsors
 

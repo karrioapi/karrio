@@ -236,6 +236,11 @@ const config = {
             label: 'Carriers',
           },
           {
+            to: '/insiders',
+            position: 'left',
+            label: 'Insiders',
+          },
+          {
             href: 'https://karrio.io',
             position: 'right',
             label: 'Karrio.io',
@@ -275,6 +280,10 @@ const config = {
             title: 'Community',
             items: [
               {
+                label: 'Launch week X',
+                href: 'https://www.karrio.io/launch-week-x',
+              },
+              {
                 label: 'Discussions',
                 href: 'https://github.com/karrioapi/karrio/discussions',
               },
@@ -286,35 +295,35 @@ const config = {
                 label: 'Twitter',
                 href: 'https://twitter.com/karrio',
               },
-              {
-                label: 'Launch week X',
-                href: 'https://www.karrio.io/launch-week-x',
-              },
             ],
           },
           {
             title: 'More',
             items: [
               {
-                label: 'Blog',
-                to: 'https://karrio.io/blog',
-              },
-              {
                 label: 'GitHub',
                 href: 'https://github.com/karrioapi/karrio',
+              },
+              {
+                label: 'Blog',
+                href: 'https://karrio.io/blog',
               },
             ],
           },
           {
-            title: 'About Us',
+            title: 'Get Started',
             items: [
-              {
-                label: 'Get Started',
-                href: 'https://karrio.io/get-started',
-              },
               {
                 label: 'FAQ',
                 href: 'https://karrio.io/get-started#FAQ',
+              },
+              {
+                label: 'Insiders',
+                to: '/insiders',
+              },
+              {
+                label: 'Download',
+                to: '/product/self-hosting',
               },
             ],
           },
