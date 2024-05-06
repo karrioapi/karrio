@@ -4797,7 +4797,7 @@ components:
             \n        {\n            \"part_number\": \"5218487281\",\n          \
             \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
             ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
-            \ }\n        "
+            \ }\n        </details>\n        "
         object_type:
           type: string
           default: commodity
@@ -5253,7 +5253,7 @@ components:
             \n        {\n            \"part_number\": \"5218487281\",\n          \
             \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
             ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
-            \ }\n        "
+            \ }\n        </details>\n        "
       required:
       - weight
       - weight_unit
@@ -5347,7 +5347,7 @@ components:
             \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
             : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
             \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
-            \     "
+            \     </details>\n        "
         object_type:
           type: string
           default: customs_info
@@ -5439,7 +5439,7 @@ components:
             \           \"certificate_number\": \"5218487281\",\n            \"nip_number\"\
             : \"5218487281\",\n            \"eori_number\": \"5218487281\",\n    \
             \        \"vat_registration_number\": \"5218487281\",\n        }\n   \
-            \     "
+            \     </details>\n        "
       required:
       - commodities
     DocumentDetails:
@@ -6214,7 +6214,7 @@ components:
             \n        {\n            \"part_number\": \"5218487281\",\n          \
             \  \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\"\
             ,\n            \"reference3\": \"# ref 3\",\n            ...\n       \
-            \ }\n        "
+            \ }\n        </details>\n        "
         object_type:
           type: string
           default: commodity
@@ -6262,7 +6262,7 @@ components:
             \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
             \             {\n                    \"tracking_number\": \"123456789\"\
             ,\n                    ...\n                    \"meta\": {...}\n    \
-            \            }\n            ]\n        }\n        "
+            \            }\n            ]\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -6315,7 +6315,7 @@ components:
             \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
             \             {\n                    \"tracking_number\": \"123456789\"\
             ,\n                    ...\n                    \"meta\": {...}\n    \
-            \            }\n            ]\n        }\n        "
+            \            }\n            ]\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -6408,7 +6408,7 @@ components:
             \ manifest.</summary>\n\n        {\n            \"shipments\": [\n   \
             \             {\n                    \"tracking_number\": \"123456789\"\
             ,\n                    ...\n                    \"meta\": {...}\n    \
-            \            }\n            ]\n        }\n        "
+            \            }\n            ]\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -6561,7 +6561,7 @@ components:
             : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
             \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
             : [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\"\
-            ,\n        }\n        "
+            ,\n        }\n        </details>\n        "
         meta:
           type: object
           additionalProperties: {}
@@ -6636,7 +6636,7 @@ components:
             : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
             \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
             : [\"canadapost-test\"],\n            \"preferred_service\": \"fedex_express_saver\"\
-            ,\n        }\n        "
+            ,\n        }\n        </details>\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -6680,7 +6680,7 @@ components:
             \       \"duty_account_number\": \"123456789\",\n            \"invoice_number\"\
             : \"123456789\",\n            \"invoice_date\": \"2020-01-01\",\n    \
             \        \"single_item_per_parcel\": true,\n            \"carrier_ids\"\
-            : [\"canadapost-test\"],\n        }\n        "
+            : [\"canadapost-test\"],\n        }\n        </details>\n        "
         metadata:
           type: object
           additionalProperties: {}
@@ -6780,7 +6780,7 @@ components:
           default: {}
           description: "<details>\n        <summary>Parcel specific options.</summary>\n\
             \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
-            : \"carrier\",\n        }\n        "
+            : \"carrier\",\n        }\n        </details>\n        "
         object_type:
           type: string
           default: parcel
@@ -6880,7 +6880,7 @@ components:
           default: {}
           description: "<details>\n        <summary>Parcel specific options.</summary>\n\
             \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
-            : \"carrier\",\n        }\n        "
+            : \"carrier\",\n        }\n        </details>\n        "
       required:
       - weight
       - weight_unit
@@ -7311,7 +7311,7 @@ components:
           default: {}
           description: "<details>\n        <summary>Parcel specific options.</summary>\n\
             \n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\"\
-            : \"carrier\",\n        }\n        "
+            : \"carrier\",\n        }\n        </details>\n        "
     PatchedWebhookData:
       type: object
       properties:
@@ -7964,7 +7964,7 @@ components:
             pdf\",\n                }\n            ],\n            \"doc_references\"\
             : [\n                {\n                    \"doc_id\": \"123456789\"\
             ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        "
+            \         }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -8058,7 +8058,7 @@ components:
             pdf\",\n                }\n            ],\n            \"doc_references\"\
             : [\n                {\n                    \"doc_id\": \"123456789\"\
             ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        "
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8253,7 +8253,7 @@ components:
             pdf\",\n                }\n            ],\n            \"doc_references\"\
             : [\n                {\n                    \"doc_id\": \"123456789\"\
             ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        "
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8359,7 +8359,7 @@ components:
             pdf\",\n                }\n            ],\n            \"doc_references\"\
             : [\n                {\n                    \"doc_id\": \"123456789\"\
             ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        "
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8531,7 +8531,7 @@ components:
             \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
             \            \"email_notification\": true,\n            \"email_notification_to\"\
             : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \        }\n        "
+            \        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -8581,7 +8581,7 @@ components:
             pdf\",\n                }\n            ],\n            \"doc_references\"\
             : [\n                {\n                    \"doc_id\": \"123456789\"\
             ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        "
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8692,7 +8692,7 @@ components:
             pdf\",\n                }\n            ],\n            \"doc_references\"\
             : [\n                {\n                    \"doc_id\": \"123456789\"\
             ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        "
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9560,8 +9560,8 @@ tags:
     | laposte | La Poste |
     | geodis | GEODIS |
     | freightcom | Freightcom |
-    | fedex | FedEx |
     | fedex_ws | FedEx Web Service |
+    | fedex | FedEx |
     | eshipper | eShipper |
     | easypost | EasyPost |
     | dpdhl | Deutsche Post DHL |
@@ -9876,48 +9876,6 @@ tags:
     | freightcom_canadapost_xpresspost | 6303 |
     | freightcom_canadapost_priority | 6302 |
 
-    ### FedEx
-    | Code         | Service Name |
-    | ------------ | ------------ |
-    | fedex_international_priority_express | FEDEX_INTERNATIONAL_PRIORITY_EXPRESS |
-    | fedex_international_first | INTERNATIONAL_FIRST |
-    | fedex_international_priority | FEDEX_INTERNATIONAL_PRIORITY |
-    | fedex_international_economy | INTERNATIONAL_ECONOMY |
-    | fedex_ground | FEDEX_GROUND |
-    | fedex_cargo_mail | FEDEX_CARGO_MAIL |
-    | fedex_cargo_international_premium | FEDEX_CARGO_INTERNATIONAL_PREMIUM |
-    | fedex_first_overnight | FIRST_OVERNIGHT |
-    | fedex_first_overnight_freight | FIRST_OVERNIGHT_FREIGHT |
-    | fedex_1_day_freight | FEDEX_1_DAY_FREIGHT |
-    | fedex_2_day_freight | FEDEX_2_DAY_FREIGHT |
-    | fedex_3_day_freight | FEDEX_3_DAY_FREIGHT |
-    | fedex_international_priority_freight | INTERNATIONAL_PRIORITY_FREIGHT |
-    | fedex_international_economy_freight | INTERNATIONAL_ECONOMY_FREIGHT |
-    | fedex_cargo_airport_to_airport | FEDEX_CARGO_AIRPORT_TO_AIRPORT |
-    | fedex_international_priority_distribution | INTERNATIONAL_PRIORITY_DISTRIBUTION |
-    | fedex_ip_direct_distribution_freight | FEDEX_IP_DIRECT_DISTRIBUTION_FREIGHT |
-    | fedex_intl_ground_distribution | INTL_GROUND_DISTRIBUTION |
-    | fedex_ground_home_delivery | GROUND_HOME_DELIVERY |
-    | fedex_smart_post | SMART_POST |
-    | fedex_priority_overnight | PRIORITY_OVERNIGHT |
-    | fedex_standard_overnight | STANDARD_OVERNIGHT |
-    | fedex_2_day | FEDEX_2_DAY |
-    | fedex_2_day_am | FEDEX_2_DAY_AM |
-    | fedex_express_saver | FEDEX_EXPRESS_SAVER |
-    | fedex_same_day | SAME_DAY |
-    | fedex_same_day_city | SAME_DAY_CITY |
-    | fedex_one_day_freight | FEDEX_ONE_DAY_FREIGHT |
-    | fedex_international_economy_distribution | INTERNATIONAL_ECONOMY_DISTRIBUTION |
-    | fedex_international_connect_plus | FEDEX_INTERNATIONAL_CONNECT_PLUS |
-    | fedex_international_distribution_freight | INTERNATIONAL_DISTRIBUTION_FREIGHT |
-    | fedex_regional_economy | FEDEX_REGIONAL_ECONOMY |
-    | fedex_next_day_freight | FEDEX_NEXT_DAY_FREIGHT |
-    | fedex_next_day | FEDEX_NEXT_DAY |
-    | fedex_next_day_10am | FEDEX_NEXT_DAY_10AM |
-    | fedex_next_day_12pm | FEDEX_NEXT_DAY_12PM |
-    | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
-    | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
-
     ### FedEx Web Service
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -9977,6 +9935,48 @@ tags:
     | fedex_smart_post | SMART_POST |
     | fedex_standard_overnight | STANDARD_OVERNIGHT |
     | fedex_transborder_distribution_consolidation | TRANSBORDER_DISTRIBUTION_CONSOLIDATION |
+
+    ### FedEx
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | fedex_international_priority_express | FEDEX_INTERNATIONAL_PRIORITY_EXPRESS |
+    | fedex_international_first | INTERNATIONAL_FIRST |
+    | fedex_international_priority | FEDEX_INTERNATIONAL_PRIORITY |
+    | fedex_international_economy | INTERNATIONAL_ECONOMY |
+    | fedex_ground | FEDEX_GROUND |
+    | fedex_cargo_mail | FEDEX_CARGO_MAIL |
+    | fedex_cargo_international_premium | FEDEX_CARGO_INTERNATIONAL_PREMIUM |
+    | fedex_first_overnight | FIRST_OVERNIGHT |
+    | fedex_first_overnight_freight | FIRST_OVERNIGHT_FREIGHT |
+    | fedex_1_day_freight | FEDEX_1_DAY_FREIGHT |
+    | fedex_2_day_freight | FEDEX_2_DAY_FREIGHT |
+    | fedex_3_day_freight | FEDEX_3_DAY_FREIGHT |
+    | fedex_international_priority_freight | INTERNATIONAL_PRIORITY_FREIGHT |
+    | fedex_international_economy_freight | INTERNATIONAL_ECONOMY_FREIGHT |
+    | fedex_cargo_airport_to_airport | FEDEX_CARGO_AIRPORT_TO_AIRPORT |
+    | fedex_international_priority_distribution | INTERNATIONAL_PRIORITY_DISTRIBUTION |
+    | fedex_ip_direct_distribution_freight | FEDEX_IP_DIRECT_DISTRIBUTION_FREIGHT |
+    | fedex_intl_ground_distribution | INTL_GROUND_DISTRIBUTION |
+    | fedex_ground_home_delivery | GROUND_HOME_DELIVERY |
+    | fedex_smart_post | SMART_POST |
+    | fedex_priority_overnight | PRIORITY_OVERNIGHT |
+    | fedex_standard_overnight | STANDARD_OVERNIGHT |
+    | fedex_2_day | FEDEX_2_DAY |
+    | fedex_2_day_am | FEDEX_2_DAY_AM |
+    | fedex_express_saver | FEDEX_EXPRESS_SAVER |
+    | fedex_same_day | SAME_DAY |
+    | fedex_same_day_city | SAME_DAY_CITY |
+    | fedex_one_day_freight | FEDEX_ONE_DAY_FREIGHT |
+    | fedex_international_economy_distribution | INTERNATIONAL_ECONOMY_DISTRIBUTION |
+    | fedex_international_connect_plus | FEDEX_INTERNATIONAL_CONNECT_PLUS |
+    | fedex_international_distribution_freight | INTERNATIONAL_DISTRIBUTION_FREIGHT |
+    | fedex_regional_economy | FEDEX_REGIONAL_ECONOMY |
+    | fedex_next_day_freight | FEDEX_NEXT_DAY_FREIGHT |
+    | fedex_next_day | FEDEX_NEXT_DAY |
+    | fedex_next_day_10am | FEDEX_NEXT_DAY_10AM |
+    | fedex_next_day_12pm | FEDEX_NEXT_DAY_12PM |
+    | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
+    | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
 
     ### eShipper
     | Code         | Service Name |
