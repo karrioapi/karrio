@@ -364,6 +364,6 @@ router.urls.append(
     re_path(
         r"^trackers/(?P<pk>\w+)/(?P<doc>[a-z0-9]+)",
         TrackerDocs.as_view(),
-        name="shipment-docs",
+        name="tracker-docs",
     )
 )
