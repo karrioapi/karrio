@@ -1,0 +1,39 @@
+{
+  "uuid": "string",
+  "quotes": [
+    {
+      "carrierName": "string",
+      "serviceId": 0,
+      "serviceName": "string",
+      "deliveryCarrier": "string",
+      "modeTransport": "AIR",
+      "transitDays": "string",
+      "baseCharge": 0,
+      "fuelSurcharge": 0,
+      "fuelSurchargePercentage": 0,
+      "carbonNeutralFees": 0,
+      "surcharges": [
+        {
+          "name": "string",
+          "amount": 0
+        }
+      ],
+      "totalCharge": 0,
+      "processingFees": 0,
+      "taxes": [
+        {
+          "name": "string",
+          "amount": 0
+        }
+      ],
+      "totalChargedAmount": 0,
+      "currency": "string"
+    }
+  ],
+  "warnings": [
+    "string"
+  ],
+  "errors": [
+    "string"
+  ]
+}

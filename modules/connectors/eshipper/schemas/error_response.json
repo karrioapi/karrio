@@ -1,0 +1,13 @@
+{
+  "type": "Success",
+  "message": "string",
+  "code": "string",
+  "fieldErrors": [
+    {
+      "objectName": "string",
+      "field": "string",
+      "message": "string"
+    }
+  ],
+  "thirdPartyMessage": "string"
+}
