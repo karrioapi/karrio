@@ -19,6 +19,6 @@ gateway = karrio.gateway["locate2u"].create(
     dict(
         client_id=client_id,
         client_secret=client_secret,
-        cache=lib.Cache(**cached_auth),
-    )
+    ),
+    cache=lib.Cache(**cached_auth),
 )

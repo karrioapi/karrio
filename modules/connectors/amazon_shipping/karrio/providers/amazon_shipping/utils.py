@@ -14,8 +14,6 @@ class Settings(core.Settings):
     mws_auth_token: str
     aws_region: str = "us-east-1"
 
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
-
     @property
     def server_url(self):
         if self.aws_region == "eu-west-1":
@@ -49,15 +47,15 @@ class Settings(core.Settings):
         cache_key = f"{self.carrier_name}|{self.seller_id}|{self.developer_id}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.cache.get(cache_key) or {}
+        auth = self.connection_cache.get(cache_key) or {}
         token = auth.get("authorizationCode")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
         if token is not None and expiry is not None and expiry > now:
             return token
 
-        self.cache.set(cache_key, lambda: login(self))
-        new_auth = self.cache.get(cache_key)
+        self.connection_cache.set(cache_key, lambda: login(self))
+        new_auth = self.connection_cache.get(cache_key)
 
         return new_auth["authorizationCode"]
 

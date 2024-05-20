@@ -6,8 +6,8 @@ import django.db.models as models
 
 import karrio
 import karrio.lib as lib
-import karrio.core.utils as utils
 import karrio.core.units as units
+import django.core.cache as caching
 import karrio.api.gateway as gateway
 import karrio.server.core.models as core
 import karrio.server.core.fields as fields
@@ -144,10 +144,30 @@ class Carrier(core.OwnedEntity):
         from karrio.server.core import middleware
 
         _context = middleware.SessionContext.get_current_request()
-        _tracer = getattr(_context, "tracer", utils.Tracer())
+        _tracer = getattr(_context, "tracer", lib.Tracer())
+        _cache = lib.Cache(caching.cache)
         _carrier_name = self.ext
 
-        return karrio.gateway[_carrier_name].create({**self.data.to_dict()}, _tracer)
+        return karrio.gateway[_carrier_name].create(
+            {**self.data.to_dict()}, _tracer, _cache
+        )
+
+    @property
+    def carrier_display_name(self):
+        if hasattr(self.settings, "display_name"):
+            return self.settings.display_name
+
+        import karrio.references as references
+
+        return references.collect_references()["carriers"].get(
+            self.settings.carrier_name
+        )
+
+    @property
+    def config(self):
+        config = self.__class__.resolve_config(self)
+
+        return config
 
     @property
     def data(self) -> datatypes.CarrierSettings:
@@ -197,23 +217,6 @@ class Carrier(core.OwnedEntity):
             ),
             (None, None),
         )
-
-    @property
-    def carrier_display_name(self):
-        if hasattr(self.settings, "display_name"):
-            return self.settings.display_name
-
-        import karrio.references as references
-
-        return references.collect_references()["carriers"].get(
-            self.settings.carrier_name
-        )
-
-    @property
-    def config(self):
-        config = self.__class__.resolve_config(self)
-
-        return config
 
     @staticmethod
     def resolve_config(

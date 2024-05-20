@@ -495,7 +495,7 @@ def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.
         _excluded = [
             "services",
             "id",
-            "cache",
+            # "cache",
             "test_mode",
             "rate_sheet",
             "sscc_count",

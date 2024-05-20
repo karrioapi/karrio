@@ -7,7 +7,7 @@ import typing
 
 @attr.s(auto_attribs=True)
 class Settings(abc.ABC):
-    """Unified API carrier Connection settings (Interface)"""
+    """Unified API carrier connection settings (Interface)"""
 
     carrier_id: str
     account_country_code: str = None
@@ -33,3 +33,9 @@ class Settings(abc.ABC):
         import karrio.lib as lib
 
         return lib.to_connection_config(self.config or {})
+
+    @property
+    def connection_cache(self):
+        import karrio.lib as lib
+
+        return getattr(self, "cache", None) or lib.Cache()

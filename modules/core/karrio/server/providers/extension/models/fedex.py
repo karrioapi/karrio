@@ -2,7 +2,6 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_auth_cache
 class FedexSettings(providers.Carrier):
     class Meta:
         db_table = "fedex-settings"
