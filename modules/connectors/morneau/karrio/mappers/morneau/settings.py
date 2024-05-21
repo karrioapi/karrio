@@ -3,18 +3,17 @@
 import attr
 import jstruct
 import karrio.lib as lib
-import karrio.providers.morneau.utils as provider_utils
+from karrio.providers.morneau.utils import Settings as BaseSettings
 
 
 @attr.s(auto_attribs=True)
-class Settings(provider_utils.Settings):
+class Settings(BaseSettings):
     """Groupe Morneau connection settings."""
 
     username: str
     password: str
-    billed_id: int
     caller_id: str
-
+    billed_id: int
     division: str = "Morneau"
     carrier_id: str = "morneau"
     account_country_code: str = None

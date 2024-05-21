@@ -4,7 +4,7 @@ import karrio
 import karrio.lib as lib
 import karrio.providers.morneau.units as units
 
-username = "morneau.user"
+username = "imprimerie.gauvin"
 password = "test"
 caller_id = "0000005991"
 billed_id = 99999

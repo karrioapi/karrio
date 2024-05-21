@@ -25,7 +25,7 @@ class TestGroupeMorneauRating(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}/quotes/add"
+                f"{gateway.settings.rates_server_url}/quotes/add"
             )
 
     def test_parse_rate_response(self):
@@ -47,7 +47,7 @@ RatePayload = {
         "address_line2": "5th Floor",
         "city": "San Francisco",
         "state_code": "CA",
-        "postal_code": "H1L 4M3",
+        "postal_code": "H1L4M3",
         "phone_number": "415-528-7555",
     },
     "shipper": {
@@ -56,7 +56,7 @@ RatePayload = {
         "address_line1": "1 E 161st St.",
         "city": "Bronx",
         "state_code": "NY",
-        "postal_code": "J8Z 1V8",
+        "postal_code": "J8Z1V8",
     },
     "parcels": [{"length": 21.0, "width": 40.0, "height": 26.0, "weight": 110.0, "weight_unit": "LB",
                  "items": [{"title": "RENDEZVOUS"}, {"title": "PCAMLIVR"}, {"title": "HOME"}]

@@ -2,6 +2,7 @@ import typing
 
 import karrio.core.models as models
 import karrio.lib as lib
+import karrio.providers.morneau.error as provider_error
 import karrio.providers.morneau.utils as provider_utils
 import karrio.schemas.morneau.shipment_purchase_response as shipping
 
@@ -9,14 +10,13 @@ import karrio.schemas.morneau.shipment_purchase_response as shipping
 def parse_shipment_response(
     response: lib.Deserializable[dict],
     settings: provider_utils.Settings,
-) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response_dict = response.deserialize()
-    response_shipment = response_dict  # Directly pass the deserialized response to _extract_details
 
-    messages = []  # Assuming error handling is to be updated based on API specifics
-    shipment = _extract_details(response_shipment, settings) if response_shipment else None
+    errors = provider_error.parse_error_response(response_dict, settings)
+    shipment = _extract_details(response_dict, settings) if "error" not in response_dict else None
 
-    return shipment, messages
+    return shipment, errors
 
 
 def _extract_details(
@@ -33,8 +33,6 @@ def _extract_details(
     status = load_tender_confirmation.Status
     is_accepted = load_tender_confirmation.IsAccepted
 
-    # Example: assuming label data and tracking number are part of the response
-    # Replace these with the actual keys if they are different or if additional processing is needed.
     label = ""  # Placeholder: replace with actual label extraction logic if applicable
     tracking_number = freight_bill_number  # Assuming the FreightBillNumber is used as the tracking number
 
@@ -49,7 +47,7 @@ def _extract_details(
         tracking_number=tracking_number,
         shipment_identifier=shipment_identifier,
         label_type="PDF",
-        docs=models.Documents(label="No label..."),
+        docs=models.Documents(label=""),
         meta=meta,
     )
 

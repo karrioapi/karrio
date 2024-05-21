@@ -109,7 +109,7 @@ ParsedShipmentResponse = [
     {
         "carrier_id": "morneau",
         "carrier_name": "morneau",
-        "docs": {'label': 'No label...'},
+        'docs': {},
         "label_type": "PDF",
         "meta": {
             "is_accepted": True,

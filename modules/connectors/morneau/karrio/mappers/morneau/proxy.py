@@ -12,8 +12,8 @@ class Proxy(proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         # Send request for quotation
         response = lib.request(
-            url=f"{self.settings.server_url}/quotes/add",
-            data=request.serialize(),
+            url=f"{self.settings.rates_server_url}/quotes/add",
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
             headers={
@@ -21,13 +21,14 @@ class Proxy(proxy.Proxy):
                 "Content-Type": "application/json",
             },
         )
-
+        print(self.settings.rating_jwt_token)
+        print(response)
         return lib.Deserializable(response, lib.to_dict)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/LoadTender/{self.settings.caller_id}",
-            data=request.serialize(),
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
             headers={

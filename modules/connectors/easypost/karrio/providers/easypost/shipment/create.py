@@ -1,13 +1,13 @@
-import karrio.schemas.easypost.shipment_request as easypost
-import karrio.schemas.easypost.shipments_response as shipping
-
 import typing
-import karrio.lib as lib
-import karrio.core.units as units
+
 import karrio.core.models as models
+import karrio.core.units as units
+import karrio.lib as lib
 import karrio.providers.easypost.error as provider_error
 import karrio.providers.easypost.units as provider_units
 import karrio.providers.easypost.utils as provider_utils
+import karrio.schemas.easypost.shipment_request as easypost
+import karrio.schemas.easypost.shipments_response as shipping
 
 
 def parse_shipment_response(
@@ -15,6 +15,8 @@ def parse_shipment_response(
     settings: provider_utils.Settings,
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
+
+    print(response)
     errors = provider_error.parse_error_response(response, settings)
     shipment = _extract_details(response, settings) if "error" not in response else None
 
