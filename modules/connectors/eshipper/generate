@@ -20,4 +20,5 @@ quicktype --src="${SCHEMAS}/rate_request.json" --out="${LIB_MODULES}/rate_reques
 quicktype --src="${SCHEMAS}/rate_response.json" --out="${LIB_MODULES}/rate_response.py"
 quicktype --src="${SCHEMAS}/shipping_request.json" --out="${LIB_MODULES}/shipping_request.py"
 quicktype --src="${SCHEMAS}/shipping_response.json" --out="${LIB_MODULES}/shipping_response.py"
+quicktype --src="${SCHEMAS}/tracking_request.json" --out="${LIB_MODULES}/tracking_request.py"
 quicktype --src="${SCHEMAS}/tracking_response.json" --out="${LIB_MODULES}/tracking_response.py"

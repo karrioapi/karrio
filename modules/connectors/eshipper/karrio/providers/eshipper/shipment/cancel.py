@@ -1,4 +1,4 @@
-
+import karrio.schemas.eshipper.cancel_request as eshipper
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -13,7 +13,7 @@ def parse_shipment_cancel_response(
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = True  # compute shipment cancel success state
+    success = len(response.get("order")) > 0
 
     confirmation = (
         models.ConfirmationDetails(
@@ -21,7 +21,9 @@ def parse_shipment_cancel_response(
             carrier_name=settings.carrier_name,
             operation="Cancel Shipment",
             success=success,
-        ) if success else None
+        )
+        if success
+        else None
     )
 
     return confirmation, messages
@@ -32,6 +34,12 @@ def shipment_cancel_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
-    request = None  # map data to convert karrio model to eshipper specific type
+    request = eshipper.CancelRequestType(
+        order=eshipper.OrderType(
+            trackingId=payload.shipment_identifier,
+            orderId=payload.options.get("orderId"),
+            message=None,
+        )
+    )
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, lib.to_dict)

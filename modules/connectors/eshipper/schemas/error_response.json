@@ -1,7 +1,9 @@
 {
+  "status": 400,
+  "title": "Warn",
   "type": "Success",
-  "message": "string",
-  "code": "string",
+  "message": "Shipment for provided identifier not found",
+  "code": "ERR_SHIPMENT_NOT_FOUND",
   "fieldErrors": [
     {
       "objectName": "string",

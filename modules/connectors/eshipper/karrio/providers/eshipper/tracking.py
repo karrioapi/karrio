@@ -1,4 +1,5 @@
-
+import karrio.schemas.eshipper.tracking_request as eshipper
+import karrio.schemas.eshipper.tracking_response as tracking
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -9,19 +10,25 @@ import karrio.providers.eshipper.units as provider_units
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    _response: lib.Deserializable[typing.List[dict]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     responses = _response.deserialize()
 
-    messages = sum(
+    messages: typing.List[models.Message] = sum(
         [
-            error.parse_error_response(response, settings, tracking_number=_)
-            for _, response in responses
+            error.parse_error_response(
+                _, settings, tracking_number=_.get("trackingNumber")
+            )
+            for _ in responses
         ],
         start=[],
     )
-    tracking_details = [_extract_details(details, settings) for _, details in responses]
+    tracking_details = [
+        _extract_details(_, settings)
+        for _ in responses
+        if _.get("trackingNumber") is not None
+    ]
 
     return tracking_details, messages
 
@@ -30,24 +37,24 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    tracking = None  # parse carrier tracking object type
+    details = lib.to_object(tracking.TrackingResponseElementType, data)
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from tracking
+        tracking_number=details.trackingNumber,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(""), # extract tracking event date
-                description="",  # extract tracking event description or code
-                code="",  # extract tracking event code
-                time=lib.ftime(""), # extract tracking event time
-                location="",  # extract tracking event address
+                code=event.originalEvent.name,
+                location=event.location,
+                description=event.description,
+                date=lib.fdate(event.originalEvent.eventDate),
+                time=lib.ftime(event.originalEvent.eventDate),
             )
-            for event in []  # extract tracking events
+            for event in details.event
         ],
-        estimated_delivery=lib.fdate(""), # extract tracking estimated date if provided
-        delivered=False,  # compute tracking delivered status
+        estimated_delivery=lib.fdate(details.expectedDeliveryDate),
+        delivered=details.shipmentStatus.delivered,
     )
 
 
@@ -55,6 +62,10 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = None  # map data to convert karrio model to eshipper specific type
+    request = eshipper.TrackingRequestType(
+        trackingNumbers=payload.tracking_numbers,
+        includePublished=True,
+        pageable=lib.to_json({"page": 0, "size": 25}),
+    )
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, lib.to_dict)

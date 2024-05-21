@@ -1,4 +1,3 @@
-
 """Karrio eShipper client proxy."""
 
 import karrio.lib as lib
@@ -11,45 +10,56 @@ class Proxy(proxy.Proxy):
 
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            url=f"{self.settings.server_url}/api/v2/quote",
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
-            headers={},
+            headers={
+                "content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            url=f"{self.settings.server_url}/api/v2/ship",
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
-            method="POST",
-            headers={},
+            method="PUT",
+            headers={
+                "content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            url=f"{self.settings.server_url}/api/v2/ship",
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
-            method="POST",
-            headers={},
+            method="DELETE",
+            headers={
+                "content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            url=f"{self.settings.server_url}/api/v2/track/events",
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
-            headers={},
+            headers={
+                "content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.access_token}",
+            },
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    

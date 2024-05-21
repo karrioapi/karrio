@@ -12,6 +12,8 @@ class FieldErrorType:
 
 @s(auto_attribs=True)
 class ErrorResponseType:
+    status: Optional[int] = None
+    title: Optional[str] = None
     type: Optional[str] = None
     message: Optional[str] = None
     code: Optional[str] = None

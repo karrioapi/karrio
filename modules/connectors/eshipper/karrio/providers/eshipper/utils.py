@@ -1,5 +1,5 @@
 import datetime
-import kario.lib as lib
+import karrio.lib as lib
 import karrio.core as core
 import karrio.core.errors as errors
 
@@ -53,12 +53,14 @@ def login(settings: Settings):
 
     result = lib.request(
         url=f"{settings.server_url}/api/v2/authenticate",
-        data=lib.to_json,
+        data=lib.to_json(
+            {
+                "principal": settings.principal,
+                "credential": settings.credential,
+            }
+        ),
         method="POST",
-        headers={
-            "authorization": f"Basic {settings.authorization}",
-            "content-Type": "application/json",
-        },
+        headers={"content-Type": "application/json"},
     )
     response = lib.to_dict(result)
     messages = error.parse_error_response(response, settings)

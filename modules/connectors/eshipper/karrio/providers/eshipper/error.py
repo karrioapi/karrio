@@ -1,4 +1,3 @@
-
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -10,7 +9,7 @@ def parse_error_response(
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors = []  # compute the carrier error object list
+    errors: list = []  # compute the carrier error object list
 
     return [
         models.Message(

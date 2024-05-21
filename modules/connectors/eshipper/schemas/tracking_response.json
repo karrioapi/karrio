@@ -1,96 +1,44 @@
-{
-  "trackingUrl": "string",
-  "brandedTrackingUrl": "string",
-  "lmcCarrierTrackingUrl": "string",
-  "carbonNeutral": true,
-  "remarks": "string",
-  "trackingDetails": [
-    {
-      "carrier": "string",
-      "carrierEventCode": "string",
-      "dateTime": "2024-05-13T03:18:15.315Z",
-      "location": "string",
-      "postalCode": "string",
-      "proofOfDelivery": "string",
-      "signatoryName": "string",
-      "description": "string",
-      "additionalInfo": "string",
-      "awbNumber": "string",
-      "vehicleId": "string",
-      "vehicleType": "Flight",
-      "eshipperOrderStatus": "string"
-    }
-  ],
-  "status": {
-    "labelGenerated": true,
-    "reachedAtWarehouse": true,
-    "inTransit": true,
-    "delivered": true,
-    "exception": true
-  },
-  "orderDetails": {
-    "carrier": {
-      "carrierName": "string",
-      "serviceName": "string",
-      "carrierLogoPath": "string"
+[
+  {
+    "eventTime": "string",
+    "shipDate": "string",
+    "carrierName": "string",
+    "carrierService": "string",
+    "trackingUrl": "string",
+    "trackingNumber": "string",
+    "referenceCodes": ["string"],
+    "expectedDeliveryDate": "string",
+    "currentStatus": "string",
+    "shipmentStatus": {
+      "labelGenerated": true,
+      "reachedAtWarehouse": true,
+      "inTransit": true,
+      "delivered": true,
+      "exception": true
     },
-    "from": {
-      "attention": "string",
-      "company": "string",
-      "address1": "string",
-      "address2": "string",
-      "city": "string",
-      "province": "string",
-      "country": "string",
-      "zip": "string",
-      "email": "string",
-      "phone": "\\\\ddd\\-\\ddd\\dddd",
-      "instructions": "string",
-      "residential": true,
-      "tailgateRequired": true,
-      "confirmDelivery": true,
-      "notifyRecipient": true
-    },
-    "to": {
-      "attention": "string",
-      "company": "string",
-      "address1": "string",
-      "address2": "string",
-      "city": "string",
-      "province": "string",
-      "country": "string",
-      "zip": "string",
-      "email": "string",
-      "phone": "\\\\\\dd \\ddd \\ddd\\dddd",
-      "instructions": "string",
-      "residential": true,
-      "tailgateRequired": true,
-      "confirmDelivery": true,
-      "notifyRecipient": true
-    },
-    "packages": {
-      "type": "string",
-      "quantity": 0,
-      "weightUnit": "string",
-      "packages": [
-        {
-          "height": 0,
-          "length": 0,
-          "width": 0,
-          "dimensionUnit": "string",
-          "weight": 0,
-          "weightUnit": "string",
-          "type": "string",
-          "freightClass": "string",
-          "nmfcCode": "string",
-          "insuranceAmount": 0,
-          "codAmount": 0,
-          "description": "string",
-          "harmonizedCode": "string",
-          "skuCode": "string"
+    "orderId": "string",
+    "eventId": "string",
+    "event": [
+      {
+        "dateTime": "string",
+        "description": "string",
+        "location": "string",
+        "proofOfDelivery": "string",
+        "postalCode": "string",
+        "additionalInformation": "string",
+        "originalEvent": {
+          "name": "string",
+          "identifier": "string",
+          "eventDate": "string",
+          "eventLocation": "string",
+          "data": {
+            "empty": true,
+            "additionalProp1": {},
+            "additionalProp2": {},
+            "additionalProp3": {}
+          }
         }
-      ],
-      "totalWeight": 0
-    }
+      }
+    ]
   }
-}
+]
