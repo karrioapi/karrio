@@ -1,4 +1,5 @@
 # These are supported funding model platforms
 
 github: [karrioapi]
-custom: ['https://karrio.io/get-started']
+polar: karrioapi
+custom: ['https://docs.karrio.io/insiders']

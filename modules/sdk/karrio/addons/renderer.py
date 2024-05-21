@@ -12,7 +12,7 @@ LINE_SEPARATOR = """
 """
 
 
-def generate_pdf_from_svg_label(content: str, **kwargs) -> Image:
+def generate_pdf_from_svg_label(content: str, **kwargs):
     template = fromstring(content)
     label = Image.new("L", (1200, 1800), "white")
     draw = ImageDraw.Draw(label)

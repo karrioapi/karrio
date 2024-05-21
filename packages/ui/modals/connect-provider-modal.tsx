@@ -979,6 +979,24 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                               placeholder='https://your-instance.api.com.au'
                             />}
 
+                          {"rate_request_types" in connection_configs[carrier_name.toString()] &&
+                            <SelectField value={payload.config?.rate_request_types}
+                              name="rate_request_types"
+                              label="Rate request types"
+                              onChange={handleConfigChange}
+                              className="is-small is-fullwidth"
+                              wrapperClass="column is-6 pt-1"
+                              fieldClass="mb-0"
+                              size={3}
+                              multiple
+                            >
+                              <option value='none'></option>
+                              <option value='LIST'>LIST</option>
+                              <option value='PREFERRED'>PREFERRED</option>
+                              <option value='INCENTIVE'>INCENTIVE</option>
+                              <option value='ACCOUNT'>ACCOUNT</option>
+                            </SelectField>}
+
                           {"shipping_services" in connection_configs[carrier_name.toString()] &&
                             <SelectField defaultValue={payload.config?.shipping_services}
                               name="shipping_services"

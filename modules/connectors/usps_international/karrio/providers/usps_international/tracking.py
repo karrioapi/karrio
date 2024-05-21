@@ -87,6 +87,7 @@ def tracking_request(
 ) -> lib.Serializable:
     request = usps.TrackFieldRequest(
         USERID=settings.username,
+        PASSWORD=settings.password,
         Revision="1",
         ClientIp="127.0.0.1",
         SourceId="Karrio",

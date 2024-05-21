@@ -164,7 +164,7 @@ ParsedShipmentCancelResponse = [
     [],
 ]
 
-ShipmentRequestXML = """<eVSPriorityMailIntlRequest USERID="username">
+ShipmentRequestXML = """<eVSPriorityMailIntlRequest USERID="username" PASSWORD="password">
     <Revision>2</Revision>
     <ImageParameters>
         <ImageParameter>6X4LABEL</ImageParameter>
@@ -225,7 +225,7 @@ ShipmentRequestXML = """<eVSPriorityMailIntlRequest USERID="username">
 
 ShipmentRequestQuery = {"API": "eVSPriorityMailIntl", "XML": ShipmentRequestXML}
 
-ShipmentCancelRequestXML = """<eVSICancelRequest USERID="username">
+ShipmentCancelRequestXML = """<eVSICancelRequest USERID="username" PASSWORD="password">
     <BarcodeNumber>123456789012</BarcodeNumber>
 </eVSICancelRequest>
 """

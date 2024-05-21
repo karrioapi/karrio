@@ -45,7 +45,9 @@ def shipment_cancel_request(
     payload: ShipmentCancelRequest, settings: Settings
 ) -> Serializable:
     request = eVSCancelRequest(
-        USERID=settings.username, BarcodeNumber=payload.shipment_identifier
+        USERID=settings.username,
+        PASSWORD=settings.password, 
+        BarcodeNumber=payload.shipment_identifier,
     )
 
     return Serializable(request, XP.export)

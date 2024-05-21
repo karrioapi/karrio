@@ -243,6 +243,7 @@ class ConnectionConfig(utils.Enum):
     smart_post_hub_id = utils.OptionEnum("smart_post_hub_id")
     shipping_options = utils.OptionEnum("shipping_options", list)
     shipping_services = utils.OptionEnum("shipping_services", list)
+    rate_request_types = utils.OptionEnum("rate_request_types", list)
 
 
 class ServiceType(utils.Enum):

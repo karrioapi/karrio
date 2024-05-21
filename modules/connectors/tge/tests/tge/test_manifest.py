@@ -95,6 +95,7 @@ ManifestPayload = {
                 "reference": "testing 123",
                 "meta": {
                     "SSCCs": ["00099475103613941860"],
+                    "ShipmentIDs": ["8880419999995"],
                     "ShipmentID": "8880419999995",
                     "shipment_count": 9999995,
                     "sscc_count": 361394186,

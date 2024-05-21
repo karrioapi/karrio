@@ -80,6 +80,7 @@ class OrderData(serializers.Serializer):
             "carrier_ids": ["canadapost-test"],
             "preferred_service": "fedex_express_saver",
         }
+        </details>
         """,
     )
     metadata = serializers.PlainDictField(
@@ -144,6 +145,7 @@ class Order(serializers.EntitySerializer):
             "carrier_ids": ["canadapost-test"],
             "preferred_service": "fedex_express_saver",
         }
+        </details>
         """,
     )
     meta = serializers.PlainDictField(

@@ -673,7 +673,7 @@ def bundle_pdfs(
 
 def bundle_imgs(
     base64_strings: typing.List[str],
-) -> utils.Image:
+):
     return utils.bundle_imgs(base64_strings)
 
 

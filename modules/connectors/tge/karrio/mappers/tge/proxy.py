@@ -9,21 +9,28 @@ import karrio.mappers.tge.settings as provider_settings
 class Proxy(proxy.Proxy):
     settings: provider_settings.Settings
 
-    def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"{self.settings.server_url}/calculatePrice",
-            data=lib.to_json(request.serialize()),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={
-                "Authorization": f"Basic {self.settings.authorization}",
-                "Auth": f"Basic {self.settings.auth}",
-                "Content-Type": "application/json",
-                "accept": "*/*",
-            },
+    def get_rates(self, requests: lib.Serializable) -> lib.Deserializable[str]:
+        responses = lib.run_asynchronously(
+            lambda payload: lib.request(
+                url=f"{self.settings.server_url}/calculatePrice",
+                data=lib.to_json(payload),
+                trace=self.trace_as("json"),
+                method="POST",
+                headers={
+                    "Authorization": f"Basic {self.settings.authorization}",
+                    "Auth": f"Basic {self.settings.auth}",
+                    "Content-Type": "application/json",
+                    "accept": "*/*",
+                },
+            ),
+            requests.serialize(),
         )
 
-        return lib.Deserializable(response, provider_utils.parse_response, request.ctx)
+        return lib.Deserializable(
+            responses,
+            lambda __: [provider_utils.parse_response(_) for _ in __],
+            requests.ctx,
+        )
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(

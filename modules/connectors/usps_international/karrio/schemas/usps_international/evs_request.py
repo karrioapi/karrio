@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 
 #
-# Generated Sat Oct 14 00:23:45 2023 by generateDS.py version 2.43.2.
-# Python 3.10.12 (main, Jun 11 2023, 05:26:28) [GCC 11.4.0]
+# Generated Wed Apr  3 21:09:10 2024 by generateDS.py version 2.43.3.
+# Python 3.10.13 (main, Mar 21 2024, 17:51:02) [GCC 9.4.0]
 #
 # Command line options:
 #   ('--no-namespace-defs', '')
@@ -13,7 +13,7 @@
 #   ./schemas/eVSRequest.xsd
 #
 # Command line:
-#   /home/kserver/Workspace/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps_international/evs_request.py" ./schemas/eVSRequest.xsd
+#   /workspaces/karrio/.venv/karrio/bin/generateDS --no-namespace-defs -o "./karrio/schemas/usps_international/evs_request.py" ./schemas/eVSRequest.xsd
 #
 # Current working directory (os.getcwd()):
 #   usps_international
@@ -1011,7 +1011,7 @@ class eVSRequest(GeneratedsSuper):
     __hash__ = GeneratedsSuper.__hash__
     subclass = None
     superclass = None
-    def __init__(self, USERID=None, Option=None, Revision=None, ImageParameters=None, FromName=None, FromFirm=None, FromAddress1=None, FromAddress2=None, FromCity=None, FromState=None, FromZip5=None, FromZip4=None, FromPhone=None, POZipCode=None, AllowNonCleansedOriginAddr=None, ToName=None, ToFirm=None, ToAddress1=None, ToAddress2=None, ToCity=None, ToState=None, ToZip5=None, ToZip4=None, ToPhone=None, POBox=None, ToContactPreference=None, ToContactMessaging=None, ToContactEmail=None, AllowNonCleansedDestAddr=None, WeightInOunces=None, ServiceType=None, Container=None, Width=None, Length=None, Height=None, Girth=None, Machinable=None, ProcessingCategory=None, PriceOptions=None, InsuredAmount=None, AddressServiceRequested=None, ExpressMailOptions=None, ShipDate=None, CustomerRefNo=None, CustomerRefNo2=None, ExtraServices=None, HoldForPickup=None, OpenDistribute=None, PermitNumber=None, PermitZIPCode=None, PermitHolderName=None, CRID=None, MID=None, LogisticsManagerMID=None, VendorCode=None, VendorProductVersionNumber=None, SenderName=None, SenderEMail=None, RecipientName=None, RecipientEMail=None, ReceiptOption=None, ImageType=None, HoldForManifest=None, NineDigitRoutingZip=None, ShipInfo=None, CarrierRelease=None, DropOffTime=None, ReturnCommitments=None, PrintCustomerRefNo=None, Content=None, ActionCode=None, OptOutOfSPE=None, SortationLevel=None, DestinationEntryFacilityType=None, ShippingContents=None, CustomsContentType=None, ContentComments=None, RestrictionType=None, RestrictionComments=None, AESITN=None, ImportersReference=None, ImportersContact=None, ExportersReference=None, ExportersContact=None, InvoiceNumber=None, LicenseNumber=None, CertificateNumber=None, NonDeliveryOption=None, AltReturnAddress1=None, AltReturnAddress2=None, AltReturnAddress3=None, AltReturnAddress4=None, AltReturnAddress5=None, AltReturnAddress6=None, AltReturnCountry=None, LabelImportType=None, ePostageMailerReporting=None, SenderFirstName=None, SenderLastName=None, SenderBusinessName=None, SenderAddress1=None, SenderCity=None, SenderState=None, SenderZip5=None, SenderPhone=None, ChargebackCode=None, TrackingRetentionPeriod=None, gds_collector_=None, **kwargs_):
+    def __init__(self, USERID=None, PASSWORD=None, Option=None, Revision=None, ImageParameters=None, FromName=None, FromFirm=None, FromAddress1=None, FromAddress2=None, FromCity=None, FromState=None, FromZip5=None, FromZip4=None, FromPhone=None, POZipCode=None, AllowNonCleansedOriginAddr=None, ToName=None, ToFirm=None, ToAddress1=None, ToAddress2=None, ToCity=None, ToState=None, ToZip5=None, ToZip4=None, ToPhone=None, POBox=None, ToContactPreference=None, ToContactMessaging=None, ToContactEmail=None, AllowNonCleansedDestAddr=None, WeightInOunces=None, ServiceType=None, Container=None, Width=None, Length=None, Height=None, Girth=None, Machinable=None, ProcessingCategory=None, PriceOptions=None, InsuredAmount=None, AddressServiceRequested=None, ExpressMailOptions=None, ShipDate=None, CustomerRefNo=None, CustomerRefNo2=None, ExtraServices=None, HoldForPickup=None, OpenDistribute=None, PermitNumber=None, PermitZIPCode=None, PermitHolderName=None, CRID=None, MID=None, LogisticsManagerMID=None, VendorCode=None, VendorProductVersionNumber=None, SenderName=None, SenderEMail=None, RecipientName=None, RecipientEMail=None, ReceiptOption=None, ImageType=None, HoldForManifest=None, NineDigitRoutingZip=None, ShipInfo=None, CarrierRelease=None, DropOffTime=None, ReturnCommitments=None, PrintCustomerRefNo=None, Content=None, ActionCode=None, OptOutOfSPE=None, SortationLevel=None, DestinationEntryFacilityType=None, ShippingContents=None, CustomsContentType=None, ContentComments=None, RestrictionType=None, RestrictionComments=None, AESITN=None, ImportersReference=None, ImportersContact=None, ExportersReference=None, ExportersContact=None, InvoiceNumber=None, LicenseNumber=None, CertificateNumber=None, NonDeliveryOption=None, AltReturnAddress1=None, AltReturnAddress2=None, AltReturnAddress3=None, AltReturnAddress4=None, AltReturnAddress5=None, AltReturnAddress6=None, AltReturnCountry=None, LabelImportType=None, ePostageMailerReporting=None, SenderFirstName=None, SenderLastName=None, SenderBusinessName=None, SenderAddress1=None, SenderCity=None, SenderState=None, SenderZip5=None, SenderPhone=None, ChargebackCode=None, TrackingRetentionPeriod=None, gds_collector_=None, **kwargs_):
         self.gds_collector_ = gds_collector_
         self.gds_elementtree_node_ = None
         self.original_tagname_ = None
@@ -1019,6 +1019,8 @@ class eVSRequest(GeneratedsSuper):
         self.ns_prefix_ = None
         self.USERID = _cast(None, USERID)
         self.USERID_nsprefix_ = None
+        self.PASSWORD = _cast(None, PASSWORD)
+        self.PASSWORD_nsprefix_ = None
         self.Option = Option
         self.Option_nsprefix_ = None
         self.Revision = Revision
@@ -1675,6 +1677,10 @@ class eVSRequest(GeneratedsSuper):
         return self.USERID
     def set_USERID(self, USERID):
         self.USERID = USERID
+    def get_PASSWORD(self):
+        return self.PASSWORD
+    def set_PASSWORD(self, PASSWORD):
+        self.PASSWORD = PASSWORD
     def validate_ShipDateType(self, value):
         result = True
         # Validate type ShipDateType, a restriction on xs:string.
@@ -1828,6 +1834,9 @@ class eVSRequest(GeneratedsSuper):
         if self.USERID is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             outfile.write(' USERID=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.USERID), input_name='USERID')), ))
+        if self.PASSWORD is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            outfile.write(' PASSWORD=%s' % (self.gds_encode(self.gds_format_string(quote_attrib(self.PASSWORD), input_name='PASSWORD')), ))
     def _exportChildren(self, outfile, level, namespaceprefix_='', namespacedef_='', name_='eVSRequest', fromsubclass_=False, pretty_print=True):
         if pretty_print:
             eol_ = '\n'
@@ -1887,7 +1896,7 @@ class eVSRequest(GeneratedsSuper):
         if self.AllowNonCleansedOriginAddr is not None:
             namespaceprefix_ = self.AllowNonCleansedOriginAddr_nsprefix_ + ':' if (UseCapturedNS_ and self.AllowNonCleansedOriginAddr_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
-            outfile.write('<%sAllowNonCleansedOriginAddr>%s</%sAllowNonCleansedOriginAddr>%s' % (namespaceprefix_ , self.gds_encode(self.gds_format_string(quote_xml(self.AllowNonCleansedOriginAddr), input_name='AllowNonCleansedOriginAddr')), namespaceprefix_ , eol_))
+            outfile.write('<%sAllowNonCleansedOriginAddr>%s</%sAllowNonCleansedOriginAddr>%s' % (namespaceprefix_ , self.gds_format_boolean(self.AllowNonCleansedOriginAddr, input_name='AllowNonCleansedOriginAddr'), namespaceprefix_ , eol_))
         if self.ToName is not None:
             namespaceprefix_ = self.ToName_nsprefix_ + ':' if (UseCapturedNS_ and self.ToName_nsprefix_) else ''
             showIndent(outfile, level, pretty_print)
@@ -2268,6 +2277,10 @@ class eVSRequest(GeneratedsSuper):
         if value is not None and 'USERID' not in already_processed:
             already_processed.add('USERID')
             self.USERID = value
+        value = find_attr_value_('PASSWORD', node)
+        if value is not None and 'PASSWORD' not in already_processed:
+            already_processed.add('PASSWORD')
+            self.PASSWORD = value
     def _buildChildren(self, child_, node, nodeName_, fromsubclass_=False, gds_collector_=None):
         if nodeName_ == 'Option' and child_.text:
             sval_ = child_.text
@@ -2347,10 +2360,10 @@ class eVSRequest(GeneratedsSuper):
             self.POZipCode = value_
             self.POZipCode_nsprefix_ = child_.prefix
         elif nodeName_ == 'AllowNonCleansedOriginAddr':
-            value_ = child_.text
-            value_ = self.gds_parse_string(value_, node, 'AllowNonCleansedOriginAddr')
-            value_ = self.gds_validate_string(value_, node, 'AllowNonCleansedOriginAddr')
-            self.AllowNonCleansedOriginAddr = value_
+            sval_ = child_.text
+            ival_ = self.gds_parse_boolean(sval_, node, 'AllowNonCleansedOriginAddr')
+            ival_ = self.gds_validate_boolean(ival_, node, 'AllowNonCleansedOriginAddr')
+            self.AllowNonCleansedOriginAddr = ival_
             self.AllowNonCleansedOriginAddr_nsprefix_ = child_.prefix
         elif nodeName_ == 'ToName':
             value_ = child_.text

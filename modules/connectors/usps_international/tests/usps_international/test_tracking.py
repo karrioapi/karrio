@@ -67,7 +67,7 @@ PARSED_TRACKING_RESPONSE = [
 ]
 
 
-TRACKING_REQUEST = """<TrackFieldRequest USERID="username">
+TRACKING_REQUEST = """<TrackFieldRequest USERID="username" PASSWORD="password">
     <Revision>1</Revision>
     <ClientIp>127.0.0.1</ClientIp>
     <SourceId>Karrio</SourceId>

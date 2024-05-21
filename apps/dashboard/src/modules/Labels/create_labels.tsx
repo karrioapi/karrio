@@ -79,7 +79,7 @@ export default function Page(pageProps: any) {
         .map(({ node: order }) => {
           const shipment = (
             order.shipments.find(({ status }) => status === "draft") ||
-            createShipmentFromOrders([order] as OrderType[], defaults, workspace_config.customsOptions)
+            createShipmentFromOrders([order] as OrderType[], defaults, workspace_config)
           );
 
           return shipment as ShipmentType;

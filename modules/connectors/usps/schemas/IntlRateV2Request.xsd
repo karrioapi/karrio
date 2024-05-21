@@ -62,11 +62,12 @@
                                 </xs:complexType>
                             </xs:element>
                         </xs:sequence>
-                        <xs:attribute type="xs:string" name="ID" use="requirede"/>
+                        <xs:attribute type="xs:string" name="ID" use="required"/>
                     </xs:complexType>
                 </xs:element>
             </xs:sequence>
             <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>
