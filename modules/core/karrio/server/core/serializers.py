@@ -305,6 +305,7 @@ class CommodityData(serializers.Serializer):
             "reference3": "# ref 3",
             ...
         }
+        </details>
         """,
     )
 
@@ -407,6 +408,7 @@ class ParcelData(validators.PresetSerializer):
             "insurance": "100.00",
             "insured_by": "carrier",
         }
+        </details>
         """,
     )
 
@@ -542,6 +544,7 @@ class CustomsData(serializers.Serializer):
             "eori_number": "5218487281",
             "vat_registration_number": "5218487281",
         }
+        </details>
         """,
     )
 
@@ -648,6 +651,7 @@ class RateRequest(validators.OptionDefaultSerializer):
                 }
             ],
         }
+        </details>
         """,
     )
     reference = serializers.CharField(
@@ -1230,6 +1234,7 @@ class ShippingData(validators.OptionDefaultSerializer):
                 }
             ],
         }
+        </details>
         """,
     )
     payment = Payment(required=False, default={}, help_text="The payment details")
@@ -1435,6 +1440,7 @@ class ShipmentContent(serializers.Serializer):
                 }
             ],
         }
+        </details>
         """,
     )
     payment = Payment(required=False, default={}, help_text="The payment details")
@@ -1559,6 +1565,7 @@ class ManifestRequestData(serializers.Serializer):
                 }
             ]
         }
+        </details>
         """,
     )
     reference = serializers.CharField(

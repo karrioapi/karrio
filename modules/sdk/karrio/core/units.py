@@ -620,6 +620,15 @@ class Products(typing.Iterable[Product]):
     @property
     def value_amount(self):
         return sum((item.value_amount or 0.0 for item in self._items), 0.0)
+    
+    @property
+    def description(self) -> typing.Optional[str]:
+        descriptions = set([item.description for item in self._items])
+        description: typing.Optional[str] = utils.SF.concat_str(
+            *list(descriptions), join=True
+        )  # type:ignore
+
+        return description
 
 
 class Package:
@@ -750,6 +759,12 @@ class Package:
 
         return Products(_items, self.weight_unit.value)
 
+    @property
+    def total_value(self) -> typing.Optional[float]:
+        if not any(self.parcel.items or []):
+            return None
+
+        return self.items.value_amount
 
 class Packages(typing.Iterable[Package]):
     """The parcel collection common processing helper"""
@@ -933,6 +948,16 @@ class Packages(typing.Iterable[Package]):
         )
 
         return Products(_items, _weight_unit.value)
+
+    @property
+    def total_value(self) -> typing.Optional[float]:
+        if not any([_.total_value for _ in self._items]):
+            return None
+
+        return sum(
+            [pkg.total_value for pkg in self._items if pkg.total_value is not None],
+            0.0
+        )
 
     def validate(self, required: typing.List[str] = None, max_weight: Weight = None):
         required = required or self._required

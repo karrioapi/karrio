@@ -8,7 +8,8 @@ import PyPDF2
 import asyncio
 import logging
 import urllib.parse
-from PIL import Image, ImageFile
+import PIL.Image
+import PIL.ImageFile
 from urllib.error import HTTPError
 from urllib.request import urlopen, Request
 from typing import List, TypeVar, Callable, Optional, Any, cast
@@ -16,7 +17,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 logger = logging.getLogger(__name__)
 ssl._create_default_https_context = ssl._create_unverified_context
-ImageFile.LOAD_TRUNCATED_IMAGES = True
+PIL.ImageFile.LOAD_TRUNCATED_IMAGES = True
 T = TypeVar("T")
 S = TypeVar("S")
 NEW_LINE = """
@@ -46,10 +47,10 @@ def to_buffer(encoded_file: str, **kwargs) -> io.BytesIO:
 
 def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str:
     buffer = to_buffer(image_str)
-    _image = Image.open(buffer)
+    _image = PIL.Image.open(buffer)
 
     image = (
-        _image.rotate(rotate, Image.NEAREST, expand=True)
+        _image.rotate(rotate, PIL.Image.Resampling.NEAREST, expand=True)
         if rotate is not None
         else _image
     )
@@ -58,12 +59,12 @@ def image_to_pdf(image_str: str, rotate: int = None, resize: dict = None) -> str
         img = image.copy()
         wpercent = resize["width"] / float(img.size[0])
         hsize = int((float(img.size[1]) * float(wpercent)))
-        image = img.resize((resize["width"], hsize), Image.Resampling.LANCZOS)
+        image = img.resize((resize["width"], hsize), PIL.Image.Resampling.LANCZOS)
 
     if resize is not None:
         img = image.copy()
         image = img.resize(
-            (resize["width"], resize["height"]), Image.Resampling.LANCZOS
+            (resize["width"], resize["height"]), PIL.Image.Resampling.LANCZOS
         )
 
     new_buffer = io.BytesIO()
@@ -82,17 +83,17 @@ def bundle_pdfs(base64_strings: List[str]) -> PyPDF2.PdfMerger:
     return merger
 
 
-def bundle_imgs(base64_strings: List[str]) -> Image:
+def bundle_imgs(base64_strings: List[str]):
     image_buffers = [
         io.BytesIO(base64.b64decode(b64_str)) for b64_str in base64_strings
     ]
-    images = [Image.open(buffer) for buffer in image_buffers]
+    images = [PIL.Image.open(buffer) for buffer in image_buffers]
     widths, heights = zip(*(i.size for i in images))
 
     max_width = max(widths)
     total_height = sum(heights)
 
-    image = Image.new("RGB", (max_width, total_height))
+    image = PIL.Image.new("RGB", (max_width, total_height))
 
     x_offset = 0
     for im in images:

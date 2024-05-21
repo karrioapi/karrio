@@ -117,7 +117,7 @@ ParsedShipmentResponse = [
 ]
 
 
-ShipmentRequestXML = """<eVSFirstClassMailIntlRequest USERID="username">
+ShipmentRequestXML = """<eVSFirstClassMailIntlRequest USERID="username" PASSWORD="password">
     <Revision>2</Revision>
     <ImageParameters>
         <ImageParameter>6X4LABEL</ImageParameter>

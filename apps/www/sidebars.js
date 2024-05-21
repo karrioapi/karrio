@@ -41,7 +41,7 @@ const sidebars = {
       items: [
         'product/self-hosting',
         'product/self-hosting/oss',
-        'product/self-hosting/enterprise',
+        'product/self-hosting/insiders',
         'product/self-hosting/administration',
         'product/self-hosting/environment',
       ],

@@ -74,6 +74,7 @@ def shipment_request(
 
     request = eVSFirstClassMailIntlRequest(
         USERID=settings.username,
+        PASSWORD=settings.password,
         Option=None,
         Revision=2,
         ImageParameters=ImageParametersType(ImageParameter=label_format),

@@ -1,6 +1,6 @@
 import { Metadata, SessionType } from '@karrio/types';
 import MainLayout from '@/layouts/main-layout';
-import { ServerError, p } from '@karrio/lib';
+import { ServerError, p, url$ } from '@karrio/lib';
 import Link from 'next/link';
 import React from 'react';
 
@@ -18,7 +18,7 @@ export const SectionLayout: React.FC<SectionLayoutProps> = ({ metadata, error, c
 
         <div className="container">
           <div className="has-text-centered my-6 pt-5">
-            <a href={p`/`} className="is-size-4 has-text-primary has-text-weight-bold">
+            <a href={url$`${metadata?.APP_WEBSITE}`} className="is-size-4 has-text-primary has-text-weight-bold">
               {metadata?.APP_NAME}
             </a>
           </div>
@@ -30,10 +30,14 @@ export const SectionLayout: React.FC<SectionLayoutProps> = ({ metadata, error, c
         <div className="hero-footer">
           <div className="content has-text-centered">
             <p>
-              <Link legacyBehavior href="/">
-                <span className="button is-white">&copy; {metadata?.APP_NAME}</span>
-              </Link>
-              <a href="https://docs.karrio.io" className="button is-white">Documentation</a>
+              {metadata?.APP_NAME.includes("Karrio") && <>
+                <a href="https://karrio.io" className="button is-white" target="_blank" rel="noreferrer">
+                  <span>&copy; {metadata?.APP_NAME}</span>
+                </a>
+                <a href="https://docs.karrio.io" className="button is-white" target="_blank" rel="noreferrer">
+                  <span>Documentation</span>
+                </a>
+              </>}
             </p>
           </div>
         </div>

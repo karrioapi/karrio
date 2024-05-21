@@ -112,6 +112,7 @@ def rate_request(
 
     request = RateV4Request(
         USERID=settings.username,
+        PASSWORD=settings.password,
         Revision="2",
         Package=[
             PackageType(

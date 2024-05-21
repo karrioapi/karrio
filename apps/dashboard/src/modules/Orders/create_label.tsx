@@ -133,7 +133,7 @@ export default function CreateShipmentPage(pageProps: any) {
     const setInitialData = () => {
       const orderList = orders.data!.orders!.edges.map(({ node }) => node);
 
-      onChange(createShipmentFromOrders(orderList as OrderType[], templates, workspace_config.customsOptions));
+      onChange(createShipmentFromOrders(orderList as OrderType[], templates, workspace_config));
 
       setReady(true);
     };

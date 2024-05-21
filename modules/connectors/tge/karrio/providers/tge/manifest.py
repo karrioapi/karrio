@@ -76,6 +76,7 @@ def manifest_request(
     for shipment_data in manifest_options.shipments.state or []:
         shipment_payload = lib.to_object(models.ShipmentRequest, shipment_data)
         meta = shipment_data.get("meta", {})
+        ShipmentIDs = meta.get("ShipmentIDs")
         ShipmentID = meta.get("ShipmentID")
         SSCCs = meta.get("SSCCs")
 
@@ -249,15 +250,19 @@ def manifest_request(
                                             Reference=[
                                                 tge.ReferenceType(
                                                     ReferenceType="ShipmentReference1",
-                                                    ReferenceValue=shipment_payload.reference
-                                                    or getattr(
-                                                        shipment_payload, "id", "N/A"
+                                                    ReferenceValue=(
+                                                        shipment_payload.reference
+                                                        or getattr(
+                                                            shipment_payload,
+                                                            "id",
+                                                            "N/A",
+                                                        )
                                                     ),
                                                 ),
                                             ]
                                         )
                                     ),
-                                    ShipmentID=ShipmentID,
+                                    ShipmentID=ShipmentIDs[index],
                                     ShipmentItemCollection=tge.ShipmentItemCollectionType(
                                         ShipmentItem=[
                                             tge.ShipmentItemType(
@@ -275,7 +280,9 @@ def manifest_request(
                                                         or "BAG"
                                                     ),
                                                 ),
-                                                Description=package.description,
+                                                Description=(
+                                                    package.description or "N/A"
+                                                ),
                                                 Dimensions=tge.DimensionsType(
                                                     Height=package.height.map(
                                                         provider_units.MeasurementOptions
@@ -313,11 +320,11 @@ def manifest_request(
                                                     ServiceCode=service,
                                                 ),
                                             )
-                                            for index, package in enumerate(packages)
                                         ],
                                     ),
                                     SpecialInstruction=options.tge_special_instruction.state,
                                 )
+                                for index, package in enumerate(packages)
                             ]
                         ),
                     ),

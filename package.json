@@ -11,7 +11,7 @@
     "eslint": "^8.48.0",
     "prettier": "^3.0.3",
     "tsconfig": "*",
-    "turbo": "^1.12.5"
+    "turbo": "^1.13.0"
   },
   "name": "karrio",
   "packageManager": "npm@9.8.0",

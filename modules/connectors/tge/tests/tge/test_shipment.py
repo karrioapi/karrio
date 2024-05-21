@@ -98,6 +98,7 @@ ParsedShipmentResponse = [
         "label_type": "PDF",
         "meta": {
             "SSCCs": ["00093275103417610023"],
+            "ShipmentIDs": ["8880419999995"],
             "ShipmentID": "8880419999995",
             "shipment_count": 9999995,
             "sscc_count": 341761002,

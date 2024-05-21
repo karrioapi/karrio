@@ -153,6 +153,8 @@ class ShippingOption(lib.Enum):
         "usps_option_return_service_info", bool
     )
     usps_option_ship_info = lib.OptionEnum("usps_option_ship_info", bool)
+    usps_option_allow_non_cleansed_dest_addr = lib.OptionEnum("usps_option_allow_non_cleansed_dest_addr", bool)
+    usps_option_allow_non_cleansed_origin_addr = lib.OptionEnum("usps_option_allow_non_cleansed_origin_addr", bool)
 
     """ Unified Shipment Option type mapping """
     insurance = usps_insurance

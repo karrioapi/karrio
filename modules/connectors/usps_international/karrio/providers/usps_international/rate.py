@@ -113,6 +113,7 @@ def rate_request(
 
     request = IntlRateV2Request(
         USERID=settings.username,
+        PASSWORD=settings.password,
         Revision="2",
         Package=[
             PackageType(

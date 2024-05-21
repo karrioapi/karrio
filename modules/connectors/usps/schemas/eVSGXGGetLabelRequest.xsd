@@ -125,8 +125,8 @@
                 <xs:element type="xs:string" name="OverrideMID"/>
                 <xs:element type="xs:string" name="ChargebackCode"/>
             </xs:sequence>
-            <xs:attribute type="xs:string" name="USERID"/>
-            <xs:attribute type="xs:string" name="PASSWORD"/>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

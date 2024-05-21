@@ -36,6 +36,7 @@ def pickup_update_request(
 
     request = CarrierPickupChangeRequest(
         USERID=settings.username,
+        PASSWORD=settings.password,
         FirstName=payload.address.person_name,
         LastName=None,
         FirmName=payload.address.company_name,

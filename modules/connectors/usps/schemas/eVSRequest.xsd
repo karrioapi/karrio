@@ -31,7 +31,7 @@
                 <xs:element type="xs:string" name="FromZip4" />
                 <xs:element type="xs:string" name="FromPhone" />
                 <xs:element type="xs:string" name="POZipCode" />
-                <xs:element type="xs:string" name="AllowNonCleansedOriginAddr" />
+                <xs:element type="xs:boolean" name="AllowNonCleansedOriginAddr" />
                 <xs:element type="xs:string" name="ToName" minLength="0" maxLength="100" />
                 <xs:element type="xs:string" name="ToFirm" />
                 <xs:element type="xs:string" name="ToAddress1" />
@@ -170,7 +170,8 @@
                 <xs:element type="xs:string" name="ChargebackCode" />
                 <xs:element type="xs:string" name="TrackingRetentionPeriod" />
             </xs:sequence>
-            <xs:attribute type="xs:string" name="USERID" />
+            <xs:attribute type="xs:string" name="USERID" use="required" />
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

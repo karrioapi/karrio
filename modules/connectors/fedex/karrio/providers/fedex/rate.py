@@ -102,8 +102,18 @@ def rate_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    request_types = ["LIST"] + ([] if "currency" not in options else ["PREFERRED"])
+
+    is_intl = shipper.country_code != recipient.country_code
+    request_types = lib.identity(
+        settings.connection_config.rate_request_types.state
+        if any(settings.connection_config.rate_request_types.state or [])
+        else ["LIST", "ACCOUNT", *([] if "currency" not in options else ["PREFERRED"])]
+    )
     shipment_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
+    hub_id = lib.identity(
+        lib.text(options.fedex_smart_post_hub_id.state)
+        or lib.text(settings.connection_config.smart_post_hub_id.state)
+    )
     rate_options = lambda _options: [
         option
         for _, option in _options.items()
@@ -115,8 +125,21 @@ def rate_request(
         if _options.state is not False
         and option.code in provider_units.SHIPMENT_OPTIONS
     ]
-    hub_id = lib.text(options.fedex_smart_post_hub_id.state) or lib.text(
-        settings.connection_config.smart_post_hub_id.state
+    commodities = lib.identity(
+        packages.items
+        if any(packages.items)
+        else units.Products(
+            [
+                models.Commodity(
+                    sku="0000",
+                    quantity=1,
+                    weight=packages.weight.value,
+                    weight_unit=packages.weight_unit,
+                    value_amount=options.declared_value.state or 1.0,
+                    value_currency=options.currency.state or "USD",
+                )
+            ]
+        )
     )
 
     request = fedex.RatingRequestType(
@@ -131,7 +154,7 @@ def rate_request(
                 if any(rate_options(options))
                 else []
             ),
-            rateSortOrder="COMMITASCENDING",
+            rateSortOrder=(options.fedex_rate_sort_order.state or "COMMITASCENDING"),
         ),
         requestedShipment=fedex.RequestedShipmentType(
             shipper=fedex.ShipperClassType(
@@ -207,7 +230,7 @@ def rate_request(
                 packages.package_type or "your_packaging"
             ).value,
             totalWeight=packages.weight.LB,
-            shipmentSpecialServices=(
+            shipmentSpecialServices=lib.identity(
                 fedex.ShipmentSpecialServicesType(
                     returnShipmentDetail=None,
                     deliveryOnInvoiceAcceptanceDetail=None,
@@ -227,10 +250,69 @@ def rate_request(
                 if any(shipment_options(packages.options))
                 else None
             ),
-            customsClearanceDetail=None,
+            customsClearanceDetail=lib.identity(
+                fedex.CustomsClearanceDetailType(
+                    brokers=[],
+                    commercialInvoice=None,
+                    freightOnValue=None,
+                    dutiesPayment=fedex.DutiesPaymentType(
+                        payor=fedex.PayorType(
+                            responsibleParty=fedex.ResponsiblePartyType(
+                                address=None,
+                                contact=None,
+                                accountNumber=fedex.RatingRequestAccountNumberType(
+                                    value=settings.account_number,
+                                ),
+                            ),
+                        ),
+                        paymentType=provider_units.PaymentType.map("sender").value,
+                    ),
+                    commodities=[
+                        fedex.CommodityType(
+                            description=lib.text(
+                                item.description or item.title or "N/A", max=35
+                            ),
+                            weight=fedex.WeightType(
+                                units=packages.weight_unit,
+                                value=item.weight,
+                            ),
+                            unitPrice=lib.identity(
+                                fedex.FixedValueType(
+                                    amount=lib.to_money(item.value_amount),
+                                    currency=(
+                                        item.value_currency
+                                        or packages.options.currency.state
+                                    ),
+                                )
+                                if item.value_amount
+                                else None
+                            ),
+                            customsValue=fedex.FixedValueType(
+                                amount=lib.identity(
+                                    lib.to_money(item.value_amount or 1.0 * item.quantity)
+                                ),
+                                currency=lib.identity(
+                                    item.value_currency
+                                    or packages.options.currency.state
+                                    or "USD"
+                                ),
+                            ),
+                            quantity=item.quantity,
+                            numberOfPieces=item.quantity,
+                            quantityUnits="PCS",
+                            harmonizedCode=item.hs_code,
+                            name=item.title,
+                            partNumber=item.sku,
+                        )
+                        for item in commodities
+                    ],
+                )
+                if is_intl
+                else None
+            ),
             groupShipment=None,
             serviceTypeDetail=None,
-            smartPostInfoDetail=(
+            smartPostInfoDetail=lib.identity(
                 fedex.SmartPostInfoDetailType(
                     ancillaryEndorsement=None,
                     hubId=hub_id,
@@ -246,7 +328,7 @@ def rate_request(
             expressFreightDetail=None,
             groundShipment=None,
         ),
-        carrierCodes=None,
+        carrierCodes=options.fedex_carrier_codes.state,
     )
 
     return lib.Serializable(

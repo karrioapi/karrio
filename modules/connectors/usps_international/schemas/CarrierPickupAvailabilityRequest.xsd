@@ -12,7 +12,8 @@
                 <xs:element type="xs:string" name="ZIP4" />
                 <xs:element type="xs:string" name="Date" maxOccurs="1"/>
             </xs:sequence>
-            <xs:attribute type="xs:string" name="USERID" />
+            <xs:attribute type="xs:string" name="USERID" use="required" />
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
         </xs:complexType>
     </xs:element>
 </xs:schema>

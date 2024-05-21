@@ -107,6 +107,7 @@ class OrderUpdateData(serializers.Serializer):
             "single_item_per_parcel": true,
             "carrier_ids": ["canadapost-test"],
         }
+        </details>
         """,
     )
     metadata = serializers.PlainDictField(

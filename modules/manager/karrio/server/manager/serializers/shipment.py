@@ -314,6 +314,7 @@ class ShipmentUpdateData(Serializer):
             "email_notification_to": "shipper@mail.com",
             "signature_confirmation": true,
         }
+        </details>
         """,
     )
     reference = CharField(

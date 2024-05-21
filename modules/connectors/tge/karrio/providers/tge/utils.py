@@ -77,15 +77,17 @@ class Settings(core.Settings):
                 for _, __ in enumerate(range(package_count), start=1)
             ]
 
-        ShipmentID = (
-            options.tge_shipment_id.state
-            if "tge_shipment_id" in options
-            else f"{ship_gs1}{str(shipment_count + 1).zfill(7)}"
-        )
+        if "tge_shipment_ids" in options:
+            ShipmentIDs = options.tge_shipment_ids.state
+        else:
+            ShipmentIDs = [
+                f"{ship_gs1}{str(shipment_count + _).zfill(7)}"
+                for _, __ in enumerate(range(package_count), start=1)
+            ]
 
         # save in cache
         _sscc_count = sscc_count + package_count
-        _shipment_count = shipment_count + 1
+        _shipment_count = shipment_count + package_count
 
         self.cache.set(
             cache_key,
@@ -93,7 +95,7 @@ class Settings(core.Settings):
         )
 
         return (
-            ShipmentID,
+            ShipmentIDs,
             SSCCs,
             _shipment_count,
             _sscc_count,

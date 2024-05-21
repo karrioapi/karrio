@@ -98,7 +98,7 @@ export const ShipmentsFilter: React.FC<ShipmentsFilterComponent> = ({ context })
       </button>
 
       {/* Dropdown content  */}
-      <article className="menu-inner panel is-white p-0 has-background-white" style={{ width: '300px', maxHeight: '80vh', overflowY: 'auto', overflowX: 'hidden' }}>
+      <article className="menu-inner panel is-white p-0 has-background-white has-text-left" style={{ width: '300px', maxHeight: '80vh', overflowY: 'auto', overflowX: 'hidden' }}>
         <div className="py-5"></div>
         <p className="panel-heading is-flex is-justify-content-space-between p-2 has-background-light"
           style={{ position: "absolute", top: 0, left: 0, right: 0, zIndex: 2 }}>
