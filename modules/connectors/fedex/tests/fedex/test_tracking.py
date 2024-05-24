@@ -45,6 +45,17 @@ class TestFedExTracking(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
+    def test_parse_duplicate_tracking_response(self):
+        with patch("karrio.mappers.fedex.proxy.lib.request") as mock:
+            mock.return_value = DuplicateTrackingResponse
+            parsed_response = (
+                karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(
+                lib.to_dict(parsed_response), ParsedDuplicateTrackingResponse
+            )
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -110,6 +121,84 @@ ParsedErrorResponse = [
             "message": "Please provide tracking number.",
         }
     ],
+]
+
+ParsedDuplicateTrackingResponse = [
+    [
+        {
+            "carrier_id": "fedex",
+            "carrier_name": "fedex",
+            "delivered": True,
+            "events": [
+                {
+                    "code": "DL",
+                    "date": "2024-04-26",
+                    "description": "Delivered",
+                    "time": "09:26",
+                },
+                {
+                    "code": "OD",
+                    "date": "2024-04-26",
+                    "description": "On FedEx vehicle for delivery",
+                    "location": "CLOVIS, CA, 93612, US",
+                    "time": "08:52",
+                },
+                {
+                    "code": "AO",
+                    "date": "2024-04-25",
+                    "description": "Shipment arriving On-Time",
+                    "location": "CLOVIS, CA, 93612, US",
+                    "time": "14:29",
+                },
+                {
+                    "code": "PU",
+                    "date": "2024-04-25",
+                    "description": "Picked up",
+                    "location": "CLOVIS, CA, 93612, US",
+                    "time": "14:25",
+                },
+                {
+                    "code": "AF",
+                    "date": "2024-04-25",
+                    "description": "Tendered at FedEx Facility",
+                    "location": "CLOVIS, CA, 93612, US",
+                    "time": "13:26",
+                },
+                {
+                    "code": "DE",
+                    "date": "2024-04-25",
+                    "description": "FedEx redirected your package to a nearby FedEx "
+                    "location",
+                    "location": "CLOVIS, CA, 93612, US",
+                    "time": "11:28",
+                },
+                {
+                    "code": "DE",
+                    "date": "2024-04-25",
+                    "description": "Customer not available or business closed",
+                    "location": "CLOVIS, CA, 93612, US",
+                    "time": "11:26",
+                },
+                {
+                    "code": "OD",
+                    "date": "2024-04-25",
+                    "description": "On FedEx vehicle for delivery",
+                    "location": "CLOVIS, CA, 93612, US",
+                    "time": "08:55",
+                },
+            ],
+            "info": {
+                "carrier_tracking_link": "https://www.fedex.com/fedextrack/?trknbr=776094337676",
+                "package_weight": 1.0,
+                "package_weight_unit": "LB",
+                "shipment_origin_country": "US",
+                "shipment_service": "FedEx Priority Overnight",
+            },
+            "status": "delivered",
+            "tracking_number": "776094337676",
+        }
+    ],
+    [],
 ]
 
 
@@ -592,5 +681,791 @@ ErrorResponse = """{
       "message": "Please provide tracking number."
     }
   ]
+}
+"""
+
+DuplicateTrackingResponse = """{
+  "transactionId": "9ca3d632-0af5-436e-b184-4a99f88598d4",
+  "customerTransactionId": "624deea6-b709-470c-8c39-4b5511281492",
+  "output": {
+    "completeTrackResults": [
+      {
+        "trackingNumber": "776094337676",
+        "trackResults": [
+          {
+            "trackingNumberInfo": {
+              "trackingNumber": "776094337676",
+              "trackingNumberUniqueId": "2460425000~776094337676~FX",
+              "carrierCode": "FDXE"
+            },
+            "additionalTrackingInfo": {
+              "nickname": "",
+              "hasAssociatedShipments": false
+            },
+            "shipperInformation": {
+              "contact": {},
+              "address": {
+                "city": "Orange",
+                "stateOrProvinceCode": "CA",
+                "countryCode": "US",
+                "residential": false,
+                "countryName": "United States"
+              }
+            },
+            "recipientInformation": {
+              "contact": {},
+              "address": {
+                "city": "FRESNO",
+                "stateOrProvinceCode": "CA",
+                "countryCode": "US",
+                "residential": false,
+                "countryName": "United States"
+              }
+            },
+            "latestStatusDetail": {
+              "code": "FD",
+              "derivedCode": "RL",
+              "statusByLocale": "Running Late",
+              "description": "At FedEx destination facility",
+              "scanLocation": {
+                "city": "CLOVIS",
+                "stateOrProvinceCode": "CA",
+                "countryCode": "US",
+                "residential": false,
+                "countryName": "United States"
+              },
+              "delayDetail": {
+                "status": "DELAYED"
+              }
+            },
+            "dateAndTimes": [
+              {
+                "type": "ACTUAL_PICKUP",
+                "dateTime": "2024-04-24T16:05:00-07:00"
+              },
+              {
+                "type": "SHIP",
+                "dateTime": "2024-04-24T00:00:00-06:00"
+              },
+              {
+                "type": "ACTUAL_TENDER",
+                "dateTime": "2024-04-24T16:05:00-07:00"
+              }
+            ],
+            "availableImages": [],
+            "specialHandlings": [
+              {
+                "type": "HOLD_AT_LOCATION",
+                "description": "Hold at Location",
+                "paymentType": "OTHER"
+              },
+              {
+                "type": "RESIDENTIAL_DELIVERY",
+                "description": "Residential Delivery",
+                "paymentType": "OTHER"
+              },
+              {
+                "type": "ADULT_SIGNATURE_REQUIRED",
+                "description": "Adult Signature Required",
+                "paymentType": "OTHER"
+              }
+            ],
+            "packageDetails": {
+              "packagingDescription": {
+                "type": "YOUR_PACKAGING",
+                "description": "Your Packaging"
+              },
+              "sequenceNumber": "1",
+              "count": "1",
+              "weightAndDimensions": {
+                "weight": [
+                  {
+                    "value": "1.0",
+                    "unit": "LB"
+                  },
+                  {
+                    "value": "0.45",
+                    "unit": "KG"
+                  }
+                ],
+                "dimensions": [
+                  {
+                    "length": 7,
+                    "width": 6,
+                    "height": 6,
+                    "units": "IN"
+                  },
+                  {
+                    "length": 17,
+                    "width": 15,
+                    "height": 15,
+                    "units": "CM"
+                  }
+                ]
+              },
+              "packageContent": []
+            },
+            "shipmentDetails": {
+              "possessionStatus": true,
+              "weight": [
+                {
+                  "value": "1.0",
+                  "unit": "LB"
+                },
+                {
+                  "value": "0.45",
+                  "unit": "KG"
+                }
+              ]
+            },
+            "scanEvents": [
+              {
+                "date": "2024-04-26T07:50:00-07:00",
+                "eventType": "AR",
+                "eventDescription": "At local FedEx facility",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "DESTINATION_FEDEX_FACILITY",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-25T13:26:00-07:00",
+                "eventType": "HP",
+                "eventDescription": "Ready for recipient pickup",
+                "exceptionCode": "",
+                "exceptionDescription": "Package available for pickup at: 2420 N BLACKSTONE AVE ",
+                "scanLocation": {
+                  "streetLines": ["2420 N BLACKSTONE AVE "],
+                  "city": "FRESNO",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93703",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "BWY81",
+                "locationType": "DESTINATION_FEDEX_FACILITY",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-25T11:29:00-07:00",
+                "eventType": "DY",
+                "eventDescription": "Delay",
+                "exceptionCode": "A52",
+                "exceptionDescription": "Package delayed",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "DESTINATION_FEDEX_FACILITY",
+                "derivedStatusCode": "DY",
+                "derivedStatus": "Delay",
+                "delayDetail": {
+                  "type": "GENERAL"
+                }
+              },
+              {
+                "date": "2024-04-25T08:12:00-07:00",
+                "eventType": "AR",
+                "eventDescription": "At local FedEx facility",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "DESTINATION_FEDEX_FACILITY",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-25T02:15:00-07:00",
+                "eventType": "DP",
+                "eventDescription": "Departed FedEx hub",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "OAKLAND",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "94621",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "OAKH",
+                "locationType": "FEDEX_FACILITY",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-24T22:39:00-07:00",
+                "eventType": "AR",
+                "eventDescription": "Arrived at FedEx hub",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "OAKLAND",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "94621",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "OAKH",
+                "locationType": "FEDEX_FACILITY",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-24T18:56:00-07:00",
+                "eventType": "DP",
+                "eventDescription": "Left FedEx origin facility",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "COSTA MESA",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "92626",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "APVA",
+                "locationType": "ORIGIN_FEDEX_FACILITY",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-24T16:43:00-07:00",
+                "eventType": "AO",
+                "eventDescription": "Shipment arriving On-Time",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "COSTA MESA",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "92626",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "APVA",
+                "locationType": "PICKUP_LOCATION",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-24T16:05:00-07:00",
+                "eventType": "PU",
+                "eventDescription": "Picked up",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "COSTA MESA",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "92626",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "APVA",
+                "locationType": "PICKUP_LOCATION",
+                "derivedStatusCode": "PU",
+                "derivedStatus": "Picked up"
+              },
+              {
+                "date": "2024-04-24T15:30:57-05:00",
+                "eventType": "OC",
+                "eventDescription": "Shipment information sent to FedEx",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "residential": false
+                },
+                "locationType": "CUSTOMER",
+                "derivedStatusCode": "IN",
+                "derivedStatus": "Label created"
+              }
+            ],
+            "availableNotifications": [
+              "ON_DELIVERY",
+              "ON_EXCEPTION",
+              "ON_ESTIMATED_DELIVERY"
+            ],
+            "deliveryDetails": {
+              "deliveryAttempts": "0",
+              "deliveryOptionEligibilityDetails": [
+                {
+                  "option": "INDIRECT_SIGNATURE_RELEASE",
+                  "eligibility": "POSSIBLY_ELIGIBLE"
+                },
+                {
+                  "option": "REDIRECT_TO_HOLD_AT_LOCATION",
+                  "eligibility": "POSSIBLY_ELIGIBLE"
+                },
+                {
+                  "option": "REROUTE",
+                  "eligibility": "POSSIBLY_ELIGIBLE"
+                },
+                {
+                  "option": "RESCHEDULE",
+                  "eligibility": "POSSIBLY_ELIGIBLE"
+                },
+                {
+                  "option": "RETURN_TO_SHIPPER",
+                  "eligibility": "POSSIBLY_ELIGIBLE"
+                },
+                {
+                  "option": "DISPUTE_DELIVERY",
+                  "eligibility": "POSSIBLY_ELIGIBLE"
+                },
+                {
+                  "option": "SUPPLEMENT_ADDRESS",
+                  "eligibility": "POSSIBLY_ELIGIBLE"
+                }
+              ],
+              "destinationServiceArea": "HELDPACKAGENOTAVAILABLEFORRECIPIENTPICKUP"
+            },
+            "originLocation": {
+              "locationContactAndAddress": {
+                "address": {
+                  "city": "COSTA MESA",
+                  "stateOrProvinceCode": "CA",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                }
+              },
+              "locationId": "APVA"
+            },
+            "destinationLocation": {
+              "locationContactAndAddress": {
+                "address": {
+                  "city": "FRESNO",
+                  "stateOrProvinceCode": "CA",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                }
+              },
+              "locationType": ""
+            },
+            "lastUpdatedDestinationAddress": {
+              "city": "FRESNO",
+              "stateOrProvinceCode": "CA",
+              "countryCode": "US",
+              "residential": false,
+              "countryName": "United States"
+            },
+            "serviceCommitMessage": {
+              "message": "Package is not yet available for pickup.",
+              "type": "HELD_PACKAGE_NOT_AVAILABLE_FOR_RECIPIENT_PICKUP"
+            },
+            "serviceDetail": {
+              "type": "PRIORITY_OVERNIGHT",
+              "description": "FedEx Priority Overnight",
+              "shortDescription": "P-1"
+            },
+            "standardTransitTimeWindow": {
+              "window": {
+                "ends": "2024-04-25T10:30:00-07:00"
+              }
+            },
+            "estimatedDeliveryTimeWindow": {
+              "window": {}
+            },
+            "goodsClassificationCode": "",
+            "returnDetail": {}
+          },
+          {
+            "trackingNumberInfo": {
+              "trackingNumber": "776094337676",
+              "trackingNumberUniqueId": "2460426000~776094337676~FX",
+              "carrierCode": "FDXE"
+            },
+            "additionalTrackingInfo": {
+              "nickname": "",
+              "packageIdentifiers": [
+                {
+                  "type": "TRACKING_NUMBER_OR_DOORTAG",
+                  "values": ["DT106798246430"],
+                  "trackingNumberUniqueId": "",
+                  "carrierCode": ""
+                }
+              ],
+              "hasAssociatedShipments": false
+            },
+            "shipperInformation": {
+              "address": {
+                "residential": false
+              }
+            },
+            "recipientInformation": {
+              "address": {
+                "residential": false
+              }
+            },
+            "latestStatusDetail": {
+              "code": "DL",
+              "derivedCode": "DL",
+              "statusByLocale": "Delivered",
+              "description": "Delivered",
+              "scanLocation": {
+                "residential": false
+              }
+            },
+            "dateAndTimes": [
+              {
+                "type": "ACTUAL_DELIVERY",
+                "dateTime": "2024-04-26T09:26:00-07:00"
+              },
+              {
+                "type": "ACTUAL_PICKUP",
+                "dateTime": "2024-04-25T08:55:00-07:00"
+              },
+              {
+                "type": "SHIP",
+                "dateTime": "2024-04-25T00:00:00-06:00"
+              },
+              {
+                "type": "ACTUAL_TENDER",
+                "dateTime": "2024-04-25T08:55:00-07:00"
+              }
+            ],
+            "availableImages": [
+              {
+                "type": "SIGNATURE_PROOF_OF_DELIVERY"
+              }
+            ],
+            "specialHandlings": [
+              {
+                "type": "DELIVER_WEEKDAY",
+                "description": "Deliver Weekday",
+                "paymentType": "OTHER"
+              },
+              {
+                "type": "RESIDENTIAL_DELIVERY",
+                "description": "Residential Delivery",
+                "paymentType": "OTHER"
+              },
+              {
+                "type": "ADULT_SIGNATURE_REQUIRED",
+                "description": "Adult Signature Required",
+                "paymentType": "OTHER"
+              }
+            ],
+            "packageDetails": {
+              "packagingDescription": {
+                "type": "YOUR_PACKAGING",
+                "description": "Your Packaging"
+              },
+              "count": "1",
+              "weightAndDimensions": {
+                "weight": [
+                  {
+                    "value": "1.0",
+                    "unit": "LB"
+                  },
+                  {
+                    "value": "0.45",
+                    "unit": "KG"
+                  }
+                ]
+              },
+              "packageContent": []
+            },
+            "shipmentDetails": {
+              "possessionStatus": true,
+              "weight": [
+                {
+                  "value": "1.0",
+                  "unit": "LB"
+                },
+                {
+                  "value": "0.45",
+                  "unit": "KG"
+                }
+              ]
+            },
+            "scanEvents": [
+              {
+                "date": "2024-04-26T09:26:00-07:00",
+                "eventType": "DL",
+                "eventDescription": "Delivered",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "residential": false
+                },
+                "locationId": "FATA",
+                "locationType": "DELIVERY_LOCATION",
+                "derivedStatusCode": "DL",
+                "derivedStatus": "Delivered"
+              },
+              {
+                "date": "2024-04-26T08:52:00-07:00",
+                "eventType": "OD",
+                "eventDescription": "On FedEx vehicle for delivery",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "VEHICLE",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-25T14:29:00-07:00",
+                "eventType": "AO",
+                "eventDescription": "Shipment arriving On-Time",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "PICKUP_LOCATION",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-25T14:25:00-07:00",
+                "eventType": "PU",
+                "eventDescription": "Picked up",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "PICKUP_LOCATION",
+                "derivedStatusCode": "PU",
+                "derivedStatus": "Picked up"
+              },
+              {
+                "date": "2024-04-25T13:26:00-07:00",
+                "eventType": "AF",
+                "eventDescription": "At local FedEx facility",
+                "exceptionCode": "A3",
+                "exceptionDescription": "Tendered at FedEx Facility",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "FEDEX_FACILITY",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              },
+              {
+                "date": "2024-04-25T11:28:00-07:00",
+                "eventType": "DE",
+                "eventDescription": "Delivery exception",
+                "exceptionCode": "A47",
+                "exceptionDescription": "FedEx redirected your package to a nearby FedEx location",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "DESTINATION_FEDEX_FACILITY",
+                "derivedStatusCode": "DE",
+                "derivedStatus": "Delivery exception"
+              },
+              {
+                "date": "2024-04-25T11:26:00-07:00",
+                "eventType": "DE",
+                "eventDescription": "Delivery exception",
+                "exceptionCode": "08",
+                "exceptionDescription": "Customer not available or business closed",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "DELIVERY_LOCATION",
+                "derivedStatusCode": "DE",
+                "derivedStatus": "Delivery exception"
+              },
+              {
+                "date": "2024-04-25T08:55:00-07:00",
+                "eventType": "OD",
+                "eventDescription": "On FedEx vehicle for delivery",
+                "exceptionCode": "",
+                "exceptionDescription": "",
+                "scanLocation": {
+                  "streetLines": [""],
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "postalCode": "93612",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                },
+                "locationId": "FATA",
+                "locationType": "VEHICLE",
+                "derivedStatusCode": "IT",
+                "derivedStatus": "In transit"
+              }
+            ],
+            "availableNotifications": ["ON_DELIVERY"],
+            "deliveryDetails": {
+              "actualDeliveryAddress": {
+                "residential": false
+              },
+              "locationType": "RESIDENCE",
+              "locationDescription": "Residence",
+              "deliveryAttempts": "0",
+              "receivedByName": "D.HERRERA",
+              "deliveryOptionEligibilityDetails": [
+                {
+                  "option": "INDIRECT_SIGNATURE_RELEASE",
+                  "eligibility": "INELIGIBLE"
+                },
+                {
+                  "option": "REDIRECT_TO_HOLD_AT_LOCATION",
+                  "eligibility": "INELIGIBLE"
+                },
+                {
+                  "option": "REROUTE",
+                  "eligibility": "INELIGIBLE"
+                },
+                {
+                  "option": "RESCHEDULE",
+                  "eligibility": "INELIGIBLE"
+                },
+                {
+                  "option": "RETURN_TO_SHIPPER",
+                  "eligibility": "INELIGIBLE"
+                },
+                {
+                  "option": "DISPUTE_DELIVERY",
+                  "eligibility": "INELIGIBLE"
+                },
+                {
+                  "option": "SUPPLEMENT_ADDRESS",
+                  "eligibility": "INELIGIBLE"
+                }
+              ]
+            },
+            "originLocation": {
+              "locationContactAndAddress": {
+                "address": {
+                  "city": "CLOVIS",
+                  "stateOrProvinceCode": "CA",
+                  "countryCode": "US",
+                  "residential": false,
+                  "countryName": "United States"
+                }
+              },
+              "locationId": "FATA"
+            },
+            "destinationLocation": {
+              "locationContactAndAddress": {
+                "address": {
+                  "residential": false
+                }
+              },
+              "locationType": ""
+            },
+            "lastUpdatedDestinationAddress": {
+              "city": "FRESNO",
+              "stateOrProvinceCode": "CA",
+              "countryCode": "US",
+              "residential": false,
+              "countryName": "United States"
+            },
+            "serviceDetail": {
+              "type": "PRIORITY_OVERNIGHT",
+              "description": "FedEx Priority Overnight",
+              "shortDescription": "P-1"
+            },
+            "standardTransitTimeWindow": {
+              "window": {
+                "ends": "2024-04-26T00:00:00-06:00"
+              }
+            },
+            "estimatedDeliveryTimeWindow": {
+              "window": {}
+            },
+            "customDeliveryOptions": [
+              {
+                "type": "EVENING",
+                "status": "REQUESTED"
+              }
+            ],
+            "goodsClassificationCode": "",
+            "returnDetail": {}
+          }
+        ]
+      }
+    ]
+  }
 }
 """
