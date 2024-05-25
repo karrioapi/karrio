@@ -792,9 +792,247 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/documents:
+  /v1/documents/generate:
+    post:
+      operationId: '&&&&$$generate'
+      description: |-
+        Generate any document.
+        This API is designed to be used to generate GS1 labels,
+        invoices and any document that requires external data.
+      summary: Generate a document
+      tags:
+      - Documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentData'
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedDocument'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/documents/templates:
     get:
-      operationId: $$$$$&list
+      operationId: '&&&&$$list'
+      description: Retrieve all templates.
+      summary: List all templates
+      tags:
+      - Documents
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplateList'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    post:
+      operationId: '&&&&$$create'
+      description: Create a new template.
+      summary: Create a template
+      tags:
+      - Documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentTemplateData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/documents/templates/{id}:
+    get:
+      operationId: '&&&&$$retrieve'
+      description: Retrieve a template.
+      summary: Retrieve a template
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Documents
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    patch:
+      operationId: '&&&&$$update'
+      description: update a template.
+      summary: Update a template
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDocumentTemplateData'
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+    delete:
+      operationId: '&&&&$$discard'
+      description: Delete a template.
+      summary: Delete a template
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Documents
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/documents/uploads:
+    get:
+      operationId: $$$$$&uploads
       description: Retrieve all shipping document upload records.
       summary: List all upload records
       parameters:
@@ -880,9 +1118,9 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/documents/{id}:
+  /v1/documents/uploads/{id}:
     get:
-      operationId: $$$$$&retrieve
+      operationId: $$$$$&retrieve_upload
       description: Retrieve a shipping document upload record.
       summary: Retrieve an upload record
       parameters:
@@ -5442,6 +5680,26 @@ components:
             \     </details>\n        "
       required:
       - commodities
+    DocumentData:
+      type: object
+      properties:
+        template_id:
+          type: string
+          description: The template name. **Required if template is not provided.**
+        template:
+          type: string
+          description: The template content. **Required if template_id is not provided.**
+        doc_format:
+          type: string
+          description: The format of the document
+        doc_name:
+          type: string
+          description: The file name
+        data:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The template data
     DocumentDetails:
       type: object
       properties:
@@ -5476,6 +5734,111 @@ components:
       required:
       - doc_file
       - doc_name
+    DocumentTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier
+        name:
+          type: string
+          description: The template name
+          maxLength: 255
+        slug:
+          type: string
+          description: The template slug
+          maxLength: 255
+        template:
+          type: string
+          description: The template content
+        active:
+          type: boolean
+          default: true
+          description: disable template flag.
+        description:
+          type: string
+          description: The template description
+          maxLength: 255
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: The template metadata
+        related_object:
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
+          default: other
+          description: The template related object
+        object_type:
+          type: string
+          default: document-template
+          description: Specifies the object type
+      required:
+      - name
+      - slug
+      - template
+    DocumentTemplateData:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The template name
+          maxLength: 255
+        slug:
+          type: string
+          description: The template slug
+          maxLength: 255
+        template:
+          type: string
+          description: The template content
+        active:
+          type: boolean
+          default: true
+          description: disable template flag.
+        description:
+          type: string
+          description: The template description
+          maxLength: 255
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: The template metadata
+        related_object:
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
+          default: other
+          description: The template related object
+      required:
+      - name
+      - slug
+      - template
+    DocumentTemplateList:
+      type: object
+      properties:
+        count:
+          type: integer
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentTemplate'
+      required:
+      - results
     DocumentUploadData:
       type: object
       properties:
@@ -5752,6 +6115,23 @@ components:
           items:
             $ref: '#/components/schemas/APIError'
           description: The list of API errors
+    GeneratedDocument:
+      type: object
+      properties:
+        template_id:
+          type: string
+          description: The template name
+        doc_format:
+          type: string
+          description: The format of the document
+        doc_name:
+          type: string
+          description: The file name
+        doc_file:
+          type: string
+          description: A base64 file content
+      required:
+      - doc_file
     Images:
       type: object
       properties:
@@ -7219,6 +7599,41 @@ components:
           nullable: true
           default: false
           description: Indicate if the address should be validated
+    PatchedDocumentTemplateData:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The template name
+          maxLength: 255
+        slug:
+          type: string
+          description: The template slug
+          maxLength: 255
+        template:
+          type: string
+          description: The template content
+        active:
+          type: boolean
+          default: true
+          description: disable template flag.
+        description:
+          type: string
+          description: The template description
+          maxLength: 255
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: The template metadata
+        related_object:
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
+          default: other
+          description: The template related object
     PatchedParcelData:
       type: object
       properties:
@@ -7957,14 +8372,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -8051,14 +8467,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8246,14 +8663,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8352,14 +8770,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8574,14 +8993,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8685,14 +9105,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'

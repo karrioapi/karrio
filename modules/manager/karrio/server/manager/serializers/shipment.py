@@ -710,9 +710,11 @@ def generate_custom_invoice(template: str, shipment: models.Shipment, **kwargs):
         return
 
     # generate invoice document
-    import karrio.server.documents.generator as documents
+    import karrio.server.documents.generator as generator
 
-    document = documents.generate_document(template, shipment, **kwargs)
+    document = generator.Documents.generate_shipment_document(
+        template, shipment, **kwargs
+    )
 
     if getattr(shipment, "tracking_number", None) is not None:
         shipment.invoice = document["doc_file"]

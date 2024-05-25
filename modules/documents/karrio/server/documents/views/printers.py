@@ -17,7 +17,7 @@ import karrio.server.documents.generator as generator
 logger = logging.getLogger(__name__)
 
 
-class DocumentGenerator(VirtualDownloadView):
+class TemplateDocsPrinter(VirtualDownloadView):
     def get(
         self,
         request,
@@ -30,13 +30,13 @@ class DocumentGenerator(VirtualDownloadView):
             template = models.DocumentTemplate.objects.get(pk=pk, slug=slug)
             query_params = request.GET.dict()
 
-            self.document = generator.Documents.generate(
+            self.document = generator.Documents.generate_template(
                 template, query_params, context=request
             )
             self.name = f"{slug}.pdf"
             self.attachment = "download" in query_params
 
-            response = super(DocumentGenerator, self).get(request, pk, slug, **kwargs)
+            response = super(TemplateDocsPrinter, self).get(request, pk, slug, **kwargs)
             response["X-Frame-Options"] = "ALLOWALL"
             return response
         except Exception as e:
@@ -212,8 +212,8 @@ class ManifestDocsPrinter(VirtualDownloadView):
 urlpatterns = [
     re_path(
         r"^documents/templates/(?P<pk>\w+).(?P<slug>\w+)",
-        DocumentGenerator.as_view(),
-        name="documents-generator",
+        TemplateDocsPrinter.as_view(),
+        name="templates-documents-print",
     ),
     re_path(
         r"^documents/shipments/(?P<doc>[a-z0-9]+).(?P<format>[a-zA-Z0-9]+)",

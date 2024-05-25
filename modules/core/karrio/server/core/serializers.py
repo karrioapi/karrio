@@ -636,6 +636,7 @@ class RateRequest(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -1219,6 +1220,7 @@ class ShippingData(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -1425,6 +1427,7 @@ class ShipmentContent(serializers.Serializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
