@@ -28,9 +28,10 @@ class Manager(models.Manager):
         return (
             super()
             .get_queryset()
-            .prefetch_related(
-                "configs",
+            .select_related(
+                "created_by",
                 *[Model.__name__.lower() for Model in MODELS.values()],
+                *(("link",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )
 
@@ -42,7 +43,18 @@ class CarrierManager(Manager):
 
 class SystemCarrierManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().filter(is_system=True)
+        return (
+            super()
+            .get_queryset()
+            .prefetch_related(
+                "configs",
+            )
+            .select_related(
+                "created_by",
+                *(("link",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
+            )
+            .filter(is_system=True)
+        )
 
 
 class Carrier(core.OwnedEntity):

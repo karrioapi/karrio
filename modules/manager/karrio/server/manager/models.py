@@ -11,6 +11,108 @@ import karrio.server.providers.models as providers
 import karrio.server.core.serializers as serializers
 
 
+# -----------------------------------------------------------
+# Model Managers
+# -----------------------------------------------------------
+# region
+
+
+class AddressManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().defer("validation")
+
+
+class ParcelManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related("items")
+
+
+class CommodityManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super().get_queryset().select_related("parent").prefetch_related("children")
+        )
+
+
+class CustomsManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("duty_billing_address")
+            .prefetch_related("commodities")
+        )
+
+
+class PickupManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related("pickup_carrier")
+            .prefetch_related("shipments")
+        )
+
+
+class ShipmentManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .select_related(
+                "created_by",
+                "recipient",
+                "shipper",
+                "customs",
+                "manifest",
+                "billing_address",
+                "shipment_tracker",
+                "selected_rate_carrier",
+                "shipment_upload_record",
+            )
+            .prefetch_related(
+                "parcels",
+                "carriers",
+            )
+        )
+
+
+class TrackingManager(models.Manager):
+    def get_queryset(self):
+        return (
+            super()
+            .get_queryset()
+            .defer("shipment")
+            .prefetch_related(
+                "tracking_carrier",
+            )
+            .select_related(
+                "created_by",
+            )
+        )
+
+
+class DocumentUploadRecordManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related("upload_carrier")
+
+
+class ManifestManager(models.Manager):
+    def get_queryset(self):
+        # Load manifest details and associated carrier data efficiently
+        return (
+            super().get_queryset().select_related("manifest_carrier").defer("manifest")
+        )
+
+
+# endregion
+
+# -----------------------------------------------------------
+# Shipping Management Models
+# -----------------------------------------------------------
+# region
+
+
 @core.register_model
 class Address(core.OwnedEntity):
     HIDDEN_PROPS = (
@@ -24,6 +126,7 @@ class Address(core.OwnedEntity):
             else tuple()
         ),
     )
+    objects = AddressManager()
 
     class Meta:
         db_table = "address"
@@ -99,16 +202,16 @@ class Address(core.OwnedEntity):
         return None
 
 
-class ParcelManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related(
-                "items",
-            )
-            .order_by("-created_by")
-        )
+# class ParcelManager(models.Manager):
+#     def get_queryset(self):
+#         return (
+#             super()
+#             .get_queryset()
+#             .prefetch_related(
+#                 "items",
+#             )
+#             .order_by("-created_by")
+#         )
 
 
 @core.register_model
@@ -171,15 +274,18 @@ class Parcel(core.OwnedEntity):
         return self.parcel_shipment.first()
 
 
-class CommodityManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related(
-                "children",
-            )
-        )
+# class CommodityManager(models.Manager):
+#     def get_queryset(self):
+#         return (
+#             super()
+#             .get_queryset()
+#             .prefetch_related(
+#                 "children",
+#             )
+#             .select_related(
+#                 "parent",
+#             )
+#         )
 
 
 @core.register_model
@@ -268,17 +374,20 @@ class Commodity(core.OwnedEntity):
         return None
 
 
-class CustomsManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related(
-                "commodities",
-                "created_by",
-                "duty_billing_address",
-            )
-        )
+# class CustomsManager(models.Manager):
+#     def get_queryset(self):
+#         return (
+#             super()
+#             .get_queryset()
+#             .prefetch_related(
+#                 "commodities",
+#             )
+#             .select_related(
+#                 "created_by",
+#                 "duty_billing_address",
+#
+#             )
+#         )
 
 
 @core.register_model
@@ -362,17 +471,17 @@ class Customs(core.OwnedEntity):
         return None
 
 
-class PickupManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related(
-                "pickup_carrier",
-                "shipments",
-                "created_by",
-            )
-        )
+# class PickupManager(models.Manager):
+#     def get_queryset(self):
+#         return (
+#             super()
+#             .get_queryset()
+#             .prefetch_related(
+#                 "pickup_carrier",
+#                 "shipments",
+#                 "created_by",
+#             )
+#         )
 
 
 @core.register_model
@@ -458,19 +567,6 @@ class Pickup(core.OwnedEntity):
     @property
     def tracking_numbers(self) -> typing.List[str]:
         return [shipment.tracking_number for shipment in self.shipments.all()]
-
-
-class TrackingManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .prefetch_related(
-                "tracking_carrier",
-                "created_by",
-                "shipment",
-            )
-        )
 
 
 @core.register_model
@@ -580,25 +676,32 @@ class Tracking(core.OwnedEntity):
         )
 
 
-class ShipmentManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .defer("label", "invoice")
-            .prefetch_related(
-                "shipper",
-                "recipient",
-                "parcels",
-                "parcels__items",
-                "customs",
-                "carriers",
-                "selected_rate_carrier",
-                "created_by",
-                "shipment_tracker",
-                "billing_address",
-            )
-        )
+# class ShipmentManager(models.Manager):
+#     def get_queryset(self):
+#         return (
+#             super()
+#             .get_queryset()
+#             .defer(
+#                 "label",
+#                 "invoice",
+#             )
+#             .prefetch_related(
+#                 "parcels",
+#                 "carriers",
+#             )
+#             .select_related(
+#                 "created_by",
+#                 "recipient",
+#                 "shipper",
+#                 "customs",
+#                 "manifest",
+#                 "billing_address",
+#                 "shipment_tracker",
+#                 "selected_rate_carrier",
+#                 "shipment_upload_record",
+#
+#             )
+#         )
 
 
 @core.register_model
@@ -818,6 +921,7 @@ class DocumentUploadRecord(core.OwnedEntity):
         "upload_carrier",
         *(("org",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
     )
+    objects = DocumentUploadRecordManager()
 
     class Meta:
         db_table = "document-upload-record"
@@ -863,18 +967,6 @@ class DocumentUploadRecord(core.OwnedEntity):
     @property
     def carrier_name(self) -> str:
         return typing.cast(providers.Carrier, self.upload_carrier).data.carrier_name
-
-
-class ManifestManager(models.Manager):
-    def get_queryset(self):
-        return (
-            super()
-            .get_queryset()
-            .defer("manifest")
-            .prefetch_related(
-                "manifest_carrier",
-            )
-        )
 
 
 @core.register_model
@@ -958,3 +1050,6 @@ class Manifest(core.OwnedEntity):
     @property
     def shipment_identifiers(self) -> typing.List[str]:
         return [shipment.shipment_identifier for shipment in self.shipments.all()]
+
+
+# endregion
