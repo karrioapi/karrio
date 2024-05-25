@@ -37,7 +37,7 @@ class DocumentList(GenericAPIView):
 
     @openapi.extend_schema(
         tags=["Documents"],
-        operation_id=f"{ENDPOINT_ID}list",
+        operation_id=f"{ENDPOINT_ID}uploads",
         summary="List all upload records",
         parameters=UploadRecordFilter.parameters,
         responses={
@@ -100,7 +100,7 @@ class DocumentList(GenericAPIView):
 class DocumentDetails(APIView):
     @openapi.extend_schema(
         tags=["Documents"],
-        operation_id=f"{ENDPOINT_ID}retrieve",
+        operation_id=f"{ENDPOINT_ID}retrieve_upload",
         summary="Retrieve an upload record",
         responses={
             200: DocumentUploadRecord(),
@@ -115,7 +115,17 @@ class DocumentDetails(APIView):
         return Response(DocumentUploadRecord(upload_record).data)
 
 
-router.urls.append(path("documents", DocumentList.as_view(), name="document-list"))
 router.urls.append(
-    path("documents/<str:pk>", DocumentDetails.as_view(), name="document-details")
+    path(
+        "documents/uploads",
+        DocumentList.as_view(),
+        name="document-upload-list",
+    )
+)
+router.urls.append(
+    path(
+        "documents/uploads/<str:pk>",
+        DocumentDetails.as_view(),
+        name="document-upload-details",
+    )
 )

@@ -22115,6 +22115,12 @@
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
+          },
+          {
+            "name": "other",
+            "description": null,
+            "isDeprecated": false,
+            "deprecationReason": null
           }
         ],
         "possibleTypes": null
@@ -45675,20 +45681,6 @@
             "defaultValue": null
           },
           {
-            "name": "related_object",
-            "description": null,
-            "type": {
-              "kind": "NON_NULL",
-              "name": null,
-              "ofType": {
-                "kind": "ENUM",
-                "name": "TemplateRelatedObject",
-                "ofType": null
-              }
-            },
-            "defaultValue": null
-          },
-          {
             "name": "active",
             "description": null,
             "type": {
@@ -45704,6 +45696,26 @@
             "type": {
               "kind": "SCALAR",
               "name": "String",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "metadata",
+            "description": null,
+            "type": {
+              "kind": "SCALAR",
+              "name": "JSON",
+              "ofType": null
+            },
+            "defaultValue": null
+          },
+          {
+            "name": "related_object",
+            "description": null,
+            "type": {
+              "kind": "ENUM",
+              "name": "TemplateRelatedObject",
               "ofType": null
             },
             "defaultValue": null
