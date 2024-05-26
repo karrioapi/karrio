@@ -30,6 +30,7 @@ class RateViewAPI(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}fetch_rates",
+        extensions={"x-operationId": "fetchRates"},
         summary="Fetch shipment rates",
         description=DESCRIPTIONS,
         responses={

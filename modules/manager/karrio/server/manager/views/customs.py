@@ -35,6 +35,7 @@ class CustomsList(GenericAPIView):
         exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listCustomsInfo"},
         summary="List all customs info",
         responses={
             200: CustomsInfoList(),
@@ -61,6 +62,7 @@ class CustomsList(GenericAPIView):
         exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createCustomsInfo"},
         summary="Create a customs info",
         request=CustomsData(),
         responses={
@@ -85,6 +87,7 @@ class CustomsDetail(APIView):
         exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveCustomsInfo"},
         summary="Retrieve a customs info",
         responses={
             200: Customs(),
@@ -103,6 +106,7 @@ class CustomsDetail(APIView):
         exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateCustomsInfo"},
         summary="Update a customs info",
         request=CustomsData(),
         responses={
@@ -128,6 +132,7 @@ class CustomsDetail(APIView):
         exclude=True,
         tags=["Customs"],
         operation_id=f"{ENDPOINT_ID}discard",
+        extensions={"x-operationId": "discardCustomsInfo"},
         summary="Discard a customs info",
         responses={
             200: Customs(),

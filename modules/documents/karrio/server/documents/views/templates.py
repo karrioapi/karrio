@@ -32,6 +32,7 @@ class DocumentTemplateList(api.GenericAPIView):
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listDocumentTemplates"},
         summary="List all templates",
         responses={
             200: DocumentTemplates(),
@@ -50,6 +51,7 @@ class DocumentTemplateList(api.GenericAPIView):
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createDocumentTemplate"},
         summary="Create a template",
         request=serializers.DocumentTemplateData(),
         responses={
@@ -77,6 +79,7 @@ class DocumentTemplateDetail(api.APIView):
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveDocumentTemplate"},
         summary="Retrieve a template",
         responses={
             200: serializers.DocumentTemplate(),
@@ -94,6 +97,7 @@ class DocumentTemplateDetail(api.APIView):
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateDocumentTemplate"},
         summary="Update a template",
         request=serializers.DocumentTemplateData(),
         responses={
@@ -116,6 +120,7 @@ class DocumentTemplateDetail(api.APIView):
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}discard",
+        extensions={"x-operationId": "discardDocumentTemplate"},
         summary="Delete a template",
         responses={
             200: serializers.DocumentTemplate(),
@@ -138,7 +143,7 @@ class DocumentTemplateDetail(api.APIView):
 class DocumentGenerator(api.APIView):
     @openapi.extend_schema(
         tags=["Documents"],
-        operation_id=f"{ENDPOINT_ID}generate",
+        operation_id=f"{ENDPOINT_ID}generateDocument",
         summary="Generate a document",
         request=serializers.DocumentData(),
         responses={

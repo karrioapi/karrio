@@ -28,6 +28,7 @@ class BatchList(api.GenericAPIView):
     @openapi.extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listBatchOperations"},
         summary="List all batch operations",
         responses={
             200: BatchOperations(),
@@ -50,6 +51,7 @@ class BatchDetails(api.APIView):
     @openapi.extend_schema(
         tags=["Batches"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveBatchOperation"},
         summary="Retrieve a batch operation",
         responses={
             200: serializers.BatchOperation(),

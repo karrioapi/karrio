@@ -1,0 +1,602 @@
+---
+id: retrieve-document-template
+title: "Retrieve a template"
+description: "Retrieve a template."
+sidebar_label: "Retrieve a template"
+hide_title: true
+hide_table_of_contents: true
+api: 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
+sidebar_class_name: "get api-method"
+info_path: docs/reference/api/karrio-api
+custom_edit_url: null
+---
+
+import ApiTabs from "@theme/ApiTabs";
+import DiscriminatorTabs from "@theme/DiscriminatorTabs";
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import SecuritySchemes from "@theme/ApiExplorer/SecuritySchemes";
+import MimeTabs from "@theme/MimeTabs";
+import ParamsItem from "@theme/ParamsItem";
+import ResponseSamples from "@theme/ResponseSamples";
+import SchemaItem from "@theme/SchemaItem";
+import SchemaTabs from "@theme/SchemaTabs";
+import Markdown from "@theme/Markdown";
+import Heading from "@theme/Heading";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Retrieve a template"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"get"}
+  path={"/v1/documents/templates/{id}"}
+>
+  
+</MethodEndpoint>
+
+
+
+Retrieve a template.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<details
+  style={{"marginBottom":"1rem"}}
+  className={"openapi-markdown__details"}
+  data-collapsed={false}
+  open={true}
+>
+  <summary
+    style={{}}
+  >
+    <h3
+      className={"openapi-markdown__details-summary-header-params"}
+    >
+      Path Parameters
+    </h3>
+  </summary><div>
+    <ul>
+      <ParamsItem
+        className={"paramsItem"}
+        param={{"in":"path","name":"id","schema":{"type":"string"},"required":true}}
+      >
+        
+      </ParamsItem>
+    </ul>
+  </div>
+</details><div>
+  <div>
+    <ApiTabs
+      label={undefined}
+      id={undefined}
+    >
+      <TabItem
+        label={"200"}
+        value={"200"}
+      >
+        <div>
+          
+          
+          
+          
+          
+        </div><div>
+          <MimeTabs
+            className={"openapi-tabs__mime"}
+            schemaType={"response"}
+          >
+            <TabItem
+              label={"application/json"}
+              value={"application/json"}
+            >
+              <SchemaTabs
+                className={"openapi-tabs__schema"}
+              >
+                <TabItem
+                  label={"Schema"}
+                  value={"Schema"}
+                >
+                  <details
+                    style={{}}
+                    className={"openapi-markdown__details response"}
+                    data-collapsed={false}
+                    open={true}
+                  >
+                    <summary
+                      style={{}}
+                      className={"openapi-markdown__details-summary-response"}
+                    >
+                      <strong>
+                        Schema
+                      </strong>
+                    </summary><div
+                      style={{"textAlign":"left","marginLeft":"1rem"}}
+                    >
+                      
+                    </div><ul
+                      style={{"marginLeft":"1rem"}}
+                    >
+                      <SchemaItem
+                        collapsible={false}
+                        name={"id"}
+                        required={false}
+                        schemaName={"string"}
+                        qualifierMessage={undefined}
+                        schema={{"type":"string","description":"A unique identifier"}}
+                      >
+                        
+                      </SchemaItem><SchemaItem
+                        collapsible={false}
+                        name={"name"}
+                        required={true}
+                        schemaName={"string"}
+                        qualifierMessage={"**Possible values:** `<= 255 characters`"}
+                        schema={{"type":"string","description":"The template name","maxLength":255}}
+                      >
+                        
+                      </SchemaItem><SchemaItem
+                        collapsible={false}
+                        name={"slug"}
+                        required={true}
+                        schemaName={"string"}
+                        qualifierMessage={"**Possible values:** `<= 255 characters`"}
+                        schema={{"type":"string","description":"The template slug","maxLength":255}}
+                      >
+                        
+                      </SchemaItem><SchemaItem
+                        collapsible={false}
+                        name={"template"}
+                        required={true}
+                        schemaName={"string"}
+                        qualifierMessage={undefined}
+                        schema={{"type":"string","description":"The template content"}}
+                      >
+                        
+                      </SchemaItem><SchemaItem
+                        collapsible={false}
+                        name={"active"}
+                        required={false}
+                        schemaName={"boolean"}
+                        qualifierMessage={undefined}
+                        schema={{"type":"boolean","default":true,"description":"disable template flag."}}
+                      >
+                        
+                      </SchemaItem><SchemaItem
+                        collapsible={false}
+                        name={"description"}
+                        required={false}
+                        schemaName={"string"}
+                        qualifierMessage={"**Possible values:** `<= 255 characters`"}
+                        schema={{"type":"string","description":"The template description","maxLength":255}}
+                      >
+                        
+                      </SchemaItem><SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                metadata
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <div
+                              style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                            >
+                              
+                              
+                              The template metadata
+                              
+                              
+                            </div>
+                          </div>
+                        </details>
+                      </SchemaItem><SchemaItem
+                        collapsible={false}
+                        name={"related_object"}
+                        required={false}
+                        schemaName={"RelatedObjectEnum (string)"}
+                        qualifierMessage={"**Possible values:** [`shipment`, `order`, `other`]"}
+                        schema={{"enum":["shipment","order","other"],"type":"string","title":"RelatedObjectEnum"}}
+                      >
+                        
+                      </SchemaItem><SchemaItem
+                        collapsible={false}
+                        name={"object_type"}
+                        required={false}
+                        schemaName={"string"}
+                        qualifierMessage={undefined}
+                        schema={{"type":"string","default":"document-template","description":"Specifies the object type"}}
+                      >
+                        
+                      </SchemaItem>
+                    </ul>
+                  </details>
+                </TabItem><TabItem
+                  label={"Example (from schema)"}
+                  value={"Example (from schema)"}
+                >
+                  <ResponseSamples
+                    responseExample={"{\n  \"id\": \"string\",\n  \"name\": \"string\",\n  \"slug\": \"string\",\n  \"template\": \"string\",\n  \"active\": true,\n  \"description\": \"string\",\n  \"metadata\": {},\n  \"related_object\": \"shipment\",\n  \"object_type\": \"document-template\"\n}"}
+                    language={"json"}
+                  >
+                    
+                  </ResponseSamples>
+                </TabItem>
+              </SchemaTabs>
+            </TabItem>
+          </MimeTabs>
+        </div>
+      </TabItem><TabItem
+        label={"400"}
+        value={"400"}
+      >
+        <div>
+          
+          
+          
+          
+          
+        </div><div>
+          <MimeTabs
+            className={"openapi-tabs__mime"}
+            schemaType={"response"}
+          >
+            <TabItem
+              label={"application/json"}
+              value={"application/json"}
+            >
+              <SchemaTabs
+                className={"openapi-tabs__schema"}
+              >
+                <TabItem
+                  label={"Schema"}
+                  value={"Schema"}
+                >
+                  <details
+                    style={{}}
+                    className={"openapi-markdown__details response"}
+                    data-collapsed={false}
+                    open={true}
+                  >
+                    <summary
+                      style={{}}
+                      className={"openapi-markdown__details-summary-response"}
+                    >
+                      <strong>
+                        Schema
+                      </strong>
+                    </summary><div
+                      style={{"textAlign":"left","marginLeft":"1rem"}}
+                    >
+                      
+                    </div><ul
+                      style={{"marginLeft":"1rem"}}
+                    >
+                      <SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                errors
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object[]
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <div
+                              style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                            >
+                              
+                              
+                              The list of API errors
+                              
+                              
+                            </div><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                              >
+                                Array [
+                              </div>
+                            </li><SchemaItem
+                              collapsible={false}
+                              name={"message"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The error or warning message"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"code"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The message code"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      details
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    any additional details
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </details>
+                            </SchemaItem><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                              >
+                                ]
+                              </div>
+                            </li>
+                          </div>
+                        </details>
+                      </SchemaItem>
+                    </ul>
+                  </details>
+                </TabItem><TabItem
+                  label={"Example (from schema)"}
+                  value={"Example (from schema)"}
+                >
+                  <ResponseSamples
+                    responseExample={"{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"code\": \"string\",\n      \"details\": {}\n    }\n  ]\n}"}
+                    language={"json"}
+                  >
+                    
+                  </ResponseSamples>
+                </TabItem>
+              </SchemaTabs>
+            </TabItem>
+          </MimeTabs>
+        </div>
+      </TabItem><TabItem
+        label={"500"}
+        value={"500"}
+      >
+        <div>
+          
+          
+          
+          
+          
+        </div><div>
+          <MimeTabs
+            className={"openapi-tabs__mime"}
+            schemaType={"response"}
+          >
+            <TabItem
+              label={"application/json"}
+              value={"application/json"}
+            >
+              <SchemaTabs
+                className={"openapi-tabs__schema"}
+              >
+                <TabItem
+                  label={"Schema"}
+                  value={"Schema"}
+                >
+                  <details
+                    style={{}}
+                    className={"openapi-markdown__details response"}
+                    data-collapsed={false}
+                    open={true}
+                  >
+                    <summary
+                      style={{}}
+                      className={"openapi-markdown__details-summary-response"}
+                    >
+                      <strong>
+                        Schema
+                      </strong>
+                    </summary><div
+                      style={{"textAlign":"left","marginLeft":"1rem"}}
+                    >
+                      
+                    </div><ul
+                      style={{"marginLeft":"1rem"}}
+                    >
+                      <SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                errors
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object[]
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <div
+                              style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                            >
+                              
+                              
+                              The list of API errors
+                              
+                              
+                            </div><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                              >
+                                Array [
+                              </div>
+                            </li><SchemaItem
+                              collapsible={false}
+                              name={"message"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The error or warning message"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"code"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The message code"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      details
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    any additional details
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </details>
+                            </SchemaItem><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                              >
+                                ]
+                              </div>
+                            </li>
+                          </div>
+                        </details>
+                      </SchemaItem>
+                    </ul>
+                  </details>
+                </TabItem><TabItem
+                  label={"Example (from schema)"}
+                  value={"Example (from schema)"}
+                >
+                  <ResponseSamples
+                    responseExample={"{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"code\": \"string\",\n      \"details\": {}\n    }\n  ]\n}"}
+                    language={"json"}
+                  >
+                    
+                  </ResponseSamples>
+                </TabItem>
+              </SchemaTabs>
+            </TabItem>
+          </MimeTabs>
+        </div>
+      </TabItem>
+    </ApiTabs>
+  </div>
+</div>
+      

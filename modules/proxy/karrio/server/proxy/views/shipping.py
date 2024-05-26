@@ -60,6 +60,7 @@ class ShippingDetails(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}buy_label",
+        extensions={"x-operationId": "buyLabel"},
         summary="Buy a shipment label",
         request=ShippingRequest(),
         responses={
@@ -97,6 +98,7 @@ class ShippingCancel(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}void_label",
+        extensions={"x-operationId": "voidLabel"},
         summary="Void a shipment label",
         request=ShipmentCancelRequest(),
         responses={

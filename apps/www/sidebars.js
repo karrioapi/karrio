@@ -11,6 +11,8 @@
 
 // @ts-check
 
+const apiSidebar = require('./docs/reference/api/sidebar.js');
+
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   product: [
@@ -68,27 +70,41 @@ const sidebars = {
       href: '/reference/openapi',
     },
     {
-      type: 'category',
-      label: 'Shipping API',
+      type: "category",
+      label: "Shipping API",
+      // collapsed: true,
+      // collapsible: true,
       link: {
-        type: 'generated-index',
-        title: 'Shipping API Guides',
-        description: 'Learn how to use the Karrio Shipping APIs.',
+        type: "generated-index",
+        title: "Shipping API Guides",
+        description: "Learn how to use the Karrio Shipping APIs.",
         slug: '/reference',
         keywords: ['Shipping', 'REST', 'API'],
       },
-      items: [
-        'reference/api/authentication',
-        'reference/api/error-codes',
-        'reference/api/pagination',
-        'reference/api/metadata',
-        'reference/api/carriers',
-        'reference/api/shipments',
-        'reference/api/trackers',
-        'reference/api/orders',
-        'reference/api/batches',
-      ],
+      items: apiSidebar,
     },
+    // {
+    //   type: 'category',
+    //   label: 'Shipping API',
+    //   link: {
+    //     type: 'generated-index',
+    //     title: 'Shipping API Guides',
+    //     description: 'Learn how to use the Karrio Shipping APIs.',
+    //     slug: '/reference',
+    //     keywords: ['Shipping', 'REST', 'API'],
+    //   },
+    //   items: [
+    //     'reference/api/authentication',
+    //     'reference/api/error-codes',
+    //     'reference/api/pagination',
+    //     'reference/api/metadata',
+    //     'reference/api/carriers',
+    //     'reference/api/shipments',
+    //     'reference/api/trackers',
+    //     'reference/api/orders',
+    //     'reference/api/batches',
+    //   ],
+    // },
     {
       type: 'category',
       label: 'Management API',

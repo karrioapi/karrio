@@ -163,6 +163,27 @@ const config = {
         ],
       },
     ],
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: "api",
+        docsPluginId: "openapi",
+        config: {
+          api: {
+            specPath: "./openapi.yml",
+            outputDir: "docs/reference/api",
+            sidebarOptions: {
+              groupPathsBy: "tag",
+              categoryLinkSource: "tag",
+              sidebarCollapsible: true,
+              sidebarCollapsed: true,
+            },
+            downloadUrl: "./openapi.yml",
+            // showSchemas: true,
+          },
+        }
+      },
+    ],
   ],
 
   presets: [
@@ -173,10 +194,9 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/karrioapi/docs/edit/main/apps/www/',
           sidebarCollapsible: false,
+          docItemComponent: "@theme/ApiItem",
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -190,7 +210,7 @@ const config = {
         // Plugin Options for loading OpenAPI files
         specs: [
           {
-            spec: 'https://raw.githubusercontent.com/karrioapi/karrio/main/schemas/openapi.yml',
+            spec: '../../schemas/openapi.yml',
             route: '/reference/openapi/',
           },
         ],
@@ -346,6 +366,8 @@ const config = {
         darkTheme: prismThemes.dracula,
       },
     }),
+
+  themes: ["docusaurus-theme-openapi-docs"],
 };
 
 export default config;

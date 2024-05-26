@@ -35,6 +35,7 @@ class AddressList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listAddresses"},
         summary="List all addresses",
         responses={
             200: Addresses(),
@@ -59,6 +60,7 @@ class AddressList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createAddress"},
         summary="Create an address",
         request=AddressData(),
         responses={
@@ -72,17 +74,17 @@ class AddressList(GenericAPIView):
         Create a new address.
         """
         address = (
-            AddressSerializer.map(data=request.data, context=request)
-            .save()
-            .instance
+            AddressSerializer.map(data=request.data, context=request).save().instance
         )
         return Response(Address(address).data, status=status.HTTP_201_CREATED)
 
 
 class AddressDetail(APIView):
+
     @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveAddress"},
         summary="Retrieve an address",
         responses={
             200: Address(),
@@ -100,6 +102,7 @@ class AddressDetail(APIView):
     @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateAddress"},
         summary="Update an address",
         request=AddressData(),
         responses={
@@ -124,6 +127,7 @@ class AddressDetail(APIView):
     @openapi.extend_schema(
         tags=["Addresses"],
         operation_id=f"{ENDPOINT_ID}discard",
+        extensions={"x-operationId": "discardAddress"},
         summary="Discard an address",
         responses={
             200: Address(),

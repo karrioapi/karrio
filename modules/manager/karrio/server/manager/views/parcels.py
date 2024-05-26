@@ -34,6 +34,7 @@ class ParcelList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listParcels"},
         summary="List all parcels",
         responses={
             200: Parcels(),
@@ -60,6 +61,7 @@ class ParcelList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createParcel"},
         summary="Create a parcel",
         request=ParcelData(),
         responses={
@@ -73,17 +75,17 @@ class ParcelList(GenericAPIView):
         Create a new parcel.
         """
         parcel = (
-            ParcelSerializer.map(data=request.data, context=request)
-            .save()
-            .instance
+            ParcelSerializer.map(data=request.data, context=request).save().instance
         )
         return Response(Parcel(parcel).data, status=status.HTTP_201_CREATED)
 
 
 class ParcelDetail(APIView):
+
     @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveParcel"},
         summary="Retrieve a parcel",
         responses={
             200: Parcel(),
@@ -101,6 +103,7 @@ class ParcelDetail(APIView):
     @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateParcel"},
         summary="Update a parcel",
         request=ParcelData(),
         responses={
@@ -125,6 +128,7 @@ class ParcelDetail(APIView):
     @openapi.extend_schema(
         tags=["Parcels"],
         operation_id=f"{ENDPOINT_ID}discard",
+        extensions={"x-operationId": "discardParcel"},
         summary="Remove a parcel",
         responses={
             200: Parcel(),
