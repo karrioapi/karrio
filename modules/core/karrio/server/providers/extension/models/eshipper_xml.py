@@ -2,7 +2,7 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-class EShipperSettings(providers.Carrier):
+class EShipperXMLSettings(providers.Carrier):
     CARRIER_NAME = "eshipper_xml"
 
     class Meta:
@@ -18,4 +18,4 @@ class EShipperSettings(providers.Carrier):
         return self.CARRIER_NAME
 
 
-SETTINGS = EShipperSettings
+SETTINGS = EShipperXMLSettings

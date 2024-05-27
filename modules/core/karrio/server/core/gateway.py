@@ -296,9 +296,15 @@ class Shipments:
     def cancel(
         payload: dict, carrier: providers.Carrier = None, **carrier_filters
     ) -> datatypes.ConfirmationResponse:
+        carrier_id = lib.identity(
+            dict(carrier_id=payload.pop("carrier_id"))
+            if any(payload.get("carrier_id") or "") in payload
+            else {}
+        )
         carrier = carrier or Carriers.first(
             **{
                 **dict(active=True, capability="shipping", raise_not_found=True),
+                **carrier_id,
                 **carrier_filters,
             }
         )
@@ -306,10 +312,12 @@ class Shipments:
         if carrier is None:
             raise NotFound("No active carrier connection found to process the request")
 
-        request = karrio.Shipment.cancel(datatypes.ShipmentCancelRequest(**payload))
+        request = karrio.Shipment.cancel(
+            lib.to_object(datatypes.ShipmentCancelRequest, payload)
+        )
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        confirmation, messages = (
+        confirmation, messages = lib.identity(
             utils.identity(lambda: request.from_(carrier.gateway).parse())
             if "cancel_shipment" in carrier.gateway.proxy_methods
             else (
@@ -330,7 +338,8 @@ class Shipments:
             )
 
         return datatypes.ConfirmationResponse(
-            confirmation=confirmation, messages=messages
+            confirmation=confirmation,
+            messages=messages,
         )
 
     @staticmethod

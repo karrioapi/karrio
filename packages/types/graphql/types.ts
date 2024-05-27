@@ -2780,8 +2780,8 @@ export interface get_user_connections_user_connections_DPDHLSettingsType {
   rate_sheet: get_user_connections_user_connections_DPDHLSettingsType_rate_sheet | null;
 }
 
-export interface get_user_connections_user_connections_EShipperSettingsType {
-  __typename: "EShipperSettingsType";
+export interface get_user_connections_user_connections_EShipperXMLSettingsType {
+  __typename: "EShipperXMLSettingsType";
   id: string;
   carrier_id: string;
   carrier_name: string;
@@ -3166,7 +3166,7 @@ export interface get_user_connections_user_connections_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLParcelDESettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FedexWSSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TGESettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
+export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLParcelDESettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperXMLSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FedexWSSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TGESettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
 
 export interface get_user_connections {
   user_connections: get_user_connections_user_connections[];
@@ -5749,7 +5749,7 @@ export enum CarrierNameEnum {
   dpd = "dpd",
   dpdhl = "dpdhl",
   easypost = "easypost",
-  eshipper = "eshipper",
+  eshipper_xml = "eshipper_xml",
   fedex = "fedex",
   fedex_ws = "fedex_ws",
   freightcom = "freightcom",
@@ -5789,6 +5789,7 @@ export enum MetadataObjectTypeEnum {
 
 export enum TemplateRelatedObject {
   order = "order",
+  other = "other",
   shipment = "shipment",
 }
 
@@ -5847,7 +5848,7 @@ export interface CreateCarrierConnectionMutationInput {
   dpd?: DPDSettingsInput | null;
   dpdhl?: DPDHLSettingsInput | null;
   easypost?: EasyPostSettingsInput | null;
-  eshipper?: EShipperSettingsInput | null;
+  eshipper_xml?: EShipperXMLSettingsInput | null;
   fedex?: FedexSettingsInput | null;
   fedex_ws?: FedexWSSettingsInput | null;
   freightcom?: FreightcomSettingsInput | null;
@@ -6145,7 +6146,7 @@ export interface EasyPostSettingsInput {
 }
 
 // null
-export interface EShipperSettingsInput {
+export interface EShipperXMLSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
@@ -6401,7 +6402,7 @@ export interface UpdateCarrierConnectionMutationInput {
   dpd?: UpdateDPDSettingsInput | null;
   dpdhl?: UpdateDPDHLSettingsInput | null;
   easypost?: UpdateEasyPostSettingsInput | null;
-  eshipper?: UpdateEShipperSettingsInput | null;
+  eshipper_xml?: UpdateEShipperXMLSettingsInput | null;
   fedex?: UpdateFedexSettingsInput | null;
   fedex_ws?: UpdateFedexWSSettingsInput | null;
   freightcom?: UpdateFreightcomSettingsInput | null;
@@ -6720,7 +6721,7 @@ export interface UpdateEasyPostSettingsInput {
 }
 
 // null
-export interface UpdateEShipperSettingsInput {
+export interface UpdateEShipperXMLSettingsInput {
   id: string;
   active?: boolean | null;
   config?: any | null;
@@ -7377,9 +7378,10 @@ export interface CreateDocumentTemplateMutationInput {
   slug: string;
   name: string;
   template: string;
-  related_object: TemplateRelatedObject;
   active?: boolean | null;
   description?: string | null;
+  metadata?: any | null;
+  related_object?: TemplateRelatedObject | null;
 }
 
 // null

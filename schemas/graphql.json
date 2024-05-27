@@ -4692,7 +4692,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "EShipperSettingsType",
+            "name": "EShipperXMLSettingsType",
             "ofType": null
           },
           {
@@ -5252,7 +5252,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "EShipperSettingsType",
+            "name": "EShipperXMLSettingsType",
             "ofType": null
           },
           {
@@ -7096,7 +7096,7 @@
             "deprecationReason": null
           },
           {
-            "name": "eshipper",
+            "name": "eshipper_xml",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -10296,7 +10296,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "EShipperSettingsType",
+        "name": "EShipperXMLSettingsType",
         "description": null,
         "fields": [
           {
@@ -34429,11 +34429,11 @@
             "defaultValue": null
           },
           {
-            "name": "eshipper",
+            "name": "eshipper_xml",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "EShipperSettingsInput",
+              "name": "EShipperXMLSettingsInput",
               "ofType": null
             },
             "defaultValue": null
@@ -37135,7 +37135,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "EShipperSettingsInput",
+        "name": "EShipperXMLSettingsInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -39429,11 +39429,11 @@
             "defaultValue": null
           },
           {
-            "name": "eshipper",
+            "name": "eshipper_xml",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "UpdateEShipperSettingsInput",
+              "name": "UpdateEShipperXMLSettingsInput",
               "ofType": null
             },
             "defaultValue": null
@@ -42117,7 +42117,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "UpdateEShipperSettingsInput",
+        "name": "UpdateEShipperXMLSettingsInput",
         "description": null,
         "fields": null,
         "inputFields": [
