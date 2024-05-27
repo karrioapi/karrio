@@ -1,5 +1,3 @@
-
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -56,7 +54,6 @@ export interface get_address_templates {
 export interface get_address_templatesVariables {
   filter?: AddressFilter | null;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -116,7 +113,6 @@ export interface get_customs_info_templates {
 export interface get_customs_info_templatesVariables {
   filter?: TemplateFilter | null;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -206,7 +202,6 @@ export interface get_default_templates {
   default_templates: get_default_templates_default_templates;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -230,7 +225,6 @@ export interface create_connection {
 export interface create_connectionVariables {
   data: CreateCarrierConnectionMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -256,7 +250,6 @@ export interface update_connectionVariables {
   data: UpdateCarrierConnectionMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -275,7 +268,6 @@ export interface delete_connection {
 export interface delete_connectionVariables {
   data: DeleteMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -316,7 +308,6 @@ export interface get_log {
 export interface get_logVariables {
   id: number;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -374,7 +365,6 @@ export interface get_logs {
 export interface get_logsVariables {
   filter?: LogFilter | null;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -697,7 +687,6 @@ export interface get_shipmentVariables {
   id: string;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -979,7 +968,6 @@ export interface get_shipmentsVariables {
   filter?: ShipmentFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1197,7 +1185,6 @@ export interface get_shipment_data {
 export interface get_shipment_dataVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1427,7 +1414,6 @@ export interface partial_shipment_updateVariables {
   data: PartialShipmentMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1456,7 +1442,6 @@ export interface change_shipment_status {
 export interface change_shipment_statusVariables {
   data: ChangeShipmentStatusMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1563,7 +1548,6 @@ export interface get_tracker {
 export interface get_trackerVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1688,7 +1672,6 @@ export interface get_trackersVariables {
   filter?: TrackerFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1720,7 +1703,6 @@ export interface get_webhook {
 export interface get_webhookVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1773,7 +1755,6 @@ export interface get_webhooksVariables {
   filter?: WebhookFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1825,7 +1806,6 @@ export interface get_parcel_templatesVariables {
   filter?: TemplateFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1848,7 +1828,6 @@ export interface get_system_connections_system_connections {
 export interface get_system_connections {
   system_connections: get_system_connections_system_connections[];
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1873,7 +1852,6 @@ export interface mutate_system_connection {
 export interface mutate_system_connectionVariables {
   data: SystemCarrierMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1904,7 +1882,6 @@ export interface create_customs_templateVariables {
   data: CreateCustomsTemplateInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1934,7 +1911,6 @@ export interface update_customs_templateVariables {
   data: UpdateCustomsTemplateInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -1953,7 +1929,6 @@ export interface delete_template {
 export interface delete_templateVariables {
   data: DeleteMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1984,7 +1959,6 @@ export interface create_parcel_templateVariables {
   data: CreateParcelTemplateInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2013,7 +1987,6 @@ export interface update_parcel_template {
 export interface update_parcel_templateVariables {
   data: UpdateParcelTemplateInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2044,7 +2017,6 @@ export interface create_address_templateVariables {
   data: CreateAddressTemplateInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2074,7 +2046,6 @@ export interface update_address_templateVariables {
   data: UpdateAddressTemplateInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2093,7 +2064,6 @@ export interface discard_commodity {
 export interface discard_commodityVariables {
   data: DeleteMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2114,7 +2084,6 @@ export interface discard_customsVariables {
   data: DeleteMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2133,7 +2102,6 @@ export interface discard_parcel {
 export interface discard_parcelVariables {
   data: DeleteMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2158,7 +2126,6 @@ export interface mutate_tokenVariables {
   data: TokenMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2178,7 +2145,6 @@ export interface GetToken {
 export interface GetTokenVariables {
   org_id?: string | null;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2362,7 +2328,9 @@ export interface get_user_connections_user_connections_BelgianPostSettingsType {
   config: any | null;
   account_id: string | null;
   passphrase: string | null;
-  services: get_user_connections_user_connections_BelgianPostSettingsType_services[] | null;
+  services:
+    | get_user_connections_user_connections_BelgianPostSettingsType_services[]
+    | null;
   rate_sheet: get_user_connections_user_connections_BelgianPostSettingsType_rate_sheet | null;
 }
 
@@ -2472,7 +2440,9 @@ export interface get_user_connections_user_connections_ColissimoSettingsType {
   password: string | null;
   contract_number: string | null;
   laposte_api_key: string | null;
-  services: get_user_connections_user_connections_ColissimoSettingsType_services[] | null;
+  services:
+    | get_user_connections_user_connections_ColissimoSettingsType_services[]
+    | null;
   rate_sheet: get_user_connections_user_connections_ColissimoSettingsType_rate_sheet | null;
 }
 
@@ -2537,7 +2507,9 @@ export interface get_user_connections_user_connections_DHLParcelDESettingsType {
   tracking_consumer_key: string | null;
   tracking_consumer_secret: string | null;
   config: any | null;
-  services: get_user_connections_user_connections_DHLParcelDESettingsType_services[] | null;
+  services:
+    | get_user_connections_user_connections_DHLParcelDESettingsType_services[]
+    | null;
   rate_sheet: get_user_connections_user_connections_DHLParcelDESettingsType_rate_sheet | null;
 }
 
@@ -2616,7 +2588,9 @@ export interface get_user_connections_user_connections_DHLPolandSettingsType {
   username: string | null;
   password: string | null;
   account_number: string | null;
-  services: get_user_connections_user_connections_DHLPolandSettingsType_services[] | null;
+  services:
+    | get_user_connections_user_connections_DHLPolandSettingsType_services[]
+    | null;
   rate_sheet: get_user_connections_user_connections_DHLPolandSettingsType_rate_sheet | null;
 }
 
@@ -2710,7 +2684,9 @@ export interface get_user_connections_user_connections_DPDSettingsType {
   password: string | null;
   depot: string | null;
   account_country_code: string | null;
-  services: get_user_connections_user_connections_DPDSettingsType_services[] | null;
+  services:
+    | get_user_connections_user_connections_DPDSettingsType_services[]
+    | null;
   rate_sheet: get_user_connections_user_connections_DPDSettingsType_rate_sheet | null;
 }
 
@@ -2776,12 +2752,14 @@ export interface get_user_connections_user_connections_DPDHLSettingsType {
   zt_password: string | null;
   account_number: string | null;
   config: any | null;
-  services: get_user_connections_user_connections_DPDHLSettingsType_services[] | null;
+  services:
+    | get_user_connections_user_connections_DPDHLSettingsType_services[]
+    | null;
   rate_sheet: get_user_connections_user_connections_DPDHLSettingsType_rate_sheet | null;
 }
 
 export interface get_user_connections_user_connections_EShipperSettingsType {
-  __typename: "EShipperSettingsType";
+  __typename: "EShipperXMLSettingsType";
   id: string;
   carrier_id: string;
   carrier_name: string;
@@ -2929,7 +2907,9 @@ export interface get_user_connections_user_connections_GenericSettingsType {
   config: any | null;
   capabilities: string[];
   account_country_code: string | null;
-  services: get_user_connections_user_connections_GenericSettingsType_services[] | null;
+  services:
+    | get_user_connections_user_connections_GenericSettingsType_services[]
+    | null;
   label_template: get_user_connections_user_connections_GenericSettingsType_label_template | null;
   rate_sheet: get_user_connections_user_connections_GenericSettingsType_rate_sheet | null;
 }
@@ -3166,12 +3146,50 @@ export interface get_user_connections_user_connections_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type get_user_connections_user_connections = get_user_connections_user_connections_AlliedExpressSettingsType | get_user_connections_user_connections_AlliedExpressLocalSettingsType | get_user_connections_user_connections_AmazonShippingSettingsType | get_user_connections_user_connections_AramexSettingsType | get_user_connections_user_connections_AsendiaUSSettingsType | get_user_connections_user_connections_AustraliaPostSettingsType | get_user_connections_user_connections_BoxKnightSettingsType | get_user_connections_user_connections_BelgianPostSettingsType | get_user_connections_user_connections_CanadaPostSettingsType | get_user_connections_user_connections_CanparSettingsType | get_user_connections_user_connections_ChronopostSettingsType | get_user_connections_user_connections_ColissimoSettingsType | get_user_connections_user_connections_DHLParcelDESettingsType | get_user_connections_user_connections_DHLExpressSettingsType | get_user_connections_user_connections_DHLPolandSettingsType | get_user_connections_user_connections_DHLUniversalSettingsType | get_user_connections_user_connections_DicomSettingsType | get_user_connections_user_connections_DPDSettingsType | get_user_connections_user_connections_DPDHLSettingsType | get_user_connections_user_connections_EShipperSettingsType | get_user_connections_user_connections_EasyPostSettingsType | get_user_connections_user_connections_FedexSettingsType | get_user_connections_user_connections_FedexWSSettingsType | get_user_connections_user_connections_FreightcomSettingsType | get_user_connections_user_connections_GenericSettingsType | get_user_connections_user_connections_GEODISSettingsType | get_user_connections_user_connections_LaPosteSettingsType | get_user_connections_user_connections_Locate2uSettingsType | get_user_connections_user_connections_NationexSettingsType | get_user_connections_user_connections_PurolatorSettingsType | get_user_connections_user_connections_RoadieSettingsType | get_user_connections_user_connections_RoyalMailSettingsType | get_user_connections_user_connections_SendleSettingsType | get_user_connections_user_connections_TGESettingsType | get_user_connections_user_connections_TNTSettingsType | get_user_connections_user_connections_UPSSettingsType | get_user_connections_user_connections_USPSSettingsType | get_user_connections_user_connections_USPSInternationalSettingsType | get_user_connections_user_connections_Zoom2uSettingsType;
+export type get_user_connections_user_connections =
+  | get_user_connections_user_connections_AlliedExpressSettingsType
+  | get_user_connections_user_connections_AlliedExpressLocalSettingsType
+  | get_user_connections_user_connections_AmazonShippingSettingsType
+  | get_user_connections_user_connections_AramexSettingsType
+  | get_user_connections_user_connections_AsendiaUSSettingsType
+  | get_user_connections_user_connections_AustraliaPostSettingsType
+  | get_user_connections_user_connections_BoxKnightSettingsType
+  | get_user_connections_user_connections_BelgianPostSettingsType
+  | get_user_connections_user_connections_CanadaPostSettingsType
+  | get_user_connections_user_connections_CanparSettingsType
+  | get_user_connections_user_connections_ChronopostSettingsType
+  | get_user_connections_user_connections_ColissimoSettingsType
+  | get_user_connections_user_connections_DHLParcelDESettingsType
+  | get_user_connections_user_connections_DHLExpressSettingsType
+  | get_user_connections_user_connections_DHLPolandSettingsType
+  | get_user_connections_user_connections_DHLUniversalSettingsType
+  | get_user_connections_user_connections_DicomSettingsType
+  | get_user_connections_user_connections_DPDSettingsType
+  | get_user_connections_user_connections_DPDHLSettingsType
+  | get_user_connections_user_connections_EShipperSettingsType
+  | get_user_connections_user_connections_EasyPostSettingsType
+  | get_user_connections_user_connections_FedexSettingsType
+  | get_user_connections_user_connections_FedexWSSettingsType
+  | get_user_connections_user_connections_FreightcomSettingsType
+  | get_user_connections_user_connections_GenericSettingsType
+  | get_user_connections_user_connections_GEODISSettingsType
+  | get_user_connections_user_connections_LaPosteSettingsType
+  | get_user_connections_user_connections_Locate2uSettingsType
+  | get_user_connections_user_connections_NationexSettingsType
+  | get_user_connections_user_connections_PurolatorSettingsType
+  | get_user_connections_user_connections_RoadieSettingsType
+  | get_user_connections_user_connections_RoyalMailSettingsType
+  | get_user_connections_user_connections_SendleSettingsType
+  | get_user_connections_user_connections_TGESettingsType
+  | get_user_connections_user_connections_TNTSettingsType
+  | get_user_connections_user_connections_UPSSettingsType
+  | get_user_connections_user_connections_USPSSettingsType
+  | get_user_connections_user_connections_USPSInternationalSettingsType
+  | get_user_connections_user_connections_Zoom2uSettingsType;
 
 export interface get_user_connections {
   user_connections: get_user_connections_user_connections[];
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3193,7 +3211,6 @@ export interface GetUser_user {
 export interface GetUser {
   user: GetUser_user;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3230,7 +3247,6 @@ export interface update_userVariables {
   data: UpdateUserInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -3254,7 +3270,6 @@ export interface change_password {
 export interface change_passwordVariables {
   data: ChangePasswordMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3287,7 +3302,6 @@ export interface register_userVariables {
   data: RegisterUserMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -3306,7 +3320,6 @@ export interface confirm_email {
 export interface confirm_emailVariables {
   data: ConfirmEmailMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3331,7 +3344,6 @@ export interface request_email_change {
 export interface request_email_changeVariables {
   data: RequestEmailChangeMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3362,7 +3374,6 @@ export interface confirm_email_changeVariables {
   data: ConfirmEmailChangeMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -3386,7 +3397,6 @@ export interface request_password_reset {
 export interface request_password_resetVariables {
   data: RequestPasswordResetMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3412,7 +3422,6 @@ export interface confirm_password_resetVariables {
   data: ConfirmPasswordResetMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -3436,7 +3445,6 @@ export interface get_event {
 export interface get_eventVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3478,7 +3486,6 @@ export interface get_events {
 export interface get_eventsVariables {
   filter?: EventFilter | null;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3845,7 +3852,6 @@ export interface get_orderVariables {
   id: string;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -3946,7 +3952,6 @@ export interface get_order_data {
 export interface get_order_dataVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4330,7 +4335,6 @@ export interface get_ordersVariables {
   filter?: OrderFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4357,7 +4361,6 @@ export interface mutate_metadataVariables {
   data: MetadataMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4383,7 +4386,6 @@ export interface get_document_template {
 export interface get_document_templateVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4428,7 +4430,6 @@ export interface get_document_templatesVariables {
   filter?: DocumentTemplateFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4457,7 +4458,6 @@ export interface create_document_template {
 export interface create_document_templateVariables {
   data: CreateDocumentTemplateMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4488,7 +4488,6 @@ export interface update_document_templateVariables {
   data: UpdateDocumentTemplateMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4507,7 +4506,6 @@ export interface delete_document_template {
 export interface delete_document_templateVariables {
   data: DeleteMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4601,7 +4599,6 @@ export interface search_dataVariables {
   keyword?: string | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4630,7 +4627,6 @@ export interface CreateRateSheet {
 export interface CreateRateSheetVariables {
   data: CreateRateSheetMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4661,7 +4657,6 @@ export interface UpdateRateSheetVariables {
   data: UpdateRateSheetMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4686,7 +4681,6 @@ export interface DeteRateSheet {
 export interface DeteRateSheetVariables {
   data: DeleteMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4750,7 +4744,6 @@ export interface GetRateSheet {
 export interface GetRateSheetVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4830,7 +4823,6 @@ export interface GetRateSheetsVariables {
   filter?: RateSheetFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4859,7 +4851,6 @@ export interface CreateOrder {
 export interface CreateOrderVariables {
   data: CreateOrderMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4890,7 +4881,6 @@ export interface UpdateOrderVariables {
   data: UpdateOrderMutationInput;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -4915,7 +4905,6 @@ export interface DeleteOrder {
 export interface DeleteOrderVariables {
   data: DeleteOrderMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4944,7 +4933,6 @@ export interface get_batch_operation {
 export interface get_batch_operationVariables {
   id: string;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -4991,7 +4979,6 @@ export interface get_batch_operationsVariables {
   filter?: BatchOperationFilter | null;
 }
 
-
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -5016,7 +5003,6 @@ export interface deleteMetafield {
 export interface deleteMetafieldVariables {
   data: DeleteMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -5046,7 +5032,6 @@ export interface GetWorkspaceConfig_workspace_config {
 export interface GetWorkspaceConfig {
   workspace_config: GetWorkspaceConfig_workspace_config | null;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -5090,7 +5075,6 @@ export interface UpdateWorkspaceConfig {
 export interface UpdateWorkspaceConfigVariables {
   data: WorkspaceConfigMutationInput;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -5169,7 +5153,6 @@ export interface GetManifests {
 export interface GetManifestsVariables {
   filter?: ManifestFilter | null;
 }
-
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -5749,7 +5732,7 @@ export enum CarrierNameEnum {
   dpd = "dpd",
   dpdhl = "dpdhl",
   easypost = "easypost",
-  eshipper = "eshipper",
+  eshipper_xml = "eshipper_xml",
   fedex = "fedex",
   fedex_ws = "fedex_ws",
   freightcom = "freightcom",
@@ -5789,6 +5772,7 @@ export enum MetadataObjectTypeEnum {
 
 export enum TemplateRelatedObject {
   order = "order",
+  other = "other",
   shipment = "shipment",
 }
 
@@ -5847,7 +5831,7 @@ export interface CreateCarrierConnectionMutationInput {
   dpd?: DPDSettingsInput | null;
   dpdhl?: DPDHLSettingsInput | null;
   easypost?: EasyPostSettingsInput | null;
-  eshipper?: EShipperSettingsInput | null;
+  eshipper_xml?: EShipperSettingsInput | null;
   fedex?: FedexSettingsInput | null;
   fedex_ws?: FedexWSSettingsInput | null;
   freightcom?: FreightcomSettingsInput | null;
@@ -6401,7 +6385,7 @@ export interface UpdateCarrierConnectionMutationInput {
   dpd?: UpdateDPDSettingsInput | null;
   dpdhl?: UpdateDPDHLSettingsInput | null;
   easypost?: UpdateEasyPostSettingsInput | null;
-  eshipper?: UpdateEShipperSettingsInput | null;
+  eshipper_xml?: UpdateEShipperSettingsInput | null;
   fedex?: UpdateFedexSettingsInput | null;
   fedex_ws?: UpdateFedexWSSettingsInput | null;
   freightcom?: UpdateFreightcomSettingsInput | null;
@@ -7377,9 +7361,10 @@ export interface CreateDocumentTemplateMutationInput {
   slug: string;
   name: string;
   template: string;
-  related_object: TemplateRelatedObject;
   active?: boolean | null;
   description?: string | null;
+  metadata?: any | null;
+  related_object?: TemplateRelatedObject | null;
 }
 
 // null
