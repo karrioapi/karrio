@@ -3186,7 +3186,7 @@ paths:
           description: ''
       x-operationId: listTrackers
     post:
-      operationId: $$$$$$addTracker
+      operationId: addTracker
       description: |-
         This API creates or retrieves (if existent) a tracking status object containing the
         details and events of a shipping in progress.
@@ -3241,6 +3241,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: addTracker
   /v1/trackers/{carrier_name}/{tracking_number}:
     get:
       operationId: createTracker
@@ -3663,7 +3664,7 @@ paths:
       x-operationId: removeWebhook
   /v1/webhooks/{id}/test:
     post:
-      operationId: $$$$$$$testWebhook
+      operationId: testWebhook
       description: test a webhook.
       summary: Test a webhook
       parameters:
@@ -3704,6 +3705,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: testWebhook
 components:
   schemas:
     APIError:
@@ -3759,8 +3761,243 @@ components:
           description: The company name if the party is a company
           maxLength: 50
         country_code:
-          allOf:
-          - $ref: '#/components/schemas/CountryEnum'
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+          type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           description: The address country code
         email:
           type: string
@@ -3850,8 +4087,243 @@ components:
           description: The company name if the party is a company
           maxLength: 50
         country_code:
-          allOf:
-          - $ref: '#/components/schemas/CountryEnum'
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+          type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           description: The address country code
         email:
           type: string
@@ -3935,8 +4407,14 @@ components:
           type: string
           description: A unique identifier
         status:
-          allOf:
-          - $ref: '#/components/schemas/BatchOperationStatus'
+          enum:
+          - queued
+          - running
+          - failed
+          - completed
+          - completed_with_errors
+          type: string
+          x-spec-enum-id: 75e3c72297e66209
           description: The batch operation resource status
         errors:
           type: object
@@ -3952,9 +4430,22 @@ components:
           type: string
           description: A unique identifier
         status:
-          $ref: '#/components/schemas/BatchOperationStatus'
+          enum:
+          - queued
+          - running
+          - failed
+          - completed
+          - completed_with_errors
+          type: string
+          x-spec-enum-id: 75e3c72297e66209
         resource_type:
-          $ref: '#/components/schemas/ResourceTypeEnum'
+          enum:
+          - orders
+          - shipments
+          - trackers
+          - billing
+          type: string
+          x-spec-enum-id: 11343e2af644580f
         resources:
           type: array
           items:
@@ -3974,14 +4465,6 @@ components:
       - status
       - test_mode
       - updated_at
-    BatchOperationStatus:
-      enum:
-      - queued
-      - running
-      - failed
-      - completed
-      - completed_with_errors
-      type: string
     BatchOperations:
       type: object
       properties:
@@ -4032,9 +4515,6 @@ components:
           description: The list of tracking info to process.
       required:
       - trackers
-    BlankEnum:
-      enum:
-      - ''
     CarrierList:
       type: object
       properties:
@@ -4069,8 +4549,48 @@ components:
           type: string
           description: Indicates a specific carrier configuration name.
         carrier_name:
-          allOf:
-          - $ref: '#/components/schemas/CarrierSettingsCarrierNameEnum'
+          enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
+          - aramex
+          - asendia_us
+          - australiapost
+          - boxknight
+          - bpost
+          - canadapost
+          - canpar
+          - chronopost
+          - colissimo
+          - dhl_express
+          - dhl_parcel_de
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpd
+          - dpdhl
+          - easypost
+          - eshipper
+          - fedex
+          - fedex_ws
+          - freightcom
+          - generic
+          - geodis
+          - laposte
+          - locate2u
+          - nationex
+          - purolator
+          - roadie
+          - royalmail
+          - sendle
+          - tge
+          - tnt
+          - ups
+          - usps
+          - usps_international
+          - zoom2u
+          type: string
+          x-spec-enum-id: 1765d529f2970d04
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -4105,48 +4625,6 @@ components:
       - carrier_name
       - id
       - test_mode
-    CarrierSettingsCarrierNameEnum:
-      enum:
-      - allied_express
-      - allied_express_local
-      - amazon_shipping
-      - aramex
-      - asendia_us
-      - australiapost
-      - boxknight
-      - bpost
-      - canadapost
-      - canpar
-      - chronopost
-      - colissimo
-      - dhl_express
-      - dhl_parcel_de
-      - dhl_poland
-      - dhl_universal
-      - dicom
-      - dpd
-      - dpdhl
-      - easypost
-      - eshipper
-      - fedex
-      - fedex_ws
-      - freightcom
-      - generic
-      - geodis
-      - laposte
-      - locate2u
-      - nationex
-      - purolator
-      - roadie
-      - royalmail
-      - sendle
-      - tge
-      - tnt
-      - ups
-      - usps
-      - usps_international
-      - zoom2u
-      type: string
     Charge:
       type: object
       properties:
@@ -4174,8 +4652,13 @@ components:
           format: double
           description: The commodity's weight
         weight_unit:
-          allOf:
-          - $ref: '#/components/schemas/WeightUnitEnum'
+          enum:
+          - KG
+          - LB
+          - OZ
+          - G
+          type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The commodity's weight unit
         title:
           type: string
@@ -4207,17 +4690,396 @@ components:
           nullable: true
           description: The monetary value of the commodity
         value_currency:
+          enum:
+          - EUR
+          - AED
+          - USD
+          - XCD
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - XOF
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - XAF
+          - CHF
+          - NZD
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - GBP
+          - GEL
+          - GHS
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - XPF
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - OMR
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - YER
+          - ZAR
+          - null
+          type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: The currency of the commodity value amount
-          oneOf:
-          - $ref: '#/components/schemas/CurrencyEnum'
-          - $ref: '#/components/schemas/NullEnum'
         origin_country:
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+          - null
+          type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
           description: The origin or manufacture country
-          oneOf:
-          - $ref: '#/components/schemas/CountryEnum'
-          - $ref: '#/components/schemas/NullEnum'
         parent_id:
           type: string
           nullable: true
@@ -4246,8 +5108,13 @@ components:
           format: double
           description: The commodity's weight
         weight_unit:
-          allOf:
-          - $ref: '#/components/schemas/WeightUnitEnum'
+          enum:
+          - KG
+          - LB
+          - OZ
+          - G
+          type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The commodity's weight unit
         title:
           type: string
@@ -4279,17 +5146,396 @@ components:
           nullable: true
           description: The monetary value of the commodity
         value_currency:
+          enum:
+          - EUR
+          - AED
+          - USD
+          - XCD
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - XOF
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - XAF
+          - CHF
+          - NZD
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - GBP
+          - GEL
+          - GHS
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - XPF
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - OMR
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - YER
+          - ZAR
+          - null
+          type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: The currency of the commodity value amount
-          oneOf:
-          - $ref: '#/components/schemas/CurrencyEnum'
-          - $ref: '#/components/schemas/NullEnum'
         origin_country:
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+          - null
+          type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
           description: The origin or manufacture country
-          oneOf:
-          - $ref: '#/components/schemas/CountryEnum'
-          - $ref: '#/components/schemas/NullEnum'
         parent_id:
           type: string
           nullable: true
@@ -4306,398 +5552,6 @@ components:
       required:
       - weight
       - weight_unit
-    ContentTypeEnum:
-      enum:
-      - documents
-      - gift
-      - sample
-      - merchandise
-      - return_merchandise
-      - other
-      type: string
-    CountryEnum:
-      enum:
-      - AD
-      - AE
-      - AF
-      - AG
-      - AI
-      - AL
-      - AM
-      - AN
-      - AO
-      - AR
-      - AS
-      - AT
-      - AU
-      - AW
-      - AZ
-      - BA
-      - BB
-      - BD
-      - BE
-      - BF
-      - BG
-      - BH
-      - BI
-      - BJ
-      - BM
-      - BN
-      - BO
-      - BR
-      - BS
-      - BT
-      - BW
-      - BY
-      - BZ
-      - CA
-      - CD
-      - CF
-      - CG
-      - CH
-      - CI
-      - CK
-      - CL
-      - CM
-      - CN
-      - CO
-      - CR
-      - CU
-      - CV
-      - CY
-      - CZ
-      - DE
-      - DJ
-      - DK
-      - DM
-      - DO
-      - DZ
-      - EC
-      - EE
-      - EG
-      - ER
-      - ES
-      - ET
-      - FI
-      - FJ
-      - FK
-      - FM
-      - FO
-      - FR
-      - GA
-      - GB
-      - GD
-      - GE
-      - GF
-      - GG
-      - GH
-      - GI
-      - GL
-      - GM
-      - GN
-      - GP
-      - GQ
-      - GR
-      - GT
-      - GU
-      - GW
-      - GY
-      - HK
-      - HN
-      - HR
-      - HT
-      - HU
-      - IC
-      - ID
-      - IE
-      - IL
-      - IN
-      - IQ
-      - IR
-      - IS
-      - IT
-      - JE
-      - JM
-      - JO
-      - JP
-      - KE
-      - KG
-      - KH
-      - KI
-      - KM
-      - KN
-      - KP
-      - KR
-      - KV
-      - KW
-      - KY
-      - KZ
-      - LA
-      - LB
-      - LC
-      - LI
-      - LK
-      - LR
-      - LS
-      - LT
-      - LU
-      - LV
-      - LY
-      - MA
-      - MC
-      - MD
-      - ME
-      - MG
-      - MH
-      - MK
-      - ML
-      - MM
-      - MN
-      - MO
-      - MP
-      - MQ
-      - MR
-      - MS
-      - MT
-      - MU
-      - MV
-      - MW
-      - MX
-      - MY
-      - MZ
-      - NA
-      - NC
-      - NE
-      - NG
-      - NI
-      - NL
-      - 'NO'
-      - NP
-      - NR
-      - NU
-      - NZ
-      - OM
-      - PA
-      - PE
-      - PF
-      - PG
-      - PH
-      - PK
-      - PL
-      - PR
-      - PT
-      - PW
-      - PY
-      - QA
-      - RE
-      - RO
-      - RS
-      - RU
-      - RW
-      - SA
-      - SB
-      - SC
-      - SD
-      - SE
-      - SG
-      - SH
-      - SI
-      - SK
-      - SL
-      - SM
-      - SN
-      - SO
-      - SR
-      - SS
-      - ST
-      - SV
-      - SY
-      - SZ
-      - TC
-      - TD
-      - TG
-      - TH
-      - TJ
-      - TL
-      - TN
-      - TO
-      - TR
-      - TT
-      - TV
-      - TW
-      - TZ
-      - UA
-      - UG
-      - US
-      - UY
-      - UZ
-      - VA
-      - VC
-      - VE
-      - VG
-      - VI
-      - VN
-      - VU
-      - WS
-      - XB
-      - XC
-      - XE
-      - XM
-      - XN
-      - XS
-      - XY
-      - YE
-      - YT
-      - ZA
-      - ZM
-      - ZW
-      type: string
-    CurrencyEnum:
-      enum:
-      - EUR
-      - AED
-      - USD
-      - XCD
-      - AMD
-      - ANG
-      - AOA
-      - ARS
-      - AUD
-      - AWG
-      - AZN
-      - BAM
-      - BBD
-      - BDT
-      - XOF
-      - BGN
-      - BHD
-      - BIF
-      - BMD
-      - BND
-      - BOB
-      - BRL
-      - BSD
-      - BTN
-      - BWP
-      - BYN
-      - BZD
-      - CAD
-      - CDF
-      - XAF
-      - CHF
-      - NZD
-      - CLP
-      - CNY
-      - COP
-      - CRC
-      - CUC
-      - CVE
-      - CZK
-      - DJF
-      - DKK
-      - DOP
-      - DZD
-      - EGP
-      - ERN
-      - ETB
-      - FJD
-      - GBP
-      - GEL
-      - GHS
-      - GMD
-      - GNF
-      - GTQ
-      - GYD
-      - HKD
-      - HNL
-      - HRK
-      - HTG
-      - HUF
-      - IDR
-      - ILS
-      - INR
-      - IRR
-      - ISK
-      - JMD
-      - JOD
-      - JPY
-      - KES
-      - KGS
-      - KHR
-      - KMF
-      - KPW
-      - KRW
-      - KWD
-      - KYD
-      - KZT
-      - LAK
-      - LKR
-      - LRD
-      - LSL
-      - LYD
-      - MAD
-      - MDL
-      - MGA
-      - MKD
-      - MMK
-      - MNT
-      - MOP
-      - MRO
-      - MUR
-      - MVR
-      - MWK
-      - MXN
-      - MYR
-      - MZN
-      - NAD
-      - XPF
-      - NGN
-      - NIO
-      - NOK
-      - NPR
-      - OMR
-      - PEN
-      - PGK
-      - PHP
-      - PKR
-      - PLN
-      - PYG
-      - QAR
-      - RSD
-      - RUB
-      - RWF
-      - SAR
-      - SBD
-      - SCR
-      - SDG
-      - SEK
-      - SGD
-      - SHP
-      - SLL
-      - SOS
-      - SRD
-      - SSP
-      - STD
-      - SYP
-      - SZL
-      - THB
-      - TJS
-      - TND
-      - TOP
-      - TRY
-      - TTD
-      - TWD
-      - TZS
-      - UAH
-      - UYU
-      - UZS
-      - VEF
-      - VND
-      - VUV
-      - WST
-      - YER
-      - ZAR
-      type: string
     Customs:
       type: object
       properties:
@@ -4721,20 +5575,41 @@ components:
           nullable: true
           description: The duty payor address.
         content_type:
+          enum:
+          - documents
+          - gift
+          - sample
+          - merchandise
+          - return_merchandise
+          - other
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
-          oneOf:
-          - $ref: '#/components/schemas/ContentTypeEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-          - $ref: '#/components/schemas/NullEnum'
         content_description:
           type: string
           nullable: true
         incoterm:
+          enum:
+          - CFR
+          - CIF
+          - CIP
+          - CPT
+          - DAF
+          - DDP
+          - DDU
+          - DEQ
+          - DES
+          - EXW
+          - FAS
+          - FCA
+          - FOB
+          - null
+          type: string
+          x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
           description: The customs 'term of trade' also known as 'incoterm'
-          oneOf:
-          - $ref: '#/components/schemas/IncotermEnum'
-          - $ref: '#/components/schemas/NullEnum'
         invoice:
           type: string
           nullable: true
@@ -4792,20 +5667,41 @@ components:
           nullable: true
           description: The duty payor address.
         content_type:
+          enum:
+          - documents
+          - gift
+          - sample
+          - merchandise
+          - return_merchandise
+          - other
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: 8bc1717e39f37f69
           nullable: true
-          oneOf:
-          - $ref: '#/components/schemas/ContentTypeEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-          - $ref: '#/components/schemas/NullEnum'
         content_description:
           type: string
           nullable: true
         incoterm:
+          enum:
+          - CFR
+          - CIF
+          - CIP
+          - CPT
+          - DAF
+          - DDP
+          - DDU
+          - DEQ
+          - DES
+          - EXW
+          - FAS
+          - FCA
+          - FOB
+          - null
+          type: string
+          x-spec-enum-id: 544ac66d62cbdedb
           nullable: true
           description: The customs 'term of trade' also known as 'incoterm'
-          oneOf:
-          - $ref: '#/components/schemas/IncotermEnum'
-          - $ref: '#/components/schemas/NullEnum'
         invoice:
           type: string
           nullable: true
@@ -4841,11 +5737,6 @@ components:
             \     </details>\n        "
       required:
       - commodities
-    DimensionUnitEnum:
-      enum:
-      - CM
-      - IN
-      type: string
     DocumentData:
       type: object
       properties:
@@ -4930,8 +5821,12 @@ components:
           additionalProperties: {}
           description: The template metadata
         related_object:
-          allOf:
-          - $ref: '#/components/schemas/RelatedObjectEnum'
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
           default: other
           description: The template related object
         object_type:
@@ -4969,8 +5864,12 @@ components:
           additionalProperties: {}
           description: The template metadata
         related_object:
-          allOf:
-          - $ref: '#/components/schemas/RelatedObjectEnum'
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
           default: other
           description: The template related object
       required:
@@ -5087,19 +5986,167 @@ components:
       type: object
       properties:
         paid_by:
+          enum:
+          - sender
+          - recipient
+          - third_party
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: 4d1fdef60a9538c0
           nullable: true
           description: The duty payer
-          oneOf:
-          - $ref: '#/components/schemas/PaidByEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-          - $ref: '#/components/schemas/NullEnum'
         currency:
+          enum:
+          - EUR
+          - AED
+          - USD
+          - XCD
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - XOF
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - XAF
+          - CHF
+          - NZD
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - GBP
+          - GEL
+          - GHS
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - XPF
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - OMR
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - YER
+          - ZAR
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: The declared value currency
-          oneOf:
-          - $ref: '#/components/schemas/CurrencyEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-          - $ref: '#/components/schemas/NullEnum'
         declared_value:
           type: number
           format: double
@@ -5109,27 +6156,6 @@ components:
           type: string
           nullable: true
           description: The duty payment account number
-    EnabledEventsEnum:
-      enum:
-      - all
-      - shipment_purchased
-      - shipment_cancelled
-      - shipment_fulfilled
-      - shipment_out_for_delivery
-      - shipment_needs_attention
-      - shipment_delivery_failed
-      - tracker_created
-      - tracker_updated
-      - order_created
-      - order_updated
-      - order_fulfilled
-      - order_cancelled
-      - order_delivered
-      - batch_queued
-      - batch_failed
-      - batch_running
-      - batch_completed
-      type: string
     ErrorMessages:
       type: object
       properties:
@@ -5174,28 +6200,6 @@ components:
           type: string
           nullable: true
           description: A signature image in base64 string
-    IncotermEnum:
-      enum:
-      - CFR
-      - CIF
-      - CIP
-      - CPT
-      - DAF
-      - DDP
-      - DDU
-      - DEQ
-      - DES
-      - EXW
-      - FAS
-      - FCA
-      - FOB
-      type: string
-    LabelTypeEnum:
-      enum:
-      - PDF
-      - ZPL
-      - PNG
-      type: string
     LineItem:
       type: object
       properties:
@@ -5207,8 +6211,13 @@ components:
           format: double
           description: The commodity's weight
         weight_unit:
-          allOf:
-          - $ref: '#/components/schemas/WeightUnitEnum'
+          enum:
+          - KG
+          - LB
+          - OZ
+          - G
+          type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The commodity's weight unit
         title:
           type: string
@@ -5240,17 +6249,396 @@ components:
           nullable: true
           description: The monetary value of the commodity
         value_currency:
+          enum:
+          - EUR
+          - AED
+          - USD
+          - XCD
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - XOF
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - XAF
+          - CHF
+          - NZD
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - GBP
+          - GEL
+          - GHS
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - XPF
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - OMR
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - YER
+          - ZAR
+          - null
+          type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: The currency of the commodity value amount
-          oneOf:
-          - $ref: '#/components/schemas/CurrencyEnum'
-          - $ref: '#/components/schemas/NullEnum'
         origin_country:
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+          - null
+          type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           nullable: true
           description: The origin or manufacture country
-          oneOf:
-          - $ref: '#/components/schemas/CountryEnum'
-          - $ref: '#/components/schemas/NullEnum'
         parent_id:
           type: string
           nullable: true
@@ -5504,9 +6892,6 @@ components:
         carrier_id:
           type: string
           description: The targeted carrier name (unique identifier)
-    NullEnum:
-      enum:
-      - null
     Operation:
       type: object
       properties:
@@ -5572,8 +6957,14 @@ components:
           type: string
           description: The order's source.
         status:
-          allOf:
-          - $ref: '#/components/schemas/OrderStatusEnum'
+          enum:
+          - unfulfilled
+          - cancelled
+          - fulfilled
+          - delivered
+          - partial
+          type: string
+          x-spec-enum-id: 4993b3ade2f339b3
           default: unfulfilled
           description: The order status.
         shipping_to:
@@ -5712,14 +7103,6 @@ components:
             $ref: '#/components/schemas/Order'
       required:
       - results
-    OrderStatusEnum:
-      enum:
-      - unfulfilled
-      - cancelled
-      - fulfilled
-      - delivered
-      - partial
-      type: string
     OrderUpdateData:
       type: object
       properties:
@@ -5739,12 +7122,6 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
-    PaidByEnum:
-      enum:
-      - sender
-      - recipient
-      - third_party
-      type: string
     Parcel:
       type: object
       properties:
@@ -5801,15 +7178,23 @@ components:
           default: false
           description: Indicates if the parcel is composed of documents only
         weight_unit:
-          allOf:
-          - $ref: '#/components/schemas/WeightUnitEnum'
+          enum:
+          - KG
+          - LB
+          - OZ
+          - G
+          type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The parcel's weight unit
         dimension_unit:
+          enum:
+          - CM
+          - IN
+          - null
+          type: string
+          x-spec-enum-id: 41993cb8117c279c
           nullable: true
           description: The parcel's dimension unit
-          oneOf:
-          - $ref: '#/components/schemas/DimensionUnitEnum'
-          - $ref: '#/components/schemas/NullEnum'
         items:
           type: array
           items:
@@ -5893,15 +7278,23 @@ components:
           default: false
           description: Indicates if the parcel is composed of documents only
         weight_unit:
-          allOf:
-          - $ref: '#/components/schemas/WeightUnitEnum'
+          enum:
+          - KG
+          - LB
+          - OZ
+          - G
+          type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The parcel's weight unit
         dimension_unit:
+          enum:
+          - CM
+          - IN
+          - null
+          type: string
+          x-spec-enum-id: 41993cb8117c279c
           nullable: true
           description: The parcel's dimension unit
-          oneOf:
-          - $ref: '#/components/schemas/DimensionUnitEnum'
-          - $ref: '#/components/schemas/NullEnum'
         items:
           type: array
           items:
@@ -5985,8 +7378,243 @@ components:
           description: The company name if the party is a company
           maxLength: 50
         country_code:
-          allOf:
-          - $ref: '#/components/schemas/CountryEnum'
+          enum:
+          - AD
+          - AE
+          - AF
+          - AG
+          - AI
+          - AL
+          - AM
+          - AN
+          - AO
+          - AR
+          - AS
+          - AT
+          - AU
+          - AW
+          - AZ
+          - BA
+          - BB
+          - BD
+          - BE
+          - BF
+          - BG
+          - BH
+          - BI
+          - BJ
+          - BM
+          - BN
+          - BO
+          - BR
+          - BS
+          - BT
+          - BW
+          - BY
+          - BZ
+          - CA
+          - CD
+          - CF
+          - CG
+          - CH
+          - CI
+          - CK
+          - CL
+          - CM
+          - CN
+          - CO
+          - CR
+          - CU
+          - CV
+          - CY
+          - CZ
+          - DE
+          - DJ
+          - DK
+          - DM
+          - DO
+          - DZ
+          - EC
+          - EE
+          - EG
+          - ER
+          - ES
+          - ET
+          - FI
+          - FJ
+          - FK
+          - FM
+          - FO
+          - FR
+          - GA
+          - GB
+          - GD
+          - GE
+          - GF
+          - GG
+          - GH
+          - GI
+          - GL
+          - GM
+          - GN
+          - GP
+          - GQ
+          - GR
+          - GT
+          - GU
+          - GW
+          - GY
+          - HK
+          - HN
+          - HR
+          - HT
+          - HU
+          - IC
+          - ID
+          - IE
+          - IL
+          - IN
+          - IQ
+          - IR
+          - IS
+          - IT
+          - JE
+          - JM
+          - JO
+          - JP
+          - KE
+          - KG
+          - KH
+          - KI
+          - KM
+          - KN
+          - KP
+          - KR
+          - KV
+          - KW
+          - KY
+          - KZ
+          - LA
+          - LB
+          - LC
+          - LI
+          - LK
+          - LR
+          - LS
+          - LT
+          - LU
+          - LV
+          - LY
+          - MA
+          - MC
+          - MD
+          - ME
+          - MG
+          - MH
+          - MK
+          - ML
+          - MM
+          - MN
+          - MO
+          - MP
+          - MQ
+          - MR
+          - MS
+          - MT
+          - MU
+          - MV
+          - MW
+          - MX
+          - MY
+          - MZ
+          - NA
+          - NC
+          - NE
+          - NG
+          - NI
+          - NL
+          - 'NO'
+          - NP
+          - NR
+          - NU
+          - NZ
+          - OM
+          - PA
+          - PE
+          - PF
+          - PG
+          - PH
+          - PK
+          - PL
+          - PR
+          - PT
+          - PW
+          - PY
+          - QA
+          - RE
+          - RO
+          - RS
+          - RU
+          - RW
+          - SA
+          - SB
+          - SC
+          - SD
+          - SE
+          - SG
+          - SH
+          - SI
+          - SK
+          - SL
+          - SM
+          - SN
+          - SO
+          - SR
+          - SS
+          - ST
+          - SV
+          - SY
+          - SZ
+          - TC
+          - TD
+          - TG
+          - TH
+          - TJ
+          - TL
+          - TN
+          - TO
+          - TR
+          - TT
+          - TV
+          - TW
+          - TZ
+          - UA
+          - UG
+          - US
+          - UY
+          - UZ
+          - VA
+          - VC
+          - VE
+          - VG
+          - VI
+          - VN
+          - VU
+          - WS
+          - XB
+          - XC
+          - XE
+          - XM
+          - XN
+          - XS
+          - XY
+          - YE
+          - YT
+          - ZA
+          - ZM
+          - ZW
+          type: string
+          x-spec-enum-id: f907b2af5d9d32f1
           description: The address country code
         email:
           type: string
@@ -6055,8 +7683,12 @@ components:
           additionalProperties: {}
           description: The template metadata
         related_object:
-          allOf:
-          - $ref: '#/components/schemas/RelatedObjectEnum'
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
           default: other
           description: The template related object
     PatchedParcelData:
@@ -6112,15 +7744,23 @@ components:
           default: false
           description: Indicates if the parcel is composed of documents only
         weight_unit:
-          allOf:
-          - $ref: '#/components/schemas/WeightUnitEnum'
+          enum:
+          - KG
+          - LB
+          - OZ
+          - G
+          type: string
+          x-spec-enum-id: 2aa755cf319c6df9
           description: The parcel's weight unit
         dimension_unit:
+          enum:
+          - CM
+          - IN
+          - null
+          type: string
+          x-spec-enum-id: 41993cb8117c279c
           nullable: true
           description: The parcel's dimension unit
-          oneOf:
-          - $ref: '#/components/schemas/DimensionUnitEnum'
-          - $ref: '#/components/schemas/NullEnum'
         items:
           type: array
           items:
@@ -6158,7 +7798,27 @@ components:
         enabled_events:
           type: array
           items:
-            $ref: '#/components/schemas/EnabledEventsEnum'
+            enum:
+            - all
+            - shipment_purchased
+            - shipment_cancelled
+            - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
+            - tracker_created
+            - tracker_updated
+            - order_created
+            - order_updated
+            - order_fulfilled
+            - order_cancelled
+            - order_delivered
+            - batch_queued
+            - batch_failed
+            - batch_running
+            - batch_completed
+            type: string
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -6168,17 +7828,165 @@ components:
       type: object
       properties:
         paid_by:
-          allOf:
-          - $ref: '#/components/schemas/PaidByEnum'
+          enum:
+          - sender
+          - recipient
+          - third_party
+          type: string
+          x-spec-enum-id: 4d1fdef60a9538c0
           default: sender
           description: The payor type
         currency:
+          enum:
+          - EUR
+          - AED
+          - USD
+          - XCD
+          - AMD
+          - ANG
+          - AOA
+          - ARS
+          - AUD
+          - AWG
+          - AZN
+          - BAM
+          - BBD
+          - BDT
+          - XOF
+          - BGN
+          - BHD
+          - BIF
+          - BMD
+          - BND
+          - BOB
+          - BRL
+          - BSD
+          - BTN
+          - BWP
+          - BYN
+          - BZD
+          - CAD
+          - CDF
+          - XAF
+          - CHF
+          - NZD
+          - CLP
+          - CNY
+          - COP
+          - CRC
+          - CUC
+          - CVE
+          - CZK
+          - DJF
+          - DKK
+          - DOP
+          - DZD
+          - EGP
+          - ERN
+          - ETB
+          - FJD
+          - GBP
+          - GEL
+          - GHS
+          - GMD
+          - GNF
+          - GTQ
+          - GYD
+          - HKD
+          - HNL
+          - HRK
+          - HTG
+          - HUF
+          - IDR
+          - ILS
+          - INR
+          - IRR
+          - ISK
+          - JMD
+          - JOD
+          - JPY
+          - KES
+          - KGS
+          - KHR
+          - KMF
+          - KPW
+          - KRW
+          - KWD
+          - KYD
+          - KZT
+          - LAK
+          - LKR
+          - LRD
+          - LSL
+          - LYD
+          - MAD
+          - MDL
+          - MGA
+          - MKD
+          - MMK
+          - MNT
+          - MOP
+          - MRO
+          - MUR
+          - MVR
+          - MWK
+          - MXN
+          - MYR
+          - MZN
+          - NAD
+          - XPF
+          - NGN
+          - NIO
+          - NOK
+          - NPR
+          - OMR
+          - PEN
+          - PGK
+          - PHP
+          - PKR
+          - PLN
+          - PYG
+          - QAR
+          - RSD
+          - RUB
+          - RWF
+          - SAR
+          - SBD
+          - SCR
+          - SDG
+          - SEK
+          - SGD
+          - SHP
+          - SLL
+          - SOS
+          - SRD
+          - SSP
+          - STD
+          - SYP
+          - SZL
+          - THB
+          - TJS
+          - TND
+          - TOP
+          - TRY
+          - TTD
+          - TWD
+          - TZS
+          - UAH
+          - UYU
+          - UZS
+          - VEF
+          - VND
+          - VUV
+          - WST
+          - YER
+          - ZAR
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: f0290aeafc544e9d
           nullable: true
           description: The payment amount currency
-          oneOf:
-          - $ref: '#/components/schemas/CurrencyEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-          - $ref: '#/components/schemas/NullEnum'
         account_number:
           type: string
           nullable: true
@@ -6660,19 +8468,6 @@ components:
           description: The list of returned rates
       required:
       - rates
-    RelatedObjectEnum:
-      enum:
-      - shipment
-      - order
-      - other
-      type: string
-    ResourceTypeEnum:
-      enum:
-      - orders
-      - shipments
-      - trackers
-      - billing
-      type: string
     Shipment:
       type: object
       properties:
@@ -6768,12 +8563,16 @@ components:
           nullable: true
           description: The shipment reference
         label_type:
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
           nullable: true
           description: The shipment label file type.
-          oneOf:
-          - $ref: '#/components/schemas/LabelTypeEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-          - $ref: '#/components/schemas/NullEnum'
         carrier_ids:
           type: array
           items:
@@ -6803,8 +8602,18 @@ components:
           default: []
           description: The list of note or warning messages
         status:
-          allOf:
-          - $ref: '#/components/schemas/ShipmentStatus'
+          enum:
+          - draft
+          - purchased
+          - cancelled
+          - shipped
+          - in_transit
+          - delivered
+          - needs_attention
+          - out_for_delivery
+          - delivery_failed
+          type: string
+          x-spec-enum-id: e418e9eb782a00a9
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -6945,8 +8754,12 @@ components:
           description: The shipment reference
           maxLength: 35
         label_type:
-          allOf:
-          - $ref: '#/components/schemas/LabelTypeEnum'
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         service:
@@ -7048,8 +8861,12 @@ components:
           description: The shipment reference
           maxLength: 35
         label_type:
-          allOf:
-          - $ref: '#/components/schemas/LabelTypeEnum'
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         service:
@@ -7093,8 +8910,12 @@ components:
           type: string
           description: The shipment selected rate.
         label_type:
-          allOf:
-          - $ref: '#/components/schemas/LabelTypeEnum'
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         payment:
@@ -7140,24 +8961,16 @@ components:
           type: object
           additionalProperties: {}
           description: User metadata for the shipment
-    ShipmentStatus:
-      enum:
-      - draft
-      - purchased
-      - cancelled
-      - shipped
-      - in_transit
-      - delivered
-      - needs_attention
-      - out_for_delivery
-      - delivery_failed
-      type: string
     ShipmentUpdateData:
       type: object
       properties:
         label_type:
-          allOf:
-          - $ref: '#/components/schemas/LabelTypeEnum'
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         payment:
@@ -7251,8 +9064,12 @@ components:
           description: The shipment reference
           maxLength: 35
         label_type:
-          allOf:
-          - $ref: '#/components/schemas/LabelTypeEnum'
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
           default: PDF
           description: The shipment label file type.
         selected_rate_id:
@@ -7364,12 +9181,16 @@ components:
           nullable: true
           description: The shipment reference
         label_type:
+          enum:
+          - PDF
+          - ZPL
+          - PNG
+          - ''
+          - null
+          type: string
+          x-spec-enum-id: d10a5d5e08394b13
           nullable: true
           description: The shipment label file type.
-          oneOf:
-          - $ref: '#/components/schemas/LabelTypeEnum'
-          - $ref: '#/components/schemas/BlankEnum'
-          - $ref: '#/components/schemas/NullEnum'
         carrier_ids:
           type: array
           items:
@@ -7399,8 +9220,18 @@ components:
           default: []
           description: The list of note or warning messages
         status:
-          allOf:
-          - $ref: '#/components/schemas/ShipmentStatus'
+          enum:
+          - draft
+          - purchased
+          - cancelled
+          - shipped
+          - in_transit
+          - delivered
+          - needs_attention
+          - out_for_delivery
+          - delivery_failed
+          type: string
+          x-spec-enum-id: e418e9eb782a00a9
           default: draft
           description: The current Shipment status
         carrier_name:
@@ -7451,18 +9282,6 @@ components:
       - recipient
       - shipper
       - test_mode
-    Status979Enum:
-      enum:
-      - pending
-      - unknown
-      - on_hold
-      - delivered
-      - in_transit
-      - delivery_delayed
-      - out_for_delivery
-      - ready_for_pickup
-      - delivery_failed
-      type: string
     TokenObtainPair:
       type: object
       properties:
@@ -7558,8 +9377,18 @@ components:
           description: Specified whether the object was created with a carrier in
             test mode
         status:
-          allOf:
-          - $ref: '#/components/schemas/Status979Enum'
+          enum:
+          - pending
+          - unknown
+          - on_hold
+          - delivered
+          - in_transit
+          - delivery_delayed
+          - out_for_delivery
+          - ready_for_pickup
+          - delivery_failed
+          type: string
+          x-spec-enum-id: 979a07e5fd2a5042
           default: pending
           description: The current tracking status
         estimated_delivery:
@@ -7634,8 +9463,45 @@ components:
           type: string
           description: The package tracking number
         carrier_name:
-          allOf:
-          - $ref: '#/components/schemas/TrackingDataCarrierNameEnum'
+          enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
+          - aramex
+          - asendia_us
+          - australiapost
+          - boxknight
+          - bpost
+          - canadapost
+          - canpar
+          - chronopost
+          - colissimo
+          - dhl_express
+          - dhl_parcel_de
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpd
+          - dpdhl
+          - fedex
+          - fedex_ws
+          - generic
+          - geodis
+          - laposte
+          - locate2u
+          - nationex
+          - purolator
+          - roadie
+          - royalmail
+          - sendle
+          - tge
+          - tnt
+          - ups
+          - usps
+          - usps_international
+          - zoom2u
+          type: string
+          x-spec-enum-id: db5a0511af909ff1
           description: The tracking carrier
         account_number:
           type: string
@@ -7658,45 +9524,6 @@ components:
       required:
       - carrier_name
       - tracking_number
-    TrackingDataCarrierNameEnum:
-      enum:
-      - allied_express
-      - allied_express_local
-      - amazon_shipping
-      - aramex
-      - asendia_us
-      - australiapost
-      - boxknight
-      - bpost
-      - canadapost
-      - canpar
-      - chronopost
-      - colissimo
-      - dhl_express
-      - dhl_parcel_de
-      - dhl_poland
-      - dhl_universal
-      - dicom
-      - dpd
-      - dpdhl
-      - fedex
-      - fedex_ws
-      - generic
-      - geodis
-      - laposte
-      - locate2u
-      - nationex
-      - purolator
-      - roadie
-      - royalmail
-      - sendle
-      - tge
-      - tnt
-      - ups
-      - usps
-      - usps_international
-      - zoom2u
-      type: string
     TrackingEvent:
       type: object
       properties:
@@ -7872,8 +9699,18 @@ components:
           description: Specified whether the object was created with a carrier in
             test mode
         status:
-          allOf:
-          - $ref: '#/components/schemas/Status979Enum'
+          enum:
+          - pending
+          - unknown
+          - on_hold
+          - delivered
+          - in_transit
+          - delivery_delayed
+          - out_for_delivery
+          - ready_for_pickup
+          - delivery_failed
+          type: string
+          x-spec-enum-id: 979a07e5fd2a5042
           default: pending
           description: The current tracking status
         estimated_delivery:
@@ -7947,7 +9784,27 @@ components:
         enabled_events:
           type: array
           items:
-            $ref: '#/components/schemas/EnabledEventsEnum'
+            enum:
+            - all
+            - shipment_purchased
+            - shipment_cancelled
+            - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
+            - tracker_created
+            - tracker_updated
+            - order_created
+            - order_updated
+            - order_fulfilled
+            - order_cancelled
+            - order_delivered
+            - batch_queued
+            - batch_failed
+            - batch_running
+            - batch_completed
+            type: string
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -7987,7 +9844,27 @@ components:
         enabled_events:
           type: array
           items:
-            $ref: '#/components/schemas/EnabledEventsEnum'
+            enum:
+            - all
+            - shipment_purchased
+            - shipment_cancelled
+            - shipment_fulfilled
+            - shipment_out_for_delivery
+            - shipment_needs_attention
+            - shipment_delivery_failed
+            - tracker_created
+            - tracker_updated
+            - order_created
+            - order_updated
+            - order_fulfilled
+            - order_cancelled
+            - order_delivered
+            - batch_queued
+            - batch_failed
+            - batch_running
+            - batch_completed
+            type: string
+            x-spec-enum-id: 516a21d18ffb1926
           description: The list of events to enable for this endpoint.
         disabled:
           type: boolean
@@ -8024,13 +9901,6 @@ components:
           additionalProperties: {}
       required:
       - payload
-    WeightUnitEnum:
-      enum:
-      - KG
-      - LB
-      - OZ
-      - G
-      type: string
   securitySchemes:
     JWT:
       in: header
