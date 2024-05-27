@@ -1325,7 +1325,40 @@ if __name__ == "__main__":
     unittest.main()
 
 
-RatePayload = {}
+RatePayload = {
+    "shipper": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+        "phone_number": "(07) 3114 1499",
+    },
+    "recipient": {
+        "company_name": "CGI",
+        "address_line1": "23 jardin private",
+        "city": "Ottawa",
+        "postal_code": "k1k 4t3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON",
+    },
+    "parcels": [
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
+    "options": { },
+    "reference": "REF-001",
+}
 
 ParsedRateResponse = []
 
@@ -1492,7 +1525,43 @@ if __name__ == "__main__":
     unittest.main()
 
 
-ShipmentPayload = {}
+ShipmentPayload = {
+    "shipper": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+        "phone_number": "(07) 3114 1499",
+    },
+    "recipient": {
+        "company_name": "CGI",
+        "address_line1": "23 jardin private",
+        "city": "Ottawa",
+        "postal_code": "k1k 4t3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON",
+    },
+    "parcels": [
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
+    "service": "carrier_service",
+    "options": {
+        "signature_required": True,
+    },
+    "reference": "#Order 11111",
+}
 
 ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
