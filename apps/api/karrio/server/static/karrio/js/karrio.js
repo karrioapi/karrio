@@ -7370,6 +7370,7 @@ var Karrio = (function () {
                             }
                             queryParameters = {};
                             headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
                             if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
                             // oauth required
                             _a = headerParameters;
@@ -7412,6 +7413,319 @@ var Karrio = (function () {
             });
         };
         /**
+<<<<<<< HEAD
+         * Delete a template.
+         * Delete a template
+         */
+        DocumentsApi.prototype.discard = function (requestParameters, initOverrides) {
+=======
+         * Create a new template.
+         * Create a template
+         */
+        DocumentsApi.prototype.create = function (requestParameters, initOverrides) {
+>>>>>>> bae558b5d (feat: add carrier_id to Proxy cancel request to ensure precise connection selection)
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+<<<<<<< HEAD
+                        case 0: return [4 /*yield*/, this.discardRaw(requestParameters, initOverrides)];
+=======
+                        case 0: return [4 /*yield*/, this.createRaw(requestParameters, initOverrides)];
+>>>>>>> bae558b5d (feat: add carrier_id to Proxy cancel request to ensure precise connection selection)
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+<<<<<<< HEAD
+         * Generate any document. This API is designed to be used to generate GS1 labels, invoices and any document that requires external data.
+         * Generate a document
+         */
+        DocumentsApi.prototype.generateDocumentRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
+                        case 2:
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/documents/generate",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: DocumentDataToJSON(requestParameters['documentData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return GeneratedDocumentFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Generate any document. This API is designed to be used to generate GS1 labels, invoices and any document that requires external data.
+         * Generate a document
+         */
+        DocumentsApi.prototype.generateDocument = function (requestParameters, initOverrides) {
+            if (requestParameters === void 0) { requestParameters = {}; }
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.generateDocumentRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all templates.
+         * List all templates
+         */
+        DocumentsApi.prototype.listRaw = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
+                        case 2:
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/documents/templates",
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentTemplateListFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all templates.
+         * List all templates
+         */
+        DocumentsApi.prototype.list = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a template.
+         * Retrieve a template
+=======
+         * Delete a template.
+         * Delete a template
+>>>>>>> bae558b5d (feat: add carrier_id to Proxy cancel request to ensure precise connection selection)
+         */
+        DocumentsApi.prototype.discardRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieve().');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
+                        case 2:
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/documents/templates/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentTemplateFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a template.
+         * Retrieve a template
+         */
+        DocumentsApi.prototype.retrieve = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a shipping document upload record.
+         * Retrieve upload record
+         */
+        DocumentsApi.prototype.retrieveUploadRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieveUpload().');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
+                        case 2:
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/documents/uploads/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'GET',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+<<<<<<< HEAD
+         * Retrieve a shipping document upload record.
+         * Retrieve upload record
+=======
          * Delete a template.
          * Delete a template
          */
@@ -7633,80 +7947,7 @@ var Karrio = (function () {
         /**
          * Retrieve a template.
          * Retrieve a template
-         */
-        DocumentsApi.prototype.retrieve = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.retrieveRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
-         * Retrieve a shipping document upload record.
-         * Retrieve upload record
-         */
-        DocumentsApi.prototype.retrieveUploadRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
-                        case 0:
-                            if (requestParameters['id'] == null) {
-                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling retrieveUpload().');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
-                            // oauth required
-                            _a = headerParameters;
-                            _b = "Authorization";
-                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
-                        case 1:
-                            // oauth required
-                            _a[_b] = _g.sent();
-                            _g.label = 2;
-                        case 2:
-                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
-                            _c = headerParameters;
-                            _d = "Authorization";
-                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
-                        case 3:
-                            _c[_d] = _g.sent(); // JWT authentication
-                            _g.label = 4;
-                        case 4:
-                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
-                            }
-                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
-                            _e = headerParameters;
-                            _f = "Authorization";
-                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
-                        case 5:
-                            _e[_f] = _g.sent(); // Token authentication
-                            _g.label = 6;
-                        case 6: return [4 /*yield*/, this.request({
-                                path: "/v1/documents/uploads/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
-                                method: 'GET',
-                                headers: headerParameters,
-                                query: queryParameters,
-                            }, initOverrides)];
-                        case 7:
-                            response = _g.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return DocumentUploadRecordFromJSON(jsonValue); })];
-                    }
-                });
-            });
-        };
-        /**
-         * Retrieve a shipping document upload record.
-         * Retrieve upload record
+>>>>>>> bae558b5d (feat: add carrier_id to Proxy cancel request to ensure precise connection selection)
          */
         DocumentsApi.prototype.retrieveUpload = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
@@ -7799,10 +8040,10 @@ var Karrio = (function () {
             });
         };
         /**
-         * Upload a shipping document.
-         * Upload documents
+         * Retrieve a shipping document upload record.
+         * Retrieve upload record
          */
-        DocumentsApi.prototype.uploadRaw = function (requestParameters, initOverrides) {
+        DocumentsApi.prototype.retrieveUploadRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
                 return __generator(this, function (_g) {

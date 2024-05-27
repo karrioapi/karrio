@@ -2067,7 +2067,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2157,7 +2157,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2247,7 +2247,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2430,7 +2430,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -4572,7 +4572,7 @@ components:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -10056,7 +10056,7 @@ tags:
     | freightcom | Freightcom |
     | fedex_ws | FedEx Web Service |
     | fedex | FedEx |
-    | eshipper | eShipper |
+    | eshipper_xml | eShipper XML |
     | easypost | EasyPost |
     | dpdhl | Deutsche Post DHL |
     | dpd | DPD |
@@ -10472,7 +10472,7 @@ tags:
     | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
     | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
 
-    ### eShipper
+    ### eShipper XML
     | Code         | Service Name |
     | ------------ | ------------ |
     | eshipper_aramex_economy_document_express | 5000049 |
