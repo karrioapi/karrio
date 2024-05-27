@@ -686,9 +686,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -736,9 +736,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1181,9 +1181,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2067,7 +2067,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2157,7 +2157,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2247,7 +2247,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2430,7 +2430,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2701,9 +2701,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3134,9 +3134,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -4570,7 +4570,7 @@ components:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -4590,7 +4590,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 1765d529f2970d04
+          x-spec-enum-id: 3e79a5375c88cfd3
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -8674,16 +8674,19 @@ components:
       properties:
         shipment_identifier:
           type: string
-          description: The shipment identifier returned during creation
+          description: The shipment identifier returned during creation.
         service:
           type: string
           nullable: true
           description: The selected shipment service
+        carrier_id:
+          type: string
+          description: The shipment carrier_id for specific connection selection.
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: Advanced carrier specific cancellation options
+          description: Advanced carrier specific cancellation options.
       required:
       - shipment_identifier
     ShipmentData:
@@ -10020,7 +10023,7 @@ tags:
     | freightcom | Freightcom |
     | fedex_ws | FedEx Web Service |
     | fedex | FedEx |
-    | eshipper | eShipper |
+    | eshipper_xml | eShipper XML |
     | easypost | EasyPost |
     | dpdhl | Deutsche Post DHL |
     | dpd | DPD |
@@ -10436,7 +10439,7 @@ tags:
     | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
     | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
 
-    ### eShipper
+    ### eShipper XML
     | Code         | Service Name |
     | ------------ | ------------ |
     | eshipper_all | 0 |
