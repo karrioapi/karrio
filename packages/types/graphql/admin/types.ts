@@ -1,3 +1,5 @@
+
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -64,6 +66,7 @@ export interface GetSystemUsage {
 export interface GetSystemUsageVariables {
   filter?: UsageFilter | null;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -159,6 +162,7 @@ export interface GetAccountsVariables {
   filter?: AccountFilter | null;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -203,6 +207,7 @@ export interface GetUsersVariables {
   filter?: UserFilter | null;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -240,6 +245,7 @@ export interface GetSurchargesVariables {
   filter?: SurchargeFilter | null;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -276,6 +282,7 @@ export interface GetSurcharge {
 export interface GetSurchargeVariables {
   id: string;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -459,9 +466,7 @@ export interface GetSystemConnections_system_connections_BelgianPostSettingsType
   config: any | null;
   account_id: string | null;
   passphrase: string | null;
-  services:
-    | GetSystemConnections_system_connections_BelgianPostSettingsType_services[]
-    | null;
+  services: GetSystemConnections_system_connections_BelgianPostSettingsType_services[] | null;
   rate_sheet: GetSystemConnections_system_connections_BelgianPostSettingsType_rate_sheet | null;
 }
 
@@ -571,9 +576,7 @@ export interface GetSystemConnections_system_connections_ColissimoSettingsType {
   password: string | null;
   contract_number: string | null;
   laposte_api_key: string | null;
-  services:
-    | GetSystemConnections_system_connections_ColissimoSettingsType_services[]
-    | null;
+  services: GetSystemConnections_system_connections_ColissimoSettingsType_services[] | null;
   rate_sheet: GetSystemConnections_system_connections_ColissimoSettingsType_rate_sheet | null;
 }
 
@@ -638,9 +641,7 @@ export interface GetSystemConnections_system_connections_DHLParcelDESettingsType
   tracking_consumer_key: string | null;
   tracking_consumer_secret: string | null;
   config: any | null;
-  services:
-    | GetSystemConnections_system_connections_DHLParcelDESettingsType_services[]
-    | null;
+  services: GetSystemConnections_system_connections_DHLParcelDESettingsType_services[] | null;
   rate_sheet: GetSystemConnections_system_connections_DHLParcelDESettingsType_rate_sheet | null;
 }
 
@@ -719,9 +720,7 @@ export interface GetSystemConnections_system_connections_DHLPolandSettingsType {
   username: string | null;
   password: string | null;
   account_number: string | null;
-  services:
-    | GetSystemConnections_system_connections_DHLPolandSettingsType_services[]
-    | null;
+  services: GetSystemConnections_system_connections_DHLPolandSettingsType_services[] | null;
   rate_sheet: GetSystemConnections_system_connections_DHLPolandSettingsType_rate_sheet | null;
 }
 
@@ -815,9 +814,7 @@ export interface GetSystemConnections_system_connections_DPDSettingsType {
   password: string | null;
   depot: string | null;
   account_country_code: string | null;
-  services:
-    | GetSystemConnections_system_connections_DPDSettingsType_services[]
-    | null;
+  services: GetSystemConnections_system_connections_DPDSettingsType_services[] | null;
   rate_sheet: GetSystemConnections_system_connections_DPDSettingsType_rate_sheet | null;
 }
 
@@ -883,13 +880,11 @@ export interface GetSystemConnections_system_connections_DPDHLSettingsType {
   zt_password: string | null;
   account_number: string | null;
   config: any | null;
-  services:
-    | GetSystemConnections_system_connections_DPDHLSettingsType_services[]
-    | null;
+  services: GetSystemConnections_system_connections_DPDHLSettingsType_services[] | null;
   rate_sheet: GetSystemConnections_system_connections_DPDHLSettingsType_rate_sheet | null;
 }
 
-export interface GetSystemConnections_system_connections_EShipperSettingsType {
+export interface GetSystemConnections_system_connections_EShipperXMLSettingsType {
   __typename: "EShipperXMLSettingsType";
   id: string;
   carrier_id: string;
@@ -1038,9 +1033,7 @@ export interface GetSystemConnections_system_connections_GenericSettingsType {
   config: any | null;
   capabilities: string[];
   account_country_code: string | null;
-  services:
-    | GetSystemConnections_system_connections_GenericSettingsType_services[]
-    | null;
+  services: GetSystemConnections_system_connections_GenericSettingsType_services[] | null;
   label_template: GetSystemConnections_system_connections_GenericSettingsType_label_template | null;
   rate_sheet: GetSystemConnections_system_connections_GenericSettingsType_rate_sheet | null;
 }
@@ -1277,50 +1270,12 @@ export interface GetSystemConnections_system_connections_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type GetSystemConnections_system_connections =
-  | GetSystemConnections_system_connections_AlliedExpressSettingsType
-  | GetSystemConnections_system_connections_AlliedExpressLocalSettingsType
-  | GetSystemConnections_system_connections_AmazonShippingSettingsType
-  | GetSystemConnections_system_connections_AramexSettingsType
-  | GetSystemConnections_system_connections_AsendiaUSSettingsType
-  | GetSystemConnections_system_connections_AustraliaPostSettingsType
-  | GetSystemConnections_system_connections_BoxKnightSettingsType
-  | GetSystemConnections_system_connections_BelgianPostSettingsType
-  | GetSystemConnections_system_connections_CanadaPostSettingsType
-  | GetSystemConnections_system_connections_CanparSettingsType
-  | GetSystemConnections_system_connections_ChronopostSettingsType
-  | GetSystemConnections_system_connections_ColissimoSettingsType
-  | GetSystemConnections_system_connections_DHLParcelDESettingsType
-  | GetSystemConnections_system_connections_DHLExpressSettingsType
-  | GetSystemConnections_system_connections_DHLPolandSettingsType
-  | GetSystemConnections_system_connections_DHLUniversalSettingsType
-  | GetSystemConnections_system_connections_DicomSettingsType
-  | GetSystemConnections_system_connections_DPDSettingsType
-  | GetSystemConnections_system_connections_DPDHLSettingsType
-  | GetSystemConnections_system_connections_EShipperSettingsType
-  | GetSystemConnections_system_connections_EasyPostSettingsType
-  | GetSystemConnections_system_connections_FedexSettingsType
-  | GetSystemConnections_system_connections_FedexWSSettingsType
-  | GetSystemConnections_system_connections_FreightcomSettingsType
-  | GetSystemConnections_system_connections_GenericSettingsType
-  | GetSystemConnections_system_connections_GEODISSettingsType
-  | GetSystemConnections_system_connections_LaPosteSettingsType
-  | GetSystemConnections_system_connections_Locate2uSettingsType
-  | GetSystemConnections_system_connections_NationexSettingsType
-  | GetSystemConnections_system_connections_PurolatorSettingsType
-  | GetSystemConnections_system_connections_RoadieSettingsType
-  | GetSystemConnections_system_connections_RoyalMailSettingsType
-  | GetSystemConnections_system_connections_SendleSettingsType
-  | GetSystemConnections_system_connections_TGESettingsType
-  | GetSystemConnections_system_connections_TNTSettingsType
-  | GetSystemConnections_system_connections_UPSSettingsType
-  | GetSystemConnections_system_connections_USPSSettingsType
-  | GetSystemConnections_system_connections_USPSInternationalSettingsType
-  | GetSystemConnections_system_connections_Zoom2uSettingsType;
+export type GetSystemConnections_system_connections = GetSystemConnections_system_connections_AlliedExpressSettingsType | GetSystemConnections_system_connections_AlliedExpressLocalSettingsType | GetSystemConnections_system_connections_AmazonShippingSettingsType | GetSystemConnections_system_connections_AramexSettingsType | GetSystemConnections_system_connections_AsendiaUSSettingsType | GetSystemConnections_system_connections_AustraliaPostSettingsType | GetSystemConnections_system_connections_BoxKnightSettingsType | GetSystemConnections_system_connections_BelgianPostSettingsType | GetSystemConnections_system_connections_CanadaPostSettingsType | GetSystemConnections_system_connections_CanparSettingsType | GetSystemConnections_system_connections_ChronopostSettingsType | GetSystemConnections_system_connections_ColissimoSettingsType | GetSystemConnections_system_connections_DHLParcelDESettingsType | GetSystemConnections_system_connections_DHLExpressSettingsType | GetSystemConnections_system_connections_DHLPolandSettingsType | GetSystemConnections_system_connections_DHLUniversalSettingsType | GetSystemConnections_system_connections_DicomSettingsType | GetSystemConnections_system_connections_DPDSettingsType | GetSystemConnections_system_connections_DPDHLSettingsType | GetSystemConnections_system_connections_EShipperXMLSettingsType | GetSystemConnections_system_connections_EasyPostSettingsType | GetSystemConnections_system_connections_FedexSettingsType | GetSystemConnections_system_connections_FedexWSSettingsType | GetSystemConnections_system_connections_FreightcomSettingsType | GetSystemConnections_system_connections_GenericSettingsType | GetSystemConnections_system_connections_GEODISSettingsType | GetSystemConnections_system_connections_LaPosteSettingsType | GetSystemConnections_system_connections_Locate2uSettingsType | GetSystemConnections_system_connections_NationexSettingsType | GetSystemConnections_system_connections_PurolatorSettingsType | GetSystemConnections_system_connections_RoadieSettingsType | GetSystemConnections_system_connections_RoyalMailSettingsType | GetSystemConnections_system_connections_SendleSettingsType | GetSystemConnections_system_connections_TGESettingsType | GetSystemConnections_system_connections_TNTSettingsType | GetSystemConnections_system_connections_UPSSettingsType | GetSystemConnections_system_connections_USPSSettingsType | GetSystemConnections_system_connections_USPSInternationalSettingsType | GetSystemConnections_system_connections_Zoom2uSettingsType;
 
 export interface GetSystemConnections {
   system_connections: GetSystemConnections_system_connections[];
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -1504,9 +1459,7 @@ export interface GetSystemConnection_system_connection_BelgianPostSettingsType {
   config: any | null;
   account_id: string | null;
   passphrase: string | null;
-  services:
-    | GetSystemConnection_system_connection_BelgianPostSettingsType_services[]
-    | null;
+  services: GetSystemConnection_system_connection_BelgianPostSettingsType_services[] | null;
   rate_sheet: GetSystemConnection_system_connection_BelgianPostSettingsType_rate_sheet | null;
 }
 
@@ -1616,9 +1569,7 @@ export interface GetSystemConnection_system_connection_ColissimoSettingsType {
   password: string | null;
   contract_number: string | null;
   laposte_api_key: string | null;
-  services:
-    | GetSystemConnection_system_connection_ColissimoSettingsType_services[]
-    | null;
+  services: GetSystemConnection_system_connection_ColissimoSettingsType_services[] | null;
   rate_sheet: GetSystemConnection_system_connection_ColissimoSettingsType_rate_sheet | null;
 }
 
@@ -1683,9 +1634,7 @@ export interface GetSystemConnection_system_connection_DHLParcelDESettingsType {
   tracking_consumer_key: string | null;
   tracking_consumer_secret: string | null;
   config: any | null;
-  services:
-    | GetSystemConnection_system_connection_DHLParcelDESettingsType_services[]
-    | null;
+  services: GetSystemConnection_system_connection_DHLParcelDESettingsType_services[] | null;
   rate_sheet: GetSystemConnection_system_connection_DHLParcelDESettingsType_rate_sheet | null;
 }
 
@@ -1764,9 +1713,7 @@ export interface GetSystemConnection_system_connection_DHLPolandSettingsType {
   username: string | null;
   password: string | null;
   account_number: string | null;
-  services:
-    | GetSystemConnection_system_connection_DHLPolandSettingsType_services[]
-    | null;
+  services: GetSystemConnection_system_connection_DHLPolandSettingsType_services[] | null;
   rate_sheet: GetSystemConnection_system_connection_DHLPolandSettingsType_rate_sheet | null;
 }
 
@@ -1860,9 +1807,7 @@ export interface GetSystemConnection_system_connection_DPDSettingsType {
   password: string | null;
   depot: string | null;
   account_country_code: string | null;
-  services:
-    | GetSystemConnection_system_connection_DPDSettingsType_services[]
-    | null;
+  services: GetSystemConnection_system_connection_DPDSettingsType_services[] | null;
   rate_sheet: GetSystemConnection_system_connection_DPDSettingsType_rate_sheet | null;
 }
 
@@ -1928,13 +1873,11 @@ export interface GetSystemConnection_system_connection_DPDHLSettingsType {
   zt_password: string | null;
   account_number: string | null;
   config: any | null;
-  services:
-    | GetSystemConnection_system_connection_DPDHLSettingsType_services[]
-    | null;
+  services: GetSystemConnection_system_connection_DPDHLSettingsType_services[] | null;
   rate_sheet: GetSystemConnection_system_connection_DPDHLSettingsType_rate_sheet | null;
 }
 
-export interface GetSystemConnection_system_connection_EShipperSettingsType {
+export interface GetSystemConnection_system_connection_EShipperXMLSettingsType {
   __typename: "EShipperXMLSettingsType";
   id: string;
   carrier_id: string;
@@ -2083,9 +2026,7 @@ export interface GetSystemConnection_system_connection_GenericSettingsType {
   config: any | null;
   capabilities: string[];
   account_country_code: string | null;
-  services:
-    | GetSystemConnection_system_connection_GenericSettingsType_services[]
-    | null;
+  services: GetSystemConnection_system_connection_GenericSettingsType_services[] | null;
   label_template: GetSystemConnection_system_connection_GenericSettingsType_label_template | null;
   rate_sheet: GetSystemConnection_system_connection_GenericSettingsType_rate_sheet | null;
 }
@@ -2322,46 +2263,7 @@ export interface GetSystemConnection_system_connection_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type GetSystemConnection_system_connection =
-  | GetSystemConnection_system_connection_AlliedExpressSettingsType
-  | GetSystemConnection_system_connection_AlliedExpressLocalSettingsType
-  | GetSystemConnection_system_connection_AmazonShippingSettingsType
-  | GetSystemConnection_system_connection_AramexSettingsType
-  | GetSystemConnection_system_connection_AsendiaUSSettingsType
-  | GetSystemConnection_system_connection_AustraliaPostSettingsType
-  | GetSystemConnection_system_connection_BoxKnightSettingsType
-  | GetSystemConnection_system_connection_BelgianPostSettingsType
-  | GetSystemConnection_system_connection_CanadaPostSettingsType
-  | GetSystemConnection_system_connection_CanparSettingsType
-  | GetSystemConnection_system_connection_ChronopostSettingsType
-  | GetSystemConnection_system_connection_ColissimoSettingsType
-  | GetSystemConnection_system_connection_DHLParcelDESettingsType
-  | GetSystemConnection_system_connection_DHLExpressSettingsType
-  | GetSystemConnection_system_connection_DHLPolandSettingsType
-  | GetSystemConnection_system_connection_DHLUniversalSettingsType
-  | GetSystemConnection_system_connection_DicomSettingsType
-  | GetSystemConnection_system_connection_DPDSettingsType
-  | GetSystemConnection_system_connection_DPDHLSettingsType
-  | GetSystemConnection_system_connection_EShipperSettingsType
-  | GetSystemConnection_system_connection_EasyPostSettingsType
-  | GetSystemConnection_system_connection_FedexSettingsType
-  | GetSystemConnection_system_connection_FedexWSSettingsType
-  | GetSystemConnection_system_connection_FreightcomSettingsType
-  | GetSystemConnection_system_connection_GenericSettingsType
-  | GetSystemConnection_system_connection_GEODISSettingsType
-  | GetSystemConnection_system_connection_LaPosteSettingsType
-  | GetSystemConnection_system_connection_Locate2uSettingsType
-  | GetSystemConnection_system_connection_NationexSettingsType
-  | GetSystemConnection_system_connection_PurolatorSettingsType
-  | GetSystemConnection_system_connection_RoadieSettingsType
-  | GetSystemConnection_system_connection_RoyalMailSettingsType
-  | GetSystemConnection_system_connection_SendleSettingsType
-  | GetSystemConnection_system_connection_TGESettingsType
-  | GetSystemConnection_system_connection_TNTSettingsType
-  | GetSystemConnection_system_connection_UPSSettingsType
-  | GetSystemConnection_system_connection_USPSSettingsType
-  | GetSystemConnection_system_connection_USPSInternationalSettingsType
-  | GetSystemConnection_system_connection_Zoom2uSettingsType;
+export type GetSystemConnection_system_connection = GetSystemConnection_system_connection_AlliedExpressSettingsType | GetSystemConnection_system_connection_AlliedExpressLocalSettingsType | GetSystemConnection_system_connection_AmazonShippingSettingsType | GetSystemConnection_system_connection_AramexSettingsType | GetSystemConnection_system_connection_AsendiaUSSettingsType | GetSystemConnection_system_connection_AustraliaPostSettingsType | GetSystemConnection_system_connection_BoxKnightSettingsType | GetSystemConnection_system_connection_BelgianPostSettingsType | GetSystemConnection_system_connection_CanadaPostSettingsType | GetSystemConnection_system_connection_CanparSettingsType | GetSystemConnection_system_connection_ChronopostSettingsType | GetSystemConnection_system_connection_ColissimoSettingsType | GetSystemConnection_system_connection_DHLParcelDESettingsType | GetSystemConnection_system_connection_DHLExpressSettingsType | GetSystemConnection_system_connection_DHLPolandSettingsType | GetSystemConnection_system_connection_DHLUniversalSettingsType | GetSystemConnection_system_connection_DicomSettingsType | GetSystemConnection_system_connection_DPDSettingsType | GetSystemConnection_system_connection_DPDHLSettingsType | GetSystemConnection_system_connection_EShipperXMLSettingsType | GetSystemConnection_system_connection_EasyPostSettingsType | GetSystemConnection_system_connection_FedexSettingsType | GetSystemConnection_system_connection_FedexWSSettingsType | GetSystemConnection_system_connection_FreightcomSettingsType | GetSystemConnection_system_connection_GenericSettingsType | GetSystemConnection_system_connection_GEODISSettingsType | GetSystemConnection_system_connection_LaPosteSettingsType | GetSystemConnection_system_connection_Locate2uSettingsType | GetSystemConnection_system_connection_NationexSettingsType | GetSystemConnection_system_connection_PurolatorSettingsType | GetSystemConnection_system_connection_RoadieSettingsType | GetSystemConnection_system_connection_RoyalMailSettingsType | GetSystemConnection_system_connection_SendleSettingsType | GetSystemConnection_system_connection_TGESettingsType | GetSystemConnection_system_connection_TNTSettingsType | GetSystemConnection_system_connection_UPSSettingsType | GetSystemConnection_system_connection_USPSSettingsType | GetSystemConnection_system_connection_USPSInternationalSettingsType | GetSystemConnection_system_connection_Zoom2uSettingsType;
 
 export interface GetSystemConnection {
   system_connection: GetSystemConnection_system_connection | null;
@@ -2370,6 +2272,7 @@ export interface GetSystemConnection {
 export interface GetSystemConnectionVariables {
   id: string;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2430,6 +2333,7 @@ export interface GetRateSheet {
 export interface GetRateSheetVariables {
   id: string;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2506,6 +2410,7 @@ export interface GetRateSheetsVariables {
   filter?: RateSheetFilter | null;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2544,6 +2449,7 @@ export interface GetPermissionGroupsVariables {
   filter?: PermissionGroupFilter | null;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2579,6 +2485,7 @@ export interface CreateUserVariables {
   data: CreateUserMutationInput;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2602,6 +2509,7 @@ export interface UpdateUser {
 export interface UpdateUserVariables {
   data: UpdateUserMutationInput;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2628,6 +2536,7 @@ export interface RemoveUserVariables {
   data: DeleteUserMutationInput;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2652,6 +2561,7 @@ export interface CreateSurchargeVariables {
   data: CreateSurchargeMutationInput;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2675,6 +2585,7 @@ export interface UpdateSurcharge {
 export interface UpdateSurchargeVariables {
   data: UpdateSurchargeMutationInput;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2701,6 +2612,7 @@ export interface DeleteSurchargeVariables {
   data: DeleteMutationInput;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2725,6 +2637,7 @@ export interface CreateCarrierConnectionVariables {
   data: CreateConnectionMutationInput;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2748,6 +2661,7 @@ export interface UpdateCarrierConnection {
 export interface UpdateCarrierConnectionVariables {
   data: UpdateConnectionMutationInput;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2774,6 +2688,7 @@ export interface DeleteCarrierConnectionVariables {
   data: DeleteConnectionMutationInput;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2797,6 +2712,7 @@ export interface UpdateOrganizationAccount {
 export interface UpdateOrganizationAccountVariables {
   data: UpdateOrganizationAccountMutationInput;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -2827,6 +2743,7 @@ export interface CreateRateSheetVariables {
   data: CreateRateSheetMutationInput;
 }
 
+
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
 
@@ -2855,6 +2772,7 @@ export interface UpdateRateSheet {
 export interface UpdateRateSheetVariables {
   data: UpdateRateSheetMutationInput;
 }
+
 
 /* tslint:disable */
 // This file was automatically generated and should not be edited.
@@ -3309,7 +3227,7 @@ export enum CarrierNameEnum {
   dpd = "dpd",
   dpdhl = "dpdhl",
   easypost = "easypost",
-  eshipper = "eshipper",
+  eshipper_xml = "eshipper_xml",
   fedex = "fedex",
   fedex_ws = "fedex_ws",
   freightcom = "freightcom",
@@ -3468,7 +3386,7 @@ export interface CreateConnectionMutationInput {
   dpd?: DPDSettingsInput | null;
   dpdhl?: DPDHLSettingsInput | null;
   easypost?: EasyPostSettingsInput | null;
-  eshipper?: EShipperSettingsInput | null;
+  eshipper_xml?: EShipperXMLSettingsInput | null;
   fedex?: FedexSettingsInput | null;
   fedex_ws?: FedexWSSettingsInput | null;
   freightcom?: FreightcomSettingsInput | null;
@@ -3766,7 +3684,7 @@ export interface EasyPostSettingsInput {
 }
 
 // null
-export interface EShipperSettingsInput {
+export interface EShipperXMLSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
@@ -4022,7 +3940,7 @@ export interface UpdateConnectionMutationInput {
   dpd?: UpdateDPDSettingsInput | null;
   dpdhl?: UpdateDPDHLSettingsInput | null;
   easypost?: UpdateEasyPostSettingsInput | null;
-  eshipper?: UpdateEShipperSettingsInput | null;
+  eshipper_xml?: UpdateEShipperXMLSettingsInput | null;
   fedex?: UpdateFedexSettingsInput | null;
   fedex_ws?: UpdateFedexWSSettingsInput | null;
   freightcom?: UpdateFreightcomSettingsInput | null;
@@ -4341,7 +4259,7 @@ export interface UpdateEasyPostSettingsInput {
 }
 
 // null
-export interface UpdateEShipperSettingsInput {
+export interface UpdateEShipperXMLSettingsInput {
   id: string;
   active?: boolean | null;
   config?: any | null;
