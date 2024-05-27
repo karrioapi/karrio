@@ -45,7 +45,9 @@ class DocumentTemplateList(api.GenericAPIView):
         Retrieve all templates.
         """
         templates = models.DocumentTemplate.access_by(request)
-        response = self.paginate_queryset(DocumentTemplate(templates, many=True).data)
+        response = self.paginate_queryset(
+            serializers.DocumentTemplate(templates, many=True).data
+        )
         return self.get_paginated_response(response)
 
     @openapi.extend_schema(
@@ -65,12 +67,16 @@ class DocumentTemplateList(api.GenericAPIView):
         Create a new template.
         """
         template = (
-            DocumentTemplateSerializer.map(data=request.data, context=request)
+            serializers.DocumentTemplateModelSerializer.map(
+                data=request.data, context=request
+            )
             .save()
             .instance
         )
+
         return Response(
-            serializers.DocumentTemplate(template).data, status=status.HTTP_201_CREATED
+            serializers.DocumentTemplate(template).data,
+            status=status.HTTP_201_CREATED,
         )
 
 
@@ -113,7 +119,10 @@ class DocumentTemplateDetail(api.APIView):
         """
         template = models.DocumentTemplate.access_by(request).get(pk=pk)
 
-        serializers.DocumentTemplateSerializer.map(template, data=request.data).save()
+        serializers.DocumentTemplateModelSerializer.map(
+            template,
+            data=request.data,
+        ).save()
 
         return Response(serializers.DocumentTemplate(template).data)
 
