@@ -1,0 +1,28 @@
+---
+id: error-codes
+title: Error Codes
+description: Understand and handle Karrio API error codes.
+---
+
+## Errors
+
+karrio uses conventional HTTP response codes to indicate the success or failure of an API request.
+
+:::info In general:
+
+Codes in the `2xx` range indicate success. <br/>
+Codes in the `4xx` range indicate an error that failed given the information provided _(e.g., a required parameter was omitted)_.<br/>
+Codes in the `5xx` range indicate an error withkarrio ' servers.
+
+:::
+
+|      HTTP STATUS CODE SUMMARY |                                                                                                  |
+| ----------------------------: | :----------------------------------------------------------------------------------------------- |
+|                      200 - OK | Everything worked as expected.                                                                   |
+|             400 - Bad Request | The request was unacceptable, often due to missing a required parameter.                         |
+|            401 - Unauthorized | No valid API key provided.                                                                       |
+|               403 - Forbidden | The API key doesn't have permissions to perform the request.                                     |
+|               404 - Not Found | The requested resource doesn't exist.                                                            |
+|       429 - Too Many Requests | Too many requests hit the API too quickly. We recommend an exponential backoff of your requests. |
+|                409 - Conflict | The API indicates a request conflict with current state of the target resource.                  |
+| 500, 502, 504 - Server Errors | Something went wrong on karrio' end. (These are rare.)                                           |

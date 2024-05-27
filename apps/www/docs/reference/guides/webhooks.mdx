@@ -1,0 +1,56 @@
+---
+id: webhooks
+title: Webhooks
+description: Register a webhook programmatically.
+tags:
+  - REST API
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+### Add endpoints with the API
+
+<div id="tabs">
+
+```javascript
+(async () => {
+  const endpoint = await karrio.webhooks.create({
+    url: "https://example.com/my/webhook/endpoint",
+    enabled_events: ["all"],
+    test_mode: true,
+  });
+})();
+```
+
+</div>
+
+Returns the webhook endpoint object with the `secret` field populated.
+
+<div id="tabs">
+
+```json
+{
+  "id": "weh_e355adb839a141c0b79865ee621f968f",
+  "url": "https://example.com/my/webhook/endpoint",
+  "description": "",
+  "enabled_events": ["all"],
+  "test_mode": true,
+  "disabled": false,
+  "object_type": "webhook",
+  "last_event_at": null,
+  "secret": "whsec_e2fed355115b4b9eb4b0ab8bf0d4d7ee"
+}
+```
+
+</div>
+
+:::info webhook signature:
+
+The signature is a string that is used to verify that the webhook
+request came from the correct service.
+
+The `secret` field is the add to the request header `X-Event-Id: <secret>`
+to serve as a signature.
+
+:::
