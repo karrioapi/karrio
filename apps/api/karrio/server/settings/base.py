@@ -500,7 +500,10 @@ SPECTACULAR_SETTINGS = {
     "AUTHENTICATION_WHITELIST": [
         _ for _ in AUTHENTICATION_CLASSES if "Session" not in _
     ],
-    "POSTPROCESSING_HOOKS": [],
+    "POSTPROCESSING_HOOKS": [
+        "karrio.server.openapi.custom_postprocessing_hook",
+    ],
+    "PREPROCESSING_HOOKS": [],
 }
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,

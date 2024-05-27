@@ -51,7 +51,7 @@ Default Login: `admin@example.com` | `demo`
 - **Dashboard**: Use the karrio dashboard to orchestrate your logistics operations.
 
 <p align="center">
-  <img alt="Karrio Dashboard" src="screenshots/shipments.png" width="700" style="max-width: 100%;" />
+  <img alt="Karrio Dashboard" src="screenshots/dashboard-shipments.png" width="700" style="max-width: 100%;" />
 </p>
 
 ## Get started

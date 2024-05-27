@@ -101,7 +101,7 @@ class DocumentDetails(APIView):
     @openapi.extend_schema(
         tags=["Documents"],
         operation_id=f"{ENDPOINT_ID}retrieve_upload",
-        summary="Retrieve an upload record",
+        summary="Retrieve upload record",
         responses={
             200: DocumentUploadRecord(),
             404: ErrorResponse(),

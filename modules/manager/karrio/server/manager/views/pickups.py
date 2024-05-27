@@ -39,6 +39,7 @@ class PickupList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listPickups"},
         summary="List shipment pickups",
         responses={
             200: Pickups(),
@@ -62,6 +63,7 @@ class PickupRequest(APIView):
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}schedule",
+        extensions={"x-operationId": "schedulePickup"},
         summary="Schedule a pickup",
         responses={
             201: Pickup(),
@@ -94,6 +96,7 @@ class PickupDetails(APIView):
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrievePickup"},
         summary="Retrieve a pickup",
         responses={
             200: Pickup(),
@@ -109,6 +112,7 @@ class PickupDetails(APIView):
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updatePickup"},
         summary="Update a pickup",
         responses={
             200: Pickup(),
@@ -134,9 +138,11 @@ class PickupDetails(APIView):
 
 
 class PickupCancel(APIView):
+
     @openapi.extend_schema(
         tags=["Pickups"],
         operation_id=f"{ENDPOINT_ID}cancel",
+        extensions={"x-operationId": "cancelPickup"},
         summary="Cancel a pickup",
         responses={
             200: Pickup(),

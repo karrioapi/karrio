@@ -2,9 +2,7 @@ openapi: 3.0.3
 info:
   description: |2
 
-    ## API Reference
-
-    Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.
+    Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.
 
     The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded
     request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
@@ -242,6 +240,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listAddresses
     post:
       operationId: $create
       description: Create a new address.
@@ -278,6 +277,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createAddress
   /v1/addresses/{id}:
     get:
       operationId: $retrieve
@@ -315,6 +315,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveAddress
     patch:
       operationId: $update
       description: update an address.
@@ -368,6 +369,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateAddress
     delete:
       operationId: $discard
       description: Discard an address.
@@ -410,6 +412,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: discardAddress
   /v1/batches/data/import:
     post:
       operationId: '&&&&$import_file'
@@ -515,6 +518,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listBatchOperations
   /v1/batches/operations/{id}:
     get:
       operationId: '&&&&$retrieve'
@@ -552,6 +556,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveBatchOperation
   /v1/batches/orders:
     post:
       operationId: '&&&&$create_orders'
@@ -716,6 +721,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listCarriers
   /v1/carriers/{carrier_name}/services:
     get:
       operationId: '&&get_services'
@@ -792,9 +798,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveCarrier
   /v1/documents/generate:
     post:
-      operationId: '&&&&$$generate'
+      operationId: '&&&&$$generateDocument'
       description: |-
         Generate any document.
         This API is designed to be used to generate GS1 labels,
@@ -868,6 +875,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listDocumentTemplates
     post:
       operationId: '&&&&$$create'
       description: Create a new template.
@@ -904,6 +912,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createDocumentTemplate
   /v1/documents/templates/{id}:
     get:
       operationId: '&&&&$$retrieve'
@@ -941,6 +950,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveDocumentTemplate
     patch:
       operationId: '&&&&$$update'
       description: update a template.
@@ -988,6 +998,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateDocumentTemplate
     delete:
       operationId: '&&&&$$discard'
       description: Delete a template.
@@ -1030,6 +1041,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: discardDocumentTemplate
   /v1/documents/uploads:
     get:
       operationId: $$$$$&uploads
@@ -1122,7 +1134,7 @@ paths:
     get:
       operationId: $$$$$&retrieve_upload
       description: Retrieve a shipping document upload record.
-      summary: Retrieve an upload record
+      summary: Retrieve upload record
       parameters:
       - in: path
         name: id
@@ -1208,6 +1220,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listManifests
     post:
       operationId: $$$$&&create
       description: Create a manifest for one or many shipments with labels already
@@ -1251,6 +1264,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createManifest
   /v1/manifests/{id}:
     get:
       operationId: $$$$&&retrieve
@@ -1288,6 +1302,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveManifest
   /v1/orders:
     get:
       operationId: '&&&&list'
@@ -1319,6 +1334,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listOrders
     post:
       operationId: '&&&&create'
       description: Create a new order object.
@@ -1355,6 +1371,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createOrder
   /v1/orders/{id}:
     get:
       operationId: '&&&&retrieve'
@@ -1392,6 +1409,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveOrder
     put:
       operationId: '&&&&update'
       description: |-
@@ -1447,6 +1465,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateOrder
     delete:
       operationId: '&&&&dismiss'
       description: Dismiss an order from fulfillment.
@@ -1490,6 +1509,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: dismissOrder
   /v1/orders/{id}/cancel:
     post:
       operationId: '&&&&cancel'
@@ -1533,6 +1553,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: cancelOrder
   /v1/parcels:
     get:
       operationId: $$$list
@@ -1564,6 +1585,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listParcels
     post:
       operationId: $$$create
       description: Create a new parcel.
@@ -1600,6 +1622,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createParcel
   /v1/parcels/{id}:
     get:
       operationId: $$$retrieve
@@ -1637,6 +1660,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveParcel
     patch:
       operationId: $$$update
       description: modify an existing parcel's details.
@@ -1690,6 +1714,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateParcel
     delete:
       operationId: $$$discard
       description: Remove a parcel.
@@ -1732,6 +1757,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: discardParcel
   /v1/pickups:
     get:
       operationId: $$$$list
@@ -1763,6 +1789,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listPickups
   /v1/pickups/{carrier_name}/schedule:
     post:
       operationId: $$$$schedule
@@ -1813,6 +1840,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: schedulePickup
   /v1/pickups/{id}:
     get:
       operationId: $$$$retrieve
@@ -1850,6 +1878,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrievePickup
     post:
       operationId: $$$$update
       description: Modify a pickup for one or many shipments with labels already purchased.
@@ -1904,6 +1933,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updatePickup
   /v1/pickups/{id}/cancel:
     post:
       operationId: $$$$cancel
@@ -1958,9 +1988,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: cancelPickup
   /v1/proxy/manifest:
     post:
-      operationId: '@@@$create_manifest'
+      operationId: '@@@$generate_manifest'
       description: |2
 
         Some carriers require shipment manifests to be created for pickups and dropoff.
@@ -2004,6 +2035,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: generateManifest
   /v1/proxy/pickups/{carrier_name}:
     post:
       operationId: '@schedule_pickup'
@@ -2093,6 +2125,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: pickupSchedule
   /v1/proxy/pickups/{carrier_name}/cancel:
     post:
       operationId: '@cancel_pickup'
@@ -2182,6 +2215,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: pickupCancel
   /v1/proxy/pickups/{carrier_name}/update:
     post:
       operationId: '@update_pickup'
@@ -2271,6 +2305,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: pickupUpdate
   /v1/proxy/rates:
     post:
       operationId: '@@fetch_rates'
@@ -2317,6 +2352,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: fetchRates
   /v1/proxy/shipping:
     post:
       operationId: '@@@buy_label'
@@ -2362,6 +2398,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: buyLabel
   /v1/proxy/shipping/{carrier_name}/cancel:
     post:
       operationId: '@@@void_label'
@@ -2445,6 +2482,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessages'
           description: ''
+      x-operationId: voidLabel
   /v1/proxy/tracking:
     post:
       operationId: '@@@@get_tracking'
@@ -2494,6 +2532,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: getTracking
   /v1/proxy/tracking/{carrier_name}/{tracking_number}:
     get:
       operationId: '@@@@track_shipment'
@@ -2585,6 +2624,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: trackShipment
   /v1/references:
     get:
       operationId: '&&data'
@@ -2745,7 +2785,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ShipmentList'
+                $ref: '#/components/schemas/Shipment'
           description: ''
         '404':
           content:
@@ -2759,6 +2799,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listShipments
     post:
       operationId: $$$$$create
       description: Create a new shipment instance.
@@ -2801,6 +2842,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createShipment
   /v1/shipments/{id}:
     get:
       operationId: $$$$$retrieve
@@ -2838,6 +2880,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveShipment
     put:
       operationId: $$$$$update
       description: |-
@@ -2899,6 +2942,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateShipment
   /v1/shipments/{id}/cancel:
     post:
       operationId: $$$$$cancel
@@ -2954,6 +2998,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: cancelShipment
   /v1/shipments/{id}/purchase:
     post:
       operationId: $$$$$purchase
@@ -3139,6 +3184,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listTrackers
     post:
       operationId: $$$$$$add
       description: |-
@@ -3195,6 +3241,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: addTracker
   /v1/trackers/{carrier_name}/{tracking_number}:
     get:
       operationId: $$$$$$create
@@ -3292,9 +3339,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createTracker
   /v1/trackers/{id_or_tracking_number}:
     get:
-      operationId: $$$$$$retrieves
+      operationId: $$$$$$retrieve
       description: Retrieve a package tracker
       summary: Retrieves a package tracker
       parameters:
@@ -3330,6 +3378,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveTracker
     put:
       operationId: $$$$$$update
       description: Mixin to log requests
@@ -3383,6 +3432,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateTracker
     delete:
       operationId: $$$$$$remove
       description: Discard a package tracker.
@@ -3419,6 +3469,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: removeTracker
   /v1/webhooks:
     get:
       operationId: $$$$$$$list
@@ -3450,6 +3501,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listWebhooks
     post:
       operationId: $$$$$$$create
       description: Create a new webhook.
@@ -3486,6 +3538,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createWebhook
   /v1/webhooks/{id}:
     get:
       operationId: $$$$$$$retrieve
@@ -3523,6 +3576,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveWebhook
     patch:
       operationId: $$$$$$$update
       description: update a webhook.
@@ -3570,6 +3624,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateWebhook
     delete:
       operationId: $$$$$$$remove
       description: Remove a webhook.
@@ -3606,6 +3661,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: removeWebhook
   /v1/webhooks/{id}/test:
     post:
       operationId: $$$$$$$test
@@ -3649,6 +3705,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: testWebhook
 components:
   schemas:
     APIError:
@@ -8846,26 +8903,6 @@ components:
       - parcels
       - recipient
       - shipper
-    ShipmentList:
-      type: object
-      properties:
-        count:
-          type: integer
-          nullable: true
-        next:
-          type: string
-          format: uri
-          nullable: true
-        previous:
-          type: string
-          format: uri
-          nullable: true
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Shipment'
-      required:
-      - results
     ShipmentPurchaseData:
       type: object
       properties:

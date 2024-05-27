@@ -45,6 +45,7 @@ class OrderList(api.GenericAPIView):
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listOrders"},
         summary="List all orders",
         responses={
             200: Orders(),
@@ -63,6 +64,7 @@ class OrderList(api.GenericAPIView):
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createOrder"},
         summary="Create an order",
         responses={
             201: Order(),
@@ -81,9 +83,11 @@ class OrderList(api.GenericAPIView):
 
 
 class OrderDetail(api.APIView):
+
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveOrder"},
         summary="Retrieve an order",
         responses={
             200: Order(),
@@ -102,6 +106,7 @@ class OrderDetail(api.APIView):
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateOrder"},
         summary="Update an order",
         responses={
             200: Order(),
@@ -139,6 +144,7 @@ class OrderDetail(api.APIView):
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}dismiss",
+        extensions={"x-operationId": "dismissOrder"},
         summary="Dismiss an order",
         deprecated=True,
         responses={
@@ -149,8 +155,7 @@ class OrderDetail(api.APIView):
         },
     )
     def delete(self, request: Request, pk: str):
-        """Dismiss an order from fulfillment.
-        """
+        """Dismiss an order from fulfillment."""
         order = models.Order.access_by(request).get(pk=pk)
         can_mutate_order(order, delete=True)
 
@@ -161,9 +166,11 @@ class OrderDetail(api.APIView):
 
 
 class OrderCancel(api.APIView):
+
     @openapi.extend_schema(
         tags=["Orders"],
         operation_id=f"{ENDPOINT_ID}cancel",
+        extensions={"x-operationId": "cancelOrder"},
         summary="Cancel an order",
         responses={
             200: Order(),
@@ -186,4 +193,6 @@ class OrderCancel(api.APIView):
 
 router.urls.append(path("orders", OrderList.as_view(), name="order-list"))
 router.urls.append(path("orders/<str:pk>", OrderDetail.as_view(), name="order-detail"))
-router.urls.append(path("orders/<str:pk>/cancel", OrderCancel.as_view(), name="order-cancel"))
+router.urls.append(
+    path("orders/<str:pk>/cancel", OrderCancel.as_view(), name="order-cancel")
+)

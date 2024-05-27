@@ -1,12 +1,12 @@
-from rest_framework.decorators import api_view, renderer_classes, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from rest_framework.request import Request
-from rest_framework.renderers import JSONRenderer
-import karrio.server.openapi as openapi
+import rest_framework.request as request
+import rest_framework.response as response
+import rest_framework.renderers as renderers
+import rest_framework.decorators as decorators
+import rest_framework.permissions as permissions
 
-from karrio.server.conf import FEATURE_FLAGS
-from karrio.server.core import dataunits
+import karrio.server.conf as conf
+import karrio.server.openapi as openapi
+import karrio.server.core.dataunits as dataunits
 
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 Metadata = openapi.OpenApiResponse(
@@ -22,7 +22,7 @@ Metadata = openapi.OpenApiResponse(
                 "ADMIN": "",
                 "OPENAPI": "",
                 "GRAPHQL": "",
-                **{flag: True for flag in FEATURE_FLAGS},
+                **{flag: True for flag in conf.FEATURE_FLAGS},
             },
         )
     ],
@@ -37,8 +37,8 @@ Metadata = openapi.OpenApiResponse(
     summary="Instance Metadata",
     responses={200: Metadata},
 )
-@api_view(["GET"])
-@permission_classes([AllowAny])
-@renderer_classes([JSONRenderer])
-def view(request: Request) -> Response:
-    return Response(dataunits.contextual_metadata(request))
+@decorators.api_view(["GET"])
+@decorators.permission_classes([permissions.AllowAny])
+@decorators.renderer_classes([renderers.JSONRenderer])
+def view(request: request.Request) -> response.Response:
+    return response.Response(dataunits.contextual_metadata(request))
