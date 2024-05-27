@@ -69,7 +69,7 @@ karrio.dicom @ file://${PWD}/modules/connectors/dicom
 karrio.dpd @ file://${PWD}/modules/connectors/dpd
 karrio.dpdhl @ file://${PWD}/modules/connectors/dpdhl
 karrio.easypost @ file://${PWD}/modules/connectors/easypost
-karrio.eshipper @ file://${PWD}/modules/connectors/eshipper
+karrio.eshipper_xml @ file://${PWD}/modules/connectors/eshipper_xml
 karrio.fedex @ file://${PWD}/modules/connectors/fedex
 karrio.fedex_ws @ file://${PWD}/modules/connectors/fedex_ws
 karrio.freightcom @ file://${PWD}/modules/connectors/freightcom
