@@ -16,7 +16,6 @@ class Settings(provider_utils.Settings):
     track_api_key: str = None
     track_secret_key: str = None
 
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     account_country_code: str = None
     carrier_id: str = "fedex"
     test_mode: bool = False

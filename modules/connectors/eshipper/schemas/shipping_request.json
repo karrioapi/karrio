@@ -1,0 +1,177 @@
+{
+  "scheduledShipDate": "2024-05-13T03:10:50.150Z",
+  "from": {
+    "attention": "string",
+    "company": "string",
+    "address1": "string",
+    "address2": "string",
+    "city": "string",
+    "province": "string",
+    "country": "string",
+    "zip": "string",
+    "email": "string",
+    "phone": "\\ddd \\ddd\\dddd",
+    "instructions": "string",
+    "residential": true,
+    "tailgateRequired": true,
+    "confirmDelivery": true,
+    "notifyRecipient": true
+  },
+  "to": {
+    "attention": "string",
+    "company": "string",
+    "address1": "string",
+    "address2": "string",
+    "city": "string",
+    "province": "string",
+    "country": "string",
+    "zip": "string",
+    "email": "string",
+    "phone": "\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\d\\ddd\\ddd.\\dddd",
+    "instructions": "string",
+    "residential": true,
+    "tailgateRequired": true,
+    "confirmDelivery": true,
+    "notifyRecipient": true
+  },
+  "packagingUnit": "string",
+  "packages": {
+    "type": "string",
+    "quantity": 0,
+    "weightUnit": "string",
+    "packages": [
+      {
+        "height": 0,
+        "length": 0,
+        "width": 0,
+        "dimensionUnit": "string",
+        "weight": 0,
+        "weightUnit": "string",
+        "type": "string",
+        "freightClass": "string",
+        "nmfcCode": "string",
+        "insuranceAmount": 0,
+        "codAmount": 0,
+        "description": "string",
+        "harmonizedCode": "string",
+        "skuCode": "string"
+      }
+    ],
+    "totalWeight": 0
+  },
+  "reference1": "string",
+  "reference2": "string",
+  "reference3": "string",
+  "transactionId": "string",
+  "billingReference": "string",
+  "signatureRequired": "string",
+  "insuranceType": "string",
+  "dangerousGoodsType": "string",
+  "pickup": {
+    "contactName": "string",
+    "phoneNumber": "string",
+    "pickupDate": "2024-05-13",
+    "pickupTime": {
+      "hour": 0,
+      "minute": 0,
+      "second": 0,
+      "nano": 0
+    },
+    "closingTime": {
+      "hour": 0,
+      "minute": 0,
+      "second": 0,
+      "nano": 0
+    },
+    "palletPickupTime": {
+      "hour": 0,
+      "minute": 0,
+      "second": 0,
+      "nano": 0
+    },
+    "palletClosingTime": {
+      "hour": 0,
+      "minute": 0,
+      "second": 0,
+      "nano": 0
+    },
+    "palletDeliveryClosingTime": {
+      "hour": 0,
+      "minute": 0,
+      "second": 0,
+      "nano": 0
+    },
+    "location": "Receiving",
+    "instructions": "string"
+  },
+  "customsInformation": {
+    "contact": {
+      "contactCompany": "string",
+      "contactName": "string",
+      "phone": "string",
+      "brokerName": "string",
+      "brokerTaxId": "string",
+      "recipientTaxId": "string"
+    },
+    "items": {
+      "item": [
+        {
+          "hsnCode": "string",
+          "description": "string",
+          "originCountry": "string",
+          "quantity": 99999,
+          "unitPrice": 10000000,
+          "skuCode": "string"
+        }
+      ],
+      "currency": "string"
+    },
+    "dutiesTaxes": {
+      "dutiable": true,
+      "billTo": "string",
+      "accountNumber": "string",
+      "sedNumber": "string"
+    },
+    "billingAddress": {
+      "company": "string",
+      "attention": "string",
+      "address1": "string",
+      "address2": "string",
+      "city": "string",
+      "province": "string",
+      "country": "string",
+      "zip": "string",
+      "email": "string",
+      "phone": "\\ddd \\ddd \\dddd"
+    },
+    "remarks": "string"
+  },
+  "thirdPartyBilling": {
+    "carrier": 0,
+    "country": 0,
+    "billToAccountNumber": "string",
+    "billToPostalCode": "string"
+  },
+  "commodityType": "string",
+  "isSaturdayService": true,
+  "holdForPickupRequired": true,
+  "specialEquipment": true,
+  "deliveryAppointment": true,
+  "insideDelivery": true,
+  "insidePickup": true,
+  "saturdayPickupRequired": true,
+  "stackable": true,
+  "serviceId": 0,
+  "cod": {
+    "codAddress": {
+      "company": "string",
+      "name": "string",
+      "addressLine1": "string",
+      "city": "string",
+      "province": "string",
+      "country": "string",
+      "zip": "string"
+    },
+    "paymentType": "string"
+  }
+}

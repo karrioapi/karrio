@@ -9,7 +9,6 @@ class Settings(core.Settings):
 
     username: str
     password: str
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
 
     @property
     def carrier_name(self):
@@ -29,14 +28,14 @@ class Settings(core.Settings):
         or collect it from the cache if an unexpired token exist.
         """
         cache_key = f"{self.carrier_name}|{self.username}|{self.password}"
-        auth = self.cache.get(cache_key) or {}
+        auth = self.connection_cache.get(cache_key) or {}
         token = auth.get("token")
 
         if token is not None:
             return token
 
-        self.cache.set(cache_key, lambda: authenticate(self))
-        new_auth = self.cache.get(cache_key)
+        self.connection_cache.set(cache_key, lambda: authenticate(self))
+        new_auth = self.connection_cache.get(cache_key)
 
         if any(self.depot or "") is False:
             self.depot = new_auth["depot"]

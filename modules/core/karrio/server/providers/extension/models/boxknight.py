@@ -1,7 +1,4 @@
 import django.db.models as models
-import django.core.cache as caching
-
-import karrio.lib as lib
 import karrio.server.providers.models.carrier as providers
 
 
@@ -17,10 +14,6 @@ class BoxKnightSettings(providers.Carrier):
     @property
     def carrier_name(self) -> str:
         return "boxknight"
-
-    @property
-    def cache(self):
-        return lib.Cache(cache=caching.cache)
 
 
 SETTINGS = BoxKnightSettings

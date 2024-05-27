@@ -1,0 +1,44 @@
+[
+  {
+    "eventTime": "string",
+    "shipDate": "string",
+    "carrierName": "string",
+    "carrierService": "string",
+    "trackingUrl": "string",
+    "trackingNumber": "string",
+    "referenceCodes": ["string"],
+    "expectedDeliveryDate": "string",
+    "currentStatus": "string",
+    "shipmentStatus": {
+      "labelGenerated": true,
+      "reachedAtWarehouse": true,
+      "inTransit": true,
+      "delivered": true,
+      "exception": true
+    },
+    "orderId": "string",
+    "eventId": "string",
+    "event": [
+      {
+        "dateTime": "string",
+        "description": "string",
+        "location": "string",
+        "proofOfDelivery": "string",
+        "postalCode": "string",
+        "additionalInformation": "string",
+        "originalEvent": {
+          "name": "string",
+          "identifier": "string",
+          "eventDate": "string",
+          "eventLocation": "string",
+          "data": {
+            "empty": true,
+            "additionalProp1": {},
+            "additionalProp2": {},
+            "additionalProp3": {}
+          }
+        }
+      }
+    ]
+  }
+]

@@ -20,8 +20,6 @@ class Settings(core.Settings):
     sscc_count: int = None
     shipment_count: int = None
 
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
-
     @property
     def carrier_name(self):
         return "tge"
@@ -54,7 +52,7 @@ class Settings(core.Settings):
     ) -> typing.Tuple[str, list, int, int]:
         # get state from cache
         cache_key = f"{self.carrier_name}|{self.api_key}"
-        state = self.cache.get(cache_key) or {}
+        state = self.connection_cache.get(cache_key) or {}
 
         sscc_gs1 = lib.to_int(lib.text(self.connection_config.SSCC_GS1.state) or "")
         ship_gs1 = lib.to_int(lib.text(self.connection_config.SHIP_GS1.state) or "")
@@ -89,7 +87,7 @@ class Settings(core.Settings):
         _sscc_count = sscc_count + package_count
         _shipment_count = shipment_count + package_count
 
-        self.cache.set(
+        self.connection_cache.set(
             cache_key,
             {**state, "sscc_count": _sscc_count, "shipment_count": _shipment_count},
         )

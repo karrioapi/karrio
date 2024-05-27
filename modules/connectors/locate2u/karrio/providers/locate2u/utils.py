@@ -17,7 +17,6 @@ class Settings(core.Settings):
     test_mode: bool = False
     carrier_id: str = "locate2u"
     account_country_code: str = "AU"
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     metadata: dict = {}
 
     @property
@@ -45,15 +44,15 @@ class Settings(core.Settings):
         cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.cache.get(cache_key) or {}
+        auth = self.connection_cache.get(cache_key) or {}
         token = auth.get("access_token")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
         if token is not None and expiry is not None and expiry > now:
             return token
 
-        self.cache.set(cache_key, lambda: login(self))
-        new_auth = self.cache.get(cache_key)
+        self.connection_cache.set(cache_key, lambda: login(self))
+        new_auth = self.connection_cache.get(cache_key)
 
         return new_auth["access_token"]
 

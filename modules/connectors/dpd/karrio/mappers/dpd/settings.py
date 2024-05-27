@@ -26,7 +26,6 @@ class Settings(provider_utils.Settings, rating_proxy.RatingMixinSettings):
     carrier_id: str = "dpd"
     account_country_code: str = "BE"
     services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel, False, dict(default=provider_units.DEFAULT_SERVICES)]  # type: ignore
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     metadata: dict = {}
     config: dict = {}
 

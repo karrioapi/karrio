@@ -27,6 +27,5 @@ class Settings(provider_utils.Settings):
     test_mode: bool = False
     carrier_id: str = "tge"
     account_country_code: str = "AU"
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     metadata: dict = {}
     config: dict = {}

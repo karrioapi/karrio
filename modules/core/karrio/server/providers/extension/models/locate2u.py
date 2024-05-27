@@ -1,7 +1,4 @@
 import django.db.models as models
-import django.core.cache as caching
-
-import karrio.lib as lib
 import karrio.server.providers.models.carrier as providers
 
 
@@ -20,10 +17,6 @@ class Locate2uSettings(providers.Carrier):
     @property
     def carrier_name(self) -> str:
         return "locate2u"
-
-    @property
-    def cache(self):
-        return lib.Cache(cache=caching.cache)
 
 
 SETTINGS = Locate2uSettings

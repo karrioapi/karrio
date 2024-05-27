@@ -24,6 +24,6 @@ gateway = karrio.gateway["ups"].create(
         client_id="client_id",
         client_secret="client_secret",
         account_number="Your Account Number",
-        cache=lib.Cache(**cached_auth),
-    )
+    ),
+    cache=lib.Cache(**cached_auth),
 )

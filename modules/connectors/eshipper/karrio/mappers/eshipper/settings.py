@@ -1,16 +1,18 @@
-"""Karrio eshipper connection settings."""
+"""Karrio eShipper client settings."""
 
 import attr
-from karrio.providers.eshipper.utils import Settings as BaseSettings
+import karrio.providers.eshipper.utils as provider_utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
-    """eshipper connection settings."""
+class Settings(provider_utils.Settings):
+    """eShipper connection settings."""
 
-    username: str
-    password: str
+    # required carrier specific properties
+    principal: str
+    credential: str
 
+    # generic properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "eshipper"

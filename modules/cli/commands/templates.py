@@ -239,7 +239,7 @@ touch "${LIB_MODULES}/__init__.py"
 
 quicktype () {
     echo "Generating $1..."
-    docker run -it -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/{{id}} \\
+    docker run -it --rm --name quicktype -v $PWD:/app-e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/{{id}} \\
     karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \\
     --no-nice-property-names --all-properties-optional --type-as-suffix $@
 }
@@ -274,8 +274,7 @@ METADATA = Metadata(
 )
 
 MAPPER_TEMPLATE = Template(
-    '''
-"""Karrio {{name}} client mapper."""
+    '''"""Karrio {{name}} client mapper."""
 
 import typing
 import karrio.lib as lib
@@ -384,8 +383,7 @@ class Mapper(mapper.Mapper):
 )
 
 MAPPER_PROXY_TEMPLATE = Template(
-    '''
-"""Karrio {{name}} client proxy."""
+    '''"""Karrio {{name}} client proxy."""
 
 import karrio.lib as lib
 import karrio.api.proxy as proxy
@@ -398,7 +396,7 @@ class Proxy(proxy.Proxy):
     def get_rates(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -409,7 +407,7 @@ class Proxy(proxy.Proxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -420,7 +418,7 @@ class Proxy(proxy.Proxy):
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -431,7 +429,7 @@ class Proxy(proxy.Proxy):
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -442,7 +440,7 @@ class Proxy(proxy.Proxy):
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -453,7 +451,7 @@ class Proxy(proxy.Proxy):
     def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -464,7 +462,7 @@ class Proxy(proxy.Proxy):
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -475,7 +473,7 @@ class Proxy(proxy.Proxy):
     def upload_document(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -486,7 +484,7 @@ class Proxy(proxy.Proxy):
     def create_manifest(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
+            data={% if is_xml_api %}request.serialize(){% else %}lib.to_json(request.serialize()){% endif %},
             trace=self.trace_as({% if is_xml_api %}"xml"{% else %}"json"{% endif %}),
             method="POST",
             headers={},
@@ -498,8 +496,7 @@ class Proxy(proxy.Proxy):
 )
 
 MAPPER_SETTINGS_TEMPLATE = Template(
-    '''
-"""Karrio {{name}} client settings."""
+    '''"""Karrio {{name}} client settings."""
 
 import attr
 import karrio.providers.{{id}}.utils as provider_utils
@@ -557,7 +554,7 @@ from karrio.providers.{{id}}.manifest import (
 )
 
 PROVIDER_ERROR_TEMPLATE = Template(
-    """
+    '''"""Karrio {{name}} error parser."""
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -569,7 +566,7 @@ def parse_error_response(
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors = []  # compute the carrier error object list
+    errors: list = []  # compute the carrier error object list
 
     return [
         models.Message(
@@ -582,7 +579,7 @@ def parse_error_response(
         for error in errors
     ]
 
-"""
+'''
 )
 
 PROVIDER_RATE_TEMPLATE = Template(
@@ -618,7 +615,7 @@ def _extract_details(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         service="",  # extract service from rate
-        total_charge=0.0,  # extract the rate total rate cost
+        total_charge=lib.to_money(0.0),  # extract the rate total rate cost
         currency="",  # extract the rate pricing currency
         transit_days=0,  # extract the rate transit days
         meta=dict(
@@ -631,16 +628,19 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
-    services = lib.to_services(payload.services, provider_units.ShippingService)  # preprocess the request services
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(payload.parcels)
+    services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
-    )   # preprocess the request options
+    )
 
-    request = None  # map data to convert karrio model to {{id}} specific type
+    # map data to convert karrio model to {{id}} specific type
+    request = None
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -662,7 +662,7 @@ def parse_tracking_response(
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     responses = _response.deserialize()
 
-    messages = sum(
+    messages: typing.List[models.Message] = sum(
         [
             error.parse_error_response(response, settings, tracking_number=_)
             for _, response in responses
@@ -678,24 +678,24 @@ def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
-    tracking = None  # parse carrier tracking object type
+    details = None  # parse carrier tracking object type
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number="",  # extract tracking number from tracking
+        tracking_number="",
         events=[
             models.TrackingEvent(
-                date=lib.fdate(""), # extract tracking event date
-                description="",  # extract tracking event description or code
-                code="",  # extract tracking event code
-                time=lib.ftime(""), # extract tracking event time
-                location="",  # extract tracking event address
+                date=lib.fdate(""),
+                description="",
+                code="",
+                time=lib.ftime(""),
+                location="",
             )
-            for event in []  # extract tracking events
+            for event in []
         ],
-        estimated_delivery=lib.fdate(""), # extract tracking estimated date if provided
-        delivered=False,  # compute tracking delivered status
+        estimated_delivery=lib.fdate(""),
+        delivered=False,
     )
 
 
@@ -703,9 +703,11 @@ def tracking_request(
     payload: models.TrackingRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = None  # map data to convert karrio model to {{id}} specific type
 
-    return lib.Serializable(request)
+    # map data to convert karrio model to {{id}} specific type
+    request = None
+
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -835,9 +837,10 @@ def address_validation_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable[lib.Envelope]:
 
-    request = None  # map data to convert karrio model to {{id}} specific type
+    # map data to convert karrio model to {{id}} specific type
+    request = None
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -891,9 +894,10 @@ def shipment_cancel_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
-    request = None  # map data to convert karrio model to {{id}} specific type
+    # map data to convert karrio model to {{id}} specific type
+    request = None
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -953,16 +957,19 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    packages = lib.to_packages(payload.parcels)  # preprocess the request parcels
-    service = provider_units.ShippingService.map(payload.service).value_or_key  # preprocess the request services
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
+    packages = lib.to_packages(payload.parcels)
+    service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
-    )   # preprocess the request options
+    )
 
-    request = None  # map data to convert karrio model to {{id}} specific type
+    # map data to convert karrio model to {{id}} specific type
+    request = None
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -1014,9 +1021,10 @@ def document_upload_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
-    request = None  # map data to convert karrio model to {{id}} specific type
+    # map data to convert karrio model to {{id}} specific type
+    request = None
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -1063,9 +1071,10 @@ def manifest_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
-    request = None  # map data to convert karrio model to {{id}} specific type
+    # map data to convert karrio model to {{id}} specific type
+    request = None
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -1115,9 +1124,10 @@ def pickup_cancel_request(
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
-    request = None  # map data to convert karrio model to {{id}} specific type
+    # map data to convert karrio model to {{id}} specific type
+    request = None
 
-    return lib.Serializable(request)
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -1167,9 +1177,11 @@ def pickup_request(
     payload: models.PickupRequest,
     settings: provider_utils.Settings
 ) -> lib.Serializable:
-    request = None  # map data to convert karrio model to {{id}} specific type
 
-    return lib.Serializable(request)
+    # map data to convert karrio model to {{id}} specific type
+    request = None
+
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -1219,9 +1231,11 @@ def pickup_update_request(
     payload: models.PickupUpdateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    request = None  # map data to convert karrio model to {{id}} specific type
 
-    return lib.Serializable(request)
+    # map data to convert karrio model to {{id}} specific type
+    request = None
+
+    return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
 """
 )
@@ -1311,7 +1325,40 @@ if __name__ == "__main__":
     unittest.main()
 
 
-RatePayload = {}
+RatePayload = {
+    "shipper": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+        "phone_number": "(07) 3114 1499",
+    },
+    "recipient": {
+        "company_name": "CGI",
+        "address_line1": "23 jardin private",
+        "city": "Ottawa",
+        "postal_code": "k1k 4t3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON",
+    },
+    "parcels": [
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
+    "options": { },
+    "reference": "REF-001",
+}
 
 ParsedRateResponse = []
 
@@ -1478,7 +1525,43 @@ if __name__ == "__main__":
     unittest.main()
 
 
-ShipmentPayload = {}
+ShipmentPayload = {
+    "shipper": {
+        "company_name": "TESTING COMPANY",
+        "address_line1": "17 VULCAN RD",
+        "city": "CANNING VALE",
+        "postal_code": "6155",
+        "country_code": "AU",
+        "person_name": "TEST USER",
+        "state_code": "WA",
+        "email": "test@gmail.com",
+        "phone_number": "(07) 3114 1499",
+    },
+    "recipient": {
+        "company_name": "CGI",
+        "address_line1": "23 jardin private",
+        "city": "Ottawa",
+        "postal_code": "k1k 4t3",
+        "country_code": "CA",
+        "person_name": "Jain",
+        "state_code": "ON",
+    },
+    "parcels": [
+        {
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
+        }
+    ],
+    "service": "carrier_service",
+    "options": {
+        "signature_required": True,
+    },
+    "reference": "#Order 11111",
+}
 
 ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
