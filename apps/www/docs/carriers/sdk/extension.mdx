@@ -41,9 +41,11 @@ that can be abstracted, we will continue to improve the implementation process.
 
 5. Implement the Mapper functions
 
-6. Add a database model for karrio server
+6. Consolidate your integration with unit tests
 
-7. Add the carrier configuration to the dashboard
+7. Add a database model for karrio server
+
+8. Add the carrier configuration to the dashboard
 
 :::info
 The package naming convention for extensions is `karrio.[carrier_name]`
@@ -559,7 +561,46 @@ def rate_request(payload: models.RateRequest, settings: provider_utils.Settings)
 
 ---
 
-#### 6. Add a database model for karrio server
+#### 6. Consolidate your integration with unit tests
+
+Once you have the foundation of your extension and an initial implementation of your data mappers,
+you need to install your new extension and add it as a dependency in `./requirements.sdk.dev.txt`
+
+```terminal
+# Installation
+pip install -e ./modules/connectors/[carrier_name]
+```
+
+```txt
+# Carrier Extentions packages
+-e ./modules/sdk
+-e ./modules/connectors/allied_express
+-e ./modules/connectors/allied_express_local
+-e ./modules/connectors/amazon_shipping
+...
+
+# add your extension as dependency here
+-e ./modules/connectors/[carrier_name]
+
+...
+-e ./modules/connectors/locate2u
+-e ./modules/connectors/zoom2u
+```
+
+Note that when you first bootstrapped the extension, some tests files have already been prepared for you.
+
+You can run test against your extension using
+
+```terminal title="Terminal"
+python -m unittest discover -v -f modules/connectors/[carrier_name]/tests
+```
+
+You will need to update the tests fixture and the input and output data to consolidate the various scenarios
+of you implementation.
+
+---
+
+#### 7. Add a database model for karrio server
 
 The database model is a Django model that represents the carrier settings in the database.
 
@@ -590,6 +631,31 @@ SETTINGS = CanadaPostSettings
 
 Once the model is defined, you need to run the migrations to create the database table.
 
+-   First, you need to install your new extension and add it as a dependency in `./requirements.server.dev.txt`
+
+```terminal
+# Installation
+pip install -e ./modules/connectors/[carrier_name]
+```
+
+```txt
+django-debug-toolbar
+Django==4.2.11
+
+# Carrier Extentions modules
+-e ./modules/sdk
+...
+
+# add your extension as dependency here
+-e ./modules/connectors/[carrier_name]
+
+...
+-e ./modules/pricing
+-e ./modules/documents
+```
+
+-   Then, you can apply the database changes
+
 ```terminal title="Terminal"
 # create the migration file
 karrio makemigrations
@@ -600,7 +666,7 @@ karrio migrate
 
 ---
 
-#### 7. Add the carrier configuration to the dashboard
+#### 8. Add the carrier configuration to the dashboard
 
 This is the final step where you make your custom carrier configurable in the karrio dashboard.
 
