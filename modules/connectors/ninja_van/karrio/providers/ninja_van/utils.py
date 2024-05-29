@@ -14,7 +14,7 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://carrier.api"
+            "https://api.ninjavan.co"
             if self.test_mode
             else "https://sandbox.carrier.api"
         )

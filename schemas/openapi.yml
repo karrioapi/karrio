@@ -10044,6 +10044,7 @@ tags:
     | amazon_shipping | AmazonShipping |
     | allied_express_local | Allied Express Local |
     | allied_express | Allied Express |
+    | ninja_van | Ninja Van |
 
     ---
     ## Services
@@ -11364,6 +11365,11 @@ tags:
     | allied_parcel_service | P |
     | allied_standard_pallet_service | PT |
     | allied_oversized_pallet_service | PT2 |
+
+    ### Ninja Van
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | ninja_van_standard_service | Ninja Van Standard Service |
 
 
     ---

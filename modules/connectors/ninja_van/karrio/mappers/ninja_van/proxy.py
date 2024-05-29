@@ -18,7 +18,7 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
@@ -29,7 +29,7 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
@@ -40,7 +40,7 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
+
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
             url=f"{self.settings.server_url}/service",
@@ -51,4 +51,3 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
-    
