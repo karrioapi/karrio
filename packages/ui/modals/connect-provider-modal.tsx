@@ -1781,6 +1781,15 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
           ["api_key", true],
           ["account_country_code"],
         ],
+        [CarrierSettingsCarrierNameEnum.NinjaVan]: [
+          ["carrier_id", true],
+          ["api_key"],
+          ["secret_key"],
+          ["track_api_key"],
+          ["track_secret_key"],
+          ["account_number"],
+          ["account_country_code"],
+        ],
         [NoneEnum.none]: [],
       }[carrier_name] || []
     ).find(([_, ...__]) => _ === property) || [];
@@ -1801,4 +1810,3 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
 export function useConnectCarrierModal() {
   return useContext(ConnectProviderModalContext);
 }
-

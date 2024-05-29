@@ -41,3 +41,4 @@
 -e ./modules/connectors/freightcom
 -e ./modules/connectors/locate2u
 -e ./modules/connectors/zoom2u
+-e ./modules/connectors/ninja_van

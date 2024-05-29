@@ -43,6 +43,7 @@ Django==4.2.11
 -e ./modules/connectors/freightcom
 -e ./modules/connectors/locate2u
 -e ./modules/connectors/zoom2u
+-e ./modules/connectors/ninja_van
 
 
 # karrio server modules
