@@ -16,7 +16,6 @@ class Settings(provider_utils.Settings):
 
     carrier_id: str = "ups"
     account_country_code: str = None
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     test_mode: bool = False
     metadata: dict = {}
     config: dict = {}

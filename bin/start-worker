@@ -3,4 +3,4 @@
 set -e
 
 # Run django huey worker...
-karrio run_huey -w 2
+WORKER_IMMEDIATE_MODE=False karrio run_huey -w 2

@@ -17,7 +17,6 @@ class Settings(BaseSettings):
 
     carrier_id: str = "amazon_shipping"
     account_country_code: str = None
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     test_mode: bool = False
     metadata: dict = {}
     config: dict = {}
