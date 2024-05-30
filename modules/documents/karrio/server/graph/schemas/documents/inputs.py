@@ -14,9 +14,10 @@ class CreateDocumentTemplateMutationInput(utils.BaseInput):
     slug: str
     name: str
     template: str
-    related_object: TemplateRelatedObjectEnum
     active: typing.Optional[bool] = True
     description: typing.Optional[str] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    related_object: typing.Optional[TemplateRelatedObjectEnum] = strawberry.UNSET
 
 
 @strawberry.input

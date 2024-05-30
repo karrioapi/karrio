@@ -2,7 +2,6 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_auth_cache
 @providers.has_rate_sheet("dpd")
 class DPDSettings(providers.Carrier):
     class Meta:

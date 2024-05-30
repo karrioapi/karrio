@@ -53,9 +53,7 @@ urlpatterns = [
 
 def render_schema_description(APP_NAME):
     return f"""
-## API Reference
-
-{APP_NAME} is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.
+{APP_NAME} is a multi-carrier shipping API that simplifies the integration of logistics carrier services.
 
 The {APP_NAME} API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded
 request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.

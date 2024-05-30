@@ -53,10 +53,11 @@ class ShipmentList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listShipments"},
         summary="List all shipments",
         parameters=filters.ShipmentFilters.parameters,
         responses={
-            200: Shipments(),
+            200: Shipment(),
             404: ErrorResponse(),
             500: ErrorResponse(),
         },
@@ -73,6 +74,7 @@ class ShipmentList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createShipment"},
         summary="Create a shipment",
         responses={
             201: Shipment(),
@@ -99,6 +101,7 @@ class ShipmentDetails(APIView):
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveShipment"},
         summary="Retrieve a shipment",
         responses={
             200: Shipment(),
@@ -117,6 +120,7 @@ class ShipmentDetails(APIView):
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateShipment"},
         summary="Update a shipment",
         responses={
             200: Shipment(),
@@ -158,6 +162,7 @@ class ShipmentCancel(APIView):
     @openapi.extend_schema(
         tags=["Shipments"],
         operation_id=f"{ENDPOINT_ID}cancel",
+        extensions={"x-operationId": "cancelShipment"},
         summary="Cancel a shipment",
         request=None,
         responses={

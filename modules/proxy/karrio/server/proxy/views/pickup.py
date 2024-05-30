@@ -31,6 +31,7 @@ class PickupSchedule(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}schedule_pickup",
+        extensions={"x-operationId": "pickupSchedule"},
         summary="Schedule a pickup",
         request=PickupRequest(),
         responses={
@@ -65,6 +66,7 @@ class PickupUpdate(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}update_pickup",
+        extensions={"x-operationId": "pickupUpdate"},
         summary="Update a pickup",
         request=PickupUpdateRequest(),
         responses={
@@ -99,6 +101,7 @@ class PickupCancel(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}cancel_pickup",
+        extensions={"x-operationId": "pickupCancel"},
         summary="Cancel a pickup",
         request=PickupCancelRequest(),
         responses={

@@ -16,7 +16,6 @@ class Settings(core.Settings):
     track_api_key: str = None
     track_secret_key: str = None
 
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
     account_country_code: str = None
     metadata: dict = {}
     config: dict = {}
@@ -60,14 +59,14 @@ class Settings(core.Settings):
         cache_key = f"{self.carrier_name}|{self.api_key}|{self.secret_key}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.cache.get(cache_key) or {}
+        auth = self.connection_cache.get(cache_key) or {}
         token = auth.get("access_token")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
         if token is not None and expiry is not None and expiry > now:
             return token
 
-        self.cache.set(
+        self.connection_cache.set(
             cache_key,
             lambda: login(
                 self,
@@ -75,7 +74,7 @@ class Settings(core.Settings):
                 client_secret=self.secret_key,
             ),
         )
-        new_auth = self.cache.get(cache_key)
+        new_auth = self.connection_cache.get(cache_key)
 
         return new_auth["access_token"]
 
@@ -92,14 +91,14 @@ class Settings(core.Settings):
         cache_key = f"{self.carrier_name}|{self.track_api_key}|{self.track_secret_key}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.cache.get(cache_key) or {}
+        auth = self.connection_cache.get(cache_key) or {}
         token = auth.get("access_token")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
         if token is not None and expiry is not None and expiry > now:
             return token
 
-        self.cache.set(
+        self.connection_cache.set(
             cache_key,
             lambda: login(
                 self,
@@ -107,7 +106,7 @@ class Settings(core.Settings):
                 client_secret=self.track_secret_key,
             ),
         )
-        new_auth = self.cache.get(cache_key)
+        new_auth = self.connection_cache.get(cache_key)
 
         return new_auth["access_token"]
 

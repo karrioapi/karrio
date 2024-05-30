@@ -1,0 +1,97 @@
+{
+  "order": {
+    "trackingId": "string",
+    "orderId": "string",
+    "message": "string"
+  },
+  "carrier": {
+    "carrierName": "string",
+    "serviceName": "string",
+    "carrierLogoPath": "string"
+  },
+  "reference": {
+    "code": "string",
+    "name": "string"
+  },
+  "reference2": {
+    "code": "string",
+    "name": "string"
+  },
+  "reference3": {
+    "code": "string",
+    "name": "string"
+  },
+  "transactionId": "string",
+  "billingReference": "string",
+  "packages": [
+    {
+      "trackingNumber": "string"
+    }
+  ],
+  "trackingUrl": "string",
+  "brandedTrackingUrl": "string",
+  "trackingNumber": "string",
+  "labelData": {
+    "label": [
+      {
+        "type": "string",
+        "data": "string"
+      }
+    ]
+  },
+  "customsInvoice": {
+    "type": "string",
+    "data": "string"
+  },
+  "pickup": {
+    "confirmationNumber": "string"
+  },
+  "packingSlip": "string",
+  "quote": {
+    "carrierName": "string",
+    "serviceId": 0,
+    "serviceName": "string",
+    "deliveryCarrier": "string",
+    "modeTransport": "AIR",
+    "transitDays": "string",
+    "baseCharge": 0,
+    "fuelSurcharge": 0,
+    "fuelSurchargePercentage": 0,
+    "carbonNeutralFees": 0,
+    "surcharges": [
+      {
+        "name": "string",
+        "amount": 0
+      }
+    ],
+    "totalCharge": 0,
+    "processingFees": 0,
+    "taxes": [
+      {
+        "name": "string",
+        "amount": 0
+      }
+    ],
+    "totalChargedAmount": 0,
+    "currency": "string",
+    "carrierLogo": "string",
+    "id": "string"
+  },
+  "billing": {
+    "invoices": [
+      {
+        "invoiceNumber": "string",
+        "charges": [
+          {
+            "charge": "string",
+            "amount": "string",
+            "adjustmentReasons": "string"
+          }
+        ],
+        "total": 0
+      }
+    ]
+  },
+  "returnShipment": "string",
+  "message": "string"
+}

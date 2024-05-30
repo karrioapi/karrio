@@ -1,3 +1,4 @@
+
 # karrio.eshipper
 
 This package is a eShipper extension of the [karrio](https://pypi.org/project/karrio) multi carrier shipping SDK.
@@ -27,4 +28,4 @@ eshipper = karrio.gateway["eshipper"].create(
 )
 ```
 
-Check the [karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests
+Check the [Karrio Mutli-carrier SDK docs](https://docs.karrio.io) for Shipping API requests

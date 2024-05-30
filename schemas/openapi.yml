@@ -2,9 +2,7 @@ openapi: 3.0.3
 info:
   description: |2
 
-    ## API Reference
-
-    Karrio is an open source multi-carrier shipping API that simplifies the integration of logistics carrier services.
+    Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.
 
     The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded
     request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.
@@ -16,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.2.16`.
+    The current version is `2024.6-rc2`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -86,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.2.16
+  version: 2024.6-rc2
 paths:
   /:
     get:
@@ -242,6 +240,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listAddresses
     post:
       operationId: $create
       description: Create a new address.
@@ -278,6 +277,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createAddress
   /v1/addresses/{id}:
     get:
       operationId: $retrieve
@@ -315,6 +315,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveAddress
     patch:
       operationId: $update
       description: update an address.
@@ -368,6 +369,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateAddress
     delete:
       operationId: $discard
       description: Discard an address.
@@ -410,6 +412,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: discardAddress
   /v1/batches/data/import:
     post:
       operationId: '&&&&$import_file'
@@ -515,6 +518,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listBatchOperations
   /v1/batches/operations/{id}:
     get:
       operationId: '&&&&$retrieve'
@@ -552,6 +556,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveBatchOperation
   /v1/batches/orders:
     post:
       operationId: '&&&&$create_orders'
@@ -681,9 +686,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -716,6 +721,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listCarriers
   /v1/carriers/{carrier_name}/services:
     get:
       operationId: '&&get_services'
@@ -730,9 +736,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -792,9 +798,253 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/documents:
+      x-operationId: retrieveCarrier
+  /v1/documents/generate:
+    post:
+      operationId: '&&&&$$generateDocument'
+      description: |-
+        Generate any document.
+        This API is designed to be used to generate GS1 labels,
+        invoices and any document that requires external data.
+      summary: Generate a document
+      tags:
+      - Documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentData'
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedDocument'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+  /v1/documents/templates:
     get:
-      operationId: $$$$$&list
+      operationId: '&&&&$$list'
+      description: Retrieve all templates.
+      summary: List all templates
+      tags:
+      - Documents
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplateList'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: listDocumentTemplates
+    post:
+      operationId: '&&&&$$create'
+      description: Create a new template.
+      summary: Create a template
+      tags:
+      - Documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DocumentTemplateData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: createDocumentTemplate
+  /v1/documents/templates/{id}:
+    get:
+      operationId: '&&&&$$retrieve'
+      description: Retrieve a template.
+      summary: Retrieve a template
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Documents
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: retrieveDocumentTemplate
+    patch:
+      operationId: '&&&&$$update'
+      description: update a template.
+      summary: Update a template
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Documents
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedDocumentTemplateData'
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: updateDocumentTemplate
+    delete:
+      operationId: '&&&&$$discard'
+      description: Delete a template.
+      summary: Delete a template
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Documents
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DocumentTemplate'
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: discardDocumentTemplate
+  /v1/documents/uploads:
+    get:
+      operationId: $$$$$&uploads
       description: Retrieve all shipping document upload records.
       summary: List all upload records
       parameters:
@@ -880,11 +1130,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/documents/{id}:
+  /v1/documents/uploads/{id}:
     get:
-      operationId: $$$$$&retrieve
+      operationId: $$$$$&retrieve_upload
       description: Retrieve a shipping document upload record.
-      summary: Retrieve an upload record
+      summary: Retrieve upload record
       parameters:
       - in: path
         name: id
@@ -931,9 +1181,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -970,6 +1220,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listManifests
     post:
       operationId: $$$$&&create
       description: Create a manifest for one or many shipments with labels already
@@ -1013,6 +1264,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createManifest
   /v1/manifests/{id}:
     get:
       operationId: $$$$&&retrieve
@@ -1050,6 +1302,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveManifest
   /v1/orders:
     get:
       operationId: '&&&&list'
@@ -1081,6 +1334,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listOrders
     post:
       operationId: '&&&&create'
       description: Create a new order object.
@@ -1117,6 +1371,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createOrder
   /v1/orders/{id}:
     get:
       operationId: '&&&&retrieve'
@@ -1154,6 +1409,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveOrder
     put:
       operationId: '&&&&update'
       description: |-
@@ -1209,6 +1465,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateOrder
     delete:
       operationId: '&&&&dismiss'
       description: Dismiss an order from fulfillment.
@@ -1252,6 +1509,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: dismissOrder
   /v1/orders/{id}/cancel:
     post:
       operationId: '&&&&cancel'
@@ -1295,6 +1553,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: cancelOrder
   /v1/parcels:
     get:
       operationId: $$$list
@@ -1326,6 +1585,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listParcels
     post:
       operationId: $$$create
       description: Create a new parcel.
@@ -1362,6 +1622,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createParcel
   /v1/parcels/{id}:
     get:
       operationId: $$$retrieve
@@ -1399,6 +1660,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveParcel
     patch:
       operationId: $$$update
       description: modify an existing parcel's details.
@@ -1452,6 +1714,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateParcel
     delete:
       operationId: $$$discard
       description: Remove a parcel.
@@ -1494,6 +1757,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: discardParcel
   /v1/pickups:
     get:
       operationId: $$$$list
@@ -1525,6 +1789,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listPickups
   /v1/pickups/{carrier_name}/schedule:
     post:
       operationId: $$$$schedule
@@ -1575,6 +1840,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: schedulePickup
   /v1/pickups/{id}:
     get:
       operationId: $$$$retrieve
@@ -1612,6 +1878,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrievePickup
     post:
       operationId: $$$$update
       description: Modify a pickup for one or many shipments with labels already purchased.
@@ -1666,6 +1933,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updatePickup
   /v1/pickups/{id}/cancel:
     post:
       operationId: $$$$cancel
@@ -1720,9 +1988,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: cancelPickup
   /v1/proxy/manifest:
     post:
-      operationId: '@@@$create_manifest'
+      operationId: '@@@$generate_manifest'
       description: |2
 
         Some carriers require shipment manifests to be created for pickups and dropoff.
@@ -1766,6 +2035,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: generateManifest
   /v1/proxy/pickups/{carrier_name}:
     post:
       operationId: '@schedule_pickup'
@@ -1797,7 +2067,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -1855,6 +2125,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: pickupSchedule
   /v1/proxy/pickups/{carrier_name}/cancel:
     post:
       operationId: '@cancel_pickup'
@@ -1886,7 +2157,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -1944,6 +2215,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: pickupCancel
   /v1/proxy/pickups/{carrier_name}/update:
     post:
       operationId: '@update_pickup'
@@ -1975,7 +2247,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2033,6 +2305,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: pickupUpdate
   /v1/proxy/rates:
     post:
       operationId: '@@fetch_rates'
@@ -2079,6 +2352,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: fetchRates
   /v1/proxy/shipping:
     post:
       operationId: '@@@buy_label'
@@ -2124,6 +2398,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: buyLabel
   /v1/proxy/shipping/{carrier_name}/cancel:
     post:
       operationId: '@@@void_label'
@@ -2155,7 +2430,7 @@ paths:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -2207,6 +2482,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorMessages'
           description: ''
+      x-operationId: voidLabel
   /v1/proxy/tracking:
     post:
       operationId: '@@@@get_tracking'
@@ -2256,6 +2532,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: getTracking
   /v1/proxy/tracking/{carrier_name}/{tracking_number}:
     get:
       operationId: '@@@@track_shipment'
@@ -2347,6 +2624,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: trackShipment
   /v1/references:
     get:
       operationId: '&&data'
@@ -2423,9 +2701,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2507,7 +2785,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ShipmentList'
+                $ref: '#/components/schemas/Shipment'
           description: ''
         '404':
           content:
@@ -2521,6 +2799,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listShipments
     post:
       operationId: $$$$$create
       description: Create a new shipment instance.
@@ -2563,6 +2842,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createShipment
   /v1/shipments/{id}:
     get:
       operationId: $$$$$retrieve
@@ -2600,6 +2880,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveShipment
     put:
       operationId: $$$$$update
       description: |-
@@ -2661,6 +2942,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateShipment
   /v1/shipments/{id}/cancel:
     post:
       operationId: $$$$$cancel
@@ -2716,6 +2998,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: cancelShipment
   /v1/shipments/{id}/purchase:
     post:
       operationId: $$$$$purchase
@@ -2851,9 +3134,9 @@ paths:
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `easypost`, `eshipper_xml`, `fedex`, `fedex_ws`, `freightcom`, `generic`,
+          `geodis`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2901,6 +3184,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listTrackers
     post:
       operationId: $$$$$$add
       description: |-
@@ -2957,6 +3241,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: addTracker
   /v1/trackers/{carrier_name}/{tracking_number}:
     get:
       operationId: $$$$$$create
@@ -3054,9 +3339,10 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createTracker
   /v1/trackers/{id_or_tracking_number}:
     get:
-      operationId: $$$$$$retrieves
+      operationId: $$$$$$retrieve
       description: Retrieve a package tracker
       summary: Retrieves a package tracker
       parameters:
@@ -3092,6 +3378,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveTracker
     put:
       operationId: $$$$$$update
       description: Mixin to log requests
@@ -3145,6 +3432,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateTracker
     delete:
       operationId: $$$$$$remove
       description: Discard a package tracker.
@@ -3181,6 +3469,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: removeTracker
   /v1/webhooks:
     get:
       operationId: $$$$$$$list
@@ -3212,6 +3501,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: listWebhooks
     post:
       operationId: $$$$$$$create
       description: Create a new webhook.
@@ -3248,6 +3538,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: createWebhook
   /v1/webhooks/{id}:
     get:
       operationId: $$$$$$$retrieve
@@ -3285,6 +3576,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: retrieveWebhook
     patch:
       operationId: $$$$$$$update
       description: update a webhook.
@@ -3332,6 +3624,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: updateWebhook
     delete:
       operationId: $$$$$$$remove
       description: Remove a webhook.
@@ -3368,6 +3661,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: removeWebhook
   /v1/webhooks/{id}/test:
     post:
       operationId: $$$$$$$test
@@ -3411,6 +3705,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
+      x-operationId: testWebhook
 components:
   schemas:
     APIError:
@@ -4275,7 +4570,7 @@ components:
           - dpd
           - dpdhl
           - easypost
-          - eshipper
+          - eshipper_xml
           - fedex
           - fedex_ws
           - freightcom
@@ -4295,7 +4590,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 1765d529f2970d04
+          x-spec-enum-id: 3e79a5375c88cfd3
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -5442,6 +5737,26 @@ components:
             \     </details>\n        "
       required:
       - commodities
+    DocumentData:
+      type: object
+      properties:
+        template_id:
+          type: string
+          description: The template name. **Required if template is not provided.**
+        template:
+          type: string
+          description: The template content. **Required if template_id is not provided.**
+        doc_format:
+          type: string
+          description: The format of the document
+        doc_name:
+          type: string
+          description: The file name
+        data:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The template data
     DocumentDetails:
       type: object
       properties:
@@ -5476,6 +5791,111 @@ components:
       required:
       - doc_file
       - doc_name
+    DocumentTemplate:
+      type: object
+      properties:
+        id:
+          type: string
+          description: A unique identifier
+        name:
+          type: string
+          description: The template name
+          maxLength: 255
+        slug:
+          type: string
+          description: The template slug
+          maxLength: 255
+        template:
+          type: string
+          description: The template content
+        active:
+          type: boolean
+          default: true
+          description: disable template flag.
+        description:
+          type: string
+          description: The template description
+          maxLength: 255
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: The template metadata
+        related_object:
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
+          default: other
+          description: The template related object
+        object_type:
+          type: string
+          default: document-template
+          description: Specifies the object type
+      required:
+      - name
+      - slug
+      - template
+    DocumentTemplateData:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The template name
+          maxLength: 255
+        slug:
+          type: string
+          description: The template slug
+          maxLength: 255
+        template:
+          type: string
+          description: The template content
+        active:
+          type: boolean
+          default: true
+          description: disable template flag.
+        description:
+          type: string
+          description: The template description
+          maxLength: 255
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: The template metadata
+        related_object:
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
+          default: other
+          description: The template related object
+      required:
+      - name
+      - slug
+      - template
+    DocumentTemplateList:
+      type: object
+      properties:
+        count:
+          type: integer
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/DocumentTemplate'
+      required:
+      - results
     DocumentUploadData:
       type: object
       properties:
@@ -5752,6 +6172,23 @@ components:
           items:
             $ref: '#/components/schemas/APIError'
           description: The list of API errors
+    GeneratedDocument:
+      type: object
+      properties:
+        template_id:
+          type: string
+          description: The template name
+        doc_format:
+          type: string
+          description: The format of the document
+        doc_name:
+          type: string
+          description: The file name
+        doc_file:
+          type: string
+          description: A base64 file content
+      required:
+      - doc_file
     Images:
       type: object
       properties:
@@ -7219,6 +7656,41 @@ components:
           nullable: true
           default: false
           description: Indicate if the address should be validated
+    PatchedDocumentTemplateData:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The template name
+          maxLength: 255
+        slug:
+          type: string
+          description: The template slug
+          maxLength: 255
+        template:
+          type: string
+          description: The template content
+        active:
+          type: boolean
+          default: true
+          description: disable template flag.
+        description:
+          type: string
+          description: The template description
+          maxLength: 255
+        metadata:
+          type: object
+          additionalProperties: {}
+          description: The template metadata
+        related_object:
+          enum:
+          - shipment
+          - order
+          - other
+          type: string
+          x-spec-enum-id: e453b27eb99d7157
+          default: other
+          description: The template related object
     PatchedParcelData:
       type: object
       properties:
@@ -7957,14 +8429,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -8051,14 +8524,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8200,16 +8674,19 @@ components:
       properties:
         shipment_identifier:
           type: string
-          description: The shipment identifier returned during creation
+          description: The shipment identifier returned during creation.
         service:
           type: string
           nullable: true
           description: The selected shipment service
+        carrier_id:
+          type: string
+          description: The shipment carrier_id for specific connection selection.
         options:
           type: object
           additionalProperties: {}
           default: {}
-          description: Advanced carrier specific cancellation options
+          description: Advanced carrier specific cancellation options.
       required:
       - shipment_identifier
     ShipmentData:
@@ -8246,14 +8723,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8352,14 +8830,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8427,26 +8906,6 @@ components:
       - parcels
       - recipient
       - shipper
-    ShipmentList:
-      type: object
-      properties:
-        count:
-          type: integer
-          nullable: true
-        next:
-          type: string
-          format: uri
-          nullable: true
-        previous:
-          type: string
-          format: uri
-          nullable: true
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/Shipment'
-      required:
-      - results
     ShipmentPurchaseData:
       type: object
       properties:
@@ -8574,14 +9033,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8685,14 +9145,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"doc_files\": [\n                {\n           \
-            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
-            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
-            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
-            pdf\",\n                }\n            ],\n            \"doc_references\"\
-            : [\n                {\n                    \"doc_id\": \"123456789\"\
-            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
-            \         }\n            ],\n        }\n        </details>\n        "
+            : true,\n            \"is_return\": true,\n            \"doc_files\":\
+            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
+            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
+            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
+            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
+            \            \"doc_references\": [\n                {\n              \
+            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
+            commercial_invoice\",\n                }\n            ],\n        }\n\
+            \        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9562,7 +10023,7 @@ tags:
     | freightcom | Freightcom |
     | fedex_ws | FedEx Web Service |
     | fedex | FedEx |
-    | eshipper | eShipper |
+    | eshipper_xml | eShipper XML |
     | easypost | EasyPost |
     | dpdhl | Deutsche Post DHL |
     | dpd | DPD |
@@ -9978,7 +10439,7 @@ tags:
     | fedex_next_day_end_of_day | FEDEX_NEXT_DAY_END_OF_DAY |
     | fedex_distance_deferred | FEDEX_DISTANCE_DEFERRED |
 
-    ### eShipper
+    ### eShipper XML
     | Code         | Service Name |
     | ------------ | ------------ |
     | eshipper_all | 0 |

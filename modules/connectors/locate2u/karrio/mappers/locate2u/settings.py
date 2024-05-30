@@ -21,7 +21,6 @@ class Settings(provider_utils.Settings):
     test_mode: bool = False
     carrier_id: str = "locate2u"
     account_country_code: str = "AU"
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
     services: typing.List[models.ServiceLevel] = jstruct.JList[models.ServiceLevel, False, dict(default=provider_units.DEFAULT_SERVICES)]  # type: ignore
     metadata: dict = {}
 

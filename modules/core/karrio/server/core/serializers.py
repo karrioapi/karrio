@@ -636,6 +636,7 @@ class RateRequest(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -1219,6 +1220,7 @@ class ShippingData(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -1425,6 +1427,7 @@ class ShipmentContent(serializers.Serializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "is_return": true,
             "doc_files": [
                 {
                     "doc_type": "commercial_invoice",
@@ -1522,7 +1525,8 @@ class Shipment(serializers.EntitySerializer, ShipmentContent, ShipmentDetails):
 
 class ShipmentCancelRequest(serializers.Serializer):
     shipment_identifier = serializers.CharField(
-        required=True, help_text="The shipment identifier returned during creation"
+        required=True,
+        help_text="The shipment identifier returned during creation.",
     )
     service = serializers.CharField(
         required=False,
@@ -1530,10 +1534,14 @@ class ShipmentCancelRequest(serializers.Serializer):
         allow_null=True,
         help_text="The selected shipment service",
     )
+    carrier_id = serializers.CharField(
+        required=False,
+        help_text="The shipment carrier_id for specific connection selection.",
+    )
     options = serializers.PlainDictField(
         required=False,
         default={},
-        help_text="Advanced carrier specific cancellation options",
+        help_text="Advanced carrier specific cancellation options.",
     )
 
 

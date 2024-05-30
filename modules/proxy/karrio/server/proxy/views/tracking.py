@@ -26,6 +26,7 @@ class TrackingAPIView(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}get_tracking",
+        extensions={"x-operationId": "getTracking"},
         summary="Get tracking details",
         request=TrackingData(),
         responses={
@@ -87,6 +88,7 @@ class TrackingAPI(APIView):
     @openapi.extend_schema(
         tags=["Proxy"],
         operation_id=f"{ENDPOINT_ID}track_shipment",
+        extensions={"x-operationId": "trackShipment"},
         summary="Track a shipment",
         deprecated=True,
         responses={

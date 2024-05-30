@@ -17,6 +17,6 @@ gateway = karrio.gateway["amazon_shipping"].create(
         seller_id=seller_id,
         developer_id=developer_id,
         mws_auth_token="wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY",
-        cache=lib.Cache(**cached_auth),
-    )
+    ),
+    cache=lib.Cache(**cached_auth),
 )

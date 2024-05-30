@@ -11,6 +11,8 @@
 
 // @ts-check
 
+const apiSidebar = require('./docs/reference/api/sidebar.js');
+
 /** @type {import('@docusaurus/plugin-content-docs').SidebarsConfig} */
 const sidebars = {
   product: [
@@ -68,26 +70,16 @@ const sidebars = {
       href: '/reference/openapi',
     },
     {
-      type: 'category',
-      label: 'Shipping API',
+      type: "category",
+      label: "Shipping API",
       link: {
-        type: 'generated-index',
-        title: 'Shipping API Guides',
-        description: 'Learn how to use the Karrio Shipping APIs.',
+        type: "generated-index",
+        title: "Shipping API Guides",
+        description: "Learn how to use the Karrio Shipping APIs.",
         slug: '/reference',
         keywords: ['Shipping', 'REST', 'API'],
       },
-      items: [
-        'reference/api/authentication',
-        'reference/api/error-codes',
-        'reference/api/pagination',
-        'reference/api/metadata',
-        'reference/api/carriers',
-        'reference/api/shipments',
-        'reference/api/trackers',
-        'reference/api/orders',
-        'reference/api/batches',
-      ],
+      items: apiSidebar,
     },
     {
       type: 'category',
@@ -105,6 +97,29 @@ const sidebars = {
         'reference/management/users',
         'reference/management/connections',
         'reference/management/data',
+      ],
+    },
+    {
+      type: 'category',
+      label: 'API GUIDES',
+      collapsed: true,
+      collapsible: true,
+      link: {
+        type: 'generated-index',
+        title: 'API Guides',
+        description: 'Walk through Karrio APIs implementation guides.',
+        slug: '/reference/guides',
+      },
+      items: [
+        'reference/guides/authentication',
+        'reference/guides/error-codes',
+        'reference/guides/pagination',
+        'reference/guides/metadata',
+        'reference/guides/carriers',
+        'reference/guides/shipments',
+        'reference/guides/trackers',
+        'reference/guides/orders',
+        'reference/guides/batches',
       ],
     },
   ],

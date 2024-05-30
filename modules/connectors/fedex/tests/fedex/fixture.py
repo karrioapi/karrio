@@ -32,6 +32,6 @@ gateway = karrio.gateway["fedex"].create(
         track_api_key=track_api_key,
         track_secret_key=track_secret_key,
         account_number="2349857",
-        cache=lib.Cache(**cached_auth),
-    )
+    ),
+    cache=lib.Cache(**cached_auth),
 )

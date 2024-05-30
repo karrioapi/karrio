@@ -74,10 +74,10 @@ class BaseView:
     permission_classes = [IsAuthenticated]
     throttle_classes = [UserRateThrottle, AnonRateThrottle]
     authentication_classes = [
-        TokenBasicAuthentication,
         TokenAuthentication,
-        OAuth2Authentication,
         JWTAuthentication,
+        OAuth2Authentication,
+        TokenBasicAuthentication,
     ]
 
 

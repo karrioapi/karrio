@@ -56,6 +56,7 @@ class TrackerList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listTrackers"},
         summary="List all package trackers",
         parameters=filters.TrackerFilters.parameters,
         responses={
@@ -77,6 +78,7 @@ class TrackerList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}add",
+        extensions={"x-operationId": "addTracker"},
         summary="Add a package tracker",
         request=serializers.TrackingData(),
         responses={
@@ -163,6 +165,7 @@ class TrackersCreate(APIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createTracker"},
         summary="Create a package tracker",
         deprecated=True,
         responses={
@@ -236,7 +239,8 @@ class TrackersDetails(APIView):
 
     @openapi.extend_schema(
         tags=["Trackers"],
-        operation_id=f"{ENDPOINT_ID}retrieves",
+        operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveTracker"},
         summary="Retrieves a package tracker",
         responses={
             200: serializers.TrackingStatus(),
@@ -261,6 +265,7 @@ class TrackersDetails(APIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateTracker"},
         summary="Update tracker data",
         responses={
             200: serializers.TrackingStatus(),
@@ -295,6 +300,7 @@ class TrackersDetails(APIView):
     @openapi.extend_schema(
         tags=["Trackers"],
         operation_id=f"{ENDPOINT_ID}remove",
+        extensions={"x-operationId": "removeTracker"},
         summary="Discard a package tracker",
         responses={
             200: serializers.TrackingStatus(),

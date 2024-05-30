@@ -24,7 +24,8 @@ class ManifestingAPI(api.APIView):
 
     @openapi.extend_schema(
         tags=["Proxy"],
-        operation_id=f"{ENDPOINT_ID}create_manifest",
+        operation_id=f"{ENDPOINT_ID}generate_manifest",
+        extensions={"x-operationId": "generateManifest"},
         summary="Create a manifest",
         description=DESCRIPTION,
         responses={

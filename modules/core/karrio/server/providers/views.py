@@ -33,6 +33,7 @@ class CarrierList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Carriers"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listCarriers"},
         summary="List all carriers",
         responses={
             200: CarriersSettingsList(),
@@ -56,6 +57,7 @@ class CarrierDetails(APIView):
     @openapi.extend_schema(
         tags=["Carriers"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveCarrier"},
         summary="Retrieve a carrier account",
         responses={
             200: CarrierSettings(),

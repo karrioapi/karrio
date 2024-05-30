@@ -32,7 +32,7 @@ class DocumentTemplate(core.OwnedEntity):
         blank=True,
         db_index=True,
     )
-    related_object = models.CharField(max_length=25, blank=False)
+    related_object = models.CharField(max_length=25, blank=True, null=True)
     active = models.BooleanField(
         default=True,
         help_text="disable template flag. to filter out from active document downloads",
@@ -45,4 +45,4 @@ class DocumentTemplate(core.OwnedEntity):
 
     @property
     def object_type(self):
-        return "document_template"
+        return "document-template"

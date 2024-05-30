@@ -1,0 +1,2529 @@
+---
+id: pickup-update
+title: "Update a pickup"
+description: "Modify a scheduled pickup"
+sidebar_label: "Update a pickup"
+hide_title: true
+hide_table_of_contents: true
+api: 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
+sidebar_class_name: "post api-method"
+info_path: docs/reference/api/karrio-api
+custom_edit_url: null
+---
+
+import ApiTabs from "@theme/ApiTabs";
+import DiscriminatorTabs from "@theme/DiscriminatorTabs";
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import SecuritySchemes from "@theme/ApiExplorer/SecuritySchemes";
+import MimeTabs from "@theme/MimeTabs";
+import ParamsItem from "@theme/ParamsItem";
+import ResponseSamples from "@theme/ResponseSamples";
+import SchemaItem from "@theme/SchemaItem";
+import SchemaTabs from "@theme/SchemaTabs";
+import Markdown from "@theme/Markdown";
+import Heading from "@theme/Heading";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Update a pickup"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"post"}
+  path={"/v1/proxy/pickups/{carrier_name}/update"}
+>
+  
+</MethodEndpoint>
+
+
+
+Modify a scheduled pickup
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+  children={"Request"}
+>
+</Heading>
+
+<details
+  style={{"marginBottom":"1rem"}}
+  className={"openapi-markdown__details"}
+  data-collapsed={false}
+  open={true}
+>
+  <summary
+    style={{}}
+  >
+    <h3
+      className={"openapi-markdown__details-summary-header-params"}
+    >
+      Path Parameters
+    </h3>
+  </summary><div>
+    <ul>
+      <ParamsItem
+        className={"paramsItem"}
+        param={{"in":"path","name":"carrier_name","schema":{"type":"string","enum":["allied_express","allied_express_local","amazon_shipping","aramex","asendia_us","australiapost","boxknight","bpost","canadapost","canpar","chronopost","colissimo","dhl_express","dhl_parcel_de","dhl_poland","dhl_universal","dicom","dpd","dpdhl","easypost","eshipper_xml","fedex","fedex_ws","freightcom","generic","geodis","laposte","locate2u","nationex","purolator","roadie","royalmail","sendle","tge","tnt","ups","usps","usps_international","zoom2u"]},"required":true}}
+      >
+        
+      </ParamsItem>
+    </ul>
+  </div>
+</details><MimeTabs
+  className={"openapi-tabs__mime"}
+>
+  <TabItem
+    label={"application/json"}
+    value={"application/json-schema"}
+  >
+    <details
+      style={{}}
+      className={"openapi-markdown__details mime"}
+      data-collapsed={false}
+      open={true}
+    >
+      <summary
+        style={{}}
+        className={"openapi-markdown__details-summary-mime"}
+      >
+        <h3
+          className={"openapi-markdown__details-summary-header-body"}
+        >
+          Body
+        </h3><strong
+          className={"openapi-schema__required"}
+        >
+          required
+        </strong>
+      </summary><div
+        style={{"textAlign":"left","marginLeft":"1rem"}}
+      >
+        
+      </div><ul
+        style={{"marginLeft":"1rem"}}
+      >
+        <SchemaItem
+          collapsible={false}
+          name={"pickup_date"}
+          required={true}
+          schemaName={"string"}
+          qualifierMessage={undefined}
+          schema={{"type":"string","description":"The expected pickup date.<br/>\n        Date Format: `YYYY-MM-DD`\n        "}}
+        >
+          
+        </SchemaItem><SchemaItem
+          collapsible={true}
+          className={"schemaItem"}
+        >
+          <details
+            style={{}}
+            className={"openapi-markdown__details"}
+          >
+            <summary
+              style={{}}
+            >
+              <span
+                className={"openapi-schema__container"}
+              >
+                <strong
+                  className={"openapi-schema__property"}
+                >
+                  address
+                </strong><span
+                  className={"openapi-schema__name"}
+                >
+                   object
+                </span><span
+                  className={"openapi-schema__divider"}
+                >
+                  
+                </span><span
+                  className={"openapi-schema__required"}
+                >
+                  required
+                </span>
+              </span>
+            </summary><div
+              style={{"marginLeft":"1rem"}}
+            >
+              <SchemaItem
+                collapsible={false}
+                name={"id"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={undefined}
+                schema={{"type":"string","description":"A unique identifier"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"postal_code"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 10 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The address postal code\n        **(required for shipment purchase)**\n        ","maxLength":10}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"city"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 30 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The address city.\n        **(required for shipment purchase)**\n        ","maxLength":30}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"federal_tax_id"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The party frederal tax id","maxLength":20}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"state_tax_id"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The party state id","maxLength":20}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"person_name"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                schema={{"type":"string","nullable":true,"description":"Attention to\n        **(required for shipment purchase)**\n        ","maxLength":50}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"company_name"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The company name if the party is a company","maxLength":50}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"country_code"}
+                required={true}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** [`AD`, `AE`, `AF`, `AG`, `AI`, `AL`, `AM`, `AN`, `AO`, `AR`, `AS`, `AT`, `AU`, `AW`, `AZ`, `BA`, `BB`, `BD`, `BE`, `BF`, `BG`, `BH`, `BI`, `BJ`, `BM`, `BN`, `BO`, `BR`, `BS`, `BT`, `BW`, `BY`, `BZ`, `CA`, `CD`, `CF`, `CG`, `CH`, `CI`, `CK`, `CL`, `CM`, `CN`, `CO`, `CR`, `CU`, `CV`, `CY`, `CZ`, `DE`, `DJ`, `DK`, `DM`, `DO`, `DZ`, `EC`, `EE`, `EG`, `ER`, `ES`, `ET`, `FI`, `FJ`, `FK`, `FM`, `FO`, `FR`, `GA`, `GB`, `GD`, `GE`, `GF`, `GG`, `GH`, `GI`, `GL`, `GM`, `GN`, `GP`, `GQ`, `GR`, `GT`, `GU`, `GW`, `GY`, `HK`, `HN`, `HR`, `HT`, `HU`, `IC`, `ID`, `IE`, `IL`, `IN`, `IQ`, `IR`, `IS`, `IT`, `JE`, `JM`, `JO`, `JP`, `KE`, `KG`, `KH`, `KI`, `KM`, `KN`, `KP`, `KR`, `KV`, `KW`, `KY`, `KZ`, `LA`, `LB`, `LC`, `LI`, `LK`, `LR`, `LS`, `LT`, `LU`, `LV`, `LY`, `MA`, `MC`, `MD`, `ME`, `MG`, `MH`, `MK`, `ML`, `MM`, `MN`, `MO`, `MP`, `MQ`, `MR`, `MS`, `MT`, `MU`, `MV`, `MW`, `MX`, `MY`, `MZ`, `NA`, `NC`, `NE`, `NG`, `NI`, `NL`, `NO`, `NP`, `NR`, `NU`, `NZ`, `OM`, `PA`, `PE`, `PF`, `PG`, `PH`, `PK`, `PL`, `PR`, `PT`, `PW`, `PY`, `QA`, `RE`, `RO`, `RS`, `RU`, `RW`, `SA`, `SB`, `SC`, `SD`, `SE`, `SG`, `SH`, `SI`, `SK`, `SL`, `SM`, `SN`, `SO`, `SR`, `SS`, `ST`, `SV`, `SY`, `SZ`, `TC`, `TD`, `TG`, `TH`, `TJ`, `TL`, `TN`, `TO`, `TR`, `TT`, `TV`, `TW`, `TZ`, `UA`, `UG`, `US`, `UY`, `UZ`, `VA`, `VC`, `VE`, `VG`, `VI`, `VN`, `VU`, `WS`, `XB`, `XC`, `XE`, `XM`, `XN`, `XS`, `XY`, `YE`, `YT`, `ZA`, `ZM`, `ZW`]"}
+                schema={{"enum":["AD","AE","AF","AG","AI","AL","AM","AN","AO","AR","AS","AT","AU","AW","AZ","BA","BB","BD","BE","BF","BG","BH","BI","BJ","BM","BN","BO","BR","BS","BT","BW","BY","BZ","CA","CD","CF","CG","CH","CI","CK","CL","CM","CN","CO","CR","CU","CV","CY","CZ","DE","DJ","DK","DM","DO","DZ","EC","EE","EG","ER","ES","ET","FI","FJ","FK","FM","FO","FR","GA","GB","GD","GE","GF","GG","GH","GI","GL","GM","GN","GP","GQ","GR","GT","GU","GW","GY","HK","HN","HR","HT","HU","IC","ID","IE","IL","IN","IQ","IR","IS","IT","JE","JM","JO","JP","KE","KG","KH","KI","KM","KN","KP","KR","KV","KW","KY","KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU","LV","LY","MA","MC","MD","ME","MG","MH","MK","ML","MM","MN","MO","MP","MQ","MR","MS","MT","MU","MV","MW","MX","MY","MZ","NA","NC","NE","NG","NI","NL","NO","NP","NR","NU","NZ","OM","PA","PE","PF","PG","PH","PK","PL","PR","PT","PW","PY","QA","RE","RO","RS","RU","RW","SA","SB","SC","SD","SE","SG","SH","SI","SK","SL","SM","SN","SO","SR","SS","ST","SV","SY","SZ","TC","TD","TG","TH","TJ","TL","TN","TO","TR","TT","TV","TW","TZ","UA","UG","US","UY","UZ","VA","VC","VE","VG","VI","VN","VU","WS","XB","XC","XE","XM","XN","XS","XY","YE","YT","ZA","ZM","ZW"],"type":"string","x-spec-enum-id":"f907b2af5d9d32f1","description":"The address country code"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"email"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={undefined}
+                schema={{"type":"string","nullable":true,"description":"The party email"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"phone_number"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The party phone number.","maxLength":20}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"state_code"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The address state code","maxLength":20}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"residential"}
+                required={false}
+                schemaName={"boolean"}
+                qualifierMessage={undefined}
+                schema={{"type":"boolean","nullable":true,"default":false,"description":"Indicate if the address is residential or commercial (enterprise)"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"street_number"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The address street number","maxLength":20}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"address_line1"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The address line with street number <br/>\n        **(required for shipment purchase)**\n        ","maxLength":50}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"address_line2"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The address line with suite number","maxLength":50}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"validate_location"}
+                required={false}
+                schemaName={"boolean"}
+                qualifierMessage={undefined}
+                schema={{"type":"boolean","nullable":true,"default":false,"description":"Indicate if the address should be validated"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"object_type"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={undefined}
+                schema={{"type":"string","default":"address","description":"Specifies the object type"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={true}
+                className={"schemaItem"}
+              >
+                <details
+                  style={{}}
+                  className={"openapi-markdown__details"}
+                >
+                  <summary
+                    style={{}}
+                  >
+                    <span
+                      className={"openapi-schema__container"}
+                    >
+                      <strong
+                        className={"openapi-schema__property"}
+                      >
+                        validation
+                      </strong><span
+                        className={"openapi-schema__name"}
+                      >
+                         object
+                      </span><span
+                        className={"openapi-schema__divider"}
+                      >
+                        
+                      </span><span
+                        className={"openapi-schema__nullable"}
+                      >
+                        nullable
+                      </span>
+                    </span>
+                  </summary><div
+                    style={{"marginLeft":"1rem"}}
+                  >
+                    <div
+                      style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                    >
+                      
+                      
+                      Specify address validation result
+                      
+                      
+                    </div><SchemaItem
+                      collapsible={false}
+                      name={"success"}
+                      required={true}
+                      schemaName={"boolean"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"boolean","description":"True if the address is valid"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"meta"}
+                      required={false}
+                      schemaName={"object"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"object","nullable":true,"description":"validation service details"}}
+                    >
+                      
+                    </SchemaItem>
+                  </div>
+                </details>
+              </SchemaItem>
+            </div>
+          </details>
+        </SchemaItem><SchemaItem
+          collapsible={true}
+          className={"schemaItem"}
+        >
+          <details
+            style={{}}
+            className={"openapi-markdown__details"}
+          >
+            <summary
+              style={{}}
+            >
+              <span
+                className={"openapi-schema__container"}
+              >
+                <strong
+                  className={"openapi-schema__property"}
+                >
+                  parcels
+                </strong><span
+                  className={"openapi-schema__name"}
+                >
+                   object[]
+                </span><span
+                  className={"openapi-schema__divider"}
+                >
+                  
+                </span><span
+                  className={"openapi-schema__required"}
+                >
+                  required
+                </span>
+              </span>
+            </summary><div
+              style={{"marginLeft":"1rem"}}
+            >
+              <div
+                style={{"marginTop":".5rem","marginBottom":".5rem"}}
+              >
+                
+                
+                The shipment parcels to pickup.
+                
+                
+              </div><li>
+                <div
+                  style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                >
+                  Array [
+                </div>
+              </li><SchemaItem
+                collapsible={false}
+                name={"id"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={undefined}
+                schema={{"type":"string","description":"A unique identifier"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"weight"}
+                required={true}
+                schemaName={"double"}
+                qualifierMessage={undefined}
+                schema={{"type":"number","format":"double","description":"The parcel's weight"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"width"}
+                required={false}
+                schemaName={"double"}
+                qualifierMessage={undefined}
+                schema={{"type":"number","format":"double","nullable":true,"description":"The parcel's width"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"height"}
+                required={false}
+                schemaName={"double"}
+                qualifierMessage={undefined}
+                schema={{"type":"number","format":"double","nullable":true,"description":"The parcel's height"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"length"}
+                required={false}
+                schemaName={"double"}
+                qualifierMessage={undefined}
+                schema={{"type":"number","format":"double","nullable":true,"description":"The parcel's length"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"packaging_type"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The parcel's packaging type.<br/>\n        **Note that the packaging is optional when using a package preset.**<br/>\n        values: <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box` `your_packaging`<br/>\n        For carrier specific packaging types, please consult the reference.\n        ","maxLength":50}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"package_preset"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The parcel's package preset.<br/>\n        For carrier specific package presets, please consult the reference.\n        ","maxLength":50}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"description"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 250 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The parcel's description","maxLength":250}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"content"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 100 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The parcel's content description","maxLength":100}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"is_document"}
+                required={false}
+                schemaName={"boolean"}
+                qualifierMessage={undefined}
+                schema={{"type":"boolean","nullable":true,"default":false,"description":"Indicates if the parcel is composed of documents only"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"weight_unit"}
+                required={true}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** [`KG`, `LB`, `OZ`, `G`]"}
+                schema={{"enum":["KG","LB","OZ","G"],"type":"string","x-spec-enum-id":"2aa755cf319c6df9","description":"The parcel's weight unit"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"dimension_unit"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** [`CM`, `IN`, `null`]"}
+                schema={{"enum":["CM","IN",null],"type":"string","x-spec-enum-id":"41993cb8117c279c","nullable":true,"description":"The parcel's dimension unit"}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={true}
+                className={"schemaItem"}
+              >
+                <details
+                  style={{}}
+                  className={"openapi-markdown__details"}
+                >
+                  <summary
+                    style={{}}
+                  >
+                    <span
+                      className={"openapi-schema__container"}
+                    >
+                      <strong
+                        className={"openapi-schema__property"}
+                      >
+                        items
+                      </strong><span
+                        className={"openapi-schema__name"}
+                      >
+                         object[]
+                      </span>
+                    </span>
+                  </summary><div
+                    style={{"marginLeft":"1rem"}}
+                  >
+                    <div
+                      style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                    >
+                      
+                      
+                      The parcel items.
+                      
+                      
+                    </div><li>
+                      <div
+                        style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                      >
+                        Array [
+                      </div>
+                    </li><SchemaItem
+                      collapsible={false}
+                      name={"id"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"string","description":"A unique identifier"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"weight"}
+                      required={true}
+                      schemaName={"double"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"number","format":"double","description":"The commodity's weight"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"weight_unit"}
+                      required={true}
+                      schemaName={"string"}
+                      qualifierMessage={"**Possible values:** [`KG`, `LB`, `OZ`, `G`]"}
+                      schema={{"enum":["KG","LB","OZ","G"],"type":"string","x-spec-enum-id":"2aa755cf319c6df9","description":"The commodity's weight unit"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"title"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={"**Possible values:** `<= 35 characters`"}
+                      schema={{"type":"string","nullable":true,"description":"A description of the commodity","maxLength":35}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"description"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={"**Possible values:** `<= 100 characters`"}
+                      schema={{"type":"string","nullable":true,"description":"A description of the commodity","maxLength":100}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"quantity"}
+                      required={false}
+                      schemaName={"integer"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"integer","default":1,"description":"The commodity's quantity (number or item)"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"sku"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={"**Possible values:** `<= 35 characters`"}
+                      schema={{"type":"string","nullable":true,"description":"The commodity's sku number","maxLength":35}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"hs_code"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={"**Possible values:** `<= 35 characters`"}
+                      schema={{"type":"string","nullable":true,"description":"The commodity's hs_code number","maxLength":35}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"value_amount"}
+                      required={false}
+                      schemaName={"double"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"number","format":"double","nullable":true,"description":"The monetary value of the commodity"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"value_currency"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={"**Possible values:** [`EUR`, `AED`, `USD`, `XCD`, `AMD`, `ANG`, `AOA`, `ARS`, `AUD`, `AWG`, `AZN`, `BAM`, `BBD`, `BDT`, `XOF`, `BGN`, `BHD`, `BIF`, `BMD`, `BND`, `BOB`, `BRL`, `BSD`, `BTN`, `BWP`, `BYN`, `BZD`, `CAD`, `CDF`, `XAF`, `CHF`, `NZD`, `CLP`, `CNY`, `COP`, `CRC`, `CUC`, `CVE`, `CZK`, `DJF`, `DKK`, `DOP`, `DZD`, `EGP`, `ERN`, `ETB`, `FJD`, `GBP`, `GEL`, `GHS`, `GMD`, `GNF`, `GTQ`, `GYD`, `HKD`, `HNL`, `HRK`, `HTG`, `HUF`, `IDR`, `ILS`, `INR`, `IRR`, `ISK`, `JMD`, `JOD`, `JPY`, `KES`, `KGS`, `KHR`, `KMF`, `KPW`, `KRW`, `KWD`, `KYD`, `KZT`, `LAK`, `LKR`, `LRD`, `LSL`, `LYD`, `MAD`, `MDL`, `MGA`, `MKD`, `MMK`, `MNT`, `MOP`, `MRO`, `MUR`, `MVR`, `MWK`, `MXN`, `MYR`, `MZN`, `NAD`, `XPF`, `NGN`, `NIO`, `NOK`, `NPR`, `OMR`, `PEN`, `PGK`, `PHP`, `PKR`, `PLN`, `PYG`, `QAR`, `RSD`, `RUB`, `RWF`, `SAR`, `SBD`, `SCR`, `SDG`, `SEK`, `SGD`, `SHP`, `SLL`, `SOS`, `SRD`, `SSP`, `STD`, `SYP`, `SZL`, `THB`, `TJS`, `TND`, `TOP`, `TRY`, `TTD`, `TWD`, `TZS`, `UAH`, `UYU`, `UZS`, `VEF`, `VND`, `VUV`, `WST`, `YER`, `ZAR`, `null`]"}
+                      schema={{"enum":["EUR","AED","USD","XCD","AMD","ANG","AOA","ARS","AUD","AWG","AZN","BAM","BBD","BDT","XOF","BGN","BHD","BIF","BMD","BND","BOB","BRL","BSD","BTN","BWP","BYN","BZD","CAD","CDF","XAF","CHF","NZD","CLP","CNY","COP","CRC","CUC","CVE","CZK","DJF","DKK","DOP","DZD","EGP","ERN","ETB","FJD","GBP","GEL","GHS","GMD","GNF","GTQ","GYD","HKD","HNL","HRK","HTG","HUF","IDR","ILS","INR","IRR","ISK","JMD","JOD","JPY","KES","KGS","KHR","KMF","KPW","KRW","KWD","KYD","KZT","LAK","LKR","LRD","LSL","LYD","MAD","MDL","MGA","MKD","MMK","MNT","MOP","MRO","MUR","MVR","MWK","MXN","MYR","MZN","NAD","XPF","NGN","NIO","NOK","NPR","OMR","PEN","PGK","PHP","PKR","PLN","PYG","QAR","RSD","RUB","RWF","SAR","SBD","SCR","SDG","SEK","SGD","SHP","SLL","SOS","SRD","SSP","STD","SYP","SZL","THB","TJS","TND","TOP","TRY","TTD","TWD","TZS","UAH","UYU","UZS","VEF","VND","VUV","WST","YER","ZAR",null],"type":"string","x-spec-enum-id":"f0290aeafc544e9d","nullable":true,"description":"The currency of the commodity value amount"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"origin_country"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={"**Possible values:** [`AD`, `AE`, `AF`, `AG`, `AI`, `AL`, `AM`, `AN`, `AO`, `AR`, `AS`, `AT`, `AU`, `AW`, `AZ`, `BA`, `BB`, `BD`, `BE`, `BF`, `BG`, `BH`, `BI`, `BJ`, `BM`, `BN`, `BO`, `BR`, `BS`, `BT`, `BW`, `BY`, `BZ`, `CA`, `CD`, `CF`, `CG`, `CH`, `CI`, `CK`, `CL`, `CM`, `CN`, `CO`, `CR`, `CU`, `CV`, `CY`, `CZ`, `DE`, `DJ`, `DK`, `DM`, `DO`, `DZ`, `EC`, `EE`, `EG`, `ER`, `ES`, `ET`, `FI`, `FJ`, `FK`, `FM`, `FO`, `FR`, `GA`, `GB`, `GD`, `GE`, `GF`, `GG`, `GH`, `GI`, `GL`, `GM`, `GN`, `GP`, `GQ`, `GR`, `GT`, `GU`, `GW`, `GY`, `HK`, `HN`, `HR`, `HT`, `HU`, `IC`, `ID`, `IE`, `IL`, `IN`, `IQ`, `IR`, `IS`, `IT`, `JE`, `JM`, `JO`, `JP`, `KE`, `KG`, `KH`, `KI`, `KM`, `KN`, `KP`, `KR`, `KV`, `KW`, `KY`, `KZ`, `LA`, `LB`, `LC`, `LI`, `LK`, `LR`, `LS`, `LT`, `LU`, `LV`, `LY`, `MA`, `MC`, `MD`, `ME`, `MG`, `MH`, `MK`, `ML`, `MM`, `MN`, `MO`, `MP`, `MQ`, `MR`, `MS`, `MT`, `MU`, `MV`, `MW`, `MX`, `MY`, `MZ`, `NA`, `NC`, `NE`, `NG`, `NI`, `NL`, `NO`, `NP`, `NR`, `NU`, `NZ`, `OM`, `PA`, `PE`, `PF`, `PG`, `PH`, `PK`, `PL`, `PR`, `PT`, `PW`, `PY`, `QA`, `RE`, `RO`, `RS`, `RU`, `RW`, `SA`, `SB`, `SC`, `SD`, `SE`, `SG`, `SH`, `SI`, `SK`, `SL`, `SM`, `SN`, `SO`, `SR`, `SS`, `ST`, `SV`, `SY`, `SZ`, `TC`, `TD`, `TG`, `TH`, `TJ`, `TL`, `TN`, `TO`, `TR`, `TT`, `TV`, `TW`, `TZ`, `UA`, `UG`, `US`, `UY`, `UZ`, `VA`, `VC`, `VE`, `VG`, `VI`, `VN`, `VU`, `WS`, `XB`, `XC`, `XE`, `XM`, `XN`, `XS`, `XY`, `YE`, `YT`, `ZA`, `ZM`, `ZW`, `null`]"}
+                      schema={{"enum":["AD","AE","AF","AG","AI","AL","AM","AN","AO","AR","AS","AT","AU","AW","AZ","BA","BB","BD","BE","BF","BG","BH","BI","BJ","BM","BN","BO","BR","BS","BT","BW","BY","BZ","CA","CD","CF","CG","CH","CI","CK","CL","CM","CN","CO","CR","CU","CV","CY","CZ","DE","DJ","DK","DM","DO","DZ","EC","EE","EG","ER","ES","ET","FI","FJ","FK","FM","FO","FR","GA","GB","GD","GE","GF","GG","GH","GI","GL","GM","GN","GP","GQ","GR","GT","GU","GW","GY","HK","HN","HR","HT","HU","IC","ID","IE","IL","IN","IQ","IR","IS","IT","JE","JM","JO","JP","KE","KG","KH","KI","KM","KN","KP","KR","KV","KW","KY","KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU","LV","LY","MA","MC","MD","ME","MG","MH","MK","ML","MM","MN","MO","MP","MQ","MR","MS","MT","MU","MV","MW","MX","MY","MZ","NA","NC","NE","NG","NI","NL","NO","NP","NR","NU","NZ","OM","PA","PE","PF","PG","PH","PK","PL","PR","PT","PW","PY","QA","RE","RO","RS","RU","RW","SA","SB","SC","SD","SE","SG","SH","SI","SK","SL","SM","SN","SO","SR","SS","ST","SV","SY","SZ","TC","TD","TG","TH","TJ","TL","TN","TO","TR","TT","TV","TW","TZ","UA","UG","US","UY","UZ","VA","VC","VE","VG","VI","VN","VU","WS","XB","XC","XE","XM","XN","XS","XY","YE","YT","ZA","ZM","ZW",null],"type":"string","x-spec-enum-id":"f907b2af5d9d32f1","nullable":true,"description":"The origin or manufacture country"}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"parent_id"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"string","nullable":true,"description":"The id of the related order line item."}}
+                    >
+                      
+                    </SchemaItem><SchemaItem
+                      collapsible={true}
+                      className={"schemaItem"}
+                    >
+                      <details
+                        style={{}}
+                        className={"openapi-markdown__details"}
+                      >
+                        <summary
+                          style={{}}
+                        >
+                          <span
+                            className={"openapi-schema__container"}
+                          >
+                            <strong
+                              className={"openapi-schema__property"}
+                            >
+                              metadata
+                            </strong><span
+                              className={"openapi-schema__name"}
+                            >
+                               object
+                            </span><span
+                              className={"openapi-schema__divider"}
+                            >
+                              
+                            </span><span
+                              className={"openapi-schema__nullable"}
+                            >
+                              nullable
+                            </span>
+                          </span>
+                        </summary><div
+                          style={{"marginLeft":"1rem"}}
+                        >
+                          <div
+                            style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                          >
+                            
+                            
+                            <details>
+                                    <summary>Commodity user references metadata.</summary>
+                            
+                                    \{
+                                        "part_number": "5218487281",
+                                        "reference1": "# ref 1",
+                                        "reference2": "# ref 2",
+                                        "reference3": "# ref 3",
+                                        ...
+                                    \}
+                                    </details>
+                                    
+                            
+                            
+                          </div>
+                        </div>
+                      </details>
+                    </SchemaItem><SchemaItem
+                      collapsible={false}
+                      name={"object_type"}
+                      required={false}
+                      schemaName={"string"}
+                      qualifierMessage={undefined}
+                      schema={{"type":"string","default":"commodity","description":"Specifies the object type"}}
+                    >
+                      
+                    </SchemaItem><li>
+                      <div
+                        style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                      >
+                        ]
+                      </div>
+                    </li>
+                  </div>
+                </details>
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"reference_number"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 100 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The parcel reference number.<br/>\n        (can be used as tracking number for custom carriers)\n        ","maxLength":100}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"freight_class"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={"**Possible values:** `<= 6 characters`"}
+                schema={{"type":"string","nullable":true,"description":"The parcel's freight class for pallet and freight shipments.","maxLength":6}}
+              >
+                
+              </SchemaItem><SchemaItem
+                collapsible={true}
+                className={"schemaItem"}
+              >
+                <details
+                  style={{}}
+                  className={"openapi-markdown__details"}
+                >
+                  <summary
+                    style={{}}
+                  >
+                    <span
+                      className={"openapi-schema__container"}
+                    >
+                      <strong
+                        className={"openapi-schema__property"}
+                      >
+                        options
+                      </strong><span
+                        className={"openapi-schema__name"}
+                      >
+                         object
+                      </span>
+                    </span>
+                  </summary><div
+                    style={{"marginLeft":"1rem"}}
+                  >
+                    <div
+                      style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                    >
+                      
+                      
+                      <details>
+                              <summary>Parcel specific options.</summary>
+                      
+                              \{
+                                  "insurance": "100.00",
+                                  "insured_by": "carrier",
+                              \}
+                              </details>
+                              
+                      
+                      
+                    </div>
+                  </div>
+                </details>
+              </SchemaItem><SchemaItem
+                collapsible={false}
+                name={"object_type"}
+                required={false}
+                schemaName={"string"}
+                qualifierMessage={undefined}
+                schema={{"type":"string","default":"parcel","description":"Specifies the object type"}}
+              >
+                
+              </SchemaItem><li>
+                <div
+                  style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                >
+                  ]
+                </div>
+              </li>
+            </div>
+          </details>
+        </SchemaItem><SchemaItem
+          collapsible={false}
+          name={"confirmation_number"}
+          required={true}
+          schemaName={"string"}
+          qualifierMessage={undefined}
+          schema={{"type":"string","description":"pickup identification number"}}
+        >
+          
+        </SchemaItem><SchemaItem
+          collapsible={false}
+          name={"ready_time"}
+          required={true}
+          schemaName={"string"}
+          qualifierMessage={undefined}
+          schema={{"type":"string","description":"The ready time for pickup.\n        Time Format: `HH:MM`\n        "}}
+        >
+          
+        </SchemaItem><SchemaItem
+          collapsible={false}
+          name={"closing_time"}
+          required={true}
+          schemaName={"string"}
+          qualifierMessage={undefined}
+          schema={{"type":"string","description":"The closing or late time of the pickup.<br/>\n        Time Format: `HH:MM`\n        "}}
+        >
+          
+        </SchemaItem><SchemaItem
+          collapsible={false}
+          name={"instruction"}
+          required={false}
+          schemaName={"string"}
+          qualifierMessage={"**Possible values:** `<= 50 characters`"}
+          schema={{"type":"string","nullable":true,"description":"The pickup instruction.<br/>\n        eg: Handle with care.\n        ","maxLength":50}}
+        >
+          
+        </SchemaItem><SchemaItem
+          collapsible={false}
+          name={"package_location"}
+          required={false}
+          schemaName={"string"}
+          qualifierMessage={"**Possible values:** `<= 50 characters`"}
+          schema={{"type":"string","nullable":true,"description":"The package(s) location.<br/>\n        eg: Behind the entrance door.\n        ","maxLength":50}}
+        >
+          
+        </SchemaItem><SchemaItem
+          collapsible={true}
+          className={"schemaItem"}
+        >
+          <details
+            style={{}}
+            className={"openapi-markdown__details"}
+          >
+            <summary
+              style={{}}
+            >
+              <span
+                className={"openapi-schema__container"}
+              >
+                <strong
+                  className={"openapi-schema__property"}
+                >
+                  options
+                </strong><span
+                  className={"openapi-schema__name"}
+                >
+                   object
+                </span><span
+                  className={"openapi-schema__divider"}
+                >
+                  
+                </span><span
+                  className={"openapi-schema__nullable"}
+                >
+                  nullable
+                </span>
+              </span>
+            </summary><div
+              style={{"marginLeft":"1rem"}}
+            >
+              <div
+                style={{"marginTop":".5rem","marginBottom":".5rem"}}
+              >
+                
+                
+                Advanced carrier specific pickup options
+                
+                
+              </div>
+            </div>
+          </details>
+        </SchemaItem>
+      </ul>
+    </details>
+  </TabItem>
+</MimeTabs><div>
+  <div>
+    <ApiTabs
+      label={undefined}
+      id={undefined}
+    >
+      <TabItem
+        label={"200"}
+        value={"200"}
+      >
+        <div>
+          
+          
+          
+          
+          
+        </div><div>
+          <MimeTabs
+            className={"openapi-tabs__mime"}
+            schemaType={"response"}
+          >
+            <TabItem
+              label={"application/json"}
+              value={"application/json"}
+            >
+              <SchemaTabs
+                className={"openapi-tabs__schema"}
+              >
+                <TabItem
+                  label={"Schema"}
+                  value={"Schema"}
+                >
+                  <details
+                    style={{}}
+                    className={"openapi-markdown__details response"}
+                    data-collapsed={false}
+                    open={true}
+                  >
+                    <summary
+                      style={{}}
+                      className={"openapi-markdown__details-summary-response"}
+                    >
+                      <strong>
+                        Schema
+                      </strong>
+                    </summary><div
+                      style={{"textAlign":"left","marginLeft":"1rem"}}
+                    >
+                      
+                    </div><ul
+                      style={{"marginLeft":"1rem"}}
+                    >
+                      <SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                messages
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object[]
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <div
+                              style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                            >
+                              
+                              
+                              The list of note or warning messages
+                              
+                              
+                            </div><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                              >
+                                Array [
+                              </div>
+                            </li><SchemaItem
+                              collapsible={false}
+                              name={"message"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The error or warning message"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"code"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The message code"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      details
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    any additional details
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </details>
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"carrier_name"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The targeted carrier"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"carrier_id"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The targeted carrier name (unique identifier)"}}
+                            >
+                              
+                            </SchemaItem><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                              >
+                                ]
+                              </div>
+                            </li>
+                          </div>
+                        </details>
+                      </SchemaItem><SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                pickup
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <SchemaItem
+                              collapsible={false}
+                              name={"id"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"A unique pickup identifier"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"object_type"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","default":"pickup","description":"Specifies the object type"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"carrier_name"}
+                              required={true}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The pickup carrier"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"carrier_id"}
+                              required={true}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The pickup carrier configured name"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"confirmation_number"}
+                              required={true}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The pickup confirmation identifier"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"pickup_date"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","nullable":true,"description":"The pickup date"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      pickup_charge
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span><span
+                                      className={"openapi-schema__divider"}
+                                    >
+                                      
+                                    </span><span
+                                      className={"openapi-schema__nullable"}
+                                    >
+                                      nullable
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    The pickup cost details
+                                    
+                                    
+                                  </div><SchemaItem
+                                    collapsible={false}
+                                    name={"name"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"string","nullable":true,"description":"The charge description"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"amount"}
+                                    required={false}
+                                    schemaName={"double"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"number","format":"double","nullable":true,"description":"The charge monetary value"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"currency"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"string","nullable":true,"description":"The charge amount currency"}}
+                                  >
+                                    
+                                  </SchemaItem>
+                                </div>
+                              </details>
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"ready_time"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","nullable":true,"description":"The pickup expected ready time"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"closing_time"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","nullable":true,"description":"The pickup expected closing or late time"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"metadata"}
+                              required={false}
+                              schemaName={"object"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"object","default":{},"description":"User metadata for the pickup"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"meta"}
+                              required={false}
+                              schemaName={"object"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"object","nullable":true,"description":"provider specific metadata"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      address
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span><span
+                                      className={"openapi-schema__divider"}
+                                    >
+                                      
+                                    </span><span
+                                      className={"openapi-schema__required"}
+                                    >
+                                      required
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    The pickup address
+                                    
+                                    
+                                  </div><SchemaItem
+                                    collapsible={false}
+                                    name={"id"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"string","description":"A unique identifier"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"postal_code"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 10 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The address postal code\n        **(required for shipment purchase)**\n        ","maxLength":10}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"city"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 30 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The address city.\n        **(required for shipment purchase)**\n        ","maxLength":30}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"federal_tax_id"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The party frederal tax id","maxLength":20}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"state_tax_id"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The party state id","maxLength":20}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"person_name"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"Attention to\n        **(required for shipment purchase)**\n        ","maxLength":50}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"company_name"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The company name if the party is a company","maxLength":50}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"country_code"}
+                                    required={true}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** [`AD`, `AE`, `AF`, `AG`, `AI`, `AL`, `AM`, `AN`, `AO`, `AR`, `AS`, `AT`, `AU`, `AW`, `AZ`, `BA`, `BB`, `BD`, `BE`, `BF`, `BG`, `BH`, `BI`, `BJ`, `BM`, `BN`, `BO`, `BR`, `BS`, `BT`, `BW`, `BY`, `BZ`, `CA`, `CD`, `CF`, `CG`, `CH`, `CI`, `CK`, `CL`, `CM`, `CN`, `CO`, `CR`, `CU`, `CV`, `CY`, `CZ`, `DE`, `DJ`, `DK`, `DM`, `DO`, `DZ`, `EC`, `EE`, `EG`, `ER`, `ES`, `ET`, `FI`, `FJ`, `FK`, `FM`, `FO`, `FR`, `GA`, `GB`, `GD`, `GE`, `GF`, `GG`, `GH`, `GI`, `GL`, `GM`, `GN`, `GP`, `GQ`, `GR`, `GT`, `GU`, `GW`, `GY`, `HK`, `HN`, `HR`, `HT`, `HU`, `IC`, `ID`, `IE`, `IL`, `IN`, `IQ`, `IR`, `IS`, `IT`, `JE`, `JM`, `JO`, `JP`, `KE`, `KG`, `KH`, `KI`, `KM`, `KN`, `KP`, `KR`, `KV`, `KW`, `KY`, `KZ`, `LA`, `LB`, `LC`, `LI`, `LK`, `LR`, `LS`, `LT`, `LU`, `LV`, `LY`, `MA`, `MC`, `MD`, `ME`, `MG`, `MH`, `MK`, `ML`, `MM`, `MN`, `MO`, `MP`, `MQ`, `MR`, `MS`, `MT`, `MU`, `MV`, `MW`, `MX`, `MY`, `MZ`, `NA`, `NC`, `NE`, `NG`, `NI`, `NL`, `NO`, `NP`, `NR`, `NU`, `NZ`, `OM`, `PA`, `PE`, `PF`, `PG`, `PH`, `PK`, `PL`, `PR`, `PT`, `PW`, `PY`, `QA`, `RE`, `RO`, `RS`, `RU`, `RW`, `SA`, `SB`, `SC`, `SD`, `SE`, `SG`, `SH`, `SI`, `SK`, `SL`, `SM`, `SN`, `SO`, `SR`, `SS`, `ST`, `SV`, `SY`, `SZ`, `TC`, `TD`, `TG`, `TH`, `TJ`, `TL`, `TN`, `TO`, `TR`, `TT`, `TV`, `TW`, `TZ`, `UA`, `UG`, `US`, `UY`, `UZ`, `VA`, `VC`, `VE`, `VG`, `VI`, `VN`, `VU`, `WS`, `XB`, `XC`, `XE`, `XM`, `XN`, `XS`, `XY`, `YE`, `YT`, `ZA`, `ZM`, `ZW`]"}
+                                    schema={{"enum":["AD","AE","AF","AG","AI","AL","AM","AN","AO","AR","AS","AT","AU","AW","AZ","BA","BB","BD","BE","BF","BG","BH","BI","BJ","BM","BN","BO","BR","BS","BT","BW","BY","BZ","CA","CD","CF","CG","CH","CI","CK","CL","CM","CN","CO","CR","CU","CV","CY","CZ","DE","DJ","DK","DM","DO","DZ","EC","EE","EG","ER","ES","ET","FI","FJ","FK","FM","FO","FR","GA","GB","GD","GE","GF","GG","GH","GI","GL","GM","GN","GP","GQ","GR","GT","GU","GW","GY","HK","HN","HR","HT","HU","IC","ID","IE","IL","IN","IQ","IR","IS","IT","JE","JM","JO","JP","KE","KG","KH","KI","KM","KN","KP","KR","KV","KW","KY","KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU","LV","LY","MA","MC","MD","ME","MG","MH","MK","ML","MM","MN","MO","MP","MQ","MR","MS","MT","MU","MV","MW","MX","MY","MZ","NA","NC","NE","NG","NI","NL","NO","NP","NR","NU","NZ","OM","PA","PE","PF","PG","PH","PK","PL","PR","PT","PW","PY","QA","RE","RO","RS","RU","RW","SA","SB","SC","SD","SE","SG","SH","SI","SK","SL","SM","SN","SO","SR","SS","ST","SV","SY","SZ","TC","TD","TG","TH","TJ","TL","TN","TO","TR","TT","TV","TW","TZ","UA","UG","US","UY","UZ","VA","VC","VE","VG","VI","VN","VU","WS","XB","XC","XE","XM","XN","XS","XY","YE","YT","ZA","ZM","ZW"],"type":"string","x-spec-enum-id":"f907b2af5d9d32f1","description":"The address country code"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"email"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"string","nullable":true,"description":"The party email"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"phone_number"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The party phone number.","maxLength":20}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"state_code"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The address state code","maxLength":20}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"residential"}
+                                    required={false}
+                                    schemaName={"boolean"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"boolean","nullable":true,"default":false,"description":"Indicate if the address is residential or commercial (enterprise)"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"street_number"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 20 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The address street number","maxLength":20}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"address_line1"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The address line with street number <br/>\n        **(required for shipment purchase)**\n        ","maxLength":50}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"address_line2"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The address line with suite number","maxLength":50}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"validate_location"}
+                                    required={false}
+                                    schemaName={"boolean"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"boolean","nullable":true,"default":false,"description":"Indicate if the address should be validated"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"object_type"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"string","default":"address","description":"Specifies the object type"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={true}
+                                    className={"schemaItem"}
+                                  >
+                                    <details
+                                      style={{}}
+                                      className={"openapi-markdown__details"}
+                                    >
+                                      <summary
+                                        style={{}}
+                                      >
+                                        <span
+                                          className={"openapi-schema__container"}
+                                        >
+                                          <strong
+                                            className={"openapi-schema__property"}
+                                          >
+                                            validation
+                                          </strong><span
+                                            className={"openapi-schema__name"}
+                                          >
+                                             object
+                                          </span><span
+                                            className={"openapi-schema__divider"}
+                                          >
+                                            
+                                          </span><span
+                                            className={"openapi-schema__nullable"}
+                                          >
+                                            nullable
+                                          </span>
+                                        </span>
+                                      </summary><div
+                                        style={{"marginLeft":"1rem"}}
+                                      >
+                                        <div
+                                          style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                        >
+                                          
+                                          
+                                          Specify address validation result
+                                          
+                                          
+                                        </div><SchemaItem
+                                          collapsible={false}
+                                          name={"success"}
+                                          required={true}
+                                          schemaName={"boolean"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"boolean","description":"True if the address is valid"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"meta"}
+                                          required={false}
+                                          schemaName={"object"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"object","nullable":true,"description":"validation service details"}}
+                                        >
+                                          
+                                        </SchemaItem>
+                                      </div>
+                                    </details>
+                                  </SchemaItem>
+                                </div>
+                              </details>
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      parcels
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object[]
+                                    </span><span
+                                      className={"openapi-schema__divider"}
+                                    >
+                                      
+                                    </span><span
+                                      className={"openapi-schema__required"}
+                                    >
+                                      required
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    The shipment parcels to pickup.
+                                    
+                                    
+                                  </div><li>
+                                    <div
+                                      style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                                    >
+                                      Array [
+                                    </div>
+                                  </li><SchemaItem
+                                    collapsible={false}
+                                    name={"id"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"string","description":"A unique identifier"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"weight"}
+                                    required={true}
+                                    schemaName={"double"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"number","format":"double","description":"The parcel's weight"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"width"}
+                                    required={false}
+                                    schemaName={"double"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"number","format":"double","nullable":true,"description":"The parcel's width"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"height"}
+                                    required={false}
+                                    schemaName={"double"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"number","format":"double","nullable":true,"description":"The parcel's height"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"length"}
+                                    required={false}
+                                    schemaName={"double"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"number","format":"double","nullable":true,"description":"The parcel's length"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"packaging_type"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The parcel's packaging type.<br/>\n        **Note that the packaging is optional when using a package preset.**<br/>\n        values: <br/>\n        `envelope` `pak` `tube` `pallet` `small_box` `medium_box` `your_packaging`<br/>\n        For carrier specific packaging types, please consult the reference.\n        ","maxLength":50}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"package_preset"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The parcel's package preset.<br/>\n        For carrier specific package presets, please consult the reference.\n        ","maxLength":50}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"description"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 250 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The parcel's description","maxLength":250}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"content"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 100 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The parcel's content description","maxLength":100}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"is_document"}
+                                    required={false}
+                                    schemaName={"boolean"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"boolean","nullable":true,"default":false,"description":"Indicates if the parcel is composed of documents only"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"weight_unit"}
+                                    required={true}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** [`KG`, `LB`, `OZ`, `G`]"}
+                                    schema={{"enum":["KG","LB","OZ","G"],"type":"string","x-spec-enum-id":"2aa755cf319c6df9","description":"The parcel's weight unit"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"dimension_unit"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** [`CM`, `IN`, `null`]"}
+                                    schema={{"enum":["CM","IN",null],"type":"string","x-spec-enum-id":"41993cb8117c279c","nullable":true,"description":"The parcel's dimension unit"}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={true}
+                                    className={"schemaItem"}
+                                  >
+                                    <details
+                                      style={{}}
+                                      className={"openapi-markdown__details"}
+                                    >
+                                      <summary
+                                        style={{}}
+                                      >
+                                        <span
+                                          className={"openapi-schema__container"}
+                                        >
+                                          <strong
+                                            className={"openapi-schema__property"}
+                                          >
+                                            items
+                                          </strong><span
+                                            className={"openapi-schema__name"}
+                                          >
+                                             object[]
+                                          </span>
+                                        </span>
+                                      </summary><div
+                                        style={{"marginLeft":"1rem"}}
+                                      >
+                                        <div
+                                          style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                        >
+                                          
+                                          
+                                          The parcel items.
+                                          
+                                          
+                                        </div><li>
+                                          <div
+                                            style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                                          >
+                                            Array [
+                                          </div>
+                                        </li><SchemaItem
+                                          collapsible={false}
+                                          name={"id"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"string","description":"A unique identifier"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"weight"}
+                                          required={true}
+                                          schemaName={"double"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"number","format":"double","description":"The commodity's weight"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"weight_unit"}
+                                          required={true}
+                                          schemaName={"string"}
+                                          qualifierMessage={"**Possible values:** [`KG`, `LB`, `OZ`, `G`]"}
+                                          schema={{"enum":["KG","LB","OZ","G"],"type":"string","x-spec-enum-id":"2aa755cf319c6df9","description":"The commodity's weight unit"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"title"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={"**Possible values:** `<= 35 characters`"}
+                                          schema={{"type":"string","nullable":true,"description":"A description of the commodity","maxLength":35}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"description"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={"**Possible values:** `<= 100 characters`"}
+                                          schema={{"type":"string","nullable":true,"description":"A description of the commodity","maxLength":100}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"quantity"}
+                                          required={false}
+                                          schemaName={"integer"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"integer","default":1,"description":"The commodity's quantity (number or item)"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"sku"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={"**Possible values:** `<= 35 characters`"}
+                                          schema={{"type":"string","nullable":true,"description":"The commodity's sku number","maxLength":35}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"hs_code"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={"**Possible values:** `<= 35 characters`"}
+                                          schema={{"type":"string","nullable":true,"description":"The commodity's hs_code number","maxLength":35}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"value_amount"}
+                                          required={false}
+                                          schemaName={"double"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"number","format":"double","nullable":true,"description":"The monetary value of the commodity"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"value_currency"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={"**Possible values:** [`EUR`, `AED`, `USD`, `XCD`, `AMD`, `ANG`, `AOA`, `ARS`, `AUD`, `AWG`, `AZN`, `BAM`, `BBD`, `BDT`, `XOF`, `BGN`, `BHD`, `BIF`, `BMD`, `BND`, `BOB`, `BRL`, `BSD`, `BTN`, `BWP`, `BYN`, `BZD`, `CAD`, `CDF`, `XAF`, `CHF`, `NZD`, `CLP`, `CNY`, `COP`, `CRC`, `CUC`, `CVE`, `CZK`, `DJF`, `DKK`, `DOP`, `DZD`, `EGP`, `ERN`, `ETB`, `FJD`, `GBP`, `GEL`, `GHS`, `GMD`, `GNF`, `GTQ`, `GYD`, `HKD`, `HNL`, `HRK`, `HTG`, `HUF`, `IDR`, `ILS`, `INR`, `IRR`, `ISK`, `JMD`, `JOD`, `JPY`, `KES`, `KGS`, `KHR`, `KMF`, `KPW`, `KRW`, `KWD`, `KYD`, `KZT`, `LAK`, `LKR`, `LRD`, `LSL`, `LYD`, `MAD`, `MDL`, `MGA`, `MKD`, `MMK`, `MNT`, `MOP`, `MRO`, `MUR`, `MVR`, `MWK`, `MXN`, `MYR`, `MZN`, `NAD`, `XPF`, `NGN`, `NIO`, `NOK`, `NPR`, `OMR`, `PEN`, `PGK`, `PHP`, `PKR`, `PLN`, `PYG`, `QAR`, `RSD`, `RUB`, `RWF`, `SAR`, `SBD`, `SCR`, `SDG`, `SEK`, `SGD`, `SHP`, `SLL`, `SOS`, `SRD`, `SSP`, `STD`, `SYP`, `SZL`, `THB`, `TJS`, `TND`, `TOP`, `TRY`, `TTD`, `TWD`, `TZS`, `UAH`, `UYU`, `UZS`, `VEF`, `VND`, `VUV`, `WST`, `YER`, `ZAR`, `null`]"}
+                                          schema={{"enum":["EUR","AED","USD","XCD","AMD","ANG","AOA","ARS","AUD","AWG","AZN","BAM","BBD","BDT","XOF","BGN","BHD","BIF","BMD","BND","BOB","BRL","BSD","BTN","BWP","BYN","BZD","CAD","CDF","XAF","CHF","NZD","CLP","CNY","COP","CRC","CUC","CVE","CZK","DJF","DKK","DOP","DZD","EGP","ERN","ETB","FJD","GBP","GEL","GHS","GMD","GNF","GTQ","GYD","HKD","HNL","HRK","HTG","HUF","IDR","ILS","INR","IRR","ISK","JMD","JOD","JPY","KES","KGS","KHR","KMF","KPW","KRW","KWD","KYD","KZT","LAK","LKR","LRD","LSL","LYD","MAD","MDL","MGA","MKD","MMK","MNT","MOP","MRO","MUR","MVR","MWK","MXN","MYR","MZN","NAD","XPF","NGN","NIO","NOK","NPR","OMR","PEN","PGK","PHP","PKR","PLN","PYG","QAR","RSD","RUB","RWF","SAR","SBD","SCR","SDG","SEK","SGD","SHP","SLL","SOS","SRD","SSP","STD","SYP","SZL","THB","TJS","TND","TOP","TRY","TTD","TWD","TZS","UAH","UYU","UZS","VEF","VND","VUV","WST","YER","ZAR",null],"type":"string","x-spec-enum-id":"f0290aeafc544e9d","nullable":true,"description":"The currency of the commodity value amount"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"origin_country"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={"**Possible values:** [`AD`, `AE`, `AF`, `AG`, `AI`, `AL`, `AM`, `AN`, `AO`, `AR`, `AS`, `AT`, `AU`, `AW`, `AZ`, `BA`, `BB`, `BD`, `BE`, `BF`, `BG`, `BH`, `BI`, `BJ`, `BM`, `BN`, `BO`, `BR`, `BS`, `BT`, `BW`, `BY`, `BZ`, `CA`, `CD`, `CF`, `CG`, `CH`, `CI`, `CK`, `CL`, `CM`, `CN`, `CO`, `CR`, `CU`, `CV`, `CY`, `CZ`, `DE`, `DJ`, `DK`, `DM`, `DO`, `DZ`, `EC`, `EE`, `EG`, `ER`, `ES`, `ET`, `FI`, `FJ`, `FK`, `FM`, `FO`, `FR`, `GA`, `GB`, `GD`, `GE`, `GF`, `GG`, `GH`, `GI`, `GL`, `GM`, `GN`, `GP`, `GQ`, `GR`, `GT`, `GU`, `GW`, `GY`, `HK`, `HN`, `HR`, `HT`, `HU`, `IC`, `ID`, `IE`, `IL`, `IN`, `IQ`, `IR`, `IS`, `IT`, `JE`, `JM`, `JO`, `JP`, `KE`, `KG`, `KH`, `KI`, `KM`, `KN`, `KP`, `KR`, `KV`, `KW`, `KY`, `KZ`, `LA`, `LB`, `LC`, `LI`, `LK`, `LR`, `LS`, `LT`, `LU`, `LV`, `LY`, `MA`, `MC`, `MD`, `ME`, `MG`, `MH`, `MK`, `ML`, `MM`, `MN`, `MO`, `MP`, `MQ`, `MR`, `MS`, `MT`, `MU`, `MV`, `MW`, `MX`, `MY`, `MZ`, `NA`, `NC`, `NE`, `NG`, `NI`, `NL`, `NO`, `NP`, `NR`, `NU`, `NZ`, `OM`, `PA`, `PE`, `PF`, `PG`, `PH`, `PK`, `PL`, `PR`, `PT`, `PW`, `PY`, `QA`, `RE`, `RO`, `RS`, `RU`, `RW`, `SA`, `SB`, `SC`, `SD`, `SE`, `SG`, `SH`, `SI`, `SK`, `SL`, `SM`, `SN`, `SO`, `SR`, `SS`, `ST`, `SV`, `SY`, `SZ`, `TC`, `TD`, `TG`, `TH`, `TJ`, `TL`, `TN`, `TO`, `TR`, `TT`, `TV`, `TW`, `TZ`, `UA`, `UG`, `US`, `UY`, `UZ`, `VA`, `VC`, `VE`, `VG`, `VI`, `VN`, `VU`, `WS`, `XB`, `XC`, `XE`, `XM`, `XN`, `XS`, `XY`, `YE`, `YT`, `ZA`, `ZM`, `ZW`, `null`]"}
+                                          schema={{"enum":["AD","AE","AF","AG","AI","AL","AM","AN","AO","AR","AS","AT","AU","AW","AZ","BA","BB","BD","BE","BF","BG","BH","BI","BJ","BM","BN","BO","BR","BS","BT","BW","BY","BZ","CA","CD","CF","CG","CH","CI","CK","CL","CM","CN","CO","CR","CU","CV","CY","CZ","DE","DJ","DK","DM","DO","DZ","EC","EE","EG","ER","ES","ET","FI","FJ","FK","FM","FO","FR","GA","GB","GD","GE","GF","GG","GH","GI","GL","GM","GN","GP","GQ","GR","GT","GU","GW","GY","HK","HN","HR","HT","HU","IC","ID","IE","IL","IN","IQ","IR","IS","IT","JE","JM","JO","JP","KE","KG","KH","KI","KM","KN","KP","KR","KV","KW","KY","KZ","LA","LB","LC","LI","LK","LR","LS","LT","LU","LV","LY","MA","MC","MD","ME","MG","MH","MK","ML","MM","MN","MO","MP","MQ","MR","MS","MT","MU","MV","MW","MX","MY","MZ","NA","NC","NE","NG","NI","NL","NO","NP","NR","NU","NZ","OM","PA","PE","PF","PG","PH","PK","PL","PR","PT","PW","PY","QA","RE","RO","RS","RU","RW","SA","SB","SC","SD","SE","SG","SH","SI","SK","SL","SM","SN","SO","SR","SS","ST","SV","SY","SZ","TC","TD","TG","TH","TJ","TL","TN","TO","TR","TT","TV","TW","TZ","UA","UG","US","UY","UZ","VA","VC","VE","VG","VI","VN","VU","WS","XB","XC","XE","XM","XN","XS","XY","YE","YT","ZA","ZM","ZW",null],"type":"string","x-spec-enum-id":"f907b2af5d9d32f1","nullable":true,"description":"The origin or manufacture country"}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"parent_id"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"string","nullable":true,"description":"The id of the related order line item."}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"metadata"}
+                                          required={false}
+                                          schemaName={"object"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"object","nullable":true,"description":"<details>\n        <summary>Commodity user references metadata.</summary>\n\n        {\n            \"part_number\": \"5218487281\",\n            \"reference1\": \"# ref 1\",\n            \"reference2\": \"# ref 2\",\n            \"reference3\": \"# ref 3\",\n            ...\n        }\n        </details>\n        "}}
+                                        >
+                                          
+                                        </SchemaItem><SchemaItem
+                                          collapsible={false}
+                                          name={"object_type"}
+                                          required={false}
+                                          schemaName={"string"}
+                                          qualifierMessage={undefined}
+                                          schema={{"type":"string","default":"commodity","description":"Specifies the object type"}}
+                                        >
+                                          
+                                        </SchemaItem><li>
+                                          <div
+                                            style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                                          >
+                                            ]
+                                          </div>
+                                        </li>
+                                      </div>
+                                    </details>
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"reference_number"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 100 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The parcel reference number.<br/>\n        (can be used as tracking number for custom carriers)\n        ","maxLength":100}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"freight_class"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={"**Possible values:** `<= 6 characters`"}
+                                    schema={{"type":"string","nullable":true,"description":"The parcel's freight class for pallet and freight shipments.","maxLength":6}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"options"}
+                                    required={false}
+                                    schemaName={"object"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"object","default":{},"description":"<details>\n        <summary>Parcel specific options.</summary>\n\n        {\n            \"insurance\": \"100.00\",\n            \"insured_by\": \"carrier\",\n        }\n        </details>\n        "}}
+                                  >
+                                    
+                                  </SchemaItem><SchemaItem
+                                    collapsible={false}
+                                    name={"object_type"}
+                                    required={false}
+                                    schemaName={"string"}
+                                    qualifierMessage={undefined}
+                                    schema={{"type":"string","default":"parcel","description":"Specifies the object type"}}
+                                  >
+                                    
+                                  </SchemaItem><li>
+                                    <div
+                                      style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                                    >
+                                      ]
+                                    </div>
+                                  </li>
+                                </div>
+                              </details>
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"instruction"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                              schema={{"type":"string","nullable":true,"description":"The pickup instruction.<br/>\n        eg: Handle with care.\n        ","maxLength":50}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"package_location"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={"**Possible values:** `<= 50 characters`"}
+                              schema={{"type":"string","nullable":true,"description":"The package(s) location.<br/>\n        eg: Behind the entrance door.\n        ","maxLength":50}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"options"}
+                              required={false}
+                              schemaName={"object"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"object","nullable":true,"description":"Advanced carrier specific pickup options"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"test_mode"}
+                              required={true}
+                              schemaName={"boolean"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"boolean","description":"Specified whether it was created with a carrier in test mode"}}
+                            >
+                              
+                            </SchemaItem>
+                          </div>
+                        </details>
+                      </SchemaItem>
+                    </ul>
+                  </details>
+                </TabItem><TabItem
+                  label={"Example (from schema)"}
+                  value={"Example (from schema)"}
+                >
+                  <ResponseSamples
+                    responseExample={"{\n  \"messages\": [\n    {\n      \"message\": \"string\",\n      \"code\": \"string\",\n      \"details\": {},\n      \"carrier_name\": \"string\",\n      \"carrier_id\": \"string\"\n    }\n  ],\n  \"pickup\": {\n    \"id\": \"string\",\n    \"object_type\": \"pickup\",\n    \"carrier_name\": \"string\",\n    \"carrier_id\": \"string\",\n    \"confirmation_number\": \"string\",\n    \"pickup_date\": \"string\",\n    \"pickup_charge\": {\n      \"name\": \"string\",\n      \"amount\": 0,\n      \"currency\": \"string\"\n    },\n    \"ready_time\": \"string\",\n    \"closing_time\": \"string\",\n    \"metadata\": {},\n    \"meta\": {},\n    \"address\": {\n      \"id\": \"string\",\n      \"postal_code\": \"string\",\n      \"city\": \"string\",\n      \"federal_tax_id\": \"string\",\n      \"state_tax_id\": \"string\",\n      \"person_name\": \"string\",\n      \"company_name\": \"string\",\n      \"country_code\": \"AD\",\n      \"email\": \"string\",\n      \"phone_number\": \"string\",\n      \"state_code\": \"string\",\n      \"residential\": false,\n      \"street_number\": \"string\",\n      \"address_line1\": \"string\",\n      \"address_line2\": \"string\",\n      \"validate_location\": false,\n      \"object_type\": \"address\",\n      \"validation\": {\n        \"success\": true,\n        \"meta\": {}\n      }\n    },\n    \"parcels\": [\n      {\n        \"id\": \"string\",\n        \"weight\": 0,\n        \"width\": 0,\n        \"height\": 0,\n        \"length\": 0,\n        \"packaging_type\": \"string\",\n        \"package_preset\": \"string\",\n        \"description\": \"string\",\n        \"content\": \"string\",\n        \"is_document\": false,\n        \"weight_unit\": \"KG\",\n        \"dimension_unit\": \"CM\",\n        \"items\": [\n          {\n            \"id\": \"string\",\n            \"weight\": 0,\n            \"weight_unit\": \"KG\",\n            \"title\": \"string\",\n            \"description\": \"string\",\n            \"quantity\": 1,\n            \"sku\": \"string\",\n            \"hs_code\": \"string\",\n            \"value_amount\": 0,\n            \"value_currency\": \"EUR\",\n            \"origin_country\": \"AD\",\n            \"parent_id\": \"string\",\n            \"metadata\": {},\n            \"object_type\": \"commodity\"\n          }\n        ],\n        \"reference_number\": \"string\",\n        \"freight_class\": \"string\",\n        \"options\": {},\n        \"object_type\": \"parcel\"\n      }\n    ],\n    \"instruction\": \"string\",\n    \"package_location\": \"string\",\n    \"options\": {},\n    \"test_mode\": true\n  }\n}"}
+                    language={"json"}
+                  >
+                    
+                  </ResponseSamples>
+                </TabItem>
+              </SchemaTabs>
+            </TabItem>
+          </MimeTabs>
+        </div>
+      </TabItem><TabItem
+        label={"400"}
+        value={"400"}
+      >
+        <div>
+          
+          
+          
+          
+          
+        </div><div>
+          <MimeTabs
+            className={"openapi-tabs__mime"}
+            schemaType={"response"}
+          >
+            <TabItem
+              label={"application/json"}
+              value={"application/json"}
+            >
+              <SchemaTabs
+                className={"openapi-tabs__schema"}
+              >
+                <TabItem
+                  label={"Schema"}
+                  value={"Schema"}
+                >
+                  <details
+                    style={{}}
+                    className={"openapi-markdown__details response"}
+                    data-collapsed={false}
+                    open={true}
+                  >
+                    <summary
+                      style={{}}
+                      className={"openapi-markdown__details-summary-response"}
+                    >
+                      <strong>
+                        Schema
+                      </strong>
+                    </summary><div
+                      style={{"textAlign":"left","marginLeft":"1rem"}}
+                    >
+                      
+                    </div><ul
+                      style={{"marginLeft":"1rem"}}
+                    >
+                      <SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                errors
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object[]
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <div
+                              style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                            >
+                              
+                              
+                              The list of API errors
+                              
+                              
+                            </div><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                              >
+                                Array [
+                              </div>
+                            </li><SchemaItem
+                              collapsible={false}
+                              name={"message"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The error or warning message"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"code"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The message code"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      details
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    any additional details
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </details>
+                            </SchemaItem><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                              >
+                                ]
+                              </div>
+                            </li>
+                          </div>
+                        </details>
+                      </SchemaItem>
+                    </ul>
+                  </details>
+                </TabItem><TabItem
+                  label={"Example (from schema)"}
+                  value={"Example (from schema)"}
+                >
+                  <ResponseSamples
+                    responseExample={"{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"code\": \"string\",\n      \"details\": {}\n    }\n  ]\n}"}
+                    language={"json"}
+                  >
+                    
+                  </ResponseSamples>
+                </TabItem>
+              </SchemaTabs>
+            </TabItem>
+          </MimeTabs>
+        </div>
+      </TabItem><TabItem
+        label={"424"}
+        value={"424"}
+      >
+        <div>
+          
+          
+          
+          
+          
+        </div><div>
+          <MimeTabs
+            className={"openapi-tabs__mime"}
+            schemaType={"response"}
+          >
+            <TabItem
+              label={"application/json"}
+              value={"application/json"}
+            >
+              <SchemaTabs
+                className={"openapi-tabs__schema"}
+              >
+                <TabItem
+                  label={"Schema"}
+                  value={"Schema"}
+                >
+                  <details
+                    style={{}}
+                    className={"openapi-markdown__details response"}
+                    data-collapsed={false}
+                    open={true}
+                  >
+                    <summary
+                      style={{}}
+                      className={"openapi-markdown__details-summary-response"}
+                    >
+                      <strong>
+                        Schema
+                      </strong>
+                    </summary><div
+                      style={{"textAlign":"left","marginLeft":"1rem"}}
+                    >
+                      
+                    </div><ul
+                      style={{"marginLeft":"1rem"}}
+                    >
+                      <SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                messages
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object[]
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <div
+                              style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                            >
+                              
+                              
+                              The list of error messages
+                              
+                              
+                            </div><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                              >
+                                Array [
+                              </div>
+                            </li><SchemaItem
+                              collapsible={false}
+                              name={"message"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The error or warning message"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"code"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The message code"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      details
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    any additional details
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </details>
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"carrier_name"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The targeted carrier"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"carrier_id"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The targeted carrier name (unique identifier)"}}
+                            >
+                              
+                            </SchemaItem><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                              >
+                                ]
+                              </div>
+                            </li>
+                          </div>
+                        </details>
+                      </SchemaItem>
+                    </ul>
+                  </details>
+                </TabItem><TabItem
+                  label={"Example (from schema)"}
+                  value={"Example (from schema)"}
+                >
+                  <ResponseSamples
+                    responseExample={"{\n  \"messages\": [\n    {\n      \"message\": \"string\",\n      \"code\": \"string\",\n      \"details\": {},\n      \"carrier_name\": \"string\",\n      \"carrier_id\": \"string\"\n    }\n  ]\n}"}
+                    language={"json"}
+                  >
+                    
+                  </ResponseSamples>
+                </TabItem>
+              </SchemaTabs>
+            </TabItem>
+          </MimeTabs>
+        </div>
+      </TabItem><TabItem
+        label={"500"}
+        value={"500"}
+      >
+        <div>
+          
+          
+          
+          
+          
+        </div><div>
+          <MimeTabs
+            className={"openapi-tabs__mime"}
+            schemaType={"response"}
+          >
+            <TabItem
+              label={"application/json"}
+              value={"application/json"}
+            >
+              <SchemaTabs
+                className={"openapi-tabs__schema"}
+              >
+                <TabItem
+                  label={"Schema"}
+                  value={"Schema"}
+                >
+                  <details
+                    style={{}}
+                    className={"openapi-markdown__details response"}
+                    data-collapsed={false}
+                    open={true}
+                  >
+                    <summary
+                      style={{}}
+                      className={"openapi-markdown__details-summary-response"}
+                    >
+                      <strong>
+                        Schema
+                      </strong>
+                    </summary><div
+                      style={{"textAlign":"left","marginLeft":"1rem"}}
+                    >
+                      
+                    </div><ul
+                      style={{"marginLeft":"1rem"}}
+                    >
+                      <SchemaItem
+                        collapsible={true}
+                        className={"schemaItem"}
+                      >
+                        <details
+                          style={{}}
+                          className={"openapi-markdown__details"}
+                        >
+                          <summary
+                            style={{}}
+                          >
+                            <span
+                              className={"openapi-schema__container"}
+                            >
+                              <strong
+                                className={"openapi-schema__property"}
+                              >
+                                errors
+                              </strong><span
+                                className={"openapi-schema__name"}
+                              >
+                                 object[]
+                              </span>
+                            </span>
+                          </summary><div
+                            style={{"marginLeft":"1rem"}}
+                          >
+                            <div
+                              style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                            >
+                              
+                              
+                              The list of API errors
+                              
+                              
+                            </div><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem","paddingBottom":".5rem"}}
+                              >
+                                Array [
+                              </div>
+                            </li><SchemaItem
+                              collapsible={false}
+                              name={"message"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The error or warning message"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={false}
+                              name={"code"}
+                              required={false}
+                              schemaName={"string"}
+                              qualifierMessage={undefined}
+                              schema={{"type":"string","description":"The message code"}}
+                            >
+                              
+                            </SchemaItem><SchemaItem
+                              collapsible={true}
+                              className={"schemaItem"}
+                            >
+                              <details
+                                style={{}}
+                                className={"openapi-markdown__details"}
+                              >
+                                <summary
+                                  style={{}}
+                                >
+                                  <span
+                                    className={"openapi-schema__container"}
+                                  >
+                                    <strong
+                                      className={"openapi-schema__property"}
+                                    >
+                                      details
+                                    </strong><span
+                                      className={"openapi-schema__name"}
+                                    >
+                                       object
+                                    </span>
+                                  </span>
+                                </summary><div
+                                  style={{"marginLeft":"1rem"}}
+                                >
+                                  <div
+                                    style={{"marginTop":".5rem","marginBottom":".5rem"}}
+                                  >
+                                    
+                                    
+                                    any additional details
+                                    
+                                    
+                                  </div>
+                                </div>
+                              </details>
+                            </SchemaItem><li>
+                              <div
+                                style={{"fontSize":"var(--ifm-code-font-size)","opacity":"0.6","marginLeft":"-.5rem"}}
+                              >
+                                ]
+                              </div>
+                            </li>
+                          </div>
+                        </details>
+                      </SchemaItem>
+                    </ul>
+                  </details>
+                </TabItem><TabItem
+                  label={"Example (from schema)"}
+                  value={"Example (from schema)"}
+                >
+                  <ResponseSamples
+                    responseExample={"{\n  \"errors\": [\n    {\n      \"message\": \"string\",\n      \"code\": \"string\",\n      \"details\": {}\n    }\n  ]\n}"}
+                    language={"json"}
+                  >
+                    
+                  </ResponseSamples>
+                </TabItem>
+              </SchemaTabs>
+            </TabItem>
+          </MimeTabs>
+        </div>
+      </TabItem>
+    </ApiTabs>
+  </div>
+</div>
+      

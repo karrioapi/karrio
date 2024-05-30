@@ -1,6 +1,4 @@
 import django.db.models as models
-import django.core.cache as caching
-
 import karrio.server.providers.models.carrier as providers
 
 

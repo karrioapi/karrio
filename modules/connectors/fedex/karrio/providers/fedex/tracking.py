@@ -43,7 +43,13 @@ def _extract_details(
 ) -> typing.Optional[models.TrackingDetails]:
     package = lib.to_object(tracking.CompleteTrackResultType, result)
 
-    detail = package.trackResults[0]
+    detail = max(
+        package.trackResults,
+        key=lambda item: max(
+            lib.to_date(event.date, "%Y-%m-%dT%H:%M:%S%z") for event in item.scanEvents
+        ),
+        default=None,
+    )
     estimated_delivery = lib.failsafe(
         lambda: (
             detail.standardTransitTimeWindow.window.begins

@@ -1,0 +1,7 @@
+{
+  "order": {
+    "trackingId": "string",
+    "orderId": "string",
+    "message": "string"
+  }
+}

@@ -96,71 +96,28 @@ const config = {
             to: '/product/self-hosting/environment',
             from: '/self-hosting/environment',
           },
-          {
-            to: '/reference/openapi',
-            from: '/api',
-          },
-          {
-            to: '/reference/api/authentication',
-            from: '/api/authentication',
-          },
-          {
-            to: '/reference/api/error-codes',
-            from: '/api/error-codes',
-          },
-          {
-            to: '/reference/api/pagination',
-            from: '/api/pagination',
-          },
-          {
-            to: '/reference/api/metadata',
-            from: '/api/metadata',
-          },
-          {
-            to: '/reference/api/carriers',
-            from: '/api/carriers',
-          },
-          {
-            to: '/reference/api/shipments',
-            from: '/api/shipments',
-          },
-          {
-            to: '/reference/api/trackers',
-            from: '/api/trackers',
-          },
-          {
-            to: '/reference/api/orders',
-            from: '/api/orders',
-          },
-          {
-            to: '/reference/api/batches',
-            from: '/api/batches',
-          },
-          {
-            to: '/reference/management',
-            from: '/management',
-          },
-          {
-            to: '/reference/management/overview',
-            from: '/management/overview',
-          },
-          {
-            to: '/reference/management/organizations',
-            from: '/management/organizations',
-          },
-          {
-            to: '/reference/management/users',
-            from: '/management/users',
-          },
-          {
-            to: '/reference/management/connections',
-            from: '/management/connections',
-          },
-          {
-            to: '/reference/management/data',
-            from: '/management/data',
-          },
         ],
+      },
+    ],
+    [
+      'docusaurus-plugin-openapi-docs',
+      {
+        id: "api",
+        docsPluginId: "openapi",
+        config: {
+          api: {
+            specPath: "./openapi.yml",
+            outputDir: "docs/reference/api",
+            sidebarOptions: {
+              groupPathsBy: "tag",
+              categoryLinkSource: "tag",
+              sidebarCollapsible: true,
+              sidebarCollapsed: true,
+            },
+            downloadUrl: "./openapi.yml",
+            // showSchemas: true,
+          },
+        }
       },
     ],
   ],
@@ -173,10 +130,9 @@ const config = {
         docs: {
           routeBasePath: '/',
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          // Remove this to remove the "edit this page" links.
           editUrl: 'https://github.com/karrioapi/docs/edit/main/apps/www/',
           sidebarCollapsible: false,
+          docItemComponent: "@theme/ApiItem",
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -190,7 +146,7 @@ const config = {
         // Plugin Options for loading OpenAPI files
         specs: [
           {
-            spec: 'https://raw.githubusercontent.com/karrioapi/karrio/main/schemas/openapi.yml',
+            spec: '../../schemas/openapi.yml',
             route: '/reference/openapi/',
           },
         ],
@@ -346,6 +302,8 @@ const config = {
         darkTheme: prismThemes.dracula,
       },
     }),
+
+  themes: ["docusaurus-theme-openapi-docs"],
 };
 
 export default config;

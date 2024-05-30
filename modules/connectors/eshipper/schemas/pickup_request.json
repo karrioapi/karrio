@@ -1,0 +1,37 @@
+{
+  "contactName": "string",
+  "phoneNumber": "string",
+  "pickupDate": "2024-05-13",
+  "pickupTime": {
+    "hour": 0,
+    "minute": 0,
+    "second": 0,
+    "nano": 0
+  },
+  "closingTime": {
+    "hour": 0,
+    "minute": 0,
+    "second": 0,
+    "nano": 0
+  },
+  "palletPickupTime": {
+    "hour": 0,
+    "minute": 0,
+    "second": 0,
+    "nano": 0
+  },
+  "palletClosingTime": {
+    "hour": 0,
+    "minute": 0,
+    "second": 0,
+    "nano": 0
+  },
+  "palletDeliveryClosingTime": {
+    "hour": 0,
+    "minute": 0,
+    "second": 0,
+    "nano": 0
+  },
+  "location": "Receiving",
+  "instructions": "string"
+}

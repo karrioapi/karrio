@@ -7,6 +7,6 @@ gateway = karrio.gateway["boxknight"].create(
     dict(
         username="username",
         password="password",
-        cache=lib.Cache(**cached_auth),
-    )
+    ),
+    cache=lib.Cache(**cached_auth),
 )

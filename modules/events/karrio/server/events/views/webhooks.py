@@ -37,6 +37,7 @@ class WebhookList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listWebhooks"},
         summary="List all webhooks",
         responses={
             200: Webhooks(),
@@ -55,6 +56,7 @@ class WebhookList(GenericAPIView):
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createWebhook"},
         summary="Create a webhook",
         request=WebhookData(),
         responses={
@@ -73,9 +75,11 @@ class WebhookList(GenericAPIView):
 
 
 class WebhookDetails(APIView):
+
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveWebhook"},
         summary="Retrieve a webhook",
         responses={
             201: Webhook(),
@@ -93,6 +97,7 @@ class WebhookDetails(APIView):
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}update",
+        extensions={"x-operationId": "updateWebhook"},
         summary="Update a webhook",
         request=WebhookData(),
         responses={
@@ -114,6 +119,7 @@ class WebhookDetails(APIView):
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}remove",
+        extensions={"x-operationId": "removeWebhook"},
         summary="Remove a webhook",
         responses={
             200: Operation(),
@@ -133,9 +139,11 @@ class WebhookDetails(APIView):
 
 
 class WebhookTest(APIView):
+
     @openapi.extend_schema(
         tags=["Webhooks"],
         operation_id=f"{ENDPOINT_ID}test",
+        extensions={"x-operationId": "testWebhook"},
         summary="Test a webhook",
         request=WebhookTestRequest(),
         responses={

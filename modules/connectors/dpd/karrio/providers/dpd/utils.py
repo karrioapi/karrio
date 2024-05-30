@@ -16,7 +16,6 @@ class Settings(core.Settings):
     depot: str = None
     message_language: str = "en_EN"
     account_country_code: str = "BE"
-    cache: lib.Cache = jstruct.JStruct[lib.Cache]
 
     @property
     def carrier_name(self):
@@ -65,15 +64,15 @@ class Settings(core.Settings):
         cache_key = f"{self.carrier_name}|{self.delis_id}|{self.password}"
         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
 
-        auth = self.cache.get(cache_key) or {}
+        auth = self.connection_cache.get(cache_key) or {}
         token = auth.get("token")
         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
 
         if token is not None and expiry is not None and expiry > now:
             return token
 
-        self.cache.set(cache_key, lambda: login(self))
-        new_auth = self.cache.get(cache_key)
+        self.connection_cache.set(cache_key, lambda: login(self))
+        new_auth = self.connection_cache.get(cache_key)
 
         if any(self.depot or "") is False:
             self.depot = new_auth["depot"]

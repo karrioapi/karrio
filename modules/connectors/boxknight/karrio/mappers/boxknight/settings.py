@@ -13,7 +13,6 @@ class Settings(provider_utils.Settings):
     # required carrier specific properties
     username: str
     password: str
-    cache: lib.Cache = jstruct.JStruct[lib.Cache, False, dict(default=lib.Cache())]
 
     # generic properties
     id: str = None

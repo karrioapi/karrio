@@ -41,6 +41,7 @@ class ManifestList(api.GenericAPIView):
     @openapi.extend_schema(
         tags=["Manifests"],
         operation_id=f"{ENDPOINT_ID}list",
+        extensions={"x-operationId": "listManifests"},
         summary="List manifests",
         responses={
             200: Manifests(),
@@ -62,6 +63,7 @@ class ManifestList(api.GenericAPIView):
     @openapi.extend_schema(
         tags=["Manifests"],
         operation_id=f"{ENDPOINT_ID}create",
+        extensions={"x-operationId": "createManifest"},
         summary="Create a manifest",
         responses={
             201: serializers.Manifest(),
@@ -90,6 +92,7 @@ class ManifestDetails(api.APIView):
     @openapi.extend_schema(
         tags=["Manifests"],
         operation_id=f"{ENDPOINT_ID}retrieve",
+        extensions={"x-operationId": "retrieveManifest"},
         summary="Retrieve a manifest",
         responses={
             200: serializers.Manifest(),

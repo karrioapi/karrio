@@ -18,17 +18,23 @@ WORKER_IMMEDIATE_MODE = decouple.config(
 
 REDIS_HOST = decouple.config("REDIS_HOST", default=None)
 REDIS_PORT = decouple.config("REDIS_PORT", default=None)
+REDIS_PASSWORD = decouple.config("REDIS_PASSWORD", default=None)
+REDIS_USERNAME = decouple.config("REDIS_USERNAME", default="default")
 
 
 # Use redis if available
 if REDIS_HOST is not None:
     pool = redis.ConnectionPool(
-        host=REDIS_HOST, port=REDIS_PORT or "6379", max_connections=20
+        host=REDIS_HOST,
+        port=REDIS_PORT or "6379",
+        max_connections=20,
+        **({"password": REDIS_PASSWORD} if REDIS_PASSWORD else {}),
+        **({"username": REDIS_USERNAME} if REDIS_USERNAME else {}),
     )
     HUEY = huey.RedisHuey(
         "default",
         connection_pool=pool,
-        **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {})
+        **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {}),
     )
 
 else:
@@ -43,5 +49,5 @@ else:
     HUEY = huey.SqliteHuey(
         name="default",
         filename=WORKER_DB_FILE_NAME,
-        **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {})
+        **({"immediate": WORKER_IMMEDIATE_MODE} if WORKER_IMMEDIATE_MODE else {}),
     )
