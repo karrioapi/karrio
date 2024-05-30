@@ -1,6 +1,5 @@
-import base64
 from base64 import b64encode
-
+import base64
 from karrio.core import Settings as BaseSettings
 from karrio.core.utils.helpers import request
 
