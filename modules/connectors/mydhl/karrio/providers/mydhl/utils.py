@@ -1,11 +1,12 @@
-
 import karrio.core as core
 
 
 class Settings(core.Settings):
     """DHL Express connection settings."""
 
-    # username: str  # carrier specific api credential key
+    username: str
+    password: str
+    api_key: str
 
     @property
     def carrier_name(self):
@@ -14,7 +15,7 @@ class Settings(core.Settings):
     @property
     def server_url(self):
         return (
-            "https://carrier.api"
+            "https://express.api.dhl.com/mydhlapi/test"
             if self.test_mode
-            else "https://sandbox.carrier.api"
+            else "https://express.api.dhl.com/mydhlapi"
         )

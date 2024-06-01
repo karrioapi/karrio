@@ -9,6 +9,9 @@ class Settings(provider_utils.Settings):
     """DHL Express connection settings."""
 
     # required carrier specific properties
+    username: str
+    password: str
+    api_key: str
 
     # generic properties
     id: str = None
