@@ -11,6 +11,7 @@ quicktype() {
 }
 
 quicktype --src="${SCHEMAS}/error_response.json" --out="${LIB_MODULES}/error_response.py"
+quicktype --src="${SCHEMAS}/pickup_cancel_request.json" --out="${LIB_MODULES}/pickup_cancel_request.py"
 quicktype --src="${SCHEMAS}/pickup_request.json" --out="${LIB_MODULES}/pickup_request.py"
 quicktype --src="${SCHEMAS}/pickup_response.json" --out="${LIB_MODULES}/pickup_response.py"
 quicktype --src="${SCHEMAS}/pickup_update.json" --out="${LIB_MODULES}/pickup_update.py"
