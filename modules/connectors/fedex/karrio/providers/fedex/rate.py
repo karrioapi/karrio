@@ -45,14 +45,14 @@ def _extract_details(
         *[(_.description, lib.to_money(_.amount)) for _ in details.shipmentRateDetail.surCharges or []],
     ]
     total_charge = lib.to_money(
-        details.totalNetChargeWithDutiesAndTaxes 
+        details.totalNetChargeWithDutiesAndTaxes
         or details.totalNetCharge
     )
     estimated_delivery = lib.to_date(getattr(rate.operationalDetail, "commitDate", None), "%Y-%m-%dT%H:%M:%S")
     shipping_date = lib.to_date(ctx.get("shipment_date") or datetime.datetime.now())
     transit_day_list = (
         (shipping_date + datetime.timedelta(x + 1) for x in range((estimated_delivery.date() - shipping_date.date()).days))
-        if estimated_delivery is not None 
+        if estimated_delivery is not None
         else None
     )
     transit_days = (
@@ -150,7 +150,7 @@ def rate_request(
             returnTransitTimes=True,
             servicesNeededOnRateFailure=True,
             variableOptions=(
-                [option.code for option in rate_options(options)]
+                ",".join([option.code for option in rate_options(options)])
                 if any(rate_options(options))
                 else []
             ),
@@ -289,7 +289,9 @@ def rate_request(
                             ),
                             customsValue=fedex.FixedValueType(
                                 amount=lib.identity(
-                                    lib.to_money(item.value_amount or 1.0 * item.quantity)
+                                    lib.to_money(
+                                        item.value_amount or 1.0 * item.quantity
+                                    )
                                 ),
                                 currency=lib.identity(
                                     item.value_currency
