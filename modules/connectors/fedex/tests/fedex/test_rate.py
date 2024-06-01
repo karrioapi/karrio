@@ -160,7 +160,7 @@ RateRequest = {
         "rateSortOrder": "COMMITASCENDING",
         "returnTransitTimes": True,
         "servicesNeededOnRateFailure": True,
-        "variableOptions": ["SMART_POST_HUB_ID", "SMART_POST_ALLOWED_INDICIA"],
+        "variableOptions": "SMART_POST_HUB_ID,SMART_POST_ALLOWED_INDICIA",
     },
     "requestedShipment": {
         "customsClearanceDetail": {
