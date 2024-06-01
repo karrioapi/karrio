@@ -78,7 +78,7 @@ def add_extension(
             if is_xml_api
             else templates.JSON_SCHEMA_TEMPLATE
         ).stream(**context).dump(
-            f"{SCHEMAS_DIR.substitute(id=id)}/error.{'xsd' if is_xml_api else 'json'}"
+            f"{SCHEMAS_DIR.substitute(id=id)}/error_response.{'xsd' if is_xml_api else 'json'}"
         )
         templates.EMPTY_FILE_TEMPLATE.stream(**context).dump(
             f"{SCHEMA_DATATYPES_DIR.substitute(id=id)}/__init__.py"

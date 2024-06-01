@@ -239,12 +239,12 @@ touch "${LIB_MODULES}/__init__.py"
 
 quicktype () {
     echo "Generating $1..."
-    docker run -it --rm --name quicktype -v $PWD:/app-e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/{{id}} \\
+    docker run -it --rm --name quicktype -v $PWD:/app -e SCHEMAS=/app/schemas -e LIB_MODULES=/app/karrio/schemas/{{id}} \\
     karrio/tools /quicktype/script/quicktype --no-uuids --no-date-times --no-enums --src-lang json --lang jstruct \\
     --no-nice-property-names --all-properties-optional --type-as-suffix $@
 }
 
-quicktype --src="${SCHEMAS}/error.json" --out="${LIB_MODULES}/error.py"
+quicktype --src="${SCHEMAS}/error_response.json" --out="${LIB_MODULES}/error_response.py"
 
 """
 )
