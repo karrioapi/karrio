@@ -1,0 +1,71 @@
+{
+  "shipmentTrackingNumber": "5374534616",
+  "trackingUrl": "https://expressapi.dhl.com/mydhlapi/shipments/5374534616/tracking",
+  "packages": [
+    {
+      "referenceNumber": 1,
+      "trackingNumber": "JD014600004617230711",
+      "trackingUrl": "https://expressapi.dhl.com/mydhlapi/shipments/5374534616/tracking?pieceTrackingNumber=JD014600004617230711"
+    },
+    {
+      "referenceNumber": 2,
+      "trackingNumber": "JD014600004617230712",
+      "trackingUrl": "https://expressapi.dhl.com/mydhlapi/shipments/5374534616/tracking?pieceTrackingNumber=JD014600004617230712"
+    },
+    {
+      "referenceNumber": 3,
+      "trackingNumber": "JD014600004617230713",
+      "trackingUrl": "https://expressapi.dhl.com/mydhlapi/shipments/5374534616/tracking?pieceTrackingNumber=JD014600004617230713"
+    }
+  ],
+  "documents": [
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MKNCAwIG9iago8PC9GaWx0ZXIvRmxhdGVEZWNv",
+      "typeCode": "label",
+      "packageReferenceNumber": 1
+    },
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MKNCAwIG9iago8PC9GaWx0ZXdGVEZWNvZGUvTGVuZ",
+      "typeCode": "label",
+      "packageReferenceNumber": 2
+    },
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MKNCAwIG9iago8PC9GaWx0ZXGVEZWNvZGUvACgQCtwYL",
+      "typeCode": "label",
+      "packageReferenceNumber": 3
+    },
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MNvZGUvACgo8PC9GaWx0ZXGVEZWNvZGUvACgQCtwYL",
+      "typeCode": "waybillDoc"
+    },
+    {
+      "imageFormat": "PDF",
+      "content": "JVBERi0xLjQKJeLjz9MKNiAwIG9i8PC9GaWx0ZXIvRmxhdGVEZWNvZGUvTG",
+      "typeCode": "invoice"
+    }
+  ],
+  "shipmentDetails": [
+    {
+      "pickupDetails": {
+        "localCutoffDateAndTime": "2022-12-12T19:00:00",
+        "gmtCutoffTime": "21:00:00",
+        "cutoffTimeOffset": "PT2H",
+        "pickupEarliest": "09:30:00",
+        "pickupLatest": "21:00:00",
+        "totalTransitDays": "3",
+        "pickupAdditionalDays": "0",
+        "deliveryAdditionalDays": "0",
+        "pickupDayOfWeek": "1",
+        "deliveryDayOfWeek": "4"
+      }
+    }
+  ],
+  "estimatedDeliveryDate": {
+    "estimatedDeliveryDate": "2022-12-15T23:59:00Z",
+    "estimatedDeliveryType": "QDDC"
+  }
+}
