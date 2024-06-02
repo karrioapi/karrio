@@ -1,3 +1,4 @@
+import base64
 import karrio.core as core
 
 
@@ -19,3 +20,8 @@ class Settings(core.Settings):
             if self.test_mode
             else "https://express.api.dhl.com/mydhlapi"
         )
+
+    @property
+    def authorization(self):
+        pair = "%s:%s" % (self.username, self.password)
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
