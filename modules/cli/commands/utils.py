@@ -9,7 +9,7 @@ class CarrierFeatures(lib.StrEnum):
     shipping = "shipping"
     pickup = "pickup"
     address = "address"
-    upload = "upload"
+    document = "document"
     manifest = "manifest"
 
 
