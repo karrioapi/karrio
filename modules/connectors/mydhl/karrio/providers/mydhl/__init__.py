@@ -1,4 +1,3 @@
-
 from karrio.providers.mydhl.utils import Settings
 from karrio.providers.mydhl.rate import parse_rate_response, rate_request
 from karrio.providers.mydhl.shipment import (
@@ -18,4 +17,8 @@ from karrio.providers.mydhl.pickup import (
 from karrio.providers.mydhl.tracking import (
     parse_tracking_response,
     tracking_request,
+)
+from karrio.providers.mydhl.document import (
+    parse_document_upload_response,
+    document_upload_request,
 )

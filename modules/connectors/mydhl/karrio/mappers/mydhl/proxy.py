@@ -95,3 +95,19 @@ class Proxy(proxy.Proxy):
         )
 
         return lib.Deserializable(response, lib.to_dict)
+
+    def upload_document(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        tracking_number = None
+        response = lib.request(
+            url=f"{self.settings.server_url}/shipments/{tracking_number}/upload-image",
+            data=lib.to_json(request.serialize()),
+            trace=self.trace_as("json"),
+            method="PATCH",
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.settings.authorization}",
+                "X-API-KEY": self.settings.api_key,
+            },
+        )
+
+        return lib.Deserializable(response, lib.to_dict)
