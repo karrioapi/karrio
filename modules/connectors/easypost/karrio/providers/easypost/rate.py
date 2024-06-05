@@ -50,6 +50,7 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
     return_address = lib.to_address(payload.return_address)
+    billing_address = lib.to_address(payload.billing_address)
     package = lib.to_packages(
         payload.parcels,
         package_option_type=provider_units.ShippingOption,
@@ -129,6 +130,25 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
                     state_tax_id=return_address.state_tax_id,
                 )
                 if payload.return_address
+                else None
+            ),
+            buyer_address=lib.identity(
+                easypost.Address(
+                    company=billing_address.company_name,
+                    street1=billing_address.street,
+                    street2=billing_address.address_line2,
+                    city=billing_address.city,
+                    state=billing_address.state_code,
+                    zip=billing_address.postal_code,
+                    country=billing_address.country_code,
+                    residential=billing_address.residential,
+                    name=billing_address.person_name,
+                    phone=billing_address.phone_number,
+                    email=billing_address.email,
+                    federal_tax_id=billing_address.federal_tax_id,
+                    state_tax_id=billing_address.state_tax_id,
+                )
+                if payload.billing_address
                 else None
             ),
             parcel=easypost.Parcel(

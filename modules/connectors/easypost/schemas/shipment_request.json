@@ -36,6 +36,40 @@
       "federal_tax_id": "",
       "state_tax_id": ""
     },
+    "return_address": {
+      "mode": "test",
+      "street1": "417 MONTGOMERY ST",
+      "street2": "FLOOR 5",
+      "city": "SAN FRANCISCO",
+      "state": "CA",
+      "zip": "94104",
+      "country": "US",
+      "residential": true,
+      "carrier_facility": "",
+      "name": "",
+      "company": "EasyPost",
+      "phone": "4151234567",
+      "email": "",
+      "federal_tax_id": "",
+      "state_tax_id": ""
+    },
+    "buyer_address": {
+      "mode": "test",
+      "street1": "417 MONTGOMERY ST",
+      "street2": "FLOOR 5",
+      "city": "SAN FRANCISCO",
+      "state": "CA",
+      "zip": "94104",
+      "country": "US",
+      "residential": true,
+      "carrier_facility": "",
+      "name": "",
+      "company": "EasyPost",
+      "phone": "4151234567",
+      "email": "",
+      "federal_tax_id": "",
+      "state_tax_id": ""
+    },
     "parcel": {
       "length": 20.2,
       "width": 10.9,
@@ -70,8 +104,6 @@
       ]
     },
     "options": null,
-    "carrier_accounts": [
-      "carr_.."
-    ]
+    "carrier_accounts": ["carr_.."]
   }
 }

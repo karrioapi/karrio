@@ -99,6 +99,96 @@
           }
         }
       },
+      "return_address": {
+        "id": "adr_...",
+        "object": "Address",
+        "created_at": "2017-05-08T19:43:41Z",
+        "updated_at": "2017-05-08T19:43:41Z",
+        "name": "",
+        "company": "EasyPost",
+        "street1": "UNDELIVERABLE ST",
+        "street2": "",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94104",
+        "country": "US",
+        "phone": "4151234567",
+        "email": "",
+        "mode": "test",
+        "carrier_facility": "",
+        "residential": false,
+        "federal_tax_id": "",
+        "state_tax_id": "",
+        "verifications": {
+          "delivery": {
+            "success": false,
+            "errors": [
+              {
+                "suggestion": "",
+                "code": "E.ADDRESS.NOT_FOUND",
+                "field": "address",
+                "message": "Address not found"
+              },
+              {
+                "suggestion": "",
+                "code": "E.HOUSE_NUMBER.MISSING",
+                "field": "street1",
+                "message": "House number is missing"
+              }
+            ],
+            "details": {
+              "longitude": -122.40288,
+              "latitude": 37.79298,
+              "time_zone": "America/Los_Angeles"
+            }
+          }
+        }
+      },
+      "buyer_address": {
+        "id": "adr_...",
+        "object": "Address",
+        "created_at": "2017-05-08T19:43:41Z",
+        "updated_at": "2017-05-08T19:43:41Z",
+        "name": "",
+        "company": "EasyPost",
+        "street1": "UNDELIVERABLE ST",
+        "street2": "",
+        "city": "SAN FRANCISCO",
+        "state": "CA",
+        "zip": "94104",
+        "country": "US",
+        "phone": "4151234567",
+        "email": "",
+        "mode": "test",
+        "carrier_facility": "",
+        "residential": false,
+        "federal_tax_id": "",
+        "state_tax_id": "",
+        "verifications": {
+          "delivery": {
+            "success": false,
+            "errors": [
+              {
+                "suggestion": "",
+                "code": "E.ADDRESS.NOT_FOUND",
+                "field": "address",
+                "message": "Address not found"
+              },
+              {
+                "suggestion": "",
+                "code": "E.HOUSE_NUMBER.MISSING",
+                "field": "street1",
+                "message": "House number is missing"
+              }
+            ],
+            "details": {
+              "longitude": -122.40288,
+              "latitude": 37.79298,
+              "time_zone": "America/Los_Angeles"
+            }
+          }
+        }
+      },
       "parcel": {
         "id": "prcl_...",
         "object": "Parcel",
