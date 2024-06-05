@@ -4,6 +4,57 @@ from jstruct import JList, JStruct
 
 
 @s(auto_attribs=True)
+class Details:
+    longitude: Optional[float] = None
+    latitude: Optional[float] = None
+    time_zone: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class Error:
+    suggestion: Optional[str] = None
+    code: Optional[str] = None
+    field: Optional[str] = None
+    message: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class Delivery:
+    success: Optional[bool] = None
+    errors: List[Error] = JList[Error]
+    details: Optional[Details] = JStruct[Details]
+
+
+@s(auto_attribs=True)
+class Verifications:
+    delivery: Optional[Delivery] = JStruct[Delivery]
+
+
+@s(auto_attribs=True)
+class Address:
+    id: Optional[str] = None
+    object: Optional[str] = None
+    created_at: Optional[str] = None
+    updated_at: Optional[str] = None
+    name: Optional[str] = None
+    company: Optional[str] = None
+    street1: Optional[str] = None
+    street2: Optional[str] = None
+    city: Optional[str] = None
+    state: Optional[str] = None
+    zip: Optional[int] = None
+    country: Optional[str] = None
+    phone: Optional[str] = None
+    email: Optional[str] = None
+    mode: Optional[str] = None
+    carrier_facility: Optional[str] = None
+    residential: Optional[bool] = None
+    federal_tax_id: Optional[str] = None
+    state_tax_id: Optional[str] = None
+    verifications: Optional[Verifications] = JStruct[Verifications]
+
+
+@s(auto_attribs=True)
 class CustomsItem:
     id: Optional[str] = None
     object: Optional[str] = None
@@ -61,57 +112,6 @@ class Form:
     form_type: Optional[str] = None
     form_url: Optional[str] = None
     submitted_electronically: Optional[bool] = None
-
-
-@s(auto_attribs=True)
-class Details:
-    longitude: Optional[float] = None
-    latitude: Optional[float] = None
-    time_zone: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class Error:
-    suggestion: Optional[str] = None
-    code: Optional[str] = None
-    field: Optional[str] = None
-    message: Optional[str] = None
-
-
-@s(auto_attribs=True)
-class Delivery:
-    success: Optional[bool] = None
-    errors: List[Error] = JList[Error]
-    details: Optional[Details] = JStruct[Details]
-
-
-@s(auto_attribs=True)
-class Verifications:
-    delivery: Optional[Delivery] = JStruct[Delivery]
-
-
-@s(auto_attribs=True)
-class Address:
-    id: Optional[str] = None
-    object: Optional[str] = None
-    created_at: Optional[str] = None
-    updated_at: Optional[str] = None
-    name: Optional[str] = None
-    company: Optional[str] = None
-    street1: Optional[str] = None
-    street2: Optional[str] = None
-    city: Optional[str] = None
-    state: Optional[str] = None
-    zip: Optional[int] = None
-    country: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[str] = None
-    mode: Optional[str] = None
-    carrier_facility: Optional[str] = None
-    residential: Optional[bool] = None
-    federal_tax_id: Optional[str] = None
-    state_tax_id: Optional[str] = None
-    verifications: Optional[Verifications] = JStruct[Verifications]
 
 
 @s(auto_attribs=True)
@@ -219,6 +219,8 @@ class Shipment:
     batch_status: Optional[str] = None
     to_address: Optional[Address] = JStruct[Address]
     from_address: Optional[Address] = JStruct[Address]
+    return_address: Optional[Address] = JStruct[Address]
+    buyer_address: Optional[Address] = JStruct[Address]
     parcel: Optional[Parcel] = JStruct[Parcel]
     customs_info: Optional[CustomsInfo] = JStruct[CustomsInfo]
     fees: List[Fee] = JList[Fee]

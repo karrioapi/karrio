@@ -153,6 +153,12 @@ class ShipmentSerializer(ShipmentData):
                     payload=validated_data,
                     context=context,
                 ),
+                "return_address": save_one_to_one_data(
+                    "return_address",
+                    AddressSerializer,
+                    payload=validated_data,
+                    context=context,
+                ),
                 "billing_address": save_one_to_one_data(
                     "billing_address",
                     AddressSerializer,
@@ -223,6 +229,16 @@ class ShipmentSerializer(ShipmentData):
             payload=validated_data,
             context=context,
         )
+
+        if "return_address" in validated_data:
+            changes.append("return_address")
+            instance.return_address = save_one_to_one_data(
+                "return_address",
+                AddressSerializer,
+                instance,
+                payload=validated_data,
+                context=context,
+            )
 
         if "billing_address" in validated_data:
             changes.append("billing_address")

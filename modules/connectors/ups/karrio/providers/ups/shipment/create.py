@@ -96,6 +96,7 @@ def shipment_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    return_address = lib.to_address(payload.return_address or payload.shipper)
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
@@ -209,22 +210,22 @@ def shipment_request(
                 ),
                 AlternateDeliveryAddress=None,
                 ShipFrom=ups.ShipFromType(
-                    Name=(shipper.company_name or shipper.person_name),
-                    AttentionName=shipper.contact,
-                    CompanyDisplayableName=shipper.company_name,
-                    TaxIdentificationNumber=shipper.tax_id,
+                    Name=(return_address.company_name or return_address.person_name),
+                    AttentionName=return_address.contact,
+                    CompanyDisplayableName=return_address.company_name,
+                    TaxIdentificationNumber=return_address.tax_id,
                     Phone=ups.ShipFromPhoneType(
-                        Number=shipper.phone_number or "000-000-0000",
+                        Number=return_address.phone_number or "000-000-0000",
                     ),
                     FaxNumber=None,
                     Address=ups.AlternateDeliveryAddressAddressType(
-                        AddressLine=shipper.address_line,
-                        City=shipper.city,
-                        StateProvinceCode=shipper.state_code,
-                        PostalCode=shipper.postal_code,
-                        CountryCode=shipper.country_code,
+                        AddressLine=return_address.address_line,
+                        City=return_address.city,
+                        StateProvinceCode=return_address.state_code,
+                        PostalCode=return_address.postal_code,
+                        CountryCode=return_address.country_code,
                         ResidentialAddressIndicator=(
-                            "Y" if shipper.is_residential else None
+                            "Y" if return_address.is_residential else None
                         ),
                     ),
                     VendorInfo=None,
