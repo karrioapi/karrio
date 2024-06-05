@@ -836,7 +836,81 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentDataBillingAddressToJSON(value) {
+    function ShipmentReturnAddressFromJSON(json) {
+        return ShipmentReturnAddressFromJSONTyped(json);
+    }
+    function ShipmentReturnAddressFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+        };
+    }
+    function ShipmentReturnAddressToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'postal_code': value['postal_code'],
+            'city': value['city'],
+            'federal_tax_id': value['federal_tax_id'],
+            'state_tax_id': value['state_tax_id'],
+            'person_name': value['person_name'],
+            'company_name': value['company_name'],
+            'country_code': value['country_code'],
+            'email': value['email'],
+            'phone_number': value['phone_number'],
+            'state_code': value['state_code'],
+            'residential': value['residential'],
+            'street_number': value['street_number'],
+            'address_line1': value['address_line1'],
+            'address_line2': value['address_line2'],
+            'validate_location': value['validate_location'],
+        };
+    }
+
+    /* tslint:disable */
+    function ShipmentBillingAddressFromJSON(json) {
+        return ShipmentBillingAddressFromJSONTyped(json);
+    }
+    function ShipmentBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
+            'city': json['city'] == null ? undefined : json['city'],
+            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
+            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
+            'person_name': json['person_name'] == null ? undefined : json['person_name'],
+            'company_name': json['company_name'] == null ? undefined : json['company_name'],
+            'country_code': json['country_code'],
+            'email': json['email'] == null ? undefined : json['email'],
+            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
+            'state_code': json['state_code'] == null ? undefined : json['state_code'],
+            'residential': json['residential'] == null ? undefined : json['residential'],
+            'street_number': json['street_number'] == null ? undefined : json['street_number'],
+            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
+            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
+            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+        };
+    }
+    function ShipmentBillingAddressToJSON(value) {
         if (value == null) {
             return value;
         }
@@ -961,12 +1035,13 @@ var Karrio = (function () {
             return value;
         }
         return {
-            'shipper': AddressDataToJSON(value['shipper']),
             'recipient': AddressDataToJSON(value['recipient']),
+            'shipper': AddressDataToJSON(value['shipper']),
+            'return_address': ShipmentReturnAddressToJSON(value['return_address']),
+            'billing_address': ShipmentBillingAddressToJSON(value['billing_address']),
             'parcels': (value['parcels'].map(ParcelDataToJSON)),
             'options': value['options'],
             'payment': PaymentToJSON(value['payment']),
-            'billing_address': ShipmentDataBillingAddressToJSON(value['billing_address']),
             'customs': ShipmentDataCustomsToJSON(value['customs']),
             'reference': value['reference'],
             'label_type': value['label_type'],
@@ -1718,36 +1793,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentBillingAddressFromJSON(json) {
-        return ShipmentBillingAddressFromJSONTyped(json);
-    }
-    function ShipmentBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'id': json['id'] == null ? undefined : json['id'],
-            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
-            'city': json['city'] == null ? undefined : json['city'],
-            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
-            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
-            'person_name': json['person_name'] == null ? undefined : json['person_name'],
-            'company_name': json['company_name'] == null ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': json['email'] == null ? undefined : json['email'],
-            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
-            'state_code': json['state_code'] == null ? undefined : json['state_code'],
-            'residential': json['residential'] == null ? undefined : json['residential'],
-            'street_number': json['street_number'] == null ? undefined : json['street_number'],
-            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
-            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
-            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
-            'object_type': json['object_type'] == null ? undefined : json['object_type'],
-            'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
-        };
-    }
-
-    /* tslint:disable */
     function ShipmentFromJSON(json) {
         return ShipmentFromJSONTyped(json);
     }
@@ -1761,11 +1806,12 @@ var Karrio = (function () {
             'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
+            'return_address': json['return_address'] == null ? undefined : ShipmentReturnAddressFromJSON(json['return_address']),
+            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': json['services'] == null ? undefined : json['services'],
             'options': json['options'] == null ? undefined : json['options'],
             'payment': json['payment'] == null ? undefined : PaymentFromJSON(json['payment']),
-            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
             'customs': json['customs'] == null ? undefined : ShipmentCustomsFromJSON(json['customs']),
             'rates': json['rates'] == null ? undefined : (json['rates'].map(RateFromJSON)),
             'reference': json['reference'] == null ? undefined : json['reference'],
@@ -2156,12 +2202,13 @@ var Karrio = (function () {
             return value;
         }
         return {
-            'shipper': AddressDataToJSON(value['shipper']),
             'recipient': AddressDataToJSON(value['recipient']),
+            'shipper': AddressDataToJSON(value['shipper']),
+            'return_address': ShipmentReturnAddressToJSON(value['return_address']),
+            'billing_address': ShipmentBillingAddressToJSON(value['billing_address']),
             'parcels': (value['parcels'].map(ParcelDataToJSON)),
             'options': value['options'],
             'payment': PaymentToJSON(value['payment']),
-            'billing_address': ShipmentDataBillingAddressToJSON(value['billing_address']),
             'customs': ShipmentDataCustomsToJSON(value['customs']),
             'reference': value['reference'],
             'label_type': value['label_type'],
@@ -2219,12 +2266,13 @@ var Karrio = (function () {
             return value;
         }
         return {
-            'shipper': AddressDataToJSON(value['shipper']),
             'recipient': AddressDataToJSON(value['recipient']),
+            'shipper': AddressDataToJSON(value['shipper']),
+            'return_address': ShipmentReturnAddressToJSON(value['return_address']),
+            'billing_address': ShipmentBillingAddressToJSON(value['billing_address']),
             'parcels': (value['parcels'].map(ParcelDataToJSON)),
             'options': value['options'],
             'payment': PaymentToJSON(value['payment']),
-            'billing_address': ShipmentDataBillingAddressToJSON(value['billing_address']),
             'customs': ShipmentDataCustomsToJSON(value['customs']),
             'reference': value['reference'],
             'label_type': value['label_type'],
@@ -2261,11 +2309,12 @@ var Karrio = (function () {
             'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
+            'return_address': json['return_address'] == null ? undefined : ShipmentReturnAddressFromJSON(json['return_address']),
+            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': json['services'] == null ? undefined : json['services'],
             'options': json['options'] == null ? undefined : json['options'],
             'payment': json['payment'] == null ? undefined : PaymentFromJSON(json['payment']),
-            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
             'customs': json['customs'] == null ? undefined : ShipmentCustomsFromJSON(json['customs']),
             'rates': json['rates'] == null ? undefined : (json['rates'].map(RateFromJSON)),
             'reference': json['reference'] == null ? undefined : json['reference'],

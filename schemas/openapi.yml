@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6-rc4`.
+    The current version is `2024.6-rc5`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6-rc4
+  version: 2024.6-rc5
 paths:
   /:
     get:
@@ -8495,6 +8495,17 @@ components:
           description: "The address of the party.<br/>\n        Origin address (ship\
             \ from) for the **shipper**<br/>\n        Destination address (ship to)\
             \ for the **recipient**\n        "
+        return_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The return address for this shipment. Defaults to the shipper
+            address.
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
         parcels:
           type: array
           items:
@@ -8541,11 +8552,6 @@ components:
             currency: null
             account_number: null
           description: The payment details
-        billing_address:
-          allOf:
-          - $ref: '#/components/schemas/Address'
-          nullable: true
-          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/Customs'
@@ -8692,18 +8698,29 @@ components:
     ShipmentData:
       type: object
       properties:
-        shipper:
-          allOf:
-          - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship\
-            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
-            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
           description: "The address of the party.<br/>\n        Origin address (ship\
             \ from) for the **shipper**<br/>\n        Destination address (ship to)\
             \ for the **recipient**\n        "
+        shipper:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
+        return_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The return address for this shipment. Defaults to the shipper
+            address.
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
         parcels:
           type: array
           items:
@@ -8740,11 +8757,6 @@ components:
             currency: null
             account_number: null
           description: The payment details
-        billing_address:
-          allOf:
-          - $ref: '#/components/schemas/AddressData'
-          nullable: true
-          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
@@ -8799,18 +8811,29 @@ components:
     ShipmentDataReference:
       type: object
       properties:
-        shipper:
-          allOf:
-          - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship\
-            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
-            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
           description: "The address of the party.<br/>\n        Origin address (ship\
             \ from) for the **shipper**<br/>\n        Destination address (ship to)\
             \ for the **recipient**\n        "
+        shipper:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
+        return_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The return address for this shipment. Defaults to the shipper
+            address.
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
         parcels:
           type: array
           items:
@@ -8847,11 +8870,6 @@ components:
             currency: null
             account_number: null
           description: The payment details
-        billing_address:
-          allOf:
-          - $ref: '#/components/schemas/AddressData'
-          nullable: true
-          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
@@ -9002,18 +9020,29 @@ components:
     ShippingRequest:
       type: object
       properties:
-        shipper:
-          allOf:
-          - $ref: '#/components/schemas/AddressData'
-          description: "The address of the party.<br/>\n        Origin address (ship\
-            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
-            \ for the **recipient**\n        "
         recipient:
           allOf:
           - $ref: '#/components/schemas/AddressData'
           description: "The address of the party.<br/>\n        Origin address (ship\
             \ from) for the **shipper**<br/>\n        Destination address (ship to)\
             \ for the **recipient**\n        "
+        shipper:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          description: "The address of the party.<br/>\n        Origin address (ship\
+            \ from) for the **shipper**<br/>\n        Destination address (ship to)\
+            \ for the **recipient**\n        "
+        return_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The return address for this shipment. Defaults to the shipper
+            address.
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
         parcels:
           type: array
           items:
@@ -9050,11 +9079,6 @@ components:
             currency: null
             account_number: null
           description: The payment details
-        billing_address:
-          allOf:
-          - $ref: '#/components/schemas/AddressData'
-          nullable: true
-          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/CustomsData'
@@ -9116,6 +9140,17 @@ components:
           description: "The address of the party.<br/>\n        Origin address (ship\
             \ from) for the **shipper**<br/>\n        Destination address (ship to)\
             \ for the **recipient**\n        "
+        return_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The return address for this shipment. Defaults to the shipper
+            address.
+        billing_address:
+          allOf:
+          - $ref: '#/components/schemas/AddressData'
+          nullable: true
+          description: The payor address.
         parcels:
           type: array
           items:
@@ -9162,11 +9197,6 @@ components:
             currency: null
             account_number: null
           description: The payment details
-        billing_address:
-          allOf:
-          - $ref: '#/components/schemas/Address'
-          nullable: true
-          description: The payor address.
         customs:
           allOf:
           - $ref: '#/components/schemas/Customs'
