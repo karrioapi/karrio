@@ -785,6 +785,7 @@ FULFILLED_ORDER_RESPONSE = {
                 }
             ],
             "reference": None,
+            "return_address": None,
             "label_type": "PDF",
             "carrier_ids": ["canadapost"],
             "tracker_id": None,
@@ -998,6 +999,7 @@ PARTIAL_ORDER_RESPONSE = {
                 }
             ],
             "reference": None,
+            "return_address": None,
             "label_type": "PDF",
             "carrier_ids": ["canadapost"],
             "tracker_id": None,
