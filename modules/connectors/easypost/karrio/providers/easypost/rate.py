@@ -49,6 +49,7 @@ def _extract_details(
 def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    return_address = lib.to_address(payload.return_address)
     package = lib.to_packages(
         payload.parcels,
         package_option_type=provider_units.ShippingOption,
@@ -110,6 +111,25 @@ def rate_request(payload: models.RateRequest, _) -> lib.Serializable:
                 email=shipper.email,
                 federal_tax_id=shipper.federal_tax_id,
                 state_tax_id=shipper.state_tax_id,
+            ),
+            return_address=lib.identity(
+                easypost.Address(
+                    company=return_address.company_name,
+                    street1=return_address.street,
+                    street2=return_address.address_line2,
+                    city=return_address.city,
+                    state=return_address.state_code,
+                    zip=return_address.postal_code,
+                    country=return_address.country_code,
+                    residential=return_address.residential,
+                    name=return_address.person_name,
+                    phone=return_address.phone_number,
+                    email=return_address.email,
+                    federal_tax_id=return_address.federal_tax_id,
+                    state_tax_id=return_address.state_tax_id,
+                )
+                if payload.return_address
+                else None
             ),
             parcel=easypost.Parcel(
                 length=package.length.IN,

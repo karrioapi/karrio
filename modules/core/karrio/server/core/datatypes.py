@@ -194,7 +194,8 @@ class ShipmentRequest(BaseShipmentRequest):
 
     payment: Payment = jstruct.JStruct[Payment]
     customs: Customs = jstruct.JStruct[Customs]
-    billing_address: Address = jstruct.JStruct[Address]
+    return_address: Address = jstruct.JStruct[Address]
+    shipping_address: Address = jstruct.JStruct[Address]
 
     options: typing.Dict = {}
     reference: str = ""

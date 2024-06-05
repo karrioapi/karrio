@@ -86,6 +86,7 @@ def rate_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    return_address = lib.to_address(payload.return_address or payload.shipper)
     packages = lib.to_packages(payload.parcels, provider_units.PackagePresets)
     is_document = all([parcel.is_document for parcel in payload.parcels])
     service = lib.to_services(payload.services, provider_units.ServiceCode).first
@@ -95,7 +96,7 @@ def rate_request(
         initializer=provider_units.shipping_options_initializer,
     )
     currency = options.currency.state or settings.default_currency
-    mps_packaging = (
+    mps_packaging = lib.identity(
         provider_units.PackagingType.ups_unknown.value if len(packages) > 1 else None
     )
     indications = [
@@ -144,14 +145,14 @@ def rate_request(
                     ),
                 ),
                 ShipFrom=ups.ShipType(
-                    Name=shipper.name,
-                    AttentionName=shipper.contact,
+                    Name=return_address.name,
+                    AttentionName=return_address.contact,
                     Address=ups.ShipFromAddressType(
-                        AddressLine=shipper.address_line,
-                        City=shipper.city,
-                        StateProvinceCode=shipper.state_code,
-                        PostalCode=shipper.postal_code,
-                        CountryCode=shipper.country_code,
+                        AddressLine=return_address.address_line,
+                        City=return_address.city,
+                        StateProvinceCode=return_address.state_code,
+                        PostalCode=return_address.postal_code,
+                        CountryCode=return_address.country_code,
                     ),
                 ),
                 AlternateDeliveryAddress=None,
@@ -234,7 +235,7 @@ def rate_request(
                     )
                     for package in packages
                 ],
-                ShipmentServiceOptions=(
+                ShipmentServiceOptions=lib.identity(
                     ups.ShipmentServiceOptionsType(
                         SaturdayDeliveryIndicator=(
                             "Y" if options.ups_saturday_delivery.state else None

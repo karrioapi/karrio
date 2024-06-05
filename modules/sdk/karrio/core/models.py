@@ -126,7 +126,8 @@ class ShipmentRequest:
 
     payment: Payment = JStruct[Payment]
     customs: Customs = JStruct[Customs]
-    billing_address: Address = JStruct[Address]
+    return_address: Address = JStruct[Address]
+    shipping_address: Address = JStruct[Address]
 
     options: Dict = {}
     reference: str = ""

@@ -67,7 +67,7 @@ def _extract_details(
     invoice_type = invoices[0].docType if len(invoices) > 0 else "PDF"
     invoice = (
         lib.bundle_base64(
-            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in invoices], 
+            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in invoices],
             invoice_type,
         )
         if len(invoices) > 0
@@ -77,7 +77,7 @@ def _extract_details(
     label_type = labels[0].docType if len(labels) > 0 else "PDF"
     label = (
         lib.bundle_base64(
-            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in labels], 
+            [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in labels],
             label_type,
         )
         if len(labels) > 0
@@ -136,6 +136,7 @@ def shipment_request(
     label_type, label_format = provider_units.LabelType.map(
         payload.label_type or "PDF_4x6"
     ).value
+    return_address = lib.to_address(payload.return_address)
     billing_address = lib.to_address(
         payload.billing_address
         or dict(
@@ -197,7 +198,7 @@ def shipment_request(
                         companyName=shipper.company_name,
                         faxNumber=None,
                     ),
-                    tins=(
+                    tins=lib.identity(
                         fedex.TinType(number=shipper.tax_id)
                         if shipper.has_tax_info
                         else []
@@ -242,7 +243,28 @@ def shipment_request(
                     packages.package_type or "your_packaging"
                 ).value,
                 totalWeight=package.weight.value,
-                origin=None,
+                origin=lib.identity(
+                    fedex.OriginType(
+                        address=fedex.AddressType(
+                            streetLines=return_address.address_lines,
+                            city=return_address.city,
+                            stateOrProvinceCode=return_address.state_code,
+                            postalCode=return_address.postal_code,
+                            countryCode=return_address.country_code,
+                            residential=return_address.residential,
+                        ),
+                        contact=fedex.ResponsiblePartyContactType(
+                            personName=return_address.contact,
+                            emailAddress=return_address.email,
+                            phoneNumber=return_address.phone_number,
+                            phoneExtension=None,
+                            companyName=return_address.company_name,
+                            faxNumber=None,
+                        ),
+                    )
+                    if payload.return_address is not None
+                    else None
+                ),
                 shippingChargesPayment=fedex.ShippingChargesPaymentType(
                     paymentType=provider_units.PaymentType.map(
                         payment.paid_by
