@@ -90,6 +90,7 @@ export default function CreateLabelPage(pageProps: any) {
     const [ready, setReady] = useState<boolean>(false);
     const { shipment_id = "new" } = router.query as any;
     const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
+    const [addReturn, setAddReturn] = useState<boolean>(false);
     const {
       query: { data: { user_connections } = {} },
     } = useCarrierConnections();
@@ -374,6 +375,82 @@ export default function CreateLabelPage(pageProps: any) {
                     )}
                   </div>
 
+                  {/* Retrun address section */}
+                  <hr className="my-1" style={{ height: "1px" }} />
+
+                  <div className="p-3">
+                    <header className="is-flex is-justify-content-space-between">
+                      <div>
+                        <CheckBoxField
+                          name="addInsurance"
+                          fieldClass="column mb-0 is-12 px-0 py-2"
+                          defaultChecked={
+                            addReturn || !isNone(shipment.return_address)
+                          }
+                          onChange={(e) => {
+                            setAddReturn(e.target.checked);
+                            if (
+                              !e.target.checked &&
+                              !isNone(shipment.return_address)
+                            ) {
+                              onChange({ return_address: null });
+                            }
+                          }}
+                        >
+                          <span>Add a return address (optional)</span>
+                        </CheckBoxField>
+                      </div>
+                      <div className="is-vcentered">
+                        {(addReturn || !isNone(shipment.return_address)) && (
+                          <AddressModalEditor
+                            shipment={shipment}
+                            address={
+                              shipment.return_address ||
+                              ({
+                                country_code: shipment.shipper?.country_code,
+                              } as AddressType)
+                            }
+                            onSubmit={(address) =>
+                              onChange({ return_address: address })
+                            }
+                            trigger={
+                              <button
+                                className="button is-small is-info is-text is-inverted p-1"
+                                disabled={query.isFetching}
+                              >
+                                Edit return address
+                              </button>
+                            }
+                          />
+                        )}
+                      </div>
+                    </header>
+
+                    <div
+                      style={{
+                        display: `${isNone(shipment.return_address) ? "none" : "block"}`,
+                      }}
+                    >
+                      {shipment?.return_address && (
+                        <AddressDescription
+                          address={shipment!.return_address as any}
+                        />
+                      )}
+                    </div>
+
+                    {Object.values(shipment?.return_address || []).length ===
+                      0 && (
+                      <div className="notification is-default p-2 is-size-7">
+                        <span>
+                          Use this to specify an origin address different from
+                          the shipper address above. <br />
+                          This address will be used for pickup and return.
+                        </span>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Billing address section */}
                   <hr className="my-1" style={{ height: "1px" }} />
 
                   <div className="p-3">
@@ -474,7 +551,6 @@ export default function CreateLabelPage(pageProps: any) {
                       )}
                   </div>
 
-                  {/* Billing address section */}
                   {(shipment?.billing_address ||
                     shipment.payment?.paid_by === PaidByEnum.third_party) && (
                     <>
