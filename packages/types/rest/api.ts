@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc4`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc5`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2024.6-rc4
+ * The version of the OpenAPI document: 2024.6-rc5
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -7662,6 +7662,18 @@ export interface Shipment {
      */
     'recipient': Address;
     /**
+     * 
+     * @type {ShipmentReturnAddress}
+     * @memberof Shipment
+     */
+    'return_address'?: ShipmentReturnAddress | null;
+    /**
+     * 
+     * @type {ShipmentBillingAddress}
+     * @memberof Shipment
+     */
+    'billing_address'?: ShipmentBillingAddress | null;
+    /**
      * The shipment\'s parcels
      * @type {Array<Parcel>}
      * @memberof Shipment
@@ -7685,12 +7697,6 @@ export interface Shipment {
      * @memberof Shipment
      */
     'payment'?: Payment;
-    /**
-     * 
-     * @type {ShipmentBillingAddress}
-     * @memberof Shipment
-     */
-    'billing_address'?: ShipmentBillingAddress | null;
     /**
      * 
      * @type {ShipmentCustoms}
@@ -7849,12 +7855,6 @@ export type ShipmentStatusEnum = typeof ShipmentStatusEnum[keyof typeof Shipment
  */
 export interface ShipmentBillingAddress {
     /**
-     * A unique identifier
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'id'?: string;
-    /**
      * The address postal code         **(required for shipment purchase)**         
      * @type {string}
      * @memberof ShipmentBillingAddress
@@ -7944,18 +7944,6 @@ export interface ShipmentBillingAddress {
      * @memberof ShipmentBillingAddress
      */
     'validate_location'?: boolean | null;
-    /**
-     * Specifies the object type
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'object_type'?: string;
-    /**
-     * 
-     * @type {AddressValidation}
-     * @memberof ShipmentBillingAddress
-     */
-    'validation'?: AddressValidation | null;
 }
 
 export const ShipmentBillingAddressCountryCodeEnum = {
@@ -8362,13 +8350,25 @@ export interface ShipmentData {
      * @type {AddressData}
      * @memberof ShipmentData
      */
-    'shipper': AddressData;
+    'recipient': AddressData;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
      * @type {AddressData}
      * @memberof ShipmentData
      */
-    'recipient': AddressData;
+    'shipper': AddressData;
+    /**
+     * 
+     * @type {ShipmentReturnAddress}
+     * @memberof ShipmentData
+     */
+    'return_address'?: ShipmentReturnAddress | null;
+    /**
+     * 
+     * @type {ShipmentBillingAddress}
+     * @memberof ShipmentData
+     */
+    'billing_address'?: ShipmentBillingAddress | null;
     /**
      * The shipment\'s parcels
      * @type {Array<ParcelData>}
@@ -8387,12 +8387,6 @@ export interface ShipmentData {
      * @memberof ShipmentData
      */
     'payment'?: Payment;
-    /**
-     * 
-     * @type {ShipmentDataBillingAddress}
-     * @memberof ShipmentData
-     */
-    'billing_address'?: ShipmentDataBillingAddress | null;
     /**
      * 
      * @type {ShipmentDataCustoms}
@@ -8446,104 +8440,398 @@ export const ShipmentDataLabelTypeEnum = {
 export type ShipmentDataLabelTypeEnum = typeof ShipmentDataLabelTypeEnum[keyof typeof ShipmentDataLabelTypeEnum];
 
 /**
- * The payor address.
+ * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
  * @export
- * @interface ShipmentDataBillingAddress
+ * @interface ShipmentDataCustoms
  */
-export interface ShipmentDataBillingAddress {
+export interface ShipmentDataCustoms {
+    /**
+     * The parcel content items
+     * @type {Array<CommodityData>}
+     * @memberof ShipmentDataCustoms
+     */
+    'commodities': Array<CommodityData>;
+    /**
+     * 
+     * @type {CustomsDuty}
+     * @memberof ShipmentDataCustoms
+     */
+    'duty'?: CustomsDuty | null;
+    /**
+     * 
+     * @type {CustomsDataDutyBillingAddress}
+     * @memberof ShipmentDataCustoms
+     */
+    'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentDataCustoms
+     */
+    'content_type'?: ShipmentDataCustomsContentTypeEnum | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentDataCustoms
+     */
+    'content_description'?: string | null;
+    /**
+     * The customs \'term of trade\' also known as \'incoterm\'
+     * @type {string}
+     * @memberof ShipmentDataCustoms
+     */
+    'incoterm'?: ShipmentDataCustomsIncotermEnum | null;
+    /**
+     * The invoice reference number
+     * @type {string}
+     * @memberof ShipmentDataCustoms
+     */
+    'invoice'?: string | null;
+    /**
+     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
+     * @type {string}
+     * @memberof ShipmentDataCustoms
+     */
+    'invoice_date'?: string | null;
+    /**
+     * Indicates if the shipment is commercial
+     * @type {boolean}
+     * @memberof ShipmentDataCustoms
+     */
+    'commercial_invoice'?: boolean | null;
+    /**
+     * Indicate that signer certified confirmed all
+     * @type {boolean}
+     * @memberof ShipmentDataCustoms
+     */
+    'certify'?: boolean | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof ShipmentDataCustoms
+     */
+    'signer'?: string | null;
+    /**
+     * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         </details>         
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentDataCustoms
+     */
+    'options'?: { [key: string]: any; };
+}
+
+export const ShipmentDataCustomsContentTypeEnum = {
+    Documents: 'documents',
+    Gift: 'gift',
+    Sample: 'sample',
+    Merchandise: 'merchandise',
+    ReturnMerchandise: 'return_merchandise',
+    Other: 'other',
+    Empty: '',
+    Null: 'null'
+} as const;
+
+export type ShipmentDataCustomsContentTypeEnum = typeof ShipmentDataCustomsContentTypeEnum[keyof typeof ShipmentDataCustomsContentTypeEnum];
+export const ShipmentDataCustomsIncotermEnum = {
+    Cfr: 'CFR',
+    Cif: 'CIF',
+    Cip: 'CIP',
+    Cpt: 'CPT',
+    Daf: 'DAF',
+    Ddp: 'DDP',
+    Ddu: 'DDU',
+    Deq: 'DEQ',
+    Des: 'DES',
+    Exw: 'EXW',
+    Fas: 'FAS',
+    Fca: 'FCA',
+    Fob: 'FOB',
+    Null: 'null'
+} as const;
+
+export type ShipmentDataCustomsIncotermEnum = typeof ShipmentDataCustomsIncotermEnum[keyof typeof ShipmentDataCustomsIncotermEnum];
+
+/**
+ * 
+ * @export
+ * @interface ShipmentDataReference
+ */
+export interface ShipmentDataReference {
+    /**
+     * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
+     * @type {AddressData}
+     * @memberof ShipmentDataReference
+     */
+    'recipient': AddressData;
+    /**
+     * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
+     * @type {AddressData}
+     * @memberof ShipmentDataReference
+     */
+    'shipper': AddressData;
+    /**
+     * 
+     * @type {ShipmentReturnAddress}
+     * @memberof ShipmentDataReference
+     */
+    'return_address'?: ShipmentReturnAddress | null;
+    /**
+     * 
+     * @type {ShipmentBillingAddress}
+     * @memberof ShipmentDataReference
+     */
+    'billing_address'?: ShipmentBillingAddress | null;
+    /**
+     * The shipment\'s parcels
+     * @type {Array<ParcelData>}
+     * @memberof ShipmentDataReference
+     */
+    'parcels': Array<ParcelData>;
+    /**
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentDataReference
+     */
+    'options'?: { [key: string]: any; };
+    /**
+     * The payment details
+     * @type {Payment}
+     * @memberof ShipmentDataReference
+     */
+    'payment'?: Payment;
+    /**
+     * 
+     * @type {ShipmentDataCustoms}
+     * @memberof ShipmentDataReference
+     */
+    'customs'?: ShipmentDataCustoms | null;
+    /**
+     * The shipment reference
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'reference'?: string | null;
+    /**
+     * The shipment label file type.
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'label_type'?: ShipmentDataReferenceLabelTypeEnum;
+    /**
+     * **Specify a service to Buy a label in one call without rating.**
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'service'?: string;
+    /**
+     * The requested carrier service for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request         you could specify a service per carrier.**         
+     * @type {Array<string>}
+     * @memberof ShipmentDataReference
+     */
+    'services'?: Array<string> | null;
+    /**
+     * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
+     * @type {Array<string>}
+     * @memberof ShipmentDataReference
+     */
+    'carrier_ids'?: Array<string> | null;
+    /**
+     * User metadata for the shipment
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentDataReference
+     */
+    'metadata'?: { [key: string]: any; };
+    /**
+     * The shipment id.
+     * @type {string}
+     * @memberof ShipmentDataReference
+     */
+    'id'?: string;
+}
+
+export const ShipmentDataReferenceLabelTypeEnum = {
+    Pdf: 'PDF',
+    Zpl: 'ZPL',
+    Png: 'PNG'
+} as const;
+
+export type ShipmentDataReferenceLabelTypeEnum = typeof ShipmentDataReferenceLabelTypeEnum[keyof typeof ShipmentDataReferenceLabelTypeEnum];
+
+/**
+ * 
+ * @export
+ * @interface ShipmentPurchaseData
+ */
+export interface ShipmentPurchaseData {
+    /**
+     * The shipment selected rate.
+     * @type {string}
+     * @memberof ShipmentPurchaseData
+     */
+    'selected_rate_id': string;
+    /**
+     * The shipment label file type.
+     * @type {string}
+     * @memberof ShipmentPurchaseData
+     */
+    'label_type'?: ShipmentPurchaseDataLabelTypeEnum;
+    /**
+     * The payment details
+     * @type {Payment}
+     * @memberof ShipmentPurchaseData
+     */
+    'payment'?: Payment;
+    /**
+     * The shipment reference
+     * @type {string}
+     * @memberof ShipmentPurchaseData
+     */
+    'reference'?: string | null;
+    /**
+     * User metadata for the shipment
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentPurchaseData
+     */
+    'metadata'?: { [key: string]: any; };
+}
+
+export const ShipmentPurchaseDataLabelTypeEnum = {
+    Pdf: 'PDF',
+    Zpl: 'ZPL',
+    Png: 'PNG'
+} as const;
+
+export type ShipmentPurchaseDataLabelTypeEnum = typeof ShipmentPurchaseDataLabelTypeEnum[keyof typeof ShipmentPurchaseDataLabelTypeEnum];
+
+/**
+ * 
+ * @export
+ * @interface ShipmentRateData
+ */
+export interface ShipmentRateData {
+    /**
+     * The requested carrier service for the shipment.<br/>         Please consult [the reference](#operation/references) for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request you could         specify a service per carrier.**         
+     * @type {Array<string>}
+     * @memberof ShipmentRateData
+     */
+    'services'?: Array<string> | null;
+    /**
+     * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
+     * @type {Array<string>}
+     * @memberof ShipmentRateData
+     */
+    'carrier_ids'?: Array<string> | null;
+    /**
+     * The shipment reference
+     * @type {string}
+     * @memberof ShipmentRateData
+     */
+    'reference'?: string | null;
+    /**
+     * User metadata for the shipment
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentRateData
+     */
+    'metadata'?: { [key: string]: any; };
+}
+/**
+ * The return address for this shipment. Defaults to the shipper address.
+ * @export
+ * @interface ShipmentReturnAddress
+ */
+export interface ShipmentReturnAddress {
     /**
      * The address postal code         **(required for shipment purchase)**         
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'postal_code'?: string | null;
     /**
      * The address city.         **(required for shipment purchase)**         
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'city'?: string | null;
     /**
      * The party frederal tax id
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'federal_tax_id'?: string | null;
     /**
      * The party state id
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'state_tax_id'?: string | null;
     /**
      * Attention to         **(required for shipment purchase)**         
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'person_name'?: string | null;
     /**
      * The company name if the party is a company
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'company_name'?: string | null;
     /**
      * The address country code
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
-    'country_code': ShipmentDataBillingAddressCountryCodeEnum;
+    'country_code': ShipmentReturnAddressCountryCodeEnum;
     /**
      * The party email
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'email'?: string | null;
     /**
      * The party phone number.
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'phone_number'?: string | null;
     /**
      * The address state code
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'state_code'?: string | null;
     /**
      * Indicate if the address is residential or commercial (enterprise)
      * @type {boolean}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'residential'?: boolean | null;
     /**
      * The address street number
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'street_number'?: string | null;
     /**
      * The address line with street number <br/>         **(required for shipment purchase)**         
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'address_line1'?: string | null;
     /**
      * The address line with suite number
      * @type {string}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'address_line2'?: string | null;
     /**
      * Indicate if the address should be validated
      * @type {boolean}
-     * @memberof ShipmentDataBillingAddress
+     * @memberof ShipmentReturnAddress
      */
     'validate_location'?: boolean | null;
 }
 
-export const ShipmentDataBillingAddressCountryCodeEnum = {
+export const ShipmentReturnAddressCountryCodeEnum = {
     Ad: 'AD',
     Ae: 'AE',
     Af: 'AF',
@@ -8780,296 +9068,8 @@ export const ShipmentDataBillingAddressCountryCodeEnum = {
     Zw: 'ZW'
 } as const;
 
-export type ShipmentDataBillingAddressCountryCodeEnum = typeof ShipmentDataBillingAddressCountryCodeEnum[keyof typeof ShipmentDataBillingAddressCountryCodeEnum];
+export type ShipmentReturnAddressCountryCodeEnum = typeof ShipmentReturnAddressCountryCodeEnum[keyof typeof ShipmentReturnAddressCountryCodeEnum];
 
-/**
- * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
- * @export
- * @interface ShipmentDataCustoms
- */
-export interface ShipmentDataCustoms {
-    /**
-     * The parcel content items
-     * @type {Array<CommodityData>}
-     * @memberof ShipmentDataCustoms
-     */
-    'commodities': Array<CommodityData>;
-    /**
-     * 
-     * @type {CustomsDuty}
-     * @memberof ShipmentDataCustoms
-     */
-    'duty'?: CustomsDuty | null;
-    /**
-     * 
-     * @type {CustomsDataDutyBillingAddress}
-     * @memberof ShipmentDataCustoms
-     */
-    'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'content_type'?: ShipmentDataCustomsContentTypeEnum | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'content_description'?: string | null;
-    /**
-     * The customs \'term of trade\' also known as \'incoterm\'
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'incoterm'?: ShipmentDataCustomsIncotermEnum | null;
-    /**
-     * The invoice reference number
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'invoice'?: string | null;
-    /**
-     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'invoice_date'?: string | null;
-    /**
-     * Indicates if the shipment is commercial
-     * @type {boolean}
-     * @memberof ShipmentDataCustoms
-     */
-    'commercial_invoice'?: boolean | null;
-    /**
-     * Indicate that signer certified confirmed all
-     * @type {boolean}
-     * @memberof ShipmentDataCustoms
-     */
-    'certify'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'signer'?: string | null;
-    /**
-     * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentDataCustoms
-     */
-    'options'?: { [key: string]: any; };
-}
-
-export const ShipmentDataCustomsContentTypeEnum = {
-    Documents: 'documents',
-    Gift: 'gift',
-    Sample: 'sample',
-    Merchandise: 'merchandise',
-    ReturnMerchandise: 'return_merchandise',
-    Other: 'other',
-    Empty: '',
-    Null: 'null'
-} as const;
-
-export type ShipmentDataCustomsContentTypeEnum = typeof ShipmentDataCustomsContentTypeEnum[keyof typeof ShipmentDataCustomsContentTypeEnum];
-export const ShipmentDataCustomsIncotermEnum = {
-    Cfr: 'CFR',
-    Cif: 'CIF',
-    Cip: 'CIP',
-    Cpt: 'CPT',
-    Daf: 'DAF',
-    Ddp: 'DDP',
-    Ddu: 'DDU',
-    Deq: 'DEQ',
-    Des: 'DES',
-    Exw: 'EXW',
-    Fas: 'FAS',
-    Fca: 'FCA',
-    Fob: 'FOB',
-    Null: 'null'
-} as const;
-
-export type ShipmentDataCustomsIncotermEnum = typeof ShipmentDataCustomsIncotermEnum[keyof typeof ShipmentDataCustomsIncotermEnum];
-
-/**
- * 
- * @export
- * @interface ShipmentDataReference
- */
-export interface ShipmentDataReference {
-    /**
-     * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShipmentDataReference
-     */
-    'shipper': AddressData;
-    /**
-     * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
-     * @type {AddressData}
-     * @memberof ShipmentDataReference
-     */
-    'recipient': AddressData;
-    /**
-     * The shipment\'s parcels
-     * @type {Array<ParcelData>}
-     * @memberof ShipmentDataReference
-     */
-    'parcels': Array<ParcelData>;
-    /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentDataReference
-     */
-    'options'?: { [key: string]: any; };
-    /**
-     * The payment details
-     * @type {Payment}
-     * @memberof ShipmentDataReference
-     */
-    'payment'?: Payment;
-    /**
-     * 
-     * @type {ShipmentDataBillingAddress}
-     * @memberof ShipmentDataReference
-     */
-    'billing_address'?: ShipmentDataBillingAddress | null;
-    /**
-     * 
-     * @type {ShipmentDataCustoms}
-     * @memberof ShipmentDataReference
-     */
-    'customs'?: ShipmentDataCustoms | null;
-    /**
-     * The shipment reference
-     * @type {string}
-     * @memberof ShipmentDataReference
-     */
-    'reference'?: string | null;
-    /**
-     * The shipment label file type.
-     * @type {string}
-     * @memberof ShipmentDataReference
-     */
-    'label_type'?: ShipmentDataReferenceLabelTypeEnum;
-    /**
-     * **Specify a service to Buy a label in one call without rating.**
-     * @type {string}
-     * @memberof ShipmentDataReference
-     */
-    'service'?: string;
-    /**
-     * The requested carrier service for the shipment.<br/>         Please consult the reference for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request         you could specify a service per carrier.**         
-     * @type {Array<string>}
-     * @memberof ShipmentDataReference
-     */
-    'services'?: Array<string> | null;
-    /**
-     * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
-     * @type {Array<string>}
-     * @memberof ShipmentDataReference
-     */
-    'carrier_ids'?: Array<string> | null;
-    /**
-     * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentDataReference
-     */
-    'metadata'?: { [key: string]: any; };
-    /**
-     * The shipment id.
-     * @type {string}
-     * @memberof ShipmentDataReference
-     */
-    'id'?: string;
-}
-
-export const ShipmentDataReferenceLabelTypeEnum = {
-    Pdf: 'PDF',
-    Zpl: 'ZPL',
-    Png: 'PNG'
-} as const;
-
-export type ShipmentDataReferenceLabelTypeEnum = typeof ShipmentDataReferenceLabelTypeEnum[keyof typeof ShipmentDataReferenceLabelTypeEnum];
-
-/**
- * 
- * @export
- * @interface ShipmentPurchaseData
- */
-export interface ShipmentPurchaseData {
-    /**
-     * The shipment selected rate.
-     * @type {string}
-     * @memberof ShipmentPurchaseData
-     */
-    'selected_rate_id': string;
-    /**
-     * The shipment label file type.
-     * @type {string}
-     * @memberof ShipmentPurchaseData
-     */
-    'label_type'?: ShipmentPurchaseDataLabelTypeEnum;
-    /**
-     * The payment details
-     * @type {Payment}
-     * @memberof ShipmentPurchaseData
-     */
-    'payment'?: Payment;
-    /**
-     * The shipment reference
-     * @type {string}
-     * @memberof ShipmentPurchaseData
-     */
-    'reference'?: string | null;
-    /**
-     * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentPurchaseData
-     */
-    'metadata'?: { [key: string]: any; };
-}
-
-export const ShipmentPurchaseDataLabelTypeEnum = {
-    Pdf: 'PDF',
-    Zpl: 'ZPL',
-    Png: 'PNG'
-} as const;
-
-export type ShipmentPurchaseDataLabelTypeEnum = typeof ShipmentPurchaseDataLabelTypeEnum[keyof typeof ShipmentPurchaseDataLabelTypeEnum];
-
-/**
- * 
- * @export
- * @interface ShipmentRateData
- */
-export interface ShipmentRateData {
-    /**
-     * The requested carrier service for the shipment.<br/>         Please consult [the reference](#operation/references) for specific carriers services.<br/>         **Note that this is a list because on a Multi-carrier rate request you could         specify a service per carrier.**         
-     * @type {Array<string>}
-     * @memberof ShipmentRateData
-     */
-    'services'?: Array<string> | null;
-    /**
-     * The list of configured carriers you wish to get rates from.<br/>         **Note that the request will be sent to all carriers in nothing is specified**         
-     * @type {Array<string>}
-     * @memberof ShipmentRateData
-     */
-    'carrier_ids'?: Array<string> | null;
-    /**
-     * The shipment reference
-     * @type {string}
-     * @memberof ShipmentRateData
-     */
-    'reference'?: string | null;
-    /**
-     * User metadata for the shipment
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentRateData
-     */
-    'metadata'?: { [key: string]: any; };
-}
 /**
  * The shipment selected rate
  * @export
@@ -9206,13 +9206,25 @@ export interface ShippingRequest {
      * @type {AddressData}
      * @memberof ShippingRequest
      */
-    'shipper': AddressData;
+    'recipient': AddressData;
     /**
      * The address of the party.<br/>         Origin address (ship from) for the **shipper**<br/>         Destination address (ship to) for the **recipient**         
      * @type {AddressData}
      * @memberof ShippingRequest
      */
-    'recipient': AddressData;
+    'shipper': AddressData;
+    /**
+     * 
+     * @type {ShipmentReturnAddress}
+     * @memberof ShippingRequest
+     */
+    'return_address'?: ShipmentReturnAddress | null;
+    /**
+     * 
+     * @type {ShipmentBillingAddress}
+     * @memberof ShippingRequest
+     */
+    'billing_address'?: ShipmentBillingAddress | null;
     /**
      * The shipment\'s parcels
      * @type {Array<ParcelData>}
@@ -9231,12 +9243,6 @@ export interface ShippingRequest {
      * @memberof ShippingRequest
      */
     'payment'?: Payment;
-    /**
-     * 
-     * @type {ShipmentDataBillingAddress}
-     * @memberof ShippingRequest
-     */
-    'billing_address'?: ShipmentDataBillingAddress | null;
     /**
      * 
      * @type {ShipmentDataCustoms}
@@ -9314,6 +9320,18 @@ export interface ShippingResponse {
      */
     'recipient': Address;
     /**
+     * 
+     * @type {ShipmentReturnAddress}
+     * @memberof ShippingResponse
+     */
+    'return_address'?: ShipmentReturnAddress | null;
+    /**
+     * 
+     * @type {ShipmentBillingAddress}
+     * @memberof ShippingResponse
+     */
+    'billing_address'?: ShipmentBillingAddress | null;
+    /**
      * The shipment\'s parcels
      * @type {Array<Parcel>}
      * @memberof ShippingResponse
@@ -9337,12 +9355,6 @@ export interface ShippingResponse {
      * @memberof ShippingResponse
      */
     'payment'?: Payment;
-    /**
-     * 
-     * @type {ShipmentBillingAddress}
-     * @memberof ShippingResponse
-     */
-    'billing_address'?: ShipmentBillingAddress | null;
     /**
      * 
      * @type {ShipmentCustoms}

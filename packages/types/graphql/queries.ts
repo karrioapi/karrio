@@ -289,6 +289,25 @@ export const GET_SHIPMENT = gql`
         state_tax_id
         validate_location
       }
+      return_address {
+        id
+        postal_code
+        city
+        person_name
+        company_name
+        country_code
+        email
+        phone_number
+        state_code
+        suburb
+        residential
+        street_number
+        address_line1
+        address_line2
+        federal_tax_id
+        state_tax_id
+        validate_location
+      }
       billing_address {
         id
         postal_code
@@ -566,6 +585,25 @@ export const GET_SHIPMENTS = gql`
             state_tax_id
             validate_location
           }
+          return_address {
+            id
+            postal_code
+            city
+            person_name
+            company_name
+            country_code
+            email
+            phone_number
+            state_code
+            suburb
+            residential
+            street_number
+            address_line1
+            address_line2
+            federal_tax_id
+            state_tax_id
+            validate_location
+          }
           billing_address {
             id
             postal_code
@@ -779,6 +817,25 @@ export const GET_SHIPMENT_DATA = gql`
         state_tax_id
         validate_location
       }
+      return_address {
+        id
+        postal_code
+        city
+        person_name
+        company_name
+        country_code
+        email
+        phone_number
+        state_code
+        suburb
+        residential
+        street_number
+        address_line1
+        address_line2
+        federal_tax_id
+        state_tax_id
+        validate_location
+      }
       billing_address {
         id
         postal_code
@@ -943,6 +1000,25 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
           validate_location
         }
         shipper {
+          id
+          postal_code
+          city
+          person_name
+          company_name
+          country_code
+          email
+          phone_number
+          state_code
+          suburb
+          residential
+          street_number
+          address_line1
+          address_line2
+          federal_tax_id
+          state_tax_id
+          validate_location
+        }
+        return_address {
           id
           postal_code
           city
@@ -2688,6 +2764,25 @@ export const GET_ORDER = gql`
           state_tax_id
           validate_location
         }
+        return_address {
+          id
+          postal_code
+          city
+          person_name
+          company_name
+          country_code
+          email
+          phone_number
+          state_code
+          suburb
+          residential
+          street_number
+          address_line1
+          address_line2
+          federal_tax_id
+          state_tax_id
+          validate_location
+        }
         billing_address {
           id
           postal_code
@@ -3069,6 +3164,25 @@ export const GET_ORDERS = gql`
               validate_location
             }
             shipper {
+              id
+              postal_code
+              city
+              person_name
+              company_name
+              country_code
+              email
+              phone_number
+              state_code
+              suburb
+              residential
+              street_number
+              address_line1
+              address_line2
+              federal_tax_id
+              state_tax_id
+              validate_location
+            }
+            return_address {
               id
               postal_code
               city
@@ -3800,4 +3914,3 @@ export const GET_MANIFEST = gql`
     }
   }
 `;
-

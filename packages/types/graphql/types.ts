@@ -428,6 +428,26 @@ export interface get_shipment_shipment_shipper {
   validate_location: boolean | null;
 }
 
+export interface get_shipment_shipment_return_address {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
 export interface get_shipment_shipment_billing_address {
   id: string;
   postal_code: string | null;
@@ -663,6 +683,7 @@ export interface get_shipment_shipment {
   status: ShipmentStatusEnum;
   recipient: get_shipment_shipment_recipient;
   shipper: get_shipment_shipment_shipper;
+  return_address: get_shipment_shipment_return_address | null;
   billing_address: get_shipment_shipment_billing_address | null;
   parcels: get_shipment_shipment_parcels[];
   label_type: LabelTypeEnum | null;
@@ -739,6 +760,26 @@ export interface get_shipments_shipments_edges_node_recipient {
 }
 
 export interface get_shipments_shipments_edges_node_shipper {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_shipments_shipments_edges_node_return_address {
   id: string;
   postal_code: string | null;
   city: string | null;
@@ -937,6 +978,7 @@ export interface get_shipments_shipments_edges_node {
   status: ShipmentStatusEnum;
   recipient: get_shipments_shipments_edges_node_recipient;
   shipper: get_shipments_shipments_edges_node_shipper;
+  return_address: get_shipments_shipments_edges_node_return_address | null;
   billing_address: get_shipments_shipments_edges_node_billing_address | null;
   parcels: get_shipments_shipments_edges_node_parcels[];
   label_type: LabelTypeEnum | null;
@@ -1008,6 +1050,26 @@ export interface get_shipment_data_shipment_recipient {
 }
 
 export interface get_shipment_data_shipment_shipper {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface get_shipment_data_shipment_return_address {
   id: string;
   postal_code: string | null;
   city: string | null;
@@ -1176,6 +1238,7 @@ export interface get_shipment_data_shipment {
   status: ShipmentStatusEnum;
   recipient: get_shipment_data_shipment_recipient;
   shipper: get_shipment_data_shipment_shipper;
+  return_address: get_shipment_data_shipment_return_address | null;
   billing_address: get_shipment_data_shipment_billing_address | null;
   parcels: get_shipment_data_shipment_parcels[];
   label_type: LabelTypeEnum | null;
@@ -1227,6 +1290,26 @@ export interface partial_shipment_update_partial_shipment_update_shipment_recipi
 }
 
 export interface partial_shipment_update_partial_shipment_update_shipment_shipper {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
+export interface partial_shipment_update_partial_shipment_update_shipment_return_address {
   id: string;
   postal_code: string | null;
   city: string | null;
@@ -1395,6 +1478,7 @@ export interface partial_shipment_update_partial_shipment_update_shipment {
   status: ShipmentStatusEnum;
   recipient: partial_shipment_update_partial_shipment_update_shipment_recipient;
   shipper: partial_shipment_update_partial_shipment_update_shipment_shipper;
+  return_address: partial_shipment_update_partial_shipment_update_shipment_return_address | null;
   billing_address: partial_shipment_update_partial_shipment_update_shipment_billing_address | null;
   parcels: partial_shipment_update_partial_shipment_update_shipment_parcels[];
   label_type: LabelTypeEnum | null;
@@ -3614,6 +3698,26 @@ export interface get_order_order_shipments_shipper {
   validate_location: boolean | null;
 }
 
+export interface get_order_order_shipments_return_address {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
 export interface get_order_order_shipments_billing_address {
   id: string;
   postal_code: string | null;
@@ -3794,6 +3898,7 @@ export interface get_order_order_shipments {
   status: ShipmentStatusEnum;
   recipient: get_order_order_shipments_recipient;
   shipper: get_order_order_shipments_shipper;
+  return_address: get_order_order_shipments_return_address | null;
   billing_address: get_order_order_shipments_billing_address | null;
   parcels: get_order_order_shipments_parcels[];
   label_type: LabelTypeEnum | null;
@@ -4090,6 +4195,26 @@ export interface get_orders_orders_edges_node_shipments_shipper {
   validate_location: boolean | null;
 }
 
+export interface get_orders_orders_edges_node_shipments_return_address {
+  id: string;
+  postal_code: string | null;
+  city: string | null;
+  person_name: string | null;
+  company_name: string | null;
+  country_code: CountryCodeEnum;
+  email: string | null;
+  phone_number: string | null;
+  state_code: string | null;
+  suburb: string | null;
+  residential: boolean | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  federal_tax_id: string | null;
+  state_tax_id: string | null;
+  validate_location: boolean | null;
+}
+
 export interface get_orders_orders_edges_node_shipments_billing_address {
   id: string;
   postal_code: string | null;
@@ -4270,6 +4395,7 @@ export interface get_orders_orders_edges_node_shipments {
   status: ShipmentStatusEnum;
   recipient: get_orders_orders_edges_node_shipments_recipient;
   shipper: get_orders_orders_edges_node_shipments_shipper;
+  return_address: get_orders_orders_edges_node_shipments_return_address | null;
   billing_address: get_orders_orders_edges_node_shipments_billing_address | null;
   parcels: get_orders_orders_edges_node_shipments_parcels[];
   label_type: LabelTypeEnum | null;
@@ -7010,10 +7136,11 @@ export interface PartialShipmentMutationInput {
   id: string;
   recipient?: UpdateAddressInput | null;
   shipper?: UpdateAddressInput | null;
+  return_address?: UpdateAddressInput | null;
+  billing_address?: UpdateAddressInput | null;
   customs?: UpdateCustomsInput | null;
   parcels?: UpdateParcelInput[] | null;
   payment?: PaymentInput | null;
-  billing_address?: UpdateAddressInput | null;
   label_type?: LabelTypeEnum | null;
   metadata?: any | null;
   options?: any | null;

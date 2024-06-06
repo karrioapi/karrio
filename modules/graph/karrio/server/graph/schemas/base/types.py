@@ -826,13 +826,14 @@ class ShipmentType:
     options: utils.JSON
     metadata: utils.JSON
     status: utils.ShipmentStatusEnum
+    return_address: typing.Optional[AddressType]
+    billing_address: typing.Optional[AddressType]
     meta: typing.Optional[utils.JSON]
     label_type: typing.Optional[utils.LabelTypeEnum]
     tracking_number: typing.Optional[str]
     shipment_identifier: typing.Optional[str]
     tracking_url: typing.Optional[str]
     reference: typing.Optional[str]
-    billing_address: typing.Optional[AddressType]
     customs: typing.Optional[CustomsType]
     services: typing.Optional[typing.List[str]]
     service: typing.Optional[str]

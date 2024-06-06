@@ -203,6 +203,7 @@ RateRequest = {
             }
         ],
         "shipDateStamp": "2024-02-15",
+        "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
         "shipper": {
             "address": {
                 "countryCode": "CA",

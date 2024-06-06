@@ -70,7 +70,7 @@ def shipment_request(
     recipient = lib.to_address(payload.recipient)
     service = provider_units.ServiceType.map(payload.service).value_or_key
     options = lib.to_shipping_options(
-        options=payload.options,
+        payload.options,
         is_international=(
             recipient.country_code is not None and recipient.country_code != "CA"
         ),
