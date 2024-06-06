@@ -117,13 +117,12 @@ def rate_request(
     rate_options = lambda _options: [
         option
         for _, option in _options.items()
-        if _options.state is not False and option.code in provider_units.RATING_OPTIONS
+        if option.state is not False and option.code in provider_units.RATING_OPTIONS
     ]
     shipment_options = lambda _options: [
         option
         for _, option in _options.items()
-        if _options.state is not False
-        and option.code in provider_units.SHIPMENT_OPTIONS
+        if option.state is not False and option.code in provider_units.SHIPMENT_OPTIONS
     ]
     commodities = lib.identity(
         packages.items
@@ -242,12 +241,12 @@ def rate_request(
                     internationalControlledExportDetail=None,
                     homeDeliveryPremiumDetail=None,
                     specialServiceTypes=(
-                        [option.code for option in shipment_options(packages.options)]
-                        if any(shipment_options(packages.options))
+                        [option.code for option in shipment_options(options)]
+                        if any(shipment_options(options))
                         else []
                     ),
                 )
-                if any(shipment_options(packages.options))
+                if any(shipment_options(options))
                 else None
             ),
             customsClearanceDetail=lib.identity(
@@ -280,8 +279,7 @@ def rate_request(
                                 fedex.FixedValueType(
                                     amount=lib.to_money(item.value_amount),
                                     currency=(
-                                        item.value_currency
-                                        or packages.options.currency.state
+                                        item.value_currency or options.currency.state
                                     ),
                                 )
                                 if item.value_amount
@@ -295,7 +293,7 @@ def rate_request(
                                 ),
                                 currency=lib.identity(
                                     item.value_currency
-                                    or packages.options.currency.state
+                                    or options.currency.state
                                     or "USD"
                                 ),
                             ),
