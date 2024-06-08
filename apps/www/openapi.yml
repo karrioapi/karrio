@@ -8429,15 +8429,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"is_return\": true,\n            \"doc_files\":\
-            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
-            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
-            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
-            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
-            \            \"doc_references\": [\n                {\n              \
-            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
-            commercial_invoice\",\n                }\n            ],\n        }\n\
-            \        </details>\n        "
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -8535,15 +8535,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"is_return\": true,\n            \"doc_files\":\
-            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
-            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
-            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
-            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
-            \            \"doc_references\": [\n                {\n              \
-            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
-            commercial_invoice\",\n                }\n            ],\n        }\n\
-            \        </details>\n        "
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8740,15 +8740,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"is_return\": true,\n            \"doc_files\":\
-            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
-            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
-            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
-            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
-            \            \"doc_references\": [\n                {\n              \
-            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
-            commercial_invoice\",\n                }\n            ],\n        }\n\
-            \        </details>\n        "
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -8853,15 +8853,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"is_return\": true,\n            \"doc_files\":\
-            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
-            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
-            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
-            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
-            \            \"doc_references\": [\n                {\n              \
-            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
-            commercial_invoice\",\n                }\n            ],\n        }\n\
-            \        </details>\n        "
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9062,15 +9062,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"is_return\": true,\n            \"doc_files\":\
-            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
-            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
-            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
-            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
-            \            \"doc_references\": [\n                {\n              \
-            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
-            commercial_invoice\",\n                }\n            ],\n        }\n\
-            \        </details>\n        "
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
@@ -9180,15 +9180,15 @@ components:
             : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
             \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
             : \"This is a shipment note\",\n            \"signature_confirmation\"\
-            : true,\n            \"is_return\": true,\n            \"doc_files\":\
-            \ [\n                {\n                    \"doc_type\": \"commercial_invoice\"\
-            ,\n                    \"doc_file\": \"base64 encoded file\",\n      \
-            \              \"doc_name\": \"commercial_invoice.pdf\",\n           \
-            \         \"doc_format\": \"pdf\",\n                }\n            ],\n\
-            \            \"doc_references\": [\n                {\n              \
-            \      \"doc_id\": \"123456789\",\n                    \"doc_type\": \"\
-            commercial_invoice\",\n                }\n            ],\n        }\n\
-            \        </details>\n        "
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         payment:
           allOf:
           - $ref: '#/components/schemas/Payment'
