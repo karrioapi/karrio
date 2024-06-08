@@ -668,11 +668,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/carriers:
+  /v1/connections:
     get:
-      operationId: '&&list'
-      description: Returns the list of configured carriers
-      summary: List all carriers
+      operationId: '&&&list'
+      description: Retrieve all carrier connections
+      summary: List all carrier connections
       parameters:
       - in: query
         name: active
@@ -702,7 +702,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Carriers
+      - Connections
       security:
       - TokenBasic: []
       - Token: []
@@ -713,7 +713,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarrierList'
+                $ref: '#/components/schemas/CarrierConnectionList'
           description: ''
         '400':
           content:
@@ -721,17 +721,61 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-      x-operationId: listCarriers
-  /v1/carriers/{carrier_name}/services:
+      x-operationId: listCarrierConnections
+    post:
+      operationId: '&&&add'
+      description: Add a new carrier connection.
+      summary: Add a carrier connection
+      tags:
+      - Connections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarrierConnectionData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierConnection'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: addCarrierConnection
+  /v1/connections/{id}:
     get:
-      operationId: '&&get_services'
-      description: Retrieve a carrier's services
-      summary: Get carrier services
+      operationId: '&&&retrieve'
+      description: Retrieve carrier connection.
+      summary: Retrieve a carrier connection
       parameters:
       - in: path
-        name: carrier_name
+        name: id
         schema:
           type: string
+<<<<<<< HEAD
         description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
           `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
@@ -739,9 +783,11 @@ paths:
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
           `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+=======
+>>>>>>> a67aa2f04 (feat(refactor): Introducing a REST API for carrier connection management)
         required: true
       tags:
-      - Carriers
+      - Connections
       security:
       - TokenBasic: []
       - Token: []
@@ -752,8 +798,55 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: {}
+                $ref: '#/components/schemas/CarrierConnection'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: retrieveCarrierConnection
+    patch:
+      operationId: '&&&update'
+      description: Update a carrier connection.
+      summary: Update a carrier connection
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Connections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCarrierConnectionData'
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierConnection'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
           description: ''
         '404':
           content:
@@ -767,11 +860,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/carriers/{id}:
-    get:
-      operationId: '&&retrieve'
-      description: Retrieve a carrier account.
-      summary: Retrieve a carrier account
+      x-operationId: updateCarrierConnection
+    delete:
+      operationId: '&&&remove'
+      description: Remove a carrier connection.
+      summary: Remove a carrier connection
       parameters:
       - in: path
         name: id
@@ -779,7 +872,7 @@ paths:
           type: string
         required: true
       tags:
-      - Carriers
+      - Connections
       security:
       - TokenBasic: []
       - Token: []
@@ -790,7 +883,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarrierSettings'
+                $ref: '#/components/schemas/CarrierConnection'
           description: ''
         '404':
           content:
@@ -798,7 +891,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-      x-operationId: retrieveCarrier
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: removeCarrierConnection
   /v1/documents/generate:
     post:
       operationId: '&&&&$$generateDocument'
@@ -4523,27 +4628,7 @@ components:
           description: The list of tracking info to process.
       required:
       - trackers
-    CarrierList:
-      type: object
-      properties:
-        count:
-          type: integer
-          nullable: true
-        next:
-          type: string
-          format: uri
-          nullable: true
-        previous:
-          type: string
-          format: uri
-          nullable: true
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/CarrierSettings'
-      required:
-      - results
-    CarrierSettings:
+    CarrierConnection:
       type: object
       properties:
         id:
@@ -4551,11 +4636,11 @@ components:
           description: A unique address identifier
         object_type:
           type: string
-          default: carrier
+          default: carrier-connection
           description: Specifies the object type
         carrier_id:
           type: string
-          description: Indicates a specific carrier configuration name.
+          description: A carrier connection friendly name.
         carrier_name:
           enum:
           - allied_express
@@ -4599,41 +4684,150 @@ components:
           - usps_international
           - zoom2u
           type: string
+<<<<<<< HEAD
           x-spec-enum-id: b4802ead8f816259
           description: Indicates a carrier (type)
+=======
+          x-spec-enum-id: 3e79a5375c88cfd3
+          description: A carrier connection type.
+>>>>>>> a67aa2f04 (feat(refactor): Introducing a REST API for carrier connection management)
         display_name:
           type: string
-          description: The carrier verbose name.
-        test_mode:
-          type: boolean
-          description: The test flag indicates whether to use a carrier configured
-            for test.
-        active:
-          type: boolean
-          description: The active flag indicates whether the carrier account is active
-            or not.
+          description: The carrier connection type verbose name.
         capabilities:
           type: array
           items:
             type: string
           nullable: true
-          description: The carrier supported and enabled capabilities.
-        metadata:
+          description: The carrier enabled capabilities.
+        credentials:
           type: object
           additionalProperties: {}
-          default: {}
-          description: The carrier user metadata.
+          description: Carrier connection credentials.
         config:
           type: object
           additionalProperties: {}
           default: {}
-          description: The carrier connection config.
+          description: Carrier connection custom config.
+        active:
+          type: boolean
+          description: The active flag indicates whether the carrier account is active
+            or not.
+        test_mode:
+          type: boolean
+          description: The test flag indicates whether to use a carrier configured
+            for test.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the carrier.
       required:
       - active
       - carrier_id
       - carrier_name
+      - credentials
       - id
       - test_mode
+    CarrierConnectionData:
+      type: object
+      properties:
+        carrier_name:
+          enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
+          - aramex
+          - asendia_us
+          - australiapost
+          - boxknight
+          - bpost
+          - canadapost
+          - canpar
+          - chronopost
+          - colissimo
+          - dhl_express
+          - dhl_parcel_de
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpd
+          - dpdhl
+          - easypost
+          - eshipper_xml
+          - fedex
+          - fedex_ws
+          - freightcom
+          - generic
+          - geodis
+          - laposte
+          - locate2u
+          - nationex
+          - purolator
+          - roadie
+          - royalmail
+          - sendle
+          - tge
+          - tnt
+          - ups
+          - usps
+          - usps_international
+          - zoom2u
+          type: string
+          x-spec-enum-id: 3e79a5375c88cfd3
+          description: A carrier connection type.
+        carrier_id:
+          type: string
+          description: A carrier connection friendly name.
+        credentials:
+          type: object
+          additionalProperties: {}
+          description: Carrier connection credentials.
+        config:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: Carrier connection custom config.
+        capabilities:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: The carrier enabled capabilities.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the carrier.
+        active:
+          type: boolean
+          default: true
+          description: The active flag indicates whether the carrier account is active
+            or not.
+      required:
+      - carrier_id
+      - carrier_name
+      - credentials
+    CarrierConnectionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierConnection'
+      required:
+      - results
     Charge:
       type: object
       properties:
@@ -7665,6 +7859,81 @@ components:
           nullable: true
           default: false
           description: Indicate if the address should be validated
+    PatchedCarrierConnectionData:
+      type: object
+      properties:
+        carrier_name:
+          enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
+          - aramex
+          - asendia_us
+          - australiapost
+          - boxknight
+          - bpost
+          - canadapost
+          - canpar
+          - chronopost
+          - colissimo
+          - dhl_express
+          - dhl_parcel_de
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpd
+          - dpdhl
+          - easypost
+          - eshipper_xml
+          - fedex
+          - fedex_ws
+          - freightcom
+          - generic
+          - geodis
+          - laposte
+          - locate2u
+          - nationex
+          - purolator
+          - roadie
+          - royalmail
+          - sendle
+          - tge
+          - tnt
+          - ups
+          - usps
+          - usps_international
+          - zoom2u
+          type: string
+          x-spec-enum-id: 3e79a5375c88cfd3
+          description: A carrier connection type.
+        carrier_id:
+          type: string
+          description: A carrier connection friendly name.
+        credentials:
+          type: object
+          additionalProperties: {}
+          description: Carrier connection credentials.
+        config:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: Carrier connection custom config.
+        capabilities:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: The carrier enabled capabilities.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the carrier.
+        active:
+          type: boolean
+          default: true
+          description: The active flag indicates whether the carrier account is active
+            or not.
     PatchedDocumentTemplateData:
       type: object
       properties:
@@ -9981,11 +10250,11 @@ tags:
   description: "API instance metadata resources.\n                "
 - name: Auth
   description: "API authentication resources.\n                "
-- name: Carriers
-  description: "This is an object representing your Karrio carrier account connectsions.\n\
-    \                You can retrieve all configured connections available to your\
-    \ Karrio account.\n                The `carrier_id` is a nickname you assign to\
-    \ your connection.\n                "
+- name: Connections
+  description: "This is an object representing your Karrio carrier connections.\n\
+    \                You can retrieve all carrier connections available to your account.\n\
+    \                The `carrier_id` is a friendly name you assign to your connection.\n\
+    \                "
 - name: Addresses
   description: "This is an object representing your Karrio shipping address.\n   \
     \             You can retrieve all addresses related to your Karrio account.\n\

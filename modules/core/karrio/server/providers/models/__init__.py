@@ -23,6 +23,9 @@ from karrio.server.providers.models.carrier import (
     DIMENSION_UNITS,
     CAPABILITIES_CHOICES,
 )
+from karrio.server.providers.models.connection import (
+    CarrierConnection,
+)
 import karrio.server.providers.extension.models as extensions
 
 logger = logging.getLogger(__name__)

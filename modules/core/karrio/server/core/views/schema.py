@@ -203,12 +203,19 @@ def render_tags(request, APP_NAME):
                 """,
             },
             {
-                "name": "Carriers",
-                "description": f"""This is an object representing your {APP_NAME} carrier account connectsions.
-                You can retrieve all configured connections available to your {APP_NAME} account.
-                The `carrier_id` is a nickname you assign to your connection.
+                "name": "Connections",
+                "description": f"""This is an object representing your {APP_NAME} carrier connections.
+                You can retrieve all carrier connections available to your account.
+                The `carrier_id` is a friendly name you assign to your connection.
                 """,
             },
+            # {
+            #     "name": "Carriers",
+            #     "description": f"""This is an object representing your {APP_NAME} carrier account.
+            #     You can retrieve all configured connections available to your {APP_NAME} account.
+            #     The `carrier_id` is a nickname you assign to your connection.
+            #     """,
+            # },
             {
                 "name": "Addresses",
                 "description": f"""This is an object representing your {APP_NAME} shipping address.

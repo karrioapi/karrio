@@ -29,3 +29,30 @@ class CarrierConfig(core.OwnedEntity):
         blank=False,
         default=core.field_default({}),
     )
+
+
+@core.register_model
+class ConnectionConfig(core.OwnedEntity):
+    class Meta:
+        db_table = "connection-config"
+        verbose_name = "Connection Config"
+        verbose_name_plural = "Connection Configs"
+        ordering = ["-created_at"]
+
+    id = models.CharField(
+        max_length=50,
+        editable=False,
+        primary_key=True,
+        default=functools.partial(core.uuid, prefix="cfg_"),
+    )
+    connection = models.ForeignKey(
+        "CarrierConnection",
+        null=False,
+        related_name="configs",
+        on_delete=models.CASCADE,
+    )
+    config = models.JSONField(
+        null=False,
+        blank=False,
+        default=core.field_default({}),
+    )

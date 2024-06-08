@@ -1,7 +1,6 @@
 import io
 import base64
 import logging
-from django.conf import settings
 from rest_framework import status
 from django.http import JsonResponse
 from django.urls import path, re_path
@@ -15,7 +14,6 @@ import karrio.server.openapi as openapi
 import karrio.server.core.filters as filters
 import karrio.server.providers.models as models
 from karrio.server.core.gateway import Carriers
-from karrio.server.providers.router import router
 from karrio.server.core import datatypes, dataunits
 from karrio.server.serializers import PaginatedResult
 from karrio.server.core.views.api import GenericAPIView, APIView
@@ -73,9 +71,11 @@ class CarrierDetails(APIView):
 
 
 class CarrierServices(APIView):
+
     @openapi.extend_schema(
-        tags=["Carriers"],
+        tags=["API"],
         operation_id=f"{ENDPOINT_ID}get_services",
+        extensions={"x-operationId": "getServices"},
         summary="Get carrier services",
         parameters=[
             openapi.OpenApiParameter(
@@ -175,22 +175,25 @@ class CarrierLabelPreview(VirtualDownloadView):
         return shipment.docs.label
 
 
-router.urls.append(path("carriers", CarrierList.as_view(), name="carrier-list"))
-router.urls.append(
-    path("carriers/<str:pk>", CarrierDetails.as_view(), name="carrier-details")
-)
-router.urls.append(
+urlpatterns = [
+    path(
+        "carriers",
+        CarrierList.as_view(),
+        name="carrier-list",
+    ),
+    path(
+        "carriers/<str:pk>",
+        CarrierDetails.as_view(),
+        name="carrier-details",
+    ),
     path(
         "carriers/<str:carrier_name>/services",
         CarrierServices.as_view(),
         name="carrier-services",
-    )
-)
-if settings.CUSTOM_CARRIER_DEFINITION:
-    router.urls.append(
-        re_path(
-            r"^carriers/(?P<pk>\w+)/label.(?P<format>[a-z0-9]+)",
-            CarrierLabelPreview.as_view(),
-            name="carrier-label",
-        )
-    )
+    ),
+    re_path(
+        r"^carriers/(?P<pk>\w+)/label.(?P<format>[a-z0-9]+)",
+        CarrierLabelPreview.as_view(),
+        name="carrier-label",
+    ),
+]

@@ -1,10 +1,11 @@
 """
 karrio server providers module urls
 """
-from django.urls import include, path
-from karrio.server.providers.views import router
 
-app_name = 'karrio.server.providers'
+from django.urls import include, path
+
+app_name = "karrio.server.providers"
 urlpatterns = [
-    path('v1/', include(router.urls)),
+    # path("v1/", include("karrio.server.providers.views.carriers")),
+    path("v1/", include("karrio.server.providers.views.connections")),
 ]
