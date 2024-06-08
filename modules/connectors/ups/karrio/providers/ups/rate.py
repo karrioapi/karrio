@@ -237,35 +237,45 @@ def rate_request(
                 ],
                 ShipmentServiceOptions=lib.identity(
                     ups.ShipmentServiceOptionsType(
-                        SaturdayDeliveryIndicator=(
-                            "Y" if options.ups_saturday_delivery.state else None
+                        SaturdayDeliveryIndicator=lib.identity(
+                            "Y"
+                            if options.ups_saturday_delivery_indicator.state
+                            else None
                         ),
-                        SaturdayPickupIndicator=(
-                            "Y" if options.ups_saturday_pickup.state else None
+                        SaturdayPickupIndicator=lib.identity(
+                            "Y" if options.ups_saturday_pickup_indicator.state else None
                         ),
-                        SundayDeliveryIndicator=(
-                            "Y" if options.ups_sunday_delivery.state else None
+                        SundayDeliveryIndicator=lib.identity(
+                            "Y" if options.ups_sunday_delivery_indicator.state else None
                         ),
                         AvailableServicesOption=None,
                         AccessPointCOD=None,
-                        DeliverToAddresseeOnlyIndicator=(
-                            "Y" if options.ups_deliver_to_addressee_only.state else None
+                        DeliverToAddresseeOnlyIndicator=lib.identity(
+                            "Y"
+                            if options.ups_deliver_to_addressee_only_indicator.state
+                            else None
                         ),
-                        DirectDeliveryOnlyIndicator=(
-                            "Y" if options.ups_direct_delivery_only.state else None
+                        DirectDeliveryOnlyIndicator=lib.identity(
+                            "Y"
+                            if options.ups_direct_delivery_only_indicator.state
+                            else None
                         ),
                         COD=None,
                         DeliveryConfirmation=None,
-                        ReturnOfDocumentIndicator=(
-                            "Y" if options.ups_return_of_document.state else None
+                        ReturnOfDocumentIndicator=lib.identity(
+                            "Y"
+                            if options.ups_return_of_document_indicator.state
+                            else None
                         ),
-                        UPScarbonneutralIndicator=(
-                            "Y" if options.ups_carbonneutral.state else None
+                        UPScarbonneutralIndicator=lib.identity(
+                            "Y" if options.ups_carbonneutral_indicator.state else None
                         ),
-                        CertificateOfOriginIndicator=(
-                            "Y" if options.ups_certificate_of_origin.state else None
+                        CertificateOfOriginIndicator=lib.identity(
+                            "Y"
+                            if options.ups_certificate_of_origin_indicator.state
+                            else None
                         ),
-                        PickupOptions=(
+                        PickupOptions=lib.identity(
                             ups.PickupOptionsType(
                                 HoldForPickupIndicator="Y",
                                 LiftGateForPickUpIndicator=(
@@ -277,7 +287,7 @@ def rate_request(
                             if options.pickup_options.state
                             else None
                         ),
-                        DeliveryOptions=(
+                        DeliveryOptions=lib.identity(
                             ups.DeliveryOptionsType(
                                 DropOffAtUPSFacilityIndicator="Y",
                                 LiftGateForDeliveryIndicator=(
@@ -289,7 +299,7 @@ def rate_request(
                             if options.delivery_options.state
                             else None
                         ),
-                        RestrictedArticles=(
+                        RestrictedArticles=lib.identity(
                             ups.RestrictedArticlesType(
                                 AlcoholicBeveragesIndicator=None,
                                 DiagnosticSpecimensIndicator=None,
@@ -302,20 +312,20 @@ def rate_request(
                             if options.dangerous_goods.state
                             else None
                         ),
-                        ShipperExportDeclarationIndicator=(
+                        ShipperExportDeclarationIndicator=lib.identity(
                             "Y"
-                            if options.ups_shipper_export_declaration.state
+                            if options.ups_shipper_export_declaration_indicator.state
                             else None
                         ),
-                        CommercialInvoiceRemovalIndicator=(
+                        CommercialInvoiceRemovalIndicator=lib.identity(
                             "Y"
-                            if options.ups_commercial_invoice_removal.state
+                            if options.ups_commercial_invoice_removal_indicator.state
                             else None
                         ),
                         ImportControl=None,
                         ReturnService=None,
                         SDLShipmentIndicator=(
-                            "Y" if options.ups_sdl_shipment.state else None
+                            "Y" if options.ups_sdl_shipment_indicator.state else None
                         ),
                         EPRAIndicator=(
                             "Y" if options.ups_epra_indicator.state else None

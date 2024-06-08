@@ -342,6 +342,7 @@ class ShippingOption(utils.Enum):
     ups_saturday_delivery_indicator = utils.OptionEnum(
         "SaturdayDeliveryIndicator", bool
     )
+    ups_sunday_delivery_indicator = utils.OptionEnum("SundayDeliveryIndicator", bool)
     ups_access_point_cod = utils.OptionEnum("AccessPointCOD", float)
     ups_deliver_to_addressee_only_indicator = utils.OptionEnum(
         "DeliverToAddresseeOnlyIndicator"
