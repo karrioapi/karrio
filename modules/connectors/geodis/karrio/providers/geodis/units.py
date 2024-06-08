@@ -83,6 +83,9 @@ class ShippingOption(lib.Enum):
     geodis_heure_livraison = lib.OptionEnum("heure_livraison")
     geodis_instruction_livraison = lib.OptionEnum("instruction_livraison")
 
+    """ Unified Option type mapping """
+    saturday_delivery = geodis_delivery_on_a_saturday_morning
+
 
 def shipping_options_initializer(
     options: dict,

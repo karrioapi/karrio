@@ -68,6 +68,9 @@ class ShippingOption(lib.Enum):
     # dpd_invoice_address = lib.OptionEnum("invoiceAddress")
     # dpd_country_specific_service = lib.OptionEnum("countrySpecificService")
 
+    """ Unified Option type mapping """
+    saturday_delivery = dpd_saturday_delivery
+
 
 def shipping_options_initializer(
     options: dict,

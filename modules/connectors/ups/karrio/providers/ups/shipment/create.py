@@ -334,15 +334,17 @@ def shipment_request(
                 MIDualReturnShipmentKey=None,
                 RatingMethodRequestedIndicator="Y",
                 TaxInformationIndicator="Y",
-                ShipmentServiceOptions=(
+                ShipmentServiceOptions=lib.identity(
                     ups.ShipmentServiceOptionsType(
-                        SaturdayPickupIndicator=(
-                            "Y" if options.ups_saturday_pickup.state else None
+                        SaturdayPickupIndicator=lib.identity(
+                            "Y" if options.ups_saturday_pickup_indicator.state else None
                         ),
-                        SaturdayDeliveryIndicator=(
-                            "Y" if options.ups_saturday_delivery.state else None
+                        SaturdayDeliveryIndicator=lib.identity(
+                            "Y"
+                            if options.ups_saturday_delivery_indicator.state
+                            else None
                         ),
-                        COD=(
+                        COD=lib.identity(
                             ups.CodType(
                                 CODFundsCode="0",  # TODO: find reference
                                 CODAmount=ups.InvoiceLineTotalType(
@@ -353,7 +355,7 @@ def shipment_request(
                             if options.cash_on_delivery.state
                             else None
                         ),
-                        AccessPointCOD=(
+                        AccessPointCOD=lib.identity(
                             ups.InvoiceLineTotalType(
                                 CurrencyCode=options.currency.state,
                                 MonetaryValue=lib.to_money(
@@ -365,7 +367,7 @@ def shipment_request(
                         ),
                         DeliverToAddresseeOnlyIndicator=None,
                         DirectDeliveryOnlyIndicator=None,
-                        Notification=(
+                        Notification=lib.identity(
                             [
                                 ups.NotificationElementType(
                                     NotificationCode=event,
@@ -397,7 +399,7 @@ def shipment_request(
                             else []
                         ),
                         LabelDelivery=None,
-                        InternationalForms=(
+                        InternationalForms=lib.identity(
                             ups.InternationalFormsType(
                                 FormType=(
                                     "07" if options.paperless_trade.state else "01"
@@ -564,6 +566,9 @@ def shipment_request(
                         InsideDelivery=None,
                         ItemDisposal=None,
                     )
+                    if any(options.items())
+                    or options.email_notification.state is not False
+                    else None
                 ),
                 ShipmentValueThresholdCode=None,
                 MasterCartonID=None,

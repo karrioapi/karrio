@@ -418,8 +418,9 @@ class ShippingOption(utils.Enum):
     fedex_date_certain = utils.OptionEnum("DATE_CERTAIN", bool)
 
     """ Unified Option type mapping """
-    notification = fedex_event_notification
     cash_on_delivery = fedex_cod
+    notification = fedex_event_notification
+    saturday_delivery = fedex_saturday_delivery
     paperless_trade = fedex_electronic_trade_documents
     doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
     doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict)

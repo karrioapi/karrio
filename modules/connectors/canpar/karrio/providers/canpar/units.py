@@ -55,6 +55,7 @@ class ShippingOption(lib.Enum):
 
     """ Unified Option type mapping """
     cash_on_delivery = canpar_cash_on_delivery
+    saturday_delivery = canpar_saturday
 
     @classmethod
     def is_premium(cls, options: Options) -> typing.Optional[bool]:

@@ -593,6 +593,7 @@ class ShippingOption(lib.Enum):
     insurance = dhl_shipment_insurance
     paperless_trade = dhl_paperless_trade
     cash_on_delivery = dhl_cash_on_delivery
+    saturday_delivery = dhl_saturday_delivery
 
 
 def shipping_options_initializer(

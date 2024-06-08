@@ -65,7 +65,7 @@ def _extract_details(
     labels = [_ for _ in documents if "LABEL" in _.contentType]
 
     invoice_type = invoices[0].docType if len(invoices) > 0 else "PDF"
-    invoice = (
+    invoice = lib.identity(
         lib.bundle_base64(
             [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in invoices],
             invoice_type,
@@ -75,7 +75,7 @@ def _extract_details(
     )
 
     label_type = labels[0].docType if len(labels) > 0 else "PDF"
-    label = (
+    label = lib.identity(
         lib.bundle_base64(
             [_.encodedLabel or lib.request(url=_.url, decoder=lib.encode_base64) for _ in labels],
             label_type,
