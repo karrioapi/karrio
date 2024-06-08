@@ -106,6 +106,9 @@ class ShippingOption(lib.Enum):
     dicom_parcel_us_pallet_service_rap = lib.OptionEnum("RAP")
     dicom_parcel_us_pallet_service_nd = lib.OptionEnum("ND")
 
+    """ Unified Option type mapping """
+    saturday_delivery = dicom_parcel_us_saturday_delivery
+
 
 def shipping_options_initializer(
     options: dict,

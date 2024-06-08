@@ -90,6 +90,9 @@ class ShippingOption(lib.Enum):
         "Show Alternate Services", bool
     )
 
+    """ Unified Option type mapping """
+    saturday_delivery = purolator_saturday_service
+
 
 def shipping_options_initializer(
     options: dict,

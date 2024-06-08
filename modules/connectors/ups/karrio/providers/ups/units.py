@@ -384,6 +384,7 @@ class ShippingOption(utils.Enum):
     cash_on_delivery = ups_cod
     dangerous_good = ups_restricted_articles
     hold_at_location = ups_hold_for_pickup_indicator
+    saturday_delivery = ups_saturday_delivery_indicator
 
 
 def shipping_options_initializer(
