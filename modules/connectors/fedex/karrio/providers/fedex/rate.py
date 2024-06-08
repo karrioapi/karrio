@@ -151,7 +151,7 @@ def rate_request(
             variableOptions=(
                 ",".join([option.code for option in rate_options(options)])
                 if any(rate_options(options))
-                else []
+                else None
             ),
             rateSortOrder=(options.fedex_rate_sort_order.state or "COMMITASCENDING"),
         ),
