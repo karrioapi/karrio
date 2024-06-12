@@ -122,6 +122,7 @@ ShipmentPayload = {
     "options": {
         "currency": "USD",
         "shipment_date": "2024-02-15",
+        "fedex_one_rate": True,
     },
     "payment": {"paid_by": "third_party", "account_number": "2349857"},
     "customs": {
@@ -316,6 +317,7 @@ ShipmentRequest = [
             ],
             "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
             "shipDatestamp": "2024-02-15",
+            "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
             "shipper": {
                 "address": {
                     "city": "MEMPHIS",

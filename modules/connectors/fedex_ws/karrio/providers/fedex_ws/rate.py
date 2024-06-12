@@ -104,7 +104,7 @@ def rate_request(
         payload.parcels,
         provider_units.PackagePresets,
         required=["weight"],
-        options=payload.options,
+        options=options,
         package_option_type=provider_units.ShippingOption,
         shipping_options_initializer=provider_units.shipping_options_initializer,
     )
@@ -113,13 +113,12 @@ def rate_request(
     rate_options = lambda _options: [
         option
         for _, option in _options.items()
-        if _options.state is not False and option.code in provider_units.RATING_OPTIONS
+        if option.state is not False and option.code in provider_units.RATING_OPTIONS
     ]
     shipment_options = lambda _options: [
         option
         for _, option in _options.items()
-        if _options.state is not False
-        and option.code in provider_units.SHIPMENT_OPTIONS
+        if option.state is not False and option.code in provider_units.SHIPMENT_OPTIONS
     ]
     hub_id = lib.text(options.fedex_smart_post_hub_id.state) or lib.text(
         settings.connection_config.smart_post_hub_id.state

@@ -96,6 +96,7 @@ def shipment_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+    return_address = lib.to_address(payload.return_address or payload.shipper)
     packages = lib.to_packages(
         payload.parcels,
         provider_units.PackagePresets,
@@ -209,22 +210,22 @@ def shipment_request(
                 ),
                 AlternateDeliveryAddress=None,
                 ShipFrom=ups.ShipFromType(
-                    Name=(shipper.company_name or shipper.person_name),
-                    AttentionName=shipper.contact,
-                    CompanyDisplayableName=shipper.company_name,
-                    TaxIdentificationNumber=shipper.tax_id,
+                    Name=(return_address.company_name or return_address.person_name),
+                    AttentionName=return_address.contact,
+                    CompanyDisplayableName=return_address.company_name,
+                    TaxIdentificationNumber=return_address.tax_id,
                     Phone=ups.ShipFromPhoneType(
-                        Number=shipper.phone_number or "000-000-0000",
+                        Number=return_address.phone_number or "000-000-0000",
                     ),
                     FaxNumber=None,
                     Address=ups.AlternateDeliveryAddressAddressType(
-                        AddressLine=shipper.address_line,
-                        City=shipper.city,
-                        StateProvinceCode=shipper.state_code,
-                        PostalCode=shipper.postal_code,
-                        CountryCode=shipper.country_code,
+                        AddressLine=return_address.address_line,
+                        City=return_address.city,
+                        StateProvinceCode=return_address.state_code,
+                        PostalCode=return_address.postal_code,
+                        CountryCode=return_address.country_code,
                         ResidentialAddressIndicator=(
-                            "Y" if shipper.is_residential else None
+                            "Y" if return_address.is_residential else None
                         ),
                     ),
                     VendorInfo=None,
@@ -333,15 +334,17 @@ def shipment_request(
                 MIDualReturnShipmentKey=None,
                 RatingMethodRequestedIndicator="Y",
                 TaxInformationIndicator="Y",
-                ShipmentServiceOptions=(
+                ShipmentServiceOptions=lib.identity(
                     ups.ShipmentServiceOptionsType(
-                        SaturdayPickupIndicator=(
-                            "Y" if options.ups_saturday_pickup.state else None
+                        SaturdayPickupIndicator=lib.identity(
+                            "Y" if options.ups_saturday_pickup_indicator.state else None
                         ),
-                        SaturdayDeliveryIndicator=(
-                            "Y" if options.ups_saturday_delivery.state else None
+                        SaturdayDeliveryIndicator=lib.identity(
+                            "Y"
+                            if options.ups_saturday_delivery_indicator.state
+                            else None
                         ),
-                        COD=(
+                        COD=lib.identity(
                             ups.CodType(
                                 CODFundsCode="0",  # TODO: find reference
                                 CODAmount=ups.InvoiceLineTotalType(
@@ -352,7 +355,7 @@ def shipment_request(
                             if options.cash_on_delivery.state
                             else None
                         ),
-                        AccessPointCOD=(
+                        AccessPointCOD=lib.identity(
                             ups.InvoiceLineTotalType(
                                 CurrencyCode=options.currency.state,
                                 MonetaryValue=lib.to_money(
@@ -364,7 +367,7 @@ def shipment_request(
                         ),
                         DeliverToAddresseeOnlyIndicator=None,
                         DirectDeliveryOnlyIndicator=None,
-                        Notification=(
+                        Notification=lib.identity(
                             [
                                 ups.NotificationElementType(
                                     NotificationCode=event,
@@ -396,7 +399,7 @@ def shipment_request(
                             else []
                         ),
                         LabelDelivery=None,
-                        InternationalForms=(
+                        InternationalForms=lib.identity(
                             ups.InternationalFormsType(
                                 FormType=(
                                     "07" if options.paperless_trade.state else "01"
@@ -563,6 +566,9 @@ def shipment_request(
                         InsideDelivery=None,
                         ItemDisposal=None,
                     )
+                    if any(options.items())
+                    or options.email_notification.state is not False
+                    else None
                 ),
                 ShipmentValueThresholdCode=None,
                 MasterCartonID=None,

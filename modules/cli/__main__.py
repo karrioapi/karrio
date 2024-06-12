@@ -53,5 +53,18 @@ def add_features(
     )
 
 
+@app.command()
+def create_tree(
+    module: str = typer.Option(..., prompt=True),
+    class_name: str = typer.Option(..., prompt=True),
+):
+    if not module or not class_name:
+        print("module and class_name are required")
+        raise typer.Abort()
+
+    output = utils.instantiate_class_from_module(module, class_name)
+    typer.echo(output)
+
+
 if __name__ == "__main__":
     app()

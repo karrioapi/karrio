@@ -341,6 +341,7 @@ class ShippingOption(lib.Enum):
     cash_on_delivery = fedex_cod
     dangerous_good = fedex_dangerous_goods
     notification = fedex_event_notification
+    saturday_delivery = fedex_saturday_delivery
     paperless_trade = fedex_electronic_trade_documents
     doc_files = lib.OptionEnum("doc_files", lib.to_dict)
     doc_references = lib.OptionEnum("doc_references", lib.to_dict)

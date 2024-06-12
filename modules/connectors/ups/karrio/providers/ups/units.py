@@ -342,6 +342,7 @@ class ShippingOption(utils.Enum):
     ups_saturday_delivery_indicator = utils.OptionEnum(
         "SaturdayDeliveryIndicator", bool
     )
+    ups_sunday_delivery_indicator = utils.OptionEnum("SundayDeliveryIndicator", bool)
     ups_access_point_cod = utils.OptionEnum("AccessPointCOD", float)
     ups_deliver_to_addressee_only_indicator = utils.OptionEnum(
         "DeliverToAddresseeOnlyIndicator"
@@ -384,6 +385,7 @@ class ShippingOption(utils.Enum):
     cash_on_delivery = ups_cod
     dangerous_good = ups_restricted_articles
     hold_at_location = ups_hold_for_pickup_indicator
+    saturday_delivery = ups_saturday_delivery_indicator
 
 
 def shipping_options_initializer(

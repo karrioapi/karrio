@@ -30,7 +30,6 @@ class Manager(models.Manager):
             .get_queryset()
             .select_related(
                 "created_by",
-                *[Model.__name__.lower() for Model in MODELS.values()],
                 *(("link",) if conf.settings.MULTI_ORGANIZATIONS else tuple()),
             )
         )

@@ -328,10 +328,11 @@ class PartialShipmentMutationInput(utils.BaseInput):
     id: str
     recipient: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     shipper: typing.Optional[UpdateAddressInput] = strawberry.UNSET
+    return_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
+    billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     customs: typing.Optional[UpdateCustomsInput] = strawberry.UNSET
     parcels: typing.Optional[typing.List[UpdateParcelInput]] = strawberry.UNSET
     payment: typing.Optional[PaymentInput] = strawberry.UNSET
-    billing_address: typing.Optional[UpdateAddressInput] = strawberry.UNSET
     label_type: typing.Optional[utils.LabelTypeEnum] = strawberry.UNSET
     metadata: typing.Optional[utils.JSON] = strawberry.UNSET
     options: typing.Optional[utils.JSON] = strawberry.UNSET

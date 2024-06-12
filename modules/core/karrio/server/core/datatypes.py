@@ -175,6 +175,8 @@ class RateRequest(BaseRateRequest):
     recipient: Address = jstruct.JStruct[Address, jstruct.REQUIRED]
     parcels: typing.List[Parcel] = jstruct.JList[Parcel, jstruct.REQUIRED]
 
+    return_address: Address = jstruct.JStruct[Address]
+    billing_address: Address = jstruct.JStruct[Address]
     services: typing.List[str] = []
     options: typing.Dict = {}
     reference: str = ""
@@ -194,6 +196,7 @@ class ShipmentRequest(BaseShipmentRequest):
 
     payment: Payment = jstruct.JStruct[Payment]
     customs: Customs = jstruct.JStruct[Customs]
+    return_address: Address = jstruct.JStruct[Address]
     billing_address: Address = jstruct.JStruct[Address]
 
     options: typing.Dict = {}

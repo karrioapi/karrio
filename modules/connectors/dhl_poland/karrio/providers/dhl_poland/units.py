@@ -77,8 +77,9 @@ class ShippingOption(lib.Enum):
     dhl_poland_self_collect = lib.OptionEnum("ODB", bool)
 
     """ Unified Option type mapping """
-    cash_on_delivery = dhl_poland_collect_on_delivery
     insurance = dhl_poland_insuration
+    cash_on_delivery = dhl_poland_collect_on_delivery
+    saturday_delivery = dhl_poland_delivery_on_saturday
 
 
 def shipping_options_initializer(

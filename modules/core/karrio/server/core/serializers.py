@@ -636,6 +636,7 @@ class RateRequest(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "saturday_delivery": true,
             "is_return": true,
             "doc_files": [
                 {
@@ -1178,17 +1179,11 @@ class Rate(serializers.EntitySerializer):
         ("recipient", "karrio.server.manager.models.Address"),
         ("parcels", "karrio.server.manager.models.Parcel"),
         ("customs", "karrio.server.manager.models.Customs"),
+        ("return_address", "karrio.server.manager.models.Address"),
         ("billing_address", "karrio.server.manager.models.Address"),
     ]
 )
 class ShippingData(validators.OptionDefaultSerializer):
-    shipper = AddressData(
-        required=True,
-        help_text="""The address of the party.<br/>
-        Origin address (ship from) for the **shipper**<br/>
-        Destination address (ship to) for the **recipient**
-        """,
-    )
     recipient = AddressData(
         required=True,
         help_text="""The address of the party.<br/>
@@ -1196,8 +1191,27 @@ class ShippingData(validators.OptionDefaultSerializer):
         Destination address (ship to) for the **recipient**
         """,
     )
+    shipper = AddressData(
+        required=True,
+        help_text="""The address of the party.<br/>
+        Origin address (ship from) for the **shipper**<br/>
+        Destination address (ship to) for the **recipient**
+        """,
+    )
+    return_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The return address for this shipment. Defaults to the shipper address.",
+    )
+    billing_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The payor address.",
+    )
     parcels = ParcelData(
-        many=True, allow_empty=False, help_text="The shipment's parcels"
+        many=True,
+        allow_empty=False,
+        help_text="The shipment's parcels",
     )
     options = serializers.PlainDictField(
         required=False,
@@ -1220,6 +1234,7 @@ class ShippingData(validators.OptionDefaultSerializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "saturday_delivery": true,
             "is_return": true,
             "doc_files": [
                 {
@@ -1239,9 +1254,10 @@ class ShippingData(validators.OptionDefaultSerializer):
         </details>
         """,
     )
-    payment = Payment(required=False, default={}, help_text="The payment details")
-    billing_address = AddressData(
-        required=False, allow_null=True, help_text="The payor address."
+    payment = Payment(
+        required=False,
+        default={},
+        help_text="The payment details",
     )
     customs = CustomsData(
         required=False,
@@ -1395,8 +1411,21 @@ class ShipmentContent(serializers.Serializer):
         Destination address (ship to) for the **recipient**
         """,
     )
-    parcels = Parcel(many=True, allow_empty=False, help_text="The shipment's parcels")
-
+    return_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The return address for this shipment. Defaults to the shipper address.",
+    )
+    billing_address = AddressData(
+        required=False,
+        allow_null=True,
+        help_text="The payor address.",
+    )
+    parcels = Parcel(
+        many=True,
+        allow_empty=False,
+        help_text="The shipment's parcels",
+    )
     services = serializers.StringListField(
         required=False,
         allow_null=True,
@@ -1427,6 +1456,7 @@ class ShipmentContent(serializers.Serializer):
             "shipment_date": "2020-01-01",
             "shipment_note": "This is a shipment note",
             "signature_confirmation": true,
+            "saturday_delivery": true,
             "is_return": true,
             "doc_files": [
                 {
@@ -1446,9 +1476,10 @@ class ShipmentContent(serializers.Serializer):
         </details>
         """,
     )
-    payment = Payment(required=False, default={}, help_text="The payment details")
-    billing_address = Address(
-        required=False, allow_null=True, help_text="The payor address."
+    payment = Payment(
+        required=False,
+        default={},
+        help_text="The payment details",
     )
     customs = Customs(
         required=False,
