@@ -12,14 +12,12 @@ import karrio
 import karrio.lib as lib
 import karrio.server.core.utils as utils
 import karrio.server.core.models as core
+import karrio.server.core.datatypes as datatypes
+import karrio.server.core.dataunits as dataunits
+import karrio.server.core.validators as validators
+import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
-from karrio.server.core import (
-    datatypes,
-    dataunits,
-    serializers,
-    exceptions,
-    validators,
-)
+import karrio.server.core.serializers as serializers
 
 logger = logging.getLogger(__name__)
 
