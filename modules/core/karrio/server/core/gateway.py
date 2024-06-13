@@ -298,7 +298,7 @@ class Shipments:
     ) -> datatypes.ConfirmationResponse:
         carrier_id = lib.identity(
             dict(carrier_id=payload.pop("carrier_id"))
-            if any(payload.get("carrier_id") or "") in payload
+            if any(payload.get("carrier_id") or "")
             else {}
         )
         carrier = carrier or Carriers.first(
