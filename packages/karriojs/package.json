@@ -16,7 +16,7 @@
   "devDependencies": {
     "@rollup/plugin-typescript": "^8.2.1",
     "@types/node": "^16.11.6",
-    "gulp": "^4.0.2",
+    "gulp": "^5.0.0",
     "rollup": "^2.47.0",
     "tslib": "^2.3.1",
     "typescript": "^4.4.4"
