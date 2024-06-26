@@ -28,7 +28,7 @@ django-phonenumber-field==7.3.0
 django-picklefield==3.1
 django-redis==5.4.0
 django-two-factor-auth==1.16.0
-djangorestframework==3.14.0
+djangorestframework==3.15.2
 djangorestframework-simplejwt==5.3.1
 drf-api-tracking==1.8.4
 drf-spectacular==0.27.1
