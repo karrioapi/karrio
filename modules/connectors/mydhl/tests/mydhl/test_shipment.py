@@ -112,13 +112,8 @@ ShipmentPayload = {
     "reference": "#Order 11111",
 }
 
-ShipmentCancelPayload = {
-    "shipment_identifier": "794947717776",
-}
 
 ParsedShipmentResponse = []
-
-ParsedCancelShipmentResponse = []
 
 
 ShipmentRequest = {

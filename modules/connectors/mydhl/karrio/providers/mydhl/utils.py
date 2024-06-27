@@ -8,6 +8,7 @@ class Settings(core.Settings):
     username: str
     password: str
     api_key: str
+    account_number: str = None
 
     @property
     def carrier_name(self):
@@ -20,6 +21,10 @@ class Settings(core.Settings):
             if self.test_mode
             else "https://express.api.dhl.com/mydhlapi"
         )
+
+    @property
+    def tracking_url(self):
+        return "https://www.dhl.com/ca-en/home/tracking/tracking-parcel.html?submit=1&tracking-id={}"
 
     @property
     def authorization(self):

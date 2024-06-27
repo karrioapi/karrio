@@ -1,10 +1,20 @@
-
 import karrio.lib as lib
 import karrio.core.units as units
 
 
+class LabelFormat(lib.StrEnum):
+    PDF = "pdf"
+    ZPL = "zpl"
+    EPL = "epl"
+    LP2 = "lp2"
+
+    """ Unified Label format mapping """
+    PNG = PDF
+
+
 class PackagingType(lib.StrEnum):
-    """ Carrier specific packaging type """
+    """Carrier specific packaging type"""
+
     PACKAGE = "PACKAGE"
 
     """ Unified Packaging type mapping """
@@ -18,12 +28,14 @@ class PackagingType(lib.StrEnum):
 
 
 class ShippingService(lib.StrEnum):
-    """ Carrier specific services """
+    """Carrier specific services"""
+
     mydhl_standard_service = "DHL Express Standard Service"
 
 
 class ShippingOption(lib.Enum):
-    """ Carrier specific options """
+    """Carrier specific options"""
+
     # mydhl_option = lib.OptionEnum("code")
 
     """ Unified Option type mapping """

@@ -12,6 +12,7 @@ class Settings(provider_utils.Settings):
     username: str
     password: str
     api_key: str
+    account_number: str = None
 
     # generic properties
     id: str = None
