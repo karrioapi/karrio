@@ -1,0 +1,17 @@
+{
+  "instance": "/expressapi/rates",
+  "detail": "The account number is not found or invalid. Please check the account number and retry.",
+  "title": "Bad request",
+  "message": "Bad request",
+  "status": "400",
+  "code": "500",
+  "additionalDetails": [
+    "7120: Required either #/outputImageProperties/imageOptions where typeCode=invoice or provide #/documentImages",
+    "7127: The sellerDetails/postalAddress/countryCode value provided is invalid.",
+    "7008: The requested Special Service Code  #/valueAddedServices/0/serviceCode 'EE' is not available between this origin and destination. Please validate the products and services combination (via the /rates or /products service) or contact our customer service.",
+    "400104: The provided Shipment Identification Number is invalid. Please check the request message and retry.",
+    "7147: The shipment description #/content/description Match Keyword[Description:UNIQUE JEWELRY]. Please update the description and retry.",
+    "7147: The export line item description #/content/exportdeclaration/lineitems/1/description Match Keyword[Description:UNIQUE MACHINERY]. Please update the description and retry.",
+    "7147: The export line item description #/content/exportdeclaration/lineitems/2/description Match Keyword[Description:UNIQUE NIKE MERCHANDISE]. Please update the description and retry."
+  ]
+}

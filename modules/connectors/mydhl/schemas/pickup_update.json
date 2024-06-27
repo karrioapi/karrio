@@ -1,0 +1,136 @@
+{
+  "dispatchConfirmationNumber": "CBJ201220123456",
+  "originalShipperAccountNumber": "123456789",
+  "plannedPickupDateAndTime": "2019-08-04T14:00:31GMT+01:00",
+  "closeTime": "18:00",
+  "location": "reception",
+  "locationType": "residence",
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "123456789"
+    }
+  ],
+  "specialInstructions": [
+    {
+      "value": "please ring door bell",
+      "typeCode": "TBD"
+    }
+  ],
+  "remark": "string",
+  "customerDetails": {
+    "shipperDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "addres2",
+        "addressLine3": "addres3",
+        "countyName": "Central Bohemia"
+      },
+      "contactInformation": {
+        "email": "that@before.de",
+        "phone": "+1123456789",
+        "mobilePhone": "+60112345678",
+        "companyName": "Company Name",
+        "fullName": "John Brew"
+      }
+    },
+    "receiverDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "addres2",
+        "addressLine3": "addres3",
+        "countyName": "Central Bohemia"
+      },
+      "contactInformation": {
+        "email": "that@before.de",
+        "phone": "+1123456789",
+        "mobilePhone": "+60112345678",
+        "companyName": "Company Name",
+        "fullName": "John Brew"
+      }
+    },
+    "bookingRequestorDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "addres2",
+        "addressLine3": "addres3",
+        "countyName": "Central Bohemia"
+      },
+      "contactInformation": {
+        "email": "that@before.de",
+        "phone": "+1123456789",
+        "mobilePhone": "+60112345678",
+        "companyName": "Company Name",
+        "fullName": "John Brew"
+      }
+    },
+    "pickupDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "addres2",
+        "addressLine3": "addres3",
+        "countyName": "Central Bohemia"
+      },
+      "contactInformation": {
+        "email": "that@before.de",
+        "phone": "+1123456789",
+        "mobilePhone": "+60112345678",
+        "companyName": "Company Name",
+        "fullName": "John Brew"
+      }
+    }
+  },
+  "shipmentDetails": [
+    {
+      "productCode": "D",
+      "localProductCode": "D",
+      "accounts": [
+        {
+          "typeCode": "shipper",
+          "number": "123456789"
+        }
+      ],
+      "valueAddedServices": [
+        {
+          "serviceCode": "II",
+          "localServiceCode": "II",
+          "value": 100,
+          "currency": "GBP",
+          "method": "cash"
+        }
+      ],
+      "isCustomsDeclarable": true,
+      "declaredValue": 150,
+      "declaredValueCurrency": "CZK",
+      "unitOfMeasurement": "metric",
+      "shipmentTrackingNumber": "123456790",
+      "packages": [
+        {
+          "typeCode": "3BX",
+          "weight": 10.5,
+          "dimensions": {
+            "length": 25,
+            "width": 35,
+            "height": 15
+          }
+        }
+      ]
+    }
+  ]
+}

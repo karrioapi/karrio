@@ -1,0 +1,90 @@
+{
+  "plannedPickupDateAndTime": "2022-11-20T09:19:40 GMT+08:00",
+  "closeTime": "18:00",
+  "location": "reception",
+  "locationType": "business",
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "123456789"
+    }
+  ],
+  "specialInstructions": [
+    {
+      "value": "please ring front desk",
+      "typeCode": "TBD"
+    }
+  ],
+  "remark": "two parcels required pickup",
+  "customerDetails": {
+    "shipperDetails": {
+      "postalAddress": {
+        "postalCode": "B24 8DW",
+        "cityName": "BIRMINGHAM",
+        "countryCode": "GB",
+        "addressLine1": "498 Bromford Gate",
+        "addressLine2": "Bromford Lane",
+        "addressLine3": "Erdington"
+      },
+      "contactInformation": {
+        "email": "that@before.gb",
+        "phone": "+1123456789",
+        "mobilePhone": "+60112345678",
+        "companyName": "Company Name",
+        "fullName": "Adam Spencer"
+      }
+    },
+    "receiverDetails": {
+      "postalAddress": {
+        "postalCode": "14800",
+        "cityName": "Prague",
+        "countryCode": "CZ",
+        "provinceCode": "CZ",
+        "addressLine1": "V Parku 2308/10",
+        "addressLine2": "addres2",
+        "addressLine3": "addres3",
+        "countyName": "Central Bohemia"
+      },
+      "contactInformation": {
+        "email": "that@before.de",
+        "phone": "+1123456789",
+        "mobilePhone": "+60112345678",
+        "companyName": "Company Name",
+        "fullName": "John Brew"
+      }
+    }
+  },
+  "shipmentDetails": [
+    {
+      "accounts": [
+        {
+          "typeCode": "shipper",
+          "number": "123456789"
+        }
+      ],
+      "packages": [
+        {
+          "typeCode": "3BX",
+          "weight": 10.5,
+          "dimensions": {
+            "length": 25,
+            "width": 35,
+            "height": 15
+          }
+        }
+      ],
+      "productCode": "P",
+      "declaredValue": 50,
+      "unitOfMeasurement": "metric",
+      "valueAddedServices": [
+        {
+          "serviceCode": "II",
+          "value": 100,
+          "currency": "GBP"
+        }
+      ],
+      "isCustomsDeclarable": true,
+      "declaredValueCurrency": "EUR"
+    }
+  ]
+}

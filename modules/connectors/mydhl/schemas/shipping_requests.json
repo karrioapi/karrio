@@ -1,0 +1,1462 @@
+[
+  {
+    "plannedShippingDateAndTime": "2022-10-19T19:19:40 GMT+00:00",
+    "pickup": {
+      "isRequested": false
+    },
+    "productCode": "P",
+    "localProductCode": "P",
+    "getRateEstimates": false,
+    "accounts": [
+      {
+        "typeCode": "shipper",
+        "number": "123456789"
+      }
+    ],
+    "valueAddedServices": [
+      {
+        "serviceCode": "II",
+        "value": 10,
+        "currency": "USD"
+      }
+    ],
+    "outputImageProperties": {
+      "printerDPI": 300,
+      "encodingFormat": "pdf",
+      "imageOptions": [
+        {
+          "typeCode": "invoice",
+          "templateName": "COMMERCIAL_INVOICE_P_10",
+          "isRequested": true,
+          "invoiceType": "commercial",
+          "languageCode": "eng",
+          "languageCountryCode": "US"
+        },
+        {
+          "typeCode": "waybillDoc",
+          "templateName": "ARCH_8x4",
+          "isRequested": true,
+          "hideAccountNumber": false,
+          "numberOfCopies": 1
+        },
+        {
+          "typeCode": "label",
+          "templateName": "ECOM26_84_001",
+          "renderDHLLogo": true,
+          "fitLabelsToA4": false
+        }
+      ],
+      "splitTransportAndWaybillDocLabels": true,
+      "allDocumentsInOneImage": false,
+      "splitDocumentsByPages": false,
+      "splitInvoiceAndReceipt": true,
+      "receiptAndLabelsInOneImage": false
+    },
+    "customerDetails": {
+      "shipperDetails": {
+        "postalAddress": {
+          "postalCode": "526238",
+          "cityName": "Zhaoqing",
+          "countryCode": "CN",
+          "addressLine1": "4FENQU, 2HAOKU, WEIPINHUI WULIU YUAN，DAWANG",
+          "addressLine2": "GAOXIN QU, BEIJIANG DADAO, SIHUI,",
+          "addressLine3": "ZHAOQING, GUANDONG",
+          "countyName": "SIHUI",
+          "countryName": "CHINA, PEOPLES REPUBLIC"
+        },
+        "contactInformation": {
+          "email": "shipper_create_shipmentapi@dhltestmail.com",
+          "phone": "18211309039",
+          "mobilePhone": "18211309039",
+          "companyName": "Cider BookStore",
+          "fullName": "LiuWeiMing"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "SDT",
+            "number": "CN123456789",
+            "issuerCountryCode": "CN"
+          }
+        ],
+        "bankDetails": [
+          {
+            "name": "Bank of China",
+            "settlementLocalCurrency": "RMB",
+            "settlementForeignCurrency": "USD"
+          }
+        ],
+        "typeCode": "business"
+      },
+      "receiverDetails": {
+        "postalAddress": {
+          "cityName": "Graford",
+          "countryCode": "US",
+          "postalCode": "76449",
+          "addressLine1": "116 Marine Dr",
+          "countryName": "UNITED STATES OF AMERICA"
+        },
+        "contactInformation": {
+          "email": "recipient_create_shipmentapi@dhltestmail.com",
+          "phone": "9402825665",
+          "mobilePhone": "9402825666",
+          "companyName": "Baylee Marshall",
+          "fullName": "Baylee Marshall"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "SSN",
+            "number": "US123456789",
+            "issuerCountryCode": "US"
+          }
+        ],
+        "bankDetails": [
+          {
+            "name": "Bank of America",
+            "settlementLocalCurrency": "USD",
+            "settlementForeignCurrency": "USD"
+          }
+        ],
+        "typeCode": "business"
+      }
+    },
+    "content": {
+      "packages": [
+        {
+          "typeCode": "2BP",
+          "weight": 0.5,
+          "dimensions": {
+            "length": 1,
+            "width": 1,
+            "height": 1
+          },
+          "customerReferences": [
+            {
+              "value": "3654673",
+              "typeCode": "CU"
+            }
+          ],
+          "description": "Piece content description",
+          "labelDescription": "bespoke label description"
+        }
+      ],
+      "isCustomsDeclarable": true,
+      "declaredValue": 120,
+      "declaredValueCurrency": "USD",
+      "exportDeclaration": {
+        "lineItems": [
+          {
+            "number": 1,
+            "description": "Harry Steward biography first edition",
+            "price": 15,
+            "quantity": {
+              "value": 4,
+              "unitOfMeasurement": "GM"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "84713000"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "5109101110"
+              }
+            ],
+            "exportReasonType": "permanent",
+            "manufacturerCountry": "US",
+            "exportControlClassificationNumber": "US123456789",
+            "weight": {
+              "netValue": 0.1,
+              "grossValue": 0.7
+            },
+            "isTaxesPaid": true,
+            "additionalInformation": ["450pages"],
+            "customerReferences": [
+              {
+                "typeCode": "AFE",
+                "value": "1299210"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "COO",
+                "value": "MyDHLAPI - LN#1-CUSDOC-001"
+              }
+            ]
+          },
+          {
+            "number": 2,
+            "description": "Andromeda Chapter 394 - Revenge of Brook",
+            "price": 15,
+            "quantity": {
+              "value": 4,
+              "unitOfMeasurement": "GM"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "6109100011"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "5109101111"
+              }
+            ],
+            "exportReasonType": "permanent",
+            "manufacturerCountry": "US",
+            "exportControlClassificationNumber": "US123456789",
+            "weight": {
+              "netValue": 0.1,
+              "grossValue": 0.7
+            },
+            "isTaxesPaid": true,
+            "additionalInformation": ["36pages"],
+            "customerReferences": [
+              {
+                "typeCode": "AFE",
+                "value": "1299211"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "COO",
+                "value": "MyDHLAPI - LN#1-CUSDOC-001"
+              }
+            ]
+          }
+        ],
+        "invoice": {
+          "number": "2667168671",
+          "date": "2022-10-22",
+          "instructions": ["Handle with care"],
+          "totalNetWeight": 0.4,
+          "totalGrossWeight": 0.5,
+          "customerReferences": [
+            {
+              "typeCode": "UCN",
+              "value": "UCN-783974937"
+            },
+            {
+              "typeCode": "CN",
+              "value": "CUN-76498376498"
+            },
+            {
+              "typeCode": "RMA",
+              "value": "MyDHLAPI-TESTREF-001"
+            }
+          ],
+          "termsOfPayment": "100 days",
+          "indicativeCustomsValues": {
+            "importCustomsDutyValue": 150.57,
+            "importTaxesValue": 49.43
+          }
+        },
+        "remarks": [
+          {
+            "value": "Right side up only"
+          }
+        ],
+        "additionalCharges": [
+          {
+            "value": 10,
+            "caption": "fee",
+            "typeCode": "freight"
+          },
+          {
+            "value": 20,
+            "caption": "freight charges",
+            "typeCode": "other"
+          },
+          {
+            "value": 10,
+            "caption": "ins charges",
+            "typeCode": "insurance"
+          },
+          {
+            "value": 7,
+            "caption": "rev charges",
+            "typeCode": "reverse_charge"
+          }
+        ],
+        "destinationPortName": "New York Port",
+        "placeOfIncoterm": "ShenZhen Port",
+        "payerVATNumber": "12345ED",
+        "recipientReference": "01291344",
+        "exporter": {
+          "id": "121233",
+          "code": "S"
+        },
+        "packageMarks": "Fragile glass bottle",
+        "declarationNotes": [
+          {
+            "value": "up to three declaration notes"
+          }
+        ],
+        "exportReference": "export reference",
+        "exportReason": "export reason",
+        "exportReasonType": "permanent",
+        "licenses": [
+          {
+            "typeCode": "export",
+            "value": "123127233"
+          }
+        ],
+        "shipmentType": "personal",
+        "customsDocuments": [
+          {
+            "typeCode": "INV",
+            "value": "MyDHLAPI - CUSDOC-001"
+          }
+        ]
+      },
+      "description": "Shipment",
+      "USFilingTypeValue": "12345",
+      "incoterm": "DAP",
+      "unitOfMeasurement": "metric"
+    },
+    "shipmentNotification": [
+      {
+        "typeCode": "email",
+        "receiverId": "shipmentnotification@mydhlapisample.com",
+        "languageCode": "eng",
+        "languageCountryCode": "UK",
+        "bespokeMessage": "message to be included in the notification"
+      }
+    ],
+    "getTransliteratedResponse": false,
+    "estimatedDeliveryDate": {
+      "isRequested": true,
+      "typeCode": "QDDC"
+    },
+    "getAdditionalInformation": [
+      {
+        "typeCode": "pickupDetails",
+        "isRequested": true
+      }
+    ]
+  },
+  {
+    "plannedShippingDateAndTime": "2022-10-19T19:19:40 GMT+00:00",
+    "pickup": {
+      "isRequested": false
+    },
+    "productCode": "I",
+    "getRateEstimates": false,
+    "accounts": [
+      {
+        "number": "123456789",
+        "typeCode": "shipper"
+      }
+    ],
+    "valueAddedServices": [
+      {
+        "serviceCode": "IB",
+        "value": 10,
+        "currency": "GBP",
+        "method": "cash"
+      }
+    ],
+    "outputImageProperties": {
+      "printerDPI": 300,
+      "encodingFormat": "pdf",
+      "imageOptions": [
+        {
+          "typeCode": "waybillDoc",
+          "templateName": "ARCH_8x4",
+          "isRequested": true,
+          "hideAccountNumber": false,
+          "numberOfCopies": 1
+        },
+        {
+          "typeCode": "label",
+          "templateName": "ECOM26_84_001",
+          "isRequested": true
+        }
+      ],
+      "splitTransportAndWaybillDocLabels": true,
+      "allDocumentsInOneImage": false,
+      "splitDocumentsByPages": true,
+      "splitInvoiceAndReceipt": true,
+      "receiptAndLabelsInOneImage": false
+    },
+    "customerDetails": {
+      "shipperDetails": {
+        "postalAddress": {
+          "postalCode": "EN3 7SN",
+          "cityName": "Enfield",
+          "countryCode": "GB",
+          "addressLine1": "17",
+          "addressLine2": "Suez Rd",
+          "countryName": "UNITED KINGDOM"
+        },
+        "contactInformation": {
+          "email": "shipper_create_shipmentapi@dhltestmail.com",
+          "phone": "4972463",
+          "mobilePhone": "2563456227231",
+          "companyName": "DPR Wholesalers",
+          "fullName": "Johnny Steward"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "VAT",
+            "number": "244444911",
+            "issuerCountryCode": "GB"
+          }
+        ],
+        "typeCode": "business"
+      },
+      "receiverDetails": {
+        "postalAddress": {
+          "postalCode": "TW4 6FD",
+          "cityName": "Hounslow",
+          "countryCode": "GB",
+          "addressLine1": "200",
+          "addressLine2": "Great South-West Rd",
+          "addressLine3": "McFarley Drive",
+          "countryName": "UNITED KINGDOM"
+        },
+        "contactInformation": {
+          "email": "recipient_create_shipmentapi@dhltestmail.com",
+          "phone": "1123123",
+          "mobilePhone": "256345123",
+          "companyName": "DoCo Event Airline Catering",
+          "fullName": "Hillary Dickins"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "VAT",
+            "number": "12345678",
+            "issuerCountryCode": "GB"
+          }
+        ],
+        "typeCode": "business"
+      }
+    },
+    "content": {
+      "packages": [
+        {
+          "typeCode": "2BP",
+          "weight": 0.296,
+          "dimensions": {
+            "length": 1,
+            "width": 1,
+            "height": 1
+          }
+        }
+      ],
+      "isCustomsDeclarable": false,
+      "description": "Shipment Description",
+      "incoterm": "DAP",
+      "unitOfMeasurement": "metric"
+    },
+    "getTransliteratedResponse": false,
+    "estimatedDeliveryDate": {
+      "isRequested": false,
+      "typeCode": "QDDC"
+    },
+    "getAdditionalInformation": [
+      {
+        "typeCode": "pickupDetails",
+        "isRequested": true
+      }
+    ]
+  },
+  {
+    "plannedShippingDateAndTime": "2022-11-11T19:19:40 GMT+00:00",
+    "pickup": {
+      "isRequested": false,
+      "closeTime": "18:00",
+      "location": "reception",
+      "specialInstructions": [
+        {
+          "value": "please ring door bell",
+          "typeCode": "TBD"
+        }
+      ]
+    },
+    "productCode": "P",
+    "localProductCode": "P",
+    "accounts": [
+      {
+        "typeCode": "shipper",
+        "number": "123456789"
+      }
+    ],
+    "valueAddedServices": [
+      {
+        "serviceCode": "WY"
+      },
+      {
+        "serviceCode": "II",
+        "value": 100,
+        "currency": "SGD"
+      }
+    ],
+    "outputImageProperties": {
+      "printerDPI": 300,
+      "encodingFormat": "pdf",
+      "imageOptions": [
+        {
+          "typeCode": "invoice",
+          "templateName": "COMMERCIAL_INVOICE_L_10",
+          "isRequested": true,
+          "invoiceType": "commercial",
+          "languageCode": "eng",
+          "languageCountryCode": "US"
+        },
+        {
+          "typeCode": "waybillDoc",
+          "hideAccountNumber": false,
+          "templateName": "ARCH_8x4",
+          "numberOfCopies": 1,
+          "isRequested": true
+        },
+        {
+          "typeCode": "label",
+          "templateName": "ECOM26_84_001",
+          "renderDHLLogo": true,
+          "fitLabelsToA4": true
+        }
+      ],
+      "splitTransportAndWaybillDocLabels": true,
+      "allDocumentsInOneImage": false,
+      "splitDocumentsByPages": false,
+      "splitInvoiceAndReceipt": true,
+      "receiptAndLabelsInOneImage": false
+    },
+    "customerReferences": [
+      {
+        "value": "Customer reference",
+        "typeCode": "CU"
+      }
+    ],
+    "customerDetails": {
+      "shipperDetails": {
+        "postalAddress": {
+          "postalCode": "048582",
+          "cityName": "SINGAPORE",
+          "countryCode": "SG",
+          "addressLine1": "Blk 6 Lock Rd, 02-10 Gillman Barracks",
+          "addressLine2": "Barrack Street"
+        },
+        "contactInformation": {
+          "phone": "4972436020",
+          "companyName": "AGILENT TECHNOLOGIES",
+          "fullName": "Darren Pang",
+          "email": "shipper_create_shipmentapi@dhltestmail.com"
+        },
+        "bankDetails": [
+          {
+            "name": "Bank of Singapore",
+            "settlementLocalCurrency": "SGD",
+            "settlementForeignCurrency": "USD"
+          }
+        ]
+      },
+      "receiverDetails": {
+        "postalAddress": {
+          "postalCode": "75018",
+          "cityName": "Paris",
+          "countryCode": "FR",
+          "addressLine1": "9 Rue Simart"
+        },
+        "contactInformation": {
+          "phone": "+1123456789",
+          "companyName": "Pepe Chicken by QuickGoodCuisine",
+          "fullName": "Mario Brew",
+          "email": "recipient_create_shipmentapi@dhltestmail.com",
+          "mobilePhone": "60112345678"
+        },
+        "typeCode": "business"
+      },
+      "buyerDetails": {
+        "postalAddress": {
+          "cityName": "Enfield",
+          "countryCode": "GB",
+          "postalCode": "EN3 7SN",
+          "addressLine1": "17",
+          "addressLine2": "Suez Rd",
+          "countyName": "Enfield"
+        },
+        "contactInformation": {
+          "phone": "4972463",
+          "mobilePhone": "2563456227231",
+          "companyName": "DPR Wholesalers",
+          "fullName": "Johnny Steward",
+          "email": "buyer_create_shipmentapi@dhltestmail.com"
+        },
+        "registrationNumbers": [
+          {
+            "issuerCountryCode": "GB",
+            "number": "244444911",
+            "typeCode": "VAT"
+          }
+        ],
+        "typeCode": "business"
+      },
+      "importerDetails": {
+        "postalAddress": {
+          "postalCode": "NN14 4FR",
+          "cityName": "Thrapston",
+          "countryCode": "GB",
+          "addressLine1": "Unit 1B",
+          "addressLine2": "Haldens Parkway",
+          "countyName": "Thrapston"
+        },
+        "contactInformation": {
+          "email": "importer_create_shipmentapi3@dhltestmail.com",
+          "phone": "635278321",
+          "mobilePhone": "2735728123",
+          "companyName": "simplehuman DC",
+          "fullName": "Cheryl Anderson"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "VAT",
+            "number": "26727913",
+            "issuerCountryCode": "GB"
+          },
+          {
+            "typeCode": "DAN",
+            "number": "DAN11111757124",
+            "issuerCountryCode": "GB"
+          }
+        ],
+        "typeCode": "business"
+      },
+      "exporterDetails": {
+        "postalAddress": {
+          "postalCode": "526238",
+          "cityName": "Zhaoqing",
+          "countryCode": "CN",
+          "addressLine1": "4FENQU, 2HAOKU, WEIPINHUI WULIU YUAN，DAWANG",
+          "addressLine2": "GAOXIN QU， BEIJIANG DADAO，SIHUI,",
+          "addressLine3": "ZhaoQing,Guangdong"
+        },
+        "contactInformation": {
+          "email": "shipper.liu@test.com",
+          "phone": "18211309039",
+          "mobilePhone": "273573123",
+          "companyName": "cider",
+          "fullName": "LiuWeiMing"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "VAT",
+            "number": "128203",
+            "issuerCountryCode": "CN"
+          }
+        ],
+        "typeCode": "business"
+      },
+      "sellerDetails": {
+        "postalAddress": {
+          "postalCode": "10705",
+          "cityName": "Yonkers",
+          "countryCode": "US",
+          "addressLine1": "16",
+          "addressLine2": "39 Belvedere Drive",
+          "countyName": "Yonkers"
+        },
+        "contactInformation": {
+          "email": "seller_create_shipmentapi@dhltestmail.com",
+          "phone": "6352783223",
+          "mobilePhone": "273573123",
+          "companyName": "Mischelle Leathers, LLC",
+          "fullName": "Albert Pennyworth"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "VAT",
+            "number": "26727913",
+            "issuerCountryCode": "US"
+          },
+          {
+            "typeCode": "DAN",
+            "number": "DAN11111757124",
+            "issuerCountryCode": "US"
+          }
+        ],
+        "typeCode": "business"
+      }
+    },
+    "content": {
+      "packages": [
+        {
+          "typeCode": "2BP",
+          "weight": 1.5,
+          "dimensions": {
+            "length": 10,
+            "width": 15,
+            "height": 10
+          },
+          "customerReferences": [
+            {
+              "value": "3654673",
+              "typeCode": "CU"
+            }
+          ],
+          "description": "Piece content description",
+          "labelDescription": "bespoke label description"
+        }
+      ],
+      "isCustomsDeclarable": true,
+      "declaredValue": 219.75,
+      "declaredValueCurrency": "SGD",
+      "exportDeclaration": {
+        "lineItems": [
+          {
+            "number": 1,
+            "description": "Fall collection: vegan leather pouchette small",
+            "price": 45,
+            "quantity": {
+              "value": 1,
+              "unitOfMeasurement": "PCS"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "4202.89.8090"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "4202.90.8090"
+              }
+            ],
+            "exportReasonType": "permanent",
+            "manufacturerCountry": "CN",
+            "exportControlClassificationNumber": "US123456789",
+            "weight": {
+              "netValue": 0.3,
+              "grossValue": 0.3
+            },
+            "isTaxesPaid": false,
+            "additionalInformation": ["Made with plant base materials only"],
+            "customerReferences": [
+              {
+                "typeCode": "AFE",
+                "value": "0323434422"
+              },
+              {
+                "typeCode": "PAN",
+                "value": "10597122"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "INV",
+                "value": "MyDHLAPI - LN#1-CUSDOC-001"
+              }
+            ]
+          },
+          {
+            "number": 2,
+            "description": "Fall collection: white pouchette in canvas",
+            "price": 50,
+            "quantity": {
+              "value": 1,
+              "unitOfMeasurement": "PCS"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "4202.91.8091"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "4202.92.8091"
+              }
+            ],
+            "exportReasonType": "permanent",
+            "manufacturerCountry": "CN",
+            "exportControlClassificationNumber": "US123456789",
+            "weight": {
+              "netValue": 0.2,
+              "grossValue": 0.25
+            },
+            "isTaxesPaid": false,
+            "customerReferences": [
+              {
+                "typeCode": "PON",
+                "value": "PON-6755"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "INV",
+                "value": "MyDHLAPI - LN#2-CUSDOC-002"
+              }
+            ]
+          },
+          {
+            "number": 3,
+            "description": "Fall collection: magenta pouchette in canvas",
+            "price": 60,
+            "quantity": {
+              "value": 1,
+              "unitOfMeasurement": "PCS"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "4202.93.8092"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "4202.94.8092"
+              }
+            ],
+            "exportReasonType": "permanent",
+            "manufacturerCountry": "CN",
+            "exportControlClassificationNumber": "US123456789",
+            "weight": {
+              "netValue": 0.3,
+              "grossValue": 0.3
+            },
+            "isTaxesPaid": false,
+            "customerReferences": [
+              {
+                "typeCode": "PON",
+                "value": "PON-6756"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "INV",
+                "value": "MyDHLAPI - LN#3-CUSDOC-003"
+              }
+            ]
+          },
+          {
+            "number": 4,
+            "description": "Fall collection: Lavender Glass Bottled Shampoo",
+            "price": 40,
+            "quantity": {
+              "value": 1,
+              "unitOfMeasurement": "PCS"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "4202.95.8093"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "4202.96.8093"
+              }
+            ],
+            "exportReasonType": "permanent",
+            "manufacturerCountry": "CN",
+            "exportControlClassificationNumber": "US123456789",
+            "weight": {
+              "netValue": 0.5,
+              "grossValue": 0.5
+            },
+            "isTaxesPaid": false,
+            "customerReferences": [
+              {
+                "typeCode": "PON",
+                "value": "PON-6757"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "INV",
+                "value": "MyDHLAPI - LN#4-CUSDOC-004"
+              }
+            ]
+          }
+        ],
+        "invoice": {
+          "number": "INV-00210291",
+          "date": "${= def advDate= new Date() + 3; advDate.format('yyy-MM-dd')}",
+          "instructions": ["This is invoice instruction"],
+          "customerDataTextEntries": ["TestCustomer Data Text"],
+          "totalNetWeight": 1.5,
+          "totalGrossWeight": 1.5,
+          "customerReferences": [
+            {
+              "typeCode": "UCN",
+              "value": "76498376498"
+            },
+            {
+              "typeCode": "CN",
+              "value": "MyDHLAPI - CUNREF-001"
+            },
+            {
+              "typeCode": "OID",
+              "value": "OID-7839749374"
+            }
+          ],
+          "termsOfPayment": "100 days",
+          "indicativeCustomsValues": {
+            "importCustomsDutyValue": 50.57,
+            "importTaxesValue": 49.43
+          }
+        },
+        "remarks": [
+          {
+            "value": "This package contains liquid."
+          },
+          {
+            "value": "Please handle with care."
+          }
+        ],
+        "additionalCharges": [
+          {
+            "value": 12.5,
+            "caption": "fee",
+            "typeCode": "freight"
+          },
+          {
+            "value": 7.25,
+            "caption": "Handlingcare",
+            "typeCode": "insurance"
+          },
+          {
+            "value": 5,
+            "caption": "admin charges",
+            "typeCode": "admin"
+          }
+        ],
+        "destinationPortName": "Marseille Port",
+        "placeOfIncoterm": "Gaildorf Port",
+        "payerVATNumber": "12345ED",
+        "recipientReference": "01291344",
+        "exporter": {
+          "id": "121233",
+          "code": "S"
+        },
+        "packageMarks": "Fragile glass bottle",
+        "declarationNotes": [
+          {
+            "value": "up to three declaration notes"
+          }
+        ],
+        "exportReference": "export reference",
+        "exportReason": "export reason",
+        "exportReasonType": "permanent",
+        "licenses": [
+          {
+            "typeCode": "export",
+            "value": "123127233"
+          }
+        ],
+        "shipmentType": "personal",
+        "customsDocuments": [
+          {
+            "typeCode": "INV",
+            "value": "MyDHLAPI - CUSDOC-001"
+          }
+        ]
+      },
+      "description": "Shipment",
+      "USFilingTypeValue": "12345",
+      "incoterm": "DAP",
+      "unitOfMeasurement": "metric"
+    },
+    "documentImages": [
+      {
+        "typeCode": "CIN",
+        "imageFormat": "PDF",
+        "content": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgL1hSZWZTdG0gMjgwMDg+Pg0Kc3RhcnR4cmVmDQoyODcyMw0KJSVFT0Y="
+      }
+    ],
+    "shipmentNotification": [
+      {
+        "typeCode": "email",
+        "receiverId": "shipmentnotification@mydhlapisample.com",
+        "languageCode": "eng",
+        "languageCountryCode": "UK",
+        "bespokeMessage": "message to be included in the notification"
+      }
+    ],
+    "getTransliteratedResponse": false,
+    "estimatedDeliveryDate": {
+      "isRequested": true,
+      "typeCode": "QDDC"
+    },
+    "getAdditionalInformation": [
+      {
+        "typeCode": "pickupDetails",
+        "isRequested": true
+      }
+    ]
+  },
+  {
+    "plannedShippingDateAndTime": "2022-11-15T19:19:40 GMT+00:00",
+    "pickup": {
+      "isRequested": false
+    },
+    "productCode": "P",
+    "localProductCode": "P",
+    "getRateEstimates": false,
+    "accounts": [
+      {
+        "typeCode": "shipper",
+        "number": "123456789"
+      }
+    ],
+    "valueAddedServices": [
+      {
+        "serviceCode": "WY"
+      },
+      {
+        "serviceCode": "PZ"
+      },
+      {
+        "serviceCode": "PT"
+      }
+    ],
+    "outputImageProperties": {
+      "printerDPI": 300,
+      "imageOptions": [
+        {
+          "typeCode": "invoice",
+          "templateName": "COMMERCIAL_INVOICE_P_10",
+          "isRequested": false,
+          "invoiceType": "commercial",
+          "languageCode": "eng"
+        },
+        {
+          "typeCode": "waybillDoc",
+          "templateName": "ARCH_8X4_A4_002",
+          "isRequested": false,
+          "hideAccountNumber": false,
+          "numberOfCopies": 1
+        },
+        {
+          "typeCode": "qr-code",
+          "templateName": "QR_1_00_LL_PNG_001",
+          "isRequested": true,
+          "encodingFormat": "png"
+        }
+      ],
+      "splitTransportAndWaybillDocLabels": false,
+      "allDocumentsInOneImage": false,
+      "splitDocumentsByPages": false,
+      "splitInvoiceAndReceipt": false,
+      "receiptAndLabelsInOneImage": false
+    },
+    "customerDetails": {
+      "shipperDetails": {
+        "postalAddress": {
+          "postalCode": "535223",
+          "cityName": "SINGAPORE",
+          "countryCode": "SG",
+          "addressLine1": "Blk 35",
+          "addressLine2": "Bishan Road 14",
+          "addressLine3": "#25-12",
+          "countryName": "SINGAPORE"
+        },
+        "contactInformation": {
+          "email": "shippertestnoreply@testdhl.com",
+          "phone": "+6591543035",
+          "mobilePhone": "+6591543452",
+          "companyName": "Olu's Electronic Store",
+          "fullName": "Emoi Izzy"
+        },
+        "registrationNumbers": [
+          {
+            "typeCode": "VAT",
+            "number": "SG123456789",
+            "issuerCountryCode": "SG"
+          }
+        ],
+        "bankDetails": [
+          {
+            "name": "Bank of Singapore",
+            "settlementLocalCurrency": "SGD",
+            "settlementForeignCurrency": "USD"
+          }
+        ]
+      },
+      "receiverDetails": {
+        "postalAddress": {
+          "postalCode": "6105",
+          "cityName": "PERTH",
+          "countryCode": "AU",
+          "addressLine1": "R12-03",
+          "addressLine2": "CI07",
+          "provinceCode": "QLD",
+          "countryName": "AUSTRALIA"
+        },
+        "contactInformation": {
+          "email": "recipient_Create_Shipment1_noreply@dhltestmail.com",
+          "phone": "+25641527",
+          "mobilePhone": "25631231888",
+          "companyName": "AGILENT TECHNOLOGIES",
+          "fullName": "SHIPPING DEPARTMENT"
+        },
+        "registrationNumbers": [
+          {
+            "issuerCountryCode": "AU",
+            "number": "2672791111222",
+            "typeCode": "VAT"
+          },
+          {
+            "issuerCountryCode": "AU",
+            "number": "99926727911119",
+            "typeCode": "GST"
+          },
+          {
+            "issuerCountryCode": "AU",
+            "number": "1233332331",
+            "typeCode": "DAN"
+          }
+        ],
+        "bankDetails": [
+          {
+            "name": "Bank of Western Australia",
+            "settlementLocalCurrency": "AUD",
+            "settlementForeignCurrency": "USD"
+          }
+        ],
+        "typeCode": "business"
+      }
+    },
+    "content": {
+      "exportDeclaration": {
+        "exportReasonType": "commercial_purpose_or_sale",
+        "invoice": {
+          "number": "W417679401",
+          "date": "${=((new Date()).format('yyy-MM-dd'))}",
+          "totalNetWeight": 7.83,
+          "totalGrossWeight": 9.45
+        },
+        "remarks": [
+          {
+            "value": "RemarkDescription1"
+          }
+        ],
+        "lineItems": [
+          {
+            "number": 1,
+            "description": "BELT USED",
+            "price": 3,
+            "quantity": {
+              "value": 1,
+              "unitOfMeasurement": "PCS"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "inbound",
+                "value": "8517.13.0000"
+              },
+              {
+                "typeCode": "outbound",
+                "value": "8517.13.0001"
+              }
+            ],
+            "exportReasonType": "commercial_purpose_or_sale",
+            "manufacturerCountry": "PT",
+            "weight": {
+              "netValue": 0.87,
+              "grossValue": 1.05
+            }
+          }
+        ]
+      },
+      "packages": [
+        {
+          "typeCode": "2BP",
+          "weight": 4,
+          "dimensions": {
+            "length": 10,
+            "width": 15,
+            "height": 10
+          },
+          "customerReferences": [
+            {
+              "value": "3654673",
+              "typeCode": "CU"
+            }
+          ]
+        }
+      ],
+      "isCustomsDeclarable": true,
+      "declaredValue": 100,
+      "declaredValueCurrency": "SGD",
+      "description": "Labelfree Shipment",
+      "incoterm": "DAP",
+      "unitOfMeasurement": "metric"
+    },
+    "documentImages": [
+      {
+        "typeCode": "CIN",
+        "imageFormat": "PDF",
+        "content": "JVBERi0xLjcNCiW1tbW1DQoxIDAgb2JqDQo8PC9UeXBlL0NhdGFsb2cvUGFnZXMgL1hSZWZTdG0gMjgwMDg+Pg0Kc3RhcnR4cmVmDQoyODcyMw0KJSVFT0Y="
+      }
+    ]
+  },
+  {
+    "productCode": "P",
+    "plannedShippingDateAndTime": "2023-04-18T11:19:40 GMT+08:00",
+    "pickup": {
+      "isRequested": false
+    },
+    "accounts": [
+      {
+        "number": "XXXXXXXXX",
+        "typeCode": "shipper"
+      }
+    ],
+    "valueAddedServices": [
+      {
+        "serviceCode": "EE"
+      },
+      {
+        "serviceCode": "WY"
+      }
+    ],
+    "outputImageProperties": {
+      "printerDPI": 300,
+      "encodingFormat": "pdf",
+      "imageOptions": [
+        {
+          "typeCode": "waybillDoc",
+          "hideAccountNumber": false,
+          "templateName": "ARCH_8X4_A4_002",
+          "numberOfCopies": 1,
+          "isRequested": true
+        },
+        {
+          "typeCode": "label",
+          "templateName": "ECOM26_84_A4_001"
+        },
+        {
+          "typeCode": "invoice",
+          "isRequested": false
+        }
+      ]
+    },
+    "identifiers": [
+      {
+        "typeCode": "shipmentId",
+        "value": "9927269613"
+      }
+    ],
+    "customerDetails": {
+      "shipperDetails": {
+        "postalAddress": {
+          "cityName": "Shanghai",
+          "countryCode": "CN",
+          "postalCode": "201802",
+          "addressLine1": "W3, GLP Logistics Park, 175 Jinda Road Putuo",
+          "addressLine2": "District"
+        },
+        "contactInformation": {
+          "phone": "Tel: 86-21-3127",
+          "companyName": "ASM Assembly Systems Ltd.",
+          "fullName": "Attn: Michael Yan C/O Shanghai E-ch"
+        },
+        "registrationNumbers": [
+          {
+            "issuerCountryCode": "CN",
+            "number": "244444911",
+            "typeCode": "VAT"
+          }
+        ]
+      },
+      "receiverDetails": {
+        "postalAddress": {
+          "cityName": "Munich",
+          "countryCode": "DE",
+          "postalCode": "81379",
+          "addressLine1": "Rupert-Mayer-Str. 44"
+        },
+        "contactInformation": {
+          "phone": "+49 (89) 20800-82035",
+          "companyName": "ASM Assembly Systems GmbH &amp; Co. KG",
+          "fullName": "Shipping point MUC"
+        },
+        "registrationNumbers": [
+          {
+            "number": "30001360211",
+            "issuerCountryCode": "DE",
+            "typeCode": "VAT"
+          }
+        ]
+      },
+      "sellerDetails": {
+        "postalAddress": {
+          "cityName": "CYBERJAYA",
+          "countryCode": "99",
+          "postalCode": "63000",
+          "addressLine1": "LEVEL 3, EAST WING, 3511",
+          "addressLine2": "JALAN TEKNOKRAT 5"
+        },
+        "contactInformation": {
+          "phone": "+601123255555",
+          "mobilePhone": "+601123255555",
+          "companyName": "DHL INFORMATION SERVICES SDN. BHD.",
+          "fullName": "ADAM LAI",
+          "email": "adamlaikl@dhl.com"
+        },
+        "typeCode": "business"
+      }
+    },
+    "content": {
+      "exportDeclaration": {
+        "exportReasonType": "permanent",
+        "exportReason": "sales",
+        "placeOfIncoterm": "BERLIN",
+        "invoice": {
+          "number": "MyDHLAPI - INV-001",
+          "date": "2023-04-10",
+          "instructions": ["This is invoice instruction"],
+          "totalNetWeight": 0.4,
+          "totalGrossWeight": 0.5,
+          "customerReferences": [
+            {
+              "typeCode": "MRN",
+              "value": "20DE850137246140E1"
+            },
+            {
+              "typeCode": "CU",
+              "value": "MyDHLAPI - CUNREF-001"
+            }
+          ],
+          "termsOfPayment": "60 days"
+        },
+        "remarks": [
+          {
+            "value": "Invoice Remarks"
+          },
+          {
+            "value": "OtherRemarks2"
+          },
+          {
+            "value": "OtherRemarks3"
+          }
+        ],
+        "packageMarks": "PackageMarks",
+        "payerVATNumber": "yes",
+        "recipientReference": "ReceiverReference",
+        "declarationNotes": [
+          {
+            "value": "I DECLARE ALL INFORMATION TRUE AND CORRECT"
+          }
+        ],
+        "customsDocuments": [
+          {
+            "typeCode": "INV",
+            "value": "MyDHLAPI - CUSDOC-001"
+          }
+        ],
+        "lineItems": [
+          {
+            "number": 1,
+            "description": "MACHINERY",
+            "price": 56.525,
+            "quantity": {
+              "value": 1,
+              "unitOfMeasurement": "PCS"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "6109.10.0010"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "6109.10.0010"
+              }
+            ],
+            "manufacturerCountry": "DE",
+            "weight": {
+              "netValue": 0.2,
+              "grossValue": 0.25
+            },
+            "isTaxesPaid": false,
+            "customerReferences": [
+              {
+                "typeCode": "PAN",
+                "value": "10597122"
+              },
+              {
+                "typeCode": "AFE",
+                "value": "105972112200"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "INV",
+                "value": "MyDHLAPI - LN#1-CUSDOC-001"
+              }
+            ]
+          },
+          {
+            "number": 2,
+            "description": "NIKE MERCHANDISE",
+            "price": 28.35,
+            "quantity": {
+              "value": 2,
+              "unitOfMeasurement": "PCS"
+            },
+            "commodityCodes": [
+              {
+                "typeCode": "outbound",
+                "value": "6109.10.0010"
+              },
+              {
+                "typeCode": "inbound",
+                "value": "6109.10.0010"
+              }
+            ],
+            "manufacturerCountry": "DE",
+            "weight": {
+              "netValue": 0.2,
+              "grossValue": 0.25
+            },
+            "isTaxesPaid": false,
+            "customerReferences": [
+              {
+                "typeCode": "PAN",
+                "value": "1299211"
+              },
+              {
+                "typeCode": "AFE",
+                "value": "12865306"
+              }
+            ],
+            "customsDocuments": [
+              {
+                "typeCode": "INV",
+                "value": "MyDHLAPI - LN#2-CUSDOC-001"
+              }
+            ]
+          }
+        ],
+        "additionalCharges": [
+          {
+            "value": 12.5,
+            "caption": "Freight Charges",
+            "typeCode": "freight"
+          },
+          {
+            "value": 7.25,
+            "caption": "Handlingcare",
+            "typeCode": "handling"
+          }
+        ]
+      },
+      "unitOfMeasurement": "metric",
+      "isCustomsDeclarable": true,
+      "incoterm": "DAP",
+      "description": "JEWELRY",
+      "packages": [
+        {
+          "weight": 0.49,
+          "dimensions": {
+            "length": 20,
+            "width": 16,
+            "height": 16
+          }
+        }
+      ],
+      "declaredValueCurrency": "EUR",
+      "declaredValue": 945.23
+    }
+  }
+]

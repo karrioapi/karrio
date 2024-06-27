@@ -1,0 +1,17 @@
+{
+  "originalPlannedShippingDate": "2020-04-20",
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "123456789"
+    }
+  ],
+  "productCode": "D",
+  "documentImages": [
+    {
+      "typeCode": "INV",
+      "imageFormat": "PDF",
+      "content": "base64 encoded image"
+    }
+  ]
+}

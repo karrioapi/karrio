@@ -250,8 +250,7 @@ quicktype --src="${SCHEMAS}/error_response.json" --out="${LIB_MODULES}/error_res
 )
 
 MAPPER_METADATA_TEMPLATE = Template(
-    """
-from karrio.core.metadata import Metadata
+    """from karrio.core.metadata import Metadata
 
 from karrio.mappers.{{id}}.mapper import Mapper
 from karrio.mappers.{{id}}.proxy import Proxy
@@ -506,7 +505,10 @@ import karrio.providers.{{id}}.utils as provider_utils
 class Settings(provider_utils.Settings):
     """{{name}} connection settings."""
 
-    # required carrier specific properties
+    # Add carrier specific API connection properties here
+    # username: str
+    # passowrd: str
+    # account_number: str = None
 
     # generic properties
     id: str = None
@@ -520,7 +522,7 @@ class Settings(provider_utils.Settings):
 )
 
 PROVIDER_IMPORTS_TEMPLATE = Template(
-    """
+    '''"""Karrio {{name}} provider imports."""
 from karrio.providers.{{id}}.utils import Settings{% if "rating" in features %}
 from karrio.providers.{{id}}.rate import parse_rate_response, rate_request{% endif %}{% if "shipping" in features %}
 from karrio.providers.{{id}}.shipment import (
@@ -550,11 +552,12 @@ from karrio.providers.{{id}}.manifest import (
     create_manifest_request,
 ){% endif %}
 
-"""
+'''
 )
 
 PROVIDER_ERROR_TEMPLATE = Template(
     '''"""Karrio {{name}} error parser."""
+
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -583,7 +586,11 @@ def parse_error_response(
 )
 
 PROVIDER_RATE_TEMPLATE = Template(
-    """
+    '''"""Karrio {{name}} rating API implementation."""
+
+# import karrio.schemas.{{id}}.rating_request as {{id}}
+# import karrio.schemas.{{id}}.rating_response as rating
+
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -642,11 +649,15 @@ def rate_request(
 
     return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
-"""
+'''
 )
 
 PROVIDER_TRACKING_TEMPLATE = Template(
-    """
+    '''"""Karrio {{name}} rating API implementation."""
+
+# import karrio.schemas.{{id}}.tracking_request as {{id}}
+# import karrio.schemas.{{id}}.tracking_response as tracking
+
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -709,7 +720,7 @@ def tracking_request(
 
     return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
-"""
+'''
 )
 
 PROVIDER_UNITS_TEMPLATE = Template(
@@ -784,7 +795,10 @@ import karrio.core as core
 class Settings(core.Settings):
     """{{name}} connection settings."""
 
-    # username: str  # carrier specific api credential key
+    # Add carrier specific api connection properties here
+    # username: str
+    # passowrd: str
+    # account_number: str = None
 
     @property
     def carrier_name(self):
@@ -797,6 +811,10 @@ class Settings(core.Settings):
             if self.test_mode
             else "https://sandbox.carrier.api"
         )
+
+    # @property
+    # def tracking_url(self):
+    #     return "https://www.carrier.com/tracking?tracking-id={}"
 
 '''
 )

@@ -1,0 +1,12 @@
+{
+  "shipmentTrackingNumber": ["string"],
+  "pieceTrackingNumber": ["string"],
+  "shipmentReference": "string",
+  "shipmentReferenceType": "string",
+  "shipperAccountNumber": "string",
+  "dateRangeFrom": "2020-05-01",
+  "dateRangeTo": "2020-05-01",
+  "trackingView": "all-checkpoints",
+  "levelOfDetail": "shipment",
+  "requestControlledAccessDataCodes": true
+}
