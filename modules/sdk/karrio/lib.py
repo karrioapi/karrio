@@ -666,9 +666,10 @@ def request(
     decoder: typing.Callable = utils.decode_bytes,
     on_error: typing.Callable = None,
     trace: typing.Callable[[typing.Any, str], typing.Any] = None,
+    proxy: str = None,
     **kwargs,
 ) -> str:
-    return utils.request(decoder=decoder, on_error=on_error, trace=trace, **kwargs)
+    return utils.request(decoder=decoder, on_error=on_error, trace=trace, proxy=proxy, **kwargs)
 
 
 # endregion
@@ -764,6 +765,5 @@ def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
     don't mind if it fails.
     """
     return utils.failsafe(callable, warning=warning)
-
 
 # endregion

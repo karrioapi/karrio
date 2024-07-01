@@ -11,7 +11,7 @@ import urllib.parse
 import PIL.Image
 import PIL.ImageFile
 from urllib.error import HTTPError
-from urllib.request import urlopen, Request
+from urllib.request import urlopen, Request, ProxyHandler, build_opener, install_opener
 from typing import List, TypeVar, Callable, Optional, Any, cast
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
@@ -162,6 +162,7 @@ def decode_bytes(byte):
 def process_request(
     request_id: str,
     trace: Callable[[Any, str], Any] = None,
+    proxy: str = None,
     **kwargs,
 ) -> Request:
     payload = (
@@ -182,6 +183,24 @@ def process_request(
 
     _request = Request(**{**kwargs, **payload})
 
+    # Apply proxy settings if provided: Proxy Example` 'username:password@IP_Address:Port'
+    if proxy:
+        proxy_info = proxy.split('@')
+        auth_info, host_port = proxy_info[0], proxy_info[1]
+        auth_info = urllib.parse.unquote(auth_info)
+        auth_encoded = base64.b64encode(auth_info.encode()).decode()
+        proxy_url = f"http://{host_port}"
+
+        # Create a ProxyHandler
+        proxy_handler = ProxyHandler({
+            'http': proxy_url,
+            'https': proxy_url
+        })
+        opener = build_opener(proxy_handler)
+        opener.addheaders = [('Proxy-Authorization', f'Basic {auth_encoded}')]
+        install_opener(opener)
+        logger.info(f"Proxy set to: {proxy_url} with credentials")
+
     logger.info(f"Request URL:: {_request.full_url}")
 
     return _request
@@ -194,7 +213,6 @@ def process_response(
     on_ok: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
 ) -> str:
-
     if on_ok is not None:
         _response = on_ok(response)
     else:
@@ -236,18 +254,20 @@ def request(
     on_ok: Callable[[Any], str] = None,
     on_error: Callable[[HTTPError], str] = None,
     trace: Callable[[Any, str], Any] = None,
+    proxy: str = None,
     **kwargs,
 ) -> str:
     """Return an HTTP response body.
 
     make a http request (wrapper around Request method from built in urllib)
+    Proxy example: 'Username:Password@IP_Address:Port'
     """
 
     _request_id = str(uuid.uuid4())
     logger.debug(f"sending request ({_request_id})...")
 
     try:
-        _request = process_request(_request_id, trace, **kwargs)
+        _request = process_request(_request_id, trace, proxy, **kwargs)
 
         with urlopen(_request) as f:
             _response = process_response(
