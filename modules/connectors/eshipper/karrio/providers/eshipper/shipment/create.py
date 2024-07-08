@@ -59,11 +59,53 @@ def shipment_request(
 ) -> lib.Serializable:
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    packages = lib.to_packages(payload.parcels)
+    is_intl = shipper.country_code != recipient.country_code
     service = provider_units.ShippingService.map(payload.service).value_or_key
+    carrier_id = provider_units.ShippingService.carrier(service)
+
+    payment = payload.payment or models.Payment()
+    payor = lib.to_address(
+        {
+            "sender": payload.shipper,
+            "recipient": payload.recipient,
+            "thid_party": payload.third_party,
+        }.get(payment.paid_by)
+    )
+    packages = lib.to_packages(
+        payload.parcels,
+        package_option_type=provider_units.ShippingOption,
+        required=["weight", "height", "width", "length"],
+    )
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
+    )
+    customs = lib.to_customs_info(
+        payload.customs,
+        shipper=payload.shipper,
+        recipient=payload.recipient,
+        weight_unit=packages.weight_unit,
+        default_to=lib.identity(
+            models.Customs(
+                commodities=(
+                    packages.items
+                    if any(packages.items)
+                    else [
+                        models.Commodity(
+                            quantity=1,
+                            sku=f"000{index}",
+                            weight=pkg.weight.value,
+                            weight_unit=pkg.weight_unit.value,
+                            description=pkg.parcel.content,
+                        )
+                        for index, pkg in enumerate(packages, start=1)
+                    ]
+                )
+            )
+            if is_intl
+            else None
+        ),
     )
 
     request = eshipper.ShippingRequestType(
@@ -105,6 +147,9 @@ def shipment_request(
         packagingUnit=provider_units.PackageType.map(packages.package_type).value,
         packages=eshipper.PackagesType(
             type=None,
+            quantity=len(packages),
+            weightUnit=units.WeightUnit.KG.value,
+            totalWeight=packages.weight.KG,
             packages=[
                 eshipper.PackageType(
                     height=package.height.CM,
@@ -117,7 +162,7 @@ def shipment_request(
                     type=provider_units.PackageType.map(package.package_type).value,
                     freightClass=None,
                     nmfcCode=None,
-                    insuranceAmount=None,
+                    insuranceAmount=package.options.insurance.state,
                     codAmount=None,
                     description=package.description,
                     harmonizedCode=None,
@@ -134,8 +179,67 @@ def shipment_request(
         insuranceType=None,
         dangerousGoodsType=None,
         pickup=None,
-        customsInformation=None,
-        cod=None,
+        customsInformation=lib.identity(
+            eshipper.CustomsInformationType(
+                contact=eshipper.ContactType(
+                    contactCompany=shipper.company_name,
+                    contactName=shipper.contact,
+                    brokerName=None,
+                    brokerTaxId=None,
+                    recipientTaxId=None,
+                ),
+                items=eshipper.ItemsType(
+                    currency=(customs.duty.currency or options.currency.state),
+                    items=[
+                        eshipper.ItemType(
+                            hsnCode=item.hs_code,
+                            description=item.title or item.description,
+                            originCountry=item.origin_country,
+                            quantity=item.quantity,
+                            unitPrice=lib.to_money(item.value_amount),
+                            skuCode=item.sku,
+                        )
+                        for item in customs.commodities
+                    ],
+                ),
+                dutiesTaxes=eshipper.DutiesTaxesType(
+                    dutiable=not packages.is_document,
+                    billTo=customs.duty_billing_address.contact,
+                    accountNumber=customs.duty.account_number,
+                    sedNumber=customs.options.sed_number.state,
+                ),
+                billingAddress=eshipper.BillingAddressType(
+                    company=customs.duty_billing_address.company_name,
+                    attention=customs.duty_billing_address.contact,
+                    address1=customs.duty_billing_address.address_line1,
+                    address2=customs.duty_billing_address.address_line2,
+                    city=customs.duty_billing_address.city,
+                    province=customs.duty_billing_address.state_code,
+                    country=customs.duty_billing_address.country_code,
+                    zip=customs.duty_billing_address.postal_code,
+                    email=customs.duty_billing_address.email_address,
+                    phone=customs.duty_billing_address.phone_number,
+                ),
+                remarks=None,
+            )
+            if payload.customs
+            else None
+        ),
+        cod=lib.identity(
+            eshipper.CodType(
+                codAddress=eshipper.CodAddressType(
+                    company=recipient.company_name,
+                    name=recipient.contact,
+                    city=recipient.city,
+                    province=recipient.state_code,
+                    country=recipient.country_code,
+                    zip=recipient.postal_code,
+                ),
+                paymentType="Cash",
+            )
+            if options.cash_on_delivery.state
+            else None
+        ),
         isSaturdayService=options.eshipper_is_saturday_service.state,
         holdForPickupRequired=options.eshipper_hold_for_pickup_required.state,
         specialEquipment=options.eshipper_special_equipment.state,
@@ -145,8 +249,17 @@ def shipment_request(
         saturdayPickupRequired=options.eshipper_saturday_pickup_required.state,
         stackable=options.eshipper_stackable.state,
         serviceId=service,
-        thirdPartyBilling=None,
-        commodityType=None,
+        thirdPartyBilling=lib.identity(
+            eshipper.ThirdPartyBillingType(
+                carrier=carrier_id,
+                country=payor.country_code,
+                billToAccountNumber=payment.account_number,
+                billToPostalCode=payor.postal_code,
+            )
+            if payment.paid_by == "third_party"
+            else None
+        ),
+        commodityType=customs.content_type,
     )
 
     return lib.Serializable(
