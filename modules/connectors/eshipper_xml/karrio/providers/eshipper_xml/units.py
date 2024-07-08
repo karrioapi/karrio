@@ -215,7 +215,7 @@ CARRIER_IDS = {
     "5": "canadapost",
     "6": "ups",
     "11": "tst",
-    "18": "eshipper_xml",
+    "18": "eshipper",
     "35": "global_mail",
     "45": "canpar",
     "56": "fleet_optics",

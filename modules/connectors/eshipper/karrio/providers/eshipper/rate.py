@@ -1,4 +1,3 @@
-from karrio.providers.colissimo.units import ServiceName
 import karrio.schemas.eshipper.rate_request as eshipper
 import karrio.schemas.eshipper.rate_response as rating
 import typing
@@ -28,6 +27,7 @@ def _extract_details(
 ) -> models.RateDetails:
     rate = lib.to_object(rating.QuoteType, data)
     service = provider_units.ShippingService(rate.serviceId)
+    carrierId = provider_units.ShippingService.carrier(service.name_or_key)
     charges = [
         ("baseCharge", rate.baseCharge),
         ("fuelSurcharge", rate.fuelSurcharge),
@@ -55,9 +55,10 @@ def _extract_details(
             if amount
         ],
         meta=dict(
-            service_name=service.name or rate.serviceName,
-            ServiceName=rate.ServiceName,
+            service_name=rate.serviceName or service.name,
+            serviceName=rate.serviceName,
             carrierName=rate.carrierName,
+            carrierId=carrierId,
         ),
     )
 

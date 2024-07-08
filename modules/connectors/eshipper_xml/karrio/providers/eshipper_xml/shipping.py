@@ -126,7 +126,7 @@ def shipping_request(
         shipper=payload.shipper,
         recipient=payload.recipient,
         weight_unit=packages.weight_unit,
-        default_to=(
+        default_to=lib.identity(
             models.Customs(
                 commodities=(
                     packages.items
