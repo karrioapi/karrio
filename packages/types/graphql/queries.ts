@@ -2360,6 +2360,21 @@ export const GET_USER_CONNECTIONS = gql`query get_user_connections {
       account_country_code
       api_key
     }
+    ... on HayPostSettingsType {
+      id
+      carrier_id
+      carrier_name
+      display_name
+      test_mode
+      active
+      capabilities
+      metadata
+      config
+      username
+      password
+      customer_id
+      customer_type
+    }
   }
 }`;
 

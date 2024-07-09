@@ -593,6 +593,14 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({ 
                   required={field("aws_region").required}
                 />}
 
+                {field("customer_type").exists && <InputField label="Customer Type" value={payload.customer_type}
+                  name="customer_type"
+                  wrapperClass="pt-2"
+                  onChange={handleChange}
+                  className="is-small"
+                  required={field("customer_type").required}
+                />}
+
                 {field("mws_auth_token").exists && <InputField label="MWS Auth Token" value={payload.mws_auth_token}
                   name="mws_auth_token"
                   wrapperClass="pt-2"
@@ -1128,6 +1136,7 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
       [CarrierSettingsCarrierNameEnum.Usps]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],
       [CarrierSettingsCarrierNameEnum.UspsInternational]: [["carrier_id", true], ["username", true], ["password", true], ["mailer_id"], ["customer_registration_id"], ["logistics_manager_mailer_id"]],
       [CarrierSettingsCarrierNameEnum.Zoom2u]: [["carrier_id", true], ["api_key", true], ["account_country_code"]],
+      [CarrierSettingsCarrierNameEnum.HayPost]: [["carrier_id", true], ["username", true], ["password", true], ["customer_id", true], ["customer_type", true]],
       [NoneEnum.none]: [],
     }[carrier_name] || [])
       .find(([_, ...__]) => _ === property) || []

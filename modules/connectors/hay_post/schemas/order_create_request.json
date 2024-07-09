@@ -1,0 +1,42 @@
+{
+  "customerId": 999999999,
+  "serviceCategoryDirectionId": 94,
+  "weight": 100,
+  "comment": "Test",
+  "returnRegisteredAddress": true,
+  "destinationAddress": {
+    "countryId": 11,
+    "provinceStateId": 27,
+    "cityVillage": "Երևան",
+    "street": "Սարյան",
+    "building": "22",
+    "apartment": "2",
+    "postalCode": "0002",
+    "receiverInfo": {
+      "companyName": "string",
+      "firstName": "Գրտեստ",
+      "lastName": "Գրտեստ",
+      "phoneNumber": "37477885882",
+      "email": "string"
+    }
+  },
+  "returnAddress": {
+    "countryId": 11,
+    "provinceStateId": 27,
+    "cityVillage": "Երևան",
+    "street": "Սարյան",
+    "building": "22",
+    "apartment": "2",
+    "postalCode": "0002",
+    "receiverInfo": {
+      "companyName": "string",
+      "firstName": "Գրտեստ",
+      "lastName": "Գրտեստ",
+      "phoneNumber": "37477885882",
+      "email": "string"
+    }
+  },
+  "additionalServices": [
+    2
+  ]
+}
