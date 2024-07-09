@@ -44,7 +44,7 @@ Django==4.2.14
 -e ./modules/connectors/freightcom
 -e ./modules/connectors/locate2u
 -e ./modules/connectors/zoom2u
-
+-e ./modules/connectors/hay_post
 
 # karrio server modules
 -e ./modules/core

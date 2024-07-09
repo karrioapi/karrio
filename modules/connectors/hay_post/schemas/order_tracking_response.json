@@ -1,0 +1,144 @@
+{
+    "order": {
+        "id": 15022783,
+        "customerId": 999999999,
+        "trackingId": "PAS105759416AM",
+        "amount": 1810,
+        "weight": 100,
+        "stateId": 1,
+        "comment": "Test",
+        "service": {
+            "id": 4,
+            "name": "Parcel"
+        },
+        "category": {
+            "id": 1,
+            "name": "Simple"
+        },
+        "transactionId": null,
+        "bundle": null,
+        "shipment": null,
+        "createDate": "2024-06-10T08:59:21",
+        "isVerified": false,
+        "recaddress": null,
+        "locationId": null,
+        "codAmount": null,
+        "paymentMethodId": 0,
+        "isInternational": false,
+        "partner": null
+    },
+    "info": null,
+    "orderDestinationAddress": {
+        "country": {
+            "id": 11,
+            "name": "Armenia"
+        },
+        "provinceState": {
+            "id": 27,
+            "name": "ԵՐԵՎԱՆ"
+        },
+        "cityVillage": {
+            "id": 0,
+            "name": "Երևան"
+        },
+        "street": {
+            "id": 0,
+            "name": "Սարյան"
+        },
+        "building": {
+            "id": 0,
+            "name": "22"
+        },
+        "apartment": {
+            "id": 0,
+            "name": "2"
+        },
+        "postalCode": "0002",
+        "address": null,
+        "isHomeDelivery": false,
+        "isDeliveryPaid": false,
+        "deliveryDate": "0001-01-01T00:00:00",
+        "receiverInfo": {
+            "companyName": "string",
+            "firstName": "Գրտեստ",
+            "lastName": "Գրտեստ",
+            "phoneNumber": "37477885882",
+            "email": "string",
+            "nickname": null
+        },
+        "factreceiverInfo": null
+    },
+    "returnAddress": {
+        "country": {
+            "id": 11,
+            "name": null
+        },
+        "provinceState": {
+            "id": 29,
+            "name": "ԿՈՏԱՅՔ"
+        },
+        "cityVillage": {
+            "id": 0,
+            "name": "ԿՈՏԱՅՔ"
+        },
+        "street": {
+            "id": 0,
+            "name": "ԿՈՏԱՅՔ"
+        },
+        "building": {
+            "id": 0,
+            "name": "ԿՈՏԱՅՔ"
+        },
+        "apartment": {
+            "id": 0,
+            "name": null
+        },
+        "postalCode": null,
+        "address": null,
+        "isHomeDelivery": false,
+        "isDeliveryPaid": false,
+        "deliveryDate": "0001-01-01T00:00:00",
+        "receiverInfo": {
+            "companyName": null,
+            "firstName": "testCustomer",
+            "lastName": "testCustomer",
+            "phoneNumber": null,
+            "email": null,
+            "nickname": null
+        },
+        "factreceiverInfo": null
+    },
+    "customer": {
+        "customerId": 999999999,
+        "firstName": "testCustomer",
+        "lastName": "testCustomer",
+        "phone": null,
+        "legalType": {
+            "id": 3,
+            "name": "Legal"
+        },
+        "documents": [],
+        "companyName": null
+    },
+    "orderStateHistories": [
+        {
+            "id": 59700773,
+            "orderId": 15022783,
+            "stateId": 1,
+            "createDate": "2024-06-10T08:59:20.5298",
+            "userId": 999999999,
+            "isActive": true
+        }
+    ],
+    "additionalServices": [
+        {
+            "id": 2,
+            "name": "Notification Ordered",
+            "fee": 380,
+            "key": "add_s_notification_ordered",
+            "relationIndexId": 12,
+            "isActive": true
+        }
+    ],
+    "rejectedOrders": []
+}
