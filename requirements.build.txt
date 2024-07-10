@@ -1,5 +1,5 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/?sourceBuild
-Django==4.2.11
+Django==4.2.14
 
 # Carrier Extentions modules
 -e ./modules/sdk
