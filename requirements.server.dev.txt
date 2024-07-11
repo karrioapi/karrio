@@ -1,5 +1,5 @@
 django-debug-toolbar
-Django==4.2.11
+Django==4.2.14
 
 # Carrier Extentions modules
 -e ./modules/sdk

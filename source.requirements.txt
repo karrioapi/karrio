@@ -13,7 +13,7 @@ defusedxml==0.7.1
 deprecation==2.1.0
 diff-match-patch==20230430
 dj-database-url==2.1.0
-Django==4.2.11
+Django==4.2.14
 django-constance==3.1.0
 django-cors-headers==4.3.1
 django-downloadview==2.3.0
