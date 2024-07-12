@@ -47,9 +47,9 @@ def _extract_details(
 
         info=models.TrackingInfo(
             customer_name=f"{detail.customer.firstName} {detail.customer.lastName}",
-            # expected_delivery=lib.fdate(
-            #     datetime.fromisoformat(detail.orderDestinationAddress.deliveryDate).date().strftime("%Y-%m-%d")
-            # ),
+            expected_delivery=lib.fdate(
+                datetime.fromisoformat(detail.orderDestinationAddress.deliveryDate).date().strftime("%Y-%m-%d")
+            ),
             note=detail.order.comment,
             order_date=lib.fdate(
                 datetime.fromisoformat(detail.order.createDate).date().strftime("%Y-%m-%d")
@@ -60,9 +60,9 @@ def _extract_details(
             shipment_pickup_date=lib.fdate(
                 datetime.fromisoformat(detail.order.createDate).date().strftime("%Y-%m-%d")
             ),
-            # shipment_delivery_date=lib.fdate(
-            #     datetime.fromisoformat(detail.orderDestinationAddress.deliveryDate).date().strftime("%Y-%m-%d")
-            # ),
+            shipment_delivery_date=lib.fdate(
+                datetime.fromisoformat(detail.orderDestinationAddress.deliveryDate).date().strftime("%Y-%m-%d")
+            ),
             shipment_service=detail.order.service.name,
             shipment_origin_country=detail.returnAddress.country.name,
             shipment_origin_postal_code=detail.returnAddress.postalCode,
