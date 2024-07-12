@@ -21,7 +21,7 @@ def parse_error_response(
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="404",
+            code="error",
             message=" ".join(error.key.split("_")).capitalize(),
             details={**kwargs},
         )
