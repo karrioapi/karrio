@@ -45,16 +45,16 @@ class Proxy(proxy.Proxy):
 
         return lib.Deserializable(response, lib.to_dict)
 
-    def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        response = lib.request(
-            url=f"{self.settings.server_url}/service",
-            data=request.serialize(),
-            trace=self.trace_as("json"),
-            method="POST",
-            headers={},
-        )
-
-        return lib.Deserializable(response, lib.to_dict)
+    # def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
+    #     response = lib.request(
+    #         url=f"{self.settings.server_url}/service",
+    #         data=request.serialize(),
+    #         trace=self.trace_as("json"),
+    #         method="POST",
+    #         headers={},
+    #     )
+    #
+    #     return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
         query = request.serialize()
