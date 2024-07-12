@@ -103,7 +103,7 @@ def shipment_request(
         ),
         returnAddress=hay_post.NAddressType(
             countryId=shipper_country_id,
-            street=f"{shipper.street} {shipper.address_line1}",
+            street=shipper.street,
             cityVillage=shipper.city,
             postalCode=shipper.postal_code,
             receiverInfo=hay_post.ReceiverInfoType(
