@@ -91,7 +91,7 @@ def shipment_request(
         # returnRegisteredAddress=True,
         destinationAddress=hay_post.NAddressType(
             countryId=recipient_country_id,
-            street=f"{recipient.street} {recipient.address_line1}",
+            street=recipient.street,
             cityVillage=recipient.city,
             postalCode=recipient.postal_code,
             receiverInfo=hay_post.ReceiverInfoType(
