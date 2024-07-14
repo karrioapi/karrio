@@ -27,7 +27,7 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.QuoteType, data)
-    service = provider_units.ShippingService.map(rate.serviceId)
+    service = provider_units.ShippingService.map(str(rate.serviceId))
     carrierId = provider_units.ShippingService.carrier(service.name_or_key)
     charges = [
         ("baseCharge", rate.baseCharge),

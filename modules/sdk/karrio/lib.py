@@ -351,7 +351,7 @@ def to_element(
 
 
 def to_query_string(data: dict) -> str:
-    param_list = functools.reduce(
+    param_list: list = functools.reduce(
         lambda acc, item: [
             *acc,
             *(
