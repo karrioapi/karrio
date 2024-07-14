@@ -2131,7 +2131,7 @@ export const GET_USER_CONNECTIONS = gql`
           metadata
         }
       }
-      ... on EShipperXMLSettingsType {
+      ... on EShipperSettingsType {
         id
         carrier_id
         carrier_name
@@ -2140,8 +2140,8 @@ export const GET_USER_CONNECTIONS = gql`
         active
         metadata
         capabilities
-        username
-        password
+        principal
+        credential
         config
       }
       ... on EasyPostSettingsType {

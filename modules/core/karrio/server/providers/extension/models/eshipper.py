@@ -10,8 +10,8 @@ class EShipperSettings(providers.Carrier):
         verbose_name = "eShipper Settings"
         verbose_name_plural = "eShipper Settings"
 
-    username = models.CharField(max_length=200)
-    password = models.CharField(max_length=200)
+    principal = models.CharField(max_length=100)
+    credential = models.CharField(max_length=100)
 
     @property
     def carrier_name(self) -> str:
