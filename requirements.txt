@@ -67,7 +67,7 @@ jwcrypto==1.5.6
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.dpd&subdirectory=modules/connectors/dpd
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.dpdhl&subdirectory=modules/connectors/dpdhl
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.easypost&subdirectory=modules/connectors/easypost
--e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.eshipper_xml&subdirectory=modules/connectors/eshipper_xml
+-e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.eshipper&subdirectory=modules/connectors/eshipper
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.fedex&subdirectory=modules/connectors/fedex
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.fedex_ws&subdirectory=modules/connectors/fedex_ws
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.freightcom&subdirectory=modules/connectors/freightcom

@@ -2,13 +2,13 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-class EShipperXMLSettings(providers.Carrier):
-    CARRIER_NAME = "eshipper_xml"
+class EShipperSettings(providers.Carrier):
+    CARRIER_NAME = "eshipper"
 
     class Meta:
-        db_table = "eshipper-xml-settings"
-        verbose_name = "eShipper XML Settings"
-        verbose_name_plural = "eShipper XML Settings"
+        db_table = "eshipper-settings"
+        verbose_name = "eShipper Settings"
+        verbose_name_plural = "eShipper Settings"
 
     username = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
@@ -18,4 +18,4 @@ class EShipperXMLSettings(providers.Carrier):
         return self.CARRIER_NAME
 
 
-SETTINGS = EShipperXMLSettings
+SETTINGS = EShipperSettings

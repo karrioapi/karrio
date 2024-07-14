@@ -1,6 +1,0 @@
-<EShipper xmlns="http://www.eshipper.net/xml/XMLSchema" version="3.0.0">
-    <ShipmentCancelReply>
-        <Order orderId="383363" message="Order has been cancelled!" />
-        <Status statusId="4" />
-    </ShipmentCancelReply>
-</EShipper>
