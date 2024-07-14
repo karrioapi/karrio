@@ -1,5 +1,5 @@
 {
-  "name": "karrio",
+  "name": "karriojs-karrio",
   "version": "2021.10.0",
   "description": "Karrio Javascript client for bowser apps",
   "main": "karrio.js",
