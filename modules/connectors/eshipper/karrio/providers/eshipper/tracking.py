@@ -10,10 +10,11 @@ import karrio.providers.eshipper.units as provider_units
 
 
 def parse_tracking_response(
-    _response: lib.Deserializable[typing.List[dict]],
+    _response: lib.Deserializable[typing.Union[dict, typing.List[dict]]],
     settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
-    responses = _response.deserialize()
+    response = _response.deserialize()
+    responses = response if isinstance(response, list) else [response]
 
     messages: typing.List[models.Message] = sum(
         [
@@ -48,12 +49,12 @@ def _extract_details(
                 code=event.originalEvent.name,
                 location=event.location,
                 description=event.description,
-                date=lib.fdate(event.originalEvent.eventDate),
-                time=lib.ftime(event.originalEvent.eventDate),
+                date=lib.fdate(event.originalEvent.eventDate, "%Y-%m-%d %H:%M:%S"),
+                time=lib.ftime(event.originalEvent.eventDate, "%Y-%m-%d %H:%M:%S"),
             )
             for event in details.event
         ],
-        estimated_delivery=lib.fdate(details.expectedDeliveryDate),
+        estimated_delivery=lib.fdate(details.expectedDeliveryDate, "%Y-%m-%d %H:%M:%S"),
         delivered=details.shipmentStatus.delivered,
     )
 
@@ -65,7 +66,7 @@ def tracking_request(
     request = eshipper.TrackingRequestType(
         trackingNumbers=payload.tracking_numbers,
         includePublished=True,
-        pageable=lib.to_json({"page": 0, "size": 25}),
+        pageable=lib.to_json({"page": 0, "size": 25, "sort": []}),
     )
 
     return lib.Serializable(request, lib.to_dict)

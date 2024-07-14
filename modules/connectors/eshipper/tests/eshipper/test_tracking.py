@@ -23,8 +23,10 @@ class TesteShipperTracking(unittest.TestCase):
             karrio.Tracking.fetch(self.TrackingRequest).from_(gateway)
 
             self.assertEqual(
-                mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                lib.to_query_unquote(mock.call_args[1]["url"]),
+                lib.to_query_unquote(
+                    f"{gateway.settings.server_url}/api/v2/track/events?includePublished=True&pageable=%7B%0A++++%22page%22%3A+0%2C%0A++++%22size%22%3A+25%2C%0A++++%22sort%22%3A+%5B%5D%0A%7D&trackingNumbers=1ZA82D672031801317&trackingNumbers=1Z6559X42067174856"
+                ),
             )
 
     def test_parse_tracking_response(self):
@@ -51,112 +53,103 @@ if __name__ == "__main__":
 
 
 TrackingPayload = {
-    "tracking_numbers": ["89108749065090"],
+    "tracking_numbers": ["1ZA82D672031801317", "1Z6559X42067174856"],
 }
 
-ParsedTrackingResponse = []
-
-ParsedErrorResponse = []
-
-
-TrackingRequest = [{"trackingNumber": "S34WER4S"}]
-
-TrackingResponse = """{
-  "trackingUrl": "string",
-  "brandedTrackingUrl": "string",
-  "lmcCarrierTrackingUrl": "string",
-  "carbonNeutral": true,
-  "remarks": "string",
-  "trackingDetails": [
-    {
-      "carrier": "string",
-      "carrierEventCode": "string",
-      "dateTime": "2024-05-13T03:18:15.315Z",
-      "location": "string",
-      "postalCode": "string",
-      "proofOfDelivery": "string",
-      "signatoryName": "string",
-      "description": "string",
-      "additionalInfo": "string",
-      "awbNumber": "string",
-      "vehicleId": "string",
-      "vehicleType": "Flight",
-      "eshipperOrderStatus": "string"
-    }
-  ],
-  "status": {
-    "labelGenerated": true,
-    "reachedAtWarehouse": true,
-    "inTransit": true,
-    "delivered": true,
-    "exception": true
-  },
-  "orderDetails": {
-    "carrier": {
-      "carrierName": "string",
-      "serviceName": "string",
-      "carrierLogoPath": "string"
-    },
-    "from": {
-      "attention": "string",
-      "company": "string",
-      "address1": "string",
-      "address2": "string",
-      "city": "string",
-      "province": "string",
-      "country": "string",
-      "zip": "string",
-      "email": "string",
-      "phone": "\\\\ddd\\-\\ddd\\dddd",
-      "instructions": "string",
-      "residential": true,
-      "tailgateRequired": true,
-      "confirmDelivery": true,
-      "notifyRecipient": true
-    },
-    "to": {
-      "attention": "string",
-      "company": "string",
-      "address1": "string",
-      "address2": "string",
-      "city": "string",
-      "province": "string",
-      "country": "string",
-      "zip": "string",
-      "email": "string",
-      "phone": "\\\\\\dd \\ddd \\ddd\\dddd",
-      "instructions": "string",
-      "residential": true,
-      "tailgateRequired": true,
-      "confirmDelivery": true,
-      "notifyRecipient": true
-    },
-    "packages": {
-      "type": "string",
-      "quantity": 0,
-      "weightUnit": "string",
-      "packages": [
+ParsedTrackingResponse = [
+    [
         {
-          "height": 0,
-          "length": 0,
-          "width": 0,
-          "dimensionUnit": "string",
-          "weight": 0,
-          "weightUnit": "string",
-          "type": "string",
-          "freightClass": "string",
-          "nmfcCode": "string",
-          "insuranceAmount": 0,
-          "codAmount": 0,
-          "description": "string",
-          "harmonizedCode": "string",
-          "skuCode": "string"
+            "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
+            "delivered": True,
+            "estimated_delivery": "2024-07-16",
+            "events": [
+                {
+                    "code": "string",
+                    "date": "2024-07-16",
+                    "description": "string",
+                    "location": "string",
+                    "time": "10:20",
+                }
+            ],
+            "tracking_number": "string",
         }
-      ],
-      "totalWeight": 0
-    }
-  }
+    ],
+    [],
+]
+
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "eshipper",
+            "carrier_name": "eshipper",
+            "code": "string",
+            "details": {
+                "fieldErrors": [
+                    {"field": "string", "message": "string", "objectName": "string"}
+                ],
+                "thirdPartyMessage": "string",
+                "type": "Success",
+            },
+            "message": "string",
+        }
+    ],
+]
+
+
+TrackingRequest = {
+    "includePublished": True,
+    "pageable": '{\n    "page": 0,\n    "size": 25,\n    "sort": []\n}',
+    "trackingNumbers": ["1ZA82D672031801317", "1Z6559X42067174856"],
 }
+
+TrackingResponse = """[
+  {
+    "eventTime": "string",
+    "shipDate": "string",
+    "carrierName": "string",
+    "carrierService": "string",
+    "trackingUrl": "string",
+    "trackingNumber": "string",
+    "referenceCodes": [
+      "string"
+    ],
+    "expectedDeliveryDate": "2024-07-16 10:20:44",
+    "currentStatus": "string",
+    "shipmentStatus": {
+      "labelGenerated": true,
+      "reachedAtWarehouse": true,
+      "inTransit": true,
+      "delivered": true,
+      "exception": true
+    },
+    "orderId": "string",
+    "eventId": "string",
+    "event": [
+      {
+        "dateTime": "string",
+        "description": "string",
+        "location": "string",
+        "proofOfDelivery": "string",
+        "postalCode": "string",
+        "additionalInformation": "string",
+        "originalEvent": {
+          "name": "string",
+          "identifier": "string",
+          "eventDate": "2024-07-16 10:20:44",
+          "eventLocation": "string",
+          "data": {
+            "empty": true,
+            "additionalProp1": {},
+            "additionalProp2": {},
+            "additionalProp3": {}
+          }
+        }
+      }
+    ]
+  }
+]
 """
 
 ErrorResponse = """{

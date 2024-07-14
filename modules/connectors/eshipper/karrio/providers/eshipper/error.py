@@ -9,15 +9,21 @@ def parse_error_response(
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
-    errors: list = []  # compute the carrier error object list
+    responses = response if isinstance(response, list) else [response]
+    errors = [_ for _ in responses if _.get("code")]
 
     return [
         models.Message(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            code="",
-            message="",
-            details={**kwargs},
+            code=error.get("code"),
+            message=error.get("message"),
+            details={
+                **kwargs,
+                "type": error.get("type"),
+                "fieldErrors": error.get("fieldErrors"),
+                "thirdPartyMessage": error.get("thirdPartyMessage"),
+            },
         )
         for error in errors
     ]

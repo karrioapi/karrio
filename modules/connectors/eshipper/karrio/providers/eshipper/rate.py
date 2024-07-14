@@ -1,6 +1,7 @@
 import karrio.schemas.eshipper.rate_request as eshipper
 import karrio.schemas.eshipper.rate_response as rating
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -26,7 +27,7 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
     rate = lib.to_object(rating.QuoteType, data)
-    service = provider_units.ShippingService(rate.serviceId)
+    service = provider_units.ShippingService.map(rate.serviceId)
     carrierId = provider_units.ShippingService.carrier(service.name_or_key)
     charges = [
         ("baseCharge", rate.baseCharge),
@@ -75,9 +76,10 @@ def rate_request(
         payload.options,
         package_options=packages.options,
     )
+    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
 
     request = eshipper.RateRequestType(
-        scheduledShipDate=lib.fdate(options.shipment_date),
+        scheduledShipDate=lib.fdatetime(shipping_date, output_format="%Y-%m-%d %H:%M"),
         raterequestfrom=eshipper.FromType(
             attention=shipper.contact,
             company=shipper.company_name,
@@ -112,19 +114,18 @@ def rate_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit=provider_units.PackageType.map(packages.package_type).value,
+        packagingUnit="Imperial",
         packages=eshipper.PackagesType(
-            type=None,
+            type="Package",
             packages=[
                 eshipper.PackageType(
-                    height=package.height.CM,
-                    length=package.length.CM,
-                    width=package.width.CM,
-                    weight=package.weight.KG,
+                    height=str(lib.to_int(package.height.CM)),
+                    length=str(lib.to_int(package.length.CM)),
+                    width=str(lib.to_int(package.width.CM)),
+                    weight=str(lib.to_int(package.weight.KG)),
                     dimensionUnit=units.DimensionUnit.CM.value,
-                    weight=package.weight.KG,
                     weightUnit=units.WeightUnit.KG.value,
-                    type=provider_units.PackageType.map(package.package_type).value,
+                    type=provider_units.PackagingType.map(package.packaging_type).value,
                     freightClass=None,
                     nmfcCode=None,
                     insuranceAmount=None,
@@ -162,5 +163,5 @@ def rate_request(
 
     return lib.Serializable(
         request,
-        lambda _: lib.to_dict(lib.to_json(_).replace("ratequestfrom", "from")),
+        lambda _: lib.to_dict(lib.to_json(_).replace("raterequestfrom", "from")),
     )

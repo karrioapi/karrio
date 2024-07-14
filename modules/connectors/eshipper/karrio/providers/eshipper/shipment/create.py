@@ -1,3 +1,4 @@
+import datetime
 import karrio.schemas.eshipper.shipping_request as eshipper
 import karrio.schemas.eshipper.shipping_response as shipping
 import typing
@@ -26,20 +27,17 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(shipping.ShippingResponseType, data)
-    label = shipment.labelData.label.data
+    label_type = next((_.type for _ in shipment.labelData.label), "PDF")
+    label = lib.bundle_base64([_.data for _ in shipment.labelData.label], label_type)
     trackingNumbers = [_.trackingNumber for _ in shipment.packages]
-    # invoice = ""
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.trackingNumber,
         shipment_identifier=shipment.order.orderId,
-        label_type="PDF",
-        docs=models.Documents(
-            label=label,
-            # invoice=invoice,
-        ),
+        label_type=label_type,
+        docs=models.Documents(label=label),
         meta=dict(
             carrier_tracking_link=shipment.trackingUrl,
             service_name=shipment.carrier.serviceName,
@@ -68,7 +66,7 @@ def shipment_request(
         {
             "sender": payload.shipper,
             "recipient": payload.recipient,
-            "thid_party": payload.third_party,
+            "thid_party": payload.billing_address,
         }.get(payment.paid_by)
     )
     packages = lib.to_packages(
@@ -107,9 +105,10 @@ def shipment_request(
             else None
         ),
     )
+    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
 
     request = eshipper.ShippingRequestType(
-        scheduledShipDate=lib.fdate(options.shipment_date),
+        scheduledShipDate=lib.fdatetime(shipping_date, output_format="%Y-%m-%d %H:%M"),
         shippingrequestfrom=eshipper.FromType(
             attention=shipper.contact,
             company=shipper.company_name,
@@ -144,9 +143,9 @@ def shipment_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit=provider_units.PackageType.map(packages.package_type).value,
+        packagingUnit="Imperial",
         packages=eshipper.PackagesType(
-            type=None,
+            type="Package",
             quantity=len(packages),
             weightUnit=units.WeightUnit.KG.value,
             totalWeight=packages.weight.KG,
@@ -157,9 +156,8 @@ def shipment_request(
                     width=package.width.CM,
                     weight=package.weight.KG,
                     dimensionUnit=units.DimensionUnit.CM.value,
-                    weight=package.weight.KG,
                     weightUnit=units.WeightUnit.KG.value,
-                    type=provider_units.PackageType.map(package.package_type).value,
+                    type=provider_units.PackagingType.map(package.packaging_type).value,
                     freightClass=None,
                     nmfcCode=None,
                     insuranceAmount=package.options.insurance.state,

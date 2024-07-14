@@ -4,6 +4,7 @@ import PyPDF2
 import logging
 import datetime
 import functools
+import urllib.parse
 import karrio.core.utils as utils
 import karrio.core.units as units
 import karrio.core.models as models
@@ -347,6 +348,27 @@ def to_element(
         raise Exception("Cannot parse empty XML text")
 
     return utils.XP.to_xml_or_html_element(xml_text, encoding=encoding)
+
+
+def to_query_string(data: dict) -> str:
+    param_list = functools.reduce(
+        lambda acc, item: [
+            *acc,
+            *(
+                [(item[0], _) for _ in item[1]]
+                if isinstance(item[1], list)
+                else [(item[0], item[1])]
+            ),
+        ],
+        data.items(),
+        [],
+    )
+
+    return urllib.parse.urlencode(param_list)
+
+
+def to_query_unquote(query_string: str) -> str:
+    return urllib.parse.unquote(query_string)
 
 
 def find_element(
