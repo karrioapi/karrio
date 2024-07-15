@@ -15,12 +15,10 @@ def parse_tracking_response(
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
 
-    messages = []
-    tracking_details = []
-    if response.get("key") is None:
-        tracking_details = [_extract_details(response, settings)]
-    else:
-        messages = error.parse_error_response(response, settings)
+    messages = error.parse_error_response(response, settings)
+    tracking_details = [
+        _extract_details(response, settings) if response.get("key") is None else None
+    ]
 
     return tracking_details, messages
 

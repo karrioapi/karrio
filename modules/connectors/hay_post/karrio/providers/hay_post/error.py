@@ -26,4 +26,5 @@ def parse_error_response(
             details={**kwargs},
         )
         for error in errors
+        if error.key is not None
     ]

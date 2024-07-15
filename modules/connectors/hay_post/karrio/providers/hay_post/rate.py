@@ -15,12 +15,12 @@ def parse_rate_response(
     response = _response.deserialize()
     rate_response = lib.to_dict(response.get("rates"))
 
-    messages = []
-    rates = []
-    if isinstance(rate_response, dict):
-        messages = error.parse_error_response(rate_response, settings)
-    else:
-        rates: typing.List[models.RateDetails] = [_extract_details(response, settings)]
+    messages = error.parse_error_response(response, settings)
+    rates = [
+        _extract_details(response, settings)
+        if not isinstance(rate_response, dict)
+        else None
+    ]
 
     return rates, messages
 

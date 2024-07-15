@@ -27,6 +27,15 @@ class TestHayPostRating(unittest.TestCase):
                 f"{gateway.settings.server_url}/Api/Order/CalculateTariff",
             )
 
+    def test_parse_rate_response(self):
+        with patch("karrio.mappers.hay_post.proxy.lib.request") as mock:
+            mock.return_value = RateResponse
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -93,3 +102,15 @@ RateRequest = {
     "totalPrice": 0,
     "weight": 1.0
 }
+
+RateResponse = """320"""
+ParsedRateResponse = [
+    [{
+        'carrier_id': 'hay_post',
+        'carrier_name': 'hay_post',
+        'currency': 'AMD',
+        'service': 'sprint_simple',
+        'total_charge': 320.0
+    }],
+    []
+]
