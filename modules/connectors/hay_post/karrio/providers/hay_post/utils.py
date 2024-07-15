@@ -14,20 +14,10 @@ class Settings(core.Settings):
     customer_type: str
 
     @property
-    def proxies(self):
-        # Add proxy for using hay_post API in test mode
-        if self.test_mode:
-            return {
-                'http': 'username:ppassword@ip:port',
-                'https': 'username:ppassword@ip:port',
-            }
-        return None
-
-    @property
     def proxy(self):
         # Add proxy for using hay_post API in test mode
         if self.test_mode:
-            return 'username:ppassword@ip:port'
+            return 'username:passowrd@host:port'
         return None
 
     @property
@@ -56,22 +46,22 @@ class Settings(core.Settings):
             url = "https://dev-identity.haypost.am/api/Connect/Token"
 
         try:
-            response = requests.request(
-                method="POST",
+            response = lib.request(
                 url=url,
+                method="POST",
                 data=json.dumps({
                     "username": self.username,
                     "password": self.password,
                     "customerType": self.customer_type,
                 }),
+                proxy=self.proxy,
                 headers={
                     'Content-Type': 'application/json'
                 },
-                proxies=self.proxies,
-                verify=False
             )
 
-            return response.json().get("accessToken")
-        except requests.exceptions.RequestException as e:
+            return lib.to_dict(response).get("accessToken")
+
+        except Exception as e:
             print(f"Request failed: {e}")
             return None

@@ -15,12 +15,12 @@ def parse_tracking_response(
 ) -> typing.Tuple[typing.List[models.TrackingDetails], typing.List[models.Message]]:
     response = _response.deserialize()
 
-    messages = []
-    tracking_details = []
-    if response.get('key') is None:
-        tracking_details = [_extract_details(response, settings)]
-    else:
-        messages = error.parse_error_response(response, settings)
+    messages = error.parse_error_response(response, settings)
+    tracking_details = [
+        _extract_details(response, settings)
+        if response.get('key') is None
+        else None
+    ]
 
     return tracking_details, messages
 
@@ -47,21 +47,14 @@ def _extract_details(
 
         info=models.TrackingInfo(
             customer_name=f"{detail.customer.firstName} {detail.customer.lastName}",
-            expected_delivery=lib.fdate(
-                datetime.fromisoformat(detail.orderDestinationAddress.deliveryDate).date().strftime("%Y-%m-%d")
-            ),
             note=detail.order.comment,
             order_date=lib.fdate(
                 datetime.fromisoformat(detail.order.createDate).date().strftime("%Y-%m-%d")
             ),
-
             order_id=str(detail.order.id),
             package_weight=str(detail.order.weight),
             shipment_pickup_date=lib.fdate(
                 datetime.fromisoformat(detail.order.createDate).date().strftime("%Y-%m-%d")
-            ),
-            shipment_delivery_date=lib.fdate(
-                datetime.fromisoformat(detail.orderDestinationAddress.deliveryDate).date().strftime("%Y-%m-%d")
             ),
             shipment_service=detail.order.service.name,
             shipment_origin_country=detail.returnAddress.country.name,

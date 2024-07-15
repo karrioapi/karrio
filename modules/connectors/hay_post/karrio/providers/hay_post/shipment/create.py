@@ -15,12 +15,12 @@ def parse_shipment_response(
 ) -> typing.Tuple[models.ShipmentDetails, typing.List[models.Message]]:
     response = _response.deserialize()
 
-    messages = []
-    shipment = []
-    if response.get('key') is None:
-        shipment = _extract_details(response, settings)
-    else:
-        messages = error.parse_error_response(response, settings)
+    messages = error.parse_error_response(response, settings)
+    shipment = (
+        _extract_details(response, settings)
+        if response.get('key') is None
+        else None
+    )
 
     return shipment, messages
 

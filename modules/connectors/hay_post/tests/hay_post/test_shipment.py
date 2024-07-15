@@ -27,6 +27,15 @@ class TestHayPostShipping(unittest.TestCase):
                 f"{gateway.settings.server_url}/Api/Order/CreateOrderByCustomerShort",
             )
 
+    def test_parse_shipment_response(self):
+        with patch("karrio.mappers.hay_post.proxy.lib.request") as mock:
+            mock.return_value = ShipmentResponse
+            parsed_response = (
+                karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
+            )
+
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
+
 
 if __name__ == "__main__":
     unittest.main()
@@ -91,7 +100,7 @@ ShipmentRequest = {
             "companyName": "asdasd",
             "firstName": "David"
         },
-        "street": "1 Some address Some address 1"
+        "street": "1 Some address"
     },
     "returnAddress": {
         "cityVillage": "Yerevan",
@@ -100,6 +109,31 @@ ShipmentRequest = {
             "companyName": "HayPost",
             "firstName": "GGer"
         },
-        "street": "1 Some address Some address 1"
+        "street": "1 Some address"
     },
 }
+
+ShipmentResponse = """{
+    "id": 15022783,
+    "barcode": "PAS105759416AM",
+    "revertOrderId": 15022784,
+    "revertBarcode": "APAS105759416AM",
+    "postalcode": null
+}"""
+
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "hay_post",
+        "carrier_name": "hay_post",
+        "docs": {
+            "label": "No label..."
+        },
+        "meta": {
+            "revertBarcode": "APAS105759416AM",
+            "revertOrderId": 15022784
+        },
+        "shipment_identifier": "15022783",
+        "tracking_number": "PAS105759416AM"
+    },
+    []
+]
