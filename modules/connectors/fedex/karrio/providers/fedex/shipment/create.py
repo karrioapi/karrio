@@ -16,25 +16,8 @@ def parse_shipment_response(
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
     responses = _response.deserialize()
 
-    shipment = lib.to_multi_piece_shipment(
-        [
-            (
-                f"{_}",
-                (
-                    _extract_details(
-                        response["output"]["transactionShipments"][0],
-                        settings,
-                        ctx=_response.ctx,
-                    )
-                    if response.get("errors") is None
-                    and response.get("output") is not None
-                    and response.get("output").get("transactionShipments") is not None
-                    else None
-                ),
-            )
-            for _, response in enumerate(responses, start=1)
-        ]
-    )
+    shipment = _extract_details(responses[0]["output"]["transactionShipments"][0],settings,ctx=_response.ctx)
+                
     messages: typing.List[models.Message] = sum(
         [
             provider_error.parse_error_response(response, settings)
@@ -167,17 +150,16 @@ def shipment_request(
         settings.connection_config.smart_post_hub_id.state
     )
 
-    requests = [
-        fedex.ShippingRequestType(
+    requests = fedex.ShippingRequestType(
             mergeLabelDocOption=None,
             requestedShipment=fedex.RequestedShipmentType(
                 shipDatestamp=lib.fdate(shipment_date, "%Y-%m-%d"),
                 totalDeclaredValue=lib.identity(
                     fedex.TotalDeclaredValueType(
-                        amount=lib.to_money(package.options.declared_value.state),
-                        currency=package.options.currency.state,
+                        amount=lib.to_money(options.declared_value.state),
+                        currency=options.currency.state,
                     )
-                    if package.options.declared_value.state
+                    if options.declared_value.state
                     else None
                 ),
                 shipper=fedex.ShipperType(
@@ -241,7 +223,7 @@ def shipment_request(
                 packagingType=provider_units.PackagingType.map(
                     packages.package_type or "your_packaging"
                 ).value,
-                totalWeight=package.weight.value,
+                totalWeight=packages.weight.LB,
                 origin=lib.identity(
                     fedex.OriginType(
                         address=fedex.AddressType(
@@ -312,17 +294,17 @@ def shipment_request(
                         specialServiceTypes=(
                             [
                                 option.code
-                                for option in shipment_options(package.options)
+                                for option in shipment_options(packages.options)
                             ]
-                            if shipment_options(package.options)
+                            if shipment_options(packages.options)
                             else None
                         ),
                         etdDetail=(
                             fedex.EtdDetailType(
                                 attributes=(
                                     None
-                                    if package.options.doc_files.state
-                                    or package.options.doc_references.state
+                                    if options.doc_files.state
+                                    or options.doc_references.state
                                     else ["POST_SHIPMENT_UPLOAD_REQUESTED"]
                                 ),
                                 attachedDocuments=(
@@ -483,7 +465,7 @@ def shipment_request(
                             )
                             for item in customs.commodities
                         ],
-                        isDocumentOnly=package.parcel.is_document,
+                        isDocumentOnly=packages.parcel.is_document,
                         recipientCustomsId=None,
                         customsOption=None,
                         importerOfRecord=None,
@@ -547,23 +529,14 @@ def shipment_request(
                     )
                     if (
                         customs.commercial_invoice is True
-                        and not package.options.fedex_electronic_trade_documents.state
+                        and not packages.options.fedex_electronic_trade_documents.state
                     )
                     else None
                 ),
                 rateRequestType=None,
-                preferredCurrency=package.options.currency.state,
+                preferredCurrency=packages.options.currency.state,
                 totalPackageCount=len(packages),
-                masterTrackingId=lib.identity(
-                    fedex.MasterTrackingIDType(
-                        formId=None,
-                        trackingIdType="[MASTER_ID_TYPE]",
-                        uspsApplicationId=None,
-                        trackingNumber="[MASTER_TRACKING_ID]",
-                    )
-                    if package_index > 1
-                    else None
-                ),
+                masterTrackingId=None,
                 requestedPackageLineItems=[
                     fedex.RequestedPackageLineItemType(
                         sequenceNumber=package_index,
@@ -631,23 +604,20 @@ def shipment_request(
                         ),
                         trackingNumber=None,
                     )
+                    for package_index, package in enumerate(packages, start=1)
                 ],
             ),
             labelResponseOptions="LABEL",
             accountNumber=fedex.AccountNumberType(value=settings.account_number),
             shipAction="CONFIRM",
             processingOptionType=None,
-            oneLabelAtATime=None,
+            oneLabelAtATime=False,
         )
-        for package_index, package in typing.cast(
-            typing.List[typing.Tuple[int, units.Package]],
-            enumerate(packages, 1),
-        )
-    ]
+    
 
     return lib.Serializable(
         requests,
-        lambda __: [lib.to_dict(_) for _ in __],
+        lib.to_dict,
         dict(
             shipment_date=shipment_date,
             label_type=label_type,
