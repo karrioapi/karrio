@@ -149,6 +149,11 @@ def shipment_request(
     hub_id = lib.text(options.fedex_smart_post_hub_id.state) or lib.text(
         settings.connection_config.smart_post_hub_id.state
     )
+    request_types = lib.identity(
+        settings.connection_config.rate_request_types.state
+        if any(settings.connection_config.rate_request_types.state or [])
+        else ["LIST", "ACCOUNT", *([] if "currency" not in options else ["PREFERRED"])]
+    )
 
     requests = fedex.ShippingRequestType(
             mergeLabelDocOption=None,
@@ -533,7 +538,7 @@ def shipment_request(
                     )
                     else None
                 ),
-                rateRequestType=None,
+                rateRequestType=request_types,
                 preferredCurrency=packages.options.currency.state,
                 totalPackageCount=len(packages),
                 masterTrackingId=None,
