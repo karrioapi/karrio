@@ -23,6 +23,16 @@ def parse_error_response(
                 *(
                     [
                         {
+                            "message" : result["output"]["message"]
+                        }
+                    ]
+                    if "message" in result.get("output", {})
+                    and isinstance(result["output"]["message"], str)
+                    else []
+                ),
+                *(
+                    [
+                        {
                             **result["error"],
                             "tracking_number": result.get("trackingNumberInfo", {}).get(
                                 "trackingNumber"
