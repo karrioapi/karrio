@@ -73,6 +73,11 @@ class SurchargeType:
     amount: Optional[float] = None
     level: Optional[str] = None
 
+@s(auto_attribs=True)
+class TaxesType:
+    type: Optional[str] = None
+    description: Optional[str] = None
+    amount: Optional[float] = None
 
 @s(auto_attribs=True)
 class PackageRateDetailType:
@@ -132,6 +137,7 @@ class ShipmentRateDetailType:
     totalSurcharges: Optional[float] = None
     totalFreightDiscount: Optional[float] = None
     surCharges: List[SurchargeType] = JList[SurchargeType]
+    taxes: List[TaxesType] = JList[TaxesType]
     pricingCode: Optional[str] = None
     currencyExchangeRate: Optional[CurrencyExchangeRateType] = JStruct[CurrencyExchangeRateType]
     totalBillingWeight: Optional[BillingWeightType] = JStruct[BillingWeightType]
