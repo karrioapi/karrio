@@ -51,13 +51,12 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable:
-        requests = request.serialize()
         responses = [
             lib.request(
                 url=f"{self.settings.server_url}/ship/v1/shipments",
                 data=lib.to_json(
                     provider_utils.process_request(
-                        self.settings, requests[0], "shipments", request.ctx
+                        self.settings, request.serialize(), "shipments", request.ctx
                     )
                 ),
                 trace=self.trace_as("json"),
@@ -71,40 +70,6 @@ class Proxy(proxy.Proxy):
                 on_error=lambda b: provider_utils.parse_response(b.read()),
             )
         ]
-        master_id = (
-            lib.to_dict(responses[0])
-            .get("output", {})
-            .get("transactionShipments", [{}])[0]
-            .get("masterTrackingNumber")
-        )
-
-        if len(requests) > 1 and master_id is not None:
-            responses += lib.run_asynchronously(
-                lambda _: lib.request(
-                    url=f"{self.settings.server_url}/ship/v1/shipments",
-                    data=(
-                        lib.to_json(
-                            provider_utils.process_request(
-                                self.settings,
-                                _,
-                                "shipments",
-                            )
-                        )
-                        .replace("[MASTER_ID_TYPE]", master_id.TrackingIdType)
-                        .replace("[MASTER_TRACKING_ID]", master_id.TrackingNumber)
-                    ),
-                    trace=self.trace_as("json"),
-                    method="POST",
-                    headers={
-                        "x-locale": "en_US",
-                        "content-type": "application/json",
-                        "authorization": f"Bearer {self.settings.access_token}",
-                    },
-                    decoder=provider_utils.parse_response,
-                    on_error=lambda b: provider_utils.parse_response(b.read()),
-                ),
-                requests[1:],
-            )
 
         return lib.Deserializable(
             responses,
