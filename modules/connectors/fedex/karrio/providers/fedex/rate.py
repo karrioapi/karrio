@@ -39,9 +39,9 @@ def _extract_details(
     )
     charges = [
         ("Base Charge", lib.to_money(details.totalBaseCharge)),
-        ("Discounts", lib.to_money(details.totalDiscounts)),
-        ("VAT Charge", lib.to_money(details.totalVatCharge)),
-        ("Duties and Taxes", lib.to_money(details.totalDutiesAndTaxes)),
+        *([("Discounts", lib.to_money(details.totalDiscounts))] if details.totalDiscounts is not None else []),
+        *([("VAT Charge", lib.to_money(details.totalVatCharge))] if details.totalVatCharge is not None else []),
+        *[(_.type, lib.to_money(_.amount)) for _ in details.shipmentRateDetail.taxes or []],
         *[(_.description, lib.to_money(_.amount)) for _ in details.shipmentRateDetail.surCharges or []],
     ]
     total_charge = lib.to_money(
