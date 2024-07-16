@@ -186,8 +186,9 @@ def parse_response(binary_string):
 def process_request(
     settings: Settings, data: dict, request_type: str, ctx: dict = None
 ) -> dict:
-    if settings.test_mode is False:
-        return data
+    # disabling muck data for test as it works even with real data in test mode
+    # if settings.test_mode is False:
+    return data
 
     if request_type == "rates":
         if (
