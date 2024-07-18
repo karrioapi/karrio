@@ -132,7 +132,7 @@ redis==5.0.1
 referencing==0.33.0
 requests==2.32.0
 rpds-py==0.18.0
-sentry-sdk==1.40.5
+sentry-sdk==2.8.0
 six==1.16.0
 sqlparse==0.5.0
 strawberry-graphql==0.219.2
