@@ -1,5 +1,6 @@
 import pydoc
 import typing
+import logging
 import datetime
 import strawberry
 import strawberry_django
@@ -23,6 +24,7 @@ import karrio.server.user.serializers as user_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 
 User = get_user_model()
+logger = logging.getLogger(__name__)
 
 
 @strawberry_django.type(User)
@@ -1096,7 +1098,7 @@ class ConnectionType:
         carrier: providers.Carrier,
         settings_types: dict = None,
     ) -> "CarrierConnectionType":
-        carrier_name = (
+        carrier_name = lib.identity(
             carrier.carrier_name
             if carrier.carrier_name in providers.MODELS
             else "generic"
@@ -1107,13 +1109,13 @@ class ConnectionType:
             for key in model_to_dict(carrier.settings).keys()
             if key in _RawSettings.__annotations__
         }
-        services = (
+        services = lib.identity(
             dict(services=carrier.settings.services.all())
             if "services" in settings
             else {}
         )
         display_name = dict(display_name=carrier.carrier_display_name)
-        rate_sheet = (
+        rate_sheet = lib.identity(
             dict(rate_sheet=carrier.settings.rate_sheet)
             if "rate_sheet" in settings
             else {}
@@ -1129,6 +1131,7 @@ class ConnectionType:
         )
 
     @staticmethod
+    @utils.utils.error_wrapper
     @utils.authentication_required
     def resolve_list_legacy(
         info,
@@ -1139,10 +1142,10 @@ class ConnectionType:
             _filter.to_dict(),
             providers.Carrier.access_by(info.context.request).filter(is_system=False),
         ).qs
-
-        return list(map(ConnectionType.parse, connections))
+        return [ConnectionType.parse(_) for _ in connections if _.settings is not None]
 
     @staticmethod
+    @utils.utils.error_wrapper
     @utils.authentication_required
     def resolve(
         info,
@@ -1154,6 +1157,7 @@ class ConnectionType:
         return ConnectionType.parse(connection) if connection else None
 
     @staticmethod
+    @utils.utils.error_wrapper
     @utils.authentication_required
     def resolve_list(
         info,
