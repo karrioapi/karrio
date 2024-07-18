@@ -1,5 +1,5 @@
 import karrio.schemas.fedex.shipping_request as fedex
-import karrio.schemas.fedex.shipping_response as shipping
+import karrio.schemas.fedex.shipping_responses as shipping
 import typing
 import datetime
 import karrio.lib as lib
@@ -44,11 +44,10 @@ def _extract_details(
         [_.packageDocuments for _ in shipment.pieceResponses],
         start=[],
     )
-    documents = pieceDocuments if len(pieceDocuments) > 0 else shipment.shipmentDocuments
 
     tracking_number = shipment.masterTrackingNumber
-    invoices = [_ for _ in documents if "INVOICE" in _.contentType]
-    labels = [_ for _ in documents if "LABEL" in _.contentType]
+    invoices = [_ for _ in shipment.shipmentDocuments if "INVOICE" in _.contentType]
+    labels = [_ for _ in pieceDocuments if "LABEL" in _.contentType]
 
     invoice_type = invoices[0].docType if len(invoices) > 0 else "PDF"
     invoice = lib.identity(
@@ -136,7 +135,7 @@ def shipment_request(
         or dict(
             sender=payload.shipper,
             recipient=payload.recipient,
-            third_party=customs.duty_billing_address,
+            third_party=customs.duty_billing_address or billing_address or shipper,
         ).get(customs.duty.paid_by)
     )
     package_options = lambda _options: [
@@ -226,9 +225,11 @@ def shipment_request(
             recipientLocationNumber=None,
             pickupType="DROPOFF_AT_FEDEX_LOCATION",
             serviceType=service,
-            packagingType=provider_units.PackagingType.map(
-                packages.package_type or "your_packaging"
-            ).value,
+            packagingType=lib.identity(
+                provider_units.PackagingType.map(
+                    packages.package_type or "your_packaging"
+                ).value
+            ),
             totalWeight=packages.weight.LB,
             origin=lib.identity(
                 fedex.OriginType(
@@ -297,12 +298,12 @@ def shipment_request(
             ),
             shipmentSpecialServices=lib.identity(
                 fedex.ShipmentSpecialServicesType(
-                    specialServiceTypes=(
+                    specialServiceTypes=lib.identity(
                         [option.code for option in shipment_options(packages.options)]
                         if shipment_options(packages.options)
                         else None
                     ),
-                    etdDetail=(
+                    etdDetail=lib.identity(
                         fedex.EtdDetailType(
                             attributes=(
                                 None
@@ -341,7 +342,23 @@ def shipment_request(
                     internationalTrafficInArmsRegulationsDetail=None,
                     pendingShipmentDetail=None,
                     holdAtLocationDetail=None,
-                    shipmentCODDetail=None,
+                    shipmentCODDetail=lib.identity(
+                        fedex.ShipmentCODDetailType(
+                            addTransportationChargesDetail=None,
+                            codRecipient=None,
+                            remitToName=None,
+                            codCollectionType="CASH",
+                            financialInstitutionContactAndAddress=None,
+                            codCollectionAmount=fedex.TotalDeclaredValueType(
+                                amount=lib.to_money(options.cash_on_delivery.state),
+                                currency=options.currency.state or "USD",
+                            ),
+                            returnReferenceIndicatorType=None,
+                            shipmentCodAmount=None,
+                        )
+                        if options.cash_on_delivery.state
+                        else None
+                    ),
                     shipmentDryIceDetail=None,
                     internationalControlledExportDetail=None,
                     homeDeliveryPremiumDetail=None,
@@ -349,7 +366,31 @@ def shipment_request(
                 if any(shipment_options(packages.options))
                 else None
             ),
-            emailNotificationDetail=None,
+            emailNotificationDetail=lib.identity(
+                fedex.RequestedShipmentEmailNotificationDetailType(
+                    aggregationType="PER_SHIPMENT",
+                    emailNotificationRecipients=[
+                        fedex.EmailNotificationRecipientType(
+                            name=recipient.person_name,
+                            emailNotificationRecipientType="RECIPIENT",
+                            emailAddress=lib.identity(
+                                options.email_notification_to.state or recipient.email
+                            ),
+                            notificationFormatType="HTML",
+                            notificationType="EMAIL",
+                            notificationEventType=[
+                                "ON_DELIVERY",
+                                "ON_EXCEPTION",
+                                "ON_SHIPMENT",
+                            ],
+                        )
+                    ],
+                    personalMessage=None,
+                )
+                if options.email_notification.state
+                or any([options.email_notification_to.state, recipient.email])
+                else None
+            ),
             expressFreightDetail=None,
             variableHandlingChargeDetail=None,
             customsClearanceDetail=lib.identity(
@@ -388,21 +429,29 @@ def shipment_request(
                     dutiesPayment=fedex.DutiesPaymentType(
                         payor=fedex.PayorType(
                             responsibleParty=fedex.ResponsiblePartyType(
-                                address=fedex.AddressType(
-                                    streetLines=duty_billing_address.address_lines,
-                                    city=duty_billing_address.city,
-                                    stateOrProvinceCode=duty_billing_address.state_code,
-                                    postalCode=duty_billing_address.postal_code,
-                                    countryCode=duty_billing_address.country_code,
-                                    residential=duty_billing_address.residential,
+                                address=lib.identity(
+                                    fedex.AddressType(
+                                        streetLines=duty_billing_address.address_lines,
+                                        city=duty_billing_address.city,
+                                        stateOrProvinceCode=duty_billing_address.state_code,
+                                        postalCode=duty_billing_address.postal_code,
+                                        countryCode=duty_billing_address.country_code,
+                                        residential=duty_billing_address.residential,
+                                    )
+                                    if duty_billing_address
+                                    else None
                                 ),
-                                contact=fedex.ResponsiblePartyContactType(
-                                    personName=duty_billing_address.contact,
-                                    emailAddress=duty_billing_address.email,
-                                    phoneNumber=duty_billing_address.phone_number,
-                                    phoneExtension=None,
-                                    companyName=duty_billing_address.company_name,
-                                    faxNumber=None,
+                                contact=lib.identity(
+                                    fedex.ResponsiblePartyContactType(
+                                        personName=duty_billing_address.contact,
+                                        emailAddress=duty_billing_address.email,
+                                        phoneNumber=duty_billing_address.phone_number,
+                                        phoneExtension=None,
+                                        companyName=duty_billing_address.company_name,
+                                        faxNumber=None,
+                                    )
+                                    if duty_billing_address
+                                    else None
                                 ),
                                 accountNumber=customs.duty.account_number,
                                 tins=(
@@ -485,7 +534,10 @@ def shipment_request(
                     ),
                     partiesToTransactionAreRelated=None,
                     declarationStatementDetail=None,
-                    insuranceCharge=None,
+                    insuranceCharge=fedex.TotalDeclaredValueType(
+                        amount=packages.options.insurance.state or 0.0,
+                        currency=packages.options.currency.state or "USD",
+                    ),
                 )
                 if payload.customs is not None
                 else None
@@ -524,7 +576,17 @@ def shipment_request(
                     usmcaCommercialInvoiceCertificationOfOriginDetail=None,
                     shippingDocumentTypes=["COMMERCIAL_INVOICE"],
                     certificateOfOrigin=None,
-                    commercialInvoiceDetail=None,
+                    commercialInvoiceDetail=fedex.CertificateOfOriginType(
+                        customerImageUsages=[],
+                        documentFormat=fedex.DocumentFormatType(
+                            provideInstructions=None,
+                            optionsRequested=None,
+                            stockType="PAPER_LETTER",
+                            dispositions=[],
+                            locale=None,
+                            docType="PDF",
+                        ),
+                    ),
                 )
                 if (
                     customs.commercial_invoice is True
@@ -538,10 +600,8 @@ def shipment_request(
             masterTrackingId=None,
             requestedPackageLineItems=[
                 fedex.RequestedPackageLineItemType(
-                    sequenceNumber=package_index,
-                    subPackagingType=lib.identity(
-                        provider_units.SubPackageType.map(package.packaging_type).value
-                    ),
+                    sequenceNumber=None,
+                    subPackagingType="OTHER",
                     customerReferences=[],
                     declaredValue=fedex.TotalDeclaredValueType(
                         amount=lib.identity(
@@ -572,7 +632,7 @@ def shipment_request(
                         )
                         else None
                     ),
-                    groupPackageCount=1,
+                    groupPackageCount=package_index,
                     itemDescriptionForClearance=None,
                     contentRecord=[],
                     itemDescription=package.parcel.description,
@@ -582,7 +642,7 @@ def shipment_request(
                             option.code for option in package_options(package.options)
                         ],
                         priorityAlertDetail=None,
-                        signatureOptionType=(
+                        signatureOptionType=lib.identity(
                             provider_units.SignatureOptionType.map(
                                 package.options.fedex_signature_option.state
                             ).value

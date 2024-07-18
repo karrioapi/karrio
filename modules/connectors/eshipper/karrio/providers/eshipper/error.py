@@ -10,7 +10,17 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
-    errors = [_ for _ in responses if _.get("code")]
+    errors = [
+        *[_ for _ in responses if _.get("code")],
+        *sum(
+            [
+                [dict(code="warning", message=__) for __ in _.get("warnings")]
+                for _ in responses
+                if _.get("warnings")
+            ],
+            [],
+        ),
+    ]
 
     return [
         models.Message(

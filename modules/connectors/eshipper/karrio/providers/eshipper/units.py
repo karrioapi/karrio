@@ -5,19 +5,31 @@ import karrio.core.units as units
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
-    Envelope = "Envelope"
-    Pak = "Pak"
-    Package = "Package"
+    Drum = "Drum"
+    Boxes = "Boxes"
+    Rolls = "Rolls"
+    Pipes = "Pipes"
+    Bales = "Bales"
+    Bags = "Bags"
     Pallet = "Pallet"
+    Cylinder = "Cylinder"
+    Pails = "Pails"
+    Reels = "Reels"
+    Crate = "Crate"
+    Bucket = "Bucket"
+    Bundle = "Bundle"
+    Can = "Can"
+    Carton = "Carton"
+    Case = "Case"
+    Coil = "Coil"
+    Pieces = "Pieces"
+    Skid = "Skid"
 
     """ Unified Packaging type mapping """
-    envelope = Envelope
-    pak = Pak
-    tube = Package
+    tube = Cylinder
     pallet = Pallet
-    small_box = Package
-    medium_box = Package
-    your_packaging = Package
+    small_box = Boxes
+    medium_box = Boxes
 
 
 class ShippingService(lib.StrEnum):
@@ -221,11 +233,15 @@ class ShippingService(lib.StrEnum):
     # fmt: on
 
     @staticmethod
-    def carrier(service: str) -> str:
+    def carrier_id(service: str) -> str:
         return next(
             (_ for _, __ in CARRIER_SERVICES.items() if service in __),
             "5000011",
         )
+
+    @staticmethod
+    def carrier(service: str) -> str:
+        return CARRIER_IDS.get(ShippingService.carrier_id(service))
 
 
 class ShippingOption(lib.Enum):

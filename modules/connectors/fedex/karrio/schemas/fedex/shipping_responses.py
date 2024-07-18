@@ -1,5 +1,5 @@
 from attr import s
-from typing import Optional, List, Any
+from typing import Optional, Any, List, Union
 from jstruct import JList, JStruct
 
 
@@ -8,6 +8,7 @@ class AlertType:
     code: Optional[str] = None
     alertType: Optional[str] = None
     message: Optional[str] = None
+    parameterList: List[Any] = []
 
 
 @s(auto_attribs=True)
@@ -76,7 +77,7 @@ class CompletedHoldAtLocationDetailType:
 @s(auto_attribs=True)
 class WeightType:
     units: Optional[str] = None
-    value: Optional[int] = None
+    value: Optional[float] = None
 
 
 @s(auto_attribs=True)
@@ -206,7 +207,7 @@ class CompletedPackageDetailOperationalDetailType:
 
 
 @s(auto_attribs=True)
-class SurchargeType:
+class PackageRateDetailSurchargeType:
     amount: Optional[str] = None
     surchargeType: Optional[str] = None
     level: Optional[str] = None
@@ -224,7 +225,7 @@ class PackageRateDetailType:
     rateType: Optional[str] = None
     billingWeight: Optional[WeightType] = JStruct[WeightType]
     netFreight: Optional[float] = None
-    surcharges: List[SurchargeType] = JList[SurchargeType]
+    surcharges: List[PackageRateDetailSurchargeType] = JList[PackageRateDetailSurchargeType]
     totalSurcharges: Optional[float] = None
     netFedExCharge: Optional[float] = None
     netCharge: Optional[float] = None
@@ -318,7 +319,7 @@ class CompletedShipmentDetailOperationalDetailType:
     postalCode: Optional[int] = None
     scac: Optional[str] = None
     deliveryDay: Optional[str] = None
-    originLocationId: Optional[int] = None
+    originLocationId: Optional[str] = None
     countryCode: Optional[str] = None
     astraDescription: Optional[str] = None
     originLocationNumber: Optional[int] = None
@@ -352,13 +353,29 @@ class NameType:
 @s(auto_attribs=True)
 class ServiceDescriptionType:
     serviceType: Optional[str] = None
-    code: Optional[int] = None
+    code: Optional[str] = None
     names: List[NameType] = JList[NameType]
     operatingOrgCodes: List[str] = []
     astraDescription: Optional[str] = None
     description: Optional[str] = None
     serviceId: Optional[str] = None
     serviceCategory: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class PartType:
+    documentPartSequenceNumber: Optional[int] = None
+    image: Optional[str] = None
+
+
+@s(auto_attribs=True)
+class ShipmentDocumentType:
+    type: Optional[str] = None
+    shippingDocumentDisposition: Optional[str] = None
+    imageType: Optional[str] = None
+    resolution: Optional[int] = None
+    copiesToPrint: Optional[int] = None
+    parts: List[PartType] = JList[PartType]
 
 
 @s(auto_attribs=True)
@@ -377,8 +394,16 @@ class FreightDiscountType:
 
 
 @s(auto_attribs=True)
+class ShipmentRateDetailSurchargeType:
+    amount: Union[float, Any, str]
+    surchargeType: Optional[str] = None
+    level: Optional[str] = None
+    description: Optional[str] = None
+
+
+@s(auto_attribs=True)
 class TaxType:
-    amount: Optional[int] = None
+    amount: Optional[float] = None
     level: Optional[str] = None
     description: Optional[str] = None
     type: Optional[str] = None
@@ -403,7 +428,7 @@ class ShipmentRateDetailType:
     shipmentLegRateDetails: List[Any] = []
     dimDivisor: Optional[int] = None
     rateType: Optional[str] = None
-    surcharges: List[SurchargeType] = JList[SurchargeType]
+    surcharges: List[ShipmentRateDetailSurchargeType] = JList[ShipmentRateDetailSurchargeType]
     totalSurcharges: Optional[float] = None
     totalBillingWeight: Optional[WeightType] = JStruct[WeightType]
     freightDiscounts: List[FreightDiscountType] = JList[FreightDiscountType]
@@ -436,6 +461,7 @@ class CompletedShipmentDetailType:
     documentRequirements: Optional[DocumentRequirementsType] = JStruct[DocumentRequirementsType]
     exportComplianceStatement: Optional[str] = None
     accessDetail: Optional[AccessDetailType] = JStruct[AccessDetailType]
+    shipmentDocuments: List[ShipmentDocumentType] = JList[ShipmentDocumentType]
 
 
 @s(auto_attribs=True)
@@ -483,6 +509,8 @@ class PieceResponseType:
     trackingNumber: Optional[str] = None
     successful: Optional[bool] = None
     customerReferences: List[CustomerReferenceType] = JList[CustomerReferenceType]
+    netRateAmount: Optional[float] = None
+    currency: Optional[str] = None
 
 
 @s(auto_attribs=True)

@@ -1,7 +1,7 @@
-import datetime
 import karrio.schemas.eshipper.shipping_request as eshipper
 import karrio.schemas.eshipper.shipping_response as shipping
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -59,7 +59,7 @@ def shipment_request(
     recipient = lib.to_address(payload.recipient)
     is_intl = shipper.country_code != recipient.country_code
     service = provider_units.ShippingService.map(payload.service).value_or_key
-    carrier_id = provider_units.ShippingService.carrier(service)
+    carrier_id = provider_units.ShippingService.carrier_id(service)
 
     payment = payload.payment or models.Payment()
     payor = lib.to_address(
@@ -158,7 +158,7 @@ def shipment_request(
                     dimensionUnit=units.DimensionUnit.CM.value,
                     weightUnit=units.WeightUnit.KG.value,
                     type=provider_units.PackagingType.map(package.packaging_type).value,
-                    freightClass=None,
+                    freightClass=package.parcel.freight_class,
                     nmfcCode=None,
                     insuranceAmount=package.options.insurance.state,
                     codAmount=None,

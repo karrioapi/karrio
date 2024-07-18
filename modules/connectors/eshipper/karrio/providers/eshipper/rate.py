@@ -28,7 +28,8 @@ def _extract_details(
 ) -> models.RateDetails:
     rate = lib.to_object(rating.QuoteType, data)
     service = provider_units.ShippingService.map(str(rate.serviceId))
-    carrierId = provider_units.ShippingService.carrier(service.name_or_key)
+    carrierId = provider_units.ShippingService.carrier_id(service.value_or_key)
+    rate_provider = provider_units.ShippingService.carrier(service.value_or_key)
     charges = [
         ("baseCharge", rate.baseCharge),
         ("fuelSurcharge", rate.fuelSurcharge),
@@ -60,6 +61,7 @@ def _extract_details(
             serviceName=rate.serviceName,
             carrierName=rate.carrierName,
             carrierId=carrierId,
+            rate_provider=rate_provider,
         ),
     )
 
@@ -125,7 +127,7 @@ def rate_request(
                     weight=str(lib.to_int(package.weight.KG)),
                     dimensionUnit=units.DimensionUnit.CM.value,
                     weightUnit=units.WeightUnit.KG.value,
-                    type=provider_units.PackagingType.map(package.packaging_type).value,
+                    type=None,
                     freightClass=None,
                     nmfcCode=None,
                     insuranceAmount=None,
