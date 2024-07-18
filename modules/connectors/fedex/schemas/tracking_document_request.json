@@ -1,0 +1,18 @@
+{
+  "trackDocumentDetail": {
+    "documentType": "SIGNATURE_PROOF_OF_DELIVERY",
+    "documentFormat": "PNG"
+  },
+  "trackDocumentSpecification": [
+    {
+      "trackingNumberInfo": {
+        "trackingNumber": "128667043726",
+        "carrierCode": "FDXE",
+        "trackingNumberUniqueId": "245822~123456789012~FDEG"
+      },
+      "shipDateBegin": "2020-03-29",
+      "shipDateEnd": "2020-04-01",
+      "accountNumber": "XXX61073"
+    }
+  ]
+}

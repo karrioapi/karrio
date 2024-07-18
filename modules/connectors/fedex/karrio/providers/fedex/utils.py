@@ -1,5 +1,5 @@
+import karrio.schemas.fedex.tracking_document_request as fedex
 import gzip
-import jstruct
 import datetime
 import urllib.parse
 import karrio.lib as lib
@@ -140,6 +140,42 @@ def login(settings: Settings, client_id: str = None, client_secret: str = None):
     )
 
     return {**response, "expiry": lib.fdatetime(expiry)}
+
+
+def get_proof_of_delivery(tracking_number: str, settings: Settings):
+    import karrio.providers.fedex.error as error
+
+    request = fedex.TrackingDocumentRequestType(
+        trackDocumentSpecification=[
+            fedex.TrackDocumentSpecificationType(
+                trackingNumberInfo=fedex.TrackingNumberInfoType(
+                    trackingNumber=tracking_number
+                )
+            )
+        ],
+        trackDocumentDetail=fedex.TrackDocumentDetailType(
+            documentType="SIGNATURE_PROOF_OF_DELIVERY",
+            documentFormat="PNG",
+        ),
+    )
+    response = lib.to_dict(
+        lib.request(
+            url=f"{settings.server_url}/track/v1/trackingdocuments",
+            data=lib.to_json(request),
+            method="POST",
+            decoder=parse_response,
+            on_error=lambda b: parse_response(b.read()),
+        )
+    )
+
+    messages = error.parse_error_response(response, settings)
+
+    if any(messages):
+        return None
+
+    return lib.failsafe(
+        lambda: lib.bundle_base64(response["output"]["documents"], format="PNG")
+    )
 
 
 def parse_response(binary_string):
