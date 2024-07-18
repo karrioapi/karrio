@@ -21,11 +21,7 @@ def parse_error_response(
                     else []
                 ),
                 *(
-                    [
-                        {
-                            "message" : result["output"]["message"]
-                        }
-                    ]
+                    [{"message": result["output"]["message"]}]
                     if "message" in result.get("output", {})
                     and isinstance(result["output"]["message"], str)
                     else []

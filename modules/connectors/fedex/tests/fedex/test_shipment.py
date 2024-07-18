@@ -210,121 +210,216 @@ ParsedCancelShipmentResponse = [
 ]
 
 
-ShipmentRequest = [
-    {
-        "accountNumber": {"value": "2349857"},
-        "labelResponseOptions": "LABEL",
-        "requestedShipment": {
-            "blockInsightVisibility": False,
-            "customsClearanceDetail": {
-                "commercialInvoice": {
-                    "customerReferences": [
-                        {
-                            "customerReferenceType": "INVOICE_NUMBER",
-                            "value": "123456789",
-                        }
-                    ],
-                    "originatorName": "Input Your Information",
-                    "termsOfSale": "DDU",
-                },
-                "commodities": [
+ShipmentRequest = {
+    "accountNumber": {"value": "2349857"},
+    "labelResponseOptions": "LABEL",
+    "oneLabelAtATime": False,
+    "requestedShipment": {
+        "blockInsightVisibility": False,
+        "customsClearanceDetail": {
+            "commercialInvoice": {
+                "customerReferences": [
                     {
-                        "countryOfManufacture": "US",
-                        "description": "test",
-                        "name": "test",
-                        "harmonizedCode": "00339BB",
-                        "numberOfPieces": 1,
-                        "quantity": 1,
-                        "quantityUnits": "PCS",
-                        "weight": {"units": "LB", "value": 10.0},
-                        "customsValue": {"amount": 1.0, "currency": "USD"},
+                        "customerReferenceType": "INVOICE_NUMBER",
+                        "value": "123456789",
                     }
                 ],
-                "dutiesPayment": {
-                    "paymentType": "SENDER",
-                    "payor": {
-                        "responsibleParty": {
-                            "address": {
-                                "city": "MEMPHIS",
-                                "countryCode": "US",
-                                "postalCode": "38117",
-                                "residential": False,
-                                "stateOrProvinceCode": "TN",
-                                "streetLines": [
-                                    "Input Your Information",
-                                    "Input Your Information",
-                                ],
-                            },
-                            "contact": {
-                                "companyName": "Input Your Information",
-                                "emailAddress": "Input Your Information",
-                                "personName": "Input Your Information",
-                                "phoneNumber": "Input Your Information",
-                            },
-                        }
-                    },
+                "originatorName": "Input Your Information",
+                "termsOfSale": "DDU",
+            },
+            "commodities": [
+                {
+                    "countryOfManufacture": "US",
+                    "description": "test",
+                    "name": "test",
+                    "harmonizedCode": "00339BB",
+                    "numberOfPieces": 1,
+                    "quantity": 1,
+                    "quantityUnits": "PCS",
+                    "weight": {"units": "LB", "value": 10.0},
+                    "customsValue": {"amount": 1.0, "currency": "USD"},
+                }
+            ],
+            "dutiesPayment": {
+                "paymentType": "SENDER",
+                "payor": {
+                    "responsibleParty": {
+                        "address": {
+                            "city": "MEMPHIS",
+                            "countryCode": "US",
+                            "postalCode": "38117",
+                            "residential": False,
+                            "stateOrProvinceCode": "TN",
+                            "streetLines": [
+                                "Input Your Information",
+                                "Input Your Information",
+                            ],
+                        },
+                        "contact": {
+                            "companyName": "Input Your Information",
+                            "emailAddress": "Input Your Information",
+                            "personName": "Input Your Information",
+                            "phoneNumber": "Input Your Information",
+                        },
+                    }
                 },
-                "isDocumentOnly": False,
             },
-            "labelSpecification": {
-                "imageType": "PDF",
-                "labelFormatType": "COMMON2D",
-                "labelOrder": "SHIPPING_LABEL_FIRST",
-                "labelStockType": "STOCK_4X6",
-            },
-            "packagingType": "YOUR_PACKAGING",
-            "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
-            "preferredCurrency": "USD",
-            "recipients": [
-                {
-                    "address": {
-                        "city": "RICHMOND",
-                        "countryCode": "CA",
-                        "postalCode": "V7C4v7",
-                        "residential": False,
-                        "stateOrProvinceCode": "BC",
-                        "streetLines": [
-                            "Input Your Information",
-                            "Input Your Information",
-                        ],
-                    },
-                    "contact": {
-                        "companyName": "Input Your Information",
-                        "emailAddress": "Input Your Information",
-                        "personName": "Input Your Information",
-                        "phoneNumber": "Input Your Information",
-                    },
-                }
-            ],
-            "requestedPackageLineItems": [
-                {
-                    "declaredValue": {"amount": 1.0, "currency": "USD"},
-                    "dimensions": {
-                        "height": 12.0,
-                        "length": 12.0,
-                        "units": "IN",
-                        "width": 12.0,
-                    },
-                    "groupPackageCount": 1,
-                    "packageSpecialServices": {
-                        "signatureOptionType": "SERVICE_DEFAULT",
-                        "specialServiceTypes": ["SIGNATURE_OPTION"],
-                    },
-                    "sequenceNumber": 1,
-                    "subPackagingType": "OTHER",
-                    "weight": {"units": "LB", "value": 20.0},
-                }
-            ],
-            "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-            "shipDatestamp": "2024-02-15",
-            "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
-            "shipper": {
+            "isDocumentOnly": False,
+        },
+        "labelSpecification": {
+            "imageType": "PDF",
+            "labelFormatType": "COMMON2D",
+            "labelOrder": "SHIPPING_LABEL_FIRST",
+            "labelStockType": "STOCK_4X6",
+        },
+        "packagingType": "YOUR_PACKAGING",
+        "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
+        "preferredCurrency": "USD",
+        "rateRequestType": ["LIST", "ACCOUNT", "PREFERRED"],
+        "recipients": [
+            {
                 "address": {
-                    "city": "MEMPHIS",
-                    "countryCode": "US",
-                    "postalCode": "38117",
+                    "city": "RICHMOND",
+                    "countryCode": "CA",
+                    "postalCode": "V7C4v7",
                     "residential": False,
-                    "stateOrProvinceCode": "TN",
+                    "stateOrProvinceCode": "BC",
+                    "streetLines": [
+                        "Input Your Information",
+                        "Input Your Information",
+                    ],
+                },
+                "contact": {
+                    "companyName": "Input Your Information",
+                    "emailAddress": "Input Your Information",
+                    "personName": "Input Your Information",
+                    "phoneNumber": "Input Your Information",
+                },
+            }
+        ],
+        "requestedPackageLineItems": [
+            {
+                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "dimensions": {
+                    "height": 12.0,
+                    "length": 12.0,
+                    "units": "IN",
+                    "width": 12.0,
+                },
+                "groupPackageCount": 1,
+                "packageSpecialServices": {
+                    "signatureOptionType": "SERVICE_DEFAULT",
+                    "specialServiceTypes": ["SIGNATURE_OPTION"],
+                },
+                "sequenceNumber": 1,
+                "subPackagingType": "OTHER",
+                "weight": {"units": "LB", "value": 20.0},
+            }
+        ],
+        "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
+        "shipDatestamp": "2024-02-15",
+        "shipmentSpecialServices": {"specialServiceTypes": ["FEDEX_ONE_RATE"]},
+        "shipper": {
+            "address": {
+                "city": "MEMPHIS",
+                "countryCode": "US",
+                "postalCode": "38117",
+                "residential": False,
+                "stateOrProvinceCode": "TN",
+                "streetLines": ["Input Your Information", "Input Your Information"],
+            },
+            "contact": {
+                "companyName": "Input Your Information",
+                "emailAddress": "Input Your Information",
+                "personName": "Input Your Information",
+                "phoneNumber": "Input Your Information",
+            },
+        },
+        "shippingChargesPayment": {
+            "paymentType": "THIRD_PARTY",
+            "payor": {"responsibleParty": {"accountNumber": "2349857"}},
+        },
+        "shippingDocumentSpecification": {
+            "shippingDocumentTypes": ["COMMERCIAL_INVOICE"]
+        },
+        "totalPackageCount": 1,
+        "totalWeight": 20.0,
+    },
+    "shipAction": "CONFIRM",
+}
+
+
+MultiPieceShipmentRequest = {
+    "accountNumber": {"value": "2349857"},
+    "labelResponseOptions": "LABEL",
+    "oneLabelAtATime": False,
+    "requestedShipment": {
+        "blockInsightVisibility": False,
+        "customsClearanceDetail": {
+            "commercialInvoice": {
+                "customerReferences": [
+                    {"customerReferenceType": "INVOICE_NUMBER", "value": "123456789"}
+                ],
+                "originatorName": "Input Your Information",
+                "termsOfSale": "DDU",
+            },
+            "commodities": [
+                {
+                    "countryOfManufacture": "US",
+                    "customsValue": {"amount": 1.0, "currency": "USD"},
+                    "description": "test",
+                    "harmonizedCode": "00339BB",
+                    "name": "test",
+                    "numberOfPieces": 1,
+                    "quantity": 1,
+                    "quantityUnits": "PCS",
+                    "weight": {"units": "LB", "value": 10.0},
+                }
+            ],
+            "dutiesPayment": {
+                "paymentType": "SENDER",
+                "payor": {
+                    "responsibleParty": {
+                        "address": {
+                            "city": "MEMPHIS",
+                            "countryCode": "US",
+                            "postalCode": "38117",
+                            "residential": False,
+                            "stateOrProvinceCode": "TN",
+                            "streetLines": [
+                                "Input Your Information",
+                                "Input Your Information",
+                            ],
+                        },
+                        "contact": {
+                            "companyName": "Input Your Information",
+                            "emailAddress": "Input Your Information",
+                            "personName": "Input Your Information",
+                            "phoneNumber": "Input Your Information",
+                        },
+                    }
+                },
+            },
+            "isDocumentOnly": False,
+        },
+        "labelSpecification": {
+            "imageType": "PDF",
+            "labelFormatType": "COMMON2D",
+            "labelOrder": "SHIPPING_LABEL_FIRST",
+            "labelStockType": "STOCK_4X6",
+        },
+        "packagingType": "YOUR_PACKAGING",
+        "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
+        "preferredCurrency": "USD",
+        "rateRequestType": ["LIST", "ACCOUNT", "PREFERRED"],
+        "recipients": [
+            {
+                "address": {
+                    "city": "RICHMOND",
+                    "countryCode": "CA",
+                    "postalCode": "V7C4v7",
+                    "residential": False,
+                    "stateOrProvinceCode": "BC",
                     "streetLines": ["Input Your Information", "Input Your Information"],
                 },
                 "contact": {
@@ -333,309 +428,78 @@ ShipmentRequest = [
                     "personName": "Input Your Information",
                     "phoneNumber": "Input Your Information",
                 },
+            }
+        ],
+        "requestedPackageLineItems": [
+            {
+                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "dimensions": {
+                    "height": 12.0,
+                    "length": 12.0,
+                    "units": "IN",
+                    "width": 12.0,
+                },
+                "groupPackageCount": 1,
+                "packageSpecialServices": {
+                    "signatureOptionType": "SERVICE_DEFAULT",
+                    "specialServiceTypes": ["SIGNATURE_OPTION"],
+                },
+                "sequenceNumber": 1,
+                "subPackagingType": "OTHER",
+                "weight": {"units": "LB", "value": 1.0},
             },
-            "shippingChargesPayment": {
-                "paymentType": "THIRD_PARTY",
-                "payor": {"responsibleParty": {"accountNumber": "2349857"}},
+            {
+                "declaredValue": {"amount": 1.0, "currency": "USD"},
+                "dimensions": {
+                    "height": 11.0,
+                    "length": 11.0,
+                    "units": "IN",
+                    "width": 11.0,
+                },
+                "groupPackageCount": 1,
+                "packageSpecialServices": {
+                    "signatureOptionType": "SERVICE_DEFAULT",
+                    "specialServiceTypes": ["SIGNATURE_OPTION"],
+                },
+                "sequenceNumber": 2,
+                "subPackagingType": "OTHER",
+                "weight": {"units": "LB", "value": 2.0},
             },
-            "shippingDocumentSpecification": {
-                "shippingDocumentTypes": ["COMMERCIAL_INVOICE"]
+        ],
+        "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
+        "shipDatestamp": "2024-02-17",
+        "shipmentSpecialServices": {
+            "etdDetail": {
+                "attributes": ["POST_SHIPMENT_UPLOAD_REQUESTED"],
+                "requestedDocumentTypes": ["COMMERCIAL_INVOICE"],
             },
-            "totalPackageCount": 1,
-            "totalWeight": 20.0,
+            "specialServiceTypes": ["ELECTRONIC_TRADE_DOCUMENTS"],
         },
-        "shipAction": "CONFIRM",
-    }
-]
-
-MultiPieceShipmentRequest = [
-    {
-        "accountNumber": {"value": "2349857"},
-        "labelResponseOptions": "LABEL",
-        "requestedShipment": {
-            "blockInsightVisibility": False,
-            "customsClearanceDetail": {
-                "commercialInvoice": {
-                    "customerReferences": [
-                        {
-                            "customerReferenceType": "INVOICE_NUMBER",
-                            "value": "123456789",
-                        }
-                    ],
-                    "originatorName": "Input " "Your " "Information",
-                    "termsOfSale": "DDU",
-                },
-                "commodities": [
-                    {
-                        "countryOfManufacture": "US",
-                        "description": "test",
-                        "name": "test",
-                        "harmonizedCode": "00339BB",
-                        "numberOfPieces": 1,
-                        "quantity": 1,
-                        "quantityUnits": "PCS",
-                        "weight": {"units": "LB", "value": 10.0},
-                        "customsValue": {"amount": 1.0, "currency": "USD"},
-                    }
-                ],
-                "dutiesPayment": {
-                    "paymentType": "SENDER",
-                    "payor": {
-                        "responsibleParty": {
-                            "address": {
-                                "city": "MEMPHIS",
-                                "countryCode": "US",
-                                "postalCode": "38117",
-                                "residential": False,
-                                "stateOrProvinceCode": "TN",
-                                "streetLines": [
-                                    "Input " "Your " "Information",
-                                    "Input " "Your " "Information",
-                                ],
-                            },
-                            "contact": {
-                                "companyName": "Input " "Your " "Information",
-                                "emailAddress": "Input " "Your " "Information",
-                                "personName": "Input " "Your " "Information",
-                                "phoneNumber": "Input " "Your " "Information",
-                            },
-                        }
-                    },
-                },
-                "isDocumentOnly": False,
+        "shipper": {
+            "address": {
+                "city": "MEMPHIS",
+                "countryCode": "US",
+                "postalCode": "38117",
+                "residential": False,
+                "stateOrProvinceCode": "TN",
+                "streetLines": ["Input Your Information", "Input Your Information"],
             },
-            "labelSpecification": {
-                "imageType": "PDF",
-                "labelFormatType": "COMMON2D",
-                "labelOrder": "SHIPPING_LABEL_FIRST",
-                "labelStockType": "STOCK_4X6",
+            "contact": {
+                "companyName": "Input Your Information",
+                "emailAddress": "Input Your Information",
+                "personName": "Input Your Information",
+                "phoneNumber": "Input Your Information",
             },
-            "packagingType": "YOUR_PACKAGING",
-            "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
-            "preferredCurrency": "USD",
-            "recipients": [
-                {
-                    "address": {
-                        "city": "RICHMOND",
-                        "countryCode": "CA",
-                        "postalCode": "V7C4v7",
-                        "residential": False,
-                        "stateOrProvinceCode": "BC",
-                        "streetLines": [
-                            "Input " "Your " "Information",
-                            "Input " "Your " "Information",
-                        ],
-                    },
-                    "contact": {
-                        "companyName": "Input Your Information",
-                        "emailAddress": "Input " "Your " "Information",
-                        "personName": "Input Your Information",
-                        "phoneNumber": "Input Your Information",
-                    },
-                }
-            ],
-            "requestedPackageLineItems": [
-                {
-                    "declaredValue": {"amount": 1.0, "currency": "USD"},
-                    "dimensions": {
-                        "height": 12.0,
-                        "length": 12.0,
-                        "units": "IN",
-                        "width": 12.0,
-                    },
-                    "groupPackageCount": 1,
-                    "packageSpecialServices": {
-                        "signatureOptionType": "SERVICE_DEFAULT",
-                        "specialServiceTypes": ["SIGNATURE_OPTION"],
-                    },
-                    "sequenceNumber": 1,
-                    "subPackagingType": "OTHER",
-                    "weight": {"units": "LB", "value": 1.0},
-                }
-            ],
-            "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-            "shipDatestamp": "2024-02-17",
-            "shipmentSpecialServices": {
-                "etdDetail": {
-                    "attributes": ["POST_SHIPMENT_UPLOAD_REQUESTED"],
-                    "requestedDocumentTypes": ["COMMERCIAL_INVOICE"],
-                },
-                "specialServiceTypes": ["ELECTRONIC_TRADE_DOCUMENTS"],
-            },
-            "shipper": {
-                "address": {
-                    "city": "MEMPHIS",
-                    "countryCode": "US",
-                    "postalCode": "38117",
-                    "residential": False,
-                    "stateOrProvinceCode": "TN",
-                    "streetLines": [
-                        "Input Your Information",
-                        "Input Your Information",
-                    ],
-                },
-                "contact": {
-                    "companyName": "Input Your Information",
-                    "emailAddress": "Input Your Information",
-                    "personName": "Input Your Information",
-                    "phoneNumber": "Input Your Information",
-                },
-            },
-            "shippingChargesPayment": {
-                "paymentType": "THIRD_PARTY",
-                "payor": {"responsibleParty": {"accountNumber": "2349857"}},
-            },
-            "totalPackageCount": 2,
-            "totalWeight": 1.0,
         },
-        "shipAction": "CONFIRM",
+        "shippingChargesPayment": {
+            "paymentType": "THIRD_PARTY",
+            "payor": {"responsibleParty": {"accountNumber": "2349857"}},
+        },
+        "totalPackageCount": 2,
+        "totalWeight": 3.0,
     },
-    {
-        "accountNumber": {"value": "2349857"},
-        "labelResponseOptions": "LABEL",
-        "requestedShipment": {
-            "blockInsightVisibility": False,
-            "customsClearanceDetail": {
-                "commercialInvoice": {
-                    "customerReferences": [
-                        {
-                            "customerReferenceType": "INVOICE_NUMBER",
-                            "value": "123456789",
-                        }
-                    ],
-                    "originatorName": "Input " "Your " "Information",
-                    "termsOfSale": "DDU",
-                },
-                "commodities": [
-                    {
-                        "countryOfManufacture": "US",
-                        "description": "test",
-                        "name": "test",
-                        "harmonizedCode": "00339BB",
-                        "numberOfPieces": 1,
-                        "quantity": 1,
-                        "quantityUnits": "PCS",
-                        "weight": {"units": "LB", "value": 10.0},
-                        "customsValue": {"amount": 1.0, "currency": "USD"},
-                    }
-                ],
-                "dutiesPayment": {
-                    "paymentType": "SENDER",
-                    "payor": {
-                        "responsibleParty": {
-                            "address": {
-                                "city": "MEMPHIS",
-                                "countryCode": "US",
-                                "postalCode": "38117",
-                                "residential": False,
-                                "stateOrProvinceCode": "TN",
-                                "streetLines": [
-                                    "Input " "Your " "Information",
-                                    "Input " "Your " "Information",
-                                ],
-                            },
-                            "contact": {
-                                "companyName": "Input " "Your " "Information",
-                                "emailAddress": "Input " "Your " "Information",
-                                "personName": "Input " "Your " "Information",
-                                "phoneNumber": "Input " "Your " "Information",
-                            },
-                        }
-                    },
-                },
-                "isDocumentOnly": False,
-            },
-            "labelSpecification": {
-                "imageType": "PDF",
-                "labelFormatType": "COMMON2D",
-                "labelOrder": "SHIPPING_LABEL_FIRST",
-                "labelStockType": "STOCK_4X6",
-            },
-            "masterTrackingId": {
-                "trackingIdType": "[MASTER_ID_TYPE]",
-                "trackingNumber": "[MASTER_TRACKING_ID]",
-            },
-            "packagingType": "YOUR_PACKAGING",
-            "pickupType": "DROPOFF_AT_FEDEX_LOCATION",
-            "preferredCurrency": "USD",
-            "recipients": [
-                {
-                    "address": {
-                        "city": "RICHMOND",
-                        "countryCode": "CA",
-                        "postalCode": "V7C4v7",
-                        "residential": False,
-                        "stateOrProvinceCode": "BC",
-                        "streetLines": [
-                            "Input " "Your " "Information",
-                            "Input " "Your " "Information",
-                        ],
-                    },
-                    "contact": {
-                        "companyName": "Input Your Information",
-                        "emailAddress": "Input " "Your " "Information",
-                        "personName": "Input Your Information",
-                        "phoneNumber": "Input Your Information",
-                    },
-                }
-            ],
-            "requestedPackageLineItems": [
-                {
-                    "declaredValue": {"amount": 1.0, "currency": "USD"},
-                    "dimensions": {
-                        "height": 11.0,
-                        "length": 11.0,
-                        "units": "IN",
-                        "width": 11.0,
-                    },
-                    "groupPackageCount": 1,
-                    "packageSpecialServices": {
-                        "signatureOptionType": "SERVICE_DEFAULT",
-                        "specialServiceTypes": ["SIGNATURE_OPTION"],
-                    },
-                    "sequenceNumber": 2,
-                    "subPackagingType": "OTHER",
-                    "weight": {"units": "LB", "value": 2.0},
-                }
-            ],
-            "serviceType": "FEDEX_INTERNATIONAL_PRIORITY",
-            "shipDatestamp": "2024-02-17",
-            "shipmentSpecialServices": {
-                "etdDetail": {
-                    "attributes": ["POST_SHIPMENT_UPLOAD_REQUESTED"],
-                    "requestedDocumentTypes": ["COMMERCIAL_INVOICE"],
-                },
-                "specialServiceTypes": ["ELECTRONIC_TRADE_DOCUMENTS"],
-            },
-            "shipper": {
-                "address": {
-                    "city": "MEMPHIS",
-                    "countryCode": "US",
-                    "postalCode": "38117",
-                    "residential": False,
-                    "stateOrProvinceCode": "TN",
-                    "streetLines": [
-                        "Input Your Information",
-                        "Input Your Information",
-                    ],
-                },
-                "contact": {
-                    "companyName": "Input Your Information",
-                    "emailAddress": "Input Your Information",
-                    "personName": "Input Your Information",
-                    "phoneNumber": "Input Your Information",
-                },
-            },
-            "shippingChargesPayment": {
-                "paymentType": "THIRD_PARTY",
-                "payor": {"responsibleParty": {"accountNumber": "2349857"}},
-            },
-            "totalPackageCount": 2,
-            "totalWeight": 2.0,
-        },
-        "shipAction": "CONFIRM",
-    },
-]
+    "shipAction": "CONFIRM",
+}
 
 ShipmentCancelRequest = {
     "accountNumber": {"value": "2349857"},
