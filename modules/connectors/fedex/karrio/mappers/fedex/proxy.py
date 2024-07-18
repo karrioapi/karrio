@@ -62,11 +62,7 @@ class Proxy(proxy.Proxy):
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable:
         response = lib.request(
             url=f"{self.settings.server_url}/ship/v1/shipments/cancel",
-            data=lib.to_json(
-                provider_utils.process_request(
-                    self.settings, request.serialize(), "cancel"
-                )
-            ),
+            data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="PUT",
             headers={
