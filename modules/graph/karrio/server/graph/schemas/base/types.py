@@ -106,6 +106,17 @@ class WorkspaceConfigType:
 
     # endregion
 
+    # default options preferences
+    # region
+
+    @strawberry.field
+    def insured_by_default(
+        self: auth.WorkspaceConfig,
+    ) -> typing.Optional[bool]:
+        return self.config.get("insured_by_default")
+
+    # endregion
+
     # customs identifiers
     # region
 
