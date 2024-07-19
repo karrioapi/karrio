@@ -49,7 +49,7 @@ def _extract_details(
                 date=lib.fdate(event.date, "%Y-%m-%dT%H:%M:%S%z"),
                 description=event.label,
                 code=event.code,
-                time=lib.ftime(event.date, "%Y-%m-%dT%H:%M:%S%z"),
+                time=lib.flocaltime(event.date, "%Y-%m-%dT%H:%M:%S%z"),
             )
             for event in shipment.event
         ],

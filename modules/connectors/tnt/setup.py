@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.tnt",
-    version="2023.9.10",
+    version="2024.6-rc9",
     description="Karrio - TNT Shipping extension",
     long_description=long_description,
     long_description_content_type="text/markdown",

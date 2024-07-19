@@ -52,7 +52,7 @@ def _extract_details(
                 ),
                 description=event.eventDescription,
                 code=event.eventCode,
-                time=lib.ftime(
+                time=lib.flocaltime(
                     event.eventOn,
                     (
                         "%Y-%m-%dT%H:%M:%S.%f%z"

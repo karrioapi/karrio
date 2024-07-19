@@ -50,7 +50,7 @@ def _extract_details(
                 location=event.location,
                 description=event.description,
                 date=lib.fdate(event.originalEvent.eventDate, "%Y-%m-%d %H:%M:%S"),
-                time=lib.ftime(event.originalEvent.eventDate, "%Y-%m-%d %H:%M:%S"),
+                time=lib.flocaltime(event.originalEvent.eventDate, "%Y-%m-%d %H:%M:%S"),
             )
             for event in details.event
         ],

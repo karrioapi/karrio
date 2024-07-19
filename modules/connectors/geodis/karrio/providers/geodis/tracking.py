@@ -52,7 +52,7 @@ def _extract_details(
                 date=lib.fdate(event.dateSuivi),
                 description=event.libelleSuivi,
                 code=event.codeSituationJustification,
-                time=lib.ftime(event.heureSuivi),
+                time=lib.flocaltime(event.heureSuivi),
                 location=event.libelleCentre,
             )
             for event in contenu.listSuivis

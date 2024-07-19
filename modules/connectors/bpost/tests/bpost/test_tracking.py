@@ -66,19 +66,19 @@ ParsedTrackingResponse = [
                     "code": "T00",
                     "date": "2012-11-22",
                     "description": "Sorted - sorted_out",
-                    "time": "23:19",
+                    "time": "23:19 PM",
                 },
                 {
                     "code": "L00",
                     "date": "2012-11-23",
                     "description": "BoundToRound - out_for_distribution",
-                    "time": "07:11",
+                    "time": "07:11 AM",
                 },
                 {
                     "code": "U01",
                     "date": "2012-11-23",
                     "description": "DistributedNormally - regular",
-                    "time": "09:31",
+                    "time": "09:31 AM",
                 },
             ],
             "info": {

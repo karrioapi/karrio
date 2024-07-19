@@ -77,7 +77,7 @@ ParsedTrackingResponse = [
                     "date": "2021-05-28",
                     "description": "In Transit",
                     "location": "BANKSTOWN AERODROME",
-                    "time": "10:03",
+                    "time": "10:03 AM",
                 }
             ],
             "status": "in_transit",
@@ -99,7 +99,7 @@ DeliveredParsedTrackingResponse = [
                     "date": "2023-10-26",
                     "description": "Freight has been delivered",
                     "location": "NOWRA",
-                    "time": "14:03",
+                    "time": "14:03 PM",
                 }
             ],
             "status": "delivered",

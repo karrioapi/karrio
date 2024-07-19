@@ -71,7 +71,7 @@ def _extract_details(
                     separator=",",
                     join=True,
                 ),
-                time=lib.ftime(
+                time=lib.flocaltime(
                     event.date.content,
                     current_format="%m/%d/%Y %H:%M:%S %p",
                 ),

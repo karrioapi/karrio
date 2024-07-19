@@ -42,7 +42,7 @@ def _extract_tracking_details(
                 separator=", ",
             ),
             code=event.code,
-            time=lib.ftime(event.local_date_time, "%Y%m%d %H%M%S"),
+            time=lib.flocaltime(event.local_date_time, "%Y%m%d %H%M%S"),
         )
         for event in typing.cast(typing.List[canpar.TrackingEvent], result.events)
     ]

@@ -64,7 +64,7 @@ ParsedTrackingResponse = [
                     "date": "2018-03-02",
                     "description": "JESSICA",
                     "location": "Oderweg 2, AMSTERDAM",
-                    "time": "07:53",
+                    "time": "07:53 AM",
                 }
             ],
             "info": {

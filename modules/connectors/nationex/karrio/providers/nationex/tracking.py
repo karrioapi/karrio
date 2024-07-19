@@ -54,7 +54,7 @@ def _extract_details(
                 code=event.ShipmentStatus,
                 location=event.LastLocation,
                 date=lib.fdate(event.StatusDate, "%Y-%m-%dT%H:%M:%SZ"),
-                time=lib.ftime(event.StatusDate, "%Y-%m-%dT%H:%M:%SZ"),
+                time=lib.flocaltime(event.StatusDate, "%Y-%m-%dT%H:%M:%SZ"),
                 description=(
                     event.ShipmentStatusFr
                     if settings.language == "fr"

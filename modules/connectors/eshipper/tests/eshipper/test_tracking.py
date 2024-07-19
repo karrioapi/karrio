@@ -69,7 +69,7 @@ ParsedTrackingResponse = [
                     "date": "2024-07-16",
                     "description": "string",
                     "location": "string",
-                    "time": "10:20",
+                    "time": "10:20 AM",
                 }
             ],
             "tracking_number": "string",

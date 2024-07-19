@@ -82,7 +82,7 @@ def _extract_details(
                     if a.location
                     else None
                 ),
-                time=lib.ftime(a.time, "%H%M%S"),
+                time=lib.flocaltime(a.time, "%H%M%S"),
                 code=getattr(last_event.status, "code", None),
             )
             for a in package.activity

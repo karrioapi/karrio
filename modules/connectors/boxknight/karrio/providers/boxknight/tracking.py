@@ -47,7 +47,7 @@ def _extract_details(
                 description=order.orderStatus,
                 code=order.orderStatus,
                 date=lib.fdate(datetime.datetime.now(), "%Y-%m-%dT%H:%M:%S.%fZ"),
-                time=lib.ftime(datetime.datetime.now(), "%Y-%m-%dT%H:%M:%S.%fZ"),
+                time=lib.flocaltime(datetime.datetime.now(), "%Y-%m-%dT%H:%M:%S.%fZ"),
             )
         ],
         delivered=delivered,
