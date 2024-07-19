@@ -67,8 +67,10 @@ export async function loadAPIMetadata(
       await setSessionCookies(ctx as any);
       resolve({ metadata });
     } catch (e: any | Response) {
-      logger.error(`Failed to fetch API metadata from (${API_URL})`);
-      logger.error(e.response?.data || e.response);
+      logger.error(
+        `Failed to fetch API metadata from (${API_URL}, ${KARRIO_API}, ${serverRuntimeConfig.KARRIO_ADMIN_URL})`,
+      );
+      // logger.error(JSON.stringify(e.response?.data || e.response));
       const code = AUTH_HTTP_CODES.includes(e.response?.status)
         ? ServerErrorCode.API_AUTH_ERROR
         : ServerErrorCode.API_CONNECTION_ERROR;
@@ -234,11 +236,15 @@ export async function loadTenantInfo(filter: {
   schema_name?: string;
 }): Promise<TenantType | null> {
   try {
-    const {
-      data: {
-        data: { tenants },
-      },
-    } = await axios({
+    logger.warn(
+      JSON.stringify({
+        KARRIO_API,
+        KARRIO_ADMIN_URL: serverRuntimeConfig.KARRIO_ADMIN_URL,
+        KARRIO_ADMIN_API_KEY: serverRuntimeConfig.KARRIO_ADMIN_API_KEY,
+        TENANT_QUERY,
+      }),
+    );
+    const { data } = await axios({
       url: url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`,
       method: "POST",
       headers: {
@@ -246,15 +252,13 @@ export async function loadTenantInfo(filter: {
       },
       data: { variables: { filter }, query: TENANT_QUERY },
     });
-
-    return tenants.edges[0].node;
+    logger.warn(JSON.stringify({ data }));
+    return data.data.tenants.edges[0].node;
   } catch (e: any) {
-    console.log(
-      e.response?.data,
-      url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`,
-    );
+    logger.error(JSON.stringify(e.response?.data || e.response || e));
+    logger.error(url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`);
 
-    return null;
+    return { api_domains: [KARRIO_API] } as any;
   }
 }
 

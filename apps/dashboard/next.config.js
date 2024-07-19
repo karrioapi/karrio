@@ -25,6 +25,9 @@ const POSTHOG_KEY = (
 const POSTHOG_HOST = (
   process.env.POSTHOG_HOST || process.env.NEXT_PUBLIC_POSTHOG_HOST
 );
+const NEXTAUTH_SECRET = (
+  process.env.NEXTAUTH_SECRET || process.env.JWT_SECRET
+)
 
 const moduleExports = {
   swcMinify: true,
@@ -36,7 +39,8 @@ const moduleExports = {
   },
   serverRuntimeConfig: {
     KARRIO_URL: KARRIO_URL,
-    JWT_SECRET: process.env.JWT_SECRET,
+    JWT_SECRET: NEXTAUTH_SECRET,
+    NEXTAUTH_SECRET: NEXTAUTH_SECRET,
     TENANT_ENV_KEY: process.env.TENANT_ENV_KEY,
     KARRIO_ADMIN_URL: process.env.KARRIO_ADMIN_URL,
     KARRIO_ADMIN_API_KEY: process.env.KARRIO_ADMIN_API_KEY,
