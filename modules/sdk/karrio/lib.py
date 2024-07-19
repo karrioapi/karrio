@@ -209,6 +209,20 @@ def ftime(
     )
 
 
+def flocaltime(
+    time_str: str,
+    current_format: str = "%H:%M:%S",
+    output_format: str = "%H:%M %p",
+    try_formats: typing.List[str] = None,
+) -> typing.Optional[str]:
+    return utils.DF.ftime(
+        time_str,
+        current_format=current_format,
+        output_format=output_format,
+        try_formats=try_formats,
+    )
+
+
 def fdate(
     date_str: str = None,
     current_format: str = "%Y-%m-%d",
@@ -669,7 +683,9 @@ def request(
     proxy: str = None,
     **kwargs,
 ) -> str:
-    return utils.request(decoder=decoder, on_error=on_error, trace=trace, proxy=proxy, **kwargs)
+    return utils.request(
+        decoder=decoder, on_error=on_error, trace=trace, proxy=proxy, **kwargs
+    )
 
 
 # endregion
@@ -765,5 +781,6 @@ def failsafe(callable: typing.Callable[[], T], warning: str = None) -> T:
     don't mind if it fails.
     """
     return utils.failsafe(callable, warning=warning)
+
 
 # endregion
