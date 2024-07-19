@@ -43,7 +43,7 @@ def _extract_details(
         events=[
             models.TrackingEvent(
                 date=lib.fdate(scan.ScanDate),
-                time=lib.ftime(scan.ScanTime, "%H%M%S"),
+                time=lib.flocaltime(scan.ScanTime, "%H%M%S"),
                 description=scan.Description,
                 location=scan.Depot.Name,
                 code=scan.ScanType,

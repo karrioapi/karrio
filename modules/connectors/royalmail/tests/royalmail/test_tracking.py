@@ -67,7 +67,7 @@ ParsedTrackingResponse = [
                     "date": "2016-10-20",
                     "description": "Forwarded - Mis-sort",
                     "location": "Stafford DO",
-                    "time": "10:04",
+                    "time": "10:04 AM",
                 }
             ],
             "tracking_number": "090367574000000FE1E1B",

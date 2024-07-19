@@ -63,7 +63,7 @@ def _extract_details(
                     result.statusBarcodesList.scannnedTimestamp,
                     "%Y-%m-%dT%H:%M:%S.%f%z",
                 ),
-                time=lib.ftime(
+                time=lib.flocaltime(
                     result.statusBarcodesList.scannnedTimestamp,
                     "%Y-%m-%dT%H:%M:%S.%f%z",
                 ),

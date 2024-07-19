@@ -158,9 +158,9 @@ MULTI_ORGANIZATIONS = (
 ALLOW_MULTI_ACCOUNT = config(
     "ALLOW_MULTI_ACCOUNT", default=MULTI_ORGANIZATIONS, cast=bool
 )
-ADMIN_DASHBOARD = (
-    importlib.util.find_spec("karrio.server.admin") is not None  # type:ignore
-)
+ADMIN_DASHBOARD = importlib.util.find_spec(  # type:ignore
+    "karrio.server.admin"
+) is not None and config("ADMIN_DASHBOARD", default=False, cast=bool)
 ORDERS_MANAGEMENT = (
     importlib.util.find_spec("karrio.server.orders") is not None  # type:ignore
 )

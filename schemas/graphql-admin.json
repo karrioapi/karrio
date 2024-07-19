@@ -1911,7 +1911,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "EShipperXMLSettingsType",
+            "name": "EShipperSettingsType",
             "ofType": null
           },
           {
@@ -2488,7 +2488,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "EShipperXMLSettingsType",
+            "name": "EShipperSettingsType",
             "ofType": null
           },
           {
@@ -2707,7 +2707,7 @@
           },
           {
             "kind": "OBJECT",
-            "name": "EShipperXMLSettingsType",
+            "name": "EShipperSettingsType",
             "ofType": null
           },
           {
@@ -4660,7 +4660,7 @@
             "deprecationReason": null
           },
           {
-            "name": "eshipper_xml",
+            "name": "eshipper",
             "description": null,
             "isDeprecated": false,
             "deprecationReason": null
@@ -10386,7 +10386,7 @@
       },
       {
         "kind": "OBJECT",
-        "name": "EShipperXMLSettingsType",
+        "name": "EShipperSettingsType",
         "description": null,
         "fields": [
           {
@@ -10534,7 +10534,7 @@
             "deprecationReason": null
           },
           {
-            "name": "username",
+            "name": "principal",
             "description": null,
             "args": [],
             "type": {
@@ -10546,7 +10546,7 @@
             "deprecationReason": null
           },
           {
-            "name": "password",
+            "name": "credential",
             "description": null,
             "args": [],
             "type": {
@@ -17049,11 +17049,11 @@
             "defaultValue": null
           },
           {
-            "name": "eshipper_xml",
+            "name": "eshipper",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "EShipperXMLSettingsInput",
+              "name": "EShipperSettingsInput",
               "ofType": null
             },
             "defaultValue": null
@@ -19755,7 +19755,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "EShipperXMLSettingsInput",
+        "name": "EShipperSettingsInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -19790,7 +19790,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "principal",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -19804,7 +19804,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
+            "name": "credential",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -22045,11 +22045,11 @@
             "defaultValue": null
           },
           {
-            "name": "eshipper_xml",
+            "name": "eshipper",
             "description": null,
             "type": {
               "kind": "INPUT_OBJECT",
-              "name": "UpdateEShipperXMLSettingsInput",
+              "name": "UpdateEShipperSettingsInput",
               "ofType": null
             },
             "defaultValue": null
@@ -24733,7 +24733,7 @@
       },
       {
         "kind": "INPUT_OBJECT",
-        "name": "UpdateEShipperXMLSettingsInput",
+        "name": "UpdateEShipperSettingsInput",
         "description": null,
         "fields": null,
         "inputFields": [
@@ -24782,7 +24782,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "principal",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -24792,7 +24792,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
+            "name": "credential",
             "description": null,
             "type": {
               "kind": "SCALAR",

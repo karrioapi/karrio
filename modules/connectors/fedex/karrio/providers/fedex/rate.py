@@ -1,5 +1,5 @@
 import karrio.schemas.fedex.rating_request as fedex
-import karrio.schemas.fedex.rating_response as rating
+import karrio.schemas.fedex.rating_responses as rating
 import typing
 import datetime
 import karrio.lib as lib
@@ -32,7 +32,7 @@ def _extract_details(
     # fmt: off
     rate = lib.to_object(rating.RateReplyDetailType, data)
     service = provider_units.ShippingService.map(rate.serviceType)
-    details: rating.RatedShipmentDetailType = (
+    details: rating.RatedShipmentDetailType = lib.identity(
         next((_ for _ in rate.ratedShipmentDetails if _.rateType == "PREFERRED_CURRENCY"), None) or
         next((_ for _ in rate.ratedShipmentDetails if _.rateType == "ACCOUNT"), None) or
         rate.ratedShipmentDetails[0]
@@ -40,8 +40,7 @@ def _extract_details(
     charges = [
         ("Base Charge", lib.to_money(details.totalBaseCharge)),
         ("Discounts", lib.to_money(details.totalDiscounts)),
-        ("VAT Charge", lib.to_money(details.totalVatCharge)),
-        ("Duties and Taxes", lib.to_money(details.totalDutiesAndTaxes)),
+        *[(_.type, lib.to_money(_.amount)) for _ in details.shipmentRateDetail.taxes or []],
         *[(_.description, lib.to_money(_.amount)) for _ in details.shipmentRateDetail.surCharges or []],
     ]
     total_charge = lib.to_money(
@@ -50,12 +49,12 @@ def _extract_details(
     )
     estimated_delivery = lib.to_date(getattr(rate.operationalDetail, "commitDate", None), "%Y-%m-%dT%H:%M:%S")
     shipping_date = lib.to_date(ctx.get("shipment_date") or datetime.datetime.now())
-    transit_day_list = (
+    transit_day_list = lib.identity(
         (shipping_date + datetime.timedelta(x + 1) for x in range((estimated_delivery.date() - shipping_date.date()).days))
         if estimated_delivery is not None
         else None
     )
-    transit_days = (
+    transit_days = lib.identity(
         sum(1 for day in transit_day_list if day.weekday() < 5)
         if transit_day_list is not None
         else None
@@ -77,6 +76,7 @@ def _extract_details(
                 currency=details.currency,
             )
             for name, amount in charges
+            if amount is not None
         ],
         meta=dict(
             service_name=service.name or rate.serviceName,
@@ -148,7 +148,7 @@ def rate_request(
         rateRequestControlParameters=fedex.RateRequestControlParametersType(
             returnTransitTimes=True,
             servicesNeededOnRateFailure=True,
-            variableOptions=(
+            variableOptions=lib.identity(
                 ",".join([option.code for option in rate_options(options)])
                 if any(rate_options(options))
                 else None

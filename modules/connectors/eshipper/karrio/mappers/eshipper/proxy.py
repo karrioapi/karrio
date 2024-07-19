@@ -38,7 +38,7 @@ class Proxy(proxy.Proxy):
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/api/v2/ship",
+            url=f"{self.settings.server_url}/api/v2/ship/cancel",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="DELETE",
@@ -51,11 +51,11 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def get_tracking(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        query = lib.to_query_string(request.serialize())
         response = lib.request(
-            url=f"{self.settings.server_url}/api/v2/track/events",
-            data=lib.to_json(request.serialize()),
+            url=f"{self.settings.server_url}/api/v2/track/events?{query}",
             trace=self.trace_as("json"),
-            method="POST",
+            method="GET",
             headers={
                 "content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",

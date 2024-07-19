@@ -65,7 +65,9 @@ def _extract_detail(
                     else None
                 ),
                 code=event.statusCode or "",
-                time=lib.ftime(shorten_date(event.timestamp), try_formats=date_formats),
+                time=lib.flocaltime(
+                    shorten_date(event.timestamp), try_formats=date_formats
+                ),
             )
             for event in shipment.events or []
         ],

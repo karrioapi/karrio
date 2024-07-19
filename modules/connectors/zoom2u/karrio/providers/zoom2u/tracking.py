@@ -54,7 +54,9 @@ def _extract_details(
                 date=lib.fdate(tracking.statusChangeDateTime, "%Y-%m-%dT%H:%M:%S.%fZ"),
                 description=tracking.status,
                 code=tracking.status,
-                time=lib.ftime(tracking.statusChangeDateTime, "%Y-%m-%dT%H:%M:%S.%fZ"),
+                time=lib.flocaltime(
+                    tracking.statusChangeDateTime, "%Y-%m-%dT%H:%M:%S.%fZ"
+                ),
             )
         ],
         delivered=(status == "delivered"),

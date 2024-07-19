@@ -38,7 +38,7 @@ def _extract_details(
                 date=lib.fdate(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
                 description=event.eventLabel,
                 code=event.code,
-                time=lib.ftime(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
+                time=lib.flocaltime(event.eventDate, "%Y-%m%dT%H%:%M:%S"),
                 location=event.officeLabel,
             )
             for event in detail.events

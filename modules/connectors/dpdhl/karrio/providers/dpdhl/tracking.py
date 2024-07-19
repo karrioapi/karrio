@@ -59,7 +59,7 @@ def _extract_details(
                 code=event.ice,
                 description=event.event_status,
                 date=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
-                time=lib.fdate(event.event_timestamp, "%d.%m.%Y %H:%M"),
+                time=lib.flocaltime(event.event_timestamp, "%d.%m.%Y %H:%M"),
                 location=lib.join(
                     event.event_location,
                     event.event_country,

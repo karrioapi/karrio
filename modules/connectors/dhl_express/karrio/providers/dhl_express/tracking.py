@@ -56,7 +56,7 @@ def _extract_tracking(
         events=[
             models.TrackingEvent(
                 date=lib.fdate(e.Date),
-                time=lib.ftime(e.Time),
+                time=lib.flocaltime(e.Time),
                 code=e.ServiceEvent.EventCode,
                 location=e.ServiceArea.Description,
                 description=lib.text(e.ServiceEvent.Description, e.Signatory),

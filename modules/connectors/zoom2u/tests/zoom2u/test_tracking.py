@@ -65,7 +65,7 @@ ParsedTrackingResponse = [
                     "code": "Dropped Off",
                     "date": "2018-11-12",
                     "description": "Dropped Off",
-                    "time": "10:29",
+                    "time": "10:29 AM",
                 }
             ],
             "info": {

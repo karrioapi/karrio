@@ -67,7 +67,7 @@ def _extract_tracking(
         events=[
             models.TrackingEvent(
                 date=lib.fdate(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
-                time=lib.ftime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
+                time=lib.flocaltime(e.Timestamp, "%Y-%m-%d %H:%M:%S%z"),
                 code=e.EventType,
                 location=(
                     lib.join(

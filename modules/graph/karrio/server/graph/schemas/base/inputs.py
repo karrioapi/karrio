@@ -111,6 +111,8 @@ class WorkspaceConfigMutationInput(utils.BaseInput):
     customs_nip_number: typing.Optional[str] = strawberry.UNSET
     customs_vat_registration_number: typing.Optional[str] = strawberry.UNSET
 
+    insured_by_default: typing.Optional[bool] = strawberry.UNSET
+
 
 @strawberry.input
 class TokenMutationInput(utils.BaseInput):

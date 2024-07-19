@@ -162,7 +162,8 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
   ) => {
     const target = event.target;
     const name: string = target.name;
-    let value = target.type === "checkbox" ? target.checked : target.value;
+    let value =
+      (target as any).type === "checkbox" ? target.checked : target.value;
 
     if (target.multiple === true) {
       value = Array.from(target.selectedOptions).map(
@@ -485,6 +486,31 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                     onChange={handleChange}
                     className="is-small"
                     required={field("password").required}
+                  />
+                )}
+
+                {field("principal").exists && (
+                  <InputField
+                    label="Principal"
+                    value={payload.principal}
+                    name="principal"
+                    wrapperClass="pt-2"
+                    onChange={handleChange}
+                    className="is-small"
+                    required={field("principal").required}
+                  />
+                )}
+
+                {field("credential").exists && (
+                  <InputField
+                    label="Credential"
+                    value={payload.credential}
+                    type="text"
+                    name="credential"
+                    wrapperClass="pt-2"
+                    onChange={handleChange}
+                    className="is-small"
+                    required={field("credential").required}
                   />
                 )}
 
@@ -1651,10 +1677,10 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
           ["consumer_key", true],
           ["consumer_secret", true],
         ],
-        [CarrierSettingsCarrierNameEnum.EshipperXml]: [
+        [CarrierSettingsCarrierNameEnum.Eshipper]: [
           ["carrier_id", true],
-          ["username", true],
-          ["password", true],
+          ["principal", true],
+          ["credential", true],
         ],
         [CarrierSettingsCarrierNameEnum.Easypost]: [
           ["carrier_id", true],
@@ -1801,4 +1827,3 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
 export function useConnectCarrierModal() {
   return useContext(ConnectProviderModalContext);
 }
-

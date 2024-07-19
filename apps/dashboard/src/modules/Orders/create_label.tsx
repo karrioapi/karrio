@@ -190,7 +190,9 @@ export default function CreateShipmentPage(pageProps: any) {
       return !!item;
     };
     const setInitialData = () => {
-      const orderList = orders.data!.orders!.edges.map(({ node }) => node);
+      const orderList = (orders.data?.orders?.edges || []).map(
+        ({ node }) => node,
+      );
 
       onChange(
         createShipmentFromOrders(
@@ -848,7 +850,10 @@ export default function CreateShipmentPage(pageProps: any) {
                         onChange({
                           options: {
                             ...shipment.options,
-                            insurance: e.target.checked === true ? "" : null,
+                            insurance:
+                              e.target.checked === true
+                                ? shipment.options?.declared_value || ""
+                                : null,
                           },
                         })
                       }

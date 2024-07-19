@@ -1000,7 +1000,9 @@ class Images(serializers.Serializer):
 
 
 class TrackingEvent(serializers.Serializer):
-    date = serializers.CharField(required=False, help_text="The tracking event's date")
+    date = serializers.CharField(
+        required=False, help_text="The tracking event's date. Format: `YYYY-MM-DD`"
+    )
     description = serializers.CharField(
         required=False, help_text="The tracking event's description"
     )
@@ -1017,7 +1019,7 @@ class TrackingEvent(serializers.Serializer):
         required=False,
         allow_blank=True,
         allow_null=True,
-        help_text="The tracking event's time",
+        help_text="The tracking event's time. Format: `HH:MM AM/PM`",
     )
     latitude = serializers.FloatField(
         required=False,

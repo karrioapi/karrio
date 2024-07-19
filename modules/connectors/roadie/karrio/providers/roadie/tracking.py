@@ -49,7 +49,7 @@ def _extract_details(
                 date=lib.fdate(event.occurred_at, "%Y-%m-%dT%H:%M:%S.%fZ"),
                 description=event.name,
                 code=event.name,
-                time=lib.ftime(event.occurred_at, "%Y-%m-%dT%H:%M:%S.%fZ"),
+                time=lib.flocaltime(event.occurred_at, "%Y-%m-%dT%H:%M:%S.%fZ"),
                 latitude=getattr(event.location, "latitude", None),
                 longitude=getattr(event.location, "longitude", None),
             )

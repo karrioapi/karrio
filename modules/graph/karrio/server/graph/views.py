@@ -1,6 +1,7 @@
 """
 karrio server graph module urls
 """
+
 import pydoc
 import typing
 import logging

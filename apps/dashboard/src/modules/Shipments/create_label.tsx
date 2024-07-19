@@ -382,7 +382,7 @@ export default function CreateLabelPage(pageProps: any) {
                     <header className="is-flex is-justify-content-space-between">
                       <div>
                         <CheckBoxField
-                          name="addInsurance"
+                          name="addReturn"
                           fieldClass="column mb-0 is-12 px-0 py-2"
                           defaultChecked={
                             addReturn || !isNone(shipment.return_address)
@@ -947,7 +947,10 @@ export default function CreateLabelPage(pageProps: any) {
                         onChange({
                           options: {
                             ...shipment.options,
-                            insurance: e.target.checked === true ? "" : null,
+                            insurance:
+                              e.target.checked === true
+                                ? shipment.options?.declared_value || ""
+                                : null,
                           },
                         })
                       }

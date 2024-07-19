@@ -42,7 +42,6 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> typing.Optional[models.TrackingDetails]:
     package = lib.to_object(tracking.CompleteTrackResultType, result)
-
     detail = max(
         package.trackResults,
         key=lambda item: max(
@@ -56,7 +55,6 @@ def _extract_details(
             or detail.estimatedDeliveryTimeWindow.window.begins
         )
     )
-
     status = next(
         (
             status.name
@@ -65,17 +63,23 @@ def _extract_details(
         ),
         provider_units.TrackingStatus.in_transit.name,
     )
+    delivered = status == "delivered"
+    img = lib.failsafe(
+        lambda: (
+            provider_utils.get_proof_of_delivery(package.trackingNumber, settings)
+            if delivered
+            else None
+        )
+    )
 
     return models.TrackingDetails(
         carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
         tracking_number=package.trackingNumber,
-        delivered=(status == "delivered"),
-        status=status,
         events=[
             models.TrackingEvent(
                 date=lib.fdate(e.date, "%Y-%m-%dT%H:%M:%S%z"),
-                time=lib.ftime(e.date, "%Y-%m-%dT%H:%M:%S%z"),
+                time=lib.flocaltime(e.date, "%Y-%m-%dT%H:%M:%S%z"),
                 code=e.eventType,
                 location=(
                     lib.join(
@@ -93,7 +97,6 @@ def _extract_details(
             )
             for e in detail.scanEvents
         ],
-        estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
         info=models.TrackingInfo(
             carrier_tracking_link=settings.tracking_url.format(package.trackingNumber),
             shipment_service=lib.failsafe(lambda: detail.serviceDetail.description),
@@ -110,6 +113,10 @@ def _extract_details(
                 lambda: detail.originLocation.locationContactAndAddress.address.countryCode
             ),
         ),
+        images=lib.identity(models.Images(signature_image=img) if img else None),
+        estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
+        delivered=(status == "delivered"),
+        status=status,
     )
 
 
