@@ -84,7 +84,12 @@ class Documents:
         data: dict,
         **kwargs,
     ) -> io.BytesIO:
-        return Documents.generate(template=document.template, data=data, **kwargs)
+        return Documents.generate(
+            template=document.template,
+            data=data,
+            related_object=document.related_object,
+            **kwargs,
+        )
 
     @staticmethod
     def generate_shipment_document(slug: str, shipment, **kwargs) -> dict:
