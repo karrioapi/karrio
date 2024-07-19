@@ -1,5 +1,18 @@
-import { AccountContextDataType, Metadata, PortalSessionType, SessionType, SubscriptionType, OrgContextDataType, TenantType } from "@karrio/types";
-import { GetServerSideProps, GetServerSidePropsContext, NextApiRequest, NextApiResponse } from "next";
+import {
+  AccountContextDataType,
+  Metadata,
+  PortalSessionType,
+  SessionType,
+  SubscriptionType,
+  OrgContextDataType,
+  TenantType,
+} from "@karrio/types";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  NextApiRequest,
+  NextApiResponse,
+} from "next";
 import { createServerError, isNone, ServerErrorCode, url$ } from "@karrio/lib";
 import { KARRIO_API } from "@karrio/hooks/karrio";
 import { getSession } from "next-auth/react";
@@ -8,18 +21,19 @@ import getConfig from "next/config";
 import { Session } from "next-auth";
 import axios from "axios";
 
-type RequestContext = GetServerSidePropsContext | { req: NextApiRequest, res: NextApiResponse };
+type RequestContext =
+  | GetServerSidePropsContext
+  | { req: NextApiRequest; res: NextApiResponse };
 const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 const AUTH_HTTP_CODES = [401, 403, 407];
 
-
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const session = await getSession(ctx) as SessionType<Session> || null;
+  const session = ((await getSession(ctx)) as SessionType<Session>) || null;
   const pathname = ctx.resolvedUrl;
 
   const orgId = ((session as any)?.orgId as string) || null;
 
-  const metadata = await loadAPIMetadata(ctx).catch(_ => _);
+  const metadata = await loadAPIMetadata(ctx).catch((_) => _);
   const data = await loadContextData(session, metadata.metadata);
   const subscription = await checkSubscription(session, metadata.metadata);
 
@@ -29,17 +43,19 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     return {
       redirect: {
         permanent: false,
-        destination: '/'
-      }
-    }
+        destination: "/",
+      },
+    };
   }
 
   return {
-    props: { pathname, orgId, ...metadata, ...subscription, ...data }
+    props: { pathname, orgId, ...metadata, ...subscription, ...data },
   };
 };
 
-export async function loadAPIMetadata(ctx: RequestContext): Promise<{ metadata?: Metadata }> {
+export async function loadAPIMetadata(
+  ctx: RequestContext,
+): Promise<{ metadata?: Metadata }> {
   // Attempt connection to the karrio API to retrieve the API metadata
   const API_URL = await getAPIURL(ctx);
 
@@ -53,91 +69,122 @@ export async function loadAPIMetadata(ctx: RequestContext): Promise<{ metadata?:
     } catch (e: any | Response) {
       logger.error(`Failed to fetch API metadata from (${API_URL})`);
       logger.error(e.response?.data || e.response);
-      const code = AUTH_HTTP_CODES.includes(e.response?.status) ?
-        ServerErrorCode.API_AUTH_ERROR : ServerErrorCode.API_CONNECTION_ERROR;
+      const code = AUTH_HTTP_CODES.includes(e.response?.status)
+        ? ServerErrorCode.API_AUTH_ERROR
+        : ServerErrorCode.API_CONNECTION_ERROR;
 
       const error = createServerError({
         code,
         message: `
           Server (${API_URL}) unreachable.
           Please make sure that the API is running and reachable.
-        `
+        `,
       });
       reject({ error });
     }
   });
 }
 
-export async function loadContextData(session: SessionType, metadata: Metadata): Promise<any> {
+export async function loadContextData(
+  session: SessionType,
+  metadata: Metadata,
+): Promise<any> {
   if (isNone(session)) return {};
 
   const { accessToken, orgId, testMode } = session;
   const headers = {
-    ...(orgId ? { 'x-org-id': orgId } : {}),
-    ...(testMode ? { 'x-test-mode': testMode } : {}),
-    'authorization': `Bearer ${accessToken}`,
+    ...(orgId ? { "x-org-id": orgId } : {}),
+    ...(testMode ? { "x-test-mode": testMode } : {}),
+    authorization: `Bearer ${accessToken}`,
   } as any;
 
-  const getAccountData = () => (
+  const getAccountData = () =>
     axios
-      .post<AccountContextDataType>(url$`${metadata.HOST || ''}/graphql`, { query: ACCOUNT_DATA_QUERY }, { headers })
-      .then(({ data }) => data)
-  );
-  const getOrgData = () => (!!metadata?.MULTI_ORGANIZATIONS
-    ? axios
-      .post<OrgContextDataType>(url$`${metadata.HOST || ''}/graphql`, { query: ORG_DATA_QUERY }, { headers })
-      .then(({ data }) => data)
-    : Promise.resolve({ data: {} })
-  );
+      .post<AccountContextDataType>(
+        url$`${metadata.HOST || ""}/graphql`,
+        { query: ACCOUNT_DATA_QUERY },
+        { headers },
+      )
+      .then(({ data }) => data);
+  const getOrgData = () =>
+    !!metadata?.MULTI_ORGANIZATIONS
+      ? axios
+          .post<OrgContextDataType>(
+            url$`${metadata.HOST || ""}/graphql`,
+            { query: ORG_DATA_QUERY },
+            { headers },
+          )
+          .then(({ data }) => data)
+      : Promise.resolve({ data: {} });
 
   try {
     const [{ data: user }, { data: org }] = await Promise.all([
-      getAccountData(), getOrgData()
+      getAccountData(),
+      getOrgData(),
     ]);
     return { metadata, ...user, ...org };
   } catch (e: any | Response) {
     logger.error(`Failed to fetch API data from (${KARRIO_API})`);
     logger.error(e.response?.data || e.response);
-    const code = AUTH_HTTP_CODES.includes(e.response?.status) ?
-      ServerErrorCode.API_AUTH_ERROR : ServerErrorCode.API_CONNECTION_ERROR;
+    const code = AUTH_HTTP_CODES.includes(e.response?.status)
+      ? ServerErrorCode.API_AUTH_ERROR
+      : ServerErrorCode.API_CONNECTION_ERROR;
 
     const error = createServerError({
       code,
-      message: 'Failed to load intial data...'
+      message: "Failed to load intial data...",
     });
     return { metadata, error };
   }
 }
 
-export async function setSessionCookies(ctx: GetServerSidePropsContext, orgId?: string | null) {
+export async function setSessionCookies(
+  ctx: GetServerSidePropsContext,
+  orgId?: string | null,
+) {
   // Sets the authentication orgId cookie if the session has one
   if (ctx.res && !!orgId) {
-    ctx.res.setHeader('Set-Cookie', `orgId=${orgId}; path=${ctx.resolvedUrl || '/'}`);
+    ctx.res.setHeader(
+      "Set-Cookie",
+      `orgId=${orgId}; path=${ctx.resolvedUrl || "/"}`,
+    );
   }
 }
 
-export async function checkSubscription(session: SessionType | any, metadata?: Metadata) {
+export async function checkSubscription(
+  session: SessionType | any,
+  metadata?: Metadata,
+) {
   if (isNone(session)) return {};
   const { accessToken, orgId } = session;
 
-  if (orgId && (metadata?.ORG_LEVEL_BILLING || metadata?.TENANT_LEVEL_BILLING)) {
+  if (
+    orgId &&
+    (metadata?.ORG_LEVEL_BILLING || metadata?.TENANT_LEVEL_BILLING)
+  ) {
     const headers = {
-      ...(orgId ? { 'x-org-id': orgId } : {}),
-      'authorization': `Bearer ${accessToken}`,
+      ...(orgId ? { "x-org-id": orgId } : {}),
+      authorization: `Bearer ${accessToken}`,
     } as any;
-    const getOrgSubscription = () => (
+    const getOrgSubscription = () =>
       axios
-        .get<SubscriptionType>(url$`${metadata?.HOST}/v1/billing/subscription`, { headers })
+        .get<SubscriptionType>(
+          url$`${metadata?.HOST}/v1/billing/subscription`,
+          { headers },
+        )
         .then(({ data }) => data)
-        .catch(() => { return null })
-    );
+        .catch(() => {
+          return null;
+        });
 
     try {
       const subscription = await getOrgSubscription();
 
       return { subscription };
     } catch (e: any | Response) {
-      logger.error(`Failed to fetch API subscription details from (${KARRIO_API})`);
+      logger.error(
+        `Failed to fetch API subscription details from (${KARRIO_API})`,
+      );
       logger.error(e.response?.data || e.response);
     }
   }
@@ -145,26 +192,36 @@ export async function checkSubscription(session: SessionType | any, metadata?: M
   return { subscription: null };
 }
 
-export async function createPortalSession(session: SessionType | any, host: string, subscription?: SubscriptionType, metadata?: Metadata) {
+export async function createPortalSession(
+  session: SessionType | any,
+  host: string,
+  subscription?: SubscriptionType,
+  metadata?: Metadata,
+) {
   if (subscription?.is_owner) {
-    const return_url = 'http://' + host;
+    const return_url = "http://" + host;
     const headers = {
-      ...(session.orgId ? { 'x-org-id': session.orgId } : {}),
-      'authorization': `Bearer ${session.accessToken}`,
+      ...(session.orgId ? { "x-org-id": session.orgId } : {}),
+      authorization: `Bearer ${session.accessToken}`,
     } as any;
 
-    const getCustomerPortalSession = () => (
+    const getCustomerPortalSession = () =>
       axios
-        .post<PortalSessionType>(url$`${metadata?.HOST}/v1/billing/portal`, { return_url }, { headers })
-        .then(({ data }) => data)
-    );
+        .post<PortalSessionType>(
+          url$`${metadata?.HOST}/v1/billing/portal`,
+          { return_url },
+          { headers },
+        )
+        .then(({ data }) => data);
 
     try {
       const portal_session = await getCustomerPortalSession();
 
       return { session_url: portal_session.url };
     } catch (e: any | Response) {
-      logger.error(`Failed to create customer portal session from (${KARRIO_API})`);
+      logger.error(
+        `Failed to create customer portal session from (${KARRIO_API})`,
+      );
       logger.error(e.response?.data || e.response);
     }
   }
@@ -172,30 +229,45 @@ export async function createPortalSession(session: SessionType | any, host: stri
   return {};
 }
 
-export async function loadTenantInfo(filter: { app_domain?: string, schema_name?: string }): Promise<TenantType | null> {
+export async function loadTenantInfo(filter: {
+  app_domain?: string;
+  schema_name?: string;
+}): Promise<TenantType | null> {
   try {
-    const { data: { data: { tenants } } } = await axios({
+    const {
+      data: {
+        data: { tenants },
+      },
+    } = await axios({
       url: url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`,
-      method: 'POST',
-      headers: { 'authorization': `Token ${serverRuntimeConfig.KARRIO_ADMIN_API_KEY}` },
+      method: "POST",
+      headers: {
+        authorization: `Token ${serverRuntimeConfig.KARRIO_ADMIN_API_KEY}`,
+      },
       data: { variables: { filter }, query: TENANT_QUERY },
     });
 
     return tenants.edges[0].node;
   } catch (e: any) {
-    console.log(e.response?.data, url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`);
+    console.log(
+      e.response?.data,
+      url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`,
+    );
 
     return null;
   }
 }
 
-function needStaffAccess(pathname, { user, metadata }: { user?: any | null, metadata?: Metadata }) {
+function needStaffAccess(
+  pathname,
+  { user, metadata }: { user?: any | null; metadata?: Metadata },
+) {
   return (
-    pathname.includes('/admin') &&
+    pathname.includes("/admin") &&
     !!user &&
     user?.is_staff === false &&
     metadata?.ADMIN_DASHBOARD == false
-  )
+  );
 }
 
 async function getAPIURL(ctx: RequestContext) {
@@ -209,18 +281,18 @@ async function getAPIURL(ctx: RequestContext) {
   const site = params ? params.site : null;
 
   const app_domain = (site || host) as string;
-  const tenant = (publicRuntimeConfig?.MULTI_TENANT && !!app_domain
-    ? (await loadTenantInfo({ app_domain }))
-    : null
-  );
-  const APIURL = (!!serverRuntimeConfig?.TENANT_ENV_KEY
-    ? (tenant?.api_domains || []).find(d => d.includes(serverRuntimeConfig?.TENANT_ENV_KEY))
-    : (tenant?.api_domains || [])[0]
-  );
+  const tenant =
+    publicRuntimeConfig?.MULTI_TENANT && !!app_domain
+      ? await loadTenantInfo({ app_domain })
+      : null;
+  const APIURL = !!serverRuntimeConfig?.TENANT_ENV_KEY
+    ? (tenant?.api_domains || []).find((d) =>
+        d.includes(serverRuntimeConfig?.TENANT_ENV_KEY),
+      )
+    : (tenant?.api_domains || [])[0];
 
   return !!APIURL ? APIURL : KARRIO_API;
 }
-
 
 const ACCOUNT_DATA_QUERY = `{
   user {
@@ -248,6 +320,7 @@ const ACCOUNT_DATA_QUERY = `{
     customs_nip_number
     customs_eori_number
     customs_vat_registration_number
+    insured_by_default
   }
 }`;
 const ORG_DATA_QUERY = `{
@@ -282,7 +355,7 @@ const ORG_DATA_QUERY = `{
     }
   }
 }`;
-const TENANT_QUERY = `query getTenant($filter: TenantFilter!) { 
+const TENANT_QUERY = `query getTenant($filter: TenantFilter!) {
   tenants(filter: $filter) {
     edges { node { schema_name api_domains } }
   }

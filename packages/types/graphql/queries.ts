@@ -3784,6 +3784,7 @@ export const GET_WORKSPACE_CONFIG = gql`
       customs_nip_number
       customs_eori_number
       customs_vat_registration_number
+      insured_by_default
     }
   }
 `;
@@ -3807,6 +3808,7 @@ export const UPDATE_WORKSPACE_CONFIG = gql`
         customs_nip_number
         customs_eori_number
         customs_vat_registration_number
+        insured_by_default
       }
       errors {
         field

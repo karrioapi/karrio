@@ -5167,6 +5167,7 @@ export interface GetWorkspaceConfig_workspace_config {
   customs_nip_number: string | null;
   customs_eori_number: string | null;
   customs_vat_registration_number: string | null;
+  insured_by_default: boolean | null;
 }
 
 export interface GetWorkspaceConfig {
@@ -5197,6 +5198,7 @@ export interface UpdateWorkspaceConfig_update_workspace_config_workspace_config 
   customs_nip_number: string | null;
   customs_eori_number: string | null;
   customs_vat_registration_number: string | null;
+  insured_by_default: boolean | null;
 }
 
 export interface UpdateWorkspaceConfig_update_workspace_config_errors {
@@ -7599,6 +7601,7 @@ export interface WorkspaceConfigMutationInput {
   customs_certificate_number?: string | null;
   customs_nip_number?: string | null;
   customs_vat_registration_number?: string | null;
+  insured_by_default?: boolean | null;
 }
 
 // null
