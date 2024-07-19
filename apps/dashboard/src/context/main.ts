@@ -68,7 +68,7 @@ export async function loadAPIMetadata(
       resolve({ metadata });
     } catch (e: any | Response) {
       logger.error(
-        `Failed to fetch API metadata from (${API_URL}, ${KARRIO_API}, ${serverRuntimeConfig.KARRIO_ADMIN_URL})`,
+        `Failed to fetch API metadata from (${API_URL}, ${KARRIO_API}, ${serverRuntimeConfig.KARRIO_ADMIN_URL}, ${serverRuntimeConfig.KARRIO_ADMIN_API_KEY})`,
       );
       // logger.error(JSON.stringify(e.response?.data || e.response));
       const code = AUTH_HTTP_CODES.includes(e.response?.status)
