@@ -1,16 +1,11 @@
 # Install dependencies only when needed
-FROM node:21.2.0-alpine3.17 AS deps
-# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-RUN apk add --no-cache libc6-compat
-
-# Rebuild the source code only when needed
 FROM node:21.2.0-alpine3.17 AS builder
 WORKDIR /app
 COPY . .
-RUN npm ci -w apps/dashboard 
+RUN npm ci -w apps/dashboard
 RUN npm run build -w apps/dashboard && \
-  rm -rf node_modules && \
-  npm install --omit=dev --ignore-scripts --prefer-offline -w apps/dashboard
+    rm -rf node_modules && \
+    npm install --omit=dev --ignore-scripts --prefer-offline -w apps/dashboard
 
 # Production image, copy all the files and run next
 FROM node:21.2.0-alpine3.17 AS runner

@@ -1,7 +1,5 @@
-import { BASE_PATH, TEST_BASE_PATH } from "./karrio";
-import { setCookie, useLocation } from "@karrio/lib";
+import { BASE_PATH, TEST_BASE_PATH, setCookie, useLocation } from "@karrio/lib";
 import React from "react";
-
 
 type AppModeType = {
   basePath: string;
@@ -11,16 +9,19 @@ type AppModeType = {
 
 export function computeMode(pathname: string) {
   return pathname?.startsWith(TEST_BASE_PATH);
-};
+}
 
 export function computeBasePath(testMode: boolean) {
   return testMode ? TEST_BASE_PATH : BASE_PATH;
-};
+}
 
 // Init the APP client mode
 export const AppMode = React.createContext<AppModeType>({} as AppModeType);
 
-const AppModeProvider: React.FC<{ pathname?: string, children?: React.ReactNode }> = ({ children, pathname }) => {
+const AppModeProvider: React.FC<{
+  pathname?: string;
+  children?: React.ReactNode;
+}> = ({ children, pathname }) => {
   const { insertUrlParam } = useLocation();
 
   const switchMode = () => {
@@ -30,16 +31,21 @@ const AppModeProvider: React.FC<{ pathname?: string, children?: React.ReactNode 
 
     setCookie("testMode", !isTestMode);
 
-    if (isTestMode) window.location.pathname = currentPathName.replace(TEST_BASE_PATH, '');
+    if (isTestMode)
+      window.location.pathname = currentPathName.replace(TEST_BASE_PATH, "");
     else window.location.replace(TEST_BASE_PATH + currentPathName);
   };
 
   return (
-    <AppMode.Provider value={{
-      testMode: computeMode(pathname || window.location.pathname),
-      basePath: computeBasePath(computeMode(pathname || window.location.pathname)),
-      switchMode
-    }}>
+    <AppMode.Provider
+      value={{
+        testMode: computeMode(pathname || window.location.pathname),
+        basePath: computeBasePath(
+          computeMode(pathname || window.location.pathname),
+        ),
+        switchMode,
+      }}
+    >
       {children}
     </AppMode.Provider>
   );
@@ -50,3 +56,4 @@ export function useAppMode() {
 }
 
 export default AppModeProvider;
+
