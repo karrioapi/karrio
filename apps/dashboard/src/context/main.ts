@@ -14,17 +14,21 @@ import {
   NextApiResponse,
 } from "next";
 import { createServerError, isNone, ServerErrorCode, url$ } from "@karrio/lib";
-import { KARRIO_API } from "@karrio/hooks/karrio";
 import { getSession } from "next-auth/react";
-import { logger } from "@karrio/lib";
-import getConfig from "next/config";
+import {
+  KARRIO_ADMIN_API_KEY,
+  KARRIO_ADMIN_URL,
+  KARRIO_API,
+  MULTI_TENANT,
+  TENANT_ENV_KEY,
+  logger,
+} from "@karrio/lib";
 import { Session } from "next-auth";
 import axios from "axios";
 
 type RequestContext =
   | GetServerSidePropsContext
   | { req: NextApiRequest; res: NextApiResponse };
-const { serverRuntimeConfig, publicRuntimeConfig } = getConfig();
 const AUTH_HTTP_CODES = [401, 403, 407];
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -67,10 +71,8 @@ export async function loadAPIMetadata(
       await setSessionCookies(ctx as any);
       resolve({ metadata });
     } catch (e: any | Response) {
-      logger.error(
-        `Failed to fetch API metadata from (${API_URL}, ${KARRIO_API}, ${serverRuntimeConfig.KARRIO_ADMIN_URL}, ${serverRuntimeConfig.KARRIO_ADMIN_API_KEY})`,
-      );
-      // logger.error(JSON.stringify(e.response?.data || e.response));
+      logger.error(`Failed to fetch API metadata from (${API_URL})`);
+      logger.error(e.response?.data || e.response);
       const code = AUTH_HTTP_CODES.includes(e.response?.status)
         ? ServerErrorCode.API_AUTH_ERROR
         : ServerErrorCode.API_CONNECTION_ERROR;
@@ -236,29 +238,21 @@ export async function loadTenantInfo(filter: {
   schema_name?: string;
 }): Promise<TenantType | null> {
   try {
-    logger.warn(
-      JSON.stringify({
-        KARRIO_API,
-        KARRIO_ADMIN_URL: serverRuntimeConfig.KARRIO_ADMIN_URL,
-        KARRIO_ADMIN_API_KEY: serverRuntimeConfig.KARRIO_ADMIN_API_KEY,
-        TENANT_QUERY,
-      }),
-    );
     const { data } = await axios({
-      url: url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`,
+      url: url$`${KARRIO_ADMIN_URL}/admin/graphql/`,
       method: "POST",
       headers: {
-        authorization: `Token ${serverRuntimeConfig.KARRIO_ADMIN_API_KEY}`,
+        authorization: `Token ${KARRIO_ADMIN_API_KEY}`,
       },
       data: { variables: { filter }, query: TENANT_QUERY },
     });
-    logger.warn(JSON.stringify({ data }));
-    return data.data.tenants.edges[0].node;
+    console.log(JSON.stringify(data, null, 2));
+    return data.data?.tenants?.edges[0].node;
   } catch (e: any) {
-    logger.error(JSON.stringify(e.response?.data || e.response || e));
-    logger.error(url$`${serverRuntimeConfig.KARRIO_ADMIN_URL}/admin/graphql/`);
+    console.log(e);
+    console.log(e.response?.data, url$`${KARRIO_ADMIN_URL}/admin/graphql/`);
 
-    return { api_domains: [KARRIO_API] } as any;
+    return null;
   }
 }
 
@@ -275,8 +269,8 @@ function needStaffAccess(
 }
 
 async function getAPIURL(ctx: RequestContext) {
-  if (!publicRuntimeConfig?.MULTI_TENANT) {
-    return KARRIO_API;
+  if (!MULTI_TENANT) {
+    return KARRIO_API as string;
   }
 
   const params = (ctx as GetServerSidePropsContext).params;
@@ -286,16 +280,14 @@ async function getAPIURL(ctx: RequestContext) {
 
   const app_domain = (site || host) as string;
   const tenant =
-    publicRuntimeConfig?.MULTI_TENANT && !!app_domain
-      ? await loadTenantInfo({ app_domain })
-      : null;
-  const APIURL = !!serverRuntimeConfig?.TENANT_ENV_KEY
+    MULTI_TENANT && !!app_domain ? await loadTenantInfo({ app_domain }) : null;
+  const APIURL = !!TENANT_ENV_KEY
     ? (tenant?.api_domains || []).find((d) =>
-        d.includes(serverRuntimeConfig?.TENANT_ENV_KEY),
+        d.includes(TENANT_ENV_KEY as string),
       )
     : (tenant?.api_domains || [])[0];
 
-  return !!APIURL ? APIURL : KARRIO_API;
+  return (!!APIURL ? APIURL : KARRIO_API) as string;
 }
 
 const ACCOUNT_DATA_QUERY = `{

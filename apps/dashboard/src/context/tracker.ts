@@ -1,7 +1,6 @@
-import { KARRIO_API } from "@karrio/hooks/karrio";
+import { url$, logger, KARRIO_API } from "@karrio/lib";
 import { loadAPIMetadata } from "@/context/main";
 import { KarrioClient } from "@karrio/types";
-import { url$, logger } from "@karrio/lib";
 import { GetServerSideProps } from "next";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {

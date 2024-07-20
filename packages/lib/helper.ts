@@ -16,7 +16,7 @@ import {
 } from "@karrio/types";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/router";
-import getConfig from "next/config";
+import { BASE_PATH } from "./constants";
 import gql from "graphql-tag";
 import moment from "moment";
 import React from "react";
@@ -25,13 +25,6 @@ export const isEqual = require("lodash.isequal");
 export const snakeCase = require("lodash.snakecase");
 export const groupBy = require("lodash.groupby");
 export const toNumber = require("lodash.tonumber");
-
-const { publicRuntimeConfig } = getConfig();
-
-export const BASE_PATH = (publicRuntimeConfig?.BASE_PATH || "/").replace(
-  "//",
-  "/",
-);
 
 export const preventPropagation = (e: React.MouseEvent) => e.stopPropagation();
 
