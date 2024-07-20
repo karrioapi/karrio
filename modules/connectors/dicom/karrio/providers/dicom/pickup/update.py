@@ -32,7 +32,7 @@ def pickup_update_request(
 ) -> Serializable:
     request: Pipeline = Pipeline(
         delete_pickup=lambda *_: _delete_pickup(payload, settings),
-        create_pickup=partial(_create_pickup, payload=payload, settings=settings),
+        create_pickup=partial(_create_pickup_job, payload=payload, settings=settings),
         retrieve_pickup=partial(_retrieve_pickup, payload=payload, settings=settings),
     )
 

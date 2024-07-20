@@ -12,7 +12,6 @@ export const KARRIO_URL =
   process.env.KARRIO_URL || process.env.KARRIO_HOSTNAME || KARRIO_PUBLIC_URL;
 export const KARRIO_API =
   typeof window === "undefined" ? KARRIO_URL : KARRIO_PUBLIC_URL;
-console.log("KARRIO_API", KARRIO_API, KARRIO_PUBLIC_URL, KARRIO_URL);
 
 export const SENTRY_DSN =
   process.env.SENTRY_DSN || process.env.NEXT_PUBLIC_SENTRY_DSN;
