@@ -858,6 +858,21 @@ export const GET_SYSTEM_CONNECTIONS = gql`
         language
         config
       }
+      ... on HayPostSettingsType {
+        id
+        carrier_id
+        carrier_name
+        display_name
+        test_mode
+        active
+        capabilities
+        metadata
+        config
+        username
+        password
+        customer_id
+        customer_type
+      }
       ... on LaPosteSettingsType {
         id
         carrier_id
@@ -1722,6 +1737,21 @@ export const GET_SYSTEM_CONNECTION = gql`
         identifier
         language
         config
+      }
+      ... on HayPostSettingsType {
+        id
+        carrier_id
+        carrier_name
+        display_name
+        test_mode
+        active
+        capabilities
+        metadata
+        config
+        username
+        password
+        customer_id
+        customer_type
       }
       ... on LaPosteSettingsType {
         id

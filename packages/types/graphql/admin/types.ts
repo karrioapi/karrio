@@ -1054,6 +1054,23 @@ export interface GetSystemConnections_system_connections_GEODISSettingsType {
   config: any | null;
 }
 
+export interface GetSystemConnections_system_connections_HayPostSettingsType {
+  __typename: "HayPostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string | null;
+  password: string | null;
+  customer_id: string | null;
+  customer_type: string | null;
+}
+
 export interface GetSystemConnections_system_connections_LaPosteSettingsType {
   __typename: "LaPosteSettingsType";
   id: string;
@@ -1270,7 +1287,7 @@ export interface GetSystemConnections_system_connections_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type GetSystemConnections_system_connections = GetSystemConnections_system_connections_AlliedExpressSettingsType | GetSystemConnections_system_connections_AlliedExpressLocalSettingsType | GetSystemConnections_system_connections_AmazonShippingSettingsType | GetSystemConnections_system_connections_AramexSettingsType | GetSystemConnections_system_connections_AsendiaUSSettingsType | GetSystemConnections_system_connections_AustraliaPostSettingsType | GetSystemConnections_system_connections_BoxKnightSettingsType | GetSystemConnections_system_connections_BelgianPostSettingsType | GetSystemConnections_system_connections_CanadaPostSettingsType | GetSystemConnections_system_connections_CanparSettingsType | GetSystemConnections_system_connections_ChronopostSettingsType | GetSystemConnections_system_connections_ColissimoSettingsType | GetSystemConnections_system_connections_DHLParcelDESettingsType | GetSystemConnections_system_connections_DHLExpressSettingsType | GetSystemConnections_system_connections_DHLPolandSettingsType | GetSystemConnections_system_connections_DHLUniversalSettingsType | GetSystemConnections_system_connections_DicomSettingsType | GetSystemConnections_system_connections_DPDSettingsType | GetSystemConnections_system_connections_DPDHLSettingsType | GetSystemConnections_system_connections_EShipperSettingsType | GetSystemConnections_system_connections_EasyPostSettingsType | GetSystemConnections_system_connections_FedexSettingsType | GetSystemConnections_system_connections_FedexWSSettingsType | GetSystemConnections_system_connections_FreightcomSettingsType | GetSystemConnections_system_connections_GenericSettingsType | GetSystemConnections_system_connections_GEODISSettingsType | GetSystemConnections_system_connections_LaPosteSettingsType | GetSystemConnections_system_connections_Locate2uSettingsType | GetSystemConnections_system_connections_NationexSettingsType | GetSystemConnections_system_connections_PurolatorSettingsType | GetSystemConnections_system_connections_RoadieSettingsType | GetSystemConnections_system_connections_RoyalMailSettingsType | GetSystemConnections_system_connections_SendleSettingsType | GetSystemConnections_system_connections_TGESettingsType | GetSystemConnections_system_connections_TNTSettingsType | GetSystemConnections_system_connections_UPSSettingsType | GetSystemConnections_system_connections_USPSSettingsType | GetSystemConnections_system_connections_USPSInternationalSettingsType | GetSystemConnections_system_connections_Zoom2uSettingsType;
+export type GetSystemConnections_system_connections = GetSystemConnections_system_connections_AlliedExpressSettingsType | GetSystemConnections_system_connections_AlliedExpressLocalSettingsType | GetSystemConnections_system_connections_AmazonShippingSettingsType | GetSystemConnections_system_connections_AramexSettingsType | GetSystemConnections_system_connections_AsendiaUSSettingsType | GetSystemConnections_system_connections_AustraliaPostSettingsType | GetSystemConnections_system_connections_BoxKnightSettingsType | GetSystemConnections_system_connections_BelgianPostSettingsType | GetSystemConnections_system_connections_CanadaPostSettingsType | GetSystemConnections_system_connections_CanparSettingsType | GetSystemConnections_system_connections_ChronopostSettingsType | GetSystemConnections_system_connections_ColissimoSettingsType | GetSystemConnections_system_connections_DHLParcelDESettingsType | GetSystemConnections_system_connections_DHLExpressSettingsType | GetSystemConnections_system_connections_DHLPolandSettingsType | GetSystemConnections_system_connections_DHLUniversalSettingsType | GetSystemConnections_system_connections_DicomSettingsType | GetSystemConnections_system_connections_DPDSettingsType | GetSystemConnections_system_connections_DPDHLSettingsType | GetSystemConnections_system_connections_EShipperSettingsType | GetSystemConnections_system_connections_EasyPostSettingsType | GetSystemConnections_system_connections_FedexSettingsType | GetSystemConnections_system_connections_FedexWSSettingsType | GetSystemConnections_system_connections_FreightcomSettingsType | GetSystemConnections_system_connections_GenericSettingsType | GetSystemConnections_system_connections_GEODISSettingsType | GetSystemConnections_system_connections_HayPostSettingsType | GetSystemConnections_system_connections_LaPosteSettingsType | GetSystemConnections_system_connections_Locate2uSettingsType | GetSystemConnections_system_connections_NationexSettingsType | GetSystemConnections_system_connections_PurolatorSettingsType | GetSystemConnections_system_connections_RoadieSettingsType | GetSystemConnections_system_connections_RoyalMailSettingsType | GetSystemConnections_system_connections_SendleSettingsType | GetSystemConnections_system_connections_TGESettingsType | GetSystemConnections_system_connections_TNTSettingsType | GetSystemConnections_system_connections_UPSSettingsType | GetSystemConnections_system_connections_USPSSettingsType | GetSystemConnections_system_connections_USPSInternationalSettingsType | GetSystemConnections_system_connections_Zoom2uSettingsType;
 
 export interface GetSystemConnections {
   system_connections: GetSystemConnections_system_connections[];
@@ -2047,6 +2064,23 @@ export interface GetSystemConnection_system_connection_GEODISSettingsType {
   config: any | null;
 }
 
+export interface GetSystemConnection_system_connection_HayPostSettingsType {
+  __typename: "HayPostSettingsType";
+  id: string;
+  carrier_id: string;
+  carrier_name: string;
+  display_name: string;
+  test_mode: boolean;
+  active: boolean;
+  capabilities: string[];
+  metadata: any | null;
+  config: any | null;
+  username: string | null;
+  password: string | null;
+  customer_id: string | null;
+  customer_type: string | null;
+}
+
 export interface GetSystemConnection_system_connection_LaPosteSettingsType {
   __typename: "LaPosteSettingsType";
   id: string;
@@ -2263,7 +2297,7 @@ export interface GetSystemConnection_system_connection_Zoom2uSettingsType {
   api_key: string | null;
 }
 
-export type GetSystemConnection_system_connection = GetSystemConnection_system_connection_AlliedExpressSettingsType | GetSystemConnection_system_connection_AlliedExpressLocalSettingsType | GetSystemConnection_system_connection_AmazonShippingSettingsType | GetSystemConnection_system_connection_AramexSettingsType | GetSystemConnection_system_connection_AsendiaUSSettingsType | GetSystemConnection_system_connection_AustraliaPostSettingsType | GetSystemConnection_system_connection_BoxKnightSettingsType | GetSystemConnection_system_connection_BelgianPostSettingsType | GetSystemConnection_system_connection_CanadaPostSettingsType | GetSystemConnection_system_connection_CanparSettingsType | GetSystemConnection_system_connection_ChronopostSettingsType | GetSystemConnection_system_connection_ColissimoSettingsType | GetSystemConnection_system_connection_DHLParcelDESettingsType | GetSystemConnection_system_connection_DHLExpressSettingsType | GetSystemConnection_system_connection_DHLPolandSettingsType | GetSystemConnection_system_connection_DHLUniversalSettingsType | GetSystemConnection_system_connection_DicomSettingsType | GetSystemConnection_system_connection_DPDSettingsType | GetSystemConnection_system_connection_DPDHLSettingsType | GetSystemConnection_system_connection_EShipperSettingsType | GetSystemConnection_system_connection_EasyPostSettingsType | GetSystemConnection_system_connection_FedexSettingsType | GetSystemConnection_system_connection_FedexWSSettingsType | GetSystemConnection_system_connection_FreightcomSettingsType | GetSystemConnection_system_connection_GenericSettingsType | GetSystemConnection_system_connection_GEODISSettingsType | GetSystemConnection_system_connection_LaPosteSettingsType | GetSystemConnection_system_connection_Locate2uSettingsType | GetSystemConnection_system_connection_NationexSettingsType | GetSystemConnection_system_connection_PurolatorSettingsType | GetSystemConnection_system_connection_RoadieSettingsType | GetSystemConnection_system_connection_RoyalMailSettingsType | GetSystemConnection_system_connection_SendleSettingsType | GetSystemConnection_system_connection_TGESettingsType | GetSystemConnection_system_connection_TNTSettingsType | GetSystemConnection_system_connection_UPSSettingsType | GetSystemConnection_system_connection_USPSSettingsType | GetSystemConnection_system_connection_USPSInternationalSettingsType | GetSystemConnection_system_connection_Zoom2uSettingsType;
+export type GetSystemConnection_system_connection = GetSystemConnection_system_connection_AlliedExpressSettingsType | GetSystemConnection_system_connection_AlliedExpressLocalSettingsType | GetSystemConnection_system_connection_AmazonShippingSettingsType | GetSystemConnection_system_connection_AramexSettingsType | GetSystemConnection_system_connection_AsendiaUSSettingsType | GetSystemConnection_system_connection_AustraliaPostSettingsType | GetSystemConnection_system_connection_BoxKnightSettingsType | GetSystemConnection_system_connection_BelgianPostSettingsType | GetSystemConnection_system_connection_CanadaPostSettingsType | GetSystemConnection_system_connection_CanparSettingsType | GetSystemConnection_system_connection_ChronopostSettingsType | GetSystemConnection_system_connection_ColissimoSettingsType | GetSystemConnection_system_connection_DHLParcelDESettingsType | GetSystemConnection_system_connection_DHLExpressSettingsType | GetSystemConnection_system_connection_DHLPolandSettingsType | GetSystemConnection_system_connection_DHLUniversalSettingsType | GetSystemConnection_system_connection_DicomSettingsType | GetSystemConnection_system_connection_DPDSettingsType | GetSystemConnection_system_connection_DPDHLSettingsType | GetSystemConnection_system_connection_EShipperSettingsType | GetSystemConnection_system_connection_EasyPostSettingsType | GetSystemConnection_system_connection_FedexSettingsType | GetSystemConnection_system_connection_FedexWSSettingsType | GetSystemConnection_system_connection_FreightcomSettingsType | GetSystemConnection_system_connection_GenericSettingsType | GetSystemConnection_system_connection_GEODISSettingsType | GetSystemConnection_system_connection_HayPostSettingsType | GetSystemConnection_system_connection_LaPosteSettingsType | GetSystemConnection_system_connection_Locate2uSettingsType | GetSystemConnection_system_connection_NationexSettingsType | GetSystemConnection_system_connection_PurolatorSettingsType | GetSystemConnection_system_connection_RoadieSettingsType | GetSystemConnection_system_connection_RoyalMailSettingsType | GetSystemConnection_system_connection_SendleSettingsType | GetSystemConnection_system_connection_TGESettingsType | GetSystemConnection_system_connection_TNTSettingsType | GetSystemConnection_system_connection_UPSSettingsType | GetSystemConnection_system_connection_USPSSettingsType | GetSystemConnection_system_connection_USPSInternationalSettingsType | GetSystemConnection_system_connection_Zoom2uSettingsType;
 
 export interface GetSystemConnection {
   system_connection: GetSystemConnection_system_connection | null;
@@ -3233,6 +3267,7 @@ export enum CarrierNameEnum {
   freightcom = "freightcom",
   generic = "generic",
   geodis = "geodis",
+  hay_post = "hay_post",
   laposte = "laposte",
   locate2u = "locate2u",
   nationex = "nationex",
@@ -3392,6 +3427,7 @@ export interface CreateConnectionMutationInput {
   freightcom?: FreightcomSettingsInput | null;
   generic?: GenericSettingsInput | null;
   geodis?: GEODISSettingsInput | null;
+  hay_post?: HayPostSettingsInput | null;
   laposte?: LaPosteSettingsInput | null;
   locate2u?: Locate2uSettingsInput | null;
   nationex?: NationexSettingsInput | null;
@@ -3768,6 +3804,18 @@ export interface GEODISSettingsInput {
 }
 
 // null
+export interface HayPostSettingsInput {
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username: string;
+  password: string;
+  customer_id: string;
+  customer_type: string;
+  carrier_id: string;
+}
+
+// null
 export interface LaPosteSettingsInput {
   active?: boolean | null;
   config?: any | null;
@@ -3946,6 +3994,7 @@ export interface UpdateConnectionMutationInput {
   freightcom?: UpdateFreightcomSettingsInput | null;
   generic?: UpdateGenericSettingsInput | null;
   geodis?: UpdateGEODISSettingsInput | null;
+  hay_post?: UpdateHayPostSettingsInput | null;
   laposte?: UpdateLaPosteSettingsInput | null;
   locate2u?: UpdateLocate2uSettingsInput | null;
   nationex?: UpdateNationexSettingsInput | null;
@@ -4334,6 +4383,19 @@ export interface UpdateGEODISSettingsInput {
   identifier?: string | null;
   code_client?: string | null;
   language?: string | null;
+  carrier_id?: string | null;
+}
+
+// null
+export interface UpdateHayPostSettingsInput {
+  id: string;
+  active?: boolean | null;
+  config?: any | null;
+  metadata?: any | null;
+  username?: string | null;
+  password?: string | null;
+  customer_id?: string | null;
+  customer_type?: string | null;
   carrier_id?: string | null;
 }
 

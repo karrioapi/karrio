@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6-rc10`.
+    The current version is `2024.6-rc11`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6-rc10
+  version: 2024.6-rc11
 paths:
   /:
     get:
@@ -687,8 +687,8 @@ paths:
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -737,8 +737,8 @@ paths:
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -1182,8 +1182,8 @@ paths:
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2073,6 +2073,7 @@ paths:
           - freightcom
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -2163,6 +2164,7 @@ paths:
           - freightcom
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -2253,6 +2255,7 @@ paths:
           - freightcom
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -2436,6 +2439,7 @@ paths:
           - freightcom
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -2569,6 +2573,7 @@ paths:
           - fedex_ws
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -2703,8 +2708,8 @@ paths:
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3136,8 +3141,8 @@ paths:
           `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`, `sendle`,
-          `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3285,6 +3290,7 @@ paths:
           - fedex_ws
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -4578,6 +4584,7 @@ components:
           - freightcom
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -4592,7 +4599,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 1765d529f2970d04
+          x-spec-enum-id: b4802ead8f816259
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -9523,6 +9530,7 @@ components:
           - fedex_ws
           - generic
           - geodis
+          - hay_post
           - laposte
           - locate2u
           - nationex
@@ -9537,7 +9545,7 @@ components:
           - usps_international
           - zoom2u
           type: string
-          x-spec-enum-id: 5920c40ae77b6789
+          x-spec-enum-id: 7a9de47b0f615f7a
           description: The tracking carrier
         account_number:
           type: string
@@ -9565,7 +9573,7 @@ components:
       properties:
         date:
           type: string
-          description: The tracking event's date
+          description: 'The tracking event''s date. Format: `YYYY-MM-DD`'
         description:
           type: string
           description: The tracking event's description
@@ -9579,7 +9587,7 @@ components:
         time:
           type: string
           nullable: true
-          description: The tracking event's time
+          description: 'The tracking event''s time. Format: `HH:MM AM/PM`'
         latitude:
           type: number
           format: double
@@ -10052,6 +10060,7 @@ tags:
     | nationex | Nationex |
     | locate2u | Locate2u |
     | laposte | La Poste |
+    | hay_post | HayPost |
     | geodis | GEODIS |
     | freightcom | Freightcom |
     | fedex_ws | FedEx Web Service |
@@ -10312,6 +10321,23 @@ tags:
     | Code         | Service Name |
     | ------------ | ------------ |
     | locate2u_local_delivery | Locate2u Local Delivery |
+
+    ### HayPost
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | letter_ordered | 88 |
+    | letter_simple | 79 |
+    | letter_valued | 89 |
+    | package_ordered | 93 |
+    | package_simple | 92 |
+    | package_valued | 100 |
+    | parcel_simple | 94 |
+    | parcel_valued | 95 |
+    | postcard_ordered | 91 |
+    | postcard_simple | 90 |
+    | sekogram_simple | 96 |
+    | sprint_simple | 97 |
+    | yes_ordered_value | 99 |
 
     ### GEODIS
     | Code         | Service Name |
