@@ -355,6 +355,18 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                   />
                 )}
 
+                {field("customer_type").exists && (
+                  <InputField
+                    label="Customer Type"
+                    value={payload.customer_type}
+                    name="customer_type"
+                    wrapperClass="pt-2"
+                    onChange={handleChange}
+                    className="is-small"
+                    required={field("customer_type").required}
+                  />
+                )}
+
                 {field("identifier").exists && (
                   <InputField
                     label="Identifier"
@@ -1703,6 +1715,13 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
           ["identifier", true],
           ["api_key", true],
           ["language", false, "fr"],
+        ],
+        [CarrierSettingsCarrierNameEnum.HayPost]: [
+          ["carrier_id", true],
+          ["username", true],
+          ["password", true],
+          ["customer_id", true],
+          ["customer_type", true],
         ],
         [CarrierSettingsCarrierNameEnum.Laposte]: [
           ["carrier_id", true],

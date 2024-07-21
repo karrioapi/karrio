@@ -2279,6 +2279,21 @@ export const GET_USER_CONNECTIONS = gql`
         language
         config
       }
+      ... on HayPostSettingsType {
+        id
+        carrier_id
+        carrier_name
+        display_name
+        test_mode
+        active
+        capabilities
+        metadata
+        config
+        username
+        password
+        customer_id
+        customer_type
+      }
       ... on LaPosteSettingsType {
         id
         carrier_id
