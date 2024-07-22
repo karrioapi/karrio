@@ -12,13 +12,13 @@ FROM node:21.2.0-alpine3.17 AS runner
 ARG VERSION
 WORKDIR /app
 
+ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
 ENV SENTRY_IGNORE_API_RESOLUTION_ERROR 1
-ENV NODE_ENV production
-ENV JWT_SECRET "nasdlfij34l5kj5k6j5kl6lp+lsick5bi*90!mbk7rc3iy_op1r"
-ENV KARRIO_PUBLIC_URL https://api.karrio.io
-ENV DASHBOARD_URL http://localhost:3000
-ENV DASHBOARD_VERSION ${VERSION}
+ENV NEXTAUTH_SECRET "nasdlfij34l5kj5k6j5kl6lp+lsick5bi*90!mbk7rc3iy_op1r"
+ENV NEXT_PUBLIC_KARRIO_PUBLIC_URL https://api.karrio.io
+ENV NEXT_PUBLIC_DASHBOARD_URL http://localhost:3000
+ENV NEXT_PUBLIC_DASHBOARD_VERSION ${VERSION}
 
 RUN addgroup -g 1001 -S nodejs
 RUN adduser -S karrio -u 1001

@@ -54,9 +54,9 @@ services:
     depends_on:
       - api
     environment:
-      JWT_SECRET: ${JWT_SECRET}
-      DASHBOARD_URL: ${DASHBOARD_URL}
-      KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+      NEXTAUTH_SECRET: ${JWT_SECRET}
+      NEXT_PUBLIC_DASHBOARD_URL: ${DASHBOARD_URL}
+      NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
 
   caddy:
     container_name: karrio.caddy

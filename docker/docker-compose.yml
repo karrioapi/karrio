@@ -46,17 +46,17 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6-rc12
+    image: karrio/dashboard:2024.6-rc13
     restart: unless-stopped
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
     depends_on:
       - api
     environment:
-      JWT_SECRET: ${JWT_SECRET}
       KARRIO_URL: http://api:${KARRIO_HTTP_PORT:-5002}
-      DASHBOARD_URL: ${DASHBOARD_URL}
-      KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
+      NEXTAUTH_SECRET: ${JWT_SECRET}
+      NEXT_PUBLIC_DASHBOARD_URL: ${DASHBOARD_URL}
+      NEXT_PUBLIC_KARRIO_PUBLIC_URL: ${KARRIO_PUBLIC_URL}
 
   maildev:
     container_name: karrio.mail
