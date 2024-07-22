@@ -73,6 +73,7 @@ karrio.fedex_ws @ file://${PWD}/modules/connectors/fedex_ws
 karrio.freightcom @ file://${PWD}/modules/connectors/freightcom
 karrio.generic @ file://${PWD}/modules/connectors/generic
 karrio.geodis @ file://${PWD}/modules/connectors/geodis
+karrio.hay_post @ file://${PWD}/modules/connectors/hay_post
 karrio.laposte @ file://${PWD}/modules/connectors/laposte
 karrio.locate2u @ file://${PWD}/modules/connectors/locate2u
 karrio.nationex @ file://${PWD}/modules/connectors/nationex
@@ -138,7 +139,7 @@ treepoem==3.24.0
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.2
-uvicorn==0.30.1
+uvicorn==0.30.3
 validators==0.33.0
 weasyprint==62.3
 webencodings==0.5.1

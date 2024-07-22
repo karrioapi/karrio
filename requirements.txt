@@ -7,7 +7,7 @@ certifi==2024.7.4
 cffi==1.16.0
 charset-normalizer==3.3.2
 click==8.1.7
-cryptography==42.0.8
+cryptography==43.0.0
 cssselect2==0.7.0
 deprecation==2.1.0
 diff-match-patch==20230430
@@ -35,7 +35,7 @@ fonttools==4.53.1
 graphql-core==3.2.3
 gunicorn==22.0.0
 h11==0.14.0
-hiredis==2.3.2
+hiredis==3.0.0
 html5lib==1.1
 huey==2.5.1
 idna==3.7
@@ -73,6 +73,7 @@ jwcrypto==1.5.6
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.freightcom&subdirectory=modules/connectors/freightcom
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.generic&subdirectory=modules/connectors/generic
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.geodis&subdirectory=modules/connectors/geodis
+-e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.hay_post&subdirectory=modules/connectors/hay_post
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.laposte&subdirectory=modules/connectors/laposte
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.locate2u&subdirectory=modules/connectors/locate2u
 -e git+ssh://git@github.com/karrioapi/karrio.git@6f610abedd4edd6ccdf7ce2303868044827d3d85#egg=karrio.nationex&subdirectory=modules/connectors/nationex
@@ -138,7 +139,7 @@ treepoem==3.24.0
 typing_extensions==4.12.2
 uritemplate==4.1.1
 urllib3==2.2.2
-uvicorn==0.30.1
+uvicorn==0.30.3
 validators==0.33.0
 weasyprint==62.3
 webencodings==0.5.1

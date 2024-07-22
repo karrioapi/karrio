@@ -27,6 +27,7 @@ Django==4.2.14
 -e ./modules/connectors/fedex_ws
 -e ./modules/connectors/generic
 -e ./modules/connectors/geodis
+-e ./modules/connectors/hay_post
 -e ./modules/connectors/laposte
 -e ./modules/connectors/nationex
 -e ./modules/connectors/purolator
