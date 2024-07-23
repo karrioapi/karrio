@@ -1,7 +1,7 @@
-import { onError, url$, MULTI_TENANT, KARRIO_PUBLIC_URL } from "@karrio/lib";
 import { Metadata, References } from "@karrio/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSyncedSession } from "./session";
+import { onError, url$ } from "@karrio/lib";
 import React, { useContext } from "react";
 import axios from "axios";
 
@@ -14,8 +14,10 @@ const APIMetadata = React.createContext<APIMeta>({} as any);
 
 const APIMetadataProvider: React.FC<{
   metadata: Metadata;
+  MULTI_TENANT?: boolean;
+  KARRIO_PUBLIC_URL?: string;
   children?: React.ReactNode;
-}> = ({ children, metadata }) => {
+}> = ({ children, metadata, MULTI_TENANT, KARRIO_PUBLIC_URL }) => {
   const {
     query: { data: session },
   } = useSyncedSession();
@@ -43,6 +45,7 @@ const APIMetadataProvider: React.FC<{
         .then(({ data }) => data),
     refetchOnWindowFocus: false,
     staleTime: 300000,
+    enabled: !!getHost(),
     onError,
   });
 
