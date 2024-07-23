@@ -6,9 +6,9 @@ import React, { useContext } from "react";
 import axios from "axios";
 
 type APIMeta = {
-  host: string;
   metadata: Metadata;
   references: References;
+  getHost: () => string;
 };
 const APIMetadata = React.createContext<APIMeta>({} as any);
 
@@ -19,13 +19,13 @@ const APIMetadataProvider: React.FC<{
   const {
     query: { data: session },
   } = useSyncedSession();
+  const getHost = () =>
+    (MULTI_TENANT
+      ? metadata?.HOST || KARRIO_PUBLIC_URL
+      : KARRIO_PUBLIC_URL) as string;
   const context = {
+    getHost,
     metadata: (metadata || {}) as Metadata,
-    get host() {
-      return (
-        MULTI_TENANT ? metadata?.HOST || KARRIO_PUBLIC_URL : KARRIO_PUBLIC_URL
-      ) as string;
-    },
   };
 
   const { data: references } = useQuery({
@@ -33,7 +33,7 @@ const APIMetadataProvider: React.FC<{
     queryFn: () =>
       axios
         .get<References>(
-          url$`${context.host}/v1/references?reduced=false`,
+          url$`${getHost()}/v1/references?reduced=false`,
           !!session?.accessToken
             ? {
                 headers: { authorization: `Bearer ${session?.accessToken}` },

@@ -35,16 +35,16 @@ export const ClientProvider: React.FC<ClientProviderProps> = ({
   children,
   ...pageData
 }) => {
-  const { host } = useAPIMetadata();
+  const { getHost } = useAPIMetadata();
   const {
     query: { data: session },
   } = useSyncedSession();
 
-  if (!host) return <></>;
+  if (!getHost || !getHost()) return <></>;
 
   return (
     <APIClientsContext.Provider
-      value={{ ...setupRestClient(host, session), pageData }}
+      value={{ ...setupRestClient(getHost(), session), pageData }}
     >
       {children}
     </APIClientsContext.Provider>
