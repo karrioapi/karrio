@@ -6,7 +6,7 @@ export const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH || "/").replace(
 );
 export const TEST_BASE_PATH = (BASE_PATH + "/test").replace("//", "/");
 
-const KARRIO_PUBLIC_URL =
+export const KARRIO_PUBLIC_URL =
   process.env.KARRIO_PUBLIC_URL || process.env.NEXT_PUBLIC_KARRIO_PUBLIC_URL;
 export const KARRIO_URL =
   process.env.KARRIO_URL || process.env.KARRIO_HOSTNAME || KARRIO_PUBLIC_URL;

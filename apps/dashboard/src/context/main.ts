@@ -21,6 +21,7 @@ import {
   KARRIO_API,
   MULTI_TENANT,
   TENANT_ENV_KEY,
+  KARRIO_PUBLIC_URL,
   logger,
 } from "@karrio/lib";
 import { Session } from "next-auth";
@@ -66,10 +67,11 @@ export async function loadAPIMetadata(
   return new Promise(async (resolve, reject) => {
     try {
       const { data: metadata } = await axios.get<Metadata>(API_URL);
+      const HOST = (MULTI_TENANT ? metadata.HOST : KARRIO_PUBLIC_URL) as string;
 
       // TODO:: implement version compatibility check here.
       await setSessionCookies(ctx as any);
-      resolve({ metadata });
+      resolve({ metadata: { ...metadata, HOST } });
     } catch (e: any | Response) {
       logger.error(`Failed to fetch API metadata from (${API_URL})`);
       logger.error(e.response?.data || e.response);
