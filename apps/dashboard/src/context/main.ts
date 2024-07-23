@@ -18,7 +18,7 @@ import { getSession } from "next-auth/react";
 import {
   KARRIO_ADMIN_API_KEY,
   KARRIO_ADMIN_URL,
-  KARRIO_API,
+  KARRIO_URL,
   MULTI_TENANT,
   TENANT_ENV_KEY,
   KARRIO_PUBLIC_URL,
@@ -130,7 +130,7 @@ export async function loadContextData(
     ]);
     return { metadata, ...user, ...org };
   } catch (e: any | Response) {
-    logger.error(`Failed to fetch API data from (${KARRIO_API})`);
+    logger.error(`Failed to fetch API data from (${KARRIO_URL})`);
     logger.error(e.response?.data || e.response);
     const code = AUTH_HTTP_CODES.includes(e.response?.status)
       ? ServerErrorCode.API_AUTH_ERROR
@@ -189,7 +189,7 @@ export async function checkSubscription(
       return { subscription };
     } catch (e: any | Response) {
       logger.error(
-        `Failed to fetch API subscription details from (${KARRIO_API})`,
+        `Failed to fetch API subscription details from (${KARRIO_URL})`,
       );
       logger.error(e.response?.data || e.response);
     }
@@ -226,7 +226,7 @@ export async function createPortalSession(
       return { session_url: portal_session.url };
     } catch (e: any | Response) {
       logger.error(
-        `Failed to create customer portal session from (${KARRIO_API})`,
+        `Failed to create customer portal session from (${KARRIO_URL})`,
       );
       logger.error(e.response?.data || e.response);
     }
@@ -272,7 +272,7 @@ function needStaffAccess(
 
 async function getAPIURL(ctx: RequestContext) {
   if (!MULTI_TENANT) {
-    return KARRIO_API as string;
+    return KARRIO_URL as string;
   }
 
   const params = (ctx as GetServerSidePropsContext).params;
@@ -289,7 +289,7 @@ async function getAPIURL(ctx: RequestContext) {
       )
     : (tenant?.api_domains || [])[0];
 
-  return (!!APIURL ? APIURL : KARRIO_API) as string;
+  return (!!APIURL ? APIURL : KARRIO_URL) as string;
 }
 
 const ACCOUNT_DATA_QUERY = `{

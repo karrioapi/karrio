@@ -1,4 +1,4 @@
-import { onError, url$, KARRIO_URL, MULTI_TENANT } from "@karrio/lib";
+import { onError, url$, MULTI_TENANT, KARRIO_PUBLIC_URL } from "@karrio/lib";
 import { Metadata, References } from "@karrio/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSyncedSession } from "./session";
@@ -23,7 +23,7 @@ const APIMetadataProvider: React.FC<{
     metadata: (metadata || {}) as Metadata,
     get host() {
       return (
-        MULTI_TENANT ? metadata?.HOST || KARRIO_URL : KARRIO_URL
+        MULTI_TENANT ? metadata?.HOST || KARRIO_PUBLIC_URL : KARRIO_PUBLIC_URL
       ) as string;
     },
   };

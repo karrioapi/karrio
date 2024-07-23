@@ -7,7 +7,7 @@ export const BASE_PATH = (process.env.NEXT_PUBLIC_BASE_PATH || "/").replace(
 export const TEST_BASE_PATH = (BASE_PATH + "/test").replace("//", "/");
 
 export const KARRIO_PUBLIC_URL =
-  process.env.KARRIO_PUBLIC_URL || process.env.NEXT_PUBLIC_KARRIO_PUBLIC_URL;
+  process.env.NEXT_PUBLIC_KARRIO_PUBLIC_URL || process.env.KARRIO_PUBLIC_URL;
 export const KARRIO_URL =
   process.env.KARRIO_URL || process.env.KARRIO_HOSTNAME || KARRIO_PUBLIC_URL;
 export const KARRIO_API =
@@ -29,5 +29,5 @@ export const MULTI_TENANT = Boolean(
   JSON.parse(process.env.NEXT_PUBLIC_MULTI_TENANT || "false"),
 );
 
-export const DASHBOARD_VERSION = process.env.NEXT_PUBLIC_DASHBOARD_VERSION;
 export const DASHBOARD_URL = process.env.NEXT_PUBLIC_DASHBOARD_URL;
+export const DASHBOARD_VERSION = process.env.NEXT_PUBLIC_DASHBOARD_VERSION;
