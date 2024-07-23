@@ -44,7 +44,7 @@ services:
 
   dashboard:
     container_name: karrio.dashboard
-    image: karrio/dashboard:2024.6-rc14
+    image: karrio.docker.scarf.sh/karrio/dashboard:2024.6-rc14
     restart: unless-stopped
     ports:
       - ${DASHBOARD_PORT}:3000/tcp
