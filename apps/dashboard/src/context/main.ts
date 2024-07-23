@@ -17,6 +17,7 @@ import { createServerError, isNone, ServerErrorCode, url$ } from "@karrio/lib";
 import { getSession } from "next-auth/react";
 import {
   KARRIO_ADMIN_API_KEY,
+  KARRIO_PUBLIC_URL,
   KARRIO_ADMIN_URL,
   KARRIO_URL,
   MULTI_TENANT,
@@ -53,13 +54,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   }
 
   return {
-    props: { pathname, orgId, ...metadata, ...subscription, ...data },
+    props: {
+      pathname,
+      orgId,
+      ...metadata,
+      ...subscription,
+      ...data,
+    },
   };
 };
 
-export async function loadAPIMetadata(
-  ctx: RequestContext,
-): Promise<{ metadata?: Metadata }> {
+export async function loadAPIMetadata(ctx: RequestContext): Promise<{
+  metadata?: Metadata;
+  KARRIO_PUBLIC_URL?: string;
+  MULTI_TENANT?: boolean;
+}> {
   // Attempt connection to the karrio API to retrieve the API metadata
   const API_URL = await getAPIURL(ctx);
 
@@ -69,7 +78,7 @@ export async function loadAPIMetadata(
 
       // TODO:: implement version compatibility check here.
       await setSessionCookies(ctx as any);
-      resolve({ metadata });
+      resolve({ metadata, KARRIO_PUBLIC_URL, MULTI_TENANT });
     } catch (e: any | Response) {
       logger.error(`Failed to fetch API metadata from (${API_URL})`);
       logger.error(e.response?.data || e.response);
