@@ -1,5 +1,5 @@
 # Install dependencies only when needed
-FROM node:21.2.0-alpine3.17 AS builder
+FROM node:22.5.0-alpine AS builder
 WORKDIR /app
 COPY . .
 RUN npm ci -w apps/dashboard
@@ -8,7 +8,7 @@ RUN npm run build -w apps/dashboard && \
     npm install --omit=dev --ignore-scripts --prefer-offline -w apps/dashboard
 
 # Production image, copy all the files and run next
-FROM node:21.2.0-alpine3.17 AS runner
+FROM node:22.5.0-alpine AS runner
 ARG VERSION
 WORKDIR /app
 
