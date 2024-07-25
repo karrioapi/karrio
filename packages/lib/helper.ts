@@ -548,10 +548,6 @@ export function createShipmentFromOrders(
     0,
   );
 
-  console.log(
-    "workspace_config",
-    workspace_config.query.data?.workspace_config?.insured_by_default,
-  );
   if (
     !!workspace_config.query.data?.workspace_config?.insured_by_default &&
     !order_options.insurance

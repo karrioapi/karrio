@@ -340,6 +340,7 @@ export const GET_SHIPMENT = gql`
         package_preset
         freight_class
         reference_number
+        description
         items {
           id
           weight
@@ -636,6 +637,7 @@ export const GET_SHIPMENTS = gql`
             package_preset
             freight_class
             reference_number
+            description
             items {
               id
               weight
@@ -868,6 +870,7 @@ export const GET_SHIPMENT_DATA = gql`
         package_preset
         freight_class
         reference_number
+        description
         items {
           id
           weight
@@ -1069,6 +1072,7 @@ export const PARTIAL_UPDATE_SHIPMENT = gql`
           package_preset
           freight_class
           reference_number
+          description
           items {
             id
             weight
@@ -2830,6 +2834,7 @@ export const GET_ORDER = gql`
           package_preset
           freight_class
           reference_number
+          description
           items {
             id
             weight
@@ -3248,6 +3253,7 @@ export const GET_ORDERS = gql`
               package_preset
               freight_class
               reference_number
+              description
               items {
                 id
                 weight
