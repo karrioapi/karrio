@@ -17,6 +17,7 @@ type ClientProviderProps = {
   children?: React.ReactNode;
 };
 type APIClientsContextProps = KarrioClient & {
+  isAuthenticated?: boolean;
   pageData?: {
     orgId?: string;
     user?: UserType;
@@ -35,17 +36,19 @@ export const ClientProvider: React.FC<ClientProviderProps> = ({
   children,
   ...pageData
 }) => {
-  const { getHost } = useAPIMetadata();
+  const { getHost, references } = useAPIMetadata();
   const {
     query: { data: session },
   } = useSyncedSession();
+  const updateClient = (ref: any, session: any) => ({
+    ...setupRestClient(getHost(), session),
+    isAuthenticated: !!session?.accessToken,
+    pageData,
+  });
 
   if (!getHost || !getHost()) return <></>;
-
   return (
-    <APIClientsContext.Provider
-      value={{ ...setupRestClient(getHost(), session), pageData }}
-    >
+    <APIClientsContext.Provider value={updateClient(references, session)}>
       {children}
     </APIClientsContext.Provider>
   );

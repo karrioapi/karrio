@@ -577,6 +577,7 @@ def shipment_request(
                 ShipmentDate=None,
                 Package=[
                     ups.PackageType(
+                        Description=package.description,
                         Packaging=ups.LabelImageFormatType(
                             Code=(
                                 mps_packaging
@@ -587,7 +588,7 @@ def shipment_request(
                             ),
                             Description="Packaging Type",
                         ),
-                        Dimensions=(
+                        Dimensions=lib.identity(
                             ups.DimensionsType(
                                 UnitOfMeasurement=ups.LabelImageFormatType(
                                     Code=package.dimension_unit.value,

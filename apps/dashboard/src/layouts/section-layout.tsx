@@ -15,7 +15,6 @@ export const SectionLayout: React.FC<SectionLayoutProps> = ({
   error,
   children,
 }) => {
-  console.log("metadata", metadata);
   return (
     <MainLayout error={error}>
       <section className="hero is-fullheight">

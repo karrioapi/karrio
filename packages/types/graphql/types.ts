@@ -497,6 +497,7 @@ export interface get_shipment_shipment_parcels {
   package_preset: string | null;
   freight_class: string | null;
   reference_number: string | null;
+  description: string | null;
   items: get_shipment_shipment_parcels_items[];
 }
 
@@ -848,6 +849,7 @@ export interface get_shipments_shipments_edges_node_parcels {
   package_preset: string | null;
   freight_class: string | null;
   reference_number: string | null;
+  description: string | null;
   items: get_shipments_shipments_edges_node_parcels_items[];
 }
 
@@ -1138,6 +1140,7 @@ export interface get_shipment_data_shipment_parcels {
   package_preset: string | null;
   freight_class: string | null;
   reference_number: string | null;
+  description: string | null;
   items: get_shipment_data_shipment_parcels_items[];
 }
 
@@ -1378,6 +1381,7 @@ export interface partial_shipment_update_partial_shipment_update_shipment_parcel
   package_preset: string | null;
   freight_class: string | null;
   reference_number: string | null;
+  description: string | null;
   items: partial_shipment_update_partial_shipment_update_shipment_parcels_items[];
 }
 
@@ -3784,6 +3788,7 @@ export interface get_order_order_shipments_parcels {
   package_preset: string | null;
   freight_class: string | null;
   reference_number: string | null;
+  description: string | null;
   items: get_order_order_shipments_parcels_items[];
 }
 
@@ -4281,6 +4286,7 @@ export interface get_orders_orders_edges_node_shipments_parcels {
   package_preset: string | null;
   freight_class: string | null;
   reference_number: string | null;
+  description: string | null;
   items: get_orders_orders_edges_node_shipments_parcels_items[];
 }
 

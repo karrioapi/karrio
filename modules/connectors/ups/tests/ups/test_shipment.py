@@ -205,6 +205,7 @@ ShipmentRequestJSON = {
             "NumOfPiecesInShipment": "0",
             "Package": [
                 {
+                    "Description": "Description",
                     "Dimensions": {
                         "Height": "2.0",
                         "Length": "7.0",
@@ -309,6 +310,7 @@ ShipmentRequestWithPresetJSON = {
             "NumOfPiecesInShipment": "0",
             "Package": [
                 {
+                    "Description": "Description",
                     "Dimensions": {
                         "Height": "11.0",
                         "Length": "3.0",
