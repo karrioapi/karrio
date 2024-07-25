@@ -11,6 +11,7 @@ services:
     environment:
       DEBUG_MODE: "True"
       DETACHED_WORKER: "True"
+      SECRET_KEY: ${SECRET_KEY}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       DATABASE_HOST: ${DATABASE_HOST}
@@ -31,7 +32,6 @@ services:
       - api
     environment:
       DEBUG_MODE: "True"
-      SECRET_KEY: ${SECRET_KEY}
       REDIS_HOST: ${REDIS_HOST}
       REDIS_PORT: ${REDIS_PORT}
       DATABASE_HOST: ${DATABASE_HOST}
