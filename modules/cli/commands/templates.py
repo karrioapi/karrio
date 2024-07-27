@@ -642,6 +642,7 @@ def rate_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     # map data to convert karrio model to {{id}} specific type
@@ -653,7 +654,7 @@ def rate_request(
 )
 
 PROVIDER_TRACKING_TEMPLATE = Template(
-    '''"""Karrio {{name}} rating API implementation."""
+    '''"""Karrio {{name}} tracking API implementation."""
 
 # import karrio.schemas.{{id}}.tracking_request as {{id}}
 # import karrio.schemas.{{id}}.tracking_response as tracking
@@ -690,6 +691,14 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.TrackingDetails:
     details = None  # parse carrier tracking object type
+    status = next(
+        (
+            status.name
+            for status in list(provider_units.TrackingStatus)
+            if getattr(details, "status", None) in status.value
+        ),
+        provider_units.TrackingStatus.in_transit.name,
+    )
 
     return models.TrackingDetails(
         carrier_id=settings.carrier_id,
@@ -700,13 +709,14 @@ def _extract_details(
                 date=lib.fdate(""),
                 description="",
                 code="",
-                time=lib.ftime(""),
+                time=lib.flocaltime(""),
                 location="",
             )
             for event in []
         ],
         estimated_delivery=lib.fdate(""),
-        delivered=False,
+        delivered=status == "delivered",
+        status=status,
     )
 
 
@@ -789,7 +799,11 @@ class TrackingStatus(lib.Enum):
 
 PROVIDER_UTILS_TEMPLATE = Template(
     '''
+import base64
+import datetime
+import karrio.lib as lib
 import karrio.core as core
+import karrio.core.errors as errors
 
 
 class Settings(core.Settings):
@@ -797,7 +811,7 @@ class Settings(core.Settings):
 
     # Add carrier specific api connection properties here
     # username: str
-    # passowrd: str
+    # password: str
     # account_number: str = None
 
     @property
@@ -812,9 +826,77 @@ class Settings(core.Settings):
             else "https://sandbox.carrier.api"
         )
 
+    # """uncomment the following code block to expose a carrier tracking url."""
     # @property
     # def tracking_url(self):
     #     return "https://www.carrier.com/tracking?tracking-id={}"
+
+    # """uncomment the following code block to implement the Basic auth."""
+    # @property
+    # def authorization(self):
+    #     pair = "%s:%s" % (self.username, self.password)
+    #     return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+
+    @property
+    def connection_config(self) -> lib.units.Options:
+        return lib.to_connection_config(
+            self.config or {},
+            option_type=ConnectionConfig,
+        )
+
+#     """uncomment the following code block to implement the oauth login."""
+#     @property
+#     def access_token(self):
+#         """Retrieve the access_token using the client_id|client_secret pair
+#         or collect it from the cache if an unexpired access_token exist.
+#         """
+#         cache_key = f"{self.carrier_name}|{self.client_id}|{self.client_secret}"
+#         now = datetime.datetime.now() + datetime.timedelta(minutes=30)
+
+#         auth = self.connection_cache.get(cache_key) or {}
+#         token = auth.get("access_token")
+#         expiry = lib.to_date(auth.get("expiry"), current_format="%Y-%m-%d %H:%M:%S")
+
+#         if token is not None and expiry is not None and expiry > now:
+#             return token
+
+#         self.connection_cache.set(cache_key, lambda: login(self))
+#         new_auth = self.connection_cache.get(cache_key)
+
+#         return new_auth["access_token"]
+
+# """uncomment the following code block to implement the oauth login."""
+# def login(settings: Settings):
+#     import karrio.providers.{{id}}.error as error
+
+#     result = lib.request(
+#         url=f"{settings.server_url}/oauth/token",
+#         method="POST",
+#         headers={"content-Type": "application/x-www-form-urlencoded"},
+#         data=lib.to_query_string(
+#             dict(
+#                 grant_type="client_credentials",
+#                 client_id=settings.client_id,
+#                 client_secret=settings.client_secret,
+#             )
+#         ),
+#     )
+
+#     response = lib.to_dict(result)
+#     messages = error.parse_error_response(response, settings)
+
+#     if any(messages):
+#         raise errors.ShippingSDKError(messages)
+
+#     expiry = datetime.datetime.now() + datetime.timedelta(
+#         seconds=float(response.get("expires_in", 0))
+#     )
+#     return {**response, "expiry": lib.fdatetime(expiry)}
+
+
+class ConnectionConfig(lib.Enum):
+    shipping_options = lib.OptionEnum("shipping_options", list)
+    shipping_services = lib.OptionEnum("shipping_services", list)
 
 '''
 )
@@ -921,7 +1003,11 @@ def shipment_cancel_request(
 )
 
 PROVIDER_SHIPMENT_CREATE_TEMPLATE = Template(
-    """
+    '''"""Karrio {{name}} shipment API implementation."""
+
+# import karrio.schemas.{{id}}.shipping_request as {{id}}
+# import karrio.schemas.{{id}}.shipping_response as shipping
+
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
@@ -982,6 +1068,7 @@ def shipment_request(
     options = lib.to_shipping_options(
         payload.options,
         package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
 
     # map data to convert karrio model to {{id}} specific type
@@ -989,11 +1076,15 @@ def shipment_request(
 
     return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
-"""
+'''
 )
 
 PROVIDER_DOCUMENT_UPLOAD_TEMPLATE = Template(
-    """
+    '''"""Karrio {{name}} document upload API implementation."""
+
+# import karrio.schemas.{{id}}.upload_request as {{id}}
+# import karrio.schemas.{{id}}.upload_response as document
+
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -1044,11 +1135,15 @@ def document_upload_request(
 
     return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
-"""
+'''
 )
 
 PROVIDER_MANIFEST_TEMPLATE = Template(
-    """
+    '''"""Karrio {{name}} manifest API implementation."""
+
+# import karrio.schemas.{{id}}.manifest_request as {{id}}
+# import karrio.schemas.{{id}}.manifest_response as manifest
+
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -1094,7 +1189,7 @@ def manifest_request(
 
     return lib.Serializable(request, {% if is_xml_api %}lib.to_xml{% else %}lib.to_dict{% endif %})
 
-"""
+'''
 )
 
 PROVIDER_PICKUP_IMPORTS_TEMPLATE = Template(
@@ -1181,7 +1276,7 @@ def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
     settings: provider_utils.Settings,
 ) -> models.PickupDetails:
-    pickup = None  # parse carrier pickup type from "data"
+    details = None  # parse carrier pickup type from "data"
 
     return models.PickupDetails(
         carrier_id=settings.carrier_id,
@@ -1193,7 +1288,7 @@ def _extract_details(
 
 def pickup_request(
     payload: models.PickupRequest,
-    settings: provider_utils.Settings
+    settings: provider_utils.Settings,
 ) -> lib.Serializable:
 
     # map data to convert karrio model to {{id}} specific type
@@ -1235,7 +1330,7 @@ def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
     settings: provider_utils.Settings,
 ) -> models.PickupDetails:
-    pickup = None  # parse carrier pickup type from "data"
+    details = None  # parse carrier pickup type from "data"
 
     return models.PickupDetails(
         carrier_id=settings.carrier_id,
