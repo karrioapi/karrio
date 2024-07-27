@@ -1,7 +1,7 @@
 """Karrio USPS rating API implementation."""
 
-import karrio.schemas.usps.rate_request as usps
-import karrio.schemas.usps.rate_response as rating
+import karrio.schemas.usps_international.rate_request as usps
+import karrio.schemas.usps_international.rate_response as rating
 
 import time
 import typing
@@ -9,9 +9,9 @@ import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
 import karrio.core.errors as errors
-import karrio.providers.usps.error as error
-import karrio.providers.usps.utils as provider_utils
-import karrio.providers.usps.units as provider_units
+import karrio.providers.usps_international.error as error
+import karrio.providers.usps_international.utils as provider_utils
+import karrio.providers.usps_international.units as provider_units
 
 
 def parse_rate_response(
@@ -111,7 +111,7 @@ def rate_request(
                     services if any(services) else [provider_units.ShippingService.all]
                 )
             ],
-            priceType=options.usps.price_type.state,
+            priceType=options.usps_international.price_type.state,
             mailingDate=lib.fdate(
                 options.shipment_date.state or time.strftime("%Y-%m-%d")
             ),

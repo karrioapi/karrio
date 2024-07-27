@@ -1,0 +1,16 @@
+{
+  "originZIPCode": "string",
+  "foreignPostalCode": "string",
+  "destinationCountryCode": "string",
+  "weight": 5,
+  "mailingDate": "2021-07-01",
+  "length": 0,
+  "width": 0,
+  "height": 0,
+  "priceType": "RETAIL",
+  "mailClass": "FIRST-CLASS_PACKAGE_INTERNATIONAL_SERVICE",
+  "accountType": "EPS",
+  "accountNumber": "string",
+  "itemValue": 0,
+  "extraServices": [813]
+}
