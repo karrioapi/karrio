@@ -549,7 +549,7 @@ from karrio.providers.{{id}}.document import (
 ){% endif %}{% if "manifest" in features %}
 from karrio.providers.{{id}}.manifest import (
     parse_manifest_response,
-    create_manifest_request,
+    manifest_request,
 ){% endif %}
 
 '''

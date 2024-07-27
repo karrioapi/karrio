@@ -28,7 +28,7 @@ class Proxy(proxy.Proxy):
     def create_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.run_asynchronously(
             lambda _: lib.request(
-                url=f"{self.settings.server_url}/v3/label",
+                url=f"{self.settings.server_url}/v3/international-label",
                 data=lib.to_json(_),
                 trace=self.trace_as("json"),
                 method="POST",
@@ -47,7 +47,7 @@ class Proxy(proxy.Proxy):
             lambda trackingNumber: (
                 trackingNumber,
                 lib.request(
-                    url=f"{self.settings.server_url}/v3/label/{trackingNumber}",
+                    url=f"{self.settings.server_url}/v3/international-label/{trackingNumber}",
                     data=lib.to_json(request.serialize()),
                     trace=self.trace_as("json"),
                     method="POST",
