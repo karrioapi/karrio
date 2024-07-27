@@ -620,7 +620,7 @@ class Products(typing.Iterable[Product]):
     @property
     def value_amount(self):
         return sum((item.value_amount or 0.0 for item in self._items), 0.0)
-    
+
     @property
     def description(self) -> typing.Optional[str]:
         descriptions = set([item.description for item in self._items])
@@ -765,6 +765,7 @@ class Package:
             return None
 
         return self.items.value_amount
+
 
 class Packages(typing.Iterable[Package]):
     """The parcel collection common processing helper"""
@@ -955,8 +956,7 @@ class Packages(typing.Iterable[Package]):
             return None
 
         return sum(
-            [pkg.total_value for pkg in self._items if pkg.total_value is not None],
-            0.0
+            [pkg.total_value for pkg in self._items if pkg.total_value is not None], 0.0
         )
 
     def validate(self, required: typing.List[str] = None, max_weight: Weight = None):
@@ -1089,6 +1089,7 @@ class ShippingOption(utils.Enum):
     email_notification_to = utils.OptionEnum("email_notification_to")
     signature_confirmation = utils.OptionEnum("signature_confirmation", bool)
     saturday_delivery = utils.OptionEnum("saturday_delivery", bool)
+    sunday_delivery = utils.OptionEnum("sunday_delivery", bool)
     doc_files = utils.OptionEnum("doc_files", utils.DP.to_dict)
     doc_references = utils.OptionEnum("doc_references", utils.DP.to_dict)
     hold_at_location = utils.OptionEnum("hold_at_location", bool)

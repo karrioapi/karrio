@@ -1,0 +1,117 @@
+{
+  "labelMetadata": {
+    "labelAddress": {
+      "streetAddress": "string",
+      "streetAddressAbbreviation": "string",
+      "secondaryAddress": "string",
+      "cityAbbreviation": "string",
+      "city": "string",
+      "state": "st",
+      "ZIPCode": "string",
+      "ZIPPlus4": "string",
+      "urbanization": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "firm": "string",
+      "phone": "string",
+      "email": "user@example.com",
+      "ignoreBadAddress": true
+    },
+    "routingInformation": "string",
+    "trackingNumber": "string",
+    "constructCode": "string",
+    "SKU": "string",
+    "postage": 0,
+    "extraServices": [
+      {
+        "name": "string",
+        "SKU": "string",
+        "price": 0
+      }
+    ],
+    "zone": "string",
+    "commitment": {
+      "name": "string",
+      "scheduleDeliveryDate": "string"
+    },
+    "weightUOM": "string",
+    "weight": 0,
+    "dimensionalWeight": 0,
+    "fees": [
+      {
+        "name": "string",
+        "SKU": "string",
+        "price": 0
+      }
+    ],
+    "permitHolderName": "string",
+    "inductionType": {},
+    "labelBrokerID": "string",
+    "links": [
+      {
+        "rel": ["string"],
+        "title": "string",
+        "href": "http://example.com",
+        "method": "GET",
+        "submissionMediaType": "string",
+        "targetMediaType": "string"
+      }
+    ]
+  },
+  "returnLabelMetadata": {
+    "labelAddress": {
+      "streetAddress": "string",
+      "streetAddressAbbreviation": "string",
+      "secondaryAddress": "string",
+      "cityAbbreviation": "string",
+      "city": "string",
+      "state": "st",
+      "ZIPCode": "string",
+      "ZIPPlus4": "string",
+      "urbanization": "string",
+      "firstName": "string",
+      "lastName": "string",
+      "firm": "string",
+      "phone": "string",
+      "email": "user@example.com",
+      "ignoreBadAddress": true
+    },
+    "routingInformation": "string",
+    "trackingNumber": "string",
+    "SKU": "string",
+    "postage": 0,
+    "extraServices": [
+      {
+        "name": "string",
+        "SKU": "string",
+        "price": 0
+      }
+    ],
+    "zone": "string",
+    "weightUOM": "string",
+    "weight": 0,
+    "dimensionalWeight": 0,
+    "fees": [
+      {
+        "name": "string",
+        "SKU": "string",
+        "price": 0
+      }
+    ],
+    "labelBrokerID": "string",
+    "links": [
+      {
+        "rel": ["string"],
+        "title": "string",
+        "href": "http://example.com",
+        "method": "GET",
+        "submissionMediaType": "string",
+        "targetMediaType": "string"
+      }
+    ]
+  },
+  "labelImage": "string",
+  "receiptImage": "string",
+  "returnLabelImage": "string",
+  "returnReceiptImage": "string"
+}
