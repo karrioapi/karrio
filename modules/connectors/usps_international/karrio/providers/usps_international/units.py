@@ -182,9 +182,11 @@ def shipping_options_initializer(
 
     if "insurance" in options:
         if lib.to_money(options["insurance"]) > 500:
-            options[ShippingOption.usps_insurance_above_500.key] = options["insurance"]
+            options[ShippingOption.usps_insurance_above_500.name] = options["insurance"]
         else:
-            options[ShippingOption.usps_insurance_bellow_500.key] = options["insurance"]
+            options[ShippingOption.usps_insurance_bellow_500.name] = options[
+                "insurance"
+            ]
 
     def items_filter(key: str) -> bool:
         return key in ShippingOption  # type: ignore

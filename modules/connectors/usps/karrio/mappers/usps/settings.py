@@ -18,6 +18,6 @@ class Settings(provider_utils.Settings):
     id: str = None
     test_mode: bool = False
     carrier_id: str = "usps"
-    account_country_code: str = None
+    account_country_code: str = "US"
     metadata: dict = {}
     config: dict = {}

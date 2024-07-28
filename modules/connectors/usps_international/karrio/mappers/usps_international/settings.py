@@ -17,7 +17,7 @@ class Settings(provider_utils.Settings):
     # generic properties
     id: str = None
     test_mode: bool = False
-    carrier_id: str = "usps"
-    account_country_code: str = None
+    carrier_id: str = "usps_international"
+    account_country_code: str = "US"
     metadata: dict = {}
     config: dict = {}

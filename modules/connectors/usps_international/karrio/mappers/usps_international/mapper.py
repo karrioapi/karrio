@@ -4,7 +4,7 @@ import typing
 import karrio.lib as lib
 import karrio.api.mapper as mapper
 import karrio.core.models as models
-import karrio.providers.usps as provider
+import karrio.providers.usps_international as provider
 import karrio.mappers.usps_international.settings as provider_settings
 
 

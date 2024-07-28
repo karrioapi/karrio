@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -17,14 +18,14 @@ class TestUSPSShipping(unittest.TestCase):
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
-
+        logger.debug(request.serialize())
         self.assertEqual(request.serialize(), ShipmentRequest)
 
     def test_create_cancel_shipment_request(self):
         request = gateway.mapper.create_cancel_shipment_request(
             self.ShipmentCancelRequest
         )
-
+        logger.debug(request.serialize())
         self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_create_shipment(self):
@@ -34,7 +35,7 @@ class TestUSPSShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/v3/international-label",
             )
 
     def test_cancel_shipment(self):
@@ -44,7 +45,7 @@ class TestUSPSShipping(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/v3/international-label/794947717776",
             )
 
     def test_parse_shipment_response(self):
@@ -53,7 +54,7 @@ class TestUSPSShipping(unittest.TestCase):
             parsed_response = (
                 karrio.Shipment.create(self.ShipmentRequest).from_(gateway).parse()
             )
-
+            logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
 
     def test_parse_cancel_shipment_response(self):
@@ -64,7 +65,7 @@ class TestUSPSShipping(unittest.TestCase):
                 .from_(gateway)
                 .parse()
             )
-
+            logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(
                 lib.to_dict(parsed_response), ParsedCancelShipmentResponse
             )
@@ -76,24 +77,24 @@ if __name__ == "__main__":
 
 ShipmentPayload = {
     "shipper": {
-        "company_name": "TESTING COMPANY",
-        "address_line1": "17 VULCAN RD",
-        "city": "CANNING VALE",
-        "postal_code": "6155",
-        "country_code": "AU",
-        "person_name": "TEST USER",
-        "state_code": "WA",
-        "email": "test@gmail.com",
-        "phone_number": "(07) 3114 1499",
+        "company_name": "ABC Corp.",
+        "address_line1": "1098 N Fraser Street",
+        "city": "Georgetown",
+        "postal_code": "29440",
+        "country_code": "US",
+        "person_name": "Tall Tom",
+        "phone_number": "8005554526",
+        "state_code": "SC",
     },
     "recipient": {
-        "company_name": "CGI",
-        "address_line1": "23 jardin private",
-        "city": "Ottawa",
-        "postal_code": "k1k 4t3",
-        "country_code": "CA",
-        "person_name": "Jain",
-        "state_code": "ON",
+        "company_name": "Coffee Five",
+        "address_line1": "R. da Quitanda, 86 - quiosque 01",
+        "city": "Centro",
+        "postal_code": "29440",
+        "country_code": "BR",
+        "person_name": "John",
+        "phone_number": "8005554526",
+        "state_code": "Rio de Janeiro",
     },
     "parcels": [
         {
@@ -106,9 +107,35 @@ ShipmentPayload = {
         }
     ],
     "service": "carrier_service",
-    "options": {
-        "signature_required": True,
+    "service": "usps_global_express_guaranteed_non_document_non_rectangular",
+    "customs": {
+        "content_type": "merchandise",
+        "incoterm": "DDU",
+        "invoice": "INV-040903",
+        "commodities": [
+            {
+                "weight": 2,
+                "weight_unit": "KG",
+                "quantity": 1,
+                "hs_code": "XXXXX0000123",
+                "value_amount": 30,
+                "value_currency": "USD",
+                "origin_country": "US",
+            }
+        ],
+        "duty": {
+            "paid_by": "recipient",
+            "currency": "USD",
+            "declared_value": 60,
+        },
+        "certify": True,
+        "signer": "Admin",
+        "options": {
+            "license_number": "LIC-24356879",
+            "certificate_number": "CERT-97865342",
+        },
     },
+    "options": {"shipment_date": "2021-05-15", "insurance": 75.0},
     "reference": "#Order 11111",
 }
 
@@ -116,172 +143,103 @@ ShipmentCancelPayload = {
     "shipment_identifier": "794947717776",
 }
 
-ParsedShipmentResponse = []
-
-ParsedCancelShipmentResponse = []
-
-
-ShipmentRequest = {
-    "imageInfo": {
-        "imageType": "PDF",
-        "labelType": "4X5LABEL",
-        "shipInfo": True,
-        "receiptOption": "SAME_PAGE",
-        "suppressPostage": True,
-        "suppressMailDate": True,
-        "returnLabel": False,
-    },
-    "toAddress": {
-        "streetAddress": "string",
-        "secondaryAddress": "string",
-        "city": "string",
-        "state": "st",
-        "ZIPCode": "string",
-        "ZIPPlus4": "string",
-        "urbanization": "string",
-        "firstName": "string",
-        "lastName": "string",
-        "firm": "string",
-        "phone": "string",
-        "email": "user@example.com",
-        "ignoreBadAddress": True,
-        "parcelLockerDelivery": False,
-        "holdForPickup": False,
-        "facilityId": "string",
-    },
-    "fromAddress": {
-        "streetAddress": "string",
-        "secondaryAddress": "string",
-        "city": "string",
-        "state": "st",
-        "ZIPCode": "string",
-        "ZIPPlus4": "string",
-        "urbanization": "string",
-        "firstName": "string",
-        "lastName": "string",
-        "firm": "string",
-        "phone": "string",
-        "email": "user@example.com",
-        "ignoreBadAddress": True,
-    },
-    "senderAddress": {
-        "streetAddress": "string",
-        "secondaryAddress": "string",
-        "city": "string",
-        "state": "st",
-        "ZIPCode": "string",
-        "ZIPPlus4": "string",
-        "urbanization": "string",
-        "firstName": "string",
-        "lastName": "string",
-        "firm": "string",
-        "phone": "string",
-        "email": "user@example.com",
-        "ignoreBadAddress": True,
-        "platformUserId": "string",
-    },
-    "returnAddress": {
-        "streetAddress": "string",
-        "secondaryAddress": "string",
-        "city": "string",
-        "state": "st",
-        "ZIPCode": "string",
-        "ZIPPlus4": "string",
-        "urbanization": "string",
-        "firstName": "string",
-        "lastName": "string",
-        "firm": "string",
-        "phone": "string",
-        "email": "user@example.com",
-        "ignoreBadAddress": True,
-    },
-    "packageDescription": {
-        "weightUOM": "lb",
-        "weight": 0,
-        "dimensionsUOM": "in",
-        "length": 0,
-        "height": 0,
-        "width": 0,
-        "girth": 0,
-        "mailClass": "PARCEL_SELECT",
-        "rateIndicator": "3D",
-        "processingCategory": "LETTERS",
-        "destinationEntryFacilityType": "NONE",
-        "destinationEntryFacilityAddress": {
-            "streetAddress": "string",
-            "secondaryAddress": "string",
-            "city": "string",
-            "state": "st",
-            "ZIPCode": "string",
-            "ZIPPlus4": "string",
-            "urbanization": "string",
+ParsedShipmentResponse = [
+    {
+        "carrier_id": "usps_international",
+        "carrier_name": "usps_international",
+        "docs": {"label": ANY},
+        "label_type": "PDF",
+        "meta": {
+            "SKU": "string",
+            "postage": 0,
         },
-        "packageOptions": {
-            "packageValue": 35,
-            "nonDeliveryOption": "RETURN",
-            "redirectAddress": {
-                "streetAddress": "string",
-                "secondaryAddress": "string",
-                "city": "string",
-                "state": "st",
-                "ZIPCode": "string",
-                "ZIPPlus4": "string",
-                "urbanization": "string",
-                "firstName": "string",
-                "lastName": "string",
-                "firm": "string",
-                "phone": "string",
-                "email": "user@example.com",
-                "ignoreBadAddress": True,
-            },
-            "contentType": "HAZMAT",
-            "generateGXEvent": True,
-            "containers": [{"containerID": "string", "sortType": "TRUCK_BEDLOAD"}],
-            "ancillaryServiceEndorsements": "CHANGE_SERVICE_REQUESTED",
-            "originalPackage": {
-                "originalTrackingNumber": "4201234567899212391234567812345671",
-                "originalConstructCode": "C01",
-            },
+        "shipment_identifier": "string",
+        "tracking_number": "string",
+    },
+    [],
+]
+
+ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "usps_international",
+        "carrier_name": "usps_international",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
+
+
+ShipmentRequest = [
+    {
+        "customsForm": {
+            "certificateNumber": "CERT-97865342",
+            "contents": [
+                {
+                    "HSTariffNumber": "XXXXX0000123",
+                    "countryofOrigin": "US",
+                    "itemQuantity": 1,
+                    "itemTotalValue": 30,
+                    "itemTotalWeight": 4.41,
+                    "itemValue": 30,
+                    "itemWeight": 4.41,
+                    "weightUOM": "lb",
+                }
+            ],
+            "customsContentType": "MERCHANDISE",
+            "invoiceNumber": "INV-040903",
+            "licenseNumber": "LIC-24356879",
         },
-        "customerReference": [
-            {"referenceNumber": "string", "printReferenceNumber": True}
-        ],
-        "extraServices": [365],
-        "mailingDate": "2019-08-24",
-        "carrierRelease": True,
-        "physicalSignatureRequired": True,
-        "inductionZIPCode": "string",
-    },
-    "customsForm": {
-        "contentComments": "string",
-        "restrictionType": "QUARANTINE",
-        "restrictionComments": "string",
-        "AESITN": "string",
-        "invoiceNumber": "string",
-        "licenseNumber": "string",
-        "certificateNumber": "string",
-        "customsContentType": "MERCHANDISE",
-        "importersReference": "string",
-        "importersContact": "string",
-        "exportersReference": "string",
-        "exportersContact": "string",
-        "contents": [
-            {
-                "itemDescription": "Policy guidelines document",
-                "itemQuantity": 1,
-                "itemValue": 1,
-                "itemTotalValue": 1,
-                "weightUOM": "lb",
-                "itemWeight": 1.0001,
-                "itemTotalWeight": 1.0001,
-                "HSTariffNumber": "string",
-                "countryofOrigin": "string",
-                "itemCategory": "string",
-                "itemSubcategory": "string",
-            }
-        ],
-    },
-}
+        "fromAddress": {
+            "ZIPPlus4": "29440",
+            "city": "Georgetown",
+            "firm": "ABC Corp.",
+            "firstName": "Tall Tom",
+            "ignoreBadAddress": True,
+            "phone": "8005554526",
+            "streetAddress": "1098 N Fraser Street",
+        },
+        "imageInfo": {"imageType": "PDF", "labelType": "4X6LABEL"},
+        "packageDescription": {
+            "customerReference": [{"referenceNumber": "#Order 11111"}],
+            "destinationEntryFacilityType": "NONE",
+            "dimensionsUOM": "in",
+            "extraServices": [930],
+            "girth": {
+                "_side1": {"_unit": "CM", "_value": 12},
+                "_side2": {"_unit": "CM", "_value": 50},
+                "_side3": {"_unit": "CM", "_value": 50},
+            },
+            "height": 19.69,
+            "length": 19.69,
+            "mailClass": "usps_global_express_guaranteed_non_document_non_rectangular",
+            "mailingDate": "2021-05-15",
+            "processingCategory": "NON_MACHINABLE",
+            "rateIndicator": "SP",
+            "weight": 44.1,
+            "weightUOM": "lb",
+            "width": 4.72,
+        },
+        "senderAddress": {
+            "ZIPPlus4": "29440",
+            "city": "Georgetown",
+            "firm": "ABC Corp.",
+            "firstName": "Tall Tom",
+            "ignoreBadAddress": True,
+            "phone": "8005554526",
+            "streetAddress": "1098 N Fraser Street",
+        },
+        "toAddress": {
+            "ZIPCode": "29440",
+            "city": "Centro",
+            "firm": "Coffee Five",
+            "firstName": "John",
+            "ignoreBadAddress": True,
+            "phone": "8005554526",
+            "streetAddress": "R. da Quitanda, 86 - quiosque 01",
+        },
+    }
+]
 
 ShipmentCancelRequest = [{"trackingNumber": "794947717776"}]
 
@@ -293,37 +251,30 @@ ShipmentResponse = """{
       "secondaryAddress": "string",
       "cityAbbreviation": "string",
       "city": "string",
-      "state": "st",
-      "ZIPCode": "string",
-      "ZIPPlus4": "string",
-      "urbanization": "string",
+      "postalCode": "string",
+      "province": "string",
+      "country": "string",
+      "countryISOAlpha2Code": "string",
       "firstName": "string",
       "lastName": "string",
       "firm": "string",
-      "phone": "string",
-      "email": "user@example.com",
-      "ignoreBadAddress": true
+      "phone": "string"
     },
-    "routingInformation": "string",
-    "trackingNumber": "string",
+    "internationalTrackingNumber": "string",
     "constructCode": "string",
     "SKU": "string",
     "postage": 0,
     "extraServices": [
       {
-        "name": "string",
-        "SKU": "string",
+        "serviceID": "string",
+        "serviceName": "string",
         "price": 0
       }
     ],
-    "zone": "string",
-    "commitment": {
-      "name": "string",
-      "scheduleDeliveryDate": "string"
-    },
-    "weightUOM": "string",
-    "weight": 0,
-    "dimensionalWeight": 0,
+    "internationalPriceGroup": "string",
+    "weightUOM": "lb",
+    "weight": 5,
+    "dimensionalWeight": "string",
     "fees": [
       {
         "name": "string",
@@ -331,77 +282,10 @@ ShipmentResponse = """{
         "price": 0
       }
     ],
-    "permitHolderName": "string",
-    "inductionType": {},
-    "labelBrokerID": "string",
-    "links": [
-      {
-        "rel": ["string"],
-        "title": "string",
-        "href": "http://example.com",
-        "method": "GET",
-        "submissionMediaType": "string",
-        "targetMediaType": "string"
-      }
-    ]
+    "labelBrokerID": "string"
   },
-  "returnLabelMetadata": {
-    "labelAddress": {
-      "streetAddress": "string",
-      "streetAddressAbbreviation": "string",
-      "secondaryAddress": "string",
-      "cityAbbreviation": "string",
-      "city": "string",
-      "state": "st",
-      "ZIPCode": "string",
-      "ZIPPlus4": "string",
-      "urbanization": "string",
-      "firstName": "string",
-      "lastName": "string",
-      "firm": "string",
-      "phone": "string",
-      "email": "user@example.com",
-      "ignoreBadAddress": true
-    },
-    "routingInformation": "string",
-    "trackingNumber": "string",
-    "SKU": "string",
-    "postage": 0,
-    "extraServices": [
-      {
-        "name": "string",
-        "SKU": "string",
-        "price": 0
-      }
-    ],
-    "zone": "string",
-    "weightUOM": "string",
-    "weight": 0,
-    "dimensionalWeight": 0,
-    "fees": [
-      {
-        "name": "string",
-        "SKU": "string",
-        "price": 0
-      }
-    ],
-    "labelBrokerID": "string",
-    "links": [
-      {
-        "rel": ["string"],
-        "title": "string",
-        "href": "http://example.com",
-        "method": "GET",
-        "submissionMediaType": "string",
-        "targetMediaType": "string"
-      }
-    ]
-  },
-  "labelImage": "string",
-  "receiptImage": "string",
-  "returnLabelImage": "string",
-  "returnReceiptImage": "string"
+  "labelImage": "string"
 }
 """
 
-ShipmentCancelResponse = """"""
+ShipmentCancelResponse = """{"ok": true}"""

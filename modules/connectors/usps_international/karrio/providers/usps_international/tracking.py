@@ -63,6 +63,7 @@ def _extract_details(
                     event.eventZIP,
                     event.eventState,
                     event.eventCountry,
+                    separator=", ",
                 ),
             )
             for event in details.trackingEvents
@@ -80,7 +81,7 @@ def _extract_details(
             shipment_service=provider_units.ShippingService.map(details.serviceTypeCode).name_or_key,
             shipment_origin_country=details.originCountry,
             shipment_origin_postal_code=details.originZIP,
-            shipment_destination_country=details.destinationCountry,
+            shipment_destination_country=details.destinationCountryCode,
             shipment_destination_postal_code=details.destinationZIP,
             # fmt: on
         ),

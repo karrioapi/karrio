@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -14,7 +15,7 @@ class TestUSPSTracking(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_tracking_request(self.TrackingRequest)
-
+        logger.debug(request.serialize())
         self.assertEqual(request.serialize(), TrackingRequest)
 
     def test_get_tracking(self):
@@ -24,7 +25,7 @@ class TestUSPSTracking(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/v3/tracking/89108749065090",
             )
 
     def test_parse_tracking_response(self):
@@ -33,7 +34,7 @@ class TestUSPSTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-
+            logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedTrackingResponse)
 
     def test_parse_error_response(self):
@@ -42,7 +43,7 @@ class TestUSPSTracking(unittest.TestCase):
             parsed_response = (
                 karrio.Tracking.fetch(self.TrackingRequest).from_(gateway).parse()
             )
-
+            logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedErrorResponse)
 
 
@@ -54,12 +55,64 @@ TrackingPayload = {
     "tracking_numbers": ["89108749065090"],
 }
 
-ParsedTrackingResponse = ["89108749065090"]
+ParsedTrackingResponse = [
+    [
+        {
+            "carrier_id": "usps",
+            "carrier_name": "usps",
+            "delivered": False,
+            "estimated_delivery": "2019-08-24",
+            "events": [
+                {
+                    "code": "string",
+                    "date": "2019-08-24",
+                    "description": "string",
+                    "location": "string, string, string, string",
+                    "time": "14:15 PM",
+                }
+            ],
+            "info": {
+                "carrier_tracking_link": "https://tools.usps.com/go/TrackConfirmAction?tLabels=string",
+                "expected_delivery": "2019-08-24",
+                "shipment_destination_country": "string",
+                "shipment_destination_postal_code": "string",
+                "shipment_origin_country": "st",
+                "shipment_origin_postal_code": "strin",
+                "shipment_service": "string",
+            },
+            "status": "in_transit",
+            "tracking_number": "string",
+        }
+    ],
+    [],
+]
 
-ParsedErrorResponse = []
+ParsedErrorResponse = [
+    [],
+    [
+        {
+            "carrier_id": "usps",
+            "carrier_name": "usps",
+            "code": "string",
+            "details": {
+                "errors": [
+                    {
+                        "code": "string",
+                        "detail": "string",
+                        "source": {"example": "string", "parameter": "string"},
+                        "status": "string",
+                        "title": "string",
+                    }
+                ],
+                "tracking_number": "89108749065090",
+            },
+            "message": "string",
+        }
+    ],
+]
 
 
-TrackingRequest = {}
+TrackingRequest = ["89108749065090"]
 
 TrackingResponse = """{
   "trackingNumber": "string",

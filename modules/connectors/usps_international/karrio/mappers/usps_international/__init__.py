@@ -4,10 +4,11 @@ from karrio.mappers.usps_international.mapper import Mapper
 from karrio.mappers.usps_international.proxy import Proxy
 from karrio.mappers.usps_international.settings import Settings
 import karrio.providers.usps_international.units as units
+import karrio.providers.usps_international.utils as utils
 
 
 METADATA = Metadata(
-    id="usps",
+    id="usps_international",
     label="USPS",
     # Integrations
     Mapper=Mapper,
@@ -15,4 +16,7 @@ METADATA = Metadata(
     Settings=Settings,
     # Data Units
     is_hub=False,
+    options=units.ShippingOption,
+    services=units.ShippingService,
+    connection_configs=utils.ConnectionConfig,
 )

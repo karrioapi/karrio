@@ -15,15 +15,15 @@ class Settings(core.Settings):
 
     @property
     def carrier_name(self):
-        return "usps"
+        return "usps_international"
 
     @property
     def server_url(self):
-        return "https://api.usps_international.com"
+        return "https://api.usps.com"
 
     @property
     def tracking_url(self):
-        return "https://tools.usps_international.com/go/TrackConfirmAction?tLabels={}"
+        return "https://tools.usps.com/go/TrackConfirmAction?tLabels={}"
 
     @property
     def connection_config(self) -> lib.units.Options:

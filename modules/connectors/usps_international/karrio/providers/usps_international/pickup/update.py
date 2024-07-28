@@ -48,6 +48,17 @@ def pickup_update_request(
 ) -> lib.Serializable:
     address = lib.to_address(payload.address)
     packages = lib.to_packages(payload.parcels)
+    options = lib.units.Options(
+        payload.options,
+        option_type=lib.units.create_enum(
+            "PickupOptions",
+            # fmt: off
+            {
+                "usps_package_type": lib.OptionEnum("usps_package_type"),
+            },
+            # fmt: on
+        ),
+    )
 
     # map data to convert karrio model to usps specific type
     request = usps.PickupUpdateRequestType(
@@ -59,11 +70,11 @@ def pickup_update_request(
                 lastName=None,
                 firm=address.company_name,
                 address=usps.AddressType(
-                    streetAddress=address.street_name,
-                    secondaryAddress=address.street_number,
+                    streetAddress=address.address_line1,
+                    secondaryAddress=address.address_line2,
                     city=address.city,
                     state=address.state,
-                    ZIPCode=lib.to_zip5(address.postal_code) or "",
+                    ZIPCode=lib.to_zip5(address.postal_code),
                     ZIPPlus4=lib.to_zip4(address.postal_code) or "",
                     urbanization=None,
                 ),
@@ -75,7 +86,7 @@ def pickup_update_request(
             ),
             packages=[
                 usps.PackageType(
-                    packageType="OTHER",
+                    packageType=options.usps_package_type.state or "OTHER",
                     packageCount=len(packages),
                 )
             ],

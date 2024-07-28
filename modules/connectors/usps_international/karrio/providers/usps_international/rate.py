@@ -25,13 +25,10 @@ def parse_rate_response(
         [
             (
                 f"{_}",
-                [
-                    _extract_details(rate["rateOptions"], settings)
-                    for rate in responses
-                    if rate.get("rateOptions") is not None
-                ],
+                [_extract_details(rate, settings) for rate in response["rateOptions"]],
             )
             for _, response in enumerate(responses, start=1)
+            if response.get("rateOptions") is not None
         ]
     )
 
@@ -72,56 +69,51 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-
-    if (
-        shipper.country_code is not None
-        and shipper.country_code != units.Country.US.name
-    ):
-        raise errors.OriginNotServicedError(shipper.country_code)
-
-    if (
-        recipient.country_code is not None
-        and recipient.country_code != units.Country.US.name
-    ):
-        raise errors.DestinationNotServicedError(recipient.country_code)
-
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    packages = lib.to_packages(payload.parcels)
+
+    if shipper.country_code != units.Country.US.name:
+        raise errors.OriginNotServicedError(shipper.country_code)
+
+    if recipient.country_code == units.Country.US.name:
+        raise errors.DestinationNotServicedError(recipient.country_code)
+
     services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
-        package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
+    )
+    packages = lib.to_packages(
+        payload.parcels,
+        options=options,
+        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
 
     # map data to convert karrio model to usps specific type
     request = [
         usps.RateRequestType(
             originZIPCode=shipper.postal_code,
-            destinationZIPCode=recipient.postal_code,
+            foreignPostalCode=recipient.postal_code,
+            destinationCountryCode=recipient.country_code,
             weight=package.weight.LB,
             length=package.length.IN,
             width=package.width.IN,
             height=package.height.IN,
-            # mailClass=None,
-            mailClasses=[
-                service.value
-                for service in (
-                    services if any(services) else [provider_units.ShippingService.all]
-                )
-            ],
-            priceType=options.usps_international.price_type.state,
+            mailClass=getattr(
+                services.first, "value", provider_units.ShippingService.usps_all.value
+            ),
+            priceType=package.options.usps_price_type.state or "RETAIL",
             mailingDate=lib.fdate(
-                options.shipment_date.state or time.strftime("%Y-%m-%d")
+                package.options.shipment_date.state or time.strftime("%Y-%m-%d")
             ),
             accountType=settings.account_type or "EPS",
             accountNumber=settings.account_number,
             itemValue=package.items.value_amount,
             extraServices=[
-                _.code
-                for __, _ in options.items
-                if _.name not in provider_units.CUSTOM_OPTIONS
+                lib.to_int(_.code)
+                for __, _ in options.items()
+                if __ not in provider_units.CUSTOM_OPTIONS
             ],
         )
         for package in packages

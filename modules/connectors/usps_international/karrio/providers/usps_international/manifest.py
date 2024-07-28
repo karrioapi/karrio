@@ -21,7 +21,7 @@ def parse_manifest_response(
     messages = error.parse_error_response(response, settings)
     details = lib.identity(
         _extract_details(response, settings)
-        if response.get("scanFormSCANFormImage") is not None
+        if response.get("SCANFormImage") is not None
         else None
     )
 
@@ -33,13 +33,16 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.ManifestDetails:
     details = lib.to_object(manifest.ScanFormResponseType, data)
-    manifest = data.get("scanFormSCANFormImage")
+    image = data.get("SCANFormImage")
 
     return models.ManifestDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_id,
-        doc=models.ManifestDocument(manifest=manifest),
-        meta=dict(manifestNumber=details.SCANFormMetadata.manifestNumber),
+        doc=models.ManifestDocument(manifest=image),
+        meta=dict(
+            manifestNumber=details.SCANFormMetadata.manifestNumber,
+            trackingNumbers=details.SCANFormMetadata.trackingNumbers,
+        ),
     )
 
 

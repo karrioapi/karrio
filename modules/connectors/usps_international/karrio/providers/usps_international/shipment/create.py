@@ -24,13 +24,10 @@ def parse_shipment_response(
         [
             (
                 f"{_}",
-                (
-                    _extract_details(response, settings)
-                    if response.get("error") is None
-                    else None
-                ),
+                _extract_details(response, settings, _response.ctx),
             )
             for _, response in enumerate(responses, start=1)
+            if response.get("error") is None
         ]
     )
     messages: typing.List[models.Message] = sum(
@@ -44,23 +41,22 @@ def parse_shipment_response(
 def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
+    ctx: dict = None,
 ) -> models.ShipmentDetails:
-    shipment = lib.to_object(shipping.ShipmentResponseType, data)
-    label = shipment.labelImage
-    invoice = shipment.receiptImage
+    details = lib.to_object(shipping.LabelResponseType, data)
+    label = details.labelImage
+    label_type = ctx.get("label_type", "PDF")
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        tracking_number=shipment.labelMetadata.trackingNumber,
-        shipment_identifier=shipment.labelMetadata.trackingNumber,
-        label_type="PDF",
-        docs=models.Documents(label=label, invoice=invoice),
+        tracking_number=details.labelMetadata.internationalTrackingNumber,
+        shipment_identifier=details.labelMetadata.internationalTrackingNumber,
+        label_type=label_type,
+        docs=models.Documents(label=label),
         meta=dict(
-            SKU=shipment.labelMetadata.SKU,
-            postage=shipment.labelMetadata.postage,
-            routingInformation=shipment.labelMetadata.routingInformation,
-            labelBrokerID=shipment.labelMetadata.labelBrokerID,
+            SKU=details.labelMetadata.SKU,
+            postage=details.labelMetadata.postage,
         ),
     )
 
@@ -69,22 +65,19 @@ def shipment_request(
     payload: models.ShipmentRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    if (
-        payload.shipper.country_code is not None
-        and payload.shipper.country_code != units.Country.US.name
-    ):
-        raise errors.OriginNotServicedError(payload.shipper.country_code)
-
-    if payload.recipient.country_code == units.Country.US.name:
-        raise errors.DestinationNotServicedError(payload.recipient.country_code)
-
     shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
-    pickup_location = lib.to_address(options.hold_for_pickup_address.state)
+
+    if shipper.country_code != units.Country.US.name:
+        raise errors.OriginNotServicedError(shipper.country_code)
+
+    if recipient.country_code == units.Country.US.name:
+        raise errors.DestinationNotServicedError(recipient.country_code)
+
     service = provider_units.ShippingService.map(payload.service).value_or_key
     options = lib.to_shipping_options(
         payload.options,
-        package_options=packages.options,
+        initializer=provider_units.shipping_options_initializer,
     )
     packages = lib.to_packages(
         payload.parcels,
@@ -98,19 +91,19 @@ def shipment_request(
         recipient=payload.recipient,
         weight_unit=units.WeightUnit.LB,
     )
+    pickup_location = lib.to_address(options.hold_for_pickup_address.state)
+    label_type = provider_units.LabelType.map(payload.label_type).value or "PDF"
 
     # map data to convert karrio model to usps specific type
     request = [
         usps.LabelRequestType(
             imageInfo=usps.ImageInfoType(
-                imageType=lib.identity(
-                    provider_units.LabelType.map(payload.label_type).value or "PDF"
-                ),
+                imageType=label_type,
                 labelType="4X6LABEL",
             ),
             toAddress=usps.AddressType(
-                streetAddress=recipient.street_name,
-                secondaryAddress=recipient.street_number,
+                streetAddress=recipient.address_line1,
+                secondaryAddress=recipient.address_line2,
                 city=recipient.city,
                 state=recipient.state,
                 ZIPCode=lib.to_zip5(recipient.postal_code) or "",
@@ -125,8 +118,8 @@ def shipment_request(
                 platformUserId=None,
             ),
             fromAddress=usps.AddressType(
-                streetAddress=shipper.street_name,
-                secondaryAddress=shipper.street_number,
+                streetAddress=shipper.address_line1,
+                secondaryAddress=shipper.address_line2,
                 city=shipper.city,
                 state=shipper.state,
                 ZIPCode=lib.to_zip4(shipper.postal_code) or "",
@@ -141,8 +134,8 @@ def shipment_request(
                 platformUserId=None,
             ),
             senderAddress=usps.AddressType(
-                streetAddress=shipper.street_name,
-                secondaryAddress=shipper.street_number,
+                streetAddress=shipper.address_line1,
+                secondaryAddress=shipper.address_line2,
                 city=shipper.city,
                 state=shipper.state,
                 ZIPCode=lib.to_zip4(shipper.postal_code) or "",
@@ -164,7 +157,7 @@ def shipment_request(
                 height=package.height.IN,
                 width=package.width.IN,
                 girth=package.girth,
-                mailClass=service.value_or_key,
+                mailClass=service,
                 rateIndicator=package.options.usps_rate_indicator.state or "SP",
                 processingCategory=lib.identity(
                     package.options.usps_processing_category.state or "NON_MACHINABLE"
@@ -174,8 +167,8 @@ def shipment_request(
                 ),
                 destinationEntryFacilityAddress=lib.identity(
                     usps.DestinationEntryFacilityAddressType(
-                        streetAddress=pickup_location.street_name,
-                        secondaryAddress=pickup_location.street_number,
+                        streetAddress=pickup_location.address_line1,
+                        secondaryAddress=pickup_location.address_line2,
                         city=pickup_location.city,
                         state=pickup_location.state,
                         ZIPCode=lib.to_zip4(pickup_location.postal_code) or "",
@@ -204,9 +197,9 @@ def shipment_request(
                     if reference is not None
                 ],
                 extraServices=[
-                    _.code
-                    for __, _ in package.options.items
-                    if _.name not in provider_units.CUSTOM_OPTIONS
+                    lib.to_int(_.code)
+                    for __, _ in package.options.items()
+                    if __ not in provider_units.CUSTOM_OPTIONS
                 ],
                 mailingDate=lib.fdate(
                     package.options.shipment_date.state or time.strftime("%Y-%m-%d")
@@ -247,4 +240,4 @@ def shipment_request(
         for package in packages
     ]
 
-    return lib.Serializable(request, lib.to_dict)
+    return lib.Serializable(request, lib.to_dict, dict(label_type=label_type))

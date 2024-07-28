@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -14,7 +15,7 @@ class TestUSPSManifest(unittest.TestCase):
 
     def test_create_tracking_request(self):
         request = gateway.mapper.create_manifest_request(self.ManifestRequest)
-
+        logger.debug(request.serialize())
         self.assertEqual(request.serialize(), ManifestRequest)
 
     def test_create_manifest(self):
@@ -24,7 +25,7 @@ class TestUSPSManifest(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/v3/scan-form",
             )
 
     def test_parse_manifest_response(self):
@@ -33,7 +34,7 @@ class TestUSPSManifest(unittest.TestCase):
             parsed_response = (
                 karrio.Manifest.create(self.ManifestRequest).from_(gateway).parse()
             )
-
+            logger.debug(lib.to_dict(parsed_response))
             self.assertListEqual(lib.to_dict(parsed_response), ParsedManifestResponse)
 
 
@@ -44,47 +45,47 @@ if __name__ == "__main__":
 ManifestPayload = {
     "shipment_identifiers": ["794947717776"],
     "address": {
-        "city": "Los Angeles",
-        "state_code": "CA",
-        "postal_code": "90001",
+        "company_name": "ABC Corp.",
+        "address_line1": "1098 N Fraser Street",
+        "city": "Georgetown",
+        "postal_code": "29440",
         "country_code": "US",
+        "person_name": "Tall Tom",
+        "phone_number": "8005554526",
+        "state_code": "SC",
     },
     "options": {},
 }
 
 ParsedManifestResponse = [
     {
-        "carrier_id": "usps",
-        "carrier_name": "usps",
+        "carrier_id": "usps_international",
+        "carrier_name": "usps_international",
         "doc": {"manifest": ANY},
-        "meta": {},
+        "meta": {"manifestNumber": "string", "trackingNumbers": ["string"]},
     },
     [],
 ]
 
 
 ManifestRequest = {
+    "destinationEntryFacilityType": "NONE",
+    "entryFacilityZIPCode": "29440",
     "form": "5630",
+    "fromAddress": {
+        "ZIPCode": "29440",
+        "city": "Georgetown",
+        "firm": "ABC Corp.",
+        "firstName": "Tall",
+        "ignoreBadAddress": False,
+        "lastName": "Tom",
+        "streetAddress": "1098 N Fraser Street",
+    },
     "imageType": "PDF",
     "labelType": "8.5x11LABEL",
-    "mailingDate": "2019-08-24",
+    "mailingDate": "2024-07-28",
     "overwriteMailingDate": False,
-    "entryFacilityZIPCode": "20260",
-    "destinationEntryFacilityType": "NONE",
-    "shipment": {"trackingNumbers": ["string"]},
-    "fromAddress": {
-        "ignoreBadAddress": True,
-        "streetAddress": "string",
-        "secondaryAddress": "string",
-        "city": "string",
-        "state": "st",
-        "ZIPCode": "string",
-        "ZIPPlus4": "string",
-        "urbanization": "string",
-        "firstName": "string",
-        "lastName": "string",
-        "firm": "string",
-    },
+    "shipment": {"trackingNumbers": ["794947717776"]},
 }
 
 

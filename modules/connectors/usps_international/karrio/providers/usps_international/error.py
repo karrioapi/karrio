@@ -12,7 +12,7 @@ def parse_error_response(
     **kwargs,
 ) -> typing.List[models.Message]:
     responses = response if isinstance(response, list) else [response]
-    errors: list = [response for response in responses if "error" in response]
+    errors: list = [response["error"] for response in responses if "error" in response]
 
     return [
         models.Message(

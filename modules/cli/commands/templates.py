@@ -256,6 +256,7 @@ from karrio.mappers.{{id}}.mapper import Mapper
 from karrio.mappers.{{id}}.proxy import Proxy
 from karrio.mappers.{{id}}.settings import Settings
 import karrio.providers.{{id}}.units as units
+import karrio.providers.{{id}}.utils as utils
 
 
 METADATA = Metadata(
@@ -266,7 +267,10 @@ METADATA = Metadata(
     Proxy=Proxy,
     Settings=Settings,
     # Data Units
-    is_hub=False
+    is_hub=False,
+    # options=units.ShippingOption,
+    # services=units.ShippingService,
+    # connection_configs=utils.ConnectionConfig,
 )
 
 """
@@ -616,7 +620,7 @@ def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
     settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    rate = None  # parse carrier rate type
+    details = None  # parse carrier rate type
 
     return models.RateDetails(
         carrier_id=settings.carrier_id,
@@ -1037,7 +1041,7 @@ def _extract_details(
     data: {% if is_xml_api %}lib.Element{% else %}dict{% endif %},
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
-    shipment = None  # parse carrier shipment type from "data"
+    details = None  # parse carrier shipment type from "data"
     label = ""  # extract and process the shipment label to a valid base64 text
     # invoice = ""  # extract and process the shipment invoice to a valid base64 text if applies
 
@@ -1400,6 +1404,7 @@ TEST_RATE_TEMPLATE = Template(
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -1490,6 +1495,7 @@ TEST_TRACKING_TEMPLATE = Template(
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -1569,6 +1575,7 @@ TEST_SHIPMENT_TEMPLATE = Template(
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -1682,7 +1689,15 @@ ShipmentCancelPayload = {
 
 ParsedShipmentResponse = []
 
-ParsedCancelShipmentResponse = []
+ParsedCancelShipmentResponse = ParsedCancelShipmentResponse = [
+    {
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
+        "operation": "Cancel Shipment",
+        "success": True,
+    },
+    [],
+]
 
 
 ShipmentRequest = {% if is_xml_api %}"""<a></a>
@@ -1705,6 +1720,7 @@ TEST_DOCUMENT_UPLOAD_TEMPLATE = Template(
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -1764,8 +1780,8 @@ DocumentUploadPayload = {
 
 ParsedDocumentUploadResponse = [
     {
-        "carrier_id": "carrier_id",
-        "carrier_name": "carrier_id",
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
         "documents": [
             {
                 "document_id": "090493e1815c194e",
@@ -1792,6 +1808,7 @@ TEST_MANIFEST_TEMPLATE = Template(
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -1874,6 +1891,7 @@ TEST_PICKUP_TEMPLATE = Template(
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib
@@ -1883,7 +1901,7 @@ import karrio.core.models as models
 class Test{{compact_name}}Pickup(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.PickupRequest = PickupRequest(**PickupPayload)
+        self.PickupRequest = models.PickupRequest(**PickupPayload)
         self.PickupUpdateRequest = models.PickupUpdateRequest(**PickupUpdatePayload)
         self.PickupCancelRequest = models.PickupCancelRequest(**PickupCancelPayload)
 
@@ -1924,7 +1942,7 @@ class Test{{compact_name}}Pickup(unittest.TestCase):
                 f"{gateway.settings.server_url}",
             )
 
-    def test_cancel_shipment(self):
+    def test_cancel_pickup(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
             mock.return_value = "{% if is_xml_api %}<a></a>{% else %}{}{% endif %}"
             karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway)
@@ -1943,9 +1961,9 @@ class Test{{compact_name}}Pickup(unittest.TestCase):
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedPickupResponse)
 
-    def test_parse_cancel_shipment_response(self):
+    def test_parse_cancel_pickup_response(self):
         with patch("karrio.mappers.{{id}}.proxy.lib.request") as mock:
-            mock.return_value = ""
+            mock.return_value = PickupCancelResponse
             parsed_response = (
                 karrio.Pickup.cancel(self.PickupCancelRequest).from_(gateway).parse()
             )
@@ -1959,15 +1977,66 @@ if __name__ == "__main__":
     unittest.main()
 
 
-PickupPayload = {}
+PickupPayload = {
+    "pickup_date": "2013-10-19",
+    "ready_time": "10:20",
+    "closing_time": "09:20",
+    "instruction": "behind the front desk",
+    "address": {
+        "company_name": "ABC Corp.",
+        "address_line1": "1098 N Fraser Street",
+        "city": "Georgetown",
+        "postal_code": "29440",
+        "country_code": "US",
+        "person_name": "Tall Tom",
+        "phone_number": "8005554526",
+        "state_code": "SC",
+    },
+    "parcels": [{"weight": 20, "weight_unit": "LB"}],
+    "options": {"usps_package_type": "FIRST-CLASS_PACKAGE_SERVICE"},
+}
 
-PickupUpdatePayload = {}
+PickupUpdatePayload = {
+    "confirmation_number": "0074698052",
+    "pickup_date": "2013-10-19",
+    "ready_time": "10:20",
+    "closing_time": "09:20",
+    "instruction": "behind the front desk",
+    "address": {
+        "company_name": "ABC Corp.",
+        "address_line1": "1098 N Fraser Street",
+        "city": "Georgetown",
+        "postal_code": "29440",
+        "country_code": "US",
+        "person_name": "Tall Tom",
+        "phone_number": "8005554526",
+        "state_code": "SC",
+    },
+    "parcels": [{"weight": 20, "weight_unit": "LB"}],
+    "options": {"usps_package_type": "FIRST-CLASS_PACKAGE_SERVICE"},
+}
 
 PickupCancelPayload = {"confirmation_number": "0074698052"}
 
-ParsedPickupResponse = []
+ParsedPickupResponse = [
+    {
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
+        "confirmation_number": "string",
+        "pickup_date": "2019-08-24",
+    },
+    [],
+]
 
-ParsedCancelPickupResponse = []
+ParsedCancelPickupResponse = [
+    {
+        "carrier_id": "{{id}}",
+        "carrier_name": "{{id}}",
+        "operation": "Cancel Pickup",
+        "success": True,
+    },
+    [],
+]
 
 
 PickupRequest = {% if is_xml_api %}"""<a></a>
@@ -1997,6 +2066,7 @@ TEST_ADDRESS_TEMPLATE = Template(
 import unittest
 from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
 
 import karrio
 import karrio.lib as lib

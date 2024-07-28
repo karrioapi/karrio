@@ -25,13 +25,10 @@ def parse_rate_response(
         [
             (
                 f"{_}",
-                [
-                    _extract_details(rate["rateOptions"], settings)
-                    for rate in responses
-                    if rate.get("rateOptions") is not None
-                ],
+                [_extract_details(rate, settings) for rate in response["rateOptions"]],
             )
             for _, response in enumerate(responses, start=1)
+            if response.get("rateOptions") is not None
         ]
     )
 
@@ -72,6 +69,8 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
+    shipper = lib.to_address(payload.shipper)
+    recipient = lib.to_address(payload.recipient)
 
     if (
         shipper.country_code is not None
@@ -85,14 +84,16 @@ def rate_request(
     ):
         raise errors.DestinationNotServicedError(recipient.country_code)
 
-    shipper = lib.to_address(payload.shipper)
-    recipient = lib.to_address(payload.recipient)
-    packages = lib.to_packages(payload.parcels)
     services = lib.to_services(payload.services, provider_units.ShippingService)
     options = lib.to_shipping_options(
         payload.options,
-        package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
+    )
+    packages = lib.to_packages(
+        payload.parcels,
+        options=options,
+        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
     )
 
     # map data to convert karrio model to usps specific type
@@ -108,20 +109,24 @@ def rate_request(
             mailClasses=[
                 service.value
                 for service in (
-                    services if any(services) else [provider_units.ShippingService.all]
+                    services
+                    if any(services)
+                    else [provider_units.ShippingService.usps_all]
                 )
             ],
-            priceType=options.usps.price_type.state,
+            priceType=options.usps_price_type.state or "RETAIL",
             mailingDate=lib.fdate(
-                options.shipment_date.state or time.strftime("%Y-%m-%d")
+                package.options.shipment_date.state or time.strftime("%Y-%m-%d")
             ),
             accountType=settings.account_type or "EPS",
             accountNumber=settings.account_number,
-            itemValue=package.items.value_amount,
+            itemValue=lib.identity(
+                package.items.value_amount if len(package.items) > 0 else None
+            ),
             extraServices=[
-                _.code
-                for __, _ in options.items
-                if _.name not in provider_units.CUSTOM_OPTIONS
+                lib.to_int(_.code)
+                for __, _ in options.items()
+                if __ not in provider_units.CUSTOM_OPTIONS
             ],
         )
         for package in packages

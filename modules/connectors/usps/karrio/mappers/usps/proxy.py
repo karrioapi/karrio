@@ -40,14 +40,18 @@ class Proxy(proxy.Proxy):
             request.serialize(),
         )
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(
+            response,
+            lambda _: [lib.to_dict(_) for _ in _],
+            request.ctx,
+        )
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.run_asynchronously(
-            lambda trackingNumber: (
-                trackingNumber,
+            lambda _: (
+                _["trackingNumber"],
                 lib.request(
-                    url=f"{self.settings.server_url}/v3/label/{trackingNumber}",
+                    url=f"{self.settings.server_url}/v3/label/{_['trackingNumber']}",
                     data=lib.to_json(request.serialize()),
                     trace=self.trace_as("json"),
                     method="POST",
@@ -91,7 +95,7 @@ class Proxy(proxy.Proxy):
 
     def schedule_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v3/pickup",
+            url=f"{self.settings.server_url}/v3/carrier-pickup",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
@@ -105,7 +109,7 @@ class Proxy(proxy.Proxy):
 
     def modify_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
         response = lib.request(
-            url=f"{self.settings.server_url}/v3/pickup/{request.ctx['confirmationNumber']}",
+            url=f"{self.settings.server_url}/v3/carrier-pickup/{request.ctx['confirmationNumber']}",
             data=lib.to_json(request.serialize()),
             trace=self.trace_as("json"),
             method="POST",
