@@ -1,4 +1,3 @@
-
 import typing
 import karrio.lib as lib
 import karrio.core.models as models
@@ -23,7 +22,7 @@ def _extract_details(
     data: dict,
     settings: provider_utils.Settings,
 ) -> models.DocumentUploadDetails:
-    documents = []  # documents ids and name extraction
+    documents: list = []  # documents ids and name extraction
 
     return models.DocumentUploadDetails(
         carrier_id=settings.carrier_id,

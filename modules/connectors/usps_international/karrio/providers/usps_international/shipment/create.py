@@ -89,7 +89,7 @@ def shipment_request(
         payload.customs,
         shipper=payload.shipper,
         recipient=payload.recipient,
-        weight_unit=units.WeightUnit.LB,
+        weight_unit=units.WeightUnit.LB.name,
     )
     pickup_location = lib.to_address(options.hold_for_pickup_address.state)
     label_type = provider_units.LabelType.map(payload.label_type).value or "PDF"

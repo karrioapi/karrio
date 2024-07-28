@@ -7,7 +7,7 @@ import karrio.providers.usps_international.utils as provider_utils
 
 
 def parse_error_response(
-    response: typing.Tuple[dict, typing.List[dict]],
+    response: typing.Union[dict, typing.List[dict]],
     settings: provider_utils.Settings,
     **kwargs,
 ) -> typing.List[models.Message]:
