@@ -57,6 +57,7 @@ def manifest_request(
             "ManifestOptions",
             # fmt: off
             {
+                "shipment_date": lib.OptionEnum("shipment_date"),
                 "usps_ignore_bad_address": lib.OptionEnum("ignoreBadAddress", bool),
                 "usps_overwrite_mailing_date": lib.OptionEnum("overwriteMailingDate", bool),
                 "usps_destination_entry_facility_type": lib.OptionEnum("destinationEntryFacilityType", str),
@@ -64,6 +65,7 @@ def manifest_request(
             # fmt: on
         ),
     )
+    print(options.items())
 
     # map data to convert karrio model to usps specific type
     request = usps.ScanFormRequestType(

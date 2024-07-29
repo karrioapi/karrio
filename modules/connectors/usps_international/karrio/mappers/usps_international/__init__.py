@@ -9,7 +9,7 @@ import karrio.providers.usps_international.utils as utils
 
 METADATA = Metadata(
     id="usps_international",
-    label="USPS",
+    label="USPS International",
     # Integrations
     Mapper=Mapper,
     Proxy=Proxy,

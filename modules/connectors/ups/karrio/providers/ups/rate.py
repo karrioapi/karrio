@@ -103,6 +103,10 @@ def rate_request(
         *(["01"] if options.pickup_options.state else []),
         *(["02"] if options.delivery_options.state else []),
     ]
+    weight_unit, dim_unit = lib.identity(
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        or packages.compatible_units
+    )
 
     request = ups.RatingRequestType(
         RateRequest=ups.RateRequestType(
@@ -204,15 +208,15 @@ def rate_request(
                             ),
                             Description="Packaging Type",
                         ),
-                        Dimensions=(
+                        Dimensions=lib.identity(
                             ups.DimensionsType(
                                 UnitOfMeasurement=ups.CustomerClassificationType(
-                                    Code=package.dimension_unit.value,
+                                    Code=dim_unit.value,
                                     Description="Dimension",
                                 ),
-                                Length=str(package.length.value),
-                                Width=str(package.width.value),
-                                Height=str(package.height.value),
+                                Length=str(package.length[dim_unit.name]),
+                                Width=str(package.width[dim_unit.name]),
+                                Height=str(package.height[dim_unit.name]),
                             )
                             if any([package.length, package.width, package.height])
                             else None
@@ -220,12 +224,12 @@ def rate_request(
                         DimWeight=None,
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.CustomerClassificationType(
-                                Code=provider_units.WeightUnit[
-                                    str(package.weight.unit)
-                                ].value,
+                                Code=provider_units.WeightUnit.map(
+                                    weight_unit.name
+                                ).value,
                                 Description="Weight",
                             ),
-                            Weight=str(package.weight.value),
+                            Weight=str(package.weight[weight_unit.name]),
                         ),
                         Commodity=None,
                         PackageServiceOptions=None,

@@ -74,7 +74,11 @@ RatePayload = {
             "weight_unit": "KG",
         }
     ],
-    "options": {"usps_label_delivery_service": True, "usps_price_type": "RETAIL"},
+    "options": {
+        "usps_label_delivery_service": True,
+        "usps_price_type": "RETAIL",
+        "shipment_date": "2024-07-28",
+    },
     "services": ["usps_parcel_select"],
     "reference": "REF-001",
 }

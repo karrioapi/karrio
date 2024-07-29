@@ -482,7 +482,7 @@ def shipment_request(
                                         ProductWeight=ups.WeightType(
                                             UnitOfMeasurement=ups.LabelImageFormatType(
                                                 Code=provider_units.WeightUnit.map(
-                                                    weight_unit
+                                                    weight_unit.name
                                                 ).value,
                                                 Description="weight unit",
                                             ),
@@ -594,12 +594,12 @@ def shipment_request(
                         Dimensions=lib.identity(
                             ups.DimensionsType(
                                 UnitOfMeasurement=ups.LabelImageFormatType(
-                                    Code=dim_unit,
+                                    Code=dim_unit.value,
                                     Description="Dimension",
                                 ),
-                                Length=str(package.length[dim_unit]),
-                                Width=str(package.width[dim_unit]),
-                                Height=str(package.height[dim_unit]),
+                                Length=str(package.length[dim_unit.name]),
+                                Width=str(package.width[dim_unit.name]),
+                                Height=str(package.height[dim_unit.name]),
                             )
                             if any([package.length, package.width, package.height])
                             else None
@@ -607,10 +607,12 @@ def shipment_request(
                         DimWeight=None,
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.LabelImageFormatType(
-                                Code=provider_units.WeightUnit.map(weight_unit).value,
+                                Code=provider_units.WeightUnit.map(
+                                    weight_unit.name
+                                ).value,
                                 Description="Weight",
                             ),
-                            Weight=str(package.weight[weight_unit]),
+                            Weight=str(package.weight[weight_unit.name]),
                         ),
                         Commodity=None,
                         PackageServiceOptions=None,

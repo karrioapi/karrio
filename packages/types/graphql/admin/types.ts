@@ -1246,11 +1246,9 @@ export interface GetSystemConnections_system_connections_USPSSettingsType {
   active: boolean;
   metadata: any | null;
   capabilities: string[];
-  username: string | null;
-  password: string | null;
-  mailer_id: string | null;
-  customer_registration_id: string | null;
-  logistics_manager_mailer_id: string | null;
+  client_id: string | null;
+  client_secret: string | null;
+  account_number: string | null;
   config: any | null;
 }
 
@@ -1264,11 +1262,9 @@ export interface GetSystemConnections_system_connections_USPSInternationalSettin
   active: boolean;
   metadata: any | null;
   capabilities: string[];
-  username: string | null;
-  password: string | null;
-  mailer_id: string | null;
-  customer_registration_id: string | null;
-  logistics_manager_mailer_id: string | null;
+  client_id: string | null;
+  client_secret: string | null;
+  account_number: string | null;
   config: any | null;
 }
 
@@ -2256,11 +2252,9 @@ export interface GetSystemConnection_system_connection_USPSSettingsType {
   active: boolean;
   metadata: any | null;
   capabilities: string[];
-  username: string | null;
-  password: string | null;
-  mailer_id: string | null;
-  customer_registration_id: string | null;
-  logistics_manager_mailer_id: string | null;
+  client_id: string | null;
+  client_secret: string | null;
+  account_number: string | null;
   config: any | null;
 }
 
@@ -2274,11 +2268,9 @@ export interface GetSystemConnection_system_connection_USPSInternationalSettings
   active: boolean;
   metadata: any | null;
   capabilities: string[];
-  username: string | null;
-  password: string | null;
-  mailer_id: string | null;
-  customer_registration_id: string | null;
-  logistics_manager_mailer_id: string | null;
+  client_id: string | null;
+  client_secret: string | null;
+  account_number: string | null;
   config: any | null;
 }
 
@@ -3935,11 +3927,10 @@ export interface USPSSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
-  username: string;
-  password: string;
-  mailer_id?: string | null;
-  customer_registration_id?: string | null;
-  logistics_manager_mailer_id?: string | null;
+  client_id: string;
+  client_secret: string;
+  account_type?: string | null;
+  account_number?: string | null;
   carrier_id: string;
 }
 
@@ -3948,11 +3939,10 @@ export interface USPSInternationalSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
-  username: string;
-  password: string;
-  mailer_id?: string | null;
-  customer_registration_id?: string | null;
-  logistics_manager_mailer_id?: string | null;
+  client_id: string;
+  client_secret: string;
+  account_type?: string | null;
+  account_number?: string | null;
   carrier_id: string;
 }
 
@@ -4530,11 +4520,10 @@ export interface UpdateUSPSSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
-  username?: string | null;
-  password?: string | null;
-  mailer_id?: string | null;
-  customer_registration_id?: string | null;
-  logistics_manager_mailer_id?: string | null;
+  client_id?: string | null;
+  client_secret?: string | null;
+  account_type?: string | null;
+  account_number?: string | null;
   carrier_id?: string | null;
 }
 
@@ -4544,11 +4533,10 @@ export interface UpdateUSPSInternationalSettingsInput {
   active?: boolean | null;
   config?: any | null;
   metadata?: any | null;
-  username?: string | null;
-  password?: string | null;
-  mailer_id?: string | null;
-  customer_registration_id?: string | null;
-  logistics_manager_mailer_id?: string | null;
+  client_id?: string | null;
+  client_secret?: string | null;
+  account_type?: string | null;
+  account_number?: string | null;
   carrier_id?: string | null;
 }
 

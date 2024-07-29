@@ -14123,7 +14123,7 @@
             "deprecationReason": null
           },
           {
-            "name": "username",
+            "name": "account_number",
             "description": null,
             "args": [],
             "type": {
@@ -14135,7 +14135,7 @@
             "deprecationReason": null
           },
           {
-            "name": "password",
+            "name": "client_id",
             "description": null,
             "args": [],
             "type": {
@@ -14147,7 +14147,7 @@
             "deprecationReason": null
           },
           {
-            "name": "mailer_id",
+            "name": "client_secret",
             "description": null,
             "args": [],
             "type": {
@@ -14159,19 +14159,7 @@
             "deprecationReason": null
           },
           {
-            "name": "customer_registration_id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "logistics_manager_mailer_id",
+            "name": "account_type",
             "description": null,
             "args": [],
             "type": {
@@ -14344,7 +14332,7 @@
             "deprecationReason": null
           },
           {
-            "name": "username",
+            "name": "account_number",
             "description": null,
             "args": [],
             "type": {
@@ -14356,7 +14344,7 @@
             "deprecationReason": null
           },
           {
-            "name": "password",
+            "name": "client_id",
             "description": null,
             "args": [],
             "type": {
@@ -14368,7 +14356,7 @@
             "deprecationReason": null
           },
           {
-            "name": "mailer_id",
+            "name": "client_secret",
             "description": null,
             "args": [],
             "type": {
@@ -14380,19 +14368,7 @@
             "deprecationReason": null
           },
           {
-            "name": "customer_registration_id",
-            "description": null,
-            "args": [],
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "isDeprecated": false,
-            "deprecationReason": null
-          },
-          {
-            "name": "logistics_manager_mailer_id",
+            "name": "account_type",
             "description": null,
             "args": [],
             "type": {
@@ -39287,7 +39263,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "client_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -39301,7 +39277,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
+            "name": "client_secret",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -39315,7 +39291,7 @@
             "defaultValue": null
           },
           {
-            "name": "mailer_id",
+            "name": "account_type",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -39325,17 +39301,7 @@
             "defaultValue": null
           },
           {
-            "name": "customer_registration_id",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "logistics_manager_mailer_id",
+            "name": "account_number",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -39400,7 +39366,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "client_id",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -39414,7 +39380,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
+            "name": "client_secret",
             "description": null,
             "type": {
               "kind": "NON_NULL",
@@ -39428,7 +39394,7 @@
             "defaultValue": null
           },
           {
-            "name": "mailer_id",
+            "name": "account_type",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -39438,17 +39404,7 @@
             "defaultValue": null
           },
           {
-            "name": "customer_registration_id",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "logistics_manager_mailer_id",
+            "name": "account_number",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44309,7 +44265,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "client_id",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44319,7 +44275,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
+            "name": "client_secret",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44329,7 +44285,7 @@
             "defaultValue": null
           },
           {
-            "name": "mailer_id",
+            "name": "account_type",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44339,17 +44295,7 @@
             "defaultValue": null
           },
           {
-            "name": "customer_registration_id",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "logistics_manager_mailer_id",
+            "name": "account_number",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44424,7 +44370,7 @@
             "defaultValue": null
           },
           {
-            "name": "username",
+            "name": "client_id",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44434,7 +44380,7 @@
             "defaultValue": null
           },
           {
-            "name": "password",
+            "name": "client_secret",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44444,7 +44390,7 @@
             "defaultValue": null
           },
           {
-            "name": "mailer_id",
+            "name": "account_type",
             "description": null,
             "type": {
               "kind": "SCALAR",
@@ -44454,17 +44400,7 @@
             "defaultValue": null
           },
           {
-            "name": "customer_registration_id",
-            "description": null,
-            "type": {
-              "kind": "SCALAR",
-              "name": "String",
-              "ofType": null
-            },
-            "defaultValue": null
-          },
-          {
-            "name": "logistics_manager_mailer_id",
+            "name": "account_number",
             "description": null,
             "type": {
               "kind": "SCALAR",

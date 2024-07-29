@@ -54,7 +54,7 @@ ManifestPayload = {
         "phone_number": "8005554526",
         "state_code": "SC",
     },
-    "options": {},
+    "options": {"shipment_date": "2024-07-28"},
 }
 
 ParsedManifestResponse = [

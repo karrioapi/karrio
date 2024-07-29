@@ -110,6 +110,7 @@ ShipmentPayload = {
     "service": "carrier_service",
     "options": {
         "signature_required": True,
+        "shipment_date": "2024-07-28",
     },
     "reference": "#Order 11111",
 }
