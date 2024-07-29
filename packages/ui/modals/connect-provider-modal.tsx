@@ -711,6 +711,18 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                   />
                 )}
 
+                {field("contract_number").exists && (
+                  <InputField
+                    label="Contract Number"
+                    value={payload.contract_number}
+                    name="contract_number"
+                    wrapperClass="pt-2"
+                    onChange={handleChange}
+                    className="is-small"
+                    required={field("contract_number").required}
+                  />
+                )}
+
                 {field("api_secret").exists && (
                   <InputField
                     label="API Secret"
