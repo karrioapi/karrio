@@ -603,6 +603,9 @@ class Products(typing.Iterable[Product]):
         weight_unit: str = None,
     ):
         self._items = [Product(item, weight_unit=weight_unit) for item in items]
+        self._weight_unit = (
+            weight_unit or self._items[0].weight_unit if any(self._items) else None
+        )
 
     def __len__(self) -> int:
         return len(self._items)
@@ -620,6 +623,13 @@ class Products(typing.Iterable[Product]):
     @property
     def value_amount(self):
         return sum((item.value_amount or 0.0 for item in self._items), 0.0)
+
+    @property
+    def weight(self) -> Weight:
+        return Weight(
+            sum([item.weight for item in self._items], 0.0),
+            self._weight_unit,
+        )
 
     @property
     def description(self) -> typing.Optional[str]:
@@ -1181,6 +1191,41 @@ class CustomsOption(utils.Enum):
     vat_registration_number = utils.OptionEnum("vat_registration_number")
 
 
+class CustomsOptions(Options):
+    """The options common processing helper"""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs, base_option_type=CustomsOption)
+
+    @property
+    def aes(self) -> utils.OptionEnum:
+        return self[CustomsOption.aes.name]
+
+    @property
+    def eel_pfc(self) -> utils.OptionEnum:
+        return self[CustomsOption.eel_pfc.name]
+
+    @property
+    def nip_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.nip_number.name]
+
+    @property
+    def eori_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.eori_number.name]
+
+    @property
+    def license_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.license_number.name]
+
+    @property
+    def certificate_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.certificate_number.name]
+
+    @property
+    def vat_registration_number(self) -> utils.OptionEnum:
+        return self[CustomsOption.vat_registration_number.name]
+
+
 class CustomsInfo(models.Customs):
     """The customs info processing helper"""
 
@@ -1194,10 +1239,9 @@ class CustomsInfo(models.Customs):
         recipient: typing.Optional[models.Address] = None,
     ):
         _customs = customs or default_to
-        options = Options(
+        options = CustomsOptions(
             getattr(_customs, "options", None) or {},
             option_type=option_type,
-            base_option_type=CustomsOption,
         )
 
         self._customs = _customs
@@ -1220,7 +1264,7 @@ class CustomsInfo(models.Customs):
         return self._customs is not None
 
     @property
-    def duty(self) -> typing.Optional[models.Duty]:  # type:ignore
+    def duty(self) -> models.Duty:  # type:ignore
         return getattr(self._customs, "duty", None) or models.Duty()
 
     @property

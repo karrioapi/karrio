@@ -79,7 +79,7 @@ def shipment_request(
         payload.customs,
         shipper=payload.shipper,
         recipient=payload.recipient,
-        weight_unit=units.WeightUnit.KG,
+        weight_unit=units.WeightUnit.KG.value,
     )
     reference = payload.reference or getattr(payload, "id", None)
     currency = lib.identity(
@@ -95,12 +95,7 @@ def shipment_request(
             current_format="%Y-%m-%d",
             output_format="%Y-%m-%dT%H:%M:%S GMT%z",
         ),
-        pickup=mydhl.PickupType(
-            isRequested=False,
-            closeTime=None,
-            location=None,
-            specialInstructions=[],
-        ),
+        pickup=None,
         productCode=service,
         localProductCode=service,
         getRateEstimates=True,
@@ -124,21 +119,7 @@ def shipment_request(
             encodingFormat=provider_units.LabelFormat.map(
                 payload.labbel_type or "PDF"
             ).value,
-            imageOptions=[
-                mydhl.ImageOptionType(
-                    typeCode=None,
-                    templateName=None,
-                    isRequested=None,
-                    invoiceType=None,
-                    languageCode=None,
-                    languageCountryCode=None,
-                    hideAccountNumber=None,
-                    numberOfCopies=None,
-                    renderDHLLogo=None,
-                    fitLabelsToA4=None,
-                    encodingFormat=None,
-                )
-            ],
+            imageOptions=[],
             splitTransportAndWaybillDocLabels=True,
             allDocumentsInOneImage=False,
             splitDocumentsByPages=False,
@@ -165,13 +146,7 @@ def shipment_request(
                     fullName=shipper.contact,
                     email=shipper.email,
                 ),
-                registrationNumbers=[
-                    mydhl.RegistrationNumberType(
-                        issuerCountryCode=None,
-                        number=None,
-                        typeCode=None,
-                    )
-                ],
+                registrationNumbers=[],
                 bankDetails=[],
                 typeCode=("business" if shipper.company_name else None),
             ),
@@ -194,13 +169,7 @@ def shipment_request(
                     fullName=recipient.contact,
                     email=recipient.email,
                 ),
-                registrationNumbers=[
-                    mydhl.RegistrationNumberType(
-                        issuerCountryCode=None,
-                        number=None,
-                        typeCode=None,
-                    )
-                ],
+                registrationNumbers=[],
                 bankDetails=[],
                 typeCode=("business" if recipient.company_name else None),
             ),
@@ -225,147 +194,133 @@ def shipment_request(
                 )
                 for package in packages
             ],
-            isCustomsDeclarable=payload.customs is not None,
+            isCustomsDeclarable=not packages.is_document,
             declaredValue=options.declared_value.state,
             declaredValueCurrency=currency,
-            exportDeclaration=mydhl.ExportDeclarationType(
-                lineItems=[
-                    mydhl.LineItemType(
-                        number=item.hs_code or item.sku,
-                        description=item.title or item.description,
-                        price=item.value_amount,
-                        quantity=mydhl.QuantityType(
-                            value=item.quantity,
-                            unitOfMeasurement=None,
-                        ),
-                        commodityCodes=[
-                            mydhl.CustomerReferenceType(
-                                value=None,
-                                typeCode=None,
-                            )
-                        ],
-                        exportReasonType=None,
-                        manufacturerCountry=None,
-                        exportControlClassificationNumber=None,
-                        weight=mydhl.WeightType(
-                            netValue=None,
-                            grossValue=None,
-                        ),
-                        isTaxesPaid=None,
-                        additionalInformation=[],
-                        customerReferences=[
-                            mydhl.CustomerReferenceType(
-                                value=None,
-                                typeCode=None,
-                            )
-                        ],
-                        customsDocuments=[
-                            mydhl.CustomerReferenceType(
-                                value=None,
-                                typeCode=None,
-                            )
-                        ],
-                    )
-                    for item in customs.commodities
-                ],
-                invoice=mydhl.InvoiceType(
-                    number=None,
-                    date=None,
-                    instructions=[],
-                    totalNetWeight=None,
-                    totalGrossWeight=None,
-                    customerReferences=[
-                        mydhl.CustomerReferenceType(
-                            value=None,
-                            typeCode=None,
+            exportDeclaration=lib.identity(
+                mydhl.ExportDeclarationType(
+                    lineItems=[
+                        mydhl.LineItemType(
+                            number=item.hs_code or item.sku,
+                            description=item.title or item.description,
+                            price=item.value_amount,
+                            quantity=mydhl.QuantityType(
+                                value=item.quantity,
+                                unitOfMeasurement=None,
+                            ),
+                            commodityCodes=[
+                                mydhl.CustomerReferenceType(
+                                    value=None,
+                                    typeCode=None,
+                                )
+                            ],
+                            exportReasonType=None,
+                            manufacturerCountry=item.origin_country,
+                            exportControlClassificationNumber=None,
+                            weight=mydhl.WeightType(
+                                netValue=None,
+                                grossValue=item.weight,
+                            ),
+                            isTaxesPaid=None,
+                            additionalInformation=[],
+                            customerReferences=[],
+                            customsDocuments=[],
                         )
+                        for item in customs.commodities
                     ],
-                    termsOfPayment=None,
-                    indicativeCustomsValues=mydhl.IndicativeCustomsValuesType(
-                        importCustomsDutyValue=None,
-                        importTaxesValue=None,
+                    invoice=lib.identity(
+                        mydhl.InvoiceType(
+                            number=customs.invoice,
+                            date=lib.fdatetime(
+                                customs.invoice_date or datetime.datetime.now(),
+                                current_format="%Y-%m-%d",
+                                output_format="%Y-%m-%dT%H:%M:%S GMT%z",
+                            ),
+                            instructions=[],
+                            totalNetWeight=packages.weight.KG,
+                            totalGrossWeight=packages.items.weight.KG,
+                            customerReferences=[
+                                mydhl.CustomerReferenceType(
+                                    value=_,
+                                    typeCode="CU",
+                                )
+                                for _ in [reference]
+                                if _ is not None
+                            ],
+                            termsOfPayment=None,
+                            indicativeCustomsValues=None,
+                            customerDataTextEntries=[],
+                        )
+                        if customs.invoice is not None
+                        else None
                     ),
-                    customerDataTextEntries=[],
-                ),
-                remarks=[],
-                additionalCharges=[
-                    mydhl.AdditionalChargeType(
-                        value=None,
-                        caption=None,
-                        typeCode=None,
-                    )
-                ],
-                destinationPortName=None,
-                placeOfIncoterm=None,
-                payerVATNumber=None,
-                recipientReference=None,
-                exporter=mydhl.ExporterType(
-                    id=None,
-                    code=None,
-                ),
-                packageMarks=None,
-                declarationNotes=[],
-                exportReference=None,
-                exportReason=None,
-                exportReasonType=None,
-                licenses=[
-                    mydhl.CustomerReferenceType(
-                        value=None,
-                        typeCode=None,
-                    )
-                ],
-                shipmentType=None,
-                customsDocuments=[
-                    mydhl.CustomerReferenceType(
-                        value=None,
-                        typeCode=None,
-                    )
-                ],
+                    remarks=[],
+                    additionalCharges=[],
+                    destinationPortName=None,
+                    placeOfIncoterm=None,
+                    payerVATNumber=customs.options.vat_registration_number.state,
+                    recipientReference=None,
+                    exporter=None,
+                    packageMarks=None,
+                    declarationNotes=[],
+                    exportReference=None,
+                    exportReason=None,
+                    exportReasonType=None,
+                    licenses=[],
+                    shipmentType=None,
+                    customsDocuments=[],
+                )
+                if (payload.customs is not None and not packages.is_document)
+                else None
             ),
-            description=None,
+            description=packages.description,
             USFilingTypeValue=None,
-            incoterm=None,
-            unitOfMeasurement=None,
+            incoterm=customs.incoterm,
+            unitOfMeasurement="metric",
         ),
         shipmentNotification=[
             mydhl.ShipmentNotificationType(
-                typeCode=None,
-                receiverId=None,
+                typeCode="email",
+                receiverId=email,
                 languageCode=None,
                 languageCountryCode=None,
                 bespokeMessage=None,
             )
+            for email in lib.identity(
+                []
+                if options.email_notification.state is False
+                else [options.email_notification_to.state or recipient.email]
+            )
+            if email is not None
         ],
         getTransliteratedResponse=None,
-        estimatedDeliveryDate=mydhl.EstimatedDeliveryDateType(
-            isRequested=None,
-            typeCode=None,
-        ),
-        getAdditionalInformation=[
-            mydhl.EstimatedDeliveryDateType(
-                isRequested=None,
-                typeCode=None,
-            )
-        ],
+        estimatedDeliveryDate=None,
+        getAdditionalInformation=[],
         customerReferences=[
             mydhl.CustomerReferenceType(
-                value=None,
-                typeCode=None,
+                value=reference,
+                typeCode="CU",
             )
+            for _ in [reference]
+            if _ is not None
         ],
         documentImages=[
             mydhl.DocumentImageType(
-                typeCode=None,
-                imageFormat=None,
-                content=None,
+                typeCode=lib.identity(
+                    provider_units.UploadDocumentType.map(doc.get("doc_type")).value
+                    or "INV"
+                ),
+                imageFormat=doc.get("doc_format") or "PDF",
+                content=doc["doc_file"],
+            )
+            for doc in lib.identity(
+                options.doc_files.state
+                if options.dhl_paperless_trade.state == True
+                and any(options.doc_files.state or [])
+                else []
             )
         ],
-        identifiers=[
-            mydhl.CustomerReferenceType(
-                value=None,
-                typeCode=None,
-            )
-        ],
+        identifiers=[],
     )
 
     return lib.Serializable(request, lib.to_dict)

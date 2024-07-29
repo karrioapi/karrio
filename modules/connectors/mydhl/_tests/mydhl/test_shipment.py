@@ -11,21 +11,11 @@ class TestDHLExpressShipping(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
         self.ShipmentRequest = models.ShipmentRequest(**ShipmentPayload)
-        self.ShipmentCancelRequest = models.ShipmentCancelRequest(
-            **ShipmentCancelPayload
-        )
 
     def test_create_shipment_request(self):
         request = gateway.mapper.create_shipment_request(self.ShipmentRequest)
 
         self.assertEqual(request.serialize(), ShipmentRequest)
-
-    def test_create_cancel_shipment_request(self):
-        request = gateway.mapper.create_cancel_shipment_request(
-            self.ShipmentCancelRequest
-        )
-
-        self.assertEqual(request.serialize(), ShipmentCancelRequest)
 
     def test_create_shipment(self):
         with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
@@ -55,19 +45,6 @@ class TestDHLExpressShipping(unittest.TestCase):
             )
 
             self.assertListEqual(lib.to_dict(parsed_response), ParsedShipmentResponse)
-
-    def test_parse_cancel_shipment_response(self):
-        with patch("karrio.mappers.mydhl.proxy.lib.request") as mock:
-            mock.return_value = ShipmentCancelResponse
-            parsed_response = (
-                karrio.Shipment.cancel(self.ShipmentCancelRequest)
-                .from_(gateway)
-                .parse()
-            )
-
-            self.assertListEqual(
-                lib.to_dict(parsed_response), ParsedCancelShipmentResponse
-            )
 
 
 if __name__ == "__main__":

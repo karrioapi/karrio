@@ -1,7 +1,8 @@
-import datetime
 import karrio.schemas.mydhl.rating_request as mydhl
 import karrio.schemas.mydhl.rating_response as rating
+
 import typing
+import datetime
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
@@ -43,10 +44,9 @@ def _extract_details(
     return models.RateDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
-        service=service.name_or_key,  # extract service from rate
-        total_charge=lib.to_money(total_price),  # extract the rate total rate cost
-        currency=currency,  # extract the rate pricing currency
-        transit_days=0,  # extract the rate transit days
+        service=service.name_or_key,
+        total_charge=lib.to_money(total_price),
+        currency=currency,
         extra_charges=[
             models.ChargeDetails(
                 name=charge.chargeType,
@@ -56,7 +56,7 @@ def _extract_details(
             for charge in rate.totalPrice[0].charges
         ],
         meta=dict(
-            service_name=rate.productName,  # extract the rate service human readable name
+            service_name=rate.productName,
             pricingDate=rate.pricingDate,
             **extra,
         ),

@@ -12,6 +12,21 @@ class LabelFormat(lib.StrEnum):
     PNG = PDF
 
 
+class UploadDocumentType(lib.StrEnum):
+    """Carrier specific document image type"""
+
+    invoice = "INV"
+    proforma = "PNV"
+    certificate_of_origin = "COO"
+    nafta_certificate_of_origin = "NAF"
+    commercial_invoice = "CIN"
+    custom_declaration = "DCL"
+    air_waybill = "AWB"
+
+    """ Unified Document type mapping """
+    pro_forma_invoice = proforma
+
+
 class PackagingType(lib.StrEnum):
     """Carrier specific packaging type"""
 
