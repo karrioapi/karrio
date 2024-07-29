@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("providers", "0073_alter_eshipperxmlsettings_options_and_more"),
+        ("providers", "0073_delete_eshipperxmlsettings"),
     ]
 
     operations = [

@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ("providers", "0074_rename_eshipperxmlsettings_eshippersettings_and_more"),
+        ("providers", "0074_eshippersettings"),
     ]
 
     operations = [
