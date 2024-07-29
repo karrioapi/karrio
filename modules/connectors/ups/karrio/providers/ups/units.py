@@ -5,6 +5,9 @@ PRESET_DEFAULTS = dict(
     dimension_unit="IN",
     weight_unit="LB",
 )
+COUNTRY_PREFERED_UNITS = dict(
+    US=(units.WeightUnit.LB, units.DimensionUnit.IN),
+)
 
 
 class PackagePresets(utils.Enum):
