@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6-rc22`.
+    The current version is `2024.6-rc23`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6-rc22
+  version: 2024.6-rc23
 paths:
   /:
     get:
@@ -10049,7 +10049,7 @@ tags:
     | ------------ | ------------ |
     | zoom2u | Zoom2u |
     | usps | USPS |
-    | usps_international | USPS |
+    | usps_international | USPS International |
     | ups | UPS |
     | tnt | TNT |
     | tge | TGE |
@@ -10121,7 +10121,7 @@ tags:
     | usps_retail_ground | USPS_RETAIL_GROUND |
     | usps_all | ALL |
 
-    ### USPS
+    ### USPS International
     | Code         | Service Name |
     | ------------ | ------------ |
     | usps_standard_service | USPS Standard Service |
