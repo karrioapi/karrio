@@ -1,233 +1,169 @@
-import re
 import unittest
-from unittest.mock import patch
-from karrio.core.utils import DP
-from karrio.core.models import RateRequest
-from karrio import Rating
+from unittest.mock import patch, ANY
 from .fixture import gateway
+from tests import logger
+
+import karrio
+import karrio.lib as lib
+import karrio.core.models as models
 
 
 class TestUSPSRating(unittest.TestCase):
     def setUp(self):
         self.maxDiff = None
-        self.RateRequest = RateRequest(**RATE_PAYLOAD)
+        self.RateRequest = models.RateRequest(**RatePayload)
 
     def test_create_rate_request(self):
         request = gateway.mapper.create_rate_request(self.RateRequest)
-        serialized_request = re.sub(
-            "        <AcceptanceDateTime>[^>]+</AcceptanceDateTime>",
-            "",
-            request.serialize(),
-        )
-        self.assertEqual(serialized_request, RATE_REQUEST_XML)
+        logger.debug(request.serialize())
+        self.assertEqual(request.serialize(), RateRequest)
+
+    def test_get_rate(self):
+        with patch("karrio.mappers.usps_international.proxy.lib.request") as mock:
+            mock.return_value = "{}"
+            karrio.Rating.fetch(self.RateRequest).from_(gateway)
+
+            self.assertEqual(
+                mock.call_args[1]["url"],
+                f"{gateway.settings.server_url}/v3/total-rates/search",
+            )
 
     def test_parse_rate_response(self):
-        with patch("karrio.mappers.usps_international.proxy.http") as mock:
-            mock.return_value = RATE_RESPONSE_XML
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertListEqual(DP.to_dict(parsed_response), PARSED_RATE_RESPONSE)
-
-    def test_parse_rate_response_errors(self):
-        with patch("karrio.mappers.usps_international.proxy.http") as mock:
-            mock.return_value = ERROR_XML
-            parsed_response = Rating.fetch(self.RateRequest).from_(gateway).parse()
-
-            self.assertListEqual(DP.to_dict(parsed_response), PARSED_ERRORS)
+        with patch("karrio.mappers.usps_international.proxy.lib.request") as mock:
+            mock.return_value = RateResponse
+            parsed_response = (
+                karrio.Rating.fetch(self.RateRequest).from_(gateway).parse()
+            )
+            logger.debug(lib.to_dict(parsed_response))
+            self.assertListEqual(lib.to_dict(parsed_response), ParsedRateResponse)
 
 
 if __name__ == "__main__":
     unittest.main()
 
 
-RATE_PAYLOAD = {
-    "shipper": {"postal_code": "18701"},
-    "recipient": {"postal_code": "2046", "country_code": "AU"},
+RatePayload = {
+    "shipper": {
+        "company_name": "ABC Corp.",
+        "address_line1": "1098 N Fraser Street",
+        "city": "Georgetown",
+        "postal_code": "29440",
+        "country_code": "US",
+        "person_name": "Tall Tom",
+        "phone_number": "8005554526",
+        "state_code": "SC",
+    },
+    "recipient": {
+        "company_name": "Coffee Five",
+        "address_line1": "R. da Quitanda, 86 - quiosque 01",
+        "city": "Centro",
+        "postal_code": "29440",
+        "country_code": "BR",
+        "person_name": "John",
+        "phone_number": "8005554526",
+        "state_code": "Rio de Janeiro",
+    },
     "parcels": [
         {
-            "width": 10,
-            "height": 10,
-            "length": 10,
-            "weight": 3.123,
-            "weight_unit": "LB",
-            "dimension_unit": "IN",
+            "height": 50,
+            "length": 50,
+            "weight": 20,
+            "width": 12,
+            "dimension_unit": "CM",
+            "weight_unit": "KG",
         }
     ],
-    "options": {"usps_insurance_global_express_guaranteed": True},
+    "options": {
+        "usps_label_delivery_service": True,
+        "usps_price_type": "RETAIL",
+        "shipment_date": "2024-07-28",
+    },
+    "services": ["usps_parcel_select"],
+    "reference": "REF-001",
 }
 
-PARSED_RATE_RESPONSE = [
+ParsedRateResponse = [
     [
         {
             "carrier_id": "usps_international",
             "carrier_name": "usps_international",
             "currency": "USD",
             "extra_charges": [
-                {"amount": 115.9, "currency": "USD", "name": "Base charge"}
+                {"amount": 3.35, "currency": "USD", "name": "Base Charge"},
+                {"amount": 3.35, "currency": "USD", "name": "string"},
+                {"amount": 3.35, "currency": "USD", "name": "Adult Signature Required"},
             ],
-            "meta": {"service_name": "usps_global_express_guaranteed_envelopes"},
-            "service": "usps_global_express_guaranteed_envelopes",
-            "total_charge": 115.9,
-        },
-        {
-            "carrier_id": "usps_international",
-            "carrier_name": "usps_international",
-            "currency": "USD",
-            "extra_charges": [
-                {"amount": 82.45, "currency": "USD", "name": "Base charge"}
-            ],
-            "meta": {"service_name": "usps_priority_mail_express_international"},
-            "service": "usps_priority_mail_express_international",
-            "total_charge": 82.45,
-        },
-        {
-            "carrier_id": "usps_international",
-            "carrier_name": "usps_international",
-            "currency": "USD",
-            "extra_charges": [
-                {"amount": 55.35, "currency": "USD", "name": "Base charge"}
-            ],
-            "meta": {"service_name": "usps_priority_mail_international"},
-            "service": "usps_priority_mail_international",
-            "total_charge": 55.35,
-        },
-    ],
-    [],
-]
-
-PARSED_ERRORS = [
-    [],
-    [
-        {
-            "carrier_name": "usps_international",
-            "carrier_id": "usps_international",
-            "code": "-2147219037",
-            "message": "AcceptanceDateTime cannot be earlier than today's date.",
+            "meta": {"service_name": "usps_parcel_select", "zone": "01"},
+            "service": "usps_parcel_select",
+            "total_charge": 3.35,
         }
     ],
+    [],
 ]
 
 
-ERROR_XML = """<?xml version="1.0" encoding="UTF-8"?>
-<IntlRateV2Response>
-  <Package ID="0">
-    <Error>
-      <Number>-2147219037</Number>
-      <Source>;IntlRateV2.ProcessRequest</Source>
-      <Description>AcceptanceDateTime cannot be earlier than today's date.</Description>
-      <HelpFile/>
-      <HelpContext/>
-    </Error>
-  </Package>
-</IntlRateV2Response>
-"""
+RateRequest = [
+    {
+        "accountNumber": "Your Account Number",
+        "accountType": "EPS",
+        "destinationCountryCode": "BR",
+        "extraServices": [415],
+        "foreignPostalCode": "29440",
+        "height": 19.69,
+        "itemValue": 0.0,
+        "length": 19.69,
+        "mailClass": "PARCEL_SELECT",
+        "mailingDate": "2024-07-28",
+        "originZIPCode": "29440",
+        "priceType": "RETAIL",
+        "weight": 44.1,
+        "width": 4.72,
+    }
+]
 
-RATE_REQUEST_XML = """<IntlRateV2Request USERID="username" PASSWORD="password">
-    <Revision>2</Revision>
-    <Package ID="0">
-        <Pounds>0</Pounds>
-        <Ounces>49.97</Ounces>
-        <Machinable>false</Machinable>
-        <MailType>PACKAGE</MailType>
-        <ValueOfContents></ValueOfContents>
-        <Country>Australia</Country>
-        <Width>10</Width>
-        <Length>10</Length>
-        <Height>10</Height>
-        <OriginZip>18701</OriginZip>
-        <CommercialFlag>N</CommercialFlag>
-        <CommercialPlusFlag>N</CommercialPlusFlag>
-        <ExtraServices>
-            <ExtraService>106</ExtraService>
-        </ExtraServices>
 
-        <DestinationPostalCode>2046</DestinationPostalCode>
-    </Package>
-</IntlRateV2Request>
-"""
-
-RATE_REQUEST = {"API": "IntlRateV2", "XML": RATE_REQUEST_XML}
-
-RATE_RESPONSE_XML = """<?xml version="1.0" encoding="UTF-8"?>
-<IntlRateV2Response>
-  <Package ID="0">
-    <AreasServed>Please reference Express Mail for Areas Served.</AreasServed>
-    <AdditionalRestrictions>No Additional Restrictions Data found.</AdditionalRestrictions>
-    <Service ID="12">
-      <Pounds>3</Pounds>
-      <Ounces>49.97</Ounces>
-      <Machinable>false</Machinable>
-      <MailType>PACKAGE</MailType>
-      <Width>10.</Width>
-      <Length>10.</Length>
-      <Height>10.</Height>
-      <Country>CANADA</Country>
-      <Postage>115.90</Postage>
-      <ExtraServices>
-        <ExtraService>
-          <ServiceID>106</ServiceID>
-          <ServiceName>Insurance</ServiceName>
-          <Available>True</Available>
-          <Price>0.00</Price>
-          <DeclaredValueRequired>True</DeclaredValueRequired>
-        </ExtraService>
-      </ExtraServices>
-      <ValueOfContents>100.00</ValueOfContents>
-      <SvcCommitments>1 - 3 business days to many major markets</SvcCommitments>
-      <SvcDescription>USPS GXG&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt; Envelopes</SvcDescription>
-      <MaxDimensions>USPS-Produced regular size cardboard envelope (12-1/2" x 9-1/2"), the legal-sized cardboard envelope (15" x 9-1/2") and the GXG Tyvek envelope (15-1/2" x 12-1/2")</MaxDimensions>
-      <MaxWeight>70</MaxWeight>
-    </Service>
-    <Service ID="1">
-      <Pounds>3</Pounds>
-      <Ounces>49.97</Ounces>
-      <Machinable>false</Machinable>
-      <MailType>PACKAGE</MailType>
-      <Width>10.</Width>
-      <Length>10.</Length>
-      <Height>10.</Height>
-      <Country>CANADA</Country>
-      <Postage>82.45</Postage>
-      <ExtraServices>
-        <ExtraService>
-          <ServiceID>107</ServiceID>
-          <ServiceName>Insurance</ServiceName>
-          <Available>True</Available>
-          <Price>0.00</Price>
-          <DeclaredValueRequired>True</DeclaredValueRequired>
-        </ExtraService>
-      </ExtraServices>
-      <ValueOfContents>100.00</ValueOfContents>
-      <SvcCommitments>Wed, Jun 09, 2021 Guaranteed</SvcCommitments>
-      <SvcDescription>Priority Mail Express International&amp;lt;sup&amp;gt;&amp;#8482;&amp;lt;/sup&amp;gt;</SvcDescription>
-      <MaxDimensions>Max. length 59", max. length plus girth 108"</MaxDimensions>
-      <MaxWeight>66</MaxWeight>
-    </Service>
-    <Service ID="2">
-      <Pounds>3</Pounds>
-      <Ounces>49.97</Ounces>
-      <Machinable>false</Machinable>
-      <MailType>PACKAGE</MailType>
-      <Width>10.</Width>
-      <Length>10.</Length>
-      <Height>10.</Height>
-      <Country>CANADA</Country>
-      <Postage>55.35</Postage>
-      <ExtraServices>
-        <ExtraService>
-          <ServiceID>108</ServiceID>
-          <ServiceName>Insurance</ServiceName>
-          <Available>True</Available>
-          <Price>0.00</Price>
-          <DeclaredValueRequired>True</DeclaredValueRequired>
-        </ExtraService>
-      </ExtraServices>
-      <ValueOfContents>100.00</ValueOfContents>
-      <SvcCommitments>6 - 10 business days to many major markets</SvcCommitments>
-      <SvcDescription>Priority Mail International&amp;lt;sup&amp;gt;&amp;#174;&amp;lt;/sup&amp;gt;</SvcDescription>
-      <MaxDimensions>Max. length 79", max. length plus girth 108"</MaxDimensions>
-      <MaxWeight>66</MaxWeight>
-    </Service>
-  </Package>
-</IntlRateV2Response>
+RateResponse = """{
+  "rateOptions": [
+    {
+      "totalBasePrice": 3.35,
+      "rates": [
+        {
+          "SKU": "DPXX0XXXXX07200",
+          "description": "string",
+          "priceType": "RETAIL",
+          "price": 3.35,
+          "weight": 5,
+          "dimWeight": 5,
+          "fees": [
+            {
+              "name": "string",
+              "SKU": "string",
+              "price": 0
+            }
+          ],
+          "startDate": "2021-07-16",
+          "endDate": "2021-07-16",
+          "mailClass": "PARCEL_SELECT",
+          "zone": "01"
+        }
+      ],
+      "extraServices": [
+        {
+          "extraService": "922",
+          "name": "Adult Signature Required",
+          "SKU": "DPXX0XXXXX07200",
+          "priceType": "RETAIL",
+          "price": 3.35,
+          "warnings": [
+            {
+              "warningCode": "string",
+              "warningDescription": "string"
+            }
+          ]
+        }
+      ],
+      "totalPrice": 3.35
+    }
+  ]
+}
 """

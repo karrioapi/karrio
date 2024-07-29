@@ -2,9 +2,9 @@
 /* eslint-disable */
 /**
  * Karrio API
- *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc21`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
+ *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc22`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail. 
  *
- * The version of the OpenAPI document: 2024.6-rc21
+ * The version of the OpenAPI document: 2024.6-rc22
  * 
  *
  * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
@@ -157,7 +157,7 @@ export interface Address {
      */
     'object_type'?: string;
     /**
-     * 
+     * Specify address validation result
      * @type {AddressValidation}
      * @memberof Address
      */
@@ -772,7 +772,7 @@ export interface AddressList {
     'results': Array<Address>;
 }
 /**
- * Specify address validation result
+ * 
  * @export
  * @interface AddressValidation
  */
@@ -2116,17 +2116,17 @@ export interface Customs {
      */
     'commodities'?: Array<Commodity>;
     /**
-     * 
-     * @type {CustomsDuty}
+     * The payment details.<br/>         **Note that this is required for a Dutiable parcel shipped internationally.**         
+     * @type {Duty}
      * @memberof Customs
      */
-    'duty'?: CustomsDuty | null;
+    'duty'?: Duty | null;
     /**
-     * 
-     * @type {CustomsDutyBillingAddress}
+     * The duty payor address.
+     * @type {Address}
      * @memberof Customs
      */
-    'duty_billing_address'?: CustomsDutyBillingAddress | null;
+    'duty_billing_address'?: Address | null;
     /**
      * 
      * @type {string}
@@ -2233,17 +2233,17 @@ export interface CustomsData {
      */
     'commodities': Array<CommodityData>;
     /**
-     * 
-     * @type {CustomsDuty}
+     * The payment details.<br/>         **Note that this is required for a Dutiable parcel shipped internationally.**         
+     * @type {Duty}
      * @memberof CustomsData
      */
-    'duty'?: CustomsDuty | null;
+    'duty'?: Duty | null;
     /**
-     * 
-     * @type {CustomsDataDutyBillingAddress}
+     * The duty payor address.
+     * @type {AddressData}
      * @memberof CustomsData
      */
-    'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
+    'duty_billing_address'?: AddressData | null;
     /**
      * 
      * @type {string}
@@ -2330,889 +2330,6 @@ export const CustomsDataIncotermEnum = {
 } as const;
 
 export type CustomsDataIncotermEnum = typeof CustomsDataIncotermEnum[keyof typeof CustomsDataIncotermEnum];
-
-/**
- * The duty payor address.
- * @export
- * @interface CustomsDataDutyBillingAddress
- */
-export interface CustomsDataDutyBillingAddress {
-    /**
-     * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'postal_code'?: string | null;
-    /**
-     * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'city'?: string | null;
-    /**
-     * The party frederal tax id
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'federal_tax_id'?: string | null;
-    /**
-     * The party state id
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'state_tax_id'?: string | null;
-    /**
-     * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'person_name'?: string | null;
-    /**
-     * The company name if the party is a company
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'company_name'?: string | null;
-    /**
-     * The address country code
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'country_code': CustomsDataDutyBillingAddressCountryCodeEnum;
-    /**
-     * The party email
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'email'?: string | null;
-    /**
-     * The party phone number.
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'phone_number'?: string | null;
-    /**
-     * The address state code
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'state_code'?: string | null;
-    /**
-     * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'residential'?: boolean | null;
-    /**
-     * The address street number
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'street_number'?: string | null;
-    /**
-     * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'address_line1'?: string | null;
-    /**
-     * The address line with suite number
-     * @type {string}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'address_line2'?: string | null;
-    /**
-     * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof CustomsDataDutyBillingAddress
-     */
-    'validate_location'?: boolean | null;
-}
-
-export const CustomsDataDutyBillingAddressCountryCodeEnum = {
-    Ad: 'AD',
-    Ae: 'AE',
-    Af: 'AF',
-    Ag: 'AG',
-    Ai: 'AI',
-    Al: 'AL',
-    Am: 'AM',
-    An: 'AN',
-    Ao: 'AO',
-    Ar: 'AR',
-    As: 'AS',
-    At: 'AT',
-    Au: 'AU',
-    Aw: 'AW',
-    Az: 'AZ',
-    Ba: 'BA',
-    Bb: 'BB',
-    Bd: 'BD',
-    Be: 'BE',
-    Bf: 'BF',
-    Bg: 'BG',
-    Bh: 'BH',
-    Bi: 'BI',
-    Bj: 'BJ',
-    Bm: 'BM',
-    Bn: 'BN',
-    Bo: 'BO',
-    Br: 'BR',
-    Bs: 'BS',
-    Bt: 'BT',
-    Bw: 'BW',
-    By: 'BY',
-    Bz: 'BZ',
-    Ca: 'CA',
-    Cd: 'CD',
-    Cf: 'CF',
-    Cg: 'CG',
-    Ch: 'CH',
-    Ci: 'CI',
-    Ck: 'CK',
-    Cl: 'CL',
-    Cm: 'CM',
-    Cn: 'CN',
-    Co: 'CO',
-    Cr: 'CR',
-    Cu: 'CU',
-    Cv: 'CV',
-    Cy: 'CY',
-    Cz: 'CZ',
-    De: 'DE',
-    Dj: 'DJ',
-    Dk: 'DK',
-    Dm: 'DM',
-    Do: 'DO',
-    Dz: 'DZ',
-    Ec: 'EC',
-    Ee: 'EE',
-    Eg: 'EG',
-    Er: 'ER',
-    Es: 'ES',
-    Et: 'ET',
-    Fi: 'FI',
-    Fj: 'FJ',
-    Fk: 'FK',
-    Fm: 'FM',
-    Fo: 'FO',
-    Fr: 'FR',
-    Ga: 'GA',
-    Gb: 'GB',
-    Gd: 'GD',
-    Ge: 'GE',
-    Gf: 'GF',
-    Gg: 'GG',
-    Gh: 'GH',
-    Gi: 'GI',
-    Gl: 'GL',
-    Gm: 'GM',
-    Gn: 'GN',
-    Gp: 'GP',
-    Gq: 'GQ',
-    Gr: 'GR',
-    Gt: 'GT',
-    Gu: 'GU',
-    Gw: 'GW',
-    Gy: 'GY',
-    Hk: 'HK',
-    Hn: 'HN',
-    Hr: 'HR',
-    Ht: 'HT',
-    Hu: 'HU',
-    Ic: 'IC',
-    Id: 'ID',
-    Ie: 'IE',
-    Il: 'IL',
-    In: 'IN',
-    Iq: 'IQ',
-    Ir: 'IR',
-    Is: 'IS',
-    It: 'IT',
-    Je: 'JE',
-    Jm: 'JM',
-    Jo: 'JO',
-    Jp: 'JP',
-    Ke: 'KE',
-    Kg: 'KG',
-    Kh: 'KH',
-    Ki: 'KI',
-    Km: 'KM',
-    Kn: 'KN',
-    Kp: 'KP',
-    Kr: 'KR',
-    Kv: 'KV',
-    Kw: 'KW',
-    Ky: 'KY',
-    Kz: 'KZ',
-    La: 'LA',
-    Lb: 'LB',
-    Lc: 'LC',
-    Li: 'LI',
-    Lk: 'LK',
-    Lr: 'LR',
-    Ls: 'LS',
-    Lt: 'LT',
-    Lu: 'LU',
-    Lv: 'LV',
-    Ly: 'LY',
-    Ma: 'MA',
-    Mc: 'MC',
-    Md: 'MD',
-    Me: 'ME',
-    Mg: 'MG',
-    Mh: 'MH',
-    Mk: 'MK',
-    Ml: 'ML',
-    Mm: 'MM',
-    Mn: 'MN',
-    Mo: 'MO',
-    Mp: 'MP',
-    Mq: 'MQ',
-    Mr: 'MR',
-    Ms: 'MS',
-    Mt: 'MT',
-    Mu: 'MU',
-    Mv: 'MV',
-    Mw: 'MW',
-    Mx: 'MX',
-    My: 'MY',
-    Mz: 'MZ',
-    Na: 'NA',
-    Nc: 'NC',
-    Ne: 'NE',
-    Ng: 'NG',
-    Ni: 'NI',
-    Nl: 'NL',
-    No: 'NO',
-    Np: 'NP',
-    Nr: 'NR',
-    Nu: 'NU',
-    Nz: 'NZ',
-    Om: 'OM',
-    Pa: 'PA',
-    Pe: 'PE',
-    Pf: 'PF',
-    Pg: 'PG',
-    Ph: 'PH',
-    Pk: 'PK',
-    Pl: 'PL',
-    Pr: 'PR',
-    Pt: 'PT',
-    Pw: 'PW',
-    Py: 'PY',
-    Qa: 'QA',
-    Re: 'RE',
-    Ro: 'RO',
-    Rs: 'RS',
-    Ru: 'RU',
-    Rw: 'RW',
-    Sa: 'SA',
-    Sb: 'SB',
-    Sc: 'SC',
-    Sd: 'SD',
-    Se: 'SE',
-    Sg: 'SG',
-    Sh: 'SH',
-    Si: 'SI',
-    Sk: 'SK',
-    Sl: 'SL',
-    Sm: 'SM',
-    Sn: 'SN',
-    So: 'SO',
-    Sr: 'SR',
-    Ss: 'SS',
-    St: 'ST',
-    Sv: 'SV',
-    Sy: 'SY',
-    Sz: 'SZ',
-    Tc: 'TC',
-    Td: 'TD',
-    Tg: 'TG',
-    Th: 'TH',
-    Tj: 'TJ',
-    Tl: 'TL',
-    Tn: 'TN',
-    To: 'TO',
-    Tr: 'TR',
-    Tt: 'TT',
-    Tv: 'TV',
-    Tw: 'TW',
-    Tz: 'TZ',
-    Ua: 'UA',
-    Ug: 'UG',
-    Us: 'US',
-    Uy: 'UY',
-    Uz: 'UZ',
-    Va: 'VA',
-    Vc: 'VC',
-    Ve: 'VE',
-    Vg: 'VG',
-    Vi: 'VI',
-    Vn: 'VN',
-    Vu: 'VU',
-    Ws: 'WS',
-    Xb: 'XB',
-    Xc: 'XC',
-    Xe: 'XE',
-    Xm: 'XM',
-    Xn: 'XN',
-    Xs: 'XS',
-    Xy: 'XY',
-    Ye: 'YE',
-    Yt: 'YT',
-    Za: 'ZA',
-    Zm: 'ZM',
-    Zw: 'ZW'
-} as const;
-
-export type CustomsDataDutyBillingAddressCountryCodeEnum = typeof CustomsDataDutyBillingAddressCountryCodeEnum[keyof typeof CustomsDataDutyBillingAddressCountryCodeEnum];
-
-/**
- * The payment details.<br/>         **Note that this is required for a Dutiable parcel shipped internationally.**         
- * @export
- * @interface CustomsDuty
- */
-export interface CustomsDuty {
-    /**
-     * The duty payer
-     * @type {string}
-     * @memberof CustomsDuty
-     */
-    'paid_by'?: CustomsDutyPaidByEnum | null;
-    /**
-     * The declared value currency
-     * @type {string}
-     * @memberof CustomsDuty
-     */
-    'currency'?: CustomsDutyCurrencyEnum | null;
-    /**
-     * The package declared value
-     * @type {number}
-     * @memberof CustomsDuty
-     */
-    'declared_value'?: number | null;
-    /**
-     * The duty payment account number
-     * @type {string}
-     * @memberof CustomsDuty
-     */
-    'account_number'?: string | null;
-}
-
-export const CustomsDutyPaidByEnum = {
-    Sender: 'sender',
-    Recipient: 'recipient',
-    ThirdParty: 'third_party',
-    Empty: '',
-    Null: 'null'
-} as const;
-
-export type CustomsDutyPaidByEnum = typeof CustomsDutyPaidByEnum[keyof typeof CustomsDutyPaidByEnum];
-export const CustomsDutyCurrencyEnum = {
-    Eur: 'EUR',
-    Aed: 'AED',
-    Usd: 'USD',
-    Xcd: 'XCD',
-    Amd: 'AMD',
-    Ang: 'ANG',
-    Aoa: 'AOA',
-    Ars: 'ARS',
-    Aud: 'AUD',
-    Awg: 'AWG',
-    Azn: 'AZN',
-    Bam: 'BAM',
-    Bbd: 'BBD',
-    Bdt: 'BDT',
-    Xof: 'XOF',
-    Bgn: 'BGN',
-    Bhd: 'BHD',
-    Bif: 'BIF',
-    Bmd: 'BMD',
-    Bnd: 'BND',
-    Bob: 'BOB',
-    Brl: 'BRL',
-    Bsd: 'BSD',
-    Btn: 'BTN',
-    Bwp: 'BWP',
-    Byn: 'BYN',
-    Bzd: 'BZD',
-    Cad: 'CAD',
-    Cdf: 'CDF',
-    Xaf: 'XAF',
-    Chf: 'CHF',
-    Nzd: 'NZD',
-    Clp: 'CLP',
-    Cny: 'CNY',
-    Cop: 'COP',
-    Crc: 'CRC',
-    Cuc: 'CUC',
-    Cve: 'CVE',
-    Czk: 'CZK',
-    Djf: 'DJF',
-    Dkk: 'DKK',
-    Dop: 'DOP',
-    Dzd: 'DZD',
-    Egp: 'EGP',
-    Ern: 'ERN',
-    Etb: 'ETB',
-    Fjd: 'FJD',
-    Gbp: 'GBP',
-    Gel: 'GEL',
-    Ghs: 'GHS',
-    Gmd: 'GMD',
-    Gnf: 'GNF',
-    Gtq: 'GTQ',
-    Gyd: 'GYD',
-    Hkd: 'HKD',
-    Hnl: 'HNL',
-    Hrk: 'HRK',
-    Htg: 'HTG',
-    Huf: 'HUF',
-    Idr: 'IDR',
-    Ils: 'ILS',
-    Inr: 'INR',
-    Irr: 'IRR',
-    Isk: 'ISK',
-    Jmd: 'JMD',
-    Jod: 'JOD',
-    Jpy: 'JPY',
-    Kes: 'KES',
-    Kgs: 'KGS',
-    Khr: 'KHR',
-    Kmf: 'KMF',
-    Kpw: 'KPW',
-    Krw: 'KRW',
-    Kwd: 'KWD',
-    Kyd: 'KYD',
-    Kzt: 'KZT',
-    Lak: 'LAK',
-    Lkr: 'LKR',
-    Lrd: 'LRD',
-    Lsl: 'LSL',
-    Lyd: 'LYD',
-    Mad: 'MAD',
-    Mdl: 'MDL',
-    Mga: 'MGA',
-    Mkd: 'MKD',
-    Mmk: 'MMK',
-    Mnt: 'MNT',
-    Mop: 'MOP',
-    Mro: 'MRO',
-    Mur: 'MUR',
-    Mvr: 'MVR',
-    Mwk: 'MWK',
-    Mxn: 'MXN',
-    Myr: 'MYR',
-    Mzn: 'MZN',
-    Nad: 'NAD',
-    Xpf: 'XPF',
-    Ngn: 'NGN',
-    Nio: 'NIO',
-    Nok: 'NOK',
-    Npr: 'NPR',
-    Omr: 'OMR',
-    Pen: 'PEN',
-    Pgk: 'PGK',
-    Php: 'PHP',
-    Pkr: 'PKR',
-    Pln: 'PLN',
-    Pyg: 'PYG',
-    Qar: 'QAR',
-    Rsd: 'RSD',
-    Rub: 'RUB',
-    Rwf: 'RWF',
-    Sar: 'SAR',
-    Sbd: 'SBD',
-    Scr: 'SCR',
-    Sdg: 'SDG',
-    Sek: 'SEK',
-    Sgd: 'SGD',
-    Shp: 'SHP',
-    Sll: 'SLL',
-    Sos: 'SOS',
-    Srd: 'SRD',
-    Ssp: 'SSP',
-    Std: 'STD',
-    Syp: 'SYP',
-    Szl: 'SZL',
-    Thb: 'THB',
-    Tjs: 'TJS',
-    Tnd: 'TND',
-    Top: 'TOP',
-    Try: 'TRY',
-    Ttd: 'TTD',
-    Twd: 'TWD',
-    Tzs: 'TZS',
-    Uah: 'UAH',
-    Uyu: 'UYU',
-    Uzs: 'UZS',
-    Vef: 'VEF',
-    Vnd: 'VND',
-    Vuv: 'VUV',
-    Wst: 'WST',
-    Yer: 'YER',
-    Zar: 'ZAR',
-    Empty: '',
-    Null: 'null'
-} as const;
-
-export type CustomsDutyCurrencyEnum = typeof CustomsDutyCurrencyEnum[keyof typeof CustomsDutyCurrencyEnum];
-
-/**
- * The duty payor address.
- * @export
- * @interface CustomsDutyBillingAddress
- */
-export interface CustomsDutyBillingAddress {
-    /**
-     * A unique identifier
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'id'?: string;
-    /**
-     * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'postal_code'?: string | null;
-    /**
-     * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'city'?: string | null;
-    /**
-     * The party frederal tax id
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'federal_tax_id'?: string | null;
-    /**
-     * The party state id
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'state_tax_id'?: string | null;
-    /**
-     * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'person_name'?: string | null;
-    /**
-     * The company name if the party is a company
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'company_name'?: string | null;
-    /**
-     * The address country code
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'country_code': CustomsDutyBillingAddressCountryCodeEnum;
-    /**
-     * The party email
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'email'?: string | null;
-    /**
-     * The party phone number.
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'phone_number'?: string | null;
-    /**
-     * The address state code
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'state_code'?: string | null;
-    /**
-     * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'residential'?: boolean | null;
-    /**
-     * The address street number
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'street_number'?: string | null;
-    /**
-     * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'address_line1'?: string | null;
-    /**
-     * The address line with suite number
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'address_line2'?: string | null;
-    /**
-     * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'validate_location'?: boolean | null;
-    /**
-     * Specifies the object type
-     * @type {string}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'object_type'?: string;
-    /**
-     * 
-     * @type {AddressValidation}
-     * @memberof CustomsDutyBillingAddress
-     */
-    'validation'?: AddressValidation | null;
-}
-
-export const CustomsDutyBillingAddressCountryCodeEnum = {
-    Ad: 'AD',
-    Ae: 'AE',
-    Af: 'AF',
-    Ag: 'AG',
-    Ai: 'AI',
-    Al: 'AL',
-    Am: 'AM',
-    An: 'AN',
-    Ao: 'AO',
-    Ar: 'AR',
-    As: 'AS',
-    At: 'AT',
-    Au: 'AU',
-    Aw: 'AW',
-    Az: 'AZ',
-    Ba: 'BA',
-    Bb: 'BB',
-    Bd: 'BD',
-    Be: 'BE',
-    Bf: 'BF',
-    Bg: 'BG',
-    Bh: 'BH',
-    Bi: 'BI',
-    Bj: 'BJ',
-    Bm: 'BM',
-    Bn: 'BN',
-    Bo: 'BO',
-    Br: 'BR',
-    Bs: 'BS',
-    Bt: 'BT',
-    Bw: 'BW',
-    By: 'BY',
-    Bz: 'BZ',
-    Ca: 'CA',
-    Cd: 'CD',
-    Cf: 'CF',
-    Cg: 'CG',
-    Ch: 'CH',
-    Ci: 'CI',
-    Ck: 'CK',
-    Cl: 'CL',
-    Cm: 'CM',
-    Cn: 'CN',
-    Co: 'CO',
-    Cr: 'CR',
-    Cu: 'CU',
-    Cv: 'CV',
-    Cy: 'CY',
-    Cz: 'CZ',
-    De: 'DE',
-    Dj: 'DJ',
-    Dk: 'DK',
-    Dm: 'DM',
-    Do: 'DO',
-    Dz: 'DZ',
-    Ec: 'EC',
-    Ee: 'EE',
-    Eg: 'EG',
-    Er: 'ER',
-    Es: 'ES',
-    Et: 'ET',
-    Fi: 'FI',
-    Fj: 'FJ',
-    Fk: 'FK',
-    Fm: 'FM',
-    Fo: 'FO',
-    Fr: 'FR',
-    Ga: 'GA',
-    Gb: 'GB',
-    Gd: 'GD',
-    Ge: 'GE',
-    Gf: 'GF',
-    Gg: 'GG',
-    Gh: 'GH',
-    Gi: 'GI',
-    Gl: 'GL',
-    Gm: 'GM',
-    Gn: 'GN',
-    Gp: 'GP',
-    Gq: 'GQ',
-    Gr: 'GR',
-    Gt: 'GT',
-    Gu: 'GU',
-    Gw: 'GW',
-    Gy: 'GY',
-    Hk: 'HK',
-    Hn: 'HN',
-    Hr: 'HR',
-    Ht: 'HT',
-    Hu: 'HU',
-    Ic: 'IC',
-    Id: 'ID',
-    Ie: 'IE',
-    Il: 'IL',
-    In: 'IN',
-    Iq: 'IQ',
-    Ir: 'IR',
-    Is: 'IS',
-    It: 'IT',
-    Je: 'JE',
-    Jm: 'JM',
-    Jo: 'JO',
-    Jp: 'JP',
-    Ke: 'KE',
-    Kg: 'KG',
-    Kh: 'KH',
-    Ki: 'KI',
-    Km: 'KM',
-    Kn: 'KN',
-    Kp: 'KP',
-    Kr: 'KR',
-    Kv: 'KV',
-    Kw: 'KW',
-    Ky: 'KY',
-    Kz: 'KZ',
-    La: 'LA',
-    Lb: 'LB',
-    Lc: 'LC',
-    Li: 'LI',
-    Lk: 'LK',
-    Lr: 'LR',
-    Ls: 'LS',
-    Lt: 'LT',
-    Lu: 'LU',
-    Lv: 'LV',
-    Ly: 'LY',
-    Ma: 'MA',
-    Mc: 'MC',
-    Md: 'MD',
-    Me: 'ME',
-    Mg: 'MG',
-    Mh: 'MH',
-    Mk: 'MK',
-    Ml: 'ML',
-    Mm: 'MM',
-    Mn: 'MN',
-    Mo: 'MO',
-    Mp: 'MP',
-    Mq: 'MQ',
-    Mr: 'MR',
-    Ms: 'MS',
-    Mt: 'MT',
-    Mu: 'MU',
-    Mv: 'MV',
-    Mw: 'MW',
-    Mx: 'MX',
-    My: 'MY',
-    Mz: 'MZ',
-    Na: 'NA',
-    Nc: 'NC',
-    Ne: 'NE',
-    Ng: 'NG',
-    Ni: 'NI',
-    Nl: 'NL',
-    No: 'NO',
-    Np: 'NP',
-    Nr: 'NR',
-    Nu: 'NU',
-    Nz: 'NZ',
-    Om: 'OM',
-    Pa: 'PA',
-    Pe: 'PE',
-    Pf: 'PF',
-    Pg: 'PG',
-    Ph: 'PH',
-    Pk: 'PK',
-    Pl: 'PL',
-    Pr: 'PR',
-    Pt: 'PT',
-    Pw: 'PW',
-    Py: 'PY',
-    Qa: 'QA',
-    Re: 'RE',
-    Ro: 'RO',
-    Rs: 'RS',
-    Ru: 'RU',
-    Rw: 'RW',
-    Sa: 'SA',
-    Sb: 'SB',
-    Sc: 'SC',
-    Sd: 'SD',
-    Se: 'SE',
-    Sg: 'SG',
-    Sh: 'SH',
-    Si: 'SI',
-    Sk: 'SK',
-    Sl: 'SL',
-    Sm: 'SM',
-    Sn: 'SN',
-    So: 'SO',
-    Sr: 'SR',
-    Ss: 'SS',
-    St: 'ST',
-    Sv: 'SV',
-    Sy: 'SY',
-    Sz: 'SZ',
-    Tc: 'TC',
-    Td: 'TD',
-    Tg: 'TG',
-    Th: 'TH',
-    Tj: 'TJ',
-    Tl: 'TL',
-    Tn: 'TN',
-    To: 'TO',
-    Tr: 'TR',
-    Tt: 'TT',
-    Tv: 'TV',
-    Tw: 'TW',
-    Tz: 'TZ',
-    Ua: 'UA',
-    Ug: 'UG',
-    Us: 'US',
-    Uy: 'UY',
-    Uz: 'UZ',
-    Va: 'VA',
-    Vc: 'VC',
-    Ve: 'VE',
-    Vg: 'VG',
-    Vi: 'VI',
-    Vn: 'VN',
-    Vu: 'VU',
-    Ws: 'WS',
-    Xb: 'XB',
-    Xc: 'XC',
-    Xe: 'XE',
-    Xm: 'XM',
-    Xn: 'XN',
-    Xs: 'XS',
-    Xy: 'XY',
-    Ye: 'YE',
-    Yt: 'YT',
-    Za: 'ZA',
-    Zm: 'ZM',
-    Zw: 'ZW'
-} as const;
-
-export type CustomsDutyBillingAddressCountryCodeEnum = typeof CustomsDutyBillingAddressCountryCodeEnum[keyof typeof CustomsDutyBillingAddressCountryCodeEnum];
 
 /**
  * 
@@ -4498,11 +3615,11 @@ export interface ManifestDetails {
      */
     'carrier_id': string;
     /**
-     * 
-     * @type {ManifestDetailsDoc}
+     * The manifest documents
+     * @type {ManifestDocument}
      * @memberof ManifestDetails
      */
-    'doc'?: ManifestDetailsDoc | null;
+    'doc'?: ManifestDocument | null;
     /**
      * provider specific metadata
      * @type {{ [key: string]: any; }}
@@ -4515,19 +3632,6 @@ export interface ManifestDetails {
      * @memberof ManifestDetails
      */
     'test_mode': boolean;
-}
-/**
- * The manifest documents
- * @export
- * @interface ManifestDetailsDoc
- */
-export interface ManifestDetailsDoc {
-    /**
-     * A manifest file in base64 string
-     * @type {string}
-     * @memberof ManifestDetailsDoc
-     */
-    'manifest'?: string | null;
 }
 /**
  * 
@@ -4784,17 +3888,17 @@ export interface Order {
      */
     'shipping_to': Address;
     /**
-     * 
-     * @type {OrderShippingFrom}
+     * The origin or warehouse address of the order items.
+     * @type {Address}
      * @memberof Order
      */
-    'shipping_from'?: OrderShippingFrom | null;
+    'shipping_from'?: Address | null;
     /**
-     * 
-     * @type {OrderBillingAddress}
+     * The customer\' or shipping billing address.
+     * @type {AddressData}
      * @memberof Order
      */
-    'billing_address'?: OrderBillingAddress | null;
+    'billing_address'?: AddressData | null;
     /**
      * The order line items.
      * @type {Array<LineItem>}
@@ -4850,343 +3954,6 @@ export const OrderStatusEnum = {
 export type OrderStatusEnum = typeof OrderStatusEnum[keyof typeof OrderStatusEnum];
 
 /**
- * The customer\' or shipping billing address.
- * @export
- * @interface OrderBillingAddress
- */
-export interface OrderBillingAddress {
-    /**
-     * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'postal_code'?: string | null;
-    /**
-     * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'city'?: string | null;
-    /**
-     * The party frederal tax id
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'federal_tax_id'?: string | null;
-    /**
-     * The party state id
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'state_tax_id'?: string | null;
-    /**
-     * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'person_name'?: string | null;
-    /**
-     * The company name if the party is a company
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'company_name'?: string | null;
-    /**
-     * The address country code
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'country_code': OrderBillingAddressCountryCodeEnum;
-    /**
-     * The party email
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'email'?: string | null;
-    /**
-     * The party phone number.
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'phone_number'?: string | null;
-    /**
-     * The address state code
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'state_code'?: string | null;
-    /**
-     * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof OrderBillingAddress
-     */
-    'residential'?: boolean | null;
-    /**
-     * The address street number
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'street_number'?: string | null;
-    /**
-     * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'address_line1'?: string | null;
-    /**
-     * The address line with suite number
-     * @type {string}
-     * @memberof OrderBillingAddress
-     */
-    'address_line2'?: string | null;
-    /**
-     * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof OrderBillingAddress
-     */
-    'validate_location'?: boolean | null;
-}
-
-export const OrderBillingAddressCountryCodeEnum = {
-    Ad: 'AD',
-    Ae: 'AE',
-    Af: 'AF',
-    Ag: 'AG',
-    Ai: 'AI',
-    Al: 'AL',
-    Am: 'AM',
-    An: 'AN',
-    Ao: 'AO',
-    Ar: 'AR',
-    As: 'AS',
-    At: 'AT',
-    Au: 'AU',
-    Aw: 'AW',
-    Az: 'AZ',
-    Ba: 'BA',
-    Bb: 'BB',
-    Bd: 'BD',
-    Be: 'BE',
-    Bf: 'BF',
-    Bg: 'BG',
-    Bh: 'BH',
-    Bi: 'BI',
-    Bj: 'BJ',
-    Bm: 'BM',
-    Bn: 'BN',
-    Bo: 'BO',
-    Br: 'BR',
-    Bs: 'BS',
-    Bt: 'BT',
-    Bw: 'BW',
-    By: 'BY',
-    Bz: 'BZ',
-    Ca: 'CA',
-    Cd: 'CD',
-    Cf: 'CF',
-    Cg: 'CG',
-    Ch: 'CH',
-    Ci: 'CI',
-    Ck: 'CK',
-    Cl: 'CL',
-    Cm: 'CM',
-    Cn: 'CN',
-    Co: 'CO',
-    Cr: 'CR',
-    Cu: 'CU',
-    Cv: 'CV',
-    Cy: 'CY',
-    Cz: 'CZ',
-    De: 'DE',
-    Dj: 'DJ',
-    Dk: 'DK',
-    Dm: 'DM',
-    Do: 'DO',
-    Dz: 'DZ',
-    Ec: 'EC',
-    Ee: 'EE',
-    Eg: 'EG',
-    Er: 'ER',
-    Es: 'ES',
-    Et: 'ET',
-    Fi: 'FI',
-    Fj: 'FJ',
-    Fk: 'FK',
-    Fm: 'FM',
-    Fo: 'FO',
-    Fr: 'FR',
-    Ga: 'GA',
-    Gb: 'GB',
-    Gd: 'GD',
-    Ge: 'GE',
-    Gf: 'GF',
-    Gg: 'GG',
-    Gh: 'GH',
-    Gi: 'GI',
-    Gl: 'GL',
-    Gm: 'GM',
-    Gn: 'GN',
-    Gp: 'GP',
-    Gq: 'GQ',
-    Gr: 'GR',
-    Gt: 'GT',
-    Gu: 'GU',
-    Gw: 'GW',
-    Gy: 'GY',
-    Hk: 'HK',
-    Hn: 'HN',
-    Hr: 'HR',
-    Ht: 'HT',
-    Hu: 'HU',
-    Ic: 'IC',
-    Id: 'ID',
-    Ie: 'IE',
-    Il: 'IL',
-    In: 'IN',
-    Iq: 'IQ',
-    Ir: 'IR',
-    Is: 'IS',
-    It: 'IT',
-    Je: 'JE',
-    Jm: 'JM',
-    Jo: 'JO',
-    Jp: 'JP',
-    Ke: 'KE',
-    Kg: 'KG',
-    Kh: 'KH',
-    Ki: 'KI',
-    Km: 'KM',
-    Kn: 'KN',
-    Kp: 'KP',
-    Kr: 'KR',
-    Kv: 'KV',
-    Kw: 'KW',
-    Ky: 'KY',
-    Kz: 'KZ',
-    La: 'LA',
-    Lb: 'LB',
-    Lc: 'LC',
-    Li: 'LI',
-    Lk: 'LK',
-    Lr: 'LR',
-    Ls: 'LS',
-    Lt: 'LT',
-    Lu: 'LU',
-    Lv: 'LV',
-    Ly: 'LY',
-    Ma: 'MA',
-    Mc: 'MC',
-    Md: 'MD',
-    Me: 'ME',
-    Mg: 'MG',
-    Mh: 'MH',
-    Mk: 'MK',
-    Ml: 'ML',
-    Mm: 'MM',
-    Mn: 'MN',
-    Mo: 'MO',
-    Mp: 'MP',
-    Mq: 'MQ',
-    Mr: 'MR',
-    Ms: 'MS',
-    Mt: 'MT',
-    Mu: 'MU',
-    Mv: 'MV',
-    Mw: 'MW',
-    Mx: 'MX',
-    My: 'MY',
-    Mz: 'MZ',
-    Na: 'NA',
-    Nc: 'NC',
-    Ne: 'NE',
-    Ng: 'NG',
-    Ni: 'NI',
-    Nl: 'NL',
-    No: 'NO',
-    Np: 'NP',
-    Nr: 'NR',
-    Nu: 'NU',
-    Nz: 'NZ',
-    Om: 'OM',
-    Pa: 'PA',
-    Pe: 'PE',
-    Pf: 'PF',
-    Pg: 'PG',
-    Ph: 'PH',
-    Pk: 'PK',
-    Pl: 'PL',
-    Pr: 'PR',
-    Pt: 'PT',
-    Pw: 'PW',
-    Py: 'PY',
-    Qa: 'QA',
-    Re: 'RE',
-    Ro: 'RO',
-    Rs: 'RS',
-    Ru: 'RU',
-    Rw: 'RW',
-    Sa: 'SA',
-    Sb: 'SB',
-    Sc: 'SC',
-    Sd: 'SD',
-    Se: 'SE',
-    Sg: 'SG',
-    Sh: 'SH',
-    Si: 'SI',
-    Sk: 'SK',
-    Sl: 'SL',
-    Sm: 'SM',
-    Sn: 'SN',
-    So: 'SO',
-    Sr: 'SR',
-    Ss: 'SS',
-    St: 'ST',
-    Sv: 'SV',
-    Sy: 'SY',
-    Sz: 'SZ',
-    Tc: 'TC',
-    Td: 'TD',
-    Tg: 'TG',
-    Th: 'TH',
-    Tj: 'TJ',
-    Tl: 'TL',
-    Tn: 'TN',
-    To: 'TO',
-    Tr: 'TR',
-    Tt: 'TT',
-    Tv: 'TV',
-    Tw: 'TW',
-    Tz: 'TZ',
-    Ua: 'UA',
-    Ug: 'UG',
-    Us: 'US',
-    Uy: 'UY',
-    Uz: 'UZ',
-    Va: 'VA',
-    Vc: 'VC',
-    Ve: 'VE',
-    Vg: 'VG',
-    Vi: 'VI',
-    Vn: 'VN',
-    Vu: 'VU',
-    Ws: 'WS',
-    Xb: 'XB',
-    Xc: 'XC',
-    Xe: 'XE',
-    Xm: 'XM',
-    Xn: 'XN',
-    Xs: 'XS',
-    Xy: 'XY',
-    Ye: 'YE',
-    Yt: 'YT',
-    Za: 'ZA',
-    Zm: 'ZM',
-    Zw: 'ZW'
-} as const;
-
-export type OrderBillingAddressCountryCodeEnum = typeof OrderBillingAddressCountryCodeEnum[keyof typeof OrderBillingAddressCountryCodeEnum];
-
-/**
  * 
  * @export
  * @interface OrderData
@@ -5217,17 +3984,17 @@ export interface OrderData {
      */
     'shipping_to': AddressData;
     /**
-     * 
-     * @type {OrderDataShippingFrom}
+     * The origin or warehouse address of the order items.
+     * @type {AddressData}
      * @memberof OrderData
      */
-    'shipping_from'?: OrderDataShippingFrom | null;
+    'shipping_from'?: AddressData | null;
     /**
-     * 
-     * @type {OrderBillingAddress}
+     * The customer\' or shipping billing address.
+     * @type {AddressData}
      * @memberof OrderData
      */
-    'billing_address'?: OrderBillingAddress | null;
+    'billing_address'?: AddressData | null;
     /**
      * The order line items.
      * @type {Array<CommodityData>}
@@ -5247,343 +4014,6 @@ export interface OrderData {
      */
     'metadata'?: { [key: string]: any; };
 }
-/**
- * The origin or warehouse address of the order items.
- * @export
- * @interface OrderDataShippingFrom
- */
-export interface OrderDataShippingFrom {
-    /**
-     * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'postal_code'?: string | null;
-    /**
-     * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'city'?: string | null;
-    /**
-     * The party frederal tax id
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'federal_tax_id'?: string | null;
-    /**
-     * The party state id
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'state_tax_id'?: string | null;
-    /**
-     * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'person_name'?: string | null;
-    /**
-     * The company name if the party is a company
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'company_name'?: string | null;
-    /**
-     * The address country code
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'country_code': OrderDataShippingFromCountryCodeEnum;
-    /**
-     * The party email
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'email'?: string | null;
-    /**
-     * The party phone number.
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'phone_number'?: string | null;
-    /**
-     * The address state code
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'state_code'?: string | null;
-    /**
-     * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof OrderDataShippingFrom
-     */
-    'residential'?: boolean | null;
-    /**
-     * The address street number
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'street_number'?: string | null;
-    /**
-     * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'address_line1'?: string | null;
-    /**
-     * The address line with suite number
-     * @type {string}
-     * @memberof OrderDataShippingFrom
-     */
-    'address_line2'?: string | null;
-    /**
-     * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof OrderDataShippingFrom
-     */
-    'validate_location'?: boolean | null;
-}
-
-export const OrderDataShippingFromCountryCodeEnum = {
-    Ad: 'AD',
-    Ae: 'AE',
-    Af: 'AF',
-    Ag: 'AG',
-    Ai: 'AI',
-    Al: 'AL',
-    Am: 'AM',
-    An: 'AN',
-    Ao: 'AO',
-    Ar: 'AR',
-    As: 'AS',
-    At: 'AT',
-    Au: 'AU',
-    Aw: 'AW',
-    Az: 'AZ',
-    Ba: 'BA',
-    Bb: 'BB',
-    Bd: 'BD',
-    Be: 'BE',
-    Bf: 'BF',
-    Bg: 'BG',
-    Bh: 'BH',
-    Bi: 'BI',
-    Bj: 'BJ',
-    Bm: 'BM',
-    Bn: 'BN',
-    Bo: 'BO',
-    Br: 'BR',
-    Bs: 'BS',
-    Bt: 'BT',
-    Bw: 'BW',
-    By: 'BY',
-    Bz: 'BZ',
-    Ca: 'CA',
-    Cd: 'CD',
-    Cf: 'CF',
-    Cg: 'CG',
-    Ch: 'CH',
-    Ci: 'CI',
-    Ck: 'CK',
-    Cl: 'CL',
-    Cm: 'CM',
-    Cn: 'CN',
-    Co: 'CO',
-    Cr: 'CR',
-    Cu: 'CU',
-    Cv: 'CV',
-    Cy: 'CY',
-    Cz: 'CZ',
-    De: 'DE',
-    Dj: 'DJ',
-    Dk: 'DK',
-    Dm: 'DM',
-    Do: 'DO',
-    Dz: 'DZ',
-    Ec: 'EC',
-    Ee: 'EE',
-    Eg: 'EG',
-    Er: 'ER',
-    Es: 'ES',
-    Et: 'ET',
-    Fi: 'FI',
-    Fj: 'FJ',
-    Fk: 'FK',
-    Fm: 'FM',
-    Fo: 'FO',
-    Fr: 'FR',
-    Ga: 'GA',
-    Gb: 'GB',
-    Gd: 'GD',
-    Ge: 'GE',
-    Gf: 'GF',
-    Gg: 'GG',
-    Gh: 'GH',
-    Gi: 'GI',
-    Gl: 'GL',
-    Gm: 'GM',
-    Gn: 'GN',
-    Gp: 'GP',
-    Gq: 'GQ',
-    Gr: 'GR',
-    Gt: 'GT',
-    Gu: 'GU',
-    Gw: 'GW',
-    Gy: 'GY',
-    Hk: 'HK',
-    Hn: 'HN',
-    Hr: 'HR',
-    Ht: 'HT',
-    Hu: 'HU',
-    Ic: 'IC',
-    Id: 'ID',
-    Ie: 'IE',
-    Il: 'IL',
-    In: 'IN',
-    Iq: 'IQ',
-    Ir: 'IR',
-    Is: 'IS',
-    It: 'IT',
-    Je: 'JE',
-    Jm: 'JM',
-    Jo: 'JO',
-    Jp: 'JP',
-    Ke: 'KE',
-    Kg: 'KG',
-    Kh: 'KH',
-    Ki: 'KI',
-    Km: 'KM',
-    Kn: 'KN',
-    Kp: 'KP',
-    Kr: 'KR',
-    Kv: 'KV',
-    Kw: 'KW',
-    Ky: 'KY',
-    Kz: 'KZ',
-    La: 'LA',
-    Lb: 'LB',
-    Lc: 'LC',
-    Li: 'LI',
-    Lk: 'LK',
-    Lr: 'LR',
-    Ls: 'LS',
-    Lt: 'LT',
-    Lu: 'LU',
-    Lv: 'LV',
-    Ly: 'LY',
-    Ma: 'MA',
-    Mc: 'MC',
-    Md: 'MD',
-    Me: 'ME',
-    Mg: 'MG',
-    Mh: 'MH',
-    Mk: 'MK',
-    Ml: 'ML',
-    Mm: 'MM',
-    Mn: 'MN',
-    Mo: 'MO',
-    Mp: 'MP',
-    Mq: 'MQ',
-    Mr: 'MR',
-    Ms: 'MS',
-    Mt: 'MT',
-    Mu: 'MU',
-    Mv: 'MV',
-    Mw: 'MW',
-    Mx: 'MX',
-    My: 'MY',
-    Mz: 'MZ',
-    Na: 'NA',
-    Nc: 'NC',
-    Ne: 'NE',
-    Ng: 'NG',
-    Ni: 'NI',
-    Nl: 'NL',
-    No: 'NO',
-    Np: 'NP',
-    Nr: 'NR',
-    Nu: 'NU',
-    Nz: 'NZ',
-    Om: 'OM',
-    Pa: 'PA',
-    Pe: 'PE',
-    Pf: 'PF',
-    Pg: 'PG',
-    Ph: 'PH',
-    Pk: 'PK',
-    Pl: 'PL',
-    Pr: 'PR',
-    Pt: 'PT',
-    Pw: 'PW',
-    Py: 'PY',
-    Qa: 'QA',
-    Re: 'RE',
-    Ro: 'RO',
-    Rs: 'RS',
-    Ru: 'RU',
-    Rw: 'RW',
-    Sa: 'SA',
-    Sb: 'SB',
-    Sc: 'SC',
-    Sd: 'SD',
-    Se: 'SE',
-    Sg: 'SG',
-    Sh: 'SH',
-    Si: 'SI',
-    Sk: 'SK',
-    Sl: 'SL',
-    Sm: 'SM',
-    Sn: 'SN',
-    So: 'SO',
-    Sr: 'SR',
-    Ss: 'SS',
-    St: 'ST',
-    Sv: 'SV',
-    Sy: 'SY',
-    Sz: 'SZ',
-    Tc: 'TC',
-    Td: 'TD',
-    Tg: 'TG',
-    Th: 'TH',
-    Tj: 'TJ',
-    Tl: 'TL',
-    Tn: 'TN',
-    To: 'TO',
-    Tr: 'TR',
-    Tt: 'TT',
-    Tv: 'TV',
-    Tw: 'TW',
-    Tz: 'TZ',
-    Ua: 'UA',
-    Ug: 'UG',
-    Us: 'US',
-    Uy: 'UY',
-    Uz: 'UZ',
-    Va: 'VA',
-    Vc: 'VC',
-    Ve: 'VE',
-    Vg: 'VG',
-    Vi: 'VI',
-    Vn: 'VN',
-    Vu: 'VU',
-    Ws: 'WS',
-    Xb: 'XB',
-    Xc: 'XC',
-    Xe: 'XE',
-    Xm: 'XM',
-    Xn: 'XN',
-    Xs: 'XS',
-    Xy: 'XY',
-    Ye: 'YE',
-    Yt: 'YT',
-    Za: 'ZA',
-    Zm: 'ZM',
-    Zw: 'ZW'
-} as const;
-
-export type OrderDataShippingFromCountryCodeEnum = typeof OrderDataShippingFromCountryCodeEnum[keyof typeof OrderDataShippingFromCountryCodeEnum];
-
 /**
  * 
  * @export
@@ -5615,361 +4045,6 @@ export interface OrderList {
      */
     'results': Array<Order>;
 }
-/**
- * The origin or warehouse address of the order items.
- * @export
- * @interface OrderShippingFrom
- */
-export interface OrderShippingFrom {
-    /**
-     * A unique identifier
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'id'?: string;
-    /**
-     * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'postal_code'?: string | null;
-    /**
-     * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'city'?: string | null;
-    /**
-     * The party frederal tax id
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'federal_tax_id'?: string | null;
-    /**
-     * The party state id
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'state_tax_id'?: string | null;
-    /**
-     * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'person_name'?: string | null;
-    /**
-     * The company name if the party is a company
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'company_name'?: string | null;
-    /**
-     * The address country code
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'country_code': OrderShippingFromCountryCodeEnum;
-    /**
-     * The party email
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'email'?: string | null;
-    /**
-     * The party phone number.
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'phone_number'?: string | null;
-    /**
-     * The address state code
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'state_code'?: string | null;
-    /**
-     * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof OrderShippingFrom
-     */
-    'residential'?: boolean | null;
-    /**
-     * The address street number
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'street_number'?: string | null;
-    /**
-     * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'address_line1'?: string | null;
-    /**
-     * The address line with suite number
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'address_line2'?: string | null;
-    /**
-     * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof OrderShippingFrom
-     */
-    'validate_location'?: boolean | null;
-    /**
-     * Specifies the object type
-     * @type {string}
-     * @memberof OrderShippingFrom
-     */
-    'object_type'?: string;
-    /**
-     * 
-     * @type {AddressValidation}
-     * @memberof OrderShippingFrom
-     */
-    'validation'?: AddressValidation | null;
-}
-
-export const OrderShippingFromCountryCodeEnum = {
-    Ad: 'AD',
-    Ae: 'AE',
-    Af: 'AF',
-    Ag: 'AG',
-    Ai: 'AI',
-    Al: 'AL',
-    Am: 'AM',
-    An: 'AN',
-    Ao: 'AO',
-    Ar: 'AR',
-    As: 'AS',
-    At: 'AT',
-    Au: 'AU',
-    Aw: 'AW',
-    Az: 'AZ',
-    Ba: 'BA',
-    Bb: 'BB',
-    Bd: 'BD',
-    Be: 'BE',
-    Bf: 'BF',
-    Bg: 'BG',
-    Bh: 'BH',
-    Bi: 'BI',
-    Bj: 'BJ',
-    Bm: 'BM',
-    Bn: 'BN',
-    Bo: 'BO',
-    Br: 'BR',
-    Bs: 'BS',
-    Bt: 'BT',
-    Bw: 'BW',
-    By: 'BY',
-    Bz: 'BZ',
-    Ca: 'CA',
-    Cd: 'CD',
-    Cf: 'CF',
-    Cg: 'CG',
-    Ch: 'CH',
-    Ci: 'CI',
-    Ck: 'CK',
-    Cl: 'CL',
-    Cm: 'CM',
-    Cn: 'CN',
-    Co: 'CO',
-    Cr: 'CR',
-    Cu: 'CU',
-    Cv: 'CV',
-    Cy: 'CY',
-    Cz: 'CZ',
-    De: 'DE',
-    Dj: 'DJ',
-    Dk: 'DK',
-    Dm: 'DM',
-    Do: 'DO',
-    Dz: 'DZ',
-    Ec: 'EC',
-    Ee: 'EE',
-    Eg: 'EG',
-    Er: 'ER',
-    Es: 'ES',
-    Et: 'ET',
-    Fi: 'FI',
-    Fj: 'FJ',
-    Fk: 'FK',
-    Fm: 'FM',
-    Fo: 'FO',
-    Fr: 'FR',
-    Ga: 'GA',
-    Gb: 'GB',
-    Gd: 'GD',
-    Ge: 'GE',
-    Gf: 'GF',
-    Gg: 'GG',
-    Gh: 'GH',
-    Gi: 'GI',
-    Gl: 'GL',
-    Gm: 'GM',
-    Gn: 'GN',
-    Gp: 'GP',
-    Gq: 'GQ',
-    Gr: 'GR',
-    Gt: 'GT',
-    Gu: 'GU',
-    Gw: 'GW',
-    Gy: 'GY',
-    Hk: 'HK',
-    Hn: 'HN',
-    Hr: 'HR',
-    Ht: 'HT',
-    Hu: 'HU',
-    Ic: 'IC',
-    Id: 'ID',
-    Ie: 'IE',
-    Il: 'IL',
-    In: 'IN',
-    Iq: 'IQ',
-    Ir: 'IR',
-    Is: 'IS',
-    It: 'IT',
-    Je: 'JE',
-    Jm: 'JM',
-    Jo: 'JO',
-    Jp: 'JP',
-    Ke: 'KE',
-    Kg: 'KG',
-    Kh: 'KH',
-    Ki: 'KI',
-    Km: 'KM',
-    Kn: 'KN',
-    Kp: 'KP',
-    Kr: 'KR',
-    Kv: 'KV',
-    Kw: 'KW',
-    Ky: 'KY',
-    Kz: 'KZ',
-    La: 'LA',
-    Lb: 'LB',
-    Lc: 'LC',
-    Li: 'LI',
-    Lk: 'LK',
-    Lr: 'LR',
-    Ls: 'LS',
-    Lt: 'LT',
-    Lu: 'LU',
-    Lv: 'LV',
-    Ly: 'LY',
-    Ma: 'MA',
-    Mc: 'MC',
-    Md: 'MD',
-    Me: 'ME',
-    Mg: 'MG',
-    Mh: 'MH',
-    Mk: 'MK',
-    Ml: 'ML',
-    Mm: 'MM',
-    Mn: 'MN',
-    Mo: 'MO',
-    Mp: 'MP',
-    Mq: 'MQ',
-    Mr: 'MR',
-    Ms: 'MS',
-    Mt: 'MT',
-    Mu: 'MU',
-    Mv: 'MV',
-    Mw: 'MW',
-    Mx: 'MX',
-    My: 'MY',
-    Mz: 'MZ',
-    Na: 'NA',
-    Nc: 'NC',
-    Ne: 'NE',
-    Ng: 'NG',
-    Ni: 'NI',
-    Nl: 'NL',
-    No: 'NO',
-    Np: 'NP',
-    Nr: 'NR',
-    Nu: 'NU',
-    Nz: 'NZ',
-    Om: 'OM',
-    Pa: 'PA',
-    Pe: 'PE',
-    Pf: 'PF',
-    Pg: 'PG',
-    Ph: 'PH',
-    Pk: 'PK',
-    Pl: 'PL',
-    Pr: 'PR',
-    Pt: 'PT',
-    Pw: 'PW',
-    Py: 'PY',
-    Qa: 'QA',
-    Re: 'RE',
-    Ro: 'RO',
-    Rs: 'RS',
-    Ru: 'RU',
-    Rw: 'RW',
-    Sa: 'SA',
-    Sb: 'SB',
-    Sc: 'SC',
-    Sd: 'SD',
-    Se: 'SE',
-    Sg: 'SG',
-    Sh: 'SH',
-    Si: 'SI',
-    Sk: 'SK',
-    Sl: 'SL',
-    Sm: 'SM',
-    Sn: 'SN',
-    So: 'SO',
-    Sr: 'SR',
-    Ss: 'SS',
-    St: 'ST',
-    Sv: 'SV',
-    Sy: 'SY',
-    Sz: 'SZ',
-    Tc: 'TC',
-    Td: 'TD',
-    Tg: 'TG',
-    Th: 'TH',
-    Tj: 'TJ',
-    Tl: 'TL',
-    Tn: 'TN',
-    To: 'TO',
-    Tr: 'TR',
-    Tt: 'TT',
-    Tv: 'TV',
-    Tw: 'TW',
-    Tz: 'TZ',
-    Ua: 'UA',
-    Ug: 'UG',
-    Us: 'US',
-    Uy: 'UY',
-    Uz: 'UZ',
-    Va: 'VA',
-    Vc: 'VC',
-    Ve: 'VE',
-    Vg: 'VG',
-    Vi: 'VI',
-    Vn: 'VN',
-    Vu: 'VU',
-    Ws: 'WS',
-    Xb: 'XB',
-    Xc: 'XC',
-    Xe: 'XE',
-    Xm: 'XM',
-    Xn: 'XN',
-    Xs: 'XS',
-    Xy: 'XY',
-    Ye: 'YE',
-    Yt: 'YT',
-    Za: 'ZA',
-    Zm: 'ZM',
-    Zw: 'ZW'
-} as const;
-
-export type OrderShippingFromCountryCodeEnum = typeof OrderShippingFromCountryCodeEnum[keyof typeof OrderShippingFromCountryCodeEnum];
-
 /**
  * 
  * @export
@@ -7050,11 +5125,11 @@ export interface Pickup {
      */
     'pickup_date'?: string | null;
     /**
-     * 
-     * @type {PickupPickupCharge}
+     * The pickup cost details
+     * @type {Charge}
      * @memberof Pickup
      */
-    'pickup_charge'?: PickupPickupCharge | null;
+    'pickup_charge'?: Charge | null;
     /**
      * The pickup expected ready time
      * @type {string}
@@ -7251,31 +5326,6 @@ export interface PickupList {
      * @memberof PickupList
      */
     'results': Array<Pickup>;
-}
-/**
- * The pickup cost details
- * @export
- * @interface PickupPickupCharge
- */
-export interface PickupPickupCharge {
-    /**
-     * The charge description
-     * @type {string}
-     * @memberof PickupPickupCharge
-     */
-    'name'?: string | null;
-    /**
-     * The charge monetary value
-     * @type {number}
-     * @memberof PickupPickupCharge
-     */
-    'amount'?: number | null;
-    /**
-     * The charge amount currency
-     * @type {string}
-     * @memberof PickupPickupCharge
-     */
-    'currency'?: string | null;
 }
 /**
  * 
@@ -7663,17 +5713,17 @@ export interface Shipment {
      */
     'recipient': Address;
     /**
-     * 
-     * @type {ShipmentReturnAddress}
+     * The return address for this shipment. Defaults to the shipper address.
+     * @type {AddressData}
      * @memberof Shipment
      */
-    'return_address'?: ShipmentReturnAddress | null;
+    'return_address'?: AddressData | null;
     /**
-     * 
-     * @type {ShipmentBillingAddress}
+     * The payor address.
+     * @type {AddressData}
      * @memberof Shipment
      */
-    'billing_address'?: ShipmentBillingAddress | null;
+    'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
      * @type {Array<Parcel>}
@@ -7699,11 +5749,11 @@ export interface Shipment {
      */
     'payment'?: Payment;
     /**
-     * 
-     * @type {ShipmentCustoms}
+     * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
+     * @type {Customs}
      * @memberof Shipment
      */
-    'customs'?: ShipmentCustoms | null;
+    'customs'?: Customs | null;
     /**
      * The list for shipment rates fetched previously
      * @type {Array<Rate>}
@@ -7783,11 +5833,11 @@ export interface Shipment {
      */
     'shipment_identifier'?: string | null;
     /**
-     * 
-     * @type {ShipmentSelectedRate}
+     * The shipment selected rate
+     * @type {Rate}
      * @memberof Shipment
      */
-    'selected_rate'?: ShipmentSelectedRate | null;
+    'selected_rate'?: Rate | null;
     /**
      * provider specific metadata
      * @type {{ [key: string]: any; }}
@@ -7850,343 +5900,6 @@ export const ShipmentStatusEnum = {
 export type ShipmentStatusEnum = typeof ShipmentStatusEnum[keyof typeof ShipmentStatusEnum];
 
 /**
- * The payor address.
- * @export
- * @interface ShipmentBillingAddress
- */
-export interface ShipmentBillingAddress {
-    /**
-     * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'postal_code'?: string | null;
-    /**
-     * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'city'?: string | null;
-    /**
-     * The party frederal tax id
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'federal_tax_id'?: string | null;
-    /**
-     * The party state id
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'state_tax_id'?: string | null;
-    /**
-     * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'person_name'?: string | null;
-    /**
-     * The company name if the party is a company
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'company_name'?: string | null;
-    /**
-     * The address country code
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'country_code': ShipmentBillingAddressCountryCodeEnum;
-    /**
-     * The party email
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'email'?: string | null;
-    /**
-     * The party phone number.
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'phone_number'?: string | null;
-    /**
-     * The address state code
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'state_code'?: string | null;
-    /**
-     * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof ShipmentBillingAddress
-     */
-    'residential'?: boolean | null;
-    /**
-     * The address street number
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'street_number'?: string | null;
-    /**
-     * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'address_line1'?: string | null;
-    /**
-     * The address line with suite number
-     * @type {string}
-     * @memberof ShipmentBillingAddress
-     */
-    'address_line2'?: string | null;
-    /**
-     * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof ShipmentBillingAddress
-     */
-    'validate_location'?: boolean | null;
-}
-
-export const ShipmentBillingAddressCountryCodeEnum = {
-    Ad: 'AD',
-    Ae: 'AE',
-    Af: 'AF',
-    Ag: 'AG',
-    Ai: 'AI',
-    Al: 'AL',
-    Am: 'AM',
-    An: 'AN',
-    Ao: 'AO',
-    Ar: 'AR',
-    As: 'AS',
-    At: 'AT',
-    Au: 'AU',
-    Aw: 'AW',
-    Az: 'AZ',
-    Ba: 'BA',
-    Bb: 'BB',
-    Bd: 'BD',
-    Be: 'BE',
-    Bf: 'BF',
-    Bg: 'BG',
-    Bh: 'BH',
-    Bi: 'BI',
-    Bj: 'BJ',
-    Bm: 'BM',
-    Bn: 'BN',
-    Bo: 'BO',
-    Br: 'BR',
-    Bs: 'BS',
-    Bt: 'BT',
-    Bw: 'BW',
-    By: 'BY',
-    Bz: 'BZ',
-    Ca: 'CA',
-    Cd: 'CD',
-    Cf: 'CF',
-    Cg: 'CG',
-    Ch: 'CH',
-    Ci: 'CI',
-    Ck: 'CK',
-    Cl: 'CL',
-    Cm: 'CM',
-    Cn: 'CN',
-    Co: 'CO',
-    Cr: 'CR',
-    Cu: 'CU',
-    Cv: 'CV',
-    Cy: 'CY',
-    Cz: 'CZ',
-    De: 'DE',
-    Dj: 'DJ',
-    Dk: 'DK',
-    Dm: 'DM',
-    Do: 'DO',
-    Dz: 'DZ',
-    Ec: 'EC',
-    Ee: 'EE',
-    Eg: 'EG',
-    Er: 'ER',
-    Es: 'ES',
-    Et: 'ET',
-    Fi: 'FI',
-    Fj: 'FJ',
-    Fk: 'FK',
-    Fm: 'FM',
-    Fo: 'FO',
-    Fr: 'FR',
-    Ga: 'GA',
-    Gb: 'GB',
-    Gd: 'GD',
-    Ge: 'GE',
-    Gf: 'GF',
-    Gg: 'GG',
-    Gh: 'GH',
-    Gi: 'GI',
-    Gl: 'GL',
-    Gm: 'GM',
-    Gn: 'GN',
-    Gp: 'GP',
-    Gq: 'GQ',
-    Gr: 'GR',
-    Gt: 'GT',
-    Gu: 'GU',
-    Gw: 'GW',
-    Gy: 'GY',
-    Hk: 'HK',
-    Hn: 'HN',
-    Hr: 'HR',
-    Ht: 'HT',
-    Hu: 'HU',
-    Ic: 'IC',
-    Id: 'ID',
-    Ie: 'IE',
-    Il: 'IL',
-    In: 'IN',
-    Iq: 'IQ',
-    Ir: 'IR',
-    Is: 'IS',
-    It: 'IT',
-    Je: 'JE',
-    Jm: 'JM',
-    Jo: 'JO',
-    Jp: 'JP',
-    Ke: 'KE',
-    Kg: 'KG',
-    Kh: 'KH',
-    Ki: 'KI',
-    Km: 'KM',
-    Kn: 'KN',
-    Kp: 'KP',
-    Kr: 'KR',
-    Kv: 'KV',
-    Kw: 'KW',
-    Ky: 'KY',
-    Kz: 'KZ',
-    La: 'LA',
-    Lb: 'LB',
-    Lc: 'LC',
-    Li: 'LI',
-    Lk: 'LK',
-    Lr: 'LR',
-    Ls: 'LS',
-    Lt: 'LT',
-    Lu: 'LU',
-    Lv: 'LV',
-    Ly: 'LY',
-    Ma: 'MA',
-    Mc: 'MC',
-    Md: 'MD',
-    Me: 'ME',
-    Mg: 'MG',
-    Mh: 'MH',
-    Mk: 'MK',
-    Ml: 'ML',
-    Mm: 'MM',
-    Mn: 'MN',
-    Mo: 'MO',
-    Mp: 'MP',
-    Mq: 'MQ',
-    Mr: 'MR',
-    Ms: 'MS',
-    Mt: 'MT',
-    Mu: 'MU',
-    Mv: 'MV',
-    Mw: 'MW',
-    Mx: 'MX',
-    My: 'MY',
-    Mz: 'MZ',
-    Na: 'NA',
-    Nc: 'NC',
-    Ne: 'NE',
-    Ng: 'NG',
-    Ni: 'NI',
-    Nl: 'NL',
-    No: 'NO',
-    Np: 'NP',
-    Nr: 'NR',
-    Nu: 'NU',
-    Nz: 'NZ',
-    Om: 'OM',
-    Pa: 'PA',
-    Pe: 'PE',
-    Pf: 'PF',
-    Pg: 'PG',
-    Ph: 'PH',
-    Pk: 'PK',
-    Pl: 'PL',
-    Pr: 'PR',
-    Pt: 'PT',
-    Pw: 'PW',
-    Py: 'PY',
-    Qa: 'QA',
-    Re: 'RE',
-    Ro: 'RO',
-    Rs: 'RS',
-    Ru: 'RU',
-    Rw: 'RW',
-    Sa: 'SA',
-    Sb: 'SB',
-    Sc: 'SC',
-    Sd: 'SD',
-    Se: 'SE',
-    Sg: 'SG',
-    Sh: 'SH',
-    Si: 'SI',
-    Sk: 'SK',
-    Sl: 'SL',
-    Sm: 'SM',
-    Sn: 'SN',
-    So: 'SO',
-    Sr: 'SR',
-    Ss: 'SS',
-    St: 'ST',
-    Sv: 'SV',
-    Sy: 'SY',
-    Sz: 'SZ',
-    Tc: 'TC',
-    Td: 'TD',
-    Tg: 'TG',
-    Th: 'TH',
-    Tj: 'TJ',
-    Tl: 'TL',
-    Tn: 'TN',
-    To: 'TO',
-    Tr: 'TR',
-    Tt: 'TT',
-    Tv: 'TV',
-    Tw: 'TW',
-    Tz: 'TZ',
-    Ua: 'UA',
-    Ug: 'UG',
-    Us: 'US',
-    Uy: 'UY',
-    Uz: 'UZ',
-    Va: 'VA',
-    Vc: 'VC',
-    Ve: 'VE',
-    Vg: 'VG',
-    Vi: 'VI',
-    Vn: 'VN',
-    Vu: 'VU',
-    Ws: 'WS',
-    Xb: 'XB',
-    Xc: 'XC',
-    Xe: 'XE',
-    Xm: 'XM',
-    Xn: 'XN',
-    Xs: 'XS',
-    Xy: 'XY',
-    Ye: 'YE',
-    Yt: 'YT',
-    Za: 'ZA',
-    Zm: 'ZM',
-    Zw: 'ZW'
-} as const;
-
-export type ShipmentBillingAddressCountryCodeEnum = typeof ShipmentBillingAddressCountryCodeEnum[keyof typeof ShipmentBillingAddressCountryCodeEnum];
-
-/**
  * 
  * @export
  * @interface ShipmentCancelRequest
@@ -8218,129 +5931,6 @@ export interface ShipmentCancelRequest {
     'options'?: { [key: string]: any; };
 }
 /**
- * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
- * @export
- * @interface ShipmentCustoms
- */
-export interface ShipmentCustoms {
-    /**
-     * A unique identifier
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'id'?: string;
-    /**
-     * The parcel content items
-     * @type {Array<Commodity>}
-     * @memberof ShipmentCustoms
-     */
-    'commodities'?: Array<Commodity>;
-    /**
-     * 
-     * @type {CustomsDuty}
-     * @memberof ShipmentCustoms
-     */
-    'duty'?: CustomsDuty | null;
-    /**
-     * 
-     * @type {CustomsDutyBillingAddress}
-     * @memberof ShipmentCustoms
-     */
-    'duty_billing_address'?: CustomsDutyBillingAddress | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'content_type'?: ShipmentCustomsContentTypeEnum | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'content_description'?: string | null;
-    /**
-     * The customs \'term of trade\' also known as \'incoterm\'
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'incoterm'?: ShipmentCustomsIncotermEnum | null;
-    /**
-     * The invoice reference number
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'invoice'?: string | null;
-    /**
-     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'invoice_date'?: string | null;
-    /**
-     * Indicates if the shipment is commercial
-     * @type {boolean}
-     * @memberof ShipmentCustoms
-     */
-    'commercial_invoice'?: boolean | null;
-    /**
-     * Indicate that signer certified confirmed all
-     * @type {boolean}
-     * @memberof ShipmentCustoms
-     */
-    'certify'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'signer'?: string | null;
-    /**
-     * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentCustoms
-     */
-    'options'?: { [key: string]: any; };
-    /**
-     * Specifies the object type
-     * @type {string}
-     * @memberof ShipmentCustoms
-     */
-    'object_type'?: string;
-}
-
-export const ShipmentCustomsContentTypeEnum = {
-    Documents: 'documents',
-    Gift: 'gift',
-    Sample: 'sample',
-    Merchandise: 'merchandise',
-    ReturnMerchandise: 'return_merchandise',
-    Other: 'other',
-    Empty: '',
-    Null: 'null'
-} as const;
-
-export type ShipmentCustomsContentTypeEnum = typeof ShipmentCustomsContentTypeEnum[keyof typeof ShipmentCustomsContentTypeEnum];
-export const ShipmentCustomsIncotermEnum = {
-    Cfr: 'CFR',
-    Cif: 'CIF',
-    Cip: 'CIP',
-    Cpt: 'CPT',
-    Daf: 'DAF',
-    Ddp: 'DDP',
-    Ddu: 'DDU',
-    Deq: 'DEQ',
-    Des: 'DES',
-    Exw: 'EXW',
-    Fas: 'FAS',
-    Fca: 'FCA',
-    Fob: 'FOB',
-    Null: 'null'
-} as const;
-
-export type ShipmentCustomsIncotermEnum = typeof ShipmentCustomsIncotermEnum[keyof typeof ShipmentCustomsIncotermEnum];
-
-/**
  * 
  * @export
  * @interface ShipmentData
@@ -8359,17 +5949,17 @@ export interface ShipmentData {
      */
     'shipper': AddressData;
     /**
-     * 
-     * @type {ShipmentReturnAddress}
+     * The return address for this shipment. Defaults to the shipper address.
+     * @type {AddressData}
      * @memberof ShipmentData
      */
-    'return_address'?: ShipmentReturnAddress | null;
+    'return_address'?: AddressData | null;
     /**
-     * 
-     * @type {ShipmentBillingAddress}
+     * The payor address.
+     * @type {AddressData}
      * @memberof ShipmentData
      */
-    'billing_address'?: ShipmentBillingAddress | null;
+    'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
      * @type {Array<ParcelData>}
@@ -8389,11 +5979,11 @@ export interface ShipmentData {
      */
     'payment'?: Payment;
     /**
-     * 
-     * @type {ShipmentDataCustoms}
+     * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
+     * @type {CustomsData}
      * @memberof ShipmentData
      */
-    'customs'?: ShipmentDataCustoms | null;
+    'customs'?: CustomsData | null;
     /**
      * The shipment reference
      * @type {string}
@@ -8441,117 +6031,6 @@ export const ShipmentDataLabelTypeEnum = {
 export type ShipmentDataLabelTypeEnum = typeof ShipmentDataLabelTypeEnum[keyof typeof ShipmentDataLabelTypeEnum];
 
 /**
- * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
- * @export
- * @interface ShipmentDataCustoms
- */
-export interface ShipmentDataCustoms {
-    /**
-     * The parcel content items
-     * @type {Array<CommodityData>}
-     * @memberof ShipmentDataCustoms
-     */
-    'commodities': Array<CommodityData>;
-    /**
-     * 
-     * @type {CustomsDuty}
-     * @memberof ShipmentDataCustoms
-     */
-    'duty'?: CustomsDuty | null;
-    /**
-     * 
-     * @type {CustomsDataDutyBillingAddress}
-     * @memberof ShipmentDataCustoms
-     */
-    'duty_billing_address'?: CustomsDataDutyBillingAddress | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'content_type'?: ShipmentDataCustomsContentTypeEnum | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'content_description'?: string | null;
-    /**
-     * The customs \'term of trade\' also known as \'incoterm\'
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'incoterm'?: ShipmentDataCustomsIncotermEnum | null;
-    /**
-     * The invoice reference number
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'invoice'?: string | null;
-    /**
-     * The invoice date.<br/>         Date Format: `YYYY-MM-DD`         
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'invoice_date'?: string | null;
-    /**
-     * Indicates if the shipment is commercial
-     * @type {boolean}
-     * @memberof ShipmentDataCustoms
-     */
-    'commercial_invoice'?: boolean | null;
-    /**
-     * Indicate that signer certified confirmed all
-     * @type {boolean}
-     * @memberof ShipmentDataCustoms
-     */
-    'certify'?: boolean | null;
-    /**
-     * 
-     * @type {string}
-     * @memberof ShipmentDataCustoms
-     */
-    'signer'?: string | null;
-    /**
-     * <details>         <summary>Customs identification options.</summary>          {             \"aes\": \"5218487281\",             \"eel_pfc\": \"5218487281\",             \"license_number\": \"5218487281\",             \"certificate_number\": \"5218487281\",             \"nip_number\": \"5218487281\",             \"eori_number\": \"5218487281\",             \"vat_registration_number\": \"5218487281\",         }         </details>         
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentDataCustoms
-     */
-    'options'?: { [key: string]: any; };
-}
-
-export const ShipmentDataCustomsContentTypeEnum = {
-    Documents: 'documents',
-    Gift: 'gift',
-    Sample: 'sample',
-    Merchandise: 'merchandise',
-    ReturnMerchandise: 'return_merchandise',
-    Other: 'other',
-    Empty: '',
-    Null: 'null'
-} as const;
-
-export type ShipmentDataCustomsContentTypeEnum = typeof ShipmentDataCustomsContentTypeEnum[keyof typeof ShipmentDataCustomsContentTypeEnum];
-export const ShipmentDataCustomsIncotermEnum = {
-    Cfr: 'CFR',
-    Cif: 'CIF',
-    Cip: 'CIP',
-    Cpt: 'CPT',
-    Daf: 'DAF',
-    Ddp: 'DDP',
-    Ddu: 'DDU',
-    Deq: 'DEQ',
-    Des: 'DES',
-    Exw: 'EXW',
-    Fas: 'FAS',
-    Fca: 'FCA',
-    Fob: 'FOB',
-    Null: 'null'
-} as const;
-
-export type ShipmentDataCustomsIncotermEnum = typeof ShipmentDataCustomsIncotermEnum[keyof typeof ShipmentDataCustomsIncotermEnum];
-
-/**
  * 
  * @export
  * @interface ShipmentDataReference
@@ -8570,17 +6049,17 @@ export interface ShipmentDataReference {
      */
     'shipper': AddressData;
     /**
-     * 
-     * @type {ShipmentReturnAddress}
+     * The return address for this shipment. Defaults to the shipper address.
+     * @type {AddressData}
      * @memberof ShipmentDataReference
      */
-    'return_address'?: ShipmentReturnAddress | null;
+    'return_address'?: AddressData | null;
     /**
-     * 
-     * @type {ShipmentBillingAddress}
+     * The payor address.
+     * @type {AddressData}
      * @memberof ShipmentDataReference
      */
-    'billing_address'?: ShipmentBillingAddress | null;
+    'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
      * @type {Array<ParcelData>}
@@ -8600,11 +6079,11 @@ export interface ShipmentDataReference {
      */
     'payment'?: Payment;
     /**
-     * 
-     * @type {ShipmentDataCustoms}
+     * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
+     * @type {CustomsData}
      * @memberof ShipmentDataReference
      */
-    'customs'?: ShipmentDataCustoms | null;
+    'customs'?: CustomsData | null;
     /**
      * The shipment reference
      * @type {string}
@@ -8735,422 +6214,6 @@ export interface ShipmentRateData {
     'metadata'?: { [key: string]: any; };
 }
 /**
- * The return address for this shipment. Defaults to the shipper address.
- * @export
- * @interface ShipmentReturnAddress
- */
-export interface ShipmentReturnAddress {
-    /**
-     * The address postal code         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'postal_code'?: string | null;
-    /**
-     * The address city.         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'city'?: string | null;
-    /**
-     * The party frederal tax id
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'federal_tax_id'?: string | null;
-    /**
-     * The party state id
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'state_tax_id'?: string | null;
-    /**
-     * Attention to         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'person_name'?: string | null;
-    /**
-     * The company name if the party is a company
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'company_name'?: string | null;
-    /**
-     * The address country code
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'country_code': ShipmentReturnAddressCountryCodeEnum;
-    /**
-     * The party email
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'email'?: string | null;
-    /**
-     * The party phone number.
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'phone_number'?: string | null;
-    /**
-     * The address state code
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'state_code'?: string | null;
-    /**
-     * Indicate if the address is residential or commercial (enterprise)
-     * @type {boolean}
-     * @memberof ShipmentReturnAddress
-     */
-    'residential'?: boolean | null;
-    /**
-     * The address street number
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'street_number'?: string | null;
-    /**
-     * The address line with street number <br/>         **(required for shipment purchase)**         
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'address_line1'?: string | null;
-    /**
-     * The address line with suite number
-     * @type {string}
-     * @memberof ShipmentReturnAddress
-     */
-    'address_line2'?: string | null;
-    /**
-     * Indicate if the address should be validated
-     * @type {boolean}
-     * @memberof ShipmentReturnAddress
-     */
-    'validate_location'?: boolean | null;
-}
-
-export const ShipmentReturnAddressCountryCodeEnum = {
-    Ad: 'AD',
-    Ae: 'AE',
-    Af: 'AF',
-    Ag: 'AG',
-    Ai: 'AI',
-    Al: 'AL',
-    Am: 'AM',
-    An: 'AN',
-    Ao: 'AO',
-    Ar: 'AR',
-    As: 'AS',
-    At: 'AT',
-    Au: 'AU',
-    Aw: 'AW',
-    Az: 'AZ',
-    Ba: 'BA',
-    Bb: 'BB',
-    Bd: 'BD',
-    Be: 'BE',
-    Bf: 'BF',
-    Bg: 'BG',
-    Bh: 'BH',
-    Bi: 'BI',
-    Bj: 'BJ',
-    Bm: 'BM',
-    Bn: 'BN',
-    Bo: 'BO',
-    Br: 'BR',
-    Bs: 'BS',
-    Bt: 'BT',
-    Bw: 'BW',
-    By: 'BY',
-    Bz: 'BZ',
-    Ca: 'CA',
-    Cd: 'CD',
-    Cf: 'CF',
-    Cg: 'CG',
-    Ch: 'CH',
-    Ci: 'CI',
-    Ck: 'CK',
-    Cl: 'CL',
-    Cm: 'CM',
-    Cn: 'CN',
-    Co: 'CO',
-    Cr: 'CR',
-    Cu: 'CU',
-    Cv: 'CV',
-    Cy: 'CY',
-    Cz: 'CZ',
-    De: 'DE',
-    Dj: 'DJ',
-    Dk: 'DK',
-    Dm: 'DM',
-    Do: 'DO',
-    Dz: 'DZ',
-    Ec: 'EC',
-    Ee: 'EE',
-    Eg: 'EG',
-    Er: 'ER',
-    Es: 'ES',
-    Et: 'ET',
-    Fi: 'FI',
-    Fj: 'FJ',
-    Fk: 'FK',
-    Fm: 'FM',
-    Fo: 'FO',
-    Fr: 'FR',
-    Ga: 'GA',
-    Gb: 'GB',
-    Gd: 'GD',
-    Ge: 'GE',
-    Gf: 'GF',
-    Gg: 'GG',
-    Gh: 'GH',
-    Gi: 'GI',
-    Gl: 'GL',
-    Gm: 'GM',
-    Gn: 'GN',
-    Gp: 'GP',
-    Gq: 'GQ',
-    Gr: 'GR',
-    Gt: 'GT',
-    Gu: 'GU',
-    Gw: 'GW',
-    Gy: 'GY',
-    Hk: 'HK',
-    Hn: 'HN',
-    Hr: 'HR',
-    Ht: 'HT',
-    Hu: 'HU',
-    Ic: 'IC',
-    Id: 'ID',
-    Ie: 'IE',
-    Il: 'IL',
-    In: 'IN',
-    Iq: 'IQ',
-    Ir: 'IR',
-    Is: 'IS',
-    It: 'IT',
-    Je: 'JE',
-    Jm: 'JM',
-    Jo: 'JO',
-    Jp: 'JP',
-    Ke: 'KE',
-    Kg: 'KG',
-    Kh: 'KH',
-    Ki: 'KI',
-    Km: 'KM',
-    Kn: 'KN',
-    Kp: 'KP',
-    Kr: 'KR',
-    Kv: 'KV',
-    Kw: 'KW',
-    Ky: 'KY',
-    Kz: 'KZ',
-    La: 'LA',
-    Lb: 'LB',
-    Lc: 'LC',
-    Li: 'LI',
-    Lk: 'LK',
-    Lr: 'LR',
-    Ls: 'LS',
-    Lt: 'LT',
-    Lu: 'LU',
-    Lv: 'LV',
-    Ly: 'LY',
-    Ma: 'MA',
-    Mc: 'MC',
-    Md: 'MD',
-    Me: 'ME',
-    Mg: 'MG',
-    Mh: 'MH',
-    Mk: 'MK',
-    Ml: 'ML',
-    Mm: 'MM',
-    Mn: 'MN',
-    Mo: 'MO',
-    Mp: 'MP',
-    Mq: 'MQ',
-    Mr: 'MR',
-    Ms: 'MS',
-    Mt: 'MT',
-    Mu: 'MU',
-    Mv: 'MV',
-    Mw: 'MW',
-    Mx: 'MX',
-    My: 'MY',
-    Mz: 'MZ',
-    Na: 'NA',
-    Nc: 'NC',
-    Ne: 'NE',
-    Ng: 'NG',
-    Ni: 'NI',
-    Nl: 'NL',
-    No: 'NO',
-    Np: 'NP',
-    Nr: 'NR',
-    Nu: 'NU',
-    Nz: 'NZ',
-    Om: 'OM',
-    Pa: 'PA',
-    Pe: 'PE',
-    Pf: 'PF',
-    Pg: 'PG',
-    Ph: 'PH',
-    Pk: 'PK',
-    Pl: 'PL',
-    Pr: 'PR',
-    Pt: 'PT',
-    Pw: 'PW',
-    Py: 'PY',
-    Qa: 'QA',
-    Re: 'RE',
-    Ro: 'RO',
-    Rs: 'RS',
-    Ru: 'RU',
-    Rw: 'RW',
-    Sa: 'SA',
-    Sb: 'SB',
-    Sc: 'SC',
-    Sd: 'SD',
-    Se: 'SE',
-    Sg: 'SG',
-    Sh: 'SH',
-    Si: 'SI',
-    Sk: 'SK',
-    Sl: 'SL',
-    Sm: 'SM',
-    Sn: 'SN',
-    So: 'SO',
-    Sr: 'SR',
-    Ss: 'SS',
-    St: 'ST',
-    Sv: 'SV',
-    Sy: 'SY',
-    Sz: 'SZ',
-    Tc: 'TC',
-    Td: 'TD',
-    Tg: 'TG',
-    Th: 'TH',
-    Tj: 'TJ',
-    Tl: 'TL',
-    Tn: 'TN',
-    To: 'TO',
-    Tr: 'TR',
-    Tt: 'TT',
-    Tv: 'TV',
-    Tw: 'TW',
-    Tz: 'TZ',
-    Ua: 'UA',
-    Ug: 'UG',
-    Us: 'US',
-    Uy: 'UY',
-    Uz: 'UZ',
-    Va: 'VA',
-    Vc: 'VC',
-    Ve: 'VE',
-    Vg: 'VG',
-    Vi: 'VI',
-    Vn: 'VN',
-    Vu: 'VU',
-    Ws: 'WS',
-    Xb: 'XB',
-    Xc: 'XC',
-    Xe: 'XE',
-    Xm: 'XM',
-    Xn: 'XN',
-    Xs: 'XS',
-    Xy: 'XY',
-    Ye: 'YE',
-    Yt: 'YT',
-    Za: 'ZA',
-    Zm: 'ZM',
-    Zw: 'ZW'
-} as const;
-
-export type ShipmentReturnAddressCountryCodeEnum = typeof ShipmentReturnAddressCountryCodeEnum[keyof typeof ShipmentReturnAddressCountryCodeEnum];
-
-/**
- * The shipment selected rate
- * @export
- * @interface ShipmentSelectedRate
- */
-export interface ShipmentSelectedRate {
-    /**
-     * A unique identifier
-     * @type {string}
-     * @memberof ShipmentSelectedRate
-     */
-    'id'?: string;
-    /**
-     * Specifies the object type
-     * @type {string}
-     * @memberof ShipmentSelectedRate
-     */
-    'object_type'?: string;
-    /**
-     * The rate\'s carrier
-     * @type {string}
-     * @memberof ShipmentSelectedRate
-     */
-    'carrier_name': string;
-    /**
-     * The targeted carrier\'s name (unique identifier)
-     * @type {string}
-     * @memberof ShipmentSelectedRate
-     */
-    'carrier_id': string;
-    /**
-     * The rate monetary values currency code
-     * @type {string}
-     * @memberof ShipmentSelectedRate
-     */
-    'currency'?: string;
-    /**
-     * The carrier\'s rate (quote) service
-     * @type {string}
-     * @memberof ShipmentSelectedRate
-     */
-    'service'?: string | null;
-    /**
-     * The rate\'s monetary amount of the total charge.<br/>         This is the gross amount of the rate after adding the additional charges         
-     * @type {number}
-     * @memberof ShipmentSelectedRate
-     */
-    'total_charge'?: number;
-    /**
-     * The estimated delivery transit days
-     * @type {number}
-     * @memberof ShipmentSelectedRate
-     */
-    'transit_days'?: number | null;
-    /**
-     * list of the rate\'s additional charges
-     * @type {Array<Charge>}
-     * @memberof ShipmentSelectedRate
-     */
-    'extra_charges'?: Array<Charge>;
-    /**
-     * The delivery estimated date
-     * @type {string}
-     * @memberof ShipmentSelectedRate
-     */
-    'estimated_delivery'?: string | null;
-    /**
-     * provider specific metadata
-     * @type {{ [key: string]: any; }}
-     * @memberof ShipmentSelectedRate
-     */
-    'meta'?: { [key: string]: any; } | null;
-    /**
-     * Specified whether it was created with a carrier in test mode
-     * @type {boolean}
-     * @memberof ShipmentSelectedRate
-     */
-    'test_mode': boolean;
-}
-/**
  * 
  * @export
  * @interface ShipmentUpdateData
@@ -9215,17 +6278,17 @@ export interface ShippingRequest {
      */
     'shipper': AddressData;
     /**
-     * 
-     * @type {ShipmentReturnAddress}
+     * The return address for this shipment. Defaults to the shipper address.
+     * @type {AddressData}
      * @memberof ShippingRequest
      */
-    'return_address'?: ShipmentReturnAddress | null;
+    'return_address'?: AddressData | null;
     /**
-     * 
-     * @type {ShipmentBillingAddress}
+     * The payor address.
+     * @type {AddressData}
      * @memberof ShippingRequest
      */
-    'billing_address'?: ShipmentBillingAddress | null;
+    'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
      * @type {Array<ParcelData>}
@@ -9245,11 +6308,11 @@ export interface ShippingRequest {
      */
     'payment'?: Payment;
     /**
-     * 
-     * @type {ShipmentDataCustoms}
+     * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
+     * @type {CustomsData}
      * @memberof ShippingRequest
      */
-    'customs'?: ShipmentDataCustoms | null;
+    'customs'?: CustomsData | null;
     /**
      * The shipment reference
      * @type {string}
@@ -9321,17 +6384,17 @@ export interface ShippingResponse {
      */
     'recipient': Address;
     /**
-     * 
-     * @type {ShipmentReturnAddress}
+     * The return address for this shipment. Defaults to the shipper address.
+     * @type {AddressData}
      * @memberof ShippingResponse
      */
-    'return_address'?: ShipmentReturnAddress | null;
+    'return_address'?: AddressData | null;
     /**
-     * 
-     * @type {ShipmentBillingAddress}
+     * The payor address.
+     * @type {AddressData}
      * @memberof ShippingResponse
      */
-    'billing_address'?: ShipmentBillingAddress | null;
+    'billing_address'?: AddressData | null;
     /**
      * The shipment\'s parcels
      * @type {Array<Parcel>}
@@ -9357,11 +6420,11 @@ export interface ShippingResponse {
      */
     'payment'?: Payment;
     /**
-     * 
-     * @type {ShipmentCustoms}
+     * The customs details.<br/>         **Note that this is required for the shipment of an international Dutiable parcel.**         
+     * @type {Customs}
      * @memberof ShippingResponse
      */
-    'customs'?: ShipmentCustoms | null;
+    'customs'?: Customs | null;
     /**
      * The list for shipment rates fetched previously
      * @type {Array<Rate>}
@@ -9441,17 +6504,17 @@ export interface ShippingResponse {
      */
     'shipment_identifier'?: string | null;
     /**
-     * 
-     * @type {ShipmentSelectedRate}
+     * The shipment selected rate
+     * @type {Rate}
      * @memberof ShippingResponse
      */
-    'selected_rate'?: ShipmentSelectedRate | null;
+    'selected_rate'?: Rate | null;
     /**
-     * 
-     * @type {ShippingResponseDocs}
+     * The shipment documents
+     * @type {Documents}
      * @memberof ShippingResponse
      */
-    'docs'?: ShippingResponseDocs | null;
+    'docs'?: Documents | null;
     /**
      * provider specific metadata
      * @type {{ [key: string]: any; }}
@@ -9501,25 +6564,6 @@ export const ShippingResponseStatusEnum = {
 
 export type ShippingResponseStatusEnum = typeof ShippingResponseStatusEnum[keyof typeof ShippingResponseStatusEnum];
 
-/**
- * The shipment documents
- * @export
- * @interface ShippingResponseDocs
- */
-export interface ShippingResponseDocs {
-    /**
-     * A shipping label in base64 string
-     * @type {string}
-     * @memberof ShippingResponseDocs
-     */
-    'label'?: string | null;
-    /**
-     * A shipping invoice in base64 string
-     * @type {string}
-     * @memberof ShippingResponseDocs
-     */
-    'invoice'?: string | null;
-}
 /**
  * 
  * @export
@@ -9621,11 +6665,11 @@ export interface TrackerDetails {
      */
     'tracking_number': string;
     /**
-     * 
-     * @type {TrackerDetailsInfo}
+     * The package and shipment tracking details
+     * @type {TrackingInfo}
      * @memberof TrackerDetails
      */
-    'info'?: TrackerDetailsInfo | null;
+    'info'?: TrackingInfo | null;
     /**
      * The tracking details events
      * @type {Array<TrackingEvent>}
@@ -9663,11 +6707,11 @@ export interface TrackerDetails {
      */
     'meta'?: { [key: string]: any; } | null;
     /**
-     * 
-     * @type {TrackerDetailsImages}
+     * The tracker documents
+     * @type {Images}
      * @memberof TrackerDetails
      */
-    'images'?: TrackerDetailsImages | null;
+    'images'?: Images | null;
     /**
      * Specifies the object type
      * @type {string}
@@ -9702,146 +6746,6 @@ export const TrackerDetailsStatusEnum = {
 
 export type TrackerDetailsStatusEnum = typeof TrackerDetailsStatusEnum[keyof typeof TrackerDetailsStatusEnum];
 
-/**
- * The tracker documents
- * @export
- * @interface TrackerDetailsImages
- */
-export interface TrackerDetailsImages {
-    /**
-     * A delivery image in base64 string
-     * @type {string}
-     * @memberof TrackerDetailsImages
-     */
-    'delivery_image'?: string | null;
-    /**
-     * A signature image in base64 string
-     * @type {string}
-     * @memberof TrackerDetailsImages
-     */
-    'signature_image'?: string | null;
-}
-/**
- * The package and shipment tracking details
- * @export
- * @interface TrackerDetailsInfo
- */
-export interface TrackerDetailsInfo {
-    /**
-     * The carrier tracking link
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'carrier_tracking_link'?: string | null;
-    /**
-     * The customer name
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'customer_name'?: string | null;
-    /**
-     * The expected delivery date
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'expected_delivery'?: string | null;
-    /**
-     * A tracking note
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'note'?: string | null;
-    /**
-     * The package order date
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'order_date'?: string | null;
-    /**
-     * The package order id or number
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'order_id'?: string | null;
-    /**
-     * The package weight
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'package_weight'?: string | null;
-    /**
-     * The package weight unit
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'package_weight_unit'?: string | null;
-    /**
-     * The package count
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_package_count'?: string | null;
-    /**
-     * The shipment pickup date
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_pickup_date'?: string | null;
-    /**
-     * The shipment delivery date
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_delivery_date'?: string | null;
-    /**
-     * The shipment service
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_service'?: string | null;
-    /**
-     * The shipment origin country
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_origin_country'?: string | null;
-    /**
-     * The shipment origin postal code
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_origin_postal_code'?: string | null;
-    /**
-     * The shipment destination country
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_destination_country'?: string | null;
-    /**
-     * The shipment destination postal code
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipment_destination_postal_code'?: string | null;
-    /**
-     * The shipping date
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'shipping_date'?: string | null;
-    /**
-     * The person who signed for the package
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'signed_by'?: string | null;
-    /**
-     * The tracker source
-     * @type {string}
-     * @memberof TrackerDetailsInfo
-     */
-    'source'?: string | null;
-}
 /**
  * 
  * @export
@@ -9880,138 +6784,17 @@ export interface TrackerList {
  */
 export interface TrackerUpdateData {
     /**
-     * 
-     * @type {TrackerUpdateDataInfo}
+     * The package and shipment tracking details
+     * @type {TrackingInfo}
      * @memberof TrackerUpdateData
      */
-    'info'?: TrackerUpdateDataInfo | null;
+    'info'?: TrackingInfo | null;
     /**
      * User metadata for the tracker
      * @type {{ [key: string]: any; }}
      * @memberof TrackerUpdateData
      */
     'metadata'?: { [key: string]: any; };
-}
-/**
- * The package and shipment tracking details
- * @export
- * @interface TrackerUpdateDataInfo
- */
-export interface TrackerUpdateDataInfo {
-    /**
-     * The carrier tracking link
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'carrier_tracking_link'?: string | null;
-    /**
-     * The customer name
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'customer_name'?: string | null;
-    /**
-     * The expected delivery date
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'expected_delivery'?: string | null;
-    /**
-     * A tracking note
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'note'?: string | null;
-    /**
-     * The package order date
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'order_date'?: string | null;
-    /**
-     * The package order id or number
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'order_id'?: string | null;
-    /**
-     * The package weight
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'package_weight'?: string | null;
-    /**
-     * The package weight unit
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'package_weight_unit'?: string | null;
-    /**
-     * The package count
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_package_count'?: string | null;
-    /**
-     * The shipment pickup date
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_pickup_date'?: string | null;
-    /**
-     * The shipment delivery date
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_delivery_date'?: string | null;
-    /**
-     * The shipment service
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_service'?: string | null;
-    /**
-     * The shipment origin country
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_origin_country'?: string | null;
-    /**
-     * The shipment origin postal code
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_origin_postal_code'?: string | null;
-    /**
-     * The shipment destination country
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_destination_country'?: string | null;
-    /**
-     * The shipment destination postal code
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipment_destination_postal_code'?: string | null;
-    /**
-     * The shipping date
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'shipping_date'?: string | null;
-    /**
-     * The person who signed for the package
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'signed_by'?: string | null;
-    /**
-     * The tracker source
-     * @type {string}
-     * @memberof TrackerUpdateDataInfo
-     */
-    'source'?: string | null;
 }
 /**
  * 
@@ -10044,11 +6827,11 @@ export interface TrackingData {
      */
     'reference'?: string | null;
     /**
-     * 
-     * @type {TrackerUpdateDataInfo}
+     * The package and shipment tracking details
+     * @type {TrackingInfo}
      * @memberof TrackingData
      */
-    'info'?: TrackerUpdateDataInfo | null;
+    'info'?: TrackingInfo | null;
     /**
      * The carrier user metadata.
      * @type {{ [key: string]: any; }}
@@ -10320,11 +7103,11 @@ export interface TrackingStatus {
      */
     'tracking_number': string;
     /**
-     * 
-     * @type {TrackerDetailsInfo}
+     * The package and shipment tracking details
+     * @type {TrackingInfo}
      * @memberof TrackingStatus
      */
-    'info'?: TrackerDetailsInfo | null;
+    'info'?: TrackingInfo | null;
     /**
      * The tracking details events
      * @type {Array<TrackingEvent>}

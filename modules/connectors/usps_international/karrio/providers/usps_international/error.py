@@ -1,24 +1,26 @@
-from typing import List
-from karrio.schemas.usps.error import Error
-from karrio.core.utils import Element, XP
-from karrio.core.models import Message
-from karrio.providers.usps_international.utils import Settings
+"""Karrio USPS error parser."""
+
+import typing
+import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.usps_international.utils as provider_utils
 
 
-def parse_error_response(response: Element, settings: Settings) -> List[Message]:
-    error_nodes = (
-        [response]
-        if response.tag == "Error"
-        else response.xpath(".//*[local-name() = $name]", name="Error")
-    )
-    errors = [XP.to_object(Error, node) for node in error_nodes]
+def parse_error_response(
+    response: typing.Union[dict, typing.List[dict]],
+    settings: provider_utils.Settings,
+    **kwargs,
+) -> typing.List[models.Message]:
+    responses = response if isinstance(response, list) else [response]
+    errors: list = [response["error"] for response in responses if "error" in response]
 
     return [
-        Message(
-            carrier_name=settings.carrier_name,
+        models.Message(
             carrier_id=settings.carrier_id,
-            code=str(error.Number),
-            message=error.Description,
+            carrier_name=settings.carrier_name,
+            code=error.get("code"),
+            message=error.get("message"),
+            details={**kwargs, "errors": error.get("errors", [])},
         )
         for error in errors
     ]

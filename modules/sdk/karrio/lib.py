@@ -678,13 +678,19 @@ def run_asynchronously(
 
 def request(
     decoder: typing.Callable = utils.decode_bytes,
+    on_ok: typing.Callable = None,
     on_error: typing.Callable = None,
     trace: typing.Callable[[typing.Any, str], typing.Any] = None,
     proxy: str = None,
     **kwargs,
 ) -> str:
     return utils.request(
-        decoder=decoder, on_error=on_error, trace=trace, proxy=proxy, **kwargs
+        decoder=decoder,
+        on_ok=on_ok,
+        on_error=on_error,
+        trace=trace,
+        proxy=proxy,
+        **kwargs,
     )
 
 

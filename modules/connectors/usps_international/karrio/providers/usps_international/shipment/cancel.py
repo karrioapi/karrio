@@ -1,53 +1,53 @@
-from typing import Tuple, List
-from karrio.schemas.usps.evsi_cancel_request import eVSICancelRequest
-from karrio.schemas.usps.evsi_cancel_response import eVSICancelResponse
-from karrio.core.utils import Serializable, XP
-from karrio.core.models import ShipmentCancelRequest, ConfirmationDetails, Message
-
-from karrio.providers.usps_international.error import parse_error_response
-from karrio.providers.usps_international.utils import Settings
+import typing
 import karrio.lib as lib
+import karrio.core.models as models
+import karrio.providers.usps_international.error as error
+import karrio.providers.usps_international.utils as provider_utils
+import karrio.providers.usps_international.units as provider_units
 
 
 def parse_shipment_cancel_response(
-    _response: lib.Deserializable[lib.Element],
-    settings: Settings,
-) -> Tuple[ConfirmationDetails, List[Message]]:
-    response = _response.deserialize()
-    errors: List[Message] = parse_error_response(response, settings)
-    cancel_response = XP.to_object(eVSICancelResponse, response)
+    _response: lib.Deserializable[typing.List[typing.Tuple[str, dict]]],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
+    responses = _response.deserialize()
+    messages: typing.List[models.Message] = sum(
+        [
+            error.parse_error_response(response, settings, tracking_number=_)
+            for _, response in responses
+        ],
+        start=[],
+    )
+    success = all([_["ok"] for __, _ in responses])
 
-    if cancel_response.Status != "Cancelled":
-        errors.append(
-            Message(
-                carrier_name=settings.carrier_name,
-                carrier_id=settings.carrier_id,
-                message=cancel_response.Reason,
-                code=cancel_response.Status,
-            )
-        )
-
-    details = (
-        ConfirmationDetails(
+    confirmation = (
+        models.ConfirmationDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            operation="Shipment Cancel",
-            success=True,
+            operation="Cancel Shipment",
+            success=success,
         )
-        if not any(errors)
+        if success
         else None
     )
 
-    return details, errors
+    return confirmation, messages
 
 
 def shipment_cancel_request(
-    payload: ShipmentCancelRequest, settings: Settings
-) -> Serializable:
-    request = eVSICancelRequest(
-        USERID=settings.username,
-        PASSWORD=settings.password, 
-        BarcodeNumber=payload.shipment_identifier,
-    )
+    payload: models.ShipmentCancelRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
 
-    return Serializable(request, XP.export)
+    # map data to convert karrio model to usps specific type
+    request = [
+        dict(trackingNumber=_)
+        for _ in set(
+            [
+                payload.shipment_identifier,
+                *((payload.options or {}).get("shipment_identifiers") or []),
+            ]
+        )
+    ]
+
+    return lib.Serializable(request, lib.to_dict)

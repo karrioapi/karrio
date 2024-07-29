@@ -1,0 +1,39 @@
+{
+  "confirmationNumber": "string",
+  "pickupDate": "2019-08-24",
+  "carrierPickupRequest": {
+    "pickupDate": "2019-08-24",
+    "pickupAddress": {
+      "firstName": "string",
+      "lastName": "string",
+      "firm": "string",
+      "address": {
+        "streetAddress": "string",
+        "streetAddressAbbreviation": "string",
+        "secondaryAddress": "string",
+        "cityAbbreviation": "string",
+        "city": "string",
+        "state": "st",
+        "ZIPCode": "string",
+        "ZIPPlus4": "string",
+        "urbanization": "string"
+      },
+      "contact": [
+        {
+          "email": "user@example.com"
+        }
+      ]
+    },
+    "packages": [
+      {
+        "packageType": "FIRST-CLASS_PACKAGE_SERVICE",
+        "packageCount": 0
+      }
+    ],
+    "estimatedWeight": 0,
+    "pickupLocation": {
+      "packageLocation": "FRONT_DOOR",
+      "specialInstructions": "string"
+    }
+  }
+}

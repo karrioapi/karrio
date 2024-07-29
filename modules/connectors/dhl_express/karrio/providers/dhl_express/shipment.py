@@ -1,4 +1,3 @@
-from karrio.schemas.fedex.rating_request import NumberType
 import karrio.schemas.dhl_express.ship_val_global_req_10_0 as dhl
 import karrio.schemas.dhl_express.ship_val_global_res_10_0 as dhl_res
 import karrio.schemas.dhl_express.datatypes_global_v10 as dhl_global

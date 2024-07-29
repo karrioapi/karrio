@@ -1,63 +1,109 @@
-from typing import Tuple, List
-from karrio.schemas.usps.carrier_pickup_change_request import (
-    CarrierPickupChangeRequest,
-    PackageType,
-)
-from karrio.core.units import Packages
-from karrio.core.utils import Serializable, SF
-from karrio.core.models import (
-    ShipmentRequest,
-    PickupUpdateRequest,
-    PickupDetails,
-    Message,
-)
+"""Karrio USPS update pickup implementation."""
 
-from karrio.providers.usps_international.error import parse_error_response
-from karrio.providers.usps_international.utils import Settings
+import karrio.schemas.usps_international.pickup_update_request as usps
+import karrio.schemas.usps_international.pickup_update_response as pickup
+
+import typing
 import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.usps_international.error as error
+import karrio.providers.usps_international.utils as provider_utils
+import karrio.providers.usps_international.units as provider_units
 
 
 def parse_pickup_update_response(
-    response: lib.Deserializable[dict], settings: Settings
-) -> Tuple[PickupDetails, List[Message]]:
-    errors = parse_error_response(response.deserialize(), settings)
-    details = None
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
+) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
+    response = _response.deserialize()
 
-    return details, errors
+    messages = error.parse_error_response(response, settings)
+    pickup = (
+        _extract_details(response, settings)
+        if "confirmationNumber" in response
+        else None
+    )
+
+    return pickup, messages
+
+
+def _extract_details(
+    data: dict,
+    settings: provider_utils.Settings,
+) -> models.PickupDetails:
+    details = lib.to_object(pickup.PickupUpdateResponseType, data)
+
+    return models.PickupDetails(
+        carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
+        confirmation_number=details.confirmationNumber,
+        pickup_date=lib.fdate(details.pickupDate),
+    )
 
 
 def pickup_update_request(
-    payload: PickupUpdateRequest, settings: Settings
-) -> Serializable:
-    shipments: List[ShipmentRequest] = payload.options.get("shipments", [])
-    packages = Packages(payload.parcels)
-
-    request = CarrierPickupChangeRequest(
-        USERID=settings.username,
-        PASSWORD=settings.password,
-        FirstName=payload.address.person_name,
-        LastName=None,
-        FirmName=payload.address.company_name,
-        SuiteOrApt=payload.address.address_line1,
-        Address2=SF.concat_str(
-            payload.address.address_line1, payload.address.address_line2, join=True
+    payload: models.PickupUpdateRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
+    address = lib.to_address(payload.address)
+    packages = lib.to_packages(payload.parcels)
+    options = lib.units.Options(
+        payload.options,
+        option_type=lib.units.create_enum(
+            "PickupOptions",
+            # fmt: off
+            {
+                "usps_package_type": lib.OptionEnum("usps_package_type"),
+            },
+            # fmt: on
         ),
-        Urbanization=None,
-        City=payload.address.city,
-        State=payload.address.state_code,
-        ZIP5=payload.address.postal_code,
-        ZIP4=None,
-        Phone=payload.address.phone_number,
-        Extension=None,
-        Package=[
-            PackageType(ServiceType=shipment.service, Count=len(shipment.parcels))
-            for shipment in shipments
-        ],
-        EstimatedWeight=packages.weight.LB,
-        PackageLocation=payload.package_location,
-        SpecialInstructions=payload.instruction,
-        ConfirmationNumber=payload.confirmation_number,
-        EmailAddress=payload.address.email,
     )
 
-    return Serializable(request)
+    # map data to convert karrio model to usps specific type
+    request = usps.PickupUpdateRequestType(
+        pickupDate=lib.fdate(payload.pickup_date),
+        carrierPickupRequest=usps.CarrierPickupRequestType(
+            pickupDate=lib.fdate(payload.pickup_date),
+            pickupAddress=usps.PickupAddressType(
+                firstName=address.person_name,
+                lastName=None,
+                firm=address.company_name,
+                address=usps.AddressType(
+                    streetAddress=address.address_line1,
+                    secondaryAddress=address.address_line2,
+                    city=address.city,
+                    state=address.state,
+                    ZIPCode=lib.to_zip5(address.postal_code),
+                    ZIPPlus4=lib.to_zip4(address.postal_code) or "",
+                    urbanization=None,
+                ),
+                contact=[
+                    usps.ContactType(email=address.email)
+                    for _ in [address.email]
+                    if _ is not None
+                ],
+            ),
+            packages=[
+                usps.PackageType(
+                    packageType=options.usps_package_type.state or "OTHER",
+                    packageCount=len(packages),
+                )
+            ],
+            estimatedWeight=packages.weight.LB,
+            pickupLocation=lib.identity(
+                usps.PickupLocationType(
+                    packageLocation=payload.package_location,
+                    specialInstructions=payload.instruction,
+                )
+                if any([payload.package_location, payload.instruction])
+                else None
+            ),
+        ),
+    )
+
+    return lib.Serializable(
+        request,
+        lib.to_dict,
+        dict(confirmationNumber=payload.confirmation_number),
+    )

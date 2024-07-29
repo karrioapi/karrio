@@ -107,7 +107,10 @@ def shipment_request(
         package_options=packages.options,
         initializer=provider_units.shipping_options_initializer,
     )
-    weight_unit, _ = packages.compatible_units
+    weight_unit, dim_unit = lib.identity(
+        provider_units.COUNTRY_PREFERED_UNITS.get(payload.shipper.country_code)
+        or packages.compatible_units
+    )
     customs = lib.to_customs_info(
         payload.customs,
         shipper=payload.shipper,
@@ -139,11 +142,11 @@ def shipment_request(
         *(["02"] if options.delivery_options.state else []),
     ]
     currency = options.currency.state or settings.default_currency
-    mps_packaging = (
+    mps_packaging = lib.identity(
         provider_units.PackagingType.your_packaging.value if len(packages) > 1 else None
     )
     enforce_zpl = settings.connection_config.enforce_zpl.state
-    label_format, label_height, label_width = (
+    label_format, label_height, label_width = lib.identity(
         provider_units.LabelType.map(
             payload.label_type or settings.connection_config.label_type.state
         ).value
@@ -485,8 +488,8 @@ def shipment_request(
                                             ),
                                             Weight=str(
                                                 units.Weight(
-                                                    item.weight, weight_unit.name
-                                                )[weight_unit.name]
+                                                    item.weight, item.weight_unit
+                                                )[weight_unit]
                                             ),
                                         ),
                                         VehicleID=None,
@@ -591,12 +594,12 @@ def shipment_request(
                         Dimensions=lib.identity(
                             ups.DimensionsType(
                                 UnitOfMeasurement=ups.LabelImageFormatType(
-                                    Code=package.dimension_unit.value,
+                                    Code=dim_unit.value,
                                     Description="Dimension",
                                 ),
-                                Length=str(package.length.value),
-                                Width=str(package.width.value),
-                                Height=str(package.height.value),
+                                Length=str(package.length[dim_unit.name]),
+                                Width=str(package.width[dim_unit.name]),
+                                Height=str(package.height[dim_unit.name]),
                             )
                             if any([package.length, package.width, package.height])
                             else None
@@ -604,12 +607,12 @@ def shipment_request(
                         DimWeight=None,
                         PackageWeight=ups.WeightType(
                             UnitOfMeasurement=ups.LabelImageFormatType(
-                                Code=provider_units.WeightUnit[
-                                    str(package.weight.unit)
-                                ].value,
+                                Code=provider_units.WeightUnit.map(
+                                    weight_unit.name
+                                ).value,
                                 Description="Weight",
                             ),
-                            Weight=str(package.weight.value),
+                            Weight=str(package.weight[weight_unit.name]),
                         ),
                         Commodity=None,
                         PackageServiceOptions=None,

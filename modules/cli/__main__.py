@@ -57,12 +57,17 @@ def add_features(
 def create_tree(
     module: str = typer.Option(..., prompt=True),
     class_name: str = typer.Option(..., prompt=True),
+    module_alias: str = typer.Option("", prompt=False),
 ):
     if not module or not class_name:
         print("module and class_name are required")
         raise typer.Abort()
 
-    output = utils.instantiate_class_from_module(module, class_name)
+    output = utils.instantiate_class_from_module(
+        module,
+        class_name,
+        module_alias=module_alias,
+    )
     typer.echo(output)
 
 

@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6-rc20`.
+    The current version is `2024.6-rc22`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6-rc20
+  version: 2024.6-rc22
 paths:
   /:
     get:
@@ -10048,8 +10048,8 @@ tags:
     | Carrier Name | Display Name |
     | ------------ | ------------ |
     | zoom2u | Zoom2u |
-    | usps_international | USPS International |
     | usps | USPS |
+    | usps_international | USPS |
     | ups | UPS |
     | tnt | TNT |
     | tge | TGE |
@@ -10100,66 +10100,47 @@ tags:
     | zoom2u_3_hour | 3 hour |
     | zoom2u_same_day | Same day |
 
-    ### USPS International
+    ### USPS
     | Code         | Service Name |
     | ------------ | ------------ |
-    | usps_first_class | First Class |
-    | usps_first_class_commercial | First Class Commercial |
-    | usps_first_class_hfp_commercial | First Class HFPCommercial |
-    | usps_priority | Priority |
-    | usps_priority_commercial | Priority Commercial |
-    | usps_priority_cpp | Priority Cpp |
-    | usps_priority_hfp_commercial | Priority HFP Commercial |
-    | usps_priority_hfp_cpp | Priority HFP CPP |
-    | usps_priority_mail_express | Priority Mail Express |
-    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
-    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
-    | usps_priority_mail_express_sh | Priority Mail Express Sh |
-    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
-    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
-    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
-    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
-    | usps_priority_mail_cubic | Priority Mail Cubic |
-    | usps_retail_ground | Retail Ground |
-    | usps_media | Media |
-    | usps_library | Library |
-    | usps_all | All |
-    | usps_online | Online |
-    | usps_plus | Plus |
-    | usps_bpm | BPM |
+    | usps_standard_service | USPS Standard Service |
+    | usps_parcel_select | PARCEL_SELECT |
+    | usps_parcel_select_lightweight | PARCEL_SELECT_LIGHTWEIGHT |
+    | usps_priority_mail_express | PRIORITY_MAIL_EXPRESS |
+    | usps_priority_mail | PRIORITY_MAIL |
+    | usps_first_class_package_service | FIRST-CLASS_PACKAGE_SERVICE |
+    | usps_library_mail | LIBRARY_MAIL |
+    | usps_media_mail | MEDIA_MAIL |
+    | usps_bound_printed_matter | BOUND_PRINTED_MATTER |
+    | usps_connect_local | USPS_CONNECT_LOCAL |
+    | usps_connect_mail | USPS_CONNECT_MAIL |
+    | usps_connect_next_day | USPS_CONNECT_NEXT_DAY |
+    | usps_connect_regional | USPS_CONNECT_REGIONAL |
+    | usps_connect_same_day | USPS_CONNECT_SAME_DAY |
+    | usps_ground_advantage | USPS_GROUND_ADVANTAGE |
+    | usps_retail_ground | USPS_RETAIL_GROUND |
+    | usps_all | ALL |
 
     ### USPS
     | Code         | Service Name |
     | ------------ | ------------ |
-    | usps_first_class | First Class |
-    | usps_first_class_commercial | First Class Commercial |
-    | usps_first_class_hfp_commercial | First Class HFPCommercial |
-    | usps_priority | Priority |
-    | usps_priority_commercial | Priority Commercial |
-    | usps_priority_cpp | Priority Cpp |
-    | usps_priority_hfp_commercial | Priority HFP Commercial |
-    | usps_priority_hfp_cpp | Priority HFP CPP |
-    | usps_priority_mail_express | Priority Mail Express |
-    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
-    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
-    | usps_priority_mail_express_sh | Priority Mail Express Sh |
-    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
-    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
-    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
-    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
-    | usps_priority_mail_cubic | Priority Mail Cubic |
-    | usps_retail_ground | Retail Ground |
-    | usps_media | Media |
-    | usps_library | Library |
-    | usps_all | All |
-    | usps_online | Online |
-    | usps_plus | Plus |
-    | usps_bpm | BPM |
-    | usps_ground_advantage | Ground Advantage |
-    | usps_ground_advantage_commercial | Ground Advantage Commercial |
-    | usps_ground_advantage_hfp | Ground Advantage HFP |
-    | usps_ground_advantage_hfp_commercial | Ground Advantage HFP Commercial |
-    | usps_ground_advantage_cubic | Ground Advantage Cubic |
+    | usps_standard_service | USPS Standard Service |
+    | usps_parcel_select | PARCEL_SELECT |
+    | usps_parcel_select_lightweight | PARCEL_SELECT_LIGHTWEIGHT |
+    | usps_priority_mail_express | PRIORITY_MAIL_EXPRESS |
+    | usps_priority_mail | PRIORITY_MAIL |
+    | usps_first_class_package_service | FIRST-CLASS_PACKAGE_SERVICE |
+    | usps_library_mail | LIBRARY_MAIL |
+    | usps_media_mail | MEDIA_MAIL |
+    | usps_bound_printed_matter | BOUND_PRINTED_MATTER |
+    | usps_connect_local | USPS_CONNECT_LOCAL |
+    | usps_connect_mail | USPS_CONNECT_MAIL |
+    | usps_connect_next_day | USPS_CONNECT_NEXT_DAY |
+    | usps_connect_regional | USPS_CONNECT_REGIONAL |
+    | usps_connect_same_day | USPS_CONNECT_SAME_DAY |
+    | usps_ground_advantage | USPS_GROUND_ADVANTAGE |
+    | usps_retail_ground | USPS_RETAIL_GROUND |
+    | usps_all | ALL |
 
     ### UPS
     | Code         | Service Name |

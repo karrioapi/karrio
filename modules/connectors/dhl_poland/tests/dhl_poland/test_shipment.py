@@ -354,6 +354,7 @@ InternationalShipmentRequestXML = f"""<soap-env:Envelope xmlns:soap-env="http://
                     <secondaryName>N/A</secondaryName>
                     <costsOfShipment>100.0</costsOfShipment>
                     <nipNr>5218487281</nipNr>
+                    <eoriNr>5218487281</eoriNr>
                     <categoryOfItem>9</categoryOfItem>
                     <countryOfOrigin>PL</countryOfOrigin>
                     <grossWeight>0.45</grossWeight>

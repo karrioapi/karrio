@@ -1,3 +1,5 @@
+"""Warning: This setup.py is only there for git install until poetry support git subdirectory"""
+
 from setuptools import setup, find_namespace_packages
 
 with open("README.md", "r") as fh:
@@ -5,8 +7,8 @@ with open("README.md", "r") as fh:
 
 setup(
     name="karrio.usps_international",
-    version="2024.6-rc9",
-    description="Karrio - USPS International Shipping extension",
+    version="2024.6-rc22",
+    description="Karrio - USPS Shipping Extension",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/karrioapi/karrio",

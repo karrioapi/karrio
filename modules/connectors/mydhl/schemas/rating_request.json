@@ -1,0 +1,66 @@
+{
+  "customerDetails": {
+    "shipperDetails": {
+      "postalCode": "048582",
+      "cityName": "SINGAPORE",
+      "addressLine1": "Blk 6 Lock Rd",
+      "addressLine2": "02-10 Gillman Barracks",
+      "addressLine3": "Barrack Street",
+      "countryCode": "SG"
+    },
+    "receiverDetails": {
+      "postalCode": "75001",
+      "cityName": "PARIS",
+      "addressLine1": "9",
+      "addressLine2": "Rue Simart",
+      "countryCode": "FR"
+    }
+  },
+  "accounts": [
+    {
+      "typeCode": "shipper",
+      "number": "123456789"
+    }
+  ],
+  "productsAndServices": [
+    {
+      "productCode": "P",
+      "localProductCode": "P"
+    }
+  ],
+  "payerCountryCode": "SG",
+  "plannedShippingDateAndTime": "2022-11-20T13:00:00GMT+00:00",
+  "unitOfMeasurement": "metric",
+  "isCustomsDeclarable": true,
+  "monetaryAmount": [
+    {
+      "typeCode": "declaredValue",
+      "value": 100,
+      "currency": "SGD"
+    }
+  ],
+  "estimatedDeliveryDate": {
+    "isRequested": true,
+    "typeCode": "QDDC"
+  },
+  "getAdditionalInformation": [
+    {
+      "typeCode": "allValueAddedServices",
+      "isRequested": true
+    }
+  ],
+  "returnStandardProductsOnly": false,
+  "nextBusinessDay": true,
+  "productTypeCode": "all",
+  "packages": [
+    {
+      "typeCode": "3BX",
+      "weight": 1,
+      "dimensions": {
+        "length": 10,
+        "width": 20,
+        "height": 30
+      }
+    }
+  ]
+}

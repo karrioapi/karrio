@@ -1,0 +1,45 @@
+{
+  "rateOptions": [
+    {
+      "totalBasePrice": 3.35,
+      "rates": [
+        {
+          "SKU": "DPXX0XXXXX07200",
+          "description": "string",
+          "priceType": "RETAIL",
+          "price": 3.35,
+          "weight": 5,
+          "dimWeight": 5,
+          "fees": [
+            {
+              "name": "string",
+              "SKU": "string",
+              "price": 0
+            }
+          ],
+          "startDate": "2021-07-16",
+          "endDate": "2021-07-16",
+          "mailClass": "string",
+          "zone": "01"
+        }
+      ],
+      "extraServices": [
+        {
+          "extraService": "922",
+          "name": "Adult Signature Required",
+          "SKU": "DPXX0XXXXX07200",
+          "priceType": "RETAIL",
+          "price": 3.35,
+          "warnings": [
+            {
+              "warningCode": "string",
+              "warningDescription": "string"
+            }
+          ]
+        }
+      ],
+      "totalPrice": 3.35
+    }
+  ]
+}
+

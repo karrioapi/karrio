@@ -1,50 +1,40 @@
-from typing import Tuple, List
-from karrio.schemas.usps.carrier_pickup_cancel_request import CarrierPickupCancelRequest
-from karrio.core.utils import Serializable, SF
-from karrio.core.models import PickupCancelRequest, ConfirmationDetails, Message
-
-from karrio.providers.usps_international.error import parse_error_response
-from karrio.providers.usps_international.utils import Settings
+import typing
 import karrio.lib as lib
+import karrio.core.units as units
+import karrio.core.models as models
+import karrio.providers.usps_international.error as error
+import karrio.providers.usps_international.utils as provider_utils
+import karrio.providers.usps_international.units as provider_units
 
 
 def parse_pickup_cancel_response(
     _response: lib.Deserializable[dict],
-    settings: Settings,
-) -> Tuple[ConfirmationDetails, List[Message]]:
+    settings: provider_utils.Settings,
+) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
-    errors = parse_error_response(response, settings)
-    details = (
-        ConfirmationDetails(
+    messages = error.parse_error_response(response, settings)
+    success = response.get("ok") == True
+
+    confirmation = (
+        models.ConfirmationDetails(
             carrier_id=settings.carrier_id,
             carrier_name=settings.carrier_name,
-            success=True,
-            operation="Pickup Cancel",
+            operation="Cancel Pickup",
+            success=success,
         )
-        if not any(errors)
+        if success
         else None
     )
 
-    return details, errors
+    return confirmation, messages
 
 
 def pickup_cancel_request(
-    payload: PickupCancelRequest, settings: Settings
-) -> Serializable:
-    request = CarrierPickupCancelRequest(
-        UserID=settings.username,
-        PASSWORD=settings.password,
-        FirmName=payload.address.company_name,
-        SuiteOrApt=payload.address.address_line1,
-        Address2=SF.concat_str(
-            payload.address.address_line1, payload.address.address_line2, join=True
-        ),
-        Urbanization=None,
-        City=payload.address.city,
-        State=payload.address.state_code,
-        ZIP5=payload.address.postal_code,
-        ZIP4=None,
-        ConfirmationNumber=payload.confirmation_number,
-    )
+    payload: models.PickupCancelRequest,
+    settings: provider_utils.Settings,
+) -> lib.Serializable:
 
-    return Serializable(request)
+    # map data to convert karrio model to usps specific type
+    request = dict(confirmationNumber=payload.confirmation_number)
+
+    return lib.Serializable(request, lib.to_dict)

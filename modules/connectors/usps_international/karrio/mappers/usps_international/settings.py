@@ -1,21 +1,20 @@
-"""Karrio USPS International client settings."""
+"""Karrio USPS client settings."""
 
 import attr
-from karrio.providers.usps_international.utils import Settings as BaseSettings
+import karrio.providers.usps_international.utils as provider_utils
 
 
 @attr.s(auto_attribs=True)
-class Settings(BaseSettings):
-    """USPS International connection settings."""
+class Settings(provider_utils.Settings):
+    """USPS connection settings."""
 
-    # Carrier specific properties
-    username: str
-    password: str
-    mailer_id: str = None
-    customer_registration_id: str = None
-    logistics_manager_mailer_id: str = None
+    # Add carrier specific API connection properties here
+    client_id: str
+    client_secret: str
+    account_type: str = None
+    account_number: str = None
 
-    # Base properties
+    # generic properties
     id: str = None
     test_mode: bool = False
     carrier_id: str = "usps_international"

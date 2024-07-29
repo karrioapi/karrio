@@ -1,67 +1,67 @@
-from datetime import datetime, timezone
-from karrio.schemas.usps.intl_rate_v2_request import (
-    IntlRateV2Request,
-    PackageType,
-    ExtraServicesType,
-    GXGType,
-)
-from karrio.schemas.usps.intl_rate_v2_response import ServiceType
+"""Karrio USPS rating API implementation."""
 
+import karrio.schemas.usps_international.rate_request as usps
+import karrio.schemas.usps_international.rate_response as rating
+
+import time
 import typing
 import karrio.lib as lib
 import karrio.core.units as units
 import karrio.core.models as models
 import karrio.core.errors as errors
-import karrio.providers.usps_international.error as provider_error
-import karrio.providers.usps_international.units as provider_units
+import karrio.providers.usps_international.error as error
 import karrio.providers.usps_international.utils as provider_utils
+import karrio.providers.usps_international.units as provider_units
 
 
 def parse_rate_response(
-    _response: lib.Deserializable[lib.Element], settings: provider_utils.Settings
+    _response: lib.Deserializable[dict],
+    settings: provider_utils.Settings,
 ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-    response = _response.deserialize()
-    quotes: typing.List[models.RateDetails] = [
-        _extract_details(package, settings)
-        for package in lib.find_element("Service", response)
-    ]
-    return quotes, provider_error.parse_error_response(response, settings)
+    responses = _response.deserialize()
+
+    messages = error.parse_error_response(responses, settings)
+    rates = lib.to_multi_piece_rates(
+        [
+            (
+                f"{_}",
+                [_extract_details(rate, settings) for rate in response["rateOptions"]],
+            )
+            for _, response in enumerate(responses, start=1)
+            if response.get("rateOptions") is not None
+        ]
+    )
+
+    return rates, messages
 
 
 def _extract_details(
-    postage_node: lib.Element, settings: provider_utils.Settings
+    data: dict,
+    settings: provider_utils.Settings,
 ) -> models.RateDetails:
-    postage: ServiceType = lib.to_object(ServiceType, postage_node)
-    service = provider_units.ServiceClassID.map(str(postage.ID))
-    delivery_date = lib.to_date(postage.GuaranteeAvailability, "%m/%d/%Y")
-    transit = (
-        (delivery_date.date() - datetime.now().date()).days
-        if delivery_date is not None
-        else None
-    )
-
+    rate = lib.to_object(rating.RateOptionType, data)
+    mail_class = rate.rates[0].mailClass
+    service = provider_units.ShippingService.map(mail_class)
     charges = [
-        ("Base charge", postage.Postage),
-        *((s.ServiceName, s.Price) for s in postage.ExtraServices.ExtraService),
+        ("Base Charge", lib.to_money(rate.totalBasePrice)),
+        *[(_.description, lib.to_money(_.price)) for _ in rate.rates],
+        *[(_.name, lib.to_money(_.price)) for _ in rate.extraServices],
     ]
 
     return models.RateDetails(
-        carrier_name=settings.carrier_name,
         carrier_id=settings.carrier_id,
+        carrier_name=settings.carrier_name,
         service=service.name_or_key,
-        total_charge=lib.to_decimal(postage.Postage),
-        currency=units.Currency.USD.name,
-        transit_days=transit,
+        total_charge=lib.to_money(rate.totalPrice),
+        currency="USD",
         extra_charges=[
-            models.ChargeDetails(
-                name=name,
-                amount=lib.to_decimal(amount),
-                currency=units.Currency.USD.name,
-            )
+            models.ChargeDetails(name=name, currency="USD", amount=amount)
             for name, amount in charges
-            if amount
         ],
-        meta=dict(service_name=service.name or postage.SvcDescription),
+        meta=dict(
+            service_name=service.name or mail_class,
+            zone=lib.failsafe(lambda: rate.rates[0].zone),
+        ),
     )
 
 
@@ -69,91 +69,54 @@ def rate_request(
     payload: models.RateRequest,
     settings: provider_utils.Settings,
 ) -> lib.Serializable:
-    """Create the appropriate USPS International rate request depending on the destination
-
-    :param payload: Karrio unified API rate request data
-    :param settings: USPS International connection and auth settings
-    :return: a domestic or international USPS International compatible request
-    :raises:
-        - OriginNotServicedError when origin country is not serviced by the carrier
-        - DestinationNotServicedError when destination country is US
-    """
-
-    if (
-        payload.shipper.country_code is not None
-        and payload.shipper.country_code != units.Country.US.name
-    ):
-        raise errors.OriginNotServicedError(payload.shipper.country_code)
-
-    if payload.recipient.country_code == units.Country.US.name:
-        raise errors.DestinationNotServicedError(payload.recipient.country_code)
-
+    shipper = lib.to_address(payload.shipper)
     recipient = lib.to_address(payload.recipient)
+
+    if shipper.country_code != units.Country.US.name:
+        raise errors.OriginNotServicedError(shipper.country_code)
+
+    if recipient.country_code == units.Country.US.name:
+        raise errors.DestinationNotServicedError(recipient.country_code)
+
     services = lib.to_services(payload.services, provider_units.ShippingService)
-    package = lib.to_packages(
-        payload.parcels,
-        package_option_type=provider_units.ShippingOption,
-        max_weight=units.Weight(70, units.WeightUnit.LB),
-    ).single
     options = lib.to_shipping_options(
         payload.options,
-        package_options=package.options,
         initializer=provider_units.shipping_options_initializer,
     )
+    packages = lib.to_packages(
+        payload.parcels,
+        options=options,
+        package_option_type=provider_units.ShippingOption,
+        shipping_options_initializer=provider_units.shipping_options_initializer,
+    )
 
-    commercial = next(("Y" for svc in services if "commercial" in svc.name), "N")
-    commercial_plus = next(("Y" for svc in services if "plus" in svc.name), "N")
-    acceptance_date = (
-        datetime.isoformat(
-            (options.shipment_date.state or datetime.now(timezone.utc)),
+    # map data to convert karrio model to usps specific type
+    request = [
+        usps.RateRequestType(
+            originZIPCode=shipper.postal_code,
+            foreignPostalCode=recipient.postal_code,
+            destinationCountryCode=recipient.country_code,
+            weight=package.weight.LB,
+            length=package.length.IN,
+            width=package.width.IN,
+            height=package.height.IN,
+            mailClass=getattr(
+                services.first, "value", provider_units.ShippingService.usps_all.value
+            ),
+            priceType=package.options.usps_price_type.state or "RETAIL",
+            mailingDate=lib.fdate(
+                package.options.shipment_date.state or time.strftime("%Y-%m-%d")
+            ),
+            accountType=settings.account_type or "EPS",
+            accountNumber=settings.account_number,
+            itemValue=package.items.value_amount,
+            extraServices=[
+                lib.to_int(_.code)
+                for __, _ in options.items()
+                if __ not in provider_units.CUSTOM_OPTIONS
+            ],
         )
-        if recipient.postal_code
-        else None
-    )
+        for package in packages
+    ]
 
-    request = IntlRateV2Request(
-        USERID=settings.username,
-        PASSWORD=settings.password,
-        Revision="2",
-        Package=[
-            PackageType(
-                ID=0,
-                Pounds=0,
-                Ounces=package.weight.OZ,
-                Machinable=options.usps_option_machinable_item.state or False,
-                MailType=provider_units.PackagingType[
-                    package.packaging_type or "package"
-                ].value,
-                GXG=(
-                    GXGType(POBoxFlag="N", GiftFlag="N")
-                    if any(
-                        "global_express_guaranteed" in s.name for s in payload.services
-                    )
-                    else None
-                ),
-                ValueOfContents=(options.declared_value.state or ""),
-                Country=recipient.country_name,
-                Width=package.width.IN,
-                Length=package.length.IN,
-                Height=package.height.IN,
-                Girth=(
-                    package.girth.value if package.packaging_type == "tube" else None
-                ),
-                OriginZip=payload.shipper.postal_code,
-                CommercialFlag=commercial,
-                CommercialPlusFlag=commercial_plus,
-                AcceptanceDateTime=acceptance_date,
-                DestinationPostalCode=recipient.postal_code,
-                ExtraServices=(
-                    ExtraServicesType(
-                        ExtraService=[option.code for _, option in options.items()]
-                    )
-                    if any(options.items())
-                    else None
-                ),
-                Content=None,
-            )
-        ],
-    )
-
-    return lib.Serializable(request, lib.to_xml)
+    return lib.Serializable(request, lib.to_dict)

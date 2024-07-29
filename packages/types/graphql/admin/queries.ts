@@ -1027,11 +1027,9 @@ export const GET_SYSTEM_CONNECTIONS = gql`
         active
         metadata
         capabilities
-        username
-        password
-        mailer_id
-        customer_registration_id
-        logistics_manager_mailer_id
+        client_id
+        client_secret
+        account_number
         config
       }
       ... on USPSInternationalSettingsType {
@@ -1043,11 +1041,9 @@ export const GET_SYSTEM_CONNECTIONS = gql`
         active
         metadata
         capabilities
-        username
-        password
-        mailer_id
-        customer_registration_id
-        logistics_manager_mailer_id
+        client_id
+        client_secret
+        account_number
         config
       }
       ... on Zoom2uSettingsType {
@@ -1907,11 +1903,9 @@ export const GET_SYSTEM_CONNECTION = gql`
         active
         metadata
         capabilities
-        username
-        password
-        mailer_id
-        customer_registration_id
-        logistics_manager_mailer_id
+        client_id
+        client_secret
+        account_number
         config
       }
       ... on USPSInternationalSettingsType {
@@ -1923,11 +1917,9 @@ export const GET_SYSTEM_CONNECTION = gql`
         active
         metadata
         capabilities
-        username
-        password
-        mailer_id
-        customer_registration_id
-        logistics_manager_mailer_id
+        client_id
+        client_secret
+        account_number
         config
       }
       ... on Zoom2uSettingsType {

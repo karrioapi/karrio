@@ -711,6 +711,18 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                   />
                 )}
 
+                {field("contract_number").exists && (
+                  <InputField
+                    label="Contract Number"
+                    value={payload.contract_number}
+                    name="contract_number"
+                    wrapperClass="pt-2"
+                    onChange={handleChange}
+                    className="is-small"
+                    required={field("contract_number").required}
+                  />
+                )}
+
                 {field("api_secret").exists && (
                   <InputField
                     label="API Secret"
@@ -841,42 +853,6 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                     onChange={handleChange}
                     className="is-small"
                     required={field("depot").required}
-                  />
-                )}
-
-                {field("mailer_id").exists && (
-                  <InputField
-                    label="Mailer ID"
-                    value={payload.mailer_id}
-                    name="mailer_id"
-                    wrapperClass="pt-2"
-                    onChange={handleChange}
-                    className="is-small"
-                    required={field("mailer_id").required}
-                  />
-                )}
-
-                {field("customer_registration_id").exists && (
-                  <InputField
-                    label="Customer Registration ID"
-                    value={payload.customer_registration_id}
-                    name="customer_registration_id"
-                    wrapperClass="pt-2"
-                    onChange={handleChange}
-                    className="is-small"
-                    required={field("customer_registration_id").required}
-                  />
-                )}
-
-                {field("logistics_manager_mailer_id").exists && (
-                  <InputField
-                    label="Logistics Manager Mailer ID"
-                    value={payload.logistics_manager_mailer_id}
-                    name="logistics_manager_mailer_id"
-                    wrapperClass="pt-2"
-                    onChange={handleChange}
-                    className="is-small"
-                    required={field("logistics_manager_mailer_id").required}
                   />
                 )}
 
@@ -1807,19 +1783,15 @@ function fieldState(carrier_name: CarrierNameType, property: string) {
         ],
         [CarrierSettingsCarrierNameEnum.Usps]: [
           ["carrier_id", true],
-          ["username", true],
-          ["password", true],
-          ["mailer_id"],
-          ["customer_registration_id"],
-          ["logistics_manager_mailer_id"],
+          ["client_id", true],
+          ["client_secret", true],
+          ["account_number"],
         ],
         [CarrierSettingsCarrierNameEnum.UspsInternational]: [
           ["carrier_id", true],
-          ["username", true],
-          ["password", true],
-          ["mailer_id"],
-          ["customer_registration_id"],
-          ["logistics_manager_mailer_id"],
+          ["client_id", true],
+          ["client_secret", true],
+          ["account_number"],
         ],
         [CarrierSettingsCarrierNameEnum.Zoom2u]: [
           ["carrier_id", true],
