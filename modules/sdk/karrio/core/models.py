@@ -181,8 +181,8 @@ class PickupRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
-    instruction: str = None
     package_location: str = None
+    instruction: str = None
     options: Dict = {}
 
     metadata: Dict = {}
@@ -199,8 +199,8 @@ class PickupUpdateRequest:
     address: Address = JStruct[Address, REQUIRED]
 
     parcels: List[Parcel] = JList[Parcel]
-    instruction: str = None
     package_location: str = None
+    instruction: str = None
     options: Dict = {}
 
 

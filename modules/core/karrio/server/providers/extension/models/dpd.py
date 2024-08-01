@@ -16,6 +16,7 @@ class DPDSettings(providers.Carrier):
     account_country_code = models.CharField(
         max_length=3, blank=True, null=True, choices=providers.COUNTRIES
     )
+    services = models.ManyToManyField("ServiceLevel", blank=True)
 
     @property
     def carrier_name(self) -> str:
