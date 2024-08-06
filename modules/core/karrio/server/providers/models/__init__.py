@@ -13,7 +13,6 @@ from karrio.server.core.models.base import (
 )
 from karrio.server.providers.models.utils import (
     has_rate_sheet,
-    has_auth_cache,
 )
 from karrio.server.providers.models.carrier import (
     Carrier,
@@ -22,9 +21,6 @@ from karrio.server.providers.models.carrier import (
     WEIGHT_UNITS,
     DIMENSION_UNITS,
     CAPABILITIES_CHOICES,
-)
-from karrio.server.providers.models.connection import (
-    CarrierConnection,
 )
 import karrio.server.providers.extension.models as extensions
 

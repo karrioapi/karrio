@@ -1,21 +1,21 @@
-from jinja2 import Template
-from django.urls import path
-from django.conf import settings
-from rest_framework.response import Response
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView
+import jinja2
+import django.conf as django
+import drf_spectacular.views as views
+import rest_framework.response as response
 
-import karrio.server.core.dataunits as dataunits
+import django.urls as urls
 import karrio.server.conf as conf
+import karrio.server.core.dataunits as dataunits
 
-VERSION = getattr(settings, "VERSION", "")
+VERSION = getattr(django.settings, "VERSION", "")
 non_null = lambda items: [i for i in items if i is not None]
-RedocView = SpectacularRedocView.as_view(
+RedocView = views.SpectacularRedocView.as_view(
     url_name="shipping-openapi",
     template_name="openapi/openapi.html",
 )
 
 
-class ShippingOpenAPIView(SpectacularAPIView):
+class ShippingOpenAPIView(views.SpectacularAPIView):
     def _get_schema_response(self, request):
         version = (
             self.api_version or request.version or self._get_version_parameter(request)
@@ -37,7 +37,7 @@ class ShippingOpenAPIView(SpectacularAPIView):
             version=conf.settings.VERSION,
         )
 
-        return Response(
+        return response.Response(
             data=data,
             headers={
                 "Content-Disposition": f'inline; filename="{self._get_filename(request, version)}"'
@@ -46,8 +46,16 @@ class ShippingOpenAPIView(SpectacularAPIView):
 
 
 urlpatterns = [
-    path(settings.OPEN_API_PATH, RedocView, name="schema-rapi"),
-    path("shipping-openapi", ShippingOpenAPIView.as_view(), name="shipping-openapi"),
+    urls.path(
+        django.settings.OPEN_API_PATH,
+        RedocView,
+        name="schema-rapi",
+    ),
+    urls.path(
+        "shipping-openapi",
+        ShippingOpenAPIView.as_view(),
+        name="shipping-openapi",
+    ),
 ]
 
 
@@ -186,7 +194,7 @@ Use any of the following templates when you ship with special carrier packaging.
 {% endfor %}
 """
 
-    return Template(template).render(refs=refs, format_preset=format_preset)
+    return jinja2.Template(template).render(refs=refs, format_preset=format_preset)
 
 
 def render_tags(request, APP_NAME):
@@ -203,19 +211,18 @@ def render_tags(request, APP_NAME):
                 """,
             },
             {
+                "name": "Carriers",
+                "description": f"""This is an object representing your {APP_NAME} carrier extension.
+                You can retrieve all supported carrier extensions available.
+                """,
+            },
+            {
                 "name": "Connections",
                 "description": f"""This is an object representing your {APP_NAME} carrier connections.
                 You can retrieve all carrier connections available to your account.
                 The `carrier_id` is a friendly name you assign to your connection.
                 """,
             },
-            # {
-            #     "name": "Carriers",
-            #     "description": f"""This is an object representing your {APP_NAME} carrier account.
-            #     You can retrieve all configured connections available to your {APP_NAME} account.
-            #     The `carrier_id` is a nickname you assign to your connection.
-            #     """,
-            # },
             {
                 "name": "Addresses",
                 "description": f"""This is an object representing your {APP_NAME} shipping address.

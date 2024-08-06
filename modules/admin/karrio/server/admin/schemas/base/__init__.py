@@ -10,7 +10,7 @@ import karrio.server.admin.schemas.base.types as types
 import karrio.server.admin.schemas.base.inputs as inputs
 import karrio.server.admin.schemas.base.mutations as mutations
 
-extra_types = [*types.SystemCarrierSettings.values()]
+extra_types = []
 
 
 @strawberry.type
@@ -35,12 +35,12 @@ class Query:
     surcharges: typing.List[types.SurchargeType] = strawberry.field(
         resolver=types.SurchargeType.resolve_list
     )
-    system_connection: typing.Optional[
-        types.SystemCarrierConnectionType
-    ] = strawberry.field(resolver=types.SystemConnectionType.resolve)
-    system_connections: typing.List[
-        types.SystemCarrierConnectionType
-    ] = strawberry.field(resolver=types.SystemConnectionType.resolve_list)
+    system_connection: typing.Optional[types.SystemCarrierConnectionType] = (
+        strawberry.field(resolver=types.SystemCarrierConnectionType.resolve)
+    )
+    system_connections: typing.List[types.SystemCarrierConnectionType] = (
+        strawberry.field(resolver=types.SystemCarrierConnectionType.resolve_list)
+    )
 
     rate_sheet: typing.Optional[types.SystemRateSheetType] = strawberry.field(
         resolver=types.SystemRateSheetType.resolve

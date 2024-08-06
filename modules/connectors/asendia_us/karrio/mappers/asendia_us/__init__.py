@@ -4,6 +4,7 @@ from karrio.mappers.asendia_us.mapper import Mapper
 from karrio.mappers.asendia_us.proxy import Proxy
 from karrio.mappers.asendia_us.settings import Settings
 import karrio.providers.asendia_us.units as units
+import karrio.providers.asendia_us.utils as utils
 
 
 METADATA = Metadata(
@@ -16,5 +17,5 @@ METADATA = Metadata(
     # Data Units
     options=units.ShippingOption,
     services=units.ShippingService,
-    connection_configs=units.ConnectionConfig,
+    connection_configs=utils.ConnectionConfig,
 )

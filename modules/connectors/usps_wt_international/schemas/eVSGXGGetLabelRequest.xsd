@@ -1,0 +1,132 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="eVSGXGGetLabelRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="Option"/>
+                <xs:element type="xs:string" name="Revision"/>
+                <xs:element name="ImageParameters">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="ImageParameter" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="FromFirstName"/>
+                <xs:element type="xs:string" name="FromMiddleInitial"/>
+                <xs:element type="xs:string" name="FromLastName"/>
+                <xs:element type="xs:string" name="FromFirm"/>
+                <xs:element type="xs:string" name="FromAddress1"/>
+                <xs:element type="xs:string" name="FromAddress2"/>
+                <xs:element type="xs:string" name="FromUrbanization"/>
+                <xs:element type="xs:string" name="FromCity"/>
+                <xs:element type="xs:string" name="FromState"/>
+                <xs:element type="xs:string" name="FromZIP5"/>
+                <xs:element type="xs:string" name="FromZIP4"/>
+                <xs:element type="xs:string" name="FromPhone"/>
+                <xs:element type="xs:string" name="ShipFromZIP"/>
+                <xs:element type="xs:string" name="SenderEMail"/>
+                <xs:element type="xs:string" name="ToFirstName"/>
+                <xs:element type="xs:string" name="ToLastName"/>
+                <xs:element type="xs:string" name="ToFirm"/>
+                <xs:element type="xs:string" name="ToAddress1"/>
+                <xs:element type="xs:string" name="ToAddress2"/>
+                <xs:element type="xs:string" name="ToAddress3"/>
+                <xs:element type="xs:string" name="ToPostalCode"/>
+                <xs:element type="xs:string" name="ToPhone"/>
+                <xs:element type="xs:string" name="RecipientEMail"/>
+                <xs:element type="xs:string" name="ToDPID"/>
+                <xs:element type="xs:string" name="ToProvince"/>
+                <xs:element type="xs:string" name="ToTaxID"/>
+                <xs:element type="xs:string" name="Container"/>
+                <xs:element type="xs:string" name="ContentType"/>
+                <xs:element name="ShippingContents">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ItemDetail" maxOccurs="30" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="Description"/>
+                                        <xs:element type="xs:string" name="Commodity"/>
+                                        <xs:element name="Restriction">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element type="xs:string" name="FootnoteNumber"/>
+                                                    <xs:element type="xs:string" name="Response"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element type="xs:byte" name="Quantity"/>
+                                        <xs:element type="xs:decimal" name="UnitValue"/>
+                                        <xs:element type="xs:decimal" name="NetPounds"/>
+                                        <xs:element type="xs:decimal" name="NetOunces"/>
+                                        <xs:element type="xs:decimal" name="UnitOfMeasure"/>
+                                        <xs:element type="xs:string" name="HSTariffNumber"/>
+                                        <xs:element type="xs:string" name="CountryofManufacture"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="PurposeOfShipment"/>
+                <xs:element type="xs:string" name="PartiesToTransaction"/>
+                <xs:element type="xs:string" name="Agreement"/>
+                <xs:element type="xs:string" name="Postage"/>
+                <xs:element type="xs:string" name="InsuredValue"/>
+                <xs:element type="xs:decimal" name="GrossPounds"/>
+                <xs:element type="xs:decimal" name="GrossOunces"/>
+                <xs:element type="xs:decimal" name="Length"/>
+                <xs:element type="xs:decimal" name="Width"/>
+                <xs:element type="xs:decimal" name="Height"/>
+                <xs:element type="xs:decimal" name="Girth"/>
+                <xs:element type="xs:string" name="Shape"/>
+                <xs:element type="xs:boolean" name="CIRequired"/>
+                <xs:element type="xs:string" name="InvoiceDate"/>
+                <xs:element type="xs:string" name="InvoiceNumber"/>
+                <xs:element type="xs:string" name="CustomerOrderNumber"/>
+                <xs:element type="xs:string" name="CustOrderNumber"/>
+                <xs:element type="xs:string" name="TermsDelivery"/>
+                <xs:element type="xs:string" name="TermsDeliveryOther"/>
+                <xs:element type="xs:decimal" name="PackingCost"/>
+                <xs:element type="xs:string" name="CountryUltDest"/>
+                <xs:element type="xs:string" name="CIAgreement"/>
+                <xs:element type="xs:string" name="ImageType"/>
+                <xs:element type="xs:string" name="ImageLayout"/>
+                <xs:element type="xs:string" name="CustomerRefNo"/>
+                <xs:element type="xs:string" name="CustomerRefNo2"/>
+                <xs:element type="xs:string" name="ShipDate"/>
+                <xs:element type="xs:string" name="HoldForManifest"/>
+                <xs:element type="xs:string" name="PriceOptions"/>
+                <xs:element type="xs:boolean" name="CommercialShipment"/>
+                <xs:element type="xs:string" name="BuyerFirstName"/>
+                <xs:element type="xs:string" name="BuyerLastName"/>
+                <xs:element type="xs:string" name="BuyerAddress1"/>
+                <xs:element type="xs:string" name="BuyerAddress2"/>
+                <xs:element type="xs:string" name="BuyerAddress3"/>
+                <xs:element type="xs:string" name="BuyerCity"/>
+                <xs:element type="xs:string" name="BuyerState"/>
+                <xs:element type="xs:string" name="BuyerPostalCode"/>
+                <xs:element type="xs:string" name="BuyerCountry"/>
+                <xs:element type="xs:string" name="BuyerTaxID"/>
+                <xs:element type="xs:string" name="BuyerRecipient"/>
+                <xs:element type="xs:string" name="TermsPayment"/>
+                <xs:element type="xs:string" name="ActionCode"/>
+                <xs:element type="xs:boolean" name="OptOutOfSPE"/>
+                <xs:element type="xs:string" name="PermitNumber"/>
+                <xs:element type="xs:string" name="AccountZipCode"/>
+                <xs:element type="xs:boolean" name="Machinable"/>
+                <xs:element type="xs:string" name="DestinationRateIndicator"/>
+                <xs:element type="xs:string" name="MID"/>
+                <xs:element type="xs:string" name="LogisticsManagerMID"/>
+                <xs:element type="xs:string" name="CRID"/>
+                <xs:element type="xs:string" name="VendorCode"/>
+                <xs:element type="xs:string" name="VendorProductVersionNumber"/>
+                <xs:element type="xs:string" name="OverrideMID"/>
+                <xs:element type="xs:string" name="ChargebackCode"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

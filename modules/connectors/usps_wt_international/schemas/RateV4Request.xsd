@@ -1,0 +1,81 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="RateV4Request">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="Revision"/>
+                <xs:element name="Package" maxOccurs="25" use="required">
+                    <xs:complexType>
+                        <xs:sequence>
+
+                            <xs:element type="xs:string" name="Service" use="required" />
+                            <xs:element type="xs:string" name="FirstClassMailType" />
+                            <xs:element type="xs:string" name="ZipOrigination" use="required" />
+                            <xs:element type="xs:string" name="ZipDestination" use="required" />
+                            <xs:element name="Pounds" maxOccurs="1" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:integer">
+                                        <xs:minInclusive value="0"/>
+                                        <xs:maxInclusive value="70"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element name="Ounces" maxOccurs="1" use="required">
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:decimal">
+                                        <xs:minInclusive value="0.0"/>
+                                        <xs:maxInclusive value="1120.0"/>
+                                        <xs:fractionDigits value="8" />
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:element>
+                            <xs:element type="xs:string" name="Container" use="required" />
+                            <xs:element type="xs:string" name="Size" />
+                            <xs:element type="xs:decimal" name="Width" />
+                            <xs:element type="xs:decimal" name="Length" />
+                            <xs:element type="xs:decimal" name="Height" />
+                            <xs:element type="xs:decimal" name="Girth" />
+                            <xs:element type="xs:string" name="Value" />
+                            <xs:element type="xs:string" name="AmountToCollect" />
+                            <xs:element name="SpecialServices" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" maxOccurs="10" name="SpecialService"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Content">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="ContentType"/>
+                                        <xs:element type="xs:string" name="ContentDescription"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element type="xs:boolean" name="GroundOnly" />
+                            <xs:element type="xs:string" name="SortBy" />
+                            <xs:element type="xs:boolean" name="Machinable" />
+                            <xs:element type="xs:boolean" name="ReturnLocations" />
+                            <xs:element type="xs:boolean" name="ReturnServiceInfo" />
+                            <xs:element type="xs:string" name="DropOffTime" />
+                            <xs:element name="ShipDate" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:date">
+                                            <xs:attribute type="xs:string" name="Option"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element type="xs:string" name="ReturnDimensionalWeight" />
+                            <xs:element type="xs:string" name="TrackingRetentionPeriod" />
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="ID" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -10,6 +10,7 @@ import karrio.lib as lib
 import karrio.server.openapi as openapi
 import karrio.server.core.views.api as api
 import karrio.server.core.filters as filters
+import karrio.server.core.gateway as gateway
 import karrio.server.providers.models as models
 import karrio.server.providers.serializers as serializers
 
@@ -21,7 +22,7 @@ CarrierConnectionList = serializers.PaginatedResult(
 
 
 class CarrierConnectionListView(api.GenericAPIView):
-    model = models.CarrierConnection
+    model = models.Carrier
     serializer_class = serializers.CarrierConnection
     filterset_class = filters.CarrierConnectionFilter
     filter_backends = (drf.DjangoFilterBackend,)
@@ -35,7 +36,7 @@ class CarrierConnectionListView(api.GenericAPIView):
         tags=["Connections"],
         operation_id=f"{ENDPOINT_ID}list",
         extensions={"x-operationId": "listCarrierConnections"},
-        summary="List all carrier connections",
+        summary="List carrier connections",
         responses={
             200: CarrierConnectionList(),
             400: serializers.ErrorResponse(),
@@ -44,11 +45,24 @@ class CarrierConnectionListView(api.GenericAPIView):
     )
     def get(self, request: request.Request):
         """Retrieve all carrier connections"""
+        filter = {
+            **filters.CarrierFilters(request.query_params).to_dict(),
+            "context": request,
+        }
 
-        connections = self.filter_queryset(self.get_queryset())
+        # fmt: off
+        connections = gateway.Carriers.list(**filter)
         response = self.paginate_queryset(
-            models.CarrierConnection(connections, many=True).data
+            [
+                {
+                    **_,
+                    "metadata": None if _["is_system"] else _["metadata"],
+                    "credentials": None if _["is_system"] else _["credentials"]
+                }
+                for _ in serializers.CarrierConnection(connections, many=True).data
+            ]
         )
+        # fmt: on
 
         return self.get_paginated_response(response)
 
@@ -69,7 +83,8 @@ class CarrierConnectionListView(api.GenericAPIView):
         """Add a new carrier connection."""
         connection = lib.identity(
             serializers.CarrierConnectionModelSerializer.map(
-                data=request.data, context=request
+                data=serializers.CarrierConnectionData.map(data=request.data).data,
+                context=request,
             )
             .save()
             .instance
@@ -86,7 +101,7 @@ class CarrierConnectionDetail(api.APIView):
         tags=["Connections"],
         operation_id=f"{ENDPOINT_ID}retrieve",
         extensions={"x-operationId": "retrieveCarrierConnection"},
-        summary="Retrieve a carrier connection",
+        summary="Retrieve a connection",
         responses={
             200: serializers.CarrierConnection(),
             400: serializers.ErrorResponse(),
@@ -95,14 +110,14 @@ class CarrierConnectionDetail(api.APIView):
     )
     def get(self, request: request.Request, pk: str):
         """Retrieve carrier connection."""
-        connection = models.CarrierConnection.access_by(request).get(pk=pk)
+        connection = models.Carrier.access_by(request).get(pk=pk)
         return response.Response(serializers.CarrierConnection(connection).data)
 
     @openapi.extend_schema(
         tags=["Connections"],
         operation_id=f"{ENDPOINT_ID}update",
         extensions={"x-operationId": "updateCarrierConnection"},
-        summary="Update a carrier connection",
+        summary="Update a connection",
         request=serializers.CarrierConnectionData(),
         responses={
             200: serializers.CarrierConnection(),
@@ -113,14 +128,18 @@ class CarrierConnectionDetail(api.APIView):
     )
     def patch(self, request: request.Request, pk: str):
         """Update a carrier connection."""
-        connection = models.CarrierConnection.access_by(request).get(pk=pk)
+        connection = models.Carrier.access_by(request).get(pk=pk)
+        update = lib.identity(
+            serializers.CarrierConnectionModelSerializer.map(
+                connection,
+                data=request.data,
+                context=request,
+            )
+            .save()
+            .instance
+        )
 
-        serializers.CarrierConnectionModelSerializer.map(
-            connection,
-            data=request.data,
-        ).save()
-
-        return response.Response(serializers.CarrierConnection(connection).data)
+        return response.Response(serializers.CarrierConnection(update).data)
 
     @openapi.extend_schema(
         tags=["Connections"],
@@ -136,7 +155,7 @@ class CarrierConnectionDetail(api.APIView):
     )
     def delete(self, request: request.Request, pk: str):
         """Remove a carrier connection."""
-        connection = models.CarrierConnection.access_by(request).get(pk=pk)
+        connection = models.Carrier.access_by(request).get(pk=pk)
 
         connection.delete(keep_parents=True)
 

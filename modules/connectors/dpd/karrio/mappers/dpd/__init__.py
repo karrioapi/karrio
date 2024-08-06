@@ -17,4 +17,5 @@ METADATA = Metadata(
     is_hub=False,
     services=units.ShippingService,
     options=units.ShippingOption,
+    has_intl_accounts=True,
 )

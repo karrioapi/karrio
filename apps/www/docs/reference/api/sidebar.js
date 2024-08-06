@@ -67,6 +67,30 @@ const sidebar = {
     },
     {
       type: "category",
+      label: "Carriers",
+      link: {
+        type: "doc",
+        id: "reference/api/carriers",
+      },
+      collapsible: true,
+      collapsed: true,
+      items: [
+        {
+          type: "doc",
+          id: "reference/api/list-carriers",
+          label: "List all carriers",
+          className: "api-method get",
+        },
+        {
+          type: "doc",
+          id: "reference/api/get-services",
+          label: "Get carrier services",
+          className: "api-method get",
+        },
+      ],
+    },
+    {
+      type: "category",
       label: "Connections",
       link: {
         type: "doc",
@@ -78,7 +102,7 @@ const sidebar = {
         {
           type: "doc",
           id: "reference/api/list-carrier-connections",
-          label: "List all carrier connections",
+          label: "List carrier connections",
           className: "api-method get",
         },
         {
@@ -90,13 +114,13 @@ const sidebar = {
         {
           type: "doc",
           id: "reference/api/retrieve-carrier-connection",
-          label: "Retrieve a carrier connection",
+          label: "Retrieve a connection",
           className: "api-method get",
         },
         {
           type: "doc",
           id: "reference/api/update-carrier-connection",
-          label: "Update a carrier connection",
+          label: "Update a connection",
           className: "api-method patch",
         },
         {

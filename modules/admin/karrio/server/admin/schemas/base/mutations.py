@@ -3,9 +3,9 @@ import logging
 import strawberry
 from constance import config
 from strawberry.types import Info
-import django.db.models as models
 import django.db.transaction as transaction
 
+import karrio.lib as lib
 import karrio.server.conf as conf
 import karrio.server.iam.models as iam
 import karrio.server.graph.utils as utils
@@ -18,6 +18,7 @@ import karrio.server.admin.schemas.base.types as types
 import karrio.server.admin.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.mutations as base
 import karrio.server.graph.serializers as graph_serializers
+import karrio.server.providers.serializers as providers_serializers
 
 logger = logging.getLogger(__name__)
 
@@ -27,9 +28,10 @@ class CreateUserMutation(utils.BaseMutation):
     user: typing.Optional[types.UserType] = None
 
     @staticmethod
+    @transaction.atomic
+    @utils.error_wrapper
     @utils.authentication_required
     @admin.superuser_required
-    @transaction.atomic
     def mutate(
         info: Info,
         organization_id: typing.Optional[str] = None,
@@ -66,9 +68,10 @@ class UpdateUserMutation(utils.BaseMutation):
     user: typing.Optional[types.UserType] = None
 
     @staticmethod
+    @transaction.atomic
+    @utils.error_wrapper
     @utils.authentication_required
     @admin.superuser_required
-    @transaction.atomic
     def mutate(
         info: Info,
         id: int,
@@ -97,9 +100,10 @@ class DeleteConnectionMutation(utils.BaseMutation):
 
     @staticmethod
     @transaction.atomic
+    @utils.error_wrapper
+    @admin.staff_required
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
-    @admin.staff_required
     def mutate(info: Info, **input) -> "DeleteConnectionMutation":
         instance = providers.Carrier.system_carriers.get(id=input["id"])
         instance.delete()
@@ -116,8 +120,8 @@ class InstanceConfigMutation(utils.BaseMutation):
     configs: typing.Optional[types.InstanceConfigType] = None
 
     @staticmethod
-    @utils.authentication_required
     @admin.staff_required
+    @utils.authentication_required
     def mutate(
         info: Info,
         **input: inputs.InstanceConfigMutationInput,
@@ -133,28 +137,27 @@ class CreateConnectionMutation(utils.BaseMutation):
 
     @staticmethod
     @transaction.atomic
+    @utils.error_wrapper
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
     def mutate(info: Info, **input) -> "CreateConnectionMutation":
         data = input.copy()
 
-        serializer = base.serializers.ConnectionModelSerializer(
-            data=data,
-            context=info.context.request,
+        connection = lib.identity(
+            providers_serializers.CarrierConnectionModelSerializer.map(
+                data=providers_serializers.CarrierConnectionData.map(data=data).data,
+                context=info.context.request,
+            )
+            .save()
+            .instance
         )
-
-        serializer.is_valid(raise_exception=True)
-        connection = serializer.save()
 
         connection.is_system = True
         connection.save()
 
         return CreateConnectionMutation(  # type:ignore
-            connection=types.base.ConnectionType.parse(
-                providers.Carrier.objects.get(pk=connection.pk),
-                types.SystemCarrierSettings,
-            )
+            connection=connection
         )
 
 
@@ -164,43 +167,27 @@ class UpdateConnectionMutation(utils.BaseMutation):
 
     @staticmethod
     @transaction.atomic
+    @utils.error_wrapper
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     @admin.staff_required
     def mutate(info: Info, **input) -> "UpdateConnectionMutation":
-        try:
-            data = input.copy()
-            settings_data = typing.cast(dict, next(iter(data.values()), {}))
-            id = settings_data.get("id")
-            instance = providers.Carrier.objects.get(id=id)
-
-            serializer = base.serializers.PartialConnectionModelSerializer(
+        data = input.copy()
+        id = data.get("id")
+        instance = providers.Carrier.access_by(info.context.request).get(id=id)
+        connection = lib.identity(
+            providers_serializers.CarrierConnectionModelSerializer.map(
                 instance,
                 data=data,
-                partial=True,
                 context=info.context.request,
             )
-            serializer.is_valid(raise_exception=True)
+            .save()
+            .instance
+        )
 
-            if "services" in settings_data:
-                base.save_many_to_many_data(
-                    "services",
-                    base.serializers.ServiceLevelModelSerializer,
-                    instance.settings,
-                    payload=settings_data,
-                    context=info.context.request,
-                )
-
-            connection = serializer.save()
-
-            return UpdateConnectionMutation(  # type:ignore
-                connection=types.base.ConnectionType.parse(
-                    connection, types.SystemCarrierSettings
-                )
-            )
-        except Exception as e:
-            logger.exception(e)
-            raise e
+        return UpdateConnectionMutation(  # type:ignore
+            connection=connection
+        )
 
 
 @strawberry.type

@@ -81,7 +81,7 @@ def _extract_details(
                 date=lib.fdate(e.date, "%Y-%m-%dT%H:%M:%S%z"),
                 time=lib.flocaltime(e.date, "%Y-%m-%dT%H:%M:%S%z"),
                 code=e.eventType,
-                location=(
+                location=lib.identity(
                     lib.join(
                         e.scanLocation.city,
                         e.scanLocation.stateOrProvinceCode,

@@ -3,7 +3,7 @@ import django.core.validators as validators
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("generic")
+# @providers.has_rate_sheet("generic")
 class GenericSettings(providers.Carrier):
     CARRIER_NAME = "generic"
 

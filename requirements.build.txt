@@ -39,6 +39,8 @@ Django==4.2.14
 -e ./modules/connectors/ups
 -e ./modules/connectors/usps
 -e ./modules/connectors/usps_international
+-e ./modules/connectors/usps_wt
+-e ./modules/connectors/usps_wt_international
 
 -e ./modules/connectors/easypost
 -e ./modules/connectors/eshipper

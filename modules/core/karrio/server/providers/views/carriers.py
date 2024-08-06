@@ -1,79 +1,68 @@
 import io
 import base64
 import logging
-from rest_framework import status
 from django.http import JsonResponse
 from django.urls import path, re_path
+from rest_framework import status, views
 from rest_framework.request import Request
 from rest_framework.response import Response
 from django.core.files.base import ContentFile
 from django_downloadview import VirtualDownloadView
-from rest_framework.pagination import LimitOffsetPagination
 
+import karrio.lib as lib
 import karrio.server.openapi as openapi
-import karrio.server.core.filters as filters
+import karrio.server.samples as samples
+import karrio.server.core.views.api as api
 import karrio.server.providers.models as models
-from karrio.server.core.gateway import Carriers
-from karrio.server.core import datatypes, dataunits
-from karrio.server.serializers import PaginatedResult
-from karrio.server.core.views.api import GenericAPIView, APIView
-from karrio.server.core.serializers import CarrierSettings, ErrorResponse
+from karrio.server.core import datatypes, dataunits, serializers
 
 logger = logging.getLogger(__name__)
 ENDPOINT_ID = "&&"  # This endpoint id is used to make operation ids unique make sure not to duplicate
-CarriersSettingsList = PaginatedResult("CarrierList", CarrierSettings)
 
 
-class CarrierList(GenericAPIView):
-    pagination_class = LimitOffsetPagination
-    default_limit = 100
+class CarrierList(views.APIView):
+    permission_classes = []
 
     @openapi.extend_schema(
+        auth=[],
         tags=["Carriers"],
         operation_id=f"{ENDPOINT_ID}list",
         extensions={"x-operationId": "listCarriers"},
         summary="List all carriers",
         responses={
-            200: CarriersSettingsList(),
-            400: ErrorResponse(),
+            200: serializers.CarrierDetails(many=True),
+            500: serializers.ErrorResponse(),
         },
-        parameters=filters.CarrierFilters.parameters,
+        examples=[
+            openapi.OpenApiExample(
+                name="Carrier List",
+                value=lib.to_dict(samples.CARRIER_DETAILS_SAMPLE),
+            )
+        ],
     )
     def get(self, request: Request):
         """Returns the list of configured carriers"""
-        filter = {
-            **filters.CarrierFilters(request.query_params).to_dict(),
-            "context": request,
-        }
+        references = dataunits.contextual_reference()
+        carriers = [
+            dict(
+                carrier_name=carrier_name,
+                display_name=display_name,
+                connection_fields=references["connection_fields"].get(carrier_name, {}),
+                capabilities=references["carrier_capabilities"].get(carrier_name, {}),
+                config_fields=references["connection_configs"].get(carrier_name, {}),
+            )
+            for carrier_name, display_name in references["carriers"].items()
+        ]
 
-        carriers = [carrier.data for carrier in Carriers.list(**filter)]
-        response = self.paginate_queryset(CarrierSettings(carriers, many=True).data)
-        return self.get_paginated_response(response)
+        return Response(carriers, status=status.HTTP_200_OK)
 
 
-class CarrierDetails(APIView):
+class CarrierServices(api.APIView):
+    permission_classes = []
+
     @openapi.extend_schema(
+        auth=[],
         tags=["Carriers"],
-        operation_id=f"{ENDPOINT_ID}retrieve",
-        extensions={"x-operationId": "retrieveCarrier"},
-        summary="Retrieve a carrier account",
-        responses={
-            200: CarrierSettings(),
-            404: ErrorResponse(),
-        },
-    )
-    def get(self, request: Request, pk: str):
-        """
-        Retrieve a carrier account.
-        """
-        carrier = Carriers.list(request).get(pk=pk)
-        return Response(CarrierSettings(carrier.data).data)
-
-
-class CarrierServices(APIView):
-
-    @openapi.extend_schema(
-        tags=["API"],
         operation_id=f"{ENDPOINT_ID}get_services",
         extensions={"x-operationId": "getServices"},
         summary="Get carrier services",
@@ -90,9 +79,15 @@ class CarrierServices(APIView):
         ],
         responses={
             200: openapi.OpenApiTypes.OBJECT,
-            404: ErrorResponse(),
-            500: ErrorResponse(),
+            404: serializers.ErrorResponse(),
+            500: serializers.ErrorResponse(),
         },
+        examples=[
+            openapi.OpenApiExample(
+                name="Carrier List",
+                value=lib.to_dict(samples.CARRIER_SERICES_SAMPLE),
+            )
+        ],
     )
     def get(self, request: Request, carrier_name: str):
         """
@@ -144,19 +139,18 @@ class CarrierLabelPreview(VirtualDownloadView):
 
     def _generate_label(self, carrier, format):
         import karrio
-        from karrio.core.utils import DP
-        from karrio.providers.generic.units import SAMPLE_SHIPMENT_REQUEST
+        import karrio.providers.generic.units as units
 
         template = carrier.label_template
-        data = (
+        data = lib.identity(
             template.shipment_sample
             if template is not None and len(template.shipment_sample.items()) > 0
-            else SAMPLE_SHIPMENT_REQUEST
+            else units.SAMPLE_SHIPMENT_REQUEST
         )
-        service = data.get("service") or next(
-            (s.service_code for s in carrier.services)
+        service = lib.identity(
+            data.get("service") or next((s.service_code for s in carrier.services))
         )
-        request = DP.to_object(
+        request = lib.to_object(
             datatypes.ShipmentRequest,
             {
                 **data,
@@ -180,11 +174,6 @@ urlpatterns = [
         "carriers",
         CarrierList.as_view(),
         name="carrier-list",
-    ),
-    path(
-        "carriers/<str:pk>",
-        CarrierDetails.as_view(),
-        name="carrier-details",
     ),
     path(
         "carriers/<str:carrier_name>/services",
