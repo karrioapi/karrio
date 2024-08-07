@@ -1,6 +1,6 @@
 strawberry-graphql==0.234.0
 django-debug-toolbar
-Django==4.2.14
+Django==4.2.15
 
 # Carrier Extentions modules
 -e ./modules/sdk
