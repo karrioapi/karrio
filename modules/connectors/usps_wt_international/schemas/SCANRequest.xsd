@@ -1,0 +1,44 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="SCANRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="Option">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:short" name="Form"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="FromName"/>
+                <xs:element type="xs:string" name="FromFirm"/>
+                <xs:element type="xs:string" name="FromAddress1"/>
+                <xs:element type="xs:string" name="FromAddress2"/>
+                <xs:element type="xs:string" name="FromCity"/>
+                <xs:element type="xs:string" name="FromState"/>
+                <xs:element type="xs:short" name="FromZip5"/>
+                <xs:element type="xs:short" name="FromZip4"/>
+                <xs:element name="Shipment">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="PackageDetail">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="PkgBarcode"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:int" name="MailDate"/>
+                <xs:element type="xs:int" name="MailTime"/>
+                <xs:element type="xs:short" name="EntryFacility"/>
+                <xs:element type="xs:string" name="ImageType"/>
+                <xs:element type="xs:string" name="CustomerRefNo"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

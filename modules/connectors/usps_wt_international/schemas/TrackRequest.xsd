@@ -1,0 +1,20 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="TrackRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="TrackID" maxOccurs="unbounded">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute type="xs:string" name="ID" use="optional"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

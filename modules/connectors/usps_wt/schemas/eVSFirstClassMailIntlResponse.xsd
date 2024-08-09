@@ -1,0 +1,36 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="eVSFirstClassMailIntlResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:float" name="Postage"/>
+                <xs:element type="xs:float" name="TotalValue"/>
+                <xs:element type="xs:string" name="BarcodeNumber"/>
+                <xs:element type="xs:string" name="LabelImage"/>
+                <xs:element type="xs:string" name="Page2Image"/>
+                <xs:element type="xs:string" name="Page3Image"/>
+                <xs:element type="xs:string" name="Prohibitions"/>
+                <xs:element type="xs:string" name="Restrictions"/>
+                <xs:element type="xs:string" name="Observations"/>
+                <xs:element type="xs:string" name="Regulations"/>
+                <xs:element type="xs:string" name="AdditionalRestrictions"/>
+                <xs:element name="ExtraServices">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ExtraService" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:byte" name="ServiceID"/>
+                                        <xs:element type="xs:string" name="ServiceName"/>
+                                        <xs:element type="xs:float" name="Price"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:byte" name="RemainingBarcodes"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -744,12 +744,10 @@ class TrackerType:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
     @strawberry.field
-    def tracking_carrier(self: manager.Tracking) -> typing.Optional["ConnectionType"]:
-        return (
-            ConnectionType.parse(self.tracking_carrier)
-            if self.tracking_carrier
-            else None
-        )
+    def tracking_carrier(
+        self: manager.Tracking,
+    ) -> typing.Optional["CarrierConnectionType"]:
+        return self.tracking_carrier
 
     @staticmethod
     @utils.authentication_required
@@ -797,12 +795,10 @@ class ManifestType:
         return [MessageType.parse(msg) for msg in self.messages or []]
 
     @strawberry.field
-    def manifest_carrier(self: manager.Manifest) -> typing.Optional["ConnectionType"]:
-        return (
-            ConnectionType.parse(self.manifest_carrier)
-            if self.manifest_carrier
-            else None
-        )
+    def manifest_carrier(
+        self: manager.Manifest,
+    ) -> typing.Optional["CarrierConnectionType"]:
+        return self.manifest_carrier
 
     @staticmethod
     @utils.authentication_required
@@ -883,12 +879,8 @@ class ShipmentType:
     @strawberry.field
     def selected_rate_carrier(
         self: manager.Shipment,
-    ) -> typing.Optional["ConnectionType"]:
-        return (
-            ConnectionType.parse(self.selected_rate_carrier)
-            if self.selected_rate_carrier
-            else None
-        )
+    ) -> typing.Optional["CarrierConnectionType"]:
+        return self.selected_rate_carrier
 
     @strawberry.field
     def payment(self: manager.Shipment) -> typing.Optional[PaymentType]:
@@ -993,10 +985,10 @@ class LabelTemplateType:
     object_type: str
     slug: typing.Optional[str]
     template: typing.Optional[str]
-    template_type: typing.Optional[utils.LabelTemplateTypeEnum]
     width: typing.Optional[int]
     height: typing.Optional[int]
     shipment_sample: typing.Optional[utils.JSON]
+    template_type: typing.Optional[utils.LabelTemplateTypeEnum]
 
 
 @strawberry_django.type(providers.RateSheet)
@@ -1015,8 +1007,8 @@ class RateSheetType:
             return self.metadata
 
     @strawberry.field
-    def carriers(self: providers.RateSheet) -> typing.List["ConnectionType"]:
-        return list(map(ConnectionType.parse, self.carriers))
+    def carriers(self: providers.RateSheet) -> typing.List["CarrierConnectionType"]:
+        return self.carriers
 
     @strawberry.field
     def services(self: providers.RateSheet) -> typing.List[ServiceLevelType]:
@@ -1045,6 +1037,7 @@ class SystemConnectionType:
     id: str
     active: bool
     carrier_id: str
+    display_name: str
     test_mode: bool
     capabilities: typing.List[str]
     created_at: typing.Optional[datetime.datetime]
@@ -1055,10 +1048,6 @@ class SystemConnectionType:
         return getattr(self, "settings", self).carrier_name
 
     @strawberry.field
-    def display_name(self: providers.Carrier) -> str:
-        return getattr(self, "carrier_display_name", "")
-
-    @strawberry.field
     def enabled(self: providers.Carrier, info: Info) -> bool:
         if hasattr(self, "active_orgs"):
             return self.active_orgs.filter(id=info.context.request.org.id).exists()
@@ -1067,7 +1056,7 @@ class SystemConnectionType:
 
     @strawberry.field
     def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
-        return getattr(self.config, "config", None)
+        return getattr(self, "config", None)
 
     @staticmethod
     @utils.authentication_required
@@ -1086,60 +1075,31 @@ class SystemConnectionType:
         return connections
 
 
-@strawberry.interface
-class ConnectionType:
+@strawberry_django.type(providers.Carrier)
+class CarrierConnectionType:
     id: str
-    active: bool
     carrier_id: str
     carrier_name: str
     display_name: str
-    capabilities: typing.List[str]
+    active: bool
+    is_system: bool
     test_mode: bool
+    credentials: utils.JSON
+    capabilities: typing.List[str]
+    rate_sheet: typing.Optional[RateSheetType] = None
 
     @strawberry.field
     def metadata(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
-        return getattr(self.metadata, "metadata", None)
+        return getattr(self, "metadata", None)
 
     @strawberry.field
     def config(self: providers.Carrier, info: Info) -> typing.Optional[utils.JSON]:
-        return getattr(self.config, "config", None)
+        return getattr(self, "config", None)
 
-    @staticmethod
-    def parse(
-        carrier: providers.Carrier,
-        settings_types: dict = None,
-    ) -> "CarrierConnectionType":
-        carrier_name = lib.identity(
-            carrier.carrier_name
-            if carrier.carrier_name in providers.MODELS
-            else "generic"
-        )
-        _RawSettings = pydoc.locate(f"karrio.mappers.{carrier_name}.Settings")
-        settings = {
-            key: getattr(carrier.settings, key)
-            for key in model_to_dict(carrier.settings).keys()
-            if key in _RawSettings.__annotations__
-        }
-        services = lib.identity(
-            dict(services=carrier.settings.services.all())
-            if "services" in settings
-            else {}
-        )
-        display_name = dict(display_name=carrier.carrier_display_name)
-        rate_sheet = lib.identity(
-            dict(rate_sheet=carrier.settings.rate_sheet)
-            if "rate_sheet" in settings
-            else {}
-        )
-
-        return (settings_types or CarrierSettings)[carrier_name](
-            id=carrier.id,
-            active=carrier.active,
-            carrier_name=carrier_name,
-            capabilities=carrier.capabilities,
-            config=getattr(carrier.config, "config", None),
-            **{**settings, **services, **display_name, **rate_sheet},
-        )
+    def rate_sheet(
+        self: providers.Carrier, info: Info
+    ) -> typing.Optional[RateSheetType]:
+        return getattr(self, "rate_sheet", None)
 
     @staticmethod
     @utils.utils.error_wrapper
@@ -1153,7 +1113,7 @@ class ConnectionType:
             _filter.to_dict(),
             providers.Carrier.access_by(info.context.request).filter(is_system=False),
         ).qs
-        return [ConnectionType.parse(_) for _ in connections if _.settings is not None]
+        return connections
 
     @staticmethod
     @utils.utils.error_wrapper
@@ -1165,7 +1125,7 @@ class ConnectionType:
         connection = (
             providers.Carrier.access_by(info.context.request).filter(id=id).first()
         )
-        return ConnectionType.parse(connection) if connection else None
+        return connection
 
     @staticmethod
     @utils.utils.error_wrapper
@@ -1185,88 +1145,9 @@ class ConnectionType:
             page_info=connections.page_info,
             edges=[
                 utils.Edge(
-                    node=ConnectionType.parse(edge.node),
+                    node=edge.node,
                     cursor=edge.cursor,
                 )
                 for edge in connections.edges
             ],
         )
-
-
-def create_carrier_settings_type(name: str, model):
-    _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-    EXCLUDED_FIELDS = [
-        # "cache",
-        "sscc_count",
-        "shipment_count",
-    ]
-
-    @strawberry.type
-    class _Settings(ConnectionType):
-        metadata: utils.JSON = strawberry.UNSET
-        config: typing.Optional[utils.JSON] = None
-
-        if hasattr(model, "account_number"):
-            account_number: typing.Optional[str] = None
-
-        if hasattr(model, "account_country_code"):
-            account_country_code: typing.Optional[str] = None
-
-        if hasattr(model, "label_template"):
-            label_template: typing.Optional[LabelTemplateType] = None
-
-        if hasattr(model, "services"):
-
-            @strawberry.field
-            def services(
-                self: providers.Carrier,
-            ) -> typing.Optional[typing.List[ServiceLevelType]]:
-                return self.services.all()
-
-        if hasattr(model, "rate_sheet"):
-            rate_sheet: typing.Optional[RateSheetType] = None
-
-    annotations = {
-        **getattr(_RawSettings, "__annotations__", {}),
-        **getattr(_Settings, "__annotations__", {}),
-        **(
-            dict(services=typing.Optional[typing.List[ServiceLevelType]])
-            if hasattr(model, "services")
-            else {}
-        ),
-    }
-
-    return strawberry.type(
-        type(
-            f"{model.__name__}Type",
-            (_Settings,),
-            {
-                **{
-                    k: strawberry.UNSET
-                    for k, _ in getattr(_RawSettings, "__annotations__", {}).items()
-                    if hasattr(model, k) and k not in EXCLUDED_FIELDS
-                },
-                "__annotations__": {
-                    k: (
-                        typing.Optional[v]
-                        if (
-                            k not in ConnectionType.__annotations__
-                            or serializers.is_field_optional(model, k)
-                        )
-                        else v
-                    )
-                    for k, v in annotations.items()
-                    if hasattr(model, k) and k not in EXCLUDED_FIELDS
-                },
-            },
-        )
-    )
-
-
-CarrierSettings = {
-    name: create_carrier_settings_type(name, model)
-    for name, model in providers.MODELS.items()
-}
-CarrierConnectionType: typing.Any = strawberry.union(
-    "CarrierConnectionType", types=(*(T for T in CarrierSettings.values()),)
-)

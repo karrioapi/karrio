@@ -1,0 +1,124 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="SDCGetLocationsResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:byte" name="Release"/>
+                <xs:element type="xs:byte" name="MailClass"/>
+                <xs:element type="xs:int" name="OriginZIP"/>
+                <xs:element type="xs:string" name="OriginCity"/>
+                <xs:element type="xs:string" name="OriginState"/>
+                <xs:element type="xs:int" name="DestZIP"/>
+                <xs:element type="xs:string" name="DestCity"/>
+                <xs:element type="xs:string" name="DestState"/>
+                <xs:element type="xs:date" name="AcceptDate"/>
+                <xs:element type="xs:short" name="AcceptTime"/>
+                <xs:element name="Expedited">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:date" name="EAD"/>
+                            <xs:element name="Commitment" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:byte" name="MailClass" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="CommitmentName"/>
+                                        <xs:element type="xs:short" name="CommitmentTime"/>
+                                        <xs:element type="xs:string" name="CommitmentSeq"/>
+                                        <xs:element name="Location" maxOccurs="unbounded" minOccurs="0">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element type="xs:date" name="SDD"/>
+                                                    <xs:element type="xs:short" name="COT"/>
+                                                    <xs:element type="xs:string" name="FacType"/>
+                                                    <xs:element type="xs:string" name="Street"/>
+                                                    <xs:element type="xs:string" name="City"/>
+                                                    <xs:element type="xs:string" name="State"/>
+                                                    <xs:element type="xs:int" name="ZIP"/>
+                                                    <xs:element type="xs:byte" name="IsGuaranteed"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="NonExpedited" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:byte" name="MailClass"/>
+                            <xs:element type="xs:byte" name="NonExpeditedDestType"/>
+                            <xs:element type="xs:date" name="EAD" minOccurs="0"/>
+                            <xs:element type="xs:short" name="COT" minOccurs="0"/>
+                            <xs:element type="xs:string" name="SvcStdMsg" minOccurs="0"/>
+                            <xs:element type="xs:byte" name="SvcStdDays" minOccurs="0"/>
+                            <xs:element type="xs:byte" name="TotDaysDeliver" minOccurs="0"/>
+                            <xs:element type="xs:date" name="SchedDlvryDate" minOccurs="0"/>
+                            <xs:element type="xs:byte" name="NonDlvryDays" minOccurs="0"/>
+                            <xs:element name="NonExpeditedExceptions" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:byte" name="SunHol"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="HFPU" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:date" name="EAD"/>
+                                        <xs:element type="xs:short" name="COT"/>
+                                        <xs:element name="ServiceStandard">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element type="xs:string" name="SvcStdMsg"/>
+                                                    <xs:element type="xs:byte" name="SvcStdDays"/>
+                                                    <xs:element name="Location">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element type="xs:byte" name="TotDaysDeliver"/>
+                                                                <xs:element type="xs:date" name="SchedDlvryDate"/>
+                                                                <xs:element type="xs:byte" name="NonDlvryDays"/>
+                                                                <xs:element type="xs:string" name="RAUName"/>
+                                                                <xs:element type="xs:string" name="Street"/>
+                                                                <xs:element type="xs:int" name="ZIP"/>
+                                                                <xs:element name="CloseTimes">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                            <xs:element type="xs:short" name="M"/>
+                                                                            <xs:element type="xs:short" name="Tu"/>
+                                                                            <xs:element type="xs:short" name="W"/>
+                                                                            <xs:element type="xs:short" name="Th"/>
+                                                                            <xs:element type="xs:short" name="F"/>
+                                                                            <xs:element type="xs:byte" name="Sa"/>
+                                                                            <xs:element type="xs:byte" name="Su"/>
+                                                                            <xs:element type="xs:byte" name="H"/>
+                                                                        </xs:sequence>
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                                <xs:element name="NonExpeditedExceptions" minOccurs="0">
+                                                                    <xs:complexType>
+                                                                        <xs:sequence>
+                                                                            <xs:element type="xs:byte" name="SunHol"/>
+                                                                            <xs:element type="xs:byte" name="Closed"/>
+                                                                        </xs:sequence>
+                                                                    </xs:complexType>
+                                                                </xs:element>
+                                                                <xs:element type="xs:string" name="City"/>
+                                                                <xs:element type="xs:string" name="State"/>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

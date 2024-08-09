@@ -88,6 +88,7 @@ def bulk_save_tracing_records(tracer: Tracer, context=None):
     records = []
 
     for record in tracer.records:
+        logger.debug([f"record: {record.key}", record.metadata])
         records.append(
             models.TracingRecord(
                 key=record.key,
@@ -108,6 +109,7 @@ def bulk_save_tracing_records(tracer: Tracer, context=None):
 
 
 def set_tracing_context(**kwargs):
+
     from karrio.server.core import middleware
 
     request = middleware.SessionContext.get_current_request()

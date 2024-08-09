@@ -1,0 +1,132 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="TrackResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="TrackInfo" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="AdditionalInfo" minOccurs="0"/>
+                            <xs:element type="xs:string" name="ADPScripting" minOccurs="0"/>
+                            <xs:element type="xs:boolean" name="ARCHDATA" minOccurs="0"/>
+                            <xs:element type="xs:string" name="ArchiveRestoreInfo" minOccurs="0"/>
+                            <xs:element type="xs:string" name="AssociatedLabel" minOccurs="0"/>
+                            <xs:element type="xs:string" name="Class"/>
+                            <xs:element type="xs:string" name="ClassOfMailCode"/>
+                            <xs:element type="xs:string" name="DeliveryNotificationDate"/>
+                            <xs:element type="xs:string" name="DestinationCity"/>
+                            <xs:element type="xs:string" name="DestinationCountryCode"/>
+                            <xs:element type="xs:string" name="DestinationState"/>
+                            <xs:element type="xs:short" name="DestinationZip"/>
+                            <xs:element type="xs:string" name="EditedLabelID"/>
+                            <xs:element type="xs:string" name="EmailEnabled"/>
+                            <xs:element type="xs:string" name="ExpectedDeliveryDate"/>
+                            <xs:element type="xs:string" name="ExpectedDeliveryTime"/>
+                            <xs:element type="xs:string" name="GuaranteedDeliveryDate" minOccurs="0"/>
+                            <xs:element type="xs:string" name="GuaranteedDeliveryTime" minOccurs="0"/>
+                            <xs:element type="xs:string" name="GuaranteedDetails" minOccurs="0"/>
+                            <xs:element type="xs:string" name="KahalaIndicator"/>
+                            <xs:element type="xs:string" name="MailTypeCode"/>
+                            <xs:element type="xs:string" name="MPDATE"/>
+                            <xs:element type="xs:int" name="MPSUFFIX"/>
+                            <xs:element type="xs:string" name="OriginCity"/>
+                            <xs:element type="xs:string" name="OriginCountryCode"/>
+                            <xs:element type="xs:string" name="OriginState"/>
+                            <xs:element type="xs:string" name="OriginZip"/>
+                            <xs:element type="xs:string" name="PodEnabled"/>
+                            <xs:element type="xs:string" name="PredictedDeliveryDate"/>
+                            <xs:element type="xs:string" name="PredictedDeliveryTime"/>
+                            <xs:element type="xs:string" name="PDWStart"/>
+                            <xs:element type="xs:string" name="PDWEnd"/>
+                            <xs:element type="xs:string" name="RelatedRRID"/>
+                            <xs:element type="xs:boolean" name="RestoreEnabled"/>
+                            <xs:element type="xs:boolean" name="RRAMenabled"/>
+                            <xs:element type="xs:boolean" name="RreEnabled"/>
+                            <xs:element type="xs:string" name="Service"/>
+                            <xs:element type="xs:string" name="ServiceTypeCode"/>
+                            <xs:element type="xs:string" name="Status"/>
+                            <xs:element type="xs:string" name="StatusCategory"/>
+                            <xs:element type="xs:string" name="StatusSummary"/>
+                            <xs:element type="xs:string" name="TABLECODE"/>
+                            <xs:element type="xs:boolean" name="TpodEnabled"/>
+                            <xs:element type="xs:string" name="ValueofArticle"/>
+                            <xs:element name="EnabledNotificationRequests">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element name="SMS">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element type="xs:boolean" name="FD"/>
+                                                    <xs:element type="xs:boolean" name="AL"/>
+                                                    <xs:element type="xs:boolean" name="TD"/>
+                                                    <xs:element type="xs:boolean" name="UP"/>
+                                                    <xs:element type="xs:boolean" name="DND"/>
+                                                    <xs:element type="xs:boolean" name="FS"/>
+                                                    <xs:element type="xs:boolean" name="OA"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element name="EMAIL">
+                                            <xs:complexType>
+                                                <xs:sequence>
+                                                    <xs:element type="xs:boolean" name="FD"/>
+                                                    <xs:element type="xs:boolean" name="AL"/>
+                                                    <xs:element type="xs:boolean" name="TD"/>
+                                                    <xs:element type="xs:boolean" name="UP"/>
+                                                    <xs:element type="xs:boolean" name="DND"/>
+                                                    <xs:element type="xs:boolean" name="FS"/>
+                                                    <xs:element type="xs:boolean" name="OA"/>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="TrackSummary" maxOccurs="1">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="EventTime"/>
+                                        <xs:element type="xs:string" name="EventDate"/>
+                                        <xs:element type="xs:string" name="Event"/>
+                                        <xs:element type="xs:string" name="EventCity"/>
+                                        <xs:element type="xs:string" name="EventState"/>
+                                        <xs:element type="xs:int" name="EventZIPCode"/>
+                                        <xs:element type="xs:string" name="EventCountry" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="FirmName" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="Name" minOccurs="0"/>
+                                        <xs:element type="xs:boolean" name="AuthorizedAgent" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="EventCode" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="ActionCode" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="ReasonCode" minOccurs="0"/>
+                                        <xs:element type="xs:boolean" name="GeoCertified" minOccurs="0"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="TrackDetail" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="EventTime"/>
+                                        <xs:element type="xs:string" name="EventDate"/>
+                                        <xs:element type="xs:string" name="Event"/>
+                                        <xs:element type="xs:string" name="EventCity"/>
+                                        <xs:element type="xs:string" name="EventState"/>
+                                        <xs:element type="xs:short" name="EventZIPCode"/>
+                                        <xs:element type="xs:string" name="EventCountry" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="FirmName" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="Name" minOccurs="0"/>
+                                        <xs:element type="xs:boolean" name="AuthorizedAgent" minOccurs="0"/>
+                                        <xs:element type="xs:boolean" name="GeoCertified"/>
+                                        <xs:element type="xs:string" name="EventCode" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="ActionCode" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="ReasonCode" minOccurs="0"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="ID"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

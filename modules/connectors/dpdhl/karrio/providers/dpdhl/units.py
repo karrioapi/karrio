@@ -69,10 +69,12 @@ class Incoterm(lib.Enum):
 
 
 class ConnectionConfig(lib.Enum):
-    language_code = lib.OptionEnum("language_code")
     service_suffix = lib.OptionEnum("service_suffix")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    language_code = lib.OptionEnum(
+        "language_code", lib.units.create_enum("Lang", ["de", "en"])
+    )
 
 
 class ShippingService(lib.StrEnum):

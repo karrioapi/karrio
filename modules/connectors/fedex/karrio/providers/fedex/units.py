@@ -229,11 +229,13 @@ class PaymentType(lib.Enum):
 
 
 class ConnectionConfig(lib.Enum):
-    locale = lib.OptionEnum("locale")
-    label_type = lib.OptionEnum("label_type")
+    label_type = lib.OptionEnum("label_type", LabelType)
     smart_post_hub_id = lib.OptionEnum("smart_post_hub_id")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    locale = lib.OptionEnum(
+        "locale", lib.units.create_enum("Locale", ["en_US", "fr_CA"])
+    )
 
 
 class ShippingService(lib.Enum):

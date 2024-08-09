@@ -1,0 +1,41 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="MRSV4.0Request">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="Option"/>
+                <xs:element type="xs:string" name="CustomerName"/>
+                <xs:element type="xs:string" name="CustomerAddress1"/>
+                <xs:element type="xs:string" name="CustomerAddress2"/>
+                <xs:element type="xs:string" name="CustomerCity"/>
+                <xs:element type="xs:string" name="CustomerState"/>
+                <xs:element type="xs:short" name="CustomerZip5"/>
+                <xs:element type="xs:string" name="CustomerZip4"/>
+                <xs:element type="xs:string" name="RetailerName"/>
+                <xs:element type="xs:string" name="RetailerAddress"/>
+                <xs:element type="xs:int" name="PermitNumber"/>
+                <xs:element type="xs:string" name="PermitIssuingPOCity"/>
+                <xs:element type="xs:string" name="PermitIssuingPOState"/>
+                <xs:element type="xs:short" name="PermitIssuingPOZip5"/>
+                <xs:element type="xs:string" name="PDUFirmName"/>
+                <xs:element type="xs:string" name="PDUPOBox"/>
+                <xs:element type="xs:string" name="PDUCity"/>
+                <xs:element type="xs:string" name="PDUState"/>
+                <xs:element type="xs:short" name="PDUZip5"/>
+                <xs:element type="xs:short" name="PDUZip4"/>
+                <xs:element type="xs:string" name="ServiceType"/>
+                <xs:element type="xs:string" name="DeliveryConfirmation"/>
+                <xs:element type="xs:string" name="InsuranceValue"/>
+                <xs:element type="xs:string" name="MailingAckPackageID"/>
+                <xs:element type="xs:byte" name="WeightInPounds"/>
+                <xs:element type="xs:byte" name="WeightInOunces"/>
+                <xs:element type="xs:string" name="RMA"/>
+                <xs:element type="xs:string" name="RMAPICFlag"/>
+                <xs:element type="xs:string" name="ImageType"/>
+                <xs:element type="xs:string" name="RMABarcode"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,4 +1,3 @@
-
 from karrio.core.metadata import Metadata
 
 from karrio.mappers.mydhl.mapper import Mapper
@@ -15,5 +14,6 @@ METADATA = Metadata(
     Proxy=Proxy,
     Settings=Settings,
     # Data Units
-    is_hub=False
+    is_hub=False,
+    has_intl_accounts=True,
 )

@@ -1,7 +1,6 @@
 import attr
 import enum
 import typing
-import karrio.lib as lib
 
 BaseStrEnum = getattr(enum, "StrEnum", enum.Flag)
 
@@ -79,7 +78,7 @@ class EnumWrapper:
 @attr.s(auto_attribs=True)
 class OptionEnum:
     code: str
-    type: typing.Callable = str
+    type: typing.Union[typing.Callable, MetaEnum] = str
     state: typing.Any = None
 
     def __getitem__(self, type: typing.Callable = None) -> "OptionEnum":
@@ -91,6 +90,17 @@ class OptionEnum:
         # if type is bool we have an option defined as Flag.
         if self.type is bool:
             state = value is not False
+
+        elif "enum" in str(self.type):
+            state = (
+                (
+                    self.type.map(value).name_or_key  # type: ignore
+                    if hasattr(value, "map")
+                    else self.type[value].name  # type: ignore
+                )
+                if any(value or "")
+                else None
+            )
 
         else:
             state = self.type(value) if value is not None else None

@@ -12,7 +12,8 @@ import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.types as types
 import karrio.server.graph.utils as utils
 
-extra_types = [*types.CarrierSettings.values()]
+# extra_types = [*types.CarrierSettings.values()]
+extra_types = []
 
 
 @strawberry.type
@@ -27,7 +28,7 @@ class Query:
     )
 
     user_connections: typing.List[types.CarrierConnectionType] = strawberry.field(
-        resolver=types.ConnectionType.resolve_list_legacy
+        resolver=types.CarrierConnectionType.resolve_list_legacy
     )
     system_connections: typing.List[types.SystemConnectionType] = strawberry.field(
         resolver=types.SystemConnectionType.resolve_list
@@ -89,10 +90,10 @@ class Query:
     )
 
     carrier_connection: typing.Optional[types.CarrierConnectionType] = strawberry.field(
-        resolver=types.ConnectionType.resolve
+        resolver=types.CarrierConnectionType.resolve
     )
     carrier_connections: utils.Connection[types.CarrierConnectionType] = (
-        strawberry.field(resolver=types.ConnectionType.resolve_list)
+        strawberry.field(resolver=types.CarrierConnectionType.resolve_list)
     )
 
 

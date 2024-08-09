@@ -36,21 +36,40 @@ Serializer = serializers.Serializer
 HTTP_STATUS = [getattr(drf.status, a) for a in dir(drf.status) if "HTTP" in a]
 SHIPMENT_STATUS = [(c.name, c.name) for c in list(ShipmentStatus)]
 TRACKER_STATUS = [(c.name, c.name) for c in list(TrackerStatus)]
-CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)]
 INCOTERMS = [(c.name, c.name) for c in list(units.Incoterm)]
-CARRIERS = [(k, k) for k in sorted(providers.MODELS.keys())]
+CARRIERS = [(k, k) for k in dataunits.CARRIER_NAMES]
 COUNTRIES = [(c.name, c.name) for c in list(units.Country)]
 CURRENCIES = [(c.name, c.name) for c in list(units.Currency)]
 WEIGHT_UNIT = [(c.name, c.name) for c in list(units.WeightUnit)]
+PAYMENT_TYPES = [(c.name, c.name) for c in list(units.PaymentType)]
 DIMENSION_UNIT = [(c.name, c.name) for c in list(units.DimensionUnit)]
 PACKAGING_UNIT = [(c.name, c.name) for c in list(units.PackagingUnit)]
-PAYMENT_TYPES = [(c.name, c.name) for c in list(units.PaymentType)]
+CUSTOMS_CONTENT_TYPE = [(c.name, c.name) for c in list(units.CustomsContentType)]
 UPLOAD_DOCUMENT_TYPE = [(c.name, c.name) for c in list(units.UploadDocumentType)]
 LABEL_TYPES = [(c.name, c.name) for c in list(units.LabelType)]
-LABEL_TEMPLATE_TYPES = [
-    ("SVG", "SVG"),
-    ("ZPL", "ZPL"),
-]
+LABEL_TEMPLATE_TYPES = [("SVG", "SVG"), ("ZPL", "ZPL")]
+
+
+class CarrierDetails(serializers.Serializer):
+    carrier_name = serializers.ChoiceField(
+        choices=CARRIERS,
+        help_text="Indicates a carrier (type)",
+    )
+    display_name = serializers.CharField(
+        help_text="The carrier verbose name.",
+    )
+    capabilities = serializers.StringListField(
+        default=[],
+        help_text="""The carrier supported and enabled capabilities.""",
+    )
+    connection_fields = serializers.PlainDictField(
+        default={},
+        help_text="The carrier connection fields.",
+    )
+    config_fields = serializers.PlainDictField(
+        default={},
+        help_text="The carrier connection config.",
+    )
 
 
 class CarrierSettings(serializers.Serializer):

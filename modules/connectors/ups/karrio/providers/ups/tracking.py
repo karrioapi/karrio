@@ -79,7 +79,7 @@ def _extract_details(
                         join=True,
                         separator=", ",
                     )
-                    if a.location
+                    if a.location and a.location.address
                     else None
                 ),
                 time=lib.flocaltime(a.time, "%H%M%S"),

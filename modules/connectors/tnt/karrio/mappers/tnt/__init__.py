@@ -19,4 +19,5 @@ METADATA = Metadata(
     packaging_types=units.PackageType,
     package_presets=units.PackagePresets,
     connection_configs=units.ConnectionConfig,
+    has_intl_accounts=True,
 )

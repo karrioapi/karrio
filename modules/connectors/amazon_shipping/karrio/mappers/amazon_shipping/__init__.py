@@ -15,4 +15,5 @@ METADATA = Metadata(
     Settings=Settings,
     # Data Units
     services=units.Service,
+    has_intl_accounts=True,
 )

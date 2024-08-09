@@ -16,9 +16,16 @@ class RatingMixinProxy:
     tracer: utils.Tracer = attr.field(factory=utils.Tracer)
 
     def trace(self, *args, **kwargs):
-        return self.tracer.with_metadata(dict(connection=self.settings))(
-            *args, **kwargs
-        )
+        return self.tracer.with_metadata(
+            dict(
+                connection=dict(
+                    id=self.settings.id,
+                    test_mode=self.settings.test_mode,
+                    carrier_id=self.settings.carrier_id,
+                    carrier_name=self.settings.carrier_name,
+                )
+            )
+        )(*args, **kwargs)
 
     def get_rates(
         self, request: utils.Serializable

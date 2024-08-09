@@ -115,6 +115,81 @@ class CarrierFilters(filters.FilterSet):
         )
 
 
+class CarrierConnectionFilter(filters.FilterSet):
+    carrier_name = filters.CharFilter(
+        help_text=f"""
+        carrier_name used to fulfill the shipment
+        Values: {', '.join([f"`{c}`" for c in dataunits.CARRIER_NAMES])}
+        """,
+    )
+    active = filters.BooleanFilter(
+        help_text="This flag indicates whether to return active carriers only",
+    )
+    system_only = filters.BooleanFilter(
+        help_text="This flag indicates that only system carriers should be returned",
+    )
+    metadata_key = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_key_filter",
+        help_text="connection metadata keys.",
+    )
+    metadata_value = filters.CharFilter(
+        field_name="metadata",
+        method="metadata_value_filter",
+        help_text="connection metadata value.",
+    )
+
+    parameters = [
+        openapi.OpenApiParameter(
+            "carrier_name",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+            description=(
+                "The unique carrier slug. <br/>"
+                f"Values: {', '.join([f'`{c}`' for c in dataunits.CARRIER_NAMES])}"
+            ),
+        ),
+        openapi.OpenApiParameter(
+            "active",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "system_only",
+            type=openapi.OpenApiTypes.BOOL,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_key",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+        openapi.OpenApiParameter(
+            "metadata_value",
+            type=openapi.OpenApiTypes.STR,
+            location=openapi.OpenApiParameter.QUERY,
+        ),
+    ]
+
+    class Meta:
+        import karrio.server.providers.models as providers
+
+        model = providers.Carrier
+        fields: typing.List[str] = []
+
+    def metadata_key_filter(self, queryset, name, value):
+        return queryset.filter(metadata__has_key=value)
+
+    def metadata_value_filter(self, queryset, name, value):
+        return queryset.filter(
+            id__in=[
+                o["id"]
+                for o in queryset.values("id", "metadata")
+                if value in (o.get("metadata") or {}).values()
+            ]
+        )
+
+
 class ShipmentFilters(filters.FilterSet):
     keyword = filters.CharFilter(
         method="keyword_filter",

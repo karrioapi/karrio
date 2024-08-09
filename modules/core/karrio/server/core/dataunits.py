@@ -25,7 +25,8 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
-CARRIER_NAMES = list(sorted(providers.MODELS.keys()))
+# CARRIER_NAMES = list(sorted(providers.MODELS.keys()))
+CARRIER_NAMES = list(sorted(REFERENCE_MODELS["carriers"].keys()))
 CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
 NON_HUBS_CARRIERS = [
     carrier_name for carrier_name in CARRIER_NAMES if carrier_name not in CARRIER_HUBS

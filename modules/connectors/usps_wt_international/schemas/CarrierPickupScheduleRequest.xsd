@@ -1,0 +1,34 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="CarrierPickupScheduleRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="FirstName" use="required"/>
+                <xs:element type="xs:string" name="LastName" use="required"/>
+                <xs:element type="xs:string" name="FirmName" />
+                <xs:element type="xs:string" name="SuiteOrApt" />
+                <xs:element type="xs:string" name="Address2" use="required"/>
+                <xs:element type="xs:string" name="Urbanization" />
+                <xs:element type="xs:string" name="City" use="required"/>
+                <xs:element type="xs:string" name="State" use="required" />
+                <xs:element type="xs:string" name="ZIP5" use="required" />
+                <xs:element type="xs:string" name="ZIP4" />
+                <xs:element type="xs:string" name="Phone" use="required" />
+                <xs:element type="xs:string" name="Extension" />
+                <xs:element name="Package" maxOccurs="unbounded" use="required">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="ServiceType" use="required" />
+                            <xs:element type="xs:integer" name="Count" use="required" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="EstimatedWeight" use="required" />
+                <xs:element type="xs:string" name="PackageLocation" use="required" />
+                <xs:element type="xs:string" name="SpecialInstructions" />
+                <xs:element type="xs:string" name="EmailAddress" />
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required" />
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

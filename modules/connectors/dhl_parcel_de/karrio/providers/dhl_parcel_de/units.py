@@ -76,11 +76,13 @@ class LabelType(lib.Enum):
 
 class ConnectionConfig(lib.Enum):
     profile = lib.OptionEnum("profile")
-    language = lib.OptionEnum("language")
     cost_center = lib.OptionEnum("cost_center")
     creation_software = lib.OptionEnum("creation_software")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    language = lib.OptionEnum(
+        "language", lib.units.create_enum("Language", ["de", "en"])
+    )
 
 
 class ShippingService(lib.Enum):

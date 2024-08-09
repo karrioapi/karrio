@@ -1,0 +1,33 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="eVSGXGGetLabelResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:float" name="Postage"/>
+                <xs:element name="CommodityGuarantee">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="CommodityType"/>
+                            <xs:element type="xs:string" name="GuaranteeDate"/>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="Insurance"/>
+                <xs:element type="xs:string" name="USPSBarcodeNumber"/>
+                <xs:element type="xs:string" name="FedExBarcodeNumber"/>
+                <xs:element type="xs:string" name="LabelImage"/>
+                <xs:element type="xs:string" name="LabelImagePage2"/>
+                <xs:element type="xs:string" name="LabelImagePage3"/>
+                <xs:element type="xs:string" name="LabelImagePage4"/>
+                <xs:element type="xs:string" name="CIImage"/>
+                <xs:element type="xs:string" name="CIImagePage2"/>
+                <xs:element type="xs:string" name="CIImagePage3"/>
+                <xs:element type="xs:string" name="CIImagePage4"/>
+                <xs:element type="xs:float" name="InsuranceFee"/>
+                <xs:element type="xs:float" name="DimensionalWeight"/>
+                <xs:element type="xs:string" name="LogMessage"/>
+                <xs:element type="xs:short" name="RemainingBarcodes"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

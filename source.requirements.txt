@@ -98,6 +98,8 @@ karrio.tnt @ file://${PWD}/modules/connectors/tnt
 karrio.ups @ file://${PWD}/modules/connectors/ups
 karrio.usps @ file://${PWD}/modules/connectors/usps
 karrio.usps-international @ file://${PWD}/modules/connectors/usps_international
+karrio.usps-wt @ file://${PWD}/modules/connectors/usps_wt
+karrio.usps-wt-international @ file://${PWD}/modules/connectors/usps_wt_international
 karrio.zoom2u @ file://${PWD}/modules/connectors/zoom2u
 lxml==4.9.4
 lxml-stubs==0.5.1

@@ -1,0 +1,35 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="CarrierPickupCancelResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="FirstName" />
+                <xs:element type="xs:string" name="LastName" />
+                <xs:element type="xs:string" name="FirmName" />
+                <xs:element type="xs:string" name="SuiteOrApt" />
+                <xs:element type="xs:string" name="Address2" />
+                <xs:element type="xs:string" name="Urbanization" />
+                <xs:element type="xs:string" name="City" />
+                <xs:element type="xs:string" name="State" />
+                <xs:element type="xs:string" name="ZIP5" />
+                <xs:element type="xs:string" name="ZIP4" />
+                <xs:element type="xs:string" name="Phone" />
+                <xs:element type="xs:string" name="Extension" />
+                <xs:element name="Package" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="ServiceType" />
+                            <xs:element type="xs:integer" name="Count" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="EstimatedWeight" />
+                <xs:element type="xs:string" name="PackageLocation" />
+                <xs:element type="xs:string" name="SpecialInstructions" />
+                <xs:element type="xs:string" name="ConfirmationNumber" />
+                <xs:element type="xs:string" name="DayOfWeek" />
+                <xs:element type="xs:string" name="Date" />
+                <xs:element type="xs:string" name="CarrierRoute" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

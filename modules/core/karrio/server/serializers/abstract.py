@@ -438,3 +438,70 @@ def get_query_flag(
         return _value
 
     return False
+
+
+def field_to_serializer(args: dict):
+    [type, name, required, default, enum] = [
+        args.get("type"),
+        args.get("name"),
+        args.get("required"),
+        args.get("default"),
+        args.get("enum"),
+    ]
+
+    if enum:
+        return serializers.ChoiceField(
+            choices=enum,
+            required=required,
+            help_text=f"Indicates a {name} {type}",
+        )
+    if type == "string":
+        return serializers.CharField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "integer":
+        return serializers.IntegerField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "boolean":
+        return serializers.BooleanField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "float":
+        return serializers.FloatField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "datetime":
+        return serializers.DateTimeField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "date":
+        return serializers.DateField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "decimal":
+        return serializers.DecimalField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "uuid":
+        return serializers.UUIDField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "email":
+        return serializers.EmailField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )
+    if type == "url":
+        return serializers.URLField(
+            required=required,
+            **(dict(default=default) if not required else {}),
+        )

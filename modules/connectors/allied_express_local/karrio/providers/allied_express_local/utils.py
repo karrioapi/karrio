@@ -4,6 +4,11 @@ import typing
 import karrio.lib as lib
 import karrio.core as core
 
+AlliedServiceType = lib.units.create_enum(
+    "AlliedServiceType",
+    ["R", "P", "PT", "PT2"],
+)
+
 
 class Settings(core.Settings):
     """Allied Express Local connection settings."""
@@ -11,8 +16,7 @@ class Settings(core.Settings):
     username: str
     password: str
     account: str = None
-    service_type: str = "R"
-
+    service_type: AlliedServiceType = AlliedServiceType.R  # type: ignore
     account_country_code: str = "AU"
 
     @property
@@ -32,12 +36,17 @@ class Settings(core.Settings):
 
     @property
     def connection_config(self) -> lib.units.Options:
-        from karrio.providers.allied_express_local.units import ConnectionConfig
-
         return lib.to_connection_config(
             self.config or {},
             option_type=ConnectionConfig,
         )
+
+
+class ConnectionConfig(lib.Enum):
+    account_service_type = lib.OptionEnum("account_service_type", AlliedServiceType)
+    server_url = lib.OptionEnum("server_url")
+    text_color = lib.OptionEnum("text_color")
+    brand_color = lib.OptionEnum("brand_color")
 
 
 @attr.s(auto_attribs=True)

@@ -1,6 +1,5 @@
 import functools
 import django.db.models as models
-
 import karrio.server.core.models as core
 
 

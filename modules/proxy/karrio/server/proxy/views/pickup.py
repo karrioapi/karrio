@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.request import Request
 
 import karrio.server.openapi as openapi
-import karrio.server.serializers as serializers
+import karrio.server.core.utils as utils
 import karrio.server.providers.models as providers
 from karrio.server.proxy.router import router
 from karrio.server.core.gateway import Pickups

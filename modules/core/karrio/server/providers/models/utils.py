@@ -56,14 +56,3 @@ def has_rate_sheet(carrier_name: str):
         return model
 
     return decorator
-
-
-def has_auth_cache(model: models.Model):
-    # Add a cache property to the model
-    setattr(
-        model,
-        "cache",
-        property(lambda self: lib.Cache(cache=caching.cache)),
-    )
-
-    return model

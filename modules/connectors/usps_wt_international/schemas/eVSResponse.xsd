@@ -1,0 +1,53 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="eVSResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="BarcodeNumber" />
+                <xs:element type="xs:string" name="LabelImage">
+                    <xs:annotation>
+                        <xs:documentation>over 115000 suppressed</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+                <xs:element type="xs:string" name="ToName" />
+                <xs:element type="xs:string" name="ToFirm" />
+                <xs:element type="xs:string" name="ToAddress1" />
+                <xs:element type="xs:string" name="ToAddress2" />
+                <xs:element type="xs:string" name="ToCity" />
+                <xs:element type="xs:string" name="ToState" />
+                <xs:element type="xs:short" name="ToZip5" />
+                <xs:element type="xs:short" name="ToZip4" />
+                <xs:element type="xs:long" name="Postnet" />
+                <xs:element type="xs:string" name="RDC" />
+                <xs:element type="xs:float" name="Postage" />
+                <xs:element name="ExtraServices">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ExtraService" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:short" name="ServiceID" />
+                                        <xs:element type="xs:string" name="ServiceName" />
+                                        <xs:element type="xs:float" name="Price" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="Zone" />
+                <xs:element type="xs:string" name="CarrierRoute" />
+                <xs:element type="xs:string" name="PermitHolderName" />
+                <xs:element type="xs:string" name="InductionType" />
+                <xs:element type="xs:string" name="LogMessage" />
+                <xs:element name="Commitment">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="CommitmentName" />
+                            <xs:element type="xs:string" name="ScheduledDeliveryDate" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -239,7 +239,7 @@ class PaymentType(utils.StrEnum):
 
 
 class ConnectionConfig(utils.Enum):
-    label_type = utils.OptionEnum("label_type")
+    label_type = utils.OptionEnum("label_type", LabelType)
     smart_post_hub_id = utils.OptionEnum("smart_post_hub_id")
     shipping_options = utils.OptionEnum("shipping_options", list)
     shipping_services = utils.OptionEnum("shipping_services", list)

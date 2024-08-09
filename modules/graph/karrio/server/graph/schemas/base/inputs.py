@@ -491,111 +491,26 @@ class RateSheetFilter(utils.Paginated):
     keyword: typing.Optional[str] = strawberry.UNSET
 
 
-def carrier_settings_inputs(is_update: bool = False) -> typing.Dict[str, typing.Type]:
-    def carrier_settings_input(name: str, model):
-        _name = f"{'Update' if is_update else ''}{model.__name__}Input"
-        _RawSettings = pydoc.locate(f"karrio.mappers.{name}.Settings")
-        _excluded = [
-            "services",
-            "id",
-            # "cache",
-            "test_mode",
-            "rate_sheet",
-            "sscc_count",
-            "shipment_count",
-        ]
-        _optionals = ["account_country_code", "label_template"]
-        _template_type: typing.Any = "LabelTemplateInput"
-        _service_type: typing.Any = typing.List[  # type: ignore
-            "UpdateServiceLevelInput" if is_update else "CreateServiceLevelInput"
-        ]
-
-        @strawberry.input
-        class _CarrierInput(utils.BaseInput):
-            if is_update:
-                id: str
-
-            if hasattr(model, "account_country_code"):
-                account_country_code: typing.Optional[str] = strawberry.UNSET
-
-            if hasattr(model, "label_template"):
-                label_template: typing.Optional[_template_type] = strawberry.UNSET
-
-            if hasattr(model, "services"):
-                services: typing.Optional[_service_type] = strawberry.UNSET
-
-            active: typing.Optional[bool] = True
-            config: typing.Optional[utils.JSON] = strawberry.UNSET
-            metadata: typing.Optional[utils.JSON] = strawberry.UNSET
-
-        annotations = {
-            **getattr(_RawSettings, "__annotations__", {}),
-            **getattr(_CarrierInput, "__annotations__", {}),
-        }
-
-        return strawberry.input(
-            type(
-                _name,
-                (_CarrierInput,),
-                {
-                    **{
-                        k: strawberry.UNSET
-                        for k, _ in getattr(_RawSettings, "__annotations__", {}).items()
-                        if hasattr(model, k)
-                    },
-                    "__annotations__": {
-                        k: (
-                            typing.Optional[v]
-                            if (
-                                is_update
-                                or k in _optionals
-                                or serializers.is_field_optional(model, k)
-                            )
-                            else v
-                        )
-                        for k, v in annotations.items()
-                        if k not in _excluded and hasattr(model, k)
-                    },
-                },
-            )
-        )
-
-    return {
-        name: carrier_settings_input(name, model)
-        for name, model in providers.MODELS.items()
-    }
+@strawberry.input
+class CreateCarrierConnectionMutationInput(utils.BaseInput):
+    carrier_name: utils.CarrierNameEnum
+    carrier_id: str
+    credentials: utils.JSON
+    active: typing.Optional[bool] = True
+    config: typing.Optional[utils.JSON] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    capabilities: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
-CreateCarrierInputs = carrier_settings_inputs()
-UpdateCarrierInputs = carrier_settings_inputs(is_update=True)
-
-
-CreateCarrierConnectionMutationInput = strawberry.input(
-    type(
-        "CreateCarrierConnectionMutationInput",
-        (utils.BaseInput,),
-        {
-            **{name: strawberry.UNSET for name in CreateCarrierInputs.keys()},
-            "__annotations__": {
-                name: typing.Optional[type]
-                for name, type in CreateCarrierInputs.items()
-            },
-        },
-    )
-)
-UpdateCarrierConnectionMutationInput = strawberry.input(
-    type(
-        "UpdateCarrierConnectionMutationInput",
-        (utils.BaseInput,),
-        {
-            **{name: strawberry.UNSET for name in UpdateCarrierInputs.keys()},
-            "__annotations__": {
-                name: typing.Optional[type]  # type:ignore
-                for name, type in UpdateCarrierInputs.items()
-            },
-        },
-    )
-)
+@strawberry.input
+class UpdateCarrierConnectionMutationInput(utils.BaseInput):
+    id: str
+    active: typing.Optional[bool] = True
+    carrier_id: typing.Optional[str] = strawberry.UNSET
+    credentials: typing.Optional[utils.JSON] = strawberry.UNSET
+    config: typing.Optional[utils.JSON] = strawberry.UNSET
+    metadata: typing.Optional[utils.JSON] = strawberry.UNSET
+    capabilities: typing.Optional[typing.List[str]] = strawberry.UNSET
 
 
 @strawberry.input

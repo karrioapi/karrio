@@ -1,0 +1,25 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+   <xs:element name="AddressValidateRequest">
+      <xs:complexType>
+         <xs:sequence>
+            <xs:element type="xs:string" name="Revision" use="required" />
+            <xs:element name="Address" use="required">
+               <xs:complexType>
+                  <xs:sequence>
+                     <xs:element type="xs:string" name="FirmName" />
+                     <xs:element type="xs:string" name="Address1" />
+                     <xs:element type="xs:string" name="Address2" use="required" />
+                     <xs:element type="xs:string" name="City" />
+                     <xs:element type="xs:string" name="State" />
+                     <xs:element type="xs:string" name="Urbanization" />
+                     <xs:element type="xs:string" name="Zip5" />
+                     <xs:element type="xs:string" name="Zip4" />
+                  </xs:sequence>
+                  <xs:attribute type="xs:string" name="ID" />
+               </xs:complexType>
+            </xs:element>
+         </xs:sequence>
+         <xs:attribute type="xs:string" name="USERID" use="required" />
+      </xs:complexType>
+   </xs:element>
+</xs:schema>

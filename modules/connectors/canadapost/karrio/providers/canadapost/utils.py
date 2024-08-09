@@ -1,6 +1,5 @@
 """Karrio Canada post client settings."""
 
-import karrio.schemas.canadapost.shipment as canadapost
 import base64
 import karrio.lib as lib
 import karrio.core.settings as settings
@@ -77,6 +76,8 @@ def parse_label_references(shipement_response: str) -> dict:
 
 
 def parse_submitted_shipment(shipment_response: str, ctx) -> str:
+    import karrio.schemas.canadapost.shipment as canadapost
+
     shipment = lib.to_object(
         canadapost.ShipmentInfoType, lib.to_element(shipment_response)
     )

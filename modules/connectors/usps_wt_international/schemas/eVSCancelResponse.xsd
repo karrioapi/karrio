@@ -1,0 +1,11 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="eVSCancelResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="BarcodeNumber" />
+                <xs:element type="xs:string" name="Status" />
+                <xs:element type="xs:string" name="Reason" />
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

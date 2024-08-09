@@ -6,8 +6,8 @@ from rest_framework import status
 from django.contrib.auth import get_user_model
 from rest_framework.test import APITestCase as BaseAPITestCase, APIClient
 
-from karrio.server.providers.models import MODELS
 from karrio.server.user.models import Token
+import karrio.server.providers.models as providers
 
 logger = logging.getLogger(__name__)
 
@@ -33,38 +33,54 @@ class GraphTestCase(BaseAPITestCase):
         self.client.credentials(HTTP_AUTHORIZATION="Token " + self.token.key)
 
         # Setup test carrier connections.
-        self.carrier = MODELS["canadapost"].objects.create(
+        self.carrier = providers.Carrier.objects.create(
+            carrier_code="canadapost",
             carrier_id="canadapost",
             test_mode=False,
-            username="6e93d53968881714",
-            customer_number="2004381",
-            contract_id="42708517",
-            password="0bfa9fcb9853d1f51ee57a",
             created_by=self.user,
+            credentials=dict(
+                username="6e93d53968881714",
+                customer_number="2004381",
+                contract_id="42708517",
+                password="0bfa9fcb9853d1f51ee57a",
+            ),
+            capabilities=["pickup", "rating", "tracking", "shipping"],
         )
-        self.ups_carrier = MODELS["ups"].objects.create(
+        self.ups_carrier = providers.Carrier.objects.create(
+            carrier_code="ups",
             carrier_id="ups_package",
             test_mode=False,
-            client_id="test",
-            client_secret="test",
-            account_number="000000",
             created_by=self.user,
+            credentials=dict(
+                client_id="test",
+                client_secret="test",
+                account_number="000000",
+            ),
+            capabilities=["pickup", "rating", "tracking", "shipping"],
         )
-        self.fedex_carrier = MODELS["fedex_ws"].objects.create(
+        self.fedex_carrier = providers.Carrier.objects.create(
+            carrier_code="fedex_ws",
             carrier_id="fedex_express",
             test_mode=False,
-            user_key="test",
-            password="password",
-            meter_number="000000",
-            account_number="000000",
+            credentials=dict(
+                user_key="test",
+                password="password",
+                meter_number="000000",
+                account_number="000000",
+            ),
+            capabilities=["pickup", "rating", "tracking", "shipping"],
             is_system=True,
         )
-        self.dhl_carrier = MODELS["dhl_universal"].objects.create(
+        self.dhl_carrier = providers.Carrier.objects.create(
+            carrier_code="dhl_universal",
             carrier_id="dhl_universal",
             test_mode=False,
-            consumer_key="test",
-            consumer_secret="password",
             is_system=True,
+            credentials=dict(
+                consumer_key="test",
+                consumer_secret="password",
+            ),
+            capabilities=["tracking"],
         )
 
     def query(

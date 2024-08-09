@@ -22,13 +22,6 @@ class PackagingType(lib.StrEnum):
     your_packaging = PACKAGE
 
 
-class ConnectionConfig(lib.Enum):
-    account_service_type = lib.OptionEnum("account_service_type")
-    server_url = lib.OptionEnum("server_url")
-    text_color = lib.OptionEnum("text_color")
-    brand_color = lib.OptionEnum("brand_color")
-
-
 class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 

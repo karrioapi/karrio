@@ -1,0 +1,85 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="RateV4Response">
+        <xs:complexType mixed="true">
+            <xs:sequence>
+                <xs:element name="Package" maxOccurs="25" minOccurs="0">
+                    <xs:complexType mixed="true">
+                        <xs:sequence>
+                            <xs:element name="Error" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:int" name="Number"/>
+                                        <xs:element type="xs:string" name="Source"/>
+                                        <xs:element type="xs:string" name="Description"/>
+                                        <xs:element type="xs:string" name="HelpFile"/>
+                                        <xs:element type="xs:int" name="HelpContext"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element type="xs:string" name="ZipOrigination" minOccurs="0"/>
+                            <xs:element type="xs:string" name="ZipDestination" minOccurs="0"/>
+                            <xs:element type="xs:integer" name="Pounds" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Ounces" minOccurs="0"/>
+                            <xs:element type="xs:string" name="FirstClassMailType" minOccurs="0"/>
+                            <xs:element type="xs:string" name="Container" minOccurs="0"/>
+                            <xs:element type="xs:string" name="Size" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Width" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Length" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Height" minOccurs="0"/>
+                            <xs:element type="xs:decimal" name="Girth" minOccurs="0"/>
+                            <xs:element type="xs:string" name="Machinable" minOccurs="0"/>
+                            <xs:element type="xs:byte" name="Zone" minOccurs="0"/>
+                            <xs:element name="Postage" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType mixed="true">
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="MailService"/>
+                                        <xs:element type="xs:float" name="Rate"/>
+                                        <xs:element type="xs:float" name="CommercialRate"/>
+                                        <xs:element type="xs:float" name="CommercialPlusRate"/>
+                                        <xs:element type="xs:string" name="CommitmentDate" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="CommitmentName" minOccurs="0"/>
+                                        <xs:element type="xs:string" name="MaxDimensions"/>
+                                        <xs:element type="xs:string" name="ServiceInformation"/>
+                                        <xs:element name="SpecialServices" minOccurs="0">
+                                            <xs:complexType mixed="true">
+                                                <xs:sequence>
+                                                    <xs:element name="SpecialService" maxOccurs="unbounded" minOccurs="0">
+                                                        <xs:complexType>
+                                                            <xs:sequence>
+                                                                <xs:element type="xs:short" name="ServiceID"/>
+                                                                <xs:element type="xs:string" name="ServiceName"/>
+                                                                <xs:element type="xs:boolean" name="Available"/>
+                                                                <xs:element type="xs:boolean" name="AvailableOnline"/>
+                                                                <xs:element type="xs:boolean" name="AvailableCPP"/>
+                                                                <xs:element type="xs:float" name="Price"/>
+                                                                <xs:element type="xs:float" name="PriceOnline"/>
+                                                                <xs:element type="xs:float" name="PriceCPP"/>
+                                                                <xs:element type="xs:boolean" name="DeclaredValueRequired" minOccurs="0"/>
+                                                                <xs:element type="xs:boolean" name="DueSenderRequired" minOccurs="0"/>
+                                                            </xs:sequence>
+                                                        </xs:complexType>
+                                                    </xs:element>
+                                                </xs:sequence>
+                                            </xs:complexType>
+                                        </xs:element>
+                                        <xs:element type="xs:string" name="Zone"/>
+                                    </xs:sequence>
+                                    <xs:attribute type="xs:byte" name="CLASSID" use="optional"/>
+                                </xs:complexType>
+                            </xs:element>
+                            <xs:element name="Restriction" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="Restrictions"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                        <xs:attribute type="xs:string" name="ID" use="optional"/>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

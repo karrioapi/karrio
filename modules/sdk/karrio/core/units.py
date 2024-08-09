@@ -1531,7 +1531,7 @@ class TrackingStatus(utils.Enum):
     ready_for_pickup = ["ready_for_pickup"]
 
 
-def create_enum(name, values):
+def create_enum(name, values) -> utils.Enum:
     return utils.Enum(name, values)  # type: ignore
 
 
