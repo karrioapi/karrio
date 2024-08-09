@@ -94,6 +94,7 @@ ParsedTrackingResponse = [
                 "shipment_destination_country": "US",
                 "shipment_origin_country": "US",
                 "shipment_service": "FedEx Freight Economy.",
+                "signed_by": "Reciever",
             },
             "status": "in_transit",
             "tracking_number": "123456789012",

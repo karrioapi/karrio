@@ -112,6 +112,9 @@ def _extract_details(
             shipment_origin_country=lib.failsafe(
                 lambda: detail.originLocation.locationContactAndAddress.address.countryCode
             ),
+            signed_by=lib.failsafe(
+                lambda: detail.deliveryDetails.signedByName
+            ),
         ),
         images=lib.identity(models.Images(signature_image=img) if img else None),
         estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
