@@ -7,7 +7,6 @@ import {
   useCarrierConnections,
 } from "@karrio/hooks/user-connection";
 import { LabelTemplateEditModalProvider } from "@karrio/ui/modals/label-template-edit-modal";
-import { RateSheetEditModalProvider } from "@karrio/ui/modals/rate-sheet-edit-modal";
 import { UserConnectionList } from "@karrio/ui/forms/user-carrier-list";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
 import { AuthenticatedPage } from "@/layouts/authenticated-page";
@@ -27,12 +26,9 @@ const ContextProviders = bundleContexts([
   ConfirmModal,
   ConnectProviderModal,
   LabelTemplateEditModalProvider,
-  RateSheetEditModalProvider,
 ]);
 
 export default function ConnectionsPage(pageProps: any) {
-  const tabs = ["Your Accounts", "System Accounts", "Rate Sheets"];
-
   const Component: React.FC = () => {
     const router = useRouter();
     const { modal } = router.query;

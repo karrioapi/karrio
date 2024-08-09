@@ -8,12 +8,11 @@ import {
 } from "@karrio/types";
 import { ConnectProviderModalContext } from "../modals/connect-provider-modal";
 import { useLabelTemplateModal } from "../modals/label-template-edit-modal";
-import { useRateSheetModal } from "../modals/rate-sheet-edit-modal";
 import { CarrierNameBadge } from "../components/carrier-name-badge";
 import { ConfirmModalContext } from "../modals/confirm-modal";
 import { CopiableLink } from "../components/copiable-link";
 import React, { useContext, useEffect } from "react";
-import { isNone, isNoneOrEmpty, jsonify } from "@karrio/lib";
+import { isNoneOrEmpty, jsonify } from "@karrio/lib";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { useRouter } from "next/dist/client/router";
 import { Notify } from "../components/notifier";
@@ -30,7 +29,6 @@ export const UserConnectionList: React.FC<UserConnectionListView> = () => {
   const router = useRouter();
   const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
-  const ratesModal = useRateSheetModal();
   const labelModal = useLabelTemplateModal();
   const { setLoading } = useContext(Loading);
   const { confirm: confirmDeletion } = useContext(ConfirmModalContext);
@@ -197,27 +195,6 @@ export const UserConnectionList: React.FC<UserConnectionListView> = () => {
                           >
                             <span className="icon is-small">
                               <i className="fas fa-sticky-note"></i>
-                            </span>
-                          </button>
-                        )}
-                        {!isNone((connection as any).services) && (
-                          <button
-                            title="edit rates"
-                            className="button is-white"
-                            onClick={() =>
-                              ratesModal.editRateSheet({
-                                connection: connection as any,
-                                onSubmit: (services) =>
-                                  update({
-                                    id: connection.id,
-                                    carrier_name: connection.carrier_name,
-                                    services,
-                                  } as any)(),
-                              })
-                            }
-                          >
-                            <span className="icon is-small">
-                              <i className="fas fa-clipboard-list"></i>
                             </span>
                           </button>
                         )}

@@ -1,3 +1,4 @@
+import karrio.lib as lib
 from unittest.mock import ANY
 from karrio.server.graph.tests.base import GraphTestCase
 
@@ -21,7 +22,10 @@ class TestSystemConnections(GraphTestCase):
         response_data = response.data
 
         self.assertResponseNoErrors(response)
-        self.assertDictEqual(response_data, SYSTEM_CONNECTIONS)
+        self.assertDictEqual(
+            lib.to_dict(response_data),
+            SYSTEM_CONNECTIONS,
+        )
 
 
 class TestUserConnections(GraphTestCase):
@@ -44,7 +48,10 @@ class TestUserConnections(GraphTestCase):
         response_data = response.data
 
         self.assertResponseNoErrors(response)
-        self.assertDictEqual(response_data, USER_CONNECTIONS)
+        self.assertDictEqual(
+            lib.to_dict(response_data),
+            USER_CONNECTIONS,
+        )
 
     def test_create_user_connection(self):
         response = self.query(
@@ -93,25 +100,28 @@ class TestUserConnections(GraphTestCase):
         response_data = response.data
 
         self.assertResponseNoErrors(response)
-        self.assertDictEqual(response_data, CONNECTION_UPDATE_RESPONSE)
+        self.assertDictEqual(
+            lib.to_dict(response_data),
+            lib.to_dict(CONNECTION_UPDATE_RESPONSE),
+        )
 
 
 SYSTEM_CONNECTIONS = {
     "data": {
         "system_connections": [
             {
-                "id": ANY,
-                "carrier_id": "fedex_express",
-                "carrier_name": "fedex_ws",
-                "test_mode": False,
                 "active": True,
-            },
-            {
-                "id": ANY,
                 "carrier_id": "dhl_universal",
                 "carrier_name": "dhl_universal",
+                "id": ANY,
                 "test_mode": False,
+            },
+            {
                 "active": True,
+                "carrier_id": "fedex_express",
+                "carrier_name": "fedex_ws",
+                "id": ANY,
+                "test_mode": False,
             },
         ]
     }
@@ -121,29 +131,29 @@ USER_CONNECTIONS = {
     "data": {
         "user_connections": [
             {
-                "id": ANY,
-                "carrier_id": "canadapost",
-                "carrier_name": "canadapost",
-                "test_mode": False,
                 "active": True,
-                "credentials": {
-                    "username": "6e93d53968881714",
-                    "customer_number": "2004381",
-                    "contract_id": "42708517",
-                    "password": "0bfa9fcb9853d1f51ee57a",
-                },
-            },
-            {
-                "id": ANY,
                 "carrier_id": "ups_package",
                 "carrier_name": "ups",
-                "test_mode": False,
-                "active": True,
                 "credentials": {
+                    "account_number": "000000",
                     "client_id": "test",
                     "client_secret": "test",
-                    "account_number": "000000",
                 },
+                "id": ANY,
+                "test_mode": False,
+            },
+            {
+                "active": True,
+                "carrier_id": "canadapost",
+                "carrier_name": "canadapost",
+                "credentials": {
+                    "contract_id": "42708517",
+                    "customer_number": "2004381",
+                    "password": "0bfa9fcb9853d1f51ee57a",
+                    "username": "6e93d53968881714",
+                },
+                "id": ANY,
+                "test_mode": False,
             },
         ]
     }
