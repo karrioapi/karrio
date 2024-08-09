@@ -106,8 +106,14 @@ def _extract_details(
             package_weight=lib.failsafe(
                 lambda: lib.to_decimal(detail.shipmentDetails.weight[0].value)
             ),
+            shipment_destination_postal_code=lib.failsafe(
+                lambda: detail.destinationLocation.locationContactAndAddress.address.postalCode
+            ),
             shipment_destination_country=lib.failsafe(
                 lambda: detail.destinationLocation.locationContactAndAddress.address.countryCode
+            ),
+            shipment_origin_postal_code=lib.failsafe(
+                lambda: detail.originLocation.locationContactAndAddress.address.postalCode
             ),
             shipment_origin_country=lib.failsafe(
                 lambda: detail.originLocation.locationContactAndAddress.address.countryCode
