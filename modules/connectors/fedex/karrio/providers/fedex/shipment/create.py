@@ -173,7 +173,7 @@ def shipment_request(
                 address=fedex.AddressType(
                     streetLines=shipper.address_lines,
                     city=shipper.city,
-                    stateOrProvinceCode=shipper.state_code,
+                    stateOrProvinceCode="PQ" if shipper.state_code.lower() == "qc" else shipper.state_code,
                     postalCode=shipper.postal_code,
                     countryCode=shipper.country_code,
                     residential=shipper.residential,
@@ -197,7 +197,7 @@ def shipment_request(
                     address=fedex.AddressType(
                         streetLines=recipient.address_lines,
                         city=recipient.city,
-                        stateOrProvinceCode=recipient.state_code,
+                        stateOrProvinceCode="PQ" if recipient.state_code.lower() == "qc" else recipient.state_code,
                         postalCode=recipient.postal_code,
                         countryCode=recipient.country_code,
                         residential=recipient.residential,
@@ -236,7 +236,7 @@ def shipment_request(
                     address=fedex.AddressType(
                         streetLines=return_address.address_lines,
                         city=return_address.city,
-                        stateOrProvinceCode=return_address.state_code,
+                        stateOrProvinceCode="PQ" if return_address.state_code.lower() == "qc" else return_address.state_code,
                         postalCode=return_address.postal_code,
                         countryCode=return_address.country_code,
                         residential=return_address.residential,
@@ -264,7 +264,7 @@ def shipment_request(
                                 fedex.AddressType(
                                     streetLines=billing_address.address_lines,
                                     city=billing_address.city,
-                                    stateOrProvinceCode=billing_address.state_code,
+                                    stateOrProvinceCode="PQ" if billing_address.state_code.lower() == "qc" else billing_address.state_code,
                                     postalCode=billing_address.postal_code,
                                     countryCode=billing_address.country_code,
                                     residential=billing_address.residential,
@@ -433,7 +433,7 @@ def shipment_request(
                                     fedex.AddressType(
                                         streetLines=duty_billing_address.address_lines,
                                         city=duty_billing_address.city,
-                                        stateOrProvinceCode=duty_billing_address.state_code,
+                                        stateOrProvinceCode="PQ" if duty_billing_address.state_code.lower() == "qc" else duty_billing_address.state_code,
                                         postalCode=duty_billing_address.postal_code,
                                         countryCode=duty_billing_address.country_code,
                                         residential=duty_billing_address.residential,
