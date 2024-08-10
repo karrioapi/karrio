@@ -1,11 +1,13 @@
 import typing
 import functools
+from django import dispatch
 import django.conf as conf
 import django.forms as forms
 import django.db.models as models
 
 import karrio
 import karrio.lib as lib
+import karrio.references as ref
 import karrio.core.units as units
 import django.core.cache as caching
 import karrio.api.gateway as gateway
@@ -58,6 +60,10 @@ class SystemCarrierManager(models.Manager):
 class Carrier(core.OwnedEntity):
     class Meta:
         ordering = ["test_mode", "-created_at"]
+
+    objects = Manager()
+    user_carriers = CarrierManager()
+    system_carriers = SystemCarrierManager()
 
     id = models.CharField(
         max_length=50,
@@ -125,10 +131,6 @@ class Carrier(core.OwnedEntity):
         blank=True,
         on_delete=models.SET_NULL,
     )
-
-    objects = Manager()
-    user_carriers = CarrierManager()
-    system_carriers = SystemCarrierManager()
 
     def __str__(self):
         return self.carrier_id
@@ -270,3 +272,44 @@ class Carrier(core.OwnedEntity):
             return _config
 
         return queryset.first()
+
+
+def create_carrier_proxy(carrier_name: str, display_name):
+    class _Manager(Manager):
+        def get_queryset(self):
+            return super().get_queryset().filter(carrier_code=carrier_name)
+
+    class _CarrierManager(CarrierManager):
+        def get_queryset(self):
+            return super().get_queryset().filter(carrier_code=carrier_name)
+
+    class _SystemCarrierManager(SystemCarrierManager):
+        def get_queryset(self):
+            return super().get_queryset().filter(carrier_code=carrier_name)
+
+    return type(
+        f"{carrier_name}Connection",
+        (Carrier,),
+        {
+            "Meta": type(
+                "Meta",
+                (),
+                {
+                    "proxy": True,
+                    "__module__": __name__,
+                    "verbose_name": f"{display_name} Connection",
+                    "verbose_name_plural": f"{display_name} Connections",
+                },
+            ),
+            "__module__": __name__,
+            "objects": _Manager(),
+            "user_carriers": _CarrierManager(),
+            "system_carriers": _SystemCarrierManager(),
+        },
+    )
+
+
+CARRIER_PROXIES = {
+    f"{carrier_name}": create_carrier_proxy(carrier_name, display_name)
+    for carrier_name, display_name in ref.collect_references()["carriers"].items()
+}

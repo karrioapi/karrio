@@ -174,7 +174,7 @@ class UpdateConnectionMutation(utils.BaseMutation):
     def mutate(info: Info, **input) -> "UpdateConnectionMutation":
         data = input.copy()
         id = data.get("id")
-        instance = providers.Carrier.access_by(info.context.request).get(id=id)
+        instance = providers.Carrier.objects.get(id=id)
         connection = lib.identity(
             providers_serializers.CarrierConnectionModelSerializer.map(
                 instance,

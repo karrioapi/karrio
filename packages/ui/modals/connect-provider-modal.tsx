@@ -28,6 +28,7 @@ import { CountryInput } from "../forms/country-input";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { Disclosure } from "@headlessui/react";
 import { Loading } from "../components/loader";
+import { CheckBoxField } from "../components";
 
 type CarrierNameType = CarrierNameEnum | NoneEnum;
 type OperationType = {
@@ -366,7 +367,7 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                       )}
 
                       {field.type === "boolean" && (
-                        <label className="checkbox">
+                        <label className="checkbox column is-6 pt-1">
                           <input
                             name={_}
                             type="checkbox"
@@ -475,17 +476,17 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
                                   )}
 
                                   {field.type === "boolean" && (
-                                    <label className="checkbox column is-6 pt-1">
-                                      <input
-                                        name={property}
-                                        type="checkbox"
-                                        checked={payload.config?.[property]}
-                                        onChange={handleNestedChange("config")}
-                                      />
+                                    <CheckBoxField
+                                      fieldClass="column is-6 mb-0"
+                                      labelClass="has-text-weight-bold"
+                                      checked={payload.config?.[property]}
+                                      name={property}
+                                      onChange={handleNestedChange("config")}
+                                    >
                                       <span style={{ fontSize: "0.8em" }}>
                                         {formatRef(field.name).toLowerCase()}
                                       </span>
-                                    </label>
+                                    </CheckBoxField>
                                   )}
                                 </React.Fragment>
                               ))}

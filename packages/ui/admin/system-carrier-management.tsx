@@ -59,7 +59,9 @@ export const SystemCarrierManagement: React.FC<
     }
   };
 
-  React.useEffect(() => setLoading(query.isFetching));
+  React.useEffect(() => {
+    setLoading(query.isFetching);
+  });
   React.useEffect(() => {
     if (query.isFetching && !isNoneOrEmpty(router.query.modal)) {
       const connection = system_connections.find(

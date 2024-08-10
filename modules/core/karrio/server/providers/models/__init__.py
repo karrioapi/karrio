@@ -21,6 +21,7 @@ from karrio.server.providers.models.carrier import (
     WEIGHT_UNITS,
     DIMENSION_UNITS,
     CAPABILITIES_CHOICES,
+    CARRIER_PROXIES,
 )
 import karrio.server.providers.extension.models as extensions
 
