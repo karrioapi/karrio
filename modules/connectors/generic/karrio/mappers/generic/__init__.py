@@ -20,4 +20,5 @@ METADATA = Metadata(
     options=units.Option,
     service_levels=DEFAULT_SERVICES,
     connection_configs=units.ConnectionConfig,
+    has_intl_accounts=True,
 )

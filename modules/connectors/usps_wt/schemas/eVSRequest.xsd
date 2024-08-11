@@ -1,0 +1,177 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" attributeFormDefault="unqualified" elementFormDefault="qualified">
+    <xs:element name="eVSRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:byte" name="Option" />
+                <xs:element type="xs:string" name="Revision" />
+                <xs:element name="ImageParameters">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="ImageParameter" />
+                            <xs:element type="xs:integer" name="XCoordinate" />
+                            <xs:element type="xs:integer" name="YCoordinate" />
+                            <xs:element minOccurs="0" maxOccurs="1" name="LabelSequence">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element minInclusive="1" maxInclusive="999" type="xs:integer" name="PackageNumber" />
+                                        <xs:element minInclusive="1" maxInclusive="999" type="xs:integer" name="TotalPackages" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="FromName" minLength="0" maxLength="100" />
+                <xs:element type="xs:string" name="FromFirm" minLength="0" maxLength="50" />
+                <xs:element type="xs:string" name="FromAddress1" minLength="1" maxLength="50" />
+                <xs:element type="xs:string" name="FromAddress2" minLength="1" maxLength="50" />
+                <xs:element type="xs:string" name="FromCity" minLength="1" maxLength="28" />
+                <xs:element type="xs:string" name="FromState" minLength="2" maxLength="2" />
+                <xs:element type="xs:string" name="FromZip5" />
+                <xs:element type="xs:string" name="FromZip4" />
+                <xs:element type="xs:string" name="FromPhone" />
+                <xs:element type="xs:string" name="POZipCode" />
+                <xs:element type="xs:boolean" name="AllowNonCleansedOriginAddr" />
+                <xs:element type="xs:string" name="ToName" minLength="0" maxLength="100" />
+                <xs:element type="xs:string" name="ToFirm" />
+                <xs:element type="xs:string" name="ToAddress1" />
+                <xs:element type="xs:string" name="ToAddress2" />
+                <xs:element type="xs:string" name="ToCity" />
+                <xs:element type="xs:string" name="ToState" />
+                <xs:element type="xs:string" name="ToZip5" />
+                <xs:element type="xs:string" name="ToZip4" />
+                <xs:element type="xs:string" name="ToPhone" />
+                <xs:element type="xs:string" name="POBox" />
+                <xs:element type="xs:string" name="ToContactPreference" />
+                <xs:element type="xs:string" name="ToContactMessaging" />
+                <xs:element type="xs:string" name="ToContactEmail" />
+                <xs:element type="xs:boolean" name="AllowNonCleansedDestAddr" />
+                <xs:element type="xs:string" name="WeightInOunces" />
+                <xs:element type="xs:string" name="ServiceType" />
+                <xs:element type="xs:string" name="Container" />
+                <xs:element type="xs:decimal" name="Width" />
+                <xs:element type="xs:decimal" name="Length" />
+                <xs:element type="xs:decimal" name="Height" />
+                <xs:element type="xs:decimal" name="Girth" />
+                <xs:element type="xs:string" name="Machinable" />
+                <xs:element type="xs:string" name="ProcessingCategory" />
+                <xs:element type="xs:string" name="PriceOptions" />
+                <xs:element type="xs:decimal" name="InsuredAmount" />
+                <xs:element type="xs:boolean" name="AddressServiceRequested" />
+                <xs:element name="ExpressMailOptions">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="DeliveryOption" />
+                            <xs:element type="xs:boolean" name="WaiverOfSignature" />
+                            <xs:element type="xs:boolean" name="eSOFAllowed" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element name="ShipDate">
+                    <xs:simpleType>
+                        <xs:restriction base="xs:string">
+                            <xs:pattern value="\d{1,2}/ \d{1,2}/ \d\d(\d\d)?"/>
+                        </xs:restriction>
+                    </xs:simpleType>
+                </xs:element>
+                <xs:element type="xs:string" name="CustomerRefNo" />
+                <xs:element type="xs:string" name="CustomerRefNo2" />
+                <xs:element name="ExtraServices">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="ExtraService" maxOccurs="unbounded" minOccurs="0" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="HoldForPickup" />
+                <xs:element type="xs:string" name="OpenDistribute" />
+                <xs:element type="xs:string" name="PermitNumber" />
+                <xs:element type="xs:string" name="PermitZIPCode" />
+                <xs:element type="xs:string" name="PermitHolderName" />
+                <xs:element type="xs:string" name="CRID" />
+                <xs:element type="xs:string" name="MID" />
+                <xs:element type="xs:string" name="LogisticsManagerMID" />
+                <xs:element type="xs:string" name="VendorCode" />
+                <xs:element type="xs:string" name="VendorProductVersionNumber" />
+                <xs:element type="xs:string" name="SenderName" />
+                <xs:element type="xs:string" name="SenderEMail" />
+                <xs:element type="xs:string" name="RecipientName" />
+                <xs:element type="xs:string" name="RecipientEMail" />
+                <xs:element type="xs:string" name="ReceiptOption" />
+                <xs:element type="xs:string" name="ImageType" />
+                <xs:element type="xs:string" name="HoldForManifest" />
+                <xs:element type="xs:boolean" name="NineDigitRoutingZip" />
+                <xs:element type="xs:boolean" name="ShipInfo" />
+                <xs:element type="xs:boolean" name="CarrierRelease" />
+                <xs:element type="xs:boolean" name="DropOffTime" />
+                <xs:element type="xs:boolean" name="ReturnCommitments" />
+                <xs:element type="xs:string" name="PrintCustomerRefNo" />
+                <xs:element name="Content">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="ContentType" />
+                            <xs:element type="xs:string" name="ContentDescription" />
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="ActionCode" />
+                <xs:element type="xs:string" name="OptOutOfSPE" />
+                <xs:element type="xs:string" name="SortationLevel" />
+                <xs:element type="xs:string" name="DestinationEntryFacilityType" />
+                <xs:element name="ShippingContents">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element name="ItemDetail" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:string" name="Description" />
+                                        <xs:element type="xs:short" name="Quantity" />
+                                        <xs:element type="xs:float" name="Value" />
+                                        <xs:element type="xs:string" name="NetPounds" />
+                                        <xs:element type="xs:float" name="NetOunces" />
+                                        <xs:element type="xs:string" name="HSTariffNumber" />
+                                        <xs:element type="xs:string" name="CountryOfOrigin" />
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+                <xs:element type="xs:string" name="CustomsContentType" />
+                <xs:element type="xs:string" name="ContentComments" />
+                <xs:element type="xs:string" name="RestrictionType" />
+                <xs:element type="xs:string" name="RestrictionComments" />
+                <xs:element type="xs:string" name="AESITN" />
+                <xs:element type="xs:string" name="ImportersReference" />
+                <xs:element type="xs:string" name="ImportersContact" />
+                <xs:element type="xs:string" name="ExportersReference" />
+                <xs:element type="xs:string" name="ExportersContact" />
+                <xs:element type="xs:string" name="InvoiceNumber" />
+                <xs:element type="xs:string" name="LicenseNumber" />
+                <xs:element type="xs:string" name="CertificateNumber" />
+                <xs:element type="xs:string" name="NonDeliveryOption" />
+                <xs:element type="xs:string" name="AltReturnAddress1" />
+                <xs:element type="xs:string" name="AltReturnAddress2" />
+                <xs:element type="xs:string" name="AltReturnAddress3" />
+                <xs:element type="xs:string" name="AltReturnAddress4" />
+                <xs:element type="xs:string" name="AltReturnAddress5" />
+                <xs:element type="xs:string" name="AltReturnAddress6" />
+                <xs:element type="xs:string" name="AltReturnCountry" />
+                <xs:element type="xs:string" name="LabelImportType" />
+                <xs:element type="xs:string" name="ePostageMailerReporting" />
+                <xs:element type="xs:string" name="SenderFirstName" />
+                <xs:element type="xs:string" name="SenderLastName" />
+                <xs:element type="xs:string" name="SenderBusinessName" />
+                <xs:element type="xs:string" name="SenderAddress1" />
+                <xs:element type="xs:string" name="SenderCity" />
+                <xs:element type="xs:string" name="SenderState" />
+                <xs:element type="xs:string" name="SenderZip5" />
+                <xs:element type="xs:string" name="SenderPhone" />
+                <xs:element type="xs:string" name="ChargebackCode" />
+                <xs:element type="xs:string" name="TrackingRetentionPeriod" />
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required" />
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

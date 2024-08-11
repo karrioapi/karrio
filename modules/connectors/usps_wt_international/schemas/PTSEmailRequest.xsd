@@ -1,0 +1,21 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="PTSEmailRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:string" name="TrackId" minOccurs="1"/>
+                <xs:element type="xs:string" name="ClientIp" minOccurs="0"/>
+                <xs:element type="xs:integer" name="MpSuffix" minOccurs="1"/>
+                <xs:element type="xs:string" name="MpDate" minOccurs="1"/>
+                <xs:element type="xs:string" name="RequestType" minOccurs="1" maxOccurs="7"/>
+                <xs:element type="xs:string" name="FirstName" minOccurs="0"/>
+                <xs:element type="xs:string" name="LastName" minOccurs="0"/>
+                <xs:element type="xs:string" name="Email1" minOccurs="1"/>
+                <xs:element type="xs:string" name="Email2" minOccurs="0"/>
+                <xs:element type="xs:string" name="Email3" minOccurs="0"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

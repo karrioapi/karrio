@@ -1,0 +1,41 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="ExpressMailCommitmentResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="OriginZIP"/>
+                <xs:element type="xs:string" name="OriginCity"/>
+                <xs:element type="xs:string" name="OriginState"/>
+                <xs:element type="xs:short" name="DestinationZIP"/>
+                <xs:element type="xs:string" name="DestinationCity"/>
+                <xs:element type="xs:string" name="DestinationState"/>
+                <xs:element type="xs:string" name="Date"/>
+                <xs:element type="xs:string" name="Time"/>
+                <xs:element type="xs:date" name="EffectiveAcceptanceDate"/>
+                <xs:element name="Commitment" maxOccurs="unbounded" minOccurs="0">
+                    <xs:complexType>
+                        <xs:sequence>
+                            <xs:element type="xs:string" name="CommitmentName"/>
+                            <xs:element type="xs:string" name="CommitmentTime"/>
+                            <xs:element type="xs:string" name="CommitmentSequence"/>
+                            <xs:element name="Location" maxOccurs="unbounded" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element type="xs:date" name="ScheduledDeliveryDate"/>
+                                        <xs:element type="xs:string" name="CutOff"/>
+                                        <xs:element type="xs:string" name="Facility"/>
+                                        <xs:element type="xs:string" name="Street"/>
+                                        <xs:element type="xs:string" name="City"/>
+                                        <xs:element type="xs:string" name="State"/>
+                                        <xs:element type="xs:int" name="Zip"/>
+                                        <xs:element type="xs:byte" name="IsGuaranteed"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+                        </xs:sequence>
+                    </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

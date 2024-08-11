@@ -22,11 +22,6 @@ class PackagingType(lib.StrEnum):
     your_packaging = PACKAGE
 
 
-class ConnectionConfig(lib.Enum):
-    sub_account = lib.OptionEnum("sub_account")
-    processing_location = lib.OptionEnum("processing_location")
-
-
 class ShippingService(lib.StrEnum):
     """Carrier specific services"""
 

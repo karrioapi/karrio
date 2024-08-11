@@ -30,7 +30,7 @@ class Carriers:
 
         test_mode = list_filter.get("test_mode") or getattr(context, "test_mode", None)
         system_only = list_filter.get("system_only") is True
-        active_key = (
+        active_key = lib.identity(
             "active_orgs__id" if settings.MULTI_ORGANIZATIONS else "active_users__id"
         )
         access_id = getattr(
@@ -38,7 +38,7 @@ class Carriers:
             "id",
             None,
         )
-        creator_filter = (
+        creator_filter = lib.identity(
             Q(
                 created_by__id=context.user.id,
                 **(dict(org=None) if settings.MULTI_ORGANIZATIONS else {}),
@@ -58,7 +58,7 @@ class Carriers:
                 }
             )
         )
-        _queryset = (
+        _queryset = lib.identity(
             _system_carriers if system_only else _user_carriers | _system_carriers
         )
 
@@ -112,31 +112,10 @@ class Carriers:
             ]
 
             if len(carrier_names) > 0:
-                _queries = (
-                    Q(**{f"{carrier_names[0].replace('_', '')}settings__isnull": False})
-                    if carrier_names[0] in providers.MODELS.keys()
-                    else Q(genericsettings__custom_carrier_name=carrier_names[0])
-                )
-                for carrier_name in carrier_names[1:]:
-                    _queries |= (
-                        Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False})
-                        if carrier_name in providers.MODELS.keys()
-                        else Q(genericsettings__custom_carrier_name=carrier_name)
-                    )
-
-                _queryset = _queryset.filter(_queries)
-
+                _queryset = _queryset.filter(carrier_code__in=carrier_names)
         if "carrier_name" in list_filter:
             carrier_name = list_filter["carrier_name"]
-
-            if carrier_name not in providers.MODELS.keys():
-                raise NotFound(
-                    f"No extension installed for the carrier: '{carrier_name}'"
-                )
-
-            _queryset = _queryset.filter(
-                Q(**{f"{carrier_name.replace('_', '')}settings__isnull": False})
-            )
+            _queryset = _queryset.filter(carrier_code=carrier_name)
 
         carriers = _queryset.distinct()
 
@@ -524,7 +503,7 @@ class Pickups:
     ) -> datatypes.ConfirmationResponse:
         carrier = carrier or Carriers.first(
             **{
-                **dict(active=True, capability="pickup", raise_not_found=True),
+                **dict(active=True, capability="pickup"),
                 **carrier_filters,
             }
         )
@@ -537,7 +516,7 @@ class Pickups:
         )
 
         # The request call is wrapped in utils.identity to simplify mocking in tests
-        confirmation, messages = (
+        confirmation, messages = lib.identity(
             utils.identity(lambda: request.from_(carrier.gateway).parse())
             if "cancel_shipment" in carrier.gateway.proxy_methods
             else (

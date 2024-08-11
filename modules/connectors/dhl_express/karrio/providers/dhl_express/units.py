@@ -283,10 +283,10 @@ class PackageType(lib.StrEnum):
 
 
 class ConnectionConfig(lib.Enum):
-    label_type = lib.OptionEnum("label_type")
-    skip_service_filter = lib.OptionEnum("skip_service_filter")
+    label_type = lib.OptionEnum("label_type", LabelType)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    skip_service_filter = lib.OptionEnum("skip_service_filter", bool)
 
 
 class ShippingService(lib.Enum):

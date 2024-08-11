@@ -70,6 +70,8 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                                   })
                                 }
                                 className="is-small is-fullwidth"
+                                fieldClass="mb-0 p-0"
+                                wrapperClass="px-1 py-0"
                                 required
                               />
                             )}
@@ -97,17 +99,18 @@ export const MetadataEditor: React.FC<MetadataEditorProps> = ({
                             )}
                             {isEditing && (
                               <TextAreaField
+                                rows={1}
                                 placeholder="Value"
                                 defaultValue={value}
+                                className="is-small is-fullwidth"
+                                fieldClass="mb-0 p-0"
+                                style={{ minHeight: "30px" }}
                                 onChange={(e: React.ChangeEvent<any>) =>
                                   context.updateItem(uid, {
                                     key,
                                     value: e.target.value,
                                   })
                                 }
-                                className="is-small is-fullwidth py-1"
-                                style={{ minHeight: "30px" }}
-                                rows={1}
                                 required
                               />
                             )}

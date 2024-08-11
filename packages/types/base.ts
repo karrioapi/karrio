@@ -3,7 +3,7 @@ import * as graph from "./graphql/index";
 import * as ee from "./graphql/ee/index";
 
 export {
-  CarrierSettingsCarrierNameEnum,
+  CreateCarrierNameEnum,
   CustomsIncotermEnum,
   WebhookEnabledEventsEnum,
   OrderStatusEnum,
@@ -75,8 +75,7 @@ export type TemplateType = AddressTemplateType &
 export type ServiceLevelType = graph.CreateServiceLevelInput &
   graph.UpdateServiceLevelInput;
 
-export type LabelTemplateType =
-  graph.get_user_connections_user_connections_GenericSettingsType_label_template;
+export type LabelTemplateType = any;
 
 export type DocumentTemplateType =
   graph.get_document_template_document_template;
@@ -159,7 +158,7 @@ export const TRACKER_STATUSES: string[] = Array.from(
 );
 
 export const CARRIER_NAMES: string[] = Array.from(
-  new Set(Object.values(api.CarrierSettingsCarrierNameEnum)),
+  new Set(Object.values(api.CreateCarrierNameEnum)),
 );
 
 export const INCOTERMS: string[] = Array.from(
@@ -329,7 +328,24 @@ export interface References {
   packaging_types: Collection<Collection>;
   carrier_capabilities: Collection<string[]>;
   service_levels: Collection<ServiceLevelType[]>;
-  connection_configs: Collection<Collection<Collection>>;
+  connection_configs: Collection<
+    Collection<{
+      name: string;
+      type: string;
+      required: boolean;
+      default?: any;
+      enum?: string[];
+    }>
+  >;
+  connection_fields: Collection<
+    Collection<{
+      name: string;
+      type: string;
+      required: boolean;
+      default?: any;
+      enum?: string[];
+    }>
+  >;
 }
 
 export type SessionType<T = {}> = T & {
@@ -495,4 +511,3 @@ export const DEFAULT_CUSTOMS_CONTENT: Partial<CustomsType> = {
   content_type: graph.CustomsContentTypeEnum.merchandise,
   options: {},
 };
-

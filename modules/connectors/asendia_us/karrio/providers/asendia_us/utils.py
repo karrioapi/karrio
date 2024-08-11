@@ -27,8 +27,6 @@ class Settings(core.Settings):
 
     @property
     def connection_config(self) -> lib.units.Options:
-        from karrio.providers.asendia_us.units import ConnectionConfig
-
         return lib.to_connection_config(
             self.config or {},
             option_type=ConnectionConfig,
@@ -38,3 +36,8 @@ class Settings(core.Settings):
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
         return base64.b64encode(pair.encode("utf-8")).decode("ascii")
+
+
+class ConnectionConfig(lib.Enum):
+    sub_account = lib.OptionEnum("sub_account")
+    processing_location = lib.OptionEnum("processing_location")

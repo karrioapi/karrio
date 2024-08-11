@@ -2,7 +2,7 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("dpd")
+# @providers.has_rate_sheet("dpd")
 class DPDSettings(providers.Carrier):
     class Meta:
         db_table = "dpd-settings"
