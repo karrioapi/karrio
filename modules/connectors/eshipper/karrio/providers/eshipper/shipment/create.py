@@ -143,7 +143,7 @@ def shipment_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit="Metric" if packages.weight_unit == "kg" else "Imperial",
+        packagingUnit="Metric" if packages.weight_unit.lower() == "kg" else "Imperial",
         packages=eshipper.PackagesType(
             type="Package",
             packages=[
