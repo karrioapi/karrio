@@ -83,5 +83,7 @@ def login(settings: Settings, client_id: str = None, client_secret: str = None):
 
 
 class ConnectionConfig(lib.Enum):
+    mailer_id = lib.OptionEnum("mailer_id")
+    customer_registration_id = lib.OptionEnum("customer_registration_id")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)

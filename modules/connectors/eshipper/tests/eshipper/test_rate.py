@@ -321,7 +321,7 @@ RateRequest = {
         "country": "CA",
     },
     "scheduledShipDate": "2024-07-16 00:00",
-    "packagingUnit": "Imperial",
+    "packagingUnit": "Metric",
     "packages": {
         "type": "Package",
         "packages": [

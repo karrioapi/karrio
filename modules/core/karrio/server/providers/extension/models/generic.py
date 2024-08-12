@@ -3,7 +3,7 @@ import django.core.validators as validators
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("generic")
+# @providers.has_rate_sheet("generic")
 class GenericSettings(providers.Carrier):
     CARRIER_NAME = "generic"
 
@@ -18,7 +18,6 @@ class GenericSettings(providers.Carrier):
         validators=[validators.RegexValidator(r"^[a-z0-9_]+$")],
         help_text="Unique carrier slug, lowercase alphanumeric characters and underscores only",
     )
-    services = models.ManyToManyField("ServiceLevel", blank=True)
     label_template = models.OneToOneField(
         "LabelTemplate", null=True, blank=True, on_delete=models.CASCADE
     )
@@ -26,6 +25,7 @@ class GenericSettings(providers.Carrier):
     account_country_code = models.CharField(
         max_length=3, null=True, blank=True, choices=providers.COUNTRIES
     )
+    services = models.ManyToManyField("ServiceLevel", blank=True)
 
     @property
     def carrier_name(self) -> str:

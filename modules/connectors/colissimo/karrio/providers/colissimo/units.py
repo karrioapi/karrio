@@ -44,7 +44,7 @@ class LabelType(lib.Enum):
 
 
 class ConnectionConfig(lib.Enum):
-    lang = lib.OptionEnum("lang")
+    lang = lib.OptionEnum("lang", lib.units.create_enum("Lang", ["FR", "EN"]))
 
 
 class ServiceName(lib.Enum):

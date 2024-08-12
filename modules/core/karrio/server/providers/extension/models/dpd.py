@@ -2,7 +2,7 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("dpd")
+# @providers.has_rate_sheet("dpd")
 class DPDSettings(providers.Carrier):
     class Meta:
         db_table = "dpd-settings"
@@ -16,6 +16,7 @@ class DPDSettings(providers.Carrier):
     account_country_code = models.CharField(
         max_length=3, blank=True, null=True, choices=providers.COUNTRIES
     )
+    services = models.ManyToManyField("ServiceLevel", blank=True)
 
     @property
     def carrier_name(self) -> str:

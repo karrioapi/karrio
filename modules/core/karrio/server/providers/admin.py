@@ -9,91 +9,57 @@ from django.utils.translation import gettext_lazy as _
 import karrio.lib as lib
 import karrio.references as ref
 import karrio.server.serializers as serializers
-import karrio.server.providers.models as carriers
+import karrio.server.core.dataunits as dataunits
+import karrio.server.providers.models as providers
 
 User = get_user_model()
-SUPPORTED_CONNECTION_CONFIGS = [
-    "cost_center",
-    "merchant_id",
-    "enforce_zpl",
-    "skip_service_filter",
-    "default_currency",
-    "language_code",
-    "label_type",
-    "shipping_options",
-    "shipping_services",
-    "transmit_shipment_by_default",
-    "smart_post_hub_id",
-]
+references = dataunits.contextual_reference(reduced=False)
 
 
-def model_admin(ext: str, carrier):
-    import karrio.server.core.datatypes as datatypes
-    import karrio.server.core.dataunits as dataunits
-    import karrio.server.graph.serializers as graph_serializers
-
-    class_name = carrier.__name__
-    references = dataunits.contextual_reference(reduced=False)
-    connection_configs = [
-        _
-        for _ in (references["connection_configs"].get(ext) or {}).keys()
-        if _ in SUPPORTED_CONNECTION_CONFIGS
-    ]
+def model_admin(ext: str, carrierProxy):
+    class_name = carrierProxy.__name__
+    connection_fields = references["connection_fields"].get(ext) or {}
+    connection_configs = references["connection_configs"].get(ext) or {}
     carrier_services = (references["services"].get(ext) or {}).keys()
     carrier_options = (references["options"].get(ext) or {}).keys()
 
     class _Form(forms.ModelForm):
-        for key in connection_configs:
-            if key == "cost_center":
-                cost_center = forms.CharField(
-                    required=False,
+
+        for key, field in connection_fields.items():
+            if field["type"] == "boolean":
+                locals()[key] = forms.NullBooleanField(
+                    required=field.get("required", False),
+                    initial=None,
                 )
-            if key == "merchant_id":
-                merchant_id = forms.CharField(
-                    required=False,
+
+            elif field["type"] == "integer":
+                locals()[key] = forms.IntegerField(
+                    required=field.get("required", False),
                 )
-            if key == "service_suffix":
-                service_suffix = forms.CharField(
-                    required=False,
+
+            elif field["type"] == "float":
+                locals()[key] = forms.FloatField(
+                    required=field.get("required", False),
                 )
-            if key == "smart_post_hub_id":
-                smart_post_hub_id = forms.CharField(
-                    required=False,
-                )
-            if key == "language_code":
-                language_code = forms.ChoiceField(
-                    choices=[("en", "EN"), ("fr", "FR")],
+
+            elif field["type"] == "string" and any(field.get("enum", [])):
+                locals()[key] = forms.ChoiceField(
+                    choices=[(None, ""), *[(_, _) for _ in field.get("enum", [])]],
                     widget=forms.Select(attrs={"class": "vTextField"}),
-                    required=False,
+                    required=field.get("required", False),
+                    initial=field.get("default"),
                 )
-            if key == "default_currency":
-                default_currency = forms.ChoiceField(
-                    choices=datatypes.CURRENCIES,
-                    widget=forms.Select(attrs={"class": "vTextField"}),
-                    required=False,
+
+            elif field["type"] == "string":
+                locals()[key] = forms.CharField(
+                    required=field.get("required", False),
                 )
-            if key == "label_type":
-                label_type = forms.ChoiceField(
-                    choices=[(None, ""), *datatypes.LABEL_TYPES],
-                    widget=forms.Select(attrs={"class": "vTextField"}),
-                    required=False,
-                    initial=None,
-                )
-            if key == "enforce_zpl":
-                enforce_zpl = forms.NullBooleanField(
-                    required=False,
-                    initial=None,
-                )
-            if key == "skip_service_filter":
-                skip_service_filter = forms.NullBooleanField(
-                    required=False,
-                    initial=None,
-                )
-            if key == "transmit_shipment_by_default":
-                transmit_shipment_by_default = forms.NullBooleanField(
-                    required=False,
-                    initial=None,
-                )
+
+            else:
+                pass
+
+        for key, field in connection_configs.items():
+
             if key == "shipping_services":
                 shipping_services = forms.MultipleChoiceField(
                     choices=[(_, _) for _ in carrier_services],
@@ -101,6 +67,8 @@ def model_admin(ext: str, carrier):
                     required=False,
                     initial=None,
                 )
+                continue
+
             if key == "shipping_options":
                 shipping_options = forms.MultipleChoiceField(
                     choices=[(_, _) for _ in carrier_options],
@@ -108,19 +76,62 @@ def model_admin(ext: str, carrier):
                     required=False,
                     initial=None,
                 )
+                continue
+
+            if field["type"] == "boolean":
+                locals()[key] = forms.NullBooleanField(
+                    required=False,
+                    initial=None,
+                )
+
+            elif field["type"] == "integer":
+                locals()[key] = forms.IntegerField(
+                    required=False,
+                )
+
+            elif field["type"] == "float":
+                locals()[key] = forms.FloatField(
+                    required=False,
+                )
+
+            elif field["type"] == "string" and any(field.get("enum", [])):
+                locals()[key] = forms.ChoiceField(
+                    choices=[(None, ""), *[(_, _) for _ in field.get("enum", [])]],
+                    widget=forms.Select(attrs={"class": "vTextField"}),
+                    required=field.get("required", False),
+                    initial=field.get("default"),
+                )
+
+            elif field["type"] == "string":
+                locals()[key] = forms.CharField(
+                    required=False,
+                )
+
+            else:
+                pass
 
         class Meta:
-            model = carrier
+            model = carrierProxy
             fields = "__all__"
 
-        def __init__(self, *args, instance: carriers.Carrier = None, **kwargs):
+        def __init__(self, *args, instance: providers.Carrier = None, **kwargs):
             if instance is not None:
                 kwargs.update({"instance": instance})
-                config = carriers.Carrier.resolve_config(
+                credentials = instance.credentials
+                config = providers.Carrier.resolve_config(
                     instance, is_system_config=True
                 )
 
-                for key in connection_configs:
+                for key in [
+                    _ for _ in self.base_fields.keys() if _ in connection_fields.keys()
+                ]:
+                    self.base_fields[key].initial = (
+                        None if credentials is None else credentials.get(key)
+                    )
+
+                for key in [
+                    _ for _ in self.base_fields.keys() if _ in connection_configs.keys()
+                ]:
                     self.base_fields[key].initial = (
                         None if config is None else config.config.get(key)
                     )
@@ -129,12 +140,32 @@ def model_admin(ext: str, carrier):
 
         def save(self, commit: bool = True):
             config_data = lib.to_dict(
-                {key: self.cleaned_data.get(key) for key in connection_configs}
+                {key: self.cleaned_data.get(key) for key in connection_configs.keys()}
             )
+            credentials_data = lib.to_dict(
+                {key: self.cleaned_data.get(key) for key in connection_fields.keys()}
+            )
+
+            for key in connection_fields.keys():
+                if key in self.cleaned_data:
+                    self.cleaned_data.pop(key)
+
+            for key in connection_configs.keys():
+                if key in self.cleaned_data:
+                    self.cleaned_data.pop(key)
+
             carrier = super(_Form, self).save(commit)
 
-            if any(connection_configs) and (commit or carrier.pk is not None):
-                config = carriers.Carrier.resolve_config(carrier, is_system_config=True)
+            if any(connection_fields.keys()) and (commit or carrier.pk is not None):
+                carrier.credentials = serializers.process_dictionaries_mutations(
+                    ["credentials"], credentials_data, carrier
+                )
+                carrier.save()
+
+            if any(connection_configs.keys()) and (commit or carrier.pk is not None):
+                config = providers.Carrier.resolve_config(
+                    carrier, is_system_config=True
+                )
                 created_by = getattr(config, "created_by", self.request.user)
                 config_value = lib.to_dict(
                     serializers.process_dictionaries_mutations(
@@ -147,14 +178,14 @@ def model_admin(ext: str, carrier):
                     return carrier
 
                 # Save or update the carrier config...
-                (
-                    carriers.CarrierConfig.objects.create(
+                lib.identity(
+                    providers.CarrierConfig.objects.create(
                         created_by=created_by,
                         carrier=carrier,
                         config=config_value,
                     )
                     if config is None
-                    else carriers.CarrierConfig.objects.filter(carrier=carrier).update(
+                    else providers.CarrierConfig.objects.filter(carrier=carrier).update(
                         config=config_value
                     )
                 )
@@ -168,11 +199,7 @@ def model_admin(ext: str, carrier):
         form = _form
         inlines = []
         list_display = ("__str__", "test_mode", "active")
-        exclude = (
-            ["active_users", "services"]
-            if hasattr(carrier, "services")
-            else ["active_users"]
-        )
+        exclude = ["active_users"]
         fieldsets = [
             (
                 None,
@@ -182,22 +209,38 @@ def model_admin(ext: str, carrier):
                         for _ in _fields
                         if _
                         not in [
-                            *connection_configs,
+                            *connection_fields.keys(),
+                            *connection_configs.keys(),
+                            "carrier_code",
+                            "credentials",
                             "active_users",
-                            "services",
                             "is_system",
+                            "rate_sheet",
+                            "metadata",
                         ]
                     ],
                 },
             ),
         ]
 
-        if any(connection_configs):
+        if any(connection_fields.keys()):
+            fieldsets += [
+                (  # type: ignore
+                    "Connection Fields",
+                    {
+                        "fields": [_ for _ in connection_fields.keys() if _ in _fields],
+                    },
+                ),
+            ]
+
+        if any(connection_configs.keys()):
             fieldsets += [
                 (  # type: ignore
                     "Connection Config",
                     {
-                        "fields": [_ for _ in connection_configs if _ in _fields],
+                        "fields": [
+                            _ for _ in connection_configs.keys() if _ in _fields
+                        ],
                     },
                 ),
             ]
@@ -217,39 +260,10 @@ def model_admin(ext: str, carrier):
             },
         }
 
-        if hasattr(carrier, "services"):
-
-            class _ServiceInline(admin.TabularInline):
-                model = carrier.services.through
-                extra = 0
-
-                def get_formset(self, request, obj, **kwargs):
-                    formset = super().get_formset(request, obj, **kwargs)
-                    _filter = (
-                        models.Q()
-                        if obj is None
-                        else models.Q(
-                            **{f"{class_name.lower()}__id": getattr(obj, "id", None)}
-                        )
-                    )
-                    _filter = _filter | models.Q(
-                        **{
-                            f"{field.name}__isnull": True
-                            for field in carriers.ServiceLevel._meta.get_fields()
-                            if "settings" in field.name
-                        }
-                    )
-                    formset.form.base_fields["servicelevel"].queryset = (
-                        carriers.ServiceLevel.objects.filter(_filter).distinct()
-                    )
-                    return formset
-
-            inlines += [_ServiceInline]
-
         if settings.MULTI_ORGANIZATIONS:
 
             class ActiveOrgInline(admin.TabularInline):
-                model = carrier.active_orgs.through
+                model = carrierProxy.active_orgs.through
                 verbose_name = "Activated for organization"
                 extra = 0
 
@@ -282,7 +296,7 @@ def model_admin(ext: str, carrier):
         else:
 
             class ActiveUserInline(admin.TabularInline):
-                model = carrier.active_users.through
+                model = carrierProxy.active_users.through
                 exta = 0
                 verbose_name = "Activated for user"
 
@@ -317,10 +331,7 @@ def model_admin(ext: str, carrier):
             form.request = request
 
             # Customize capabilities options specific to a carrier.
-            carrier_name = next(
-                (k for k, v in carriers.MODELS.items() if v == carrier), None
-            )
-            raw_capabilities = ref.get_carrier_capabilities(carrier_name)
+            raw_capabilities = ref.get_carrier_capabilities(ext)
             form.base_fields["capabilities"].choices = [
                 (c, c) for c in raw_capabilities
             ]
@@ -330,34 +341,17 @@ def model_admin(ext: str, carrier):
 
         def save_model(self, request, obj, form, change):
             obj.is_system = True
+            obj.carrier_code = ext
             return super().save_model(request, obj, form, change)
 
     return type(f"{class_name}Admin", (_Admin,), {})
 
 
-@admin.register(carriers.ServiceLevel)
-class ServiceLevelAdmin(admin.ModelAdmin):
-    list_display = ("__str__",)
-
-    def has_module_permission(self, request):
-        return False
-
-    def get_form(self, request, obj=None, **kwargs):
-        form = super().get_form(request, obj, **kwargs)
-        form.base_fields["currency"].required = True
-        form.base_fields["currency"].initial = "USD"
-
-        form.base_fields["created_by"].initial = request.user
-        field = form.base_fields["created_by"]
-        field.widget = field.hidden_widget()
-        return form
-
-
-@admin.register(carriers.LabelTemplate)
+@admin.register(providers.LabelTemplate)
 class LabelTemplateAdmin(admin.ModelAdmin):
     def has_module_permission(self, request):
         return False
 
 
-for name, model in carriers.MODELS.items():
-    admin.site.register(model, model_admin(name, model))
+for carrier_name, proxy in providers.CARRIER_PROXIES.items():
+    admin.site.register(proxy, model_admin(carrier_name, proxy))

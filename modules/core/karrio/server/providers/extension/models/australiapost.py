@@ -5,8 +5,8 @@ from karrio.server.providers.models.carrier import Carrier
 class AustraliaPostSettings(Carrier):
     class Meta:
         db_table = "australia-post-settings"
-        verbose_name = 'Australia Post Settings'
-        verbose_name_plural = 'Australia Post Settings'
+        verbose_name = "Australia Post Settings"
+        verbose_name_plural = "Australia Post Settings"
 
     api_key = models.CharField(max_length=200)
     password = models.CharField(max_length=200)
@@ -14,7 +14,7 @@ class AustraliaPostSettings(Carrier):
 
     @property
     def carrier_name(self) -> str:
-        return 'australiapost'
+        return "australiapost"
 
 
 SETTINGS = AustraliaPostSettings

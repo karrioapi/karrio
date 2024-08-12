@@ -689,30 +689,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function OrderDataShippingFromToJSON(value) {
-        if (value == null) {
-            return value;
-        }
-        return {
-            'postal_code': value['postal_code'],
-            'city': value['city'],
-            'federal_tax_id': value['federal_tax_id'],
-            'state_tax_id': value['state_tax_id'],
-            'person_name': value['person_name'],
-            'company_name': value['company_name'],
-            'country_code': value['country_code'],
-            'email': value['email'],
-            'phone_number': value['phone_number'],
-            'state_code': value['state_code'],
-            'residential': value['residential'],
-            'street_number': value['street_number'],
-            'address_line1': value['address_line1'],
-            'address_line2': value['address_line2'],
-            'validate_location': value['validate_location'],
-        };
-    }
-
-    /* tslint:disable */
     function CommodityDataToJSON(value) {
         if (value == null) {
             return value;
@@ -734,55 +710,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function OrderBillingAddressFromJSON(json) {
-        return OrderBillingAddressFromJSONTyped(json);
-    }
-    function OrderBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
-            'city': json['city'] == null ? undefined : json['city'],
-            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
-            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
-            'person_name': json['person_name'] == null ? undefined : json['person_name'],
-            'company_name': json['company_name'] == null ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': json['email'] == null ? undefined : json['email'],
-            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
-            'state_code': json['state_code'] == null ? undefined : json['state_code'],
-            'residential': json['residential'] == null ? undefined : json['residential'],
-            'street_number': json['street_number'] == null ? undefined : json['street_number'],
-            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
-            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
-            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
-        };
-    }
-    function OrderBillingAddressToJSON(value) {
-        if (value == null) {
-            return value;
-        }
-        return {
-            'postal_code': value['postal_code'],
-            'city': value['city'],
-            'federal_tax_id': value['federal_tax_id'],
-            'state_tax_id': value['state_tax_id'],
-            'person_name': value['person_name'],
-            'company_name': value['company_name'],
-            'country_code': value['country_code'],
-            'email': value['email'],
-            'phone_number': value['phone_number'],
-            'state_code': value['state_code'],
-            'residential': value['residential'],
-            'street_number': value['street_number'],
-            'address_line1': value['address_line1'],
-            'address_line2': value['address_line2'],
-            'validate_location': value['validate_location'],
-        };
-    }
-
-    /* tslint:disable */
     function OrderDataToJSON(value) {
         if (value == null) {
             return value;
@@ -792,8 +719,8 @@ var Karrio = (function () {
             'order_date': value['order_date'],
             'source': value['source'],
             'shipping_to': AddressDataToJSON(value['shipping_to']),
-            'shipping_from': OrderDataShippingFromToJSON(value['shipping_from']),
-            'billing_address': OrderBillingAddressToJSON(value['billing_address']),
+            'shipping_from': AddressDataToJSON(value['shipping_from']),
+            'billing_address': AddressDataToJSON(value['billing_address']),
             'line_items': (value['line_items'].map(CommodityDataToJSON)),
             'options': value['options'],
             'metadata': value['metadata'],
@@ -836,108 +763,10 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentReturnAddressFromJSON(json) {
-        return ShipmentReturnAddressFromJSONTyped(json);
+    function DutyFromJSON(json) {
+        return DutyFromJSONTyped(json);
     }
-    function ShipmentReturnAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
-            'city': json['city'] == null ? undefined : json['city'],
-            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
-            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
-            'person_name': json['person_name'] == null ? undefined : json['person_name'],
-            'company_name': json['company_name'] == null ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': json['email'] == null ? undefined : json['email'],
-            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
-            'state_code': json['state_code'] == null ? undefined : json['state_code'],
-            'residential': json['residential'] == null ? undefined : json['residential'],
-            'street_number': json['street_number'] == null ? undefined : json['street_number'],
-            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
-            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
-            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
-        };
-    }
-    function ShipmentReturnAddressToJSON(value) {
-        if (value == null) {
-            return value;
-        }
-        return {
-            'postal_code': value['postal_code'],
-            'city': value['city'],
-            'federal_tax_id': value['federal_tax_id'],
-            'state_tax_id': value['state_tax_id'],
-            'person_name': value['person_name'],
-            'company_name': value['company_name'],
-            'country_code': value['country_code'],
-            'email': value['email'],
-            'phone_number': value['phone_number'],
-            'state_code': value['state_code'],
-            'residential': value['residential'],
-            'street_number': value['street_number'],
-            'address_line1': value['address_line1'],
-            'address_line2': value['address_line2'],
-            'validate_location': value['validate_location'],
-        };
-    }
-
-    /* tslint:disable */
-    function ShipmentBillingAddressFromJSON(json) {
-        return ShipmentBillingAddressFromJSONTyped(json);
-    }
-    function ShipmentBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
-            'city': json['city'] == null ? undefined : json['city'],
-            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
-            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
-            'person_name': json['person_name'] == null ? undefined : json['person_name'],
-            'company_name': json['company_name'] == null ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': json['email'] == null ? undefined : json['email'],
-            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
-            'state_code': json['state_code'] == null ? undefined : json['state_code'],
-            'residential': json['residential'] == null ? undefined : json['residential'],
-            'street_number': json['street_number'] == null ? undefined : json['street_number'],
-            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
-            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
-            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
-        };
-    }
-    function ShipmentBillingAddressToJSON(value) {
-        if (value == null) {
-            return value;
-        }
-        return {
-            'postal_code': value['postal_code'],
-            'city': value['city'],
-            'federal_tax_id': value['federal_tax_id'],
-            'state_tax_id': value['state_tax_id'],
-            'person_name': value['person_name'],
-            'company_name': value['company_name'],
-            'country_code': value['country_code'],
-            'email': value['email'],
-            'phone_number': value['phone_number'],
-            'state_code': value['state_code'],
-            'residential': value['residential'],
-            'street_number': value['street_number'],
-            'address_line1': value['address_line1'],
-            'address_line2': value['address_line2'],
-            'validate_location': value['validate_location'],
-        };
-    }
-
-    /* tslint:disable */
-    function CustomsDutyFromJSON(json) {
-        return CustomsDutyFromJSONTyped(json);
-    }
-    function CustomsDutyFromJSONTyped(json, ignoreDiscriminator) {
+    function DutyFromJSONTyped(json, ignoreDiscriminator) {
         if (json == null) {
             return json;
         }
@@ -948,7 +777,7 @@ var Karrio = (function () {
             'account_number': json['account_number'] == null ? undefined : json['account_number'],
         };
     }
-    function CustomsDutyToJSON(value) {
+    function DutyToJSON(value) {
         if (value == null) {
             return value;
         }
@@ -961,38 +790,14 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function CustomsDataDutyBillingAddressToJSON(value) {
-        if (value == null) {
-            return value;
-        }
-        return {
-            'postal_code': value['postal_code'],
-            'city': value['city'],
-            'federal_tax_id': value['federal_tax_id'],
-            'state_tax_id': value['state_tax_id'],
-            'person_name': value['person_name'],
-            'company_name': value['company_name'],
-            'country_code': value['country_code'],
-            'email': value['email'],
-            'phone_number': value['phone_number'],
-            'state_code': value['state_code'],
-            'residential': value['residential'],
-            'street_number': value['street_number'],
-            'address_line1': value['address_line1'],
-            'address_line2': value['address_line2'],
-            'validate_location': value['validate_location'],
-        };
-    }
-
-    /* tslint:disable */
-    function ShipmentDataCustomsToJSON(value) {
+    function CustomsDataToJSON(value) {
         if (value == null) {
             return value;
         }
         return {
             'commodities': (value['commodities'].map(CommodityDataToJSON)),
-            'duty': CustomsDutyToJSON(value['duty']),
-            'duty_billing_address': CustomsDataDutyBillingAddressToJSON(value['duty_billing_address']),
+            'duty': DutyToJSON(value['duty']),
+            'duty_billing_address': AddressDataToJSON(value['duty_billing_address']),
             'content_type': value['content_type'],
             'content_description': value['content_description'],
             'incoterm': value['incoterm'],
@@ -1037,12 +842,12 @@ var Karrio = (function () {
         return {
             'recipient': AddressDataToJSON(value['recipient']),
             'shipper': AddressDataToJSON(value['shipper']),
-            'return_address': ShipmentReturnAddressToJSON(value['return_address']),
-            'billing_address': ShipmentBillingAddressToJSON(value['billing_address']),
+            'return_address': AddressDataToJSON(value['return_address']),
+            'billing_address': AddressDataToJSON(value['billing_address']),
             'parcels': (value['parcels'].map(ParcelDataToJSON)),
             'options': value['options'],
             'payment': PaymentToJSON(value['payment']),
-            'customs': ShipmentDataCustomsToJSON(value['customs']),
+            'customs': CustomsDataToJSON(value['customs']),
             'reference': value['reference'],
             'label_type': value['label_type'],
             'service': value['service'],
@@ -1064,7 +869,36 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function TrackerUpdateDataInfoToJSON(value) {
+    function TrackingInfoFromJSON(json) {
+        return TrackingInfoFromJSONTyped(json);
+    }
+    function TrackingInfoFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'carrier_tracking_link': json['carrier_tracking_link'] == null ? undefined : json['carrier_tracking_link'],
+            'customer_name': json['customer_name'] == null ? undefined : json['customer_name'],
+            'expected_delivery': json['expected_delivery'] == null ? undefined : json['expected_delivery'],
+            'note': json['note'] == null ? undefined : json['note'],
+            'order_date': json['order_date'] == null ? undefined : json['order_date'],
+            'order_id': json['order_id'] == null ? undefined : json['order_id'],
+            'package_weight': json['package_weight'] == null ? undefined : json['package_weight'],
+            'package_weight_unit': json['package_weight_unit'] == null ? undefined : json['package_weight_unit'],
+            'shipment_package_count': json['shipment_package_count'] == null ? undefined : json['shipment_package_count'],
+            'shipment_pickup_date': json['shipment_pickup_date'] == null ? undefined : json['shipment_pickup_date'],
+            'shipment_delivery_date': json['shipment_delivery_date'] == null ? undefined : json['shipment_delivery_date'],
+            'shipment_service': json['shipment_service'] == null ? undefined : json['shipment_service'],
+            'shipment_origin_country': json['shipment_origin_country'] == null ? undefined : json['shipment_origin_country'],
+            'shipment_origin_postal_code': json['shipment_origin_postal_code'] == null ? undefined : json['shipment_origin_postal_code'],
+            'shipment_destination_country': json['shipment_destination_country'] == null ? undefined : json['shipment_destination_country'],
+            'shipment_destination_postal_code': json['shipment_destination_postal_code'] == null ? undefined : json['shipment_destination_postal_code'],
+            'shipping_date': json['shipping_date'] == null ? undefined : json['shipping_date'],
+            'signed_by': json['signed_by'] == null ? undefined : json['signed_by'],
+            'source': json['source'] == null ? undefined : json['source'],
+        };
+    }
+    function TrackingInfoToJSON(value) {
         if (value == null) {
             return value;
         }
@@ -1101,7 +935,7 @@ var Karrio = (function () {
             'carrier_name': value['carrier_name'],
             'account_number': value['account_number'],
             'reference': value['reference'],
-            'info': TrackerUpdateDataInfoToJSON(value['info']),
+            'info': TrackingInfoToJSON(value['info']),
             'metadata': value['metadata'],
         };
     }
@@ -1227,32 +1061,28 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function CustomsDutyBillingAddressFromJSON(json) {
-        return CustomsDutyBillingAddressFromJSONTyped(json);
+    function CustomsFromJSON(json) {
+        return CustomsFromJSONTyped(json);
     }
-    function CustomsDutyBillingAddressFromJSONTyped(json, ignoreDiscriminator) {
+    function CustomsFromJSONTyped(json, ignoreDiscriminator) {
         if (json == null) {
             return json;
         }
         return {
             'id': json['id'] == null ? undefined : json['id'],
-            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
-            'city': json['city'] == null ? undefined : json['city'],
-            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
-            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
-            'person_name': json['person_name'] == null ? undefined : json['person_name'],
-            'company_name': json['company_name'] == null ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': json['email'] == null ? undefined : json['email'],
-            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
-            'state_code': json['state_code'] == null ? undefined : json['state_code'],
-            'residential': json['residential'] == null ? undefined : json['residential'],
-            'street_number': json['street_number'] == null ? undefined : json['street_number'],
-            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
-            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
-            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
+            'commodities': json['commodities'] == null ? undefined : (json['commodities'].map(CommodityFromJSON)),
+            'duty': json['duty'] == null ? undefined : DutyFromJSON(json['duty']),
+            'duty_billing_address': json['duty_billing_address'] == null ? undefined : AddressFromJSON(json['duty_billing_address']),
+            'content_type': json['content_type'] == null ? undefined : json['content_type'],
+            'content_description': json['content_description'] == null ? undefined : json['content_description'],
+            'incoterm': json['incoterm'] == null ? undefined : json['incoterm'],
+            'invoice': json['invoice'] == null ? undefined : json['invoice'],
+            'invoice_date': json['invoice_date'] == null ? undefined : json['invoice_date'],
+            'commercial_invoice': json['commercial_invoice'] == null ? undefined : json['commercial_invoice'],
+            'certify': json['certify'] == null ? undefined : json['certify'],
+            'signer': json['signer'] == null ? undefined : json['signer'],
+            'options': json['options'] == null ? undefined : json['options'],
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
-            'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
         };
     }
 
@@ -1415,6 +1245,20 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    function DocumentsFromJSON(json) {
+        return DocumentsFromJSONTyped(json);
+    }
+    function DocumentsFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'label': json['label'] == null ? undefined : json['label'],
+            'invoice': json['invoice'] == null ? undefined : json['invoice'],
+        };
+    }
+
+    /* tslint:disable */
     function GeneratedDocumentFromJSON(json) {
         return GeneratedDocumentFromJSONTyped(json);
     }
@@ -1427,6 +1271,20 @@ var Karrio = (function () {
             'doc_format': json['doc_format'] == null ? undefined : json['doc_format'],
             'doc_name': json['doc_name'] == null ? undefined : json['doc_name'],
             'doc_file': json['doc_file'],
+        };
+    }
+
+    /* tslint:disable */
+    function ImagesFromJSON(json) {
+        return ImagesFromJSONTyped(json);
+    }
+    function ImagesFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'delivery_image': json['delivery_image'] == null ? undefined : json['delivery_image'],
+            'signature_image': json['signature_image'] == null ? undefined : json['signature_image'],
         };
     }
 
@@ -1497,10 +1355,10 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ManifestDetailsDocFromJSON(json) {
-        return ManifestDetailsDocFromJSONTyped(json);
+    function ManifestDocumentFromJSON(json) {
+        return ManifestDocumentFromJSONTyped(json);
     }
-    function ManifestDetailsDocFromJSONTyped(json, ignoreDiscriminator) {
+    function ManifestDocumentFromJSONTyped(json, ignoreDiscriminator) {
         if (json == null) {
             return json;
         }
@@ -1522,7 +1380,7 @@ var Karrio = (function () {
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
-            'doc': json['doc'] == null ? undefined : ManifestDetailsDocFromJSON(json['doc']),
+            'doc': json['doc'] == null ? undefined : ManifestDocumentFromJSON(json['doc']),
             'meta': json['meta'] == null ? undefined : json['meta'],
             'test_mode': json['test_mode'],
         };
@@ -1613,60 +1471,6 @@ var Karrio = (function () {
         return {
             'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
             'confirmation': json['confirmation'] == null ? undefined : OperationConfirmationFromJSON(json['confirmation']),
-        };
-    }
-
-    /* tslint:disable */
-    function OrderShippingFromFromJSON(json) {
-        return OrderShippingFromFromJSONTyped(json);
-    }
-    function OrderShippingFromFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'id': json['id'] == null ? undefined : json['id'],
-            'postal_code': json['postal_code'] == null ? undefined : json['postal_code'],
-            'city': json['city'] == null ? undefined : json['city'],
-            'federal_tax_id': json['federal_tax_id'] == null ? undefined : json['federal_tax_id'],
-            'state_tax_id': json['state_tax_id'] == null ? undefined : json['state_tax_id'],
-            'person_name': json['person_name'] == null ? undefined : json['person_name'],
-            'company_name': json['company_name'] == null ? undefined : json['company_name'],
-            'country_code': json['country_code'],
-            'email': json['email'] == null ? undefined : json['email'],
-            'phone_number': json['phone_number'] == null ? undefined : json['phone_number'],
-            'state_code': json['state_code'] == null ? undefined : json['state_code'],
-            'residential': json['residential'] == null ? undefined : json['residential'],
-            'street_number': json['street_number'] == null ? undefined : json['street_number'],
-            'address_line1': json['address_line1'] == null ? undefined : json['address_line1'],
-            'address_line2': json['address_line2'] == null ? undefined : json['address_line2'],
-            'validate_location': json['validate_location'] == null ? undefined : json['validate_location'],
-            'object_type': json['object_type'] == null ? undefined : json['object_type'],
-            'validation': json['validation'] == null ? undefined : AddressValidationFromJSON(json['validation']),
-        };
-    }
-
-    /* tslint:disable */
-    function ShipmentSelectedRateFromJSON(json) {
-        return ShipmentSelectedRateFromJSONTyped(json);
-    }
-    function ShipmentSelectedRateFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'id': json['id'] == null ? undefined : json['id'],
-            'object_type': json['object_type'] == null ? undefined : json['object_type'],
-            'carrier_name': json['carrier_name'],
-            'carrier_id': json['carrier_id'],
-            'currency': json['currency'] == null ? undefined : json['currency'],
-            'service': json['service'] == null ? undefined : json['service'],
-            'total_charge': json['total_charge'] == null ? undefined : json['total_charge'],
-            'transit_days': json['transit_days'] == null ? undefined : json['transit_days'],
-            'extra_charges': json['extra_charges'] == null ? undefined : (json['extra_charges'].map(ChargeFromJSON)),
-            'estimated_delivery': json['estimated_delivery'] == null ? undefined : json['estimated_delivery'],
-            'meta': json['meta'] == null ? undefined : json['meta'],
-            'test_mode': json['test_mode'],
         };
     }
 
@@ -1767,32 +1571,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function ShipmentCustomsFromJSON(json) {
-        return ShipmentCustomsFromJSONTyped(json);
-    }
-    function ShipmentCustomsFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'id': json['id'] == null ? undefined : json['id'],
-            'commodities': json['commodities'] == null ? undefined : (json['commodities'].map(CommodityFromJSON)),
-            'duty': json['duty'] == null ? undefined : CustomsDutyFromJSON(json['duty']),
-            'duty_billing_address': json['duty_billing_address'] == null ? undefined : CustomsDutyBillingAddressFromJSON(json['duty_billing_address']),
-            'content_type': json['content_type'] == null ? undefined : json['content_type'],
-            'content_description': json['content_description'] == null ? undefined : json['content_description'],
-            'incoterm': json['incoterm'] == null ? undefined : json['incoterm'],
-            'invoice': json['invoice'] == null ? undefined : json['invoice'],
-            'invoice_date': json['invoice_date'] == null ? undefined : json['invoice_date'],
-            'commercial_invoice': json['commercial_invoice'] == null ? undefined : json['commercial_invoice'],
-            'certify': json['certify'] == null ? undefined : json['certify'],
-            'signer': json['signer'] == null ? undefined : json['signer'],
-            'options': json['options'] == null ? undefined : json['options'],
-            'object_type': json['object_type'] == null ? undefined : json['object_type'],
-        };
-    }
-
-    /* tslint:disable */
     function ShipmentFromJSON(json) {
         return ShipmentFromJSONTyped(json);
     }
@@ -1806,13 +1584,13 @@ var Karrio = (function () {
             'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
-            'return_address': json['return_address'] == null ? undefined : ShipmentReturnAddressFromJSON(json['return_address']),
-            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
+            'return_address': json['return_address'] == null ? undefined : AddressDataFromJSON(json['return_address']),
+            'billing_address': json['billing_address'] == null ? undefined : AddressDataFromJSON(json['billing_address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': json['services'] == null ? undefined : json['services'],
             'options': json['options'] == null ? undefined : json['options'],
             'payment': json['payment'] == null ? undefined : PaymentFromJSON(json['payment']),
-            'customs': json['customs'] == null ? undefined : ShipmentCustomsFromJSON(json['customs']),
+            'customs': json['customs'] == null ? undefined : CustomsFromJSON(json['customs']),
             'rates': json['rates'] == null ? undefined : (json['rates'].map(RateFromJSON)),
             'reference': json['reference'] == null ? undefined : json['reference'],
             'label_type': json['label_type'] == null ? undefined : json['label_type'],
@@ -1826,7 +1604,7 @@ var Karrio = (function () {
             'carrier_id': json['carrier_id'] == null ? undefined : json['carrier_id'],
             'tracking_number': json['tracking_number'] == null ? undefined : json['tracking_number'],
             'shipment_identifier': json['shipment_identifier'] == null ? undefined : json['shipment_identifier'],
-            'selected_rate': json['selected_rate'] == null ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
+            'selected_rate': json['selected_rate'] == null ? undefined : RateFromJSON(json['selected_rate']),
             'meta': json['meta'] == null ? undefined : json['meta'],
             'service': json['service'] == null ? undefined : json['service'],
             'selected_rate_id': json['selected_rate_id'] == null ? undefined : json['selected_rate_id'],
@@ -1852,8 +1630,8 @@ var Karrio = (function () {
             'source': json['source'] == null ? undefined : json['source'],
             'status': json['status'] == null ? undefined : json['status'],
             'shipping_to': AddressFromJSON(json['shipping_to']),
-            'shipping_from': json['shipping_from'] == null ? undefined : OrderShippingFromFromJSON(json['shipping_from']),
-            'billing_address': json['billing_address'] == null ? undefined : OrderBillingAddressFromJSON(json['billing_address']),
+            'shipping_from': json['shipping_from'] == null ? undefined : AddressFromJSON(json['shipping_from']),
+            'billing_address': json['billing_address'] == null ? undefined : AddressDataFromJSON(json['billing_address']),
             'line_items': (json['line_items'].map(LineItemFromJSON)),
             'options': json['options'] == null ? undefined : json['options'],
             'meta': json['meta'] == null ? undefined : json['meta'],
@@ -1985,21 +1763,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function PickupPickupChargeFromJSON(json) {
-        return PickupPickupChargeFromJSONTyped(json);
-    }
-    function PickupPickupChargeFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'name': json['name'] == null ? undefined : json['name'],
-            'amount': json['amount'] == null ? undefined : json['amount'],
-            'currency': json['currency'] == null ? undefined : json['currency'],
-        };
-    }
-
-    /* tslint:disable */
     function PickupFromJSON(json) {
         return PickupFromJSONTyped(json);
     }
@@ -2014,7 +1777,7 @@ var Karrio = (function () {
             'carrier_id': json['carrier_id'],
             'confirmation_number': json['confirmation_number'],
             'pickup_date': json['pickup_date'] == null ? undefined : json['pickup_date'],
-            'pickup_charge': json['pickup_charge'] == null ? undefined : PickupPickupChargeFromJSON(json['pickup_charge']),
+            'pickup_charge': json['pickup_charge'] == null ? undefined : ChargeFromJSON(json['pickup_charge']),
             'ready_time': json['ready_time'] == null ? undefined : json['ready_time'],
             'closing_time': json['closing_time'] == null ? undefined : json['closing_time'],
             'metadata': json['metadata'] == null ? undefined : json['metadata'],
@@ -2204,12 +1967,12 @@ var Karrio = (function () {
         return {
             'recipient': AddressDataToJSON(value['recipient']),
             'shipper': AddressDataToJSON(value['shipper']),
-            'return_address': ShipmentReturnAddressToJSON(value['return_address']),
-            'billing_address': ShipmentBillingAddressToJSON(value['billing_address']),
+            'return_address': AddressDataToJSON(value['return_address']),
+            'billing_address': AddressDataToJSON(value['billing_address']),
             'parcels': (value['parcels'].map(ParcelDataToJSON)),
             'options': value['options'],
             'payment': PaymentToJSON(value['payment']),
-            'customs': ShipmentDataCustomsToJSON(value['customs']),
+            'customs': CustomsDataToJSON(value['customs']),
             'reference': value['reference'],
             'label_type': value['label_type'],
             'service': value['service'],
@@ -2268,30 +2031,16 @@ var Karrio = (function () {
         return {
             'recipient': AddressDataToJSON(value['recipient']),
             'shipper': AddressDataToJSON(value['shipper']),
-            'return_address': ShipmentReturnAddressToJSON(value['return_address']),
-            'billing_address': ShipmentBillingAddressToJSON(value['billing_address']),
+            'return_address': AddressDataToJSON(value['return_address']),
+            'billing_address': AddressDataToJSON(value['billing_address']),
             'parcels': (value['parcels'].map(ParcelDataToJSON)),
             'options': value['options'],
             'payment': PaymentToJSON(value['payment']),
-            'customs': ShipmentDataCustomsToJSON(value['customs']),
+            'customs': CustomsDataToJSON(value['customs']),
             'reference': value['reference'],
             'label_type': value['label_type'],
             'selected_rate_id': value['selected_rate_id'],
             'rates': (value['rates'].map(RateToJSON)),
-        };
-    }
-
-    /* tslint:disable */
-    function ShippingResponseDocsFromJSON(json) {
-        return ShippingResponseDocsFromJSONTyped(json);
-    }
-    function ShippingResponseDocsFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'label': json['label'] == null ? undefined : json['label'],
-            'invoice': json['invoice'] == null ? undefined : json['invoice'],
         };
     }
 
@@ -2309,13 +2058,13 @@ var Karrio = (function () {
             'tracking_url': json['tracking_url'] == null ? undefined : json['tracking_url'],
             'shipper': AddressFromJSON(json['shipper']),
             'recipient': AddressFromJSON(json['recipient']),
-            'return_address': json['return_address'] == null ? undefined : ShipmentReturnAddressFromJSON(json['return_address']),
-            'billing_address': json['billing_address'] == null ? undefined : ShipmentBillingAddressFromJSON(json['billing_address']),
+            'return_address': json['return_address'] == null ? undefined : AddressDataFromJSON(json['return_address']),
+            'billing_address': json['billing_address'] == null ? undefined : AddressDataFromJSON(json['billing_address']),
             'parcels': (json['parcels'].map(ParcelFromJSON)),
             'services': json['services'] == null ? undefined : json['services'],
             'options': json['options'] == null ? undefined : json['options'],
             'payment': json['payment'] == null ? undefined : PaymentFromJSON(json['payment']),
-            'customs': json['customs'] == null ? undefined : ShipmentCustomsFromJSON(json['customs']),
+            'customs': json['customs'] == null ? undefined : CustomsFromJSON(json['customs']),
             'rates': json['rates'] == null ? undefined : (json['rates'].map(RateFromJSON)),
             'reference': json['reference'] == null ? undefined : json['reference'],
             'label_type': json['label_type'] == null ? undefined : json['label_type'],
@@ -2329,26 +2078,12 @@ var Karrio = (function () {
             'carrier_id': json['carrier_id'] == null ? undefined : json['carrier_id'],
             'tracking_number': json['tracking_number'] == null ? undefined : json['tracking_number'],
             'shipment_identifier': json['shipment_identifier'] == null ? undefined : json['shipment_identifier'],
-            'selected_rate': json['selected_rate'] == null ? undefined : ShipmentSelectedRateFromJSON(json['selected_rate']),
-            'docs': json['docs'] == null ? undefined : ShippingResponseDocsFromJSON(json['docs']),
+            'selected_rate': json['selected_rate'] == null ? undefined : RateFromJSON(json['selected_rate']),
+            'docs': json['docs'] == null ? undefined : DocumentsFromJSON(json['docs']),
             'meta': json['meta'] == null ? undefined : json['meta'],
             'service': json['service'] == null ? undefined : json['service'],
             'selected_rate_id': json['selected_rate_id'] == null ? undefined : json['selected_rate_id'],
             'test_mode': json['test_mode'],
-        };
-    }
-
-    /* tslint:disable */
-    function TrackerDetailsImagesFromJSON(json) {
-        return TrackerDetailsImagesFromJSONTyped(json);
-    }
-    function TrackerDetailsImagesFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'delivery_image': json['delivery_image'] == null ? undefined : json['delivery_image'],
-            'signature_image': json['signature_image'] == null ? undefined : json['signature_image'],
         };
     }
 
@@ -2372,37 +2107,6 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function TrackerDetailsInfoFromJSON(json) {
-        return TrackerDetailsInfoFromJSONTyped(json);
-    }
-    function TrackerDetailsInfoFromJSONTyped(json, ignoreDiscriminator) {
-        if (json == null) {
-            return json;
-        }
-        return {
-            'carrier_tracking_link': json['carrier_tracking_link'] == null ? undefined : json['carrier_tracking_link'],
-            'customer_name': json['customer_name'] == null ? undefined : json['customer_name'],
-            'expected_delivery': json['expected_delivery'] == null ? undefined : json['expected_delivery'],
-            'note': json['note'] == null ? undefined : json['note'],
-            'order_date': json['order_date'] == null ? undefined : json['order_date'],
-            'order_id': json['order_id'] == null ? undefined : json['order_id'],
-            'package_weight': json['package_weight'] == null ? undefined : json['package_weight'],
-            'package_weight_unit': json['package_weight_unit'] == null ? undefined : json['package_weight_unit'],
-            'shipment_package_count': json['shipment_package_count'] == null ? undefined : json['shipment_package_count'],
-            'shipment_pickup_date': json['shipment_pickup_date'] == null ? undefined : json['shipment_pickup_date'],
-            'shipment_delivery_date': json['shipment_delivery_date'] == null ? undefined : json['shipment_delivery_date'],
-            'shipment_service': json['shipment_service'] == null ? undefined : json['shipment_service'],
-            'shipment_origin_country': json['shipment_origin_country'] == null ? undefined : json['shipment_origin_country'],
-            'shipment_origin_postal_code': json['shipment_origin_postal_code'] == null ? undefined : json['shipment_origin_postal_code'],
-            'shipment_destination_country': json['shipment_destination_country'] == null ? undefined : json['shipment_destination_country'],
-            'shipment_destination_postal_code': json['shipment_destination_postal_code'] == null ? undefined : json['shipment_destination_postal_code'],
-            'shipping_date': json['shipping_date'] == null ? undefined : json['shipping_date'],
-            'signed_by': json['signed_by'] == null ? undefined : json['signed_by'],
-            'source': json['source'] == null ? undefined : json['source'],
-        };
-    }
-
-    /* tslint:disable */
     function TrackerDetailsFromJSON(json) {
         return TrackerDetailsFromJSONTyped(json);
     }
@@ -2415,14 +2119,14 @@ var Karrio = (function () {
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
-            'info': json['info'] == null ? undefined : TrackerDetailsInfoFromJSON(json['info']),
+            'info': json['info'] == null ? undefined : TrackingInfoFromJSON(json['info']),
             'events': json['events'] == null ? undefined : (json['events'].map(TrackingEventFromJSON)),
             'delivered': json['delivered'] == null ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
             'status': json['status'] == null ? undefined : json['status'],
             'estimated_delivery': json['estimated_delivery'] == null ? undefined : json['estimated_delivery'],
             'meta': json['meta'] == null ? undefined : json['meta'],
-            'images': json['images'] == null ? undefined : TrackerDetailsImagesFromJSON(json['images']),
+            'images': json['images'] == null ? undefined : ImagesFromJSON(json['images']),
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
             'metadata': json['metadata'] == null ? undefined : json['metadata'],
             'messages': json['messages'] == null ? undefined : (json['messages'].map(MessageFromJSON)),
@@ -2442,7 +2146,7 @@ var Karrio = (function () {
             'carrier_name': json['carrier_name'],
             'carrier_id': json['carrier_id'],
             'tracking_number': json['tracking_number'],
-            'info': json['info'] == null ? undefined : TrackerDetailsInfoFromJSON(json['info']),
+            'info': json['info'] == null ? undefined : TrackingInfoFromJSON(json['info']),
             'events': json['events'] == null ? undefined : (json['events'].map(TrackingEventFromJSON)),
             'delivered': json['delivered'] == null ? undefined : json['delivered'],
             'test_mode': json['test_mode'],
@@ -2479,7 +2183,7 @@ var Karrio = (function () {
             return value;
         }
         return {
-            'info': TrackerUpdateDataInfoToJSON(value['info']),
+            'info': TrackingInfoToJSON(value['info']),
             'metadata': value['metadata'],
         };
     }
@@ -2992,63 +2696,10 @@ var Karrio = (function () {
             });
         };
         /**
-         * Instance Metadata
-         */
-        APIApi.prototype.pingRaw = function (initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            queryParameters = {};
-                            headerParameters = {};
-                            return [4 /*yield*/, this.request({
-                                    path: "/",
-                                    method: 'GET',
-                                    headers: headerParameters,
-                                    query: queryParameters,
-                                }, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [2 /*return*/, new JSONApiResponse(response)];
-                    }
-                });
-            });
-        };
-        /**
-         * Instance Metadata
-         */
-        APIApi.prototype.ping = function (initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.pingRaw(initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        return APIApi;
-    }(BaseAPI));
-
-    /* tslint:disable */
-    /**
-     *
-     */
-    var CarriersApi = /** @class */ (function (_super) {
-        __extends(CarriersApi, _super);
-        function CarriersApi() {
-            return _super !== null && _super.apply(this, arguments) || this;
-        }
-        /**
          * Retrieve a carrier\'s services
          * Get carrier services
          */
-        CarriersApi.prototype.getServicesRaw = function (requestParameters, initOverrides) {
+        APIApi.prototype.getServicesRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
                 return __generator(this, function (_g) {
@@ -3104,7 +2755,7 @@ var Karrio = (function () {
          * Retrieve a carrier\'s services
          * Get carrier services
          */
-        CarriersApi.prototype.getServices = function (requestParameters, initOverrides) {
+        APIApi.prototype.getServices = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
@@ -3118,6 +2769,59 @@ var Karrio = (function () {
                 });
             });
         };
+        /**
+         * Instance Metadata
+         */
+        APIApi.prototype.pingRaw = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            queryParameters = {};
+                            headerParameters = {};
+                            return [4 /*yield*/, this.request({
+                                    path: "/",
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response)];
+                    }
+                });
+            });
+        };
+        /**
+         * Instance Metadata
+         */
+        APIApi.prototype.ping = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.pingRaw(initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        return APIApi;
+    }(BaseAPI));
+
+    /* tslint:disable */
+    /**
+     *
+     */
+    var CarriersApi = /** @class */ (function (_super) {
+        __extends(CarriersApi, _super);
+        function CarriersApi() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
         /**
          * Returns the list of configured carriers
          * List all carriers

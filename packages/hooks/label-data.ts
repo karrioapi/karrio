@@ -385,7 +385,9 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
 
       const update = {
         parcels: state.shipment.parcels.map((parcel, index) =>
-          parcel.id === parcel_id || index === parcel_index ? data : parcel,
+          (!!parcel.id && parcel.id === parcel_id) || index === parcel_index
+            ? data
+            : parcel,
         ),
       };
       updateShipment(update as any, change);
@@ -394,9 +396,11 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
     (parcel_index: number, parcel_id?: string) =>
     async (items: CommodityType[]) => {
       const ts = Date.now();
-      const parcel =
-        state.shipment.parcels.find(({ id }) => id === parcel_id) ||
-        state.shipment.parcels[parcel_index];
+      const parcel = (
+        !!parcel_id
+          ? state.shipment.parcels.find(({ id }) => id === parcel_id)
+          : state.shipment.parcels[parcel_index]
+      ) as ParcelType;
       const indexes = new Set(
         (state.shipment.parcels[parcel_index].items || []).map(
           (item, index) =>
@@ -444,9 +448,12 @@ export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   const updateItem =
     (parcel_index: number, item_index: number, parcel_id?: string) =>
     async ({ id, ...data }: CommodityType) => {
-      const parcel =
-        state.shipment.parcels.find(({ id }) => id === parcel_id) ||
-        state.shipment.parcels[parcel_index];
+      const parcel = (
+        !!parcel_id
+          ? state.shipment.parcels.find(({ id }) => id === parcel_id)
+          : state.shipment.parcels[parcel_index]
+      ) as ParcelType;
+
       const update = {
         ...parcel,
         items: parcel.items.map((item, index) =>

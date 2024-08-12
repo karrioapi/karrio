@@ -116,7 +116,7 @@ def rate_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit="Imperial",
+        packagingUnit="Metric",
         packages=eshipper.PackagesType(
             type="Package",
             packages=[

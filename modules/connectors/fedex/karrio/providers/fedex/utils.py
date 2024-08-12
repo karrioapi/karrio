@@ -181,3 +181,14 @@ def get_proof_of_delivery(tracking_number: str, settings: Settings):
 def parse_response(binary_string):
     content = lib.failsafe(lambda: gzip.decompress(binary_string)) or binary_string
     return lib.decode(content)
+
+
+def state_code(address: lib.units.ComputedAddress) -> str:
+    if address.state_code is None:
+        return None
+
+    return (
+        "PQ"
+        if address.state_code.lower() == "qc" and address.country_code == "CA"
+        else address.state_code
+    )

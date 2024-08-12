@@ -1,0 +1,18 @@
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="ExpressMailCommitmentRequest">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element type="xs:int" name="OriginZip"/>
+                <xs:element type="xs:short" name="DestinationZip"/>
+                <xs:element type="xs:string" name="Date"/>
+                <xs:element type="xs:string" name="DropOffTime"/>
+                <xs:element type="xs:string" name="ReturnDates"/>
+                <xs:element type="xs:string" name="PMGuarantee"/>
+                <xs:element type="xs:byte" name="ClientType"/>
+            </xs:sequence>
+            <xs:attribute type="xs:string" name="USERID" use="required"/>
+            <xs:attribute type="xs:string" name="PASSWORD" use="required"/>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

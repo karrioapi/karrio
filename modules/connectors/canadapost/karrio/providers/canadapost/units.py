@@ -80,8 +80,8 @@ class PaymentType(lib.StrEnum):
 
 
 class ConnectionConfig(lib.Enum):
-    label_type = lib.OptionEnum("label_type")
     cost_center = lib.OptionEnum("cost_center")
+    label_type = lib.OptionEnum("label_type", LabelType)
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
     transmit_shipment_by_default = lib.OptionEnum("transmit_shipment_by_default", bool)

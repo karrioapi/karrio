@@ -160,7 +160,7 @@ def rate_request(
                 address=fedex.ResponsiblePartyAddressType(
                     streetLines=shipper.address_lines,
                     city=shipper.city,
-                    stateOrProvinceCode=shipper.state_code,
+                    stateOrProvinceCode=provider_utils.state_code(shipper),
                     postalCode=shipper.postal_code,
                     countryCode=shipper.country_code,
                     residential=shipper.residential,
@@ -170,7 +170,7 @@ def rate_request(
                 address=fedex.ResponsiblePartyAddressType(
                     streetLines=recipient.address_lines,
                     city=recipient.city,
-                    stateOrProvinceCode=recipient.state_code,
+                    stateOrProvinceCode=provider_utils.state_code(recipient),
                     postalCode=recipient.postal_code,
                     countryCode=recipient.country_code,
                     residential=recipient.residential,

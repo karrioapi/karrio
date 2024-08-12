@@ -2,7 +2,7 @@ import django.db.models as models
 import karrio.server.providers.models as providers
 
 
-@providers.has_rate_sheet("dhl_parcel_de")
+# @providers.has_rate_sheet("dhl_parcel_de")
 class DHLParcelDESettings(providers.Carrier):
     class Meta:
         db_table = "dhl-parcel-de-settings"

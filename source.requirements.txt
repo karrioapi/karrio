@@ -80,6 +80,7 @@ karrio.nationex @ file://${PWD}/modules/connectors/nationex
 karrio.purolator @ file://${PWD}/modules/connectors/purolator
 karrio.roadie @ file://${PWD}/modules/connectors/roadie
 karrio.royalmail @ file://${PWD}/modules/connectors/royalmail
+karrio.sapient @ file://${PWD}/modules/connectors/sapient
 karrio.sendle @ file://${PWD}/modules/connectors/sendle
 karrio.server @ file://${PWD}/apps/api
 karrio.server.admin @ file://${PWD}/modules/admin
@@ -98,6 +99,8 @@ karrio.tnt @ file://${PWD}/modules/connectors/tnt
 karrio.ups @ file://${PWD}/modules/connectors/ups
 karrio.usps @ file://${PWD}/modules/connectors/usps
 karrio.usps-international @ file://${PWD}/modules/connectors/usps_international
+karrio.usps-wt @ file://${PWD}/modules/connectors/usps_wt
+karrio.usps-wt-international @ file://${PWD}/modules/connectors/usps_wt_international
 karrio.zoom2u @ file://${PWD}/modules/connectors/zoom2u
 lxml==4.9.4
 lxml-stubs==0.5.1

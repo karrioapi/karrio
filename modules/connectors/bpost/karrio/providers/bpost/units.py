@@ -44,10 +44,10 @@ class CustomsContentType(lib.Enum):
 
 
 class ConnectionConfig(lib.Enum):
-    lang = lib.OptionEnum("lang")
     cost_center = lib.OptionEnum("cost_center")
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+    lang = lib.OptionEnum("lang", lib.units.create_enum("Lang", ["FR", "EN"]))
 
 
 class ShippingService(lib.StrEnum):

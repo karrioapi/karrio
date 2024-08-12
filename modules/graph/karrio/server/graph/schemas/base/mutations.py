@@ -18,6 +18,7 @@ from karrio.server.serializers import (
     save_many_to_many_data,
     process_dictionaries_mutations,
 )
+import karrio.server.providers.serializers as providers_serializers
 import karrio.server.manager.serializers as manager_serializers
 import karrio.server.graph.schemas.base.inputs as inputs
 import karrio.server.graph.schemas.base.types as types
@@ -30,6 +31,7 @@ import karrio.server.graph.forms as forms
 import karrio.server.graph.utils as utils
 import karrio.server.user.models as auth
 import karrio.server.iam.models as iam
+import karrio.lib as lib
 
 logger = logging.getLogger(__name__)
 
@@ -733,21 +735,23 @@ class CreateCarrierConnectionMutation(utils.BaseMutation):
     connection: types.CarrierConnectionType = None
 
     @staticmethod
+    @utils.error_wrapper
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     def mutate(info: Info, **input) -> "CreateCarrierConnectionMutation":
         data = input.copy()
 
-        serializer = serializers.ConnectionModelSerializer(
-            data=data,
-            context=info.context.request,
+        connection = lib.identity(
+            providers_serializers.CarrierConnectionModelSerializer.map(
+                data=providers_serializers.CarrierConnectionData.map(data=data).data,
+                context=info.context.request,
+            )
+            .save()
+            .instance
         )
 
-        serializer.is_valid(raise_exception=True)
-        connection = serializer.save()
-
         return CreateCarrierConnectionMutation(  # type:ignore
-            connection=types.ConnectionType.parse(connection)
+            connection=connection
         )
 
 
@@ -756,42 +760,26 @@ class UpdateCarrierConnectionMutation(utils.BaseMutation):
     connection: types.CarrierConnectionType = None
 
     @staticmethod
-    @transaction.atomic
+    @utils.error_wrapper
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     def mutate(info: Info, **input) -> "UpdateCarrierConnectionMutation":
-        try:
-            data = input.copy()
-            settings_data = typing.cast(dict, next(iter(data.values()), {}))
-            id = settings_data.get("id")
-            instance = providers.Carrier.access_by(info.context.request).get(id=id)
-
-            serializer = serializers.PartialConnectionModelSerializer(
+        data = input.copy()
+        id = data.get("id")
+        instance = providers.Carrier.access_by(info.context.request).get(id=id)
+        connection = lib.identity(
+            providers_serializers.CarrierConnectionModelSerializer.map(
                 instance,
                 data=data,
-                partial=True,
                 context=info.context.request,
             )
-            serializer.is_valid(raise_exception=True)
+            .save()
+            .instance
+        )
 
-            if "services" in settings_data:
-                save_many_to_many_data(
-                    "services",
-                    serializers.ServiceLevelModelSerializer,
-                    instance.settings,
-                    payload=settings_data,
-                    context=info.context.request,
-                    remove_if_missing=True,
-                )
-
-            connection = serializer.save()
-
-            return UpdateCarrierConnectionMutation(  # type:ignore
-                connection=types.ConnectionType.parse(connection)
-            )
-        except Exception as e:
-            logger.exception(e)
-            raise e
+        return UpdateCarrierConnectionMutation(  # type:ignore
+            connection=connection
+        )
 
 
 @strawberry.type
@@ -799,6 +787,7 @@ class SystemCarrierMutation(utils.BaseMutation):
     carrier: typing.Optional[types.SystemConnectionType] = None
 
     @staticmethod
+    @utils.error_wrapper
     @utils.authentication_required
     @utils.authorization_required(["manage_carriers"])
     def mutate(

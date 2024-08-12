@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6-rc23`.
+    The current version is `2024.6-rc24`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6-rc23
+  version: 2024.6-rc24
 paths:
   /:
     get:
@@ -673,6 +673,144 @@ paths:
       operationId: listCarriers
       description: Returns the list of configured carriers
       summary: List all carriers
+      tags:
+      - Carriers
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CarrierDetails'
+              examples:
+                CarrierList:
+                  value:
+                  - carrier_name: dhl_express
+                    display_name: DHL Express
+                    connection_fields:
+                      site_id:
+                        name: site_id
+                        required: true
+                        type: string
+                      password:
+                        name: password
+                        required: true
+                        type: string
+                      account_number:
+                        name: account_number
+                        required: false
+                        type: string
+                    capabilities:
+                    - paperless
+                    - shipping
+                    - tracking
+                    - rating
+                    - pickup
+                    config_fields:
+                      label_type:
+                        code: label_type
+                        name: label_type
+                        required: false
+                        type: string
+                      skip_service_filter:
+                        code: skip_service_filter
+                        name: skip_service_filter
+                        required: false
+                        type: string
+                      shipping_options:
+                        code: shipping_options
+                        name: shipping_options
+                        required: false
+                        type: list
+                      shipping_services:
+                        code: shipping_services
+                        name: shipping_services
+                        required: false
+                        type: list
+                  summary: Carrier List
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: listCarriers
+  /v1/carriers/{carrier_name}/services:
+    get:
+      operationId: getServices
+      description: Retrieve a carrier's services
+      summary: Get carrier services
+      parameters:
+      - in: path
+        name: carrier_name
+        schema:
+          type: string
+        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
+          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
+          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
+          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
+          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
+          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
+        required: true
+      tags:
+      - Carriers
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: {}
+              examples:
+                CarrierList:
+                  value:
+                    canadapost_regular_parcel: DOM.RP
+                    canadapost_expedited_parcel: DOM.EP
+                    canadapost_xpresspost: DOM.XP
+                    canadapost_xpresspost_certified: DOM.XP.CERT
+                    canadapost_priority: DOM.PC
+                    canadapost_library_books: DOM.LIB
+                    canadapost_expedited_parcel_usa: USA.EP
+                    canadapost_priority_worldwide_envelope_usa: USA.PW.ENV
+                    canadapost_priority_worldwide_pak_usa: USA.PW.PAK
+                    canadapost_priority_worldwide_parcel_usa: USA.PW.PARCEL
+                    canadapost_small_packet_usa_air: USA.SP.AIR
+                    canadapost_tracked_packet_usa: USA.TP
+                    canadapost_tracked_packet_usa_lvm: USA.TP.LVM
+                    canadapost_xpresspost_usa: USA.XP
+                    canadapost_xpresspost_international: INT.XP
+                    canadapost_international_parcel_air: INT.IP.AIR
+                    canadapost_international_parcel_surface: INT.IP.SURF
+                    canadapost_priority_worldwide_envelope_intl: INT.PW.ENV
+                    canadapost_priority_worldwide_pak_intl: INT.PW.PAK
+                    canadapost_priority_worldwide_parcel_intl: INT.PW.PARCEL
+                    canadapost_small_packet_international_air: INT.SP.AIR
+                    canadapost_small_packet_international_surface: INT.SP.SURF
+                    canadapost_tracked_packet_international: INT.TP
+                  summary: Carrier List
+          description: ''
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: getServices
+  /v1/connections:
+    get:
+      operationId: listCarrierConnections
+      description: Retrieve all carrier connections
+      summary: List carrier connections
       parameters:
       - in: query
         name: active
@@ -688,7 +826,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -702,7 +841,7 @@ paths:
         schema:
           type: boolean
       tags:
-      - Carriers
+      - Connections
       security:
       - TokenBasic: []
       - Token: []
@@ -713,7 +852,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarrierList'
+                $ref: '#/components/schemas/CarrierConnectionList'
           description: ''
         '400':
           content:
@@ -721,27 +860,63 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-      x-operationId: listCarriers
-  /v1/carriers/{carrier_name}/services:
+      x-operationId: listCarrierConnections
+    post:
+      operationId: addCarrierConnection
+      description: Add a new carrier connection.
+      summary: Add a carrier connection
+      tags:
+      - Connections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CarrierConnectionData'
+        required: true
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierConnection'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '424':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessages'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: addCarrierConnection
+  /v1/connections/{id}:
     get:
-      operationId: '&&get_services'
-      description: Retrieve a carrier's services
-      summary: Get carrier services
+      operationId: retrieveCarrierConnection
+      description: Retrieve carrier connection.
+      summary: Retrieve a connection
       parameters:
       - in: path
-        name: carrier_name
+        name: id
         schema:
           type: string
-        description: 'The unique carrier slug. <br/>Values: `allied_express`, `allied_express_local`,
-          `amazon_shipping`, `aramex`, `asendia_us`, `australiapost`, `boxknight`,
-          `bpost`, `canadapost`, `canpar`, `chronopost`, `colissimo`, `dhl_express`,
-          `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
-          `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
-          `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
         required: true
       tags:
-      - Carriers
+      - Connections
       security:
       - TokenBasic: []
       - Token: []
@@ -752,8 +927,55 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                additionalProperties: {}
+                $ref: '#/components/schemas/CarrierConnection'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: retrieveCarrierConnection
+    patch:
+      operationId: updateCarrierConnection
+      description: Update a carrier connection.
+      summary: Update a connection
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - Connections
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCarrierConnectionData'
+      security:
+      - TokenBasic: []
+      - Token: []
+      - OAuth2: []
+      - JWT: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CarrierConnection'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
           description: ''
         '404':
           content:
@@ -767,11 +989,11 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-  /v1/carriers/{id}:
-    get:
-      operationId: retrieveCarrier
-      description: Retrieve a carrier account.
-      summary: Retrieve a carrier account
+      x-operationId: updateCarrierConnection
+    delete:
+      operationId: removeCarrierConnection
+      description: Remove a carrier connection.
+      summary: Remove a carrier connection
       parameters:
       - in: path
         name: id
@@ -779,7 +1001,7 @@ paths:
           type: string
         required: true
       tags:
-      - Carriers
+      - Connections
       security:
       - TokenBasic: []
       - Token: []
@@ -790,7 +1012,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CarrierSettings'
+                $ref: '#/components/schemas/CarrierConnection'
           description: ''
         '404':
           content:
@@ -798,7 +1020,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
           description: ''
-      x-operationId: retrieveCarrier
+        '409':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ''
+      x-operationId: removeCarrierConnection
   /v1/documents/generate:
     post:
       operationId: '&&&&$$generateDocument'
@@ -1183,7 +1417,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2086,6 +2321,8 @@ paths:
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
         required: true
       tags:
@@ -2177,6 +2414,8 @@ paths:
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
         required: true
       tags:
@@ -2268,6 +2507,8 @@ paths:
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
         required: true
       tags:
@@ -2452,6 +2693,8 @@ paths:
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
         required: true
       tags:
@@ -2568,7 +2811,6 @@ paths:
           - dicom
           - dpd
           - dpdhl
-          - eshipper
           - fedex
           - fedex_ws
           - generic
@@ -2580,12 +2822,15 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
         required: true
       - in: query
@@ -2709,7 +2954,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3142,7 +3388,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3285,7 +3532,6 @@ paths:
           - dicom
           - dpd
           - dpdhl
-          - eshipper
           - fedex
           - fedex_ws
           - generic
@@ -3297,12 +3543,15 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
         required: true
       - in: query
@@ -4523,39 +4772,16 @@ components:
           description: The list of tracking info to process.
       required:
       - trackers
-    CarrierList:
-      type: object
-      properties:
-        count:
-          type: integer
-          nullable: true
-        next:
-          type: string
-          format: uri
-          nullable: true
-        previous:
-          type: string
-          format: uri
-          nullable: true
-        results:
-          type: array
-          items:
-            $ref: '#/components/schemas/CarrierSettings'
-      required:
-      - results
-    CarrierSettings:
+    CarrierConnection:
       type: object
       properties:
         id:
           type: string
-          description: A unique address identifier
+          description: A unique carrier connection identifier
         object_type:
           type: string
-          default: carrier
+          default: carrier-connection
           description: Specifies the object type
-        carrier_id:
-          type: string
-          description: Indicates a specific carrier configuration name.
         carrier_name:
           enum:
           - allied_express
@@ -4591,49 +4817,239 @@ components:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: b4802ead8f816259
-          description: Indicates a carrier (type)
+          x-spec-enum-id: 43d080c02eec5b40
+          description: A carrier connection type.
         display_name:
           type: string
-          description: The carrier verbose name.
-        test_mode:
-          type: boolean
-          description: The test flag indicates whether to use a carrier configured
-            for test.
-        active:
-          type: boolean
-          description: The active flag indicates whether the carrier account is active
-            or not.
+          description: The carrier connection type verbose name.
+        carrier_id:
+          type: string
+          description: A carrier connection friendly name.
+        credentials:
+          allOf:
+          - $ref: '#/components/schemas/ConnectionCredentialsField'
+          description: Carrier connection credentials.
         capabilities:
           type: array
           items:
             type: string
           nullable: true
-          description: The carrier supported and enabled capabilities.
-        metadata:
-          type: object
-          additionalProperties: {}
-          default: {}
-          description: The carrier user metadata.
+          description: The carrier enabled capabilities.
         config:
           type: object
           additionalProperties: {}
           default: {}
-          description: The carrier connection config.
+          description: Carrier connection custom config.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the carrier.
+        is_system:
+          type: boolean
+          description: The carrier connection is provided by the system admin.
+        active:
+          type: boolean
+          description: The active flag indicates whether the carrier account is active
+            or not.
+        test_mode:
+          type: boolean
+          description: The test flag indicates whether to use a carrier configured
+            for test.
       required:
       - active
       - carrier_id
       - carrier_name
       - id
+      - is_system
       - test_mode
+    CarrierConnectionData:
+      type: object
+      properties:
+        carrier_name:
+          enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
+          - aramex
+          - asendia_us
+          - australiapost
+          - boxknight
+          - bpost
+          - canadapost
+          - canpar
+          - chronopost
+          - colissimo
+          - dhl_express
+          - dhl_parcel_de
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpd
+          - dpdhl
+          - easypost
+          - eshipper
+          - fedex
+          - fedex_ws
+          - freightcom
+          - generic
+          - geodis
+          - hay_post
+          - laposte
+          - locate2u
+          - nationex
+          - purolator
+          - roadie
+          - royalmail
+          - sapient
+          - sendle
+          - tge
+          - tnt
+          - ups
+          - usps
+          - usps_international
+          - usps_wt
+          - usps_wt_international
+          - zoom2u
+          type: string
+          x-spec-enum-id: 43d080c02eec5b40
+          description: A carrier connection type.
+        carrier_id:
+          type: string
+          description: A carrier connection friendly name.
+        credentials:
+          allOf:
+          - $ref: '#/components/schemas/ConnectionCredentialsField'
+          description: Carrier connection credentials.
+        capabilities:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: The carrier enabled capabilities.
+        config:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: Carrier connection custom config.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the carrier.
+        active:
+          type: boolean
+          default: true
+          description: The active flag indicates whether the carrier account is active
+            or not.
+      required:
+      - carrier_id
+      - carrier_name
+      - credentials
+    CarrierConnectionList:
+      type: object
+      properties:
+        count:
+          type: integer
+          nullable: true
+        next:
+          type: string
+          format: uri
+          nullable: true
+        previous:
+          type: string
+          format: uri
+          nullable: true
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/CarrierConnection'
+      required:
+      - results
+    CarrierDetails:
+      type: object
+      properties:
+        carrier_name:
+          enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
+          - aramex
+          - asendia_us
+          - australiapost
+          - boxknight
+          - bpost
+          - canadapost
+          - canpar
+          - chronopost
+          - colissimo
+          - dhl_express
+          - dhl_parcel_de
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpd
+          - dpdhl
+          - easypost
+          - eshipper
+          - fedex
+          - fedex_ws
+          - freightcom
+          - generic
+          - geodis
+          - hay_post
+          - laposte
+          - locate2u
+          - nationex
+          - purolator
+          - roadie
+          - royalmail
+          - sapient
+          - sendle
+          - tge
+          - tnt
+          - ups
+          - usps
+          - usps_international
+          - usps_wt
+          - usps_wt_international
+          - zoom2u
+          type: string
+          x-spec-enum-id: 43d080c02eec5b40
+          description: Indicates a carrier (type)
+        display_name:
+          type: string
+          description: The carrier verbose name.
+        capabilities:
+          type: array
+          items:
+            type: string
+          default: []
+          description: The carrier supported and enabled capabilities.
+        connection_fields:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier connection fields.
+        config_fields:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: The carrier connection config.
+      required:
+      - carrier_name
+      - display_name
     Charge:
       type: object
       properties:
@@ -5561,6 +5977,51 @@ components:
       required:
       - weight
       - weight_unit
+    ConnectionCredentialsField:
+      oneOf:
+      - $ref: '#/components/schemas/zoom2u'
+      - $ref: '#/components/schemas/usps_wt_international'
+      - $ref: '#/components/schemas/usps_wt'
+      - $ref: '#/components/schemas/usps_international'
+      - $ref: '#/components/schemas/usps'
+      - $ref: '#/components/schemas/ups'
+      - $ref: '#/components/schemas/tnt'
+      - $ref: '#/components/schemas/tge'
+      - $ref: '#/components/schemas/sendle'
+      - $ref: '#/components/schemas/sapient'
+      - $ref: '#/components/schemas/royalmail'
+      - $ref: '#/components/schemas/roadie'
+      - $ref: '#/components/schemas/purolator'
+      - $ref: '#/components/schemas/nationex'
+      - $ref: '#/components/schemas/locate2u'
+      - $ref: '#/components/schemas/laposte'
+      - $ref: '#/components/schemas/hay_post'
+      - $ref: '#/components/schemas/geodis'
+      - $ref: '#/components/schemas/generic'
+      - $ref: '#/components/schemas/freightcom'
+      - $ref: '#/components/schemas/fedex_ws'
+      - $ref: '#/components/schemas/fedex'
+      - $ref: '#/components/schemas/eshipper'
+      - $ref: '#/components/schemas/easypost'
+      - $ref: '#/components/schemas/dpdhl'
+      - $ref: '#/components/schemas/dpd'
+      - $ref: '#/components/schemas/dicom'
+      - $ref: '#/components/schemas/dhl_universal'
+      - $ref: '#/components/schemas/dhl_poland'
+      - $ref: '#/components/schemas/dhl_parcel_de'
+      - $ref: '#/components/schemas/dhl_express'
+      - $ref: '#/components/schemas/colissimo'
+      - $ref: '#/components/schemas/chronopost'
+      - $ref: '#/components/schemas/canpar'
+      - $ref: '#/components/schemas/canadapost'
+      - $ref: '#/components/schemas/bpost'
+      - $ref: '#/components/schemas/boxknight'
+      - $ref: '#/components/schemas/australiapost'
+      - $ref: '#/components/schemas/asendia_us'
+      - $ref: '#/components/schemas/aramex'
+      - $ref: '#/components/schemas/amazon_shipping'
+      - $ref: '#/components/schemas/allied_express_local'
+      - $ref: '#/components/schemas/allied_express'
     Customs:
       type: object
       properties:
@@ -7665,6 +8126,85 @@ components:
           nullable: true
           default: false
           description: Indicate if the address should be validated
+    PatchedCarrierConnectionData:
+      type: object
+      properties:
+        carrier_name:
+          enum:
+          - allied_express
+          - allied_express_local
+          - amazon_shipping
+          - aramex
+          - asendia_us
+          - australiapost
+          - boxknight
+          - bpost
+          - canadapost
+          - canpar
+          - chronopost
+          - colissimo
+          - dhl_express
+          - dhl_parcel_de
+          - dhl_poland
+          - dhl_universal
+          - dicom
+          - dpd
+          - dpdhl
+          - easypost
+          - eshipper
+          - fedex
+          - fedex_ws
+          - freightcom
+          - generic
+          - geodis
+          - hay_post
+          - laposte
+          - locate2u
+          - nationex
+          - purolator
+          - roadie
+          - royalmail
+          - sapient
+          - sendle
+          - tge
+          - tnt
+          - ups
+          - usps
+          - usps_international
+          - usps_wt
+          - usps_wt_international
+          - zoom2u
+          type: string
+          x-spec-enum-id: 43d080c02eec5b40
+          description: A carrier connection type.
+        carrier_id:
+          type: string
+          description: A carrier connection friendly name.
+        credentials:
+          allOf:
+          - $ref: '#/components/schemas/ConnectionCredentialsField'
+          description: Carrier connection credentials.
+        capabilities:
+          type: array
+          items:
+            type: string
+          nullable: true
+          description: The carrier enabled capabilities.
+        config:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: Carrier connection custom config.
+        metadata:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: User metadata for the carrier.
+        active:
+          type: boolean
+          default: true
+          description: The active flag indicates whether the carrier account is active
+            or not.
     PatchedDocumentTemplateData:
       type: object
       properties:
@@ -9525,7 +10065,6 @@ components:
           - dicom
           - dpd
           - dpdhl
-          - eshipper
           - fedex
           - fedex_ws
           - generic
@@ -9537,15 +10076,18 @@ components:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
           - ups
           - usps
           - usps_international
+          - usps_wt
+          - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 7a9de47b0f615f7a
+          x-spec-enum-id: a37952ea65de24e7
           description: The tracking carrier
         account_number:
           type: string
@@ -9945,6 +10487,637 @@ components:
           additionalProperties: {}
       required:
       - payload
+    allied_express:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account:
+          type: string
+        service_type:
+          enum:
+          - R
+          - P
+          - PT
+          - PT2
+          type: string
+          x-spec-enum-id: 4c9d20aef483fdb4
+          description: Indicates a service_type string
+      required:
+      - password
+      - username
+    allied_express_local:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account:
+          type: string
+        service_type:
+          enum:
+          - R
+          - P
+          - PT
+          - PT2
+          type: string
+          x-spec-enum-id: 4c9d20aef483fdb4
+          description: Indicates a service_type string
+      required:
+      - password
+      - username
+    amazon_shipping:
+      type: object
+      properties:
+        seller_id:
+          type: string
+        developer_id:
+          type: string
+        mws_auth_token:
+          type: string
+        aws_region:
+          type: string
+          default: us-east-1
+        account_country_code:
+          type: string
+      required:
+      - developer_id
+      - mws_auth_token
+      - seller_id
+    aramex:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account_pin:
+          type: string
+        account_entity:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - account_country_code
+      - account_entity
+      - account_number
+      - account_pin
+      - password
+      - username
+    asendia_us:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        api_key:
+          type: string
+        account_number:
+          type: string
+      required:
+      - api_key
+      - password
+      - username
+    australiapost:
+      type: object
+      properties:
+        api_key:
+          type: string
+        password:
+          type: string
+        account_number:
+          type: string
+      required:
+      - account_number
+      - api_key
+      - password
+    boxknight:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    bpost:
+      type: object
+      properties:
+        account_id:
+          type: string
+        passphrase:
+          type: string
+      required:
+      - account_id
+      - passphrase
+    canadapost:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        customer_number:
+          type: string
+        contract_id:
+          type: string
+        language:
+          type: string
+          default: en
+      required:
+      - password
+      - username
+    canpar:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        language:
+          type: string
+          default: en
+      required:
+      - password
+      - username
+    chronopost:
+      type: object
+      properties:
+        account_number:
+          type: string
+        password:
+          type: string
+        id_emit:
+          type: string
+          default: CHRFR
+        language:
+          type: string
+          default: en_GB
+      required:
+      - account_number
+      - password
+    colissimo:
+      type: object
+      properties:
+        password:
+          type: string
+        contract_number:
+          type: string
+        laposte_api_key:
+          type: string
+      required:
+      - contract_number
+      - password
+    dhl_express:
+      type: object
+      properties:
+        site_id:
+          type: string
+        password:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - password
+      - site_id
+    dhl_parcel_de:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        dhl_api_key:
+          type: string
+        customer_number:
+          type: string
+        tracking_consumer_key:
+          type: string
+        tracking_consumer_secret:
+          type: string
+      required:
+      - dhl_api_key
+      - password
+      - username
+    dhl_poland:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account_number:
+          type: string
+      required:
+      - password
+      - username
+    dhl_universal:
+      type: object
+      properties:
+        consumer_key:
+          type: string
+        consumer_secret:
+          type: string
+        language:
+          type: string
+          default: en
+      required:
+      - consumer_key
+      - consumer_secret
+    dicom:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        billing_account:
+          type: string
+      required:
+      - password
+      - username
+    dpd:
+      type: object
+      properties:
+        delis_id:
+          type: string
+        password:
+          type: string
+        depot:
+          type: string
+        message_language:
+          type: string
+          default: en_EN
+        account_country_code:
+          type: string
+          default: BE
+      required:
+      - delis_id
+      - password
+    dpdhl:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        app_id:
+          type: string
+        app_token:
+          type: string
+        zt_id:
+          type: string
+        zt_password:
+          type: string
+        account_number:
+          type: string
+      required:
+      - password
+      - username
+    easypost:
+      type: object
+      properties:
+        api_key:
+          type: string
+      required:
+      - api_key
+    eshipper:
+      type: object
+      properties:
+        principal:
+          type: string
+        credential:
+          type: string
+      required:
+      - credential
+      - principal
+    fedex:
+      type: object
+      properties:
+        api_key:
+          type: string
+        secret_key:
+          type: string
+        account_number:
+          type: string
+        track_api_key:
+          type: string
+        track_secret_key:
+          type: string
+        account_country_code:
+          type: string
+    fedex_ws:
+      type: object
+      properties:
+        password:
+          type: string
+        meter_number:
+          type: string
+        account_number:
+          type: string
+        user_key:
+          type: string
+        language_code:
+          type: string
+          default: en
+        account_country_code:
+          type: string
+      required:
+      - account_number
+      - meter_number
+      - password
+    freightcom:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+      - password
+      - username
+    generic:
+      type: object
+      properties:
+        display_name:
+          type: string
+        custom_carrier_name:
+          type: string
+        account_country_code:
+          type: string
+        account_number:
+          type: string
+      required:
+      - custom_carrier_name
+      - display_name
+    geodis:
+      type: object
+      properties:
+        api_key:
+          type: string
+        identifier:
+          type: string
+        code_client:
+          type: string
+        language:
+          type: string
+          default: fr
+      required:
+      - api_key
+      - identifier
+    hay_post:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        customer_id:
+          type: string
+        customer_type:
+          type: string
+      required:
+      - customer_id
+      - customer_type
+      - password
+      - username
+    laposte:
+      type: object
+      properties:
+        api_key:
+          type: string
+        lang:
+          type: string
+          default: fr_FR
+      required:
+      - api_key
+    locate2u:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+    nationex:
+      type: object
+      properties:
+        api_key:
+          type: string
+        customer_id:
+          type: string
+        billing_account:
+          type: string
+        language:
+          type: string
+          default: en
+      required:
+      - api_key
+      - customer_id
+    purolator:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account_number:
+          type: string
+        language:
+          type: string
+          default: en
+        user_token:
+          type: string
+      required:
+      - account_number
+      - password
+      - username
+    roadie:
+      type: object
+      properties:
+        api_key:
+          type: string
+      required:
+      - api_key
+    royalmail:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+      required:
+      - client_id
+      - client_secret
+    sapient:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        shipping_account_id:
+          type: string
+        carrier_code:
+          enum:
+          - DX
+          - EVRI
+          - RM
+          - UPS
+          - YODEL
+          type: string
+          x-spec-enum-id: 24b797aea0df4a45
+          description: Indicates a carrier_code string
+      required:
+      - client_id
+      - client_secret
+      - shipping_account_id
+    sendle:
+      type: object
+      properties:
+        sendle_id:
+          type: string
+        api_key:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - api_key
+      - sendle_id
+    tge:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        api_key:
+          type: string
+        toll_username:
+          type: string
+        toll_password:
+          type: string
+        my_toll_token:
+          type: string
+        my_toll_identity:
+          type: string
+        account_code:
+          type: string
+        sscc_count:
+          type: integer
+        shipment_count:
+          type: integer
+      required:
+      - api_key
+      - my_toll_identity
+      - my_toll_token
+      - password
+      - toll_password
+      - toll_username
+      - username
+    tnt:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - password
+      - username
+    ups:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        account_number:
+          type: string
+        account_country_code:
+          type: string
+      required:
+      - client_id
+      - client_secret
+    usps:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        account_type:
+          type: string
+        account_number:
+          type: string
+      required:
+      - client_id
+      - client_secret
+    usps_international:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        account_type:
+          type: string
+        account_number:
+          type: string
+      required:
+      - client_id
+      - client_secret
+    usps_wt:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        mailer_id:
+          type: string
+        customer_registration_id:
+          type: string
+        logistics_manager_mailer_id:
+          type: string
+      required:
+      - password
+      - username
+    usps_wt_international:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+        mailer_id:
+          type: string
+        customer_registration_id:
+          type: string
+        logistics_manager_mailer_id:
+          type: string
+      required:
+      - password
+      - username
+    zoom2u:
+      type: object
+      properties:
+        api_key:
+          type: string
+      required:
+      - api_key
   securitySchemes:
     JWT:
       in: header
@@ -9982,10 +11155,14 @@ tags:
 - name: Auth
   description: "API authentication resources.\n                "
 - name: Carriers
-  description: "This is an object representing your Karrio carrier account connectsions.\n\
-    \                You can retrieve all configured connections available to your\
-    \ Karrio account.\n                The `carrier_id` is a nickname you assign to\
-    \ your connection.\n                "
+  description: "This is an object representing your Karrio carrier extension.\n  \
+    \              You can retrieve all supported carrier extensions available.\n\
+    \                "
+- name: Connections
+  description: "This is an object representing your Karrio carrier connections.\n\
+    \                You can retrieve all carrier connections available to your account.\n\
+    \                The `carrier_id` is a friendly name you assign to your connection.\n\
+    \                "
 - name: Addresses
   description: "This is an object representing your Karrio shipping address.\n   \
     \             You can retrieve all addresses related to your Karrio account.\n\
@@ -10048,12 +11225,15 @@ tags:
     | Carrier Name | Display Name |
     | ------------ | ------------ |
     | zoom2u | Zoom2u |
-    | usps | USPS |
+    | usps_wt_international | USPS Web Tools International |
+    | usps_wt | USPS Web Tools |
     | usps_international | USPS International |
+    | usps | USPS |
     | ups | UPS |
     | tnt | TNT |
     | tge | TGE |
     | sendle | Sendle |
+    | sapient | SAPIENT |
     | royalmail | Royal Mail |
     | roadie | Roadie |
     | purolator | Purolator |
@@ -10100,7 +11280,68 @@ tags:
     | zoom2u_3_hour | 3 hour |
     | zoom2u_same_day | Same day |
 
-    ### USPS
+    ### USPS Web Tools International
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | usps_first_class | First Class |
+    | usps_first_class_commercial | First Class Commercial |
+    | usps_first_class_hfp_commercial | First Class HFPCommercial |
+    | usps_priority | Priority |
+    | usps_priority_commercial | Priority Commercial |
+    | usps_priority_cpp | Priority Cpp |
+    | usps_priority_hfp_commercial | Priority HFP Commercial |
+    | usps_priority_hfp_cpp | Priority HFP CPP |
+    | usps_priority_mail_express | Priority Mail Express |
+    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
+    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
+    | usps_priority_mail_express_sh | Priority Mail Express Sh |
+    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
+    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
+    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
+    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
+    | usps_priority_mail_cubic | Priority Mail Cubic |
+    | usps_retail_ground | Retail Ground |
+    | usps_media | Media |
+    | usps_library | Library |
+    | usps_all | All |
+    | usps_online | Online |
+    | usps_plus | Plus |
+    | usps_bpm | BPM |
+
+    ### USPS Web Tools
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | usps_first_class | First Class |
+    | usps_first_class_commercial | First Class Commercial |
+    | usps_first_class_hfp_commercial | First Class HFPCommercial |
+    | usps_priority | Priority |
+    | usps_priority_commercial | Priority Commercial |
+    | usps_priority_cpp | Priority Cpp |
+    | usps_priority_hfp_commercial | Priority HFP Commercial |
+    | usps_priority_hfp_cpp | Priority HFP CPP |
+    | usps_priority_mail_express | Priority Mail Express |
+    | usps_priority_mail_express_commercial | Priority Mail Express Commercial |
+    | usps_priority_mail_express_cpp | Priority Mail Express CPP |
+    | usps_priority_mail_express_sh | Priority Mail Express Sh |
+    | usps_priority_mail_express_sh_commercial | Priority Mail Express ShCommercial |
+    | usps_priority_mail_express_hfp | Priority Mail Express HFP |
+    | usps_priority_mail_express_hfp_commercial | Priority Mail Express HFP Commercial |
+    | usps_priority_mail_express_hfp_cpp | Priority Mail Express HFP CPP |
+    | usps_priority_mail_cubic | Priority Mail Cubic |
+    | usps_retail_ground | Retail Ground |
+    | usps_media | Media |
+    | usps_library | Library |
+    | usps_all | All |
+    | usps_online | Online |
+    | usps_plus | Plus |
+    | usps_bpm | BPM |
+    | usps_ground_advantage | Ground Advantage |
+    | usps_ground_advantage_commercial | Ground Advantage Commercial |
+    | usps_ground_advantage_hfp | Ground Advantage HFP |
+    | usps_ground_advantage_hfp_commercial | Ground Advantage HFP Commercial |
+    | usps_ground_advantage_cubic | Ground Advantage Cubic |
+
+    ### USPS International
     | Code         | Service Name |
     | ------------ | ------------ |
     | usps_standard_service | USPS Standard Service |
@@ -10121,7 +11362,7 @@ tags:
     | usps_retail_ground | USPS_RETAIL_GROUND |
     | usps_all | ALL |
 
-    ### USPS International
+    ### USPS
     | Code         | Service Name |
     | ------------ | ------------ |
     | usps_standard_service | USPS Standard Service |

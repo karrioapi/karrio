@@ -1,11 +1,13 @@
 import typing
 import functools
+from django import dispatch
 import django.conf as conf
 import django.forms as forms
 import django.db.models as models
 
 import karrio
 import karrio.lib as lib
+import karrio.references as ref
 import karrio.core.units as units
 import django.core.cache as caching
 import karrio.api.gateway as gateway
@@ -23,8 +25,6 @@ CAPABILITIES_CHOICES = [(c, c) for c in units.CarrierCapabilities.get_capabiliti
 
 class Manager(models.Manager):
     def get_queryset(self):
-        from karrio.server.providers.models import MODELS
-
         return (
             super()
             .get_queryset()
@@ -56,9 +56,14 @@ class SystemCarrierManager(models.Manager):
         )
 
 
+@core.register_model
 class Carrier(core.OwnedEntity):
     class Meta:
         ordering = ["test_mode", "-created_at"]
+
+    objects = Manager()
+    user_carriers = CarrierManager()
+    system_carriers = SystemCarrierManager()
 
     id = models.CharField(
         max_length=50,
@@ -66,37 +71,20 @@ class Carrier(core.OwnedEntity):
         default=functools.partial(core.uuid, prefix="car_"),
         editable=False,
     )
+    carrier_code = models.CharField(
+        max_length=100,
+        db_index=True,
+        default="generic",
+        help_text="eg. dhl_express, fedex, ups, usps, ...",
+    )
     carrier_id = models.CharField(
-        max_length=200,
+        max_length=150,
         db_index=True,
         help_text="eg. canadapost, dhl_express, fedex, purolator_courrier, ups...",
     )
-    test_mode = models.BooleanField(
-        default=True,
-        db_column="test_mode",
-        help_text="Toggle carrier connection mode",
-    )
-    active = models.BooleanField(
-        default=True,
-        db_index=True,
-        help_text="Disable/Hide carrier from clients",
-    )
-    is_system = models.BooleanField(
-        default=False,
-        db_index=True,
-        help_text="Determine that the carrier connection is available system wide.",
-    )
-    created_by = models.ForeignKey(
-        conf.settings.AUTH_USER_MODEL,
-        blank=True,
-        null=True,
-        on_delete=models.CASCADE,
-        editable=False,
-    )
-    active_users = models.ManyToManyField(
-        conf.settings.AUTH_USER_MODEL,
-        blank=True,
-        related_name="active_users",
+    credentials = models.JSONField(
+        default=core.field_default({}),
+        help_text="Carrier connection credentials",
     )
     capabilities = fields.MultiChoiceField(
         choices=datatypes.CAPABILITIES_CHOICES,
@@ -109,112 +97,127 @@ class Carrier(core.OwnedEntity):
         default=core.field_default({}),
         help_text="User defined metadata",
     )
+    active = models.BooleanField(
+        default=True,
+        db_index=True,
+        help_text="Disable/Hide carrier from clients",
+    )
+    is_system = models.BooleanField(
+        default=False,
+        db_index=True,
+        help_text="Determine that the carrier connection is available system wide.",
+    )
+    test_mode = models.BooleanField(
+        default=True,
+        db_column="test_mode",
+        help_text="Toggle carrier connection mode",
+    )
 
-    objects = Manager()
-    user_carriers = CarrierManager()
-    system_carriers = SystemCarrierManager()
+    created_by = models.ForeignKey(
+        conf.settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        editable=False,
+    )
+    active_users = models.ManyToManyField(
+        conf.settings.AUTH_USER_MODEL,
+        blank=True,
+        related_name="connection_users",
+    )
+    rate_sheet = models.ForeignKey(
+        "RateSheet",
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
 
     def __str__(self):
         return self.carrier_id
 
     @property
     def object_type(self):
-        return "carrier"
-
-    @property
-    def carrier_name(self):
-        return getattr(self.settings, "carrier_name", None)
-
-    @property
-    def settings(self):
-        _, settings = self.__class__.resolve_settings(self)
-        return settings
+        return "carrier-connection"
 
     @property
     def ext(self) -> str:
         return (
             "generic"
-            if hasattr(self.settings, "custom_carrier_name")
-            else getattr(self.settings, "carrier_name", None)
+            if "custom_carrier_name" in self.credentials
+            else lib.failsafe(lambda: self.carrier_code) or "generic"
         )
 
     @property
-    def gateway(self) -> gateway.Gateway:
-        from karrio.server.core import middleware
-
-        _context = middleware.SessionContext.get_current_request()
-        _tracer = getattr(_context, "tracer", lib.Tracer())
-        _cache = lib.Cache(caching.cache)
-        _carrier_name = self.ext
-
-        return karrio.gateway[_carrier_name].create(
-            {**self.data.to_dict()}, _tracer, _cache
+    def carrier_name(self):
+        return (
+            self.credentials.get("custom_carrier_name")
+            if "custom_carrier_name" in self.credentials
+            else lib.failsafe(lambda: self.carrier_code) or "generic"
         )
 
     @property
-    def carrier_display_name(self):
-        if hasattr(self.settings, "display_name"):
-            return self.settings.display_name
-
+    def display_name(self):
         import karrio.references as references
 
-        return references.collect_references()["carriers"].get(
-            self.settings.carrier_name
-        )
+        return self.credentials.get("display_name") or references.collect_references()[
+            "carriers"
+        ].get(self.ext)
 
     @property
-    def config(self):
-        config = self.__class__.resolve_config(self)
+    def carrier_config(self):
+        return self.__class__.resolve_config(self)
 
-        return config
+    @property
+    def config(self) -> dict:
+        return getattr(self.carrier_config, "config", {})
+
+    @property
+    def services(self) -> typing.Optional[typing.List[dict]]:
+        if self.rate_sheet is None:
+            return None
+        return self.rate_sheet.services.all()
 
     @property
     def data(self) -> datatypes.CarrierSettings:
         _computed_data: typing.Dict = dict(
-            id=self.settings.id,
-            carrier_name=self.settings.carrier_name,
-            display_name=self.settings.carrier_display_name,
-            config=getattr(self.config, "config", None),
+            id=self.id,
+            config=self.config,
+            test_mode=self.test_mode,
+            metadata=self.metadata,
+            carrier_id=self.carrier_id,
+            carrier_name=self.ext,
+            display_name=self.display_name,
         )
 
-        if hasattr(self.settings, "services"):
+        if any(self.services or []):
             _computed_data.update(
-                services=[forms.model_to_dict(s) for s in self.settings.service_list]
+                services=[forms.model_to_dict(s) for s in self.services]
             )
 
-        if hasattr(self.settings, "sscc_count"):
-            _computed_data.update(sscc_count=self.settings.sscc_count)
-
-        if hasattr(self.settings, "shipment_count"):
-            _computed_data.update(shipment_count=self.settings.shipment_count)
-
-        if hasattr(self.settings, "cache"):
-            _computed_data.update(cache=self.settings.cache)
-
-        if self.is_system and self.config is None:
+        # override the config with the system config
+        if self.is_system and self.carrier_config is None:
             _config = self.__class__.resolve_config(self, is_system_config=True)
-            _computed_data.update(
-                config=getattr(_config, "config", None),
-            )
+            _computed_data.update(config=getattr(_config, "config", None))
 
         return datatypes.CarrierSettings.create(
             {
-                **forms.model_to_dict(self.settings),
+                **self.credentials,
                 **_computed_data,
             }
         )
 
-    @staticmethod
-    def resolve_settings(carrier):
-        from karrio.server.providers.models import MODELS
+    @property
+    def gateway(self) -> gateway.Gateway:
+        import karrio.server.core.middleware as middleware
 
-        return next(
-            (
-                (name, getattr(carrier, model.__name__.lower()))
-                for name, model in MODELS.items()
-                if hasattr(carrier, model.__name__.lower())
-            ),
-            (None, None),
+        _context = middleware.SessionContext.get_current_request()
+        _tracer = getattr(_context, "tracer", lib.Tracer())
+        _cache = lib.Cache(caching.cache)
+
+        return karrio.gateway[self.ext].create(
+            self.data.to_dict(),
+            _tracer,
+            _cache,
         )
 
     @staticmethod
@@ -227,25 +230,25 @@ class Carrier(core.OwnedEntity):
         - If the carrier is an org carrier, return the first config from the org
         - If the carrier is a user carrier, return the first config from the user
         """
-        from karrio.server.providers.models.config import CarrierConfig
-        from karrio.server import serializers
+        import karrio.server.serializers as serializers
         import karrio.server.core.middleware as middleware
         from django.contrib.auth.models import AnonymousUser
+        from karrio.server.providers.models.config import CarrierConfig
 
         if carrier.id is None:
             return None
 
         _ctx = serializers.get_object_context(carrier)
-        ctx = (
+        ctx = lib.identity(
             _ctx
             if (_ctx.user or _ctx.org)
             else lib.failsafe(lambda: middleware.SessionContext.get_current_request())
         )
-        has_ctx_user = ctx and (
-            (ctx.user and not isinstance(ctx.user, AnonymousUser)) or ctx.org
+        has_ctx_user = lib.identity(
+            ctx and ((ctx.user and not isinstance(ctx.user, AnonymousUser)) or ctx.org)
         )
 
-        queryset = (
+        queryset = lib.identity(
             CarrierConfig.objects.filter(carrier=carrier)
             if carrier.is_system
             else CarrierConfig.access_by(ctx).filter(carrier=carrier)
@@ -269,3 +272,44 @@ class Carrier(core.OwnedEntity):
             return _config
 
         return queryset.first()
+
+
+def create_carrier_proxy(carrier_name: str, display_name):
+    class _Manager(Manager):
+        def get_queryset(self):
+            return super().get_queryset().filter(carrier_code=carrier_name)
+
+    class _CarrierManager(CarrierManager):
+        def get_queryset(self):
+            return super().get_queryset().filter(carrier_code=carrier_name)
+
+    class _SystemCarrierManager(SystemCarrierManager):
+        def get_queryset(self):
+            return super().get_queryset().filter(carrier_code=carrier_name)
+
+    return type(
+        f"{carrier_name}Connection",
+        (Carrier,),
+        {
+            "Meta": type(
+                "Meta",
+                (),
+                {
+                    "proxy": True,
+                    "__module__": __name__,
+                    "verbose_name": f"{display_name} Connection",
+                    "verbose_name_plural": f"{display_name} Connections",
+                },
+            ),
+            "__module__": __name__,
+            "objects": _Manager(),
+            "user_carriers": _CarrierManager(),
+            "system_carriers": _SystemCarrierManager(),
+        },
+    )
+
+
+CARRIER_PROXIES = {
+    f"{carrier_name}": create_carrier_proxy(carrier_name, display_name)
+    for carrier_name, display_name in ref.collect_references()["carriers"].items()
+}

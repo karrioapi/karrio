@@ -94,7 +94,7 @@ class PermissionGroupType:
 
 
 @strawberry.type
-class CarrierConnectionType(base.SystemConnectionType):
+class UserConnectionType(base.SystemConnectionType):
     id: str
 
     @staticmethod
@@ -103,7 +103,7 @@ class CarrierConnectionType(base.SystemConnectionType):
     def resolve_list(
         info,
         filter: typing.Optional[inputs.base.ShipmentFilter] = strawberry.UNSET,
-    ) -> typing.List["CarrierConnectionType"]:
+    ) -> typing.List["UserConnectionType"]:
         _filter = filter if not utils.is_unset(filter) else inputs.ShipmentFilter()
         query = providers.Carrier.user_carrier.filter(
             test_mode=getattr(info.context.request, "test_mode", False),
@@ -113,8 +113,8 @@ class CarrierConnectionType(base.SystemConnectionType):
         return utils.paginated_connection(queryset, **_filter.pagination())
 
 
-@strawberry.interface
-class SystemConnectionType:
+@strawberry.type
+class SystemCarrierConnectionType(base.CarrierConnectionType):
     object_type: typing.Optional[str]
 
     @staticmethod
@@ -126,11 +126,7 @@ class SystemConnectionType:
             test_mode=getattr(info.context.request, "test_mode", False),
         )
 
-        return (
-            base.ConnectionType.parse(connection.first(), SystemCarrierSettings)
-            if connection.exists()
-            else None
-        )
+        return connection.first()
 
     @staticmethod
     @utils.authentication_required
@@ -139,31 +135,7 @@ class SystemConnectionType:
         connections = providers.Carrier.system_carriers.filter(
             test_mode=getattr(info.context.request, "test_mode", False),
         )
-
-        return [
-            base.ConnectionType.parse(_, SystemCarrierSettings) for _ in connections
-        ]
-
-
-SystemCarrierSettings = {
-    name: strawberry.type(
-        type(
-            settings.__name__,
-            (
-                settings,
-                SystemConnectionType,
-            ),
-            {
-                "object_type": strawberry.UNSET,
-                "__annotations__": {"object_type": typing.Optional[str]},
-            },
-        )
-    )
-    for name, settings in base.CarrierSettings.items()
-}
-SystemCarrierConnectionType: typing.Any = strawberry.union(
-    "SystemCarrierConnectionType", types=(*(T for T in SystemCarrierSettings.values()),)
-)
+        return connections
 
 
 @strawberry.type
@@ -332,11 +304,8 @@ class SurchargeType:
         return self.carriers or []
 
     @strawberry.field
-    def carrier_accounts(self: pricing.Surcharge) -> typing.List[CarrierConnectionType]:
-        return [
-            base.ConnectionType.parse(c, SystemCarrierSettings)
-            for c in self.carrier_accounts.all()
-        ]
+    def carrier_accounts(self: pricing.Surcharge) -> typing.List[UserConnectionType]:
+        return self.carrier_accounts.all()
 
     @staticmethod
     @utils.authentication_required

@@ -51,7 +51,7 @@ if __name__ == "__main__":
 
 
 RatePayload = {
-    "shipper": {"postal_code": "H3N1S4", "country_code": "CA"},
+    "shipper": {"postal_code": "H3N1S4", "country_code": "CA", "state_code": "QC"},
     "recipient": {"city": "Lome", "country_code": "TG"},
     "parcels": [
         {
@@ -293,6 +293,7 @@ RateRequest = {
                 "countryCode": "CA",
                 "postalCode": "H3N1S4",
                 "residential": False,
+                "stateOrProvinceCode": "PQ",
             }
         },
         "smartPostInfoDetail": {"hubId": "1000", "indicia": "PARCEL_SELECT"},
