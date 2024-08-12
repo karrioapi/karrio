@@ -49,6 +49,7 @@ def _extract_details(
         meta=dict(
             carrier_tracking_link=lib.failsafe(lambda: details.Packages[0].TrackingUrl),
             shipment_ids=shipment_ids,
+            tracking_numbers=tracking_numbers,
             sapient_carrier=ctx.get("carrier"),
             sapient_shipment_id=shipment_ids[0],
         ),
@@ -77,7 +78,7 @@ def shipment_request(
         recipient=payload.recipient,
     )
     commodities: units.Products = lib.identity(
-        customs.commodities if any(payload.customs) else packages.items
+        customs.commodities if payload.customs else packages.items
     )
 
     # map data to convert karrio model to sapient specific type
@@ -90,7 +91,7 @@ def shipment_request(
             DescriptionOfGoods=packages.description,
             ShipmentDate=lib.fdate(
                 options.shipment_date.state or datetime.datetime.now(),
-                format="%Y-%m-%d",
+                "%Y-%m-%d",
             ),
             CurrencyCode=options.currency.state or "GBP",
             WeightUnitOfMeasure="KG",
@@ -140,8 +141,8 @@ def shipment_request(
             VatNumber=recipient.tax_id,
         ),
         CarrierSpecifics=sapient.CarrierSpecificsType(
-            ServiceLevel=None,
-            EbayVtn=options.ebay_vtn.state,
+            ServiceLevel=settings.connection_config.service_level.state or "02",
+            EbayVtn=options.sapient_ebay_vtn.state,
             ServiceEnhancements=[
                 sapient.ServiceEnhancementType(
                     Code=option.code,
@@ -199,7 +200,7 @@ def shipment_request(
                 Quantity=item.quantity,
                 Description=item.title or item.description,
                 Value=item.value_amount,
-                Weight=item.weight.KG,
+                Weight=item.weight,
                 HSCode=item.hs_code,
                 CountryOfOrigin=item.origin_country,
             )
@@ -217,7 +218,7 @@ def shipment_request(
                 OtherCharges=options.insurance.state,
                 QuotedLandedCost=None,
                 InvoiceNumber=customs.invoice,
-                InvoiceDate=lib.fdate(customs.invoice_date, format="%Y-%m-%d"),
+                InvoiceDate=lib.fdate(customs.invoice_date, "%Y-%m-%d"),
                 ExportLicenceRequired=None,
                 Airn=customs.options.sapient_airn.state,
             )

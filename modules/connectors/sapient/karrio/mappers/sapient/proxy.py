@@ -60,11 +60,12 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
         if response.deserialize()["ok"]:
             response = self.schedule_pickup(request)
 
-        return lib.Deserializable(response, lib.to_dict)
+        return lib.Deserializable(response, lib.to_dict, request.ctx)
 
     def cancel_pickup(self, request: lib.Serializable) -> lib.Deserializable[str]:
+        payload = request.serialize()
         response = lib.request(
-            url=f"{self.settings.server_url}/v4/collections/{request.serialize()['carrier']}/{request.serialize()['shipmentId']}/cancel",
+            url=f"{self.settings.server_url}/v4/collections/{payload['carrier']}/{payload['shipmentId']}/cancel",
             trace=self.trace_as("json"),
             method="PUT",
             headers={

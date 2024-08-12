@@ -12,6 +12,7 @@ cached_auth = {
         issued_at="1685542319575",
         scope="mscapi.all",
         expires_in="14399",
+        expiry=expiry.strftime("%Y-%m-%d %H:%M:%S"),
     )
 }
 

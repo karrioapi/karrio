@@ -38,7 +38,10 @@ def _extract_details(
         carrier_name=settings.carrier_name,
         confirmation_number=details.CollectionOrderId,
         pickup_date=lib.fdate(details.CollectionDate),
-        meta=dict(shipment_id=ctx.get("shipmentId")),
+        meta=dict(
+            sapient_shipment_id=ctx.get("shipmentId"),
+            sapient_carrier=ctx.get("carrier"),
+        ),
     )
 
 
@@ -52,9 +55,10 @@ def pickup_update_request(
             "PickupOptions",
             # fmt: off
             {
+                "sapient_carrier": lib.OptionEnum("sapient_carrier"),
                 "sapient_shipment_id": lib.OptionEnum("shipment_id"),
                 "sapient_slot_reservation_id": lib.OptionEnum("SlotReservationId"),
-                "sapient_bring_my_label": lib.OptionEnum("BringMyLabel"),
+                "sapient_bring_my_label": lib.OptionEnum("BringMyLabel", bool),
             },
             # fmt: on
         ),
@@ -63,7 +67,7 @@ def pickup_update_request(
     # map data to convert karrio model to sapient specific type
     request = sapient.PickupRequestType(
         SlotDate=payload.pickup_date,
-        SlotReservationId=options.slot_reservation_id.state,
+        SlotReservationId=options.sapient_slot_reservation_id.state,
         BringMyLabel=lib.identity(
             options.sapient_bring_my_label.state
             if options.sapient_bring_my_label.state is not None
@@ -74,5 +78,8 @@ def pickup_update_request(
     return lib.Serializable(
         request,
         lib.to_dict,
-        dict(shipmentId=payload.options.shipment_id.state),
+        dict(
+            shipmentId=options.sapient_shipment_id.state,
+            carrier=options.sapient_carrier.state or settings.carrier_code,
+        ),
     )

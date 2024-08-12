@@ -67,7 +67,7 @@ def pickup_request(
     # map data to convert karrio model to sapient specific type
     request = sapient.PickupRequestType(
         SlotDate=payload.pickup_date,
-        SlotReservationId=options.slot_reservation_id.state,
+        SlotReservationId=options.sapient_slot_reservation_id.state,
         BringMyLabel=lib.identity(
             options.sapient_bring_my_label.state
             if options.sapient_bring_my_label.state is not None
@@ -78,5 +78,8 @@ def pickup_request(
     return lib.Serializable(
         request,
         lib.to_dict,
-        dict(shipmentId=payload.options.shipment_id.state, carrier=carrier),
+        dict(
+            shipmentId=options.sapient_shipment_id.state,
+            carrier=options.sapient_carrier.state or settings.carrier_code,
+        ),
     )

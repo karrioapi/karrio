@@ -37,17 +37,17 @@ class TestSAPIENTPickup(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/v4/collections/RM/fa3bb603-2687-4b38-ba18-3264208446c6",
             )
 
     def test_update_pickup(self):
         with patch("karrio.mappers.sapient.proxy.lib.request") as mock:
-            mock.return_value = "{}"
+            mock.side_effect = [PickupCancelResponse, "{}"]
             karrio.Pickup.update(self.PickupUpdateRequest).from_(gateway)
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/v4/collections/RM/fa3bb603-2687-4b38-ba18-3264208446c6",
             )
 
     def test_cancel_pickup(self):
@@ -57,7 +57,7 @@ class TestSAPIENTPickup(unittest.TestCase):
 
             self.assertEqual(
                 mock.call_args[1]["url"],
-                f"{gateway.settings.server_url}",
+                f"{gateway.settings.server_url}/v4/collections/RM/fa3bb603-2687-4b38-ba18-3264208446c6/cancel",
             )
 
     def test_parse_pickup_response(self):
@@ -101,7 +101,11 @@ PickupPayload = {
         "state_code": "SC",
     },
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
-    "options": {"usps_package_type": "FIRST-CLASS_PACKAGE_SERVICE"},
+    "options": {
+        "sapient_slot_reservation_id": "1f3c991f-a6ff-4ffb-9292-17690d745992",
+        "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
+        "sapient_carrier": "RM",
+    },
 }
 
 PickupUpdatePayload = {
@@ -121,17 +125,31 @@ PickupUpdatePayload = {
         "state_code": "SC",
     },
     "parcels": [{"weight": 20, "weight_unit": "LB"}],
-    "options": {"usps_package_type": "FIRST-CLASS_PACKAGE_SERVICE"},
+    "options": {
+        "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
+        "sapient_carrier": "RM",
+        "sapient_bring_my_label": True,
+    },
 }
 
-PickupCancelPayload = {"confirmation_number": "0074698052"}
+PickupCancelPayload = {
+    "confirmation_number": "0074698052",
+    "options": {
+        "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
+        "sapient_carrier": "RM",
+    },
+}
 
 ParsedPickupResponse = [
     {
         "carrier_id": "sapient",
         "carrier_name": "sapient",
-        "confirmation_number": "string",
-        "pickup_date": "2019-08-24",
+        "confirmation_number": "CC-W307-028741033",
+        "pickup_date": "2023-07-04",
+        "meta": {
+            "sapient_shipment_id": "fa3bb603-2687-4b38-ba18-3264208446c6",
+            "sapient_carrier": "RM",
+        },
     },
     [],
 ]
@@ -149,19 +167,20 @@ ParsedCancelPickupResponse = [
 
 PickupRequest = {
     "SlotReservationId": "1f3c991f-a6ff-4ffb-9292-17690d745992",
-    "SlotDate": "2024-06-17",
+    "SlotDate": "2013-10-19",
     "BringMyLabel": False,
 }
 
 
 PickupUpdateRequest = {
-    "SlotDate": "2024-06-17",
+    "SlotDate": "2013-10-19",
     "BringMyLabel": True,
 }
 
 
 PickupCancelRequest = {
-    "shipmentId": "1f3c991f-a6ff-4ffb-9292-17690d745992",
+    "carrier": "RM",
+    "shipmentId": "fa3bb603-2687-4b38-ba18-3264208446c6",
 }
 
 

@@ -270,13 +270,13 @@ class ShippingOption(lib.Enum):
     sapient_signed = lib.OptionEnum("Signed", bool)
     sapient_SMS = lib.OptionEnum("SMS", bool)
     sapient_email = lib.OptionEnum("Email", bool)
-    sapient_safeplace = lib.OptionEnum("Safeplace", bool)
     sapient_localcollect = lib.OptionEnum("LocalCollect", bool)
     sapient_customs_email = lib.OptionEnum("CustomsEmail")
     sapient_customs_phone = lib.OptionEnum("CustomsPhone")
-    sapient_safeplace_location = lib.OptionEnum("SafeplaceLocation")
+    sapient_safeplace_location = lib.OptionEnum("Safeplace")
 
     """ Custom options """
+    sapient_ebay_vtn = lib.OptionEnum("EbayVtn")
     sapient_container_id = lib.OptionEnum("ContainerId")
     sapient_business_transaction_type = lib.OptionEnum("BusinessTransactionType")
 
@@ -346,10 +346,10 @@ SAPIENT_CARRIERS = [
     },
 ]
 
-
 CUSTOM_OPTIONS = [
-    ShippingOption.sapient_container_id,
-    ShippingOption.sapient_business_transaction_type,
+    ShippingOption.sapient_ebay_vtn.name,
+    ShippingOption.sapient_container_id.name,
+    ShippingOption.sapient_business_transaction_type.name,
 ]
 
 SERVICES_DATA = [

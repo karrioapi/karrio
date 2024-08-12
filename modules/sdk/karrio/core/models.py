@@ -213,6 +213,7 @@ class PickupCancelRequest:
     address: Address = JStruct[Address]
     pickup_date: str = None
     reason: str = None
+    options: Dict = {}
 
 
 @attr.s(auto_attribs=True)
