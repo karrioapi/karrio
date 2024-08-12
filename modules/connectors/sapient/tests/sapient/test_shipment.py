@@ -125,6 +125,7 @@ ShipmentPayload = {
         }
     ],
     "options": {
+        "shipment_date": "2024-08-11",
         "declared_value": 98.99,
         "sapient_customs_email": True,
         "sapient_customs_phone": True,
@@ -133,7 +134,7 @@ ShipmentPayload = {
     },
     "customs": {
         "content_type": "merchandise",
-        "incoterms": "DDU",
+        "incoterm": "DDU",
         "invoice": "INV-12345",
         "invoice_date": "2024-06-17",
         "options": {
@@ -210,6 +211,7 @@ ShipmentRequest = {
         "EbayVtn": "ebay1234abc",
     },
     "Customs": {
+        "Incoterms": "DDU",
         "InvoiceDate": "2024-06-17",
         "InvoiceNumber": "INV-12345",
         "ReasonForExport": "Sale of Goods",
