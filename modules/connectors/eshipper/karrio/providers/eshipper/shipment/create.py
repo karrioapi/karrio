@@ -8,7 +8,7 @@ import karrio.core.models as models
 import karrio.providers.eshipper.error as error
 import karrio.providers.eshipper.utils as provider_utils
 import karrio.providers.eshipper.units as provider_units
-
+import math
 
 def parse_shipment_response(
     _response: lib.Deserializable[dict],
@@ -143,20 +143,17 @@ def shipment_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit="Metric",
+        packagingUnit="Metric" if packages.weight_unit == "kg" else "Imperial",
         packages=eshipper.PackagesType(
             type="Package",
-            quantity=len(packages),
-            weightUnit=units.WeightUnit.KG.value,
-            totalWeight=packages.weight.KG,
             packages=[
                 eshipper.PackageType(
-                    height=package.height.CM,
-                    length=package.length.CM,
-                    width=package.width.CM,
-                    weight=package.weight.KG,
-                    dimensionUnit=units.DimensionUnit.CM.value,
-                    weightUnit=units.WeightUnit.KG.value,
+                    height=math.ceil(package.height.value),
+                    length=math.ceil(package.length.value),
+                    width=math.ceil(package.width.value),
+                    weight=math.ceil(package.weight.value),
+                    dimensionUnit=package.dimension_unit.value,
+                    weightUnit=package.weight_unit.value,
                     type=provider_units.PackagingType.map(package.packaging_type).value,
                     freightClass=package.parcel.freight_class,
                     nmfcCode=None,
