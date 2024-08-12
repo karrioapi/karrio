@@ -150,6 +150,7 @@ class PickupCancelRequest(BasePickupCancelRequest):
     address: Address = jstruct.JStruct[Address]
     pickup_date: str = None
     reason: str = None
+    options: typing.Dict = {}
 
 
 @attr.s(auto_attribs=True)

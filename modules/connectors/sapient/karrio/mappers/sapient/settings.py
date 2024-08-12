@@ -1,27 +1,28 @@
-"""Karrio Colissimo client settings."""
+"""Karrio SAPIENT client settings."""
 
 import attr
 import typing
 import jstruct
 import karrio.core.models as models
-import karrio.providers.colissimo.utils as provider_utils
-import karrio.providers.colissimo.units as provider_units
+import karrio.providers.sapient.utils as provider_utils
+import karrio.providers.sapient.units as provider_units
 
 
 @attr.s(auto_attribs=True)
 class Settings(provider_utils.Settings):
-    """Colissimo connection settings."""
+    """SAPIENT connection settings."""
 
-    # required carrier specific properties
-    password: str
-    contract_number: str
-    laposte_api_key: str = None
+    # Add carrier specific API connection properties here
+    client_id: str
+    client_secret: str
+    shipping_account_id: str
+    carrier_code: str = "RM"
 
     # generic properties
     id: str = None
     test_mode: bool = False
-    carrier_id: str = "colissimo"
-    account_country_code: str = "FR"
+    carrier_id: str = "sapient"
+    account_country_code: str = "GB"
     metadata: dict = {}
     config: dict = {}
 
