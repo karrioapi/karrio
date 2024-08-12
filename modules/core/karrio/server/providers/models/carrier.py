@@ -214,7 +214,7 @@ class Carrier(core.OwnedEntity):
         _tracer = getattr(_context, "tracer", lib.Tracer())
         _cache = lib.Cache(caching.cache)
 
-        return karrio.gateway[self.carrier_name].create(
+        return karrio.gateway[self.ext].create(
             self.data.to_dict(),
             _tracer,
             _cache,

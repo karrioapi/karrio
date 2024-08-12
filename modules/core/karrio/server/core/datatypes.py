@@ -76,7 +76,7 @@ class CarrierSettings:
                 "capabilities",
                 "active_users",
                 "active_orgs",
-                *(["display_name"] if self.carrier_name == "generic" else []),
+                *([] if self.carrier_name == "generic" else ["display_name"]),
             ]
         }
 

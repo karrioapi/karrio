@@ -753,8 +753,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `usps_wt`,
-          `usps_wt_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
         required: true
       tags:
       - Carriers
@@ -826,8 +826,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `usps_wt`,
-          `usps_wt_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: metadata_key
         schema:
@@ -1417,8 +1417,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `usps_wt`,
-          `usps_wt_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -2822,6 +2822,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -2953,8 +2954,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `usps_wt`,
-          `usps_wt_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3387,8 +3388,8 @@ paths:
           `dhl_parcel_de`, `dhl_poland`, `dhl_universal`, `dicom`, `dpd`, `dpdhl`,
           `easypost`, `eshipper`, `fedex`, `fedex_ws`, `freightcom`, `generic`, `geodis`,
           `hay_post`, `laposte`, `locate2u`, `nationex`, `purolator`, `roadie`, `royalmail`,
-          `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`, `usps_wt`,
-          `usps_wt_international`, `zoom2u`'
+          `sapient`, `sendle`, `tge`, `tnt`, `ups`, `usps`, `usps_international`,
+          `usps_wt`, `usps_wt_international`, `zoom2u`'
       - in: query
         name: created_after
         schema:
@@ -3542,6 +3543,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -4815,6 +4817,7 @@ components:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -4825,7 +4828,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: d794e9223f222623
+          x-spec-enum-id: 43d080c02eec5b40
           description: A carrier connection type.
         display_name:
           type: string
@@ -4909,6 +4912,7 @@ components:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -4919,7 +4923,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: d794e9223f222623
+          x-spec-enum-id: 43d080c02eec5b40
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -5011,6 +5015,7 @@ components:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -5021,7 +5026,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: d794e9223f222623
+          x-spec-enum-id: 43d080c02eec5b40
           description: Indicates a carrier (type)
         display_name:
           type: string
@@ -5983,6 +5988,7 @@ components:
       - $ref: '#/components/schemas/tnt'
       - $ref: '#/components/schemas/tge'
       - $ref: '#/components/schemas/sendle'
+      - $ref: '#/components/schemas/sapient'
       - $ref: '#/components/schemas/royalmail'
       - $ref: '#/components/schemas/roadie'
       - $ref: '#/components/schemas/purolator'
@@ -8158,6 +8164,7 @@ components:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -8168,7 +8175,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: d794e9223f222623
+          x-spec-enum-id: 43d080c02eec5b40
           description: A carrier connection type.
         carrier_id:
           type: string
@@ -10069,6 +10076,7 @@ components:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -10079,7 +10087,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: 5af7591a7c1a0806
+          x-spec-enum-id: a37952ea65de24e7
           description: The tracking carrier
         account_number:
           type: string
@@ -10949,6 +10957,29 @@ components:
       required:
       - client_id
       - client_secret
+    sapient:
+      type: object
+      properties:
+        client_id:
+          type: string
+        client_secret:
+          type: string
+        shipping_account_id:
+          type: string
+        carrier_code:
+          enum:
+          - DX
+          - EVRI
+          - RM
+          - UPS
+          - YODEL
+          type: string
+          x-spec-enum-id: 24b797aea0df4a45
+          description: Indicates a carrier_code string
+      required:
+      - client_id
+      - client_secret
+      - shipping_account_id
     sendle:
       type: object
       properties:
@@ -11202,6 +11233,7 @@ tags:
     | tnt | TNT |
     | tge | TGE |
     | sendle | Sendle |
+    | sapient | SAPIENT |
     | royalmail | Royal Mail |
     | roadie | Roadie |
     | purolator | Purolator |

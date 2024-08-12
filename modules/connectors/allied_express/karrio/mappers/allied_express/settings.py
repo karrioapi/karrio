@@ -12,7 +12,7 @@ class Settings(utils.Settings):
     username: str
     password: str
     account: str = None
-    service_type: utils.AlliedServiceType = utils.AlliedServiceType.R  # type: ignore
+    service_type: utils.AlliedServiceType = "R"  # type: ignore
 
     # generic properties
     id: str = None

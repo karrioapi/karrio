@@ -5,6 +5,12 @@ import karrio.core as core
 import karrio.core.errors as errors
 
 
+SapientCarrierCode = lib.units.create_enum(
+    "SapientCarrierCode",
+    ["DX", "EVRI", "RM", "UPS", "YODEL"],
+)
+
+
 class Settings(core.Settings):
     """SAPIENT connection settings."""
 
@@ -12,7 +18,7 @@ class Settings(core.Settings):
     client_id: str
     client_secret: str
     shipping_account_id: str
-    carrier_code: str = "RM"
+    carrier_code: SapientCarrierCode = "RM"  # type: ignore
 
     @property
     def carrier_name(self):

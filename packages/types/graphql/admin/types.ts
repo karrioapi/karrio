@@ -927,6 +927,7 @@ export enum CarrierNameEnum {
   purolator = "purolator",
   roadie = "roadie",
   royalmail = "royalmail",
+  sapient = "sapient",
   sendle = "sendle",
   tge = "tge",
   tnt = "tnt",
