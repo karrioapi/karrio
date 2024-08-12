@@ -7,6 +7,7 @@ from rest_framework.response import Response
 
 import karrio.server.openapi as openapi
 import karrio.server.serializers as serializers
+import karrio.server.core.dataunits as dataunits
 import karrio.server.providers.models as providers
 from karrio.server.core.views.api import APIView
 from karrio.server.proxy.router import router
@@ -25,7 +26,6 @@ from karrio.server.core.serializers import (
 
 ENDPOINT_ID = "@@@"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 logger = logging.getLogger(__name__)
-CARRIER_NAMES = list(providers.MODELS.keys())
 
 
 class Address(BaseAddress):
@@ -111,7 +111,7 @@ class ShippingCancel(APIView):
                 "carrier_name",
                 location=openapi.OpenApiParameter.PATH,
                 type=openapi.OpenApiTypes.STR,
-                enum=CARRIER_NAMES,
+                enum=dataunits.CARRIER_NAMES,
             ),
         ],
     )

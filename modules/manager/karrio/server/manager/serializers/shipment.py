@@ -10,6 +10,7 @@ import karrio.server.conf as conf
 import karrio.server.core.utils as utils
 import karrio.server.core.gateway as gateway
 
+import karrio.server.core.dataunits as dataunits
 import karrio.server.core.datatypes as datatypes
 import karrio.server.core.exceptions as exceptions
 import karrio.server.providers.models as providers
@@ -634,8 +635,10 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
     carrier = shipment.selected_rate_carrier
 
     # Get rate provider carrier if supported instead of carrier account
-    if (rate_provider != shipment.carrier_name) and rate_provider in providers.MODELS:
-        carrier = providers.MODELS[rate_provider].access_by(context).first()
+    if (
+        rate_provider != shipment.carrier_name
+    ) and rate_provider in dataunits.CARRIER_NAMES:
+        carrier = providers.CARRIER_PROXIES[rate_provider].access_by(context).first()
 
     # Handle hub extension tracking
     if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:

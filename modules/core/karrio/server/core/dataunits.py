@@ -25,7 +25,6 @@ REFERENCE_EXCLUSIONS = [
     "customs_content_type",
     "options",
 ]
-# CARRIER_NAMES = list(sorted(providers.MODELS.keys()))
 CARRIER_NAMES = list(sorted(REFERENCE_MODELS["carriers"].keys()))
 CARRIER_HUBS = list(sorted(REFERENCE_MODELS["carrier_hubs"].keys()))
 NON_HUBS_CARRIERS = [
@@ -119,7 +118,7 @@ def contextual_reference(request: Request = None, reduced: bool = True):
             )
         )
 
-    if request is not None and "generic" in providers.MODELS:
+    if request is not None and "generic" in CARRIER_NAMES:
         _get_generic_carriers()
 
     return references

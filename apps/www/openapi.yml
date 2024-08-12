@@ -14,7 +14,7 @@ info:
     ## Versioning
 
     When backwards-incompatible changes are made to the API, a new, dated version is released.
-    The current version is `2024.6-rc25`.
+    The current version is `2024.6-rc26`.
 
     Read our API changelog to learn more about backwards compatibility.
 
@@ -84,7 +84,7 @@ info:
     All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure).
     API requests without authentication will also fail.
   title: Karrio API
-  version: 2024.6-rc25
+  version: 2024.6-rc26
 paths:
   /:
     get:
@@ -2315,6 +2315,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -2408,6 +2409,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -2501,6 +2503,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt
@@ -2687,6 +2690,7 @@ paths:
           - purolator
           - roadie
           - royalmail
+          - sapient
           - sendle
           - tge
           - tnt

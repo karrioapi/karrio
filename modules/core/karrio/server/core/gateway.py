@@ -218,7 +218,7 @@ class Shipments:
 
         def process_tracking_url(rate: datatypes.Rate) -> str:
             rate_provider = (rate.get("meta") or {}).get("rate_provider")
-            if (rate_provider not in providers.MODELS) and (
+            if (rate_provider not in dataunits.CARRIER_NAMES) and (
                 (shipment.meta or {}).get("tracking_url") is not None
             ):
                 return shipment.meta["tracking_url"]

@@ -116,7 +116,7 @@ class CarrierLabelPreview(VirtualDownloadView):
         """
         try:
             query_params = request.GET.dict()
-            carrier = models.MODELS["generic"].objects.get(pk=pk)
+            carrier = models.Carrier.objects.get(carrier_code="generic", pk=pk)
 
             self.document = self._generate_label(carrier, format)
             self.name = f"{carrier.custom_carrier_name}_label.{format}"

@@ -292,9 +292,11 @@ class CreateRateSheetMutation(utils.BaseMutation):
 
         if any(carriers):
             (
-                providers.MODELS[rate_sheet.carrier_name]
-                .objects.filter(id__in=carriers, is_system=True)
-                .update(rate_sheet=rate_sheet)
+                providers.Carrier.objects.filter(
+                    carrier_code=rate_sheet.carrier_name,
+                    id__in=carriers,
+                    is_system=True,
+                ).update(rate_sheet=rate_sheet)
             )
 
         return CreateRateSheetMutation(rate_sheet=rate_sheet)
@@ -339,14 +341,19 @@ class UpdateRateSheetMutation(utils.BaseMutation):
         if any(carriers):
             # Link listed carriers to rate sheet
             (
-                providers.MODELS[rate_sheet.carrier_name]
-                .objects.filter(id__in=carriers, is_system=True)
-                .update(rate_sheet=rate_sheet)
+                providers.Carrier.objects.filter(
+                    carrier_code=rate_sheet.carrier_name,
+                    id__in=carriers,
+                    is_system=True,
+                ).update(rate_sheet=rate_sheet)
             )
             # Unlink missing carriers from rate sheet
             (
-                providers.MODELS[rate_sheet.carrier_name]
-                .objects.filter(rate_sheet=rate_sheet, is_system=True)
+                providers.Carrier.objects.filter(
+                    carrier_code=rate_sheet.carrier_name,
+                    rate_sheet=rate_sheet,
+                    is_system=True,
+                )
                 .exclude(id__in=carriers)
                 .update(rate_sheet=None)
             )
