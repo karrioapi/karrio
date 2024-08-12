@@ -269,6 +269,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
     def create(
         self,
         validated_data: dict,
+        context: serializers.Context,
         **kwargs,
     ) -> providers.Carrier:
         config = validated_data.pop("config")
@@ -280,6 +281,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             else default_capabilities
         )
 
+        validated_data.update(test_mode=context.test_mode)
         validated_data.update(carrier_code=carrier_name)
         validated_data.update(
             capabilities=[_ for _ in capabilities if _ in default_capabilities]
@@ -290,11 +292,11 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
             .data
         )
 
-        instance = super().create(validated_data, **kwargs)
+        instance = super().create(validated_data, context=context, **kwargs)
 
         if config is not None:
             CarrierConfigModelSerializer.map(
-                context=kwargs.get("context"),
+                context=context,
                 data={"carrier": instance.pk, "config": config},
             ).save()
 
