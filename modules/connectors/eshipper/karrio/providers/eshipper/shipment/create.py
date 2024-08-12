@@ -143,7 +143,7 @@ def shipment_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit="Imperial",
+        packagingUnit="Metric",
         packages=eshipper.PackagesType(
             type="Package",
             quantity=len(packages),

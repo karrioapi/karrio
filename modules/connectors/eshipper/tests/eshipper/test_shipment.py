@@ -182,7 +182,7 @@ ShipmentRequest = {
         "type": "Package",
         "weightUnit": "KG",
     },
-    "packagingUnit": "Imperial",
+    "packagingUnit": "Metric",
     "scheduledShipDate": "2024-07-16 00:00",
     "serviceId": "5000184",
     "from": {

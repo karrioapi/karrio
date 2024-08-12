@@ -108,7 +108,9 @@ def rate_request(
                 package.options.shipment_date.state or time.strftime("%Y-%m-%d")
             ),
             accountType=settings.account_type or "EPS",
-            accountNumber=settings.account_number,
+            accountNumber=lib.identity(
+                settings.account_number or settings.connection_config.mailer_id.state
+            ),
             itemValue=package.items.value_amount,
             extraServices=[
                 lib.to_int(_.code)
