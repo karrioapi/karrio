@@ -309,9 +309,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
         **kwargs,
     ) -> providers.Carrier:
         if any(validated_data.get("capabilities") or []):
-            default_capabilities = references.get_carrier_capabilities(
-                instance.carrier_name
-            )
+            default_capabilities = references.get_carrier_capabilities(instance.ext)
             capabilities = validated_data.get("capabilities")
             instance.capabilities = [
                 _ for _ in capabilities if _ in default_capabilities
@@ -324,7 +322,7 @@ class CarrierConnectionModelSerializer(serializers.ModelSerializer):
                 instance,
             )
             validated_data.update(
-                credentials=CONNECTION_SERIALIZERS[instance.carrier_name]
+                credentials=CONNECTION_SERIALIZERS[instance.ext]
                 .map(data=data["credentials"])
                 .data
             )

@@ -79,8 +79,6 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function CreateShipmentPage(pageProps: any) {
-  const { ORDERS_MANAGEMENT } = pageProps?.metadata || {};
-
   const Component: React.FC = () => {
     const loader = useLoader();
     const notifier = useNotifier();
