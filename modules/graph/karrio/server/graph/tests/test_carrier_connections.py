@@ -178,7 +178,7 @@ CONNECTION_RESPONSE = {
                 "active": True,
                 "carrier_id": "sendle",
                 "carrier_name": "sendle",
-                "test_mode": True,
+                "test_mode": False,
                 "credentials": {
                     "api_key": "test_api_key",
                     "sendle_id": "test_sendle_id",
