@@ -15272,7 +15272,7 @@ export interface ProxyApiBuyLabelRequest {
 export interface ProxyApiCancelPickupRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiCancelPickup
      */
     readonly carrierName: CancelPickupCarrierNameEnum
@@ -15342,7 +15342,7 @@ export interface ProxyApiGetTrackingRequest {
 export interface ProxyApiSchedulePickupRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiSchedulePickup
      */
     readonly carrierName: SchedulePickupCarrierNameEnum
@@ -15391,7 +15391,7 @@ export interface ProxyApiTrackShipmentRequest {
 export interface ProxyApiUpdatePickupRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiUpdatePickup
      */
     readonly carrierName: UpdatePickupCarrierNameEnum
@@ -15412,7 +15412,7 @@ export interface ProxyApiUpdatePickupRequest {
 export interface ProxyApiVoidLabelRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'easypost' | 'eshipper' | 'fedex' | 'fedex_ws' | 'freightcom' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiVoidLabel
      */
     readonly carrierName: VoidLabelCarrierNameEnum
@@ -15579,6 +15579,7 @@ export const CancelPickupCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
+    Sapient: 'sapient',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15627,6 +15628,7 @@ export const SchedulePickupCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
+    Sapient: 'sapient',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15721,6 +15723,7 @@ export const UpdatePickupCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
+    Sapient: 'sapient',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15769,6 +15772,7 @@ export const VoidLabelCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
+    Sapient: 'sapient',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',

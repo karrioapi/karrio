@@ -639,6 +639,276 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
+    /**
+     * Check if a given object implements the AlliedExpress interface.
+     */
+    function instanceOfAlliedExpress(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function AlliedExpressFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'account': json['account'] == null ? undefined : json['account'],
+            'service_type': json['service_type'] == null ? undefined : json['service_type'],
+        };
+    }
+    function AlliedExpressToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'account': value['account'],
+            'service_type': value['service_type'],
+        };
+    }
+
+    /* tslint:disable */
+    /**
+     * Check if a given object implements the AlliedExpressLocal interface.
+     */
+    function instanceOfAlliedExpressLocal(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function AlliedExpressLocalFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'account': json['account'] == null ? undefined : json['account'],
+            'service_type': json['service_type'] == null ? undefined : json['service_type'],
+        };
+    }
+    function AlliedExpressLocalToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'account': value['account'],
+            'service_type': value['service_type'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the AmazonShipping interface.
+     */
+    function instanceOfAmazonShipping(value) {
+        if (!('seller_id' in value) || value['seller_id'] === undefined)
+            return false;
+        if (!('developer_id' in value) || value['developer_id'] === undefined)
+            return false;
+        if (!('mws_auth_token' in value) || value['mws_auth_token'] === undefined)
+            return false;
+        return true;
+    }
+    function AmazonShippingFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'seller_id': json['seller_id'],
+            'developer_id': json['developer_id'],
+            'mws_auth_token': json['mws_auth_token'],
+            'aws_region': json['aws_region'] == null ? undefined : json['aws_region'],
+            'account_country_code': json['account_country_code'] == null ? undefined : json['account_country_code'],
+        };
+    }
+    function AmazonShippingToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'seller_id': value['seller_id'],
+            'developer_id': value['developer_id'],
+            'mws_auth_token': value['mws_auth_token'],
+            'aws_region': value['aws_region'],
+            'account_country_code': value['account_country_code'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Aramex interface.
+     */
+    function instanceOfAramex(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        if (!('account_pin' in value) || value['account_pin'] === undefined)
+            return false;
+        if (!('account_entity' in value) || value['account_entity'] === undefined)
+            return false;
+        if (!('account_number' in value) || value['account_number'] === undefined)
+            return false;
+        if (!('account_country_code' in value) || value['account_country_code'] === undefined)
+            return false;
+        return true;
+    }
+    function AramexFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'account_pin': json['account_pin'],
+            'account_entity': json['account_entity'],
+            'account_number': json['account_number'],
+            'account_country_code': json['account_country_code'],
+        };
+    }
+    function AramexToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'account_pin': value['account_pin'],
+            'account_entity': value['account_entity'],
+            'account_number': value['account_number'],
+            'account_country_code': value['account_country_code'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the AsendiaUs interface.
+     */
+    function instanceOfAsendiaUs(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        if (!('api_key' in value) || value['api_key'] === undefined)
+            return false;
+        return true;
+    }
+    function AsendiaUsFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'api_key': json['api_key'],
+            'account_number': json['account_number'] == null ? undefined : json['account_number'],
+        };
+    }
+    function AsendiaUsToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'api_key': value['api_key'],
+            'account_number': value['account_number'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Australiapost interface.
+     */
+    function instanceOfAustraliapost(value) {
+        if (!('api_key' in value) || value['api_key'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        if (!('account_number' in value) || value['account_number'] === undefined)
+            return false;
+        return true;
+    }
+    function AustraliapostFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'api_key': json['api_key'],
+            'password': json['password'],
+            'account_number': json['account_number'],
+        };
+    }
+    function AustraliapostToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'api_key': value['api_key'],
+            'password': value['password'],
+            'account_number': value['account_number'],
+        };
+    }
+
+    /* tslint:disable */
     function BatchObjectFromJSON(json) {
         return BatchObjectFromJSONTyped(json);
     }
@@ -951,32 +1221,901 @@ var Karrio = (function () {
     }
 
     /* tslint:disable */
-    function CarrierSettingsFromJSON(json) {
-        return CarrierSettingsFromJSONTyped(json);
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Boxknight interface.
+     */
+    function instanceOfBoxknight(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
     }
-    function CarrierSettingsFromJSONTyped(json, ignoreDiscriminator) {
+    function BoxknightFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+        };
+    }
+    function BoxknightToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Bpost interface.
+     */
+    function instanceOfBpost(value) {
+        if (!('account_id' in value) || value['account_id'] === undefined)
+            return false;
+        if (!('passphrase' in value) || value['passphrase'] === undefined)
+            return false;
+        return true;
+    }
+    function BpostFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'account_id': json['account_id'],
+            'passphrase': json['passphrase'],
+        };
+    }
+    function BpostToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'account_id': value['account_id'],
+            'passphrase': value['passphrase'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Canadapost interface.
+     */
+    function instanceOfCanadapost(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function CanadapostFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'customer_number': json['customer_number'] == null ? undefined : json['customer_number'],
+            'contract_id': json['contract_id'] == null ? undefined : json['contract_id'],
+            'language': json['language'] == null ? undefined : json['language'],
+        };
+    }
+    function CanadapostToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'customer_number': value['customer_number'],
+            'contract_id': value['contract_id'],
+            'language': value['language'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Canpar interface.
+     */
+    function instanceOfCanpar(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function CanparFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'language': json['language'] == null ? undefined : json['language'],
+        };
+    }
+    function CanparToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'language': value['language'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Chronopost interface.
+     */
+    function instanceOfChronopost(value) {
+        if (!('account_number' in value) || value['account_number'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function ChronopostFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'account_number': json['account_number'],
+            'password': json['password'],
+            'id_emit': json['id_emit'] == null ? undefined : json['id_emit'],
+            'language': json['language'] == null ? undefined : json['language'],
+        };
+    }
+    function ChronopostToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'account_number': value['account_number'],
+            'password': value['password'],
+            'id_emit': value['id_emit'],
+            'language': value['language'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Colissimo interface.
+     */
+    function instanceOfColissimo(value) {
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        if (!('contract_number' in value) || value['contract_number'] === undefined)
+            return false;
+        return true;
+    }
+    function ColissimoFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'password': json['password'],
+            'contract_number': json['contract_number'],
+            'laposte_api_key': json['laposte_api_key'] == null ? undefined : json['laposte_api_key'],
+        };
+    }
+    function ColissimoToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'password': value['password'],
+            'contract_number': value['contract_number'],
+            'laposte_api_key': value['laposte_api_key'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the DhlExpress interface.
+     */
+    function instanceOfDhlExpress(value) {
+        if (!('site_id' in value) || value['site_id'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function DhlExpressFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'site_id': json['site_id'],
+            'password': json['password'],
+            'account_number': json['account_number'] == null ? undefined : json['account_number'],
+            'account_country_code': json['account_country_code'] == null ? undefined : json['account_country_code'],
+        };
+    }
+    function DhlExpressToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'site_id': value['site_id'],
+            'password': value['password'],
+            'account_number': value['account_number'],
+            'account_country_code': value['account_country_code'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the DhlParcelDe interface.
+     */
+    function instanceOfDhlParcelDe(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        if (!('dhl_api_key' in value) || value['dhl_api_key'] === undefined)
+            return false;
+        return true;
+    }
+    function DhlParcelDeFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'dhl_api_key': json['dhl_api_key'],
+            'customer_number': json['customer_number'] == null ? undefined : json['customer_number'],
+            'tracking_consumer_key': json['tracking_consumer_key'] == null ? undefined : json['tracking_consumer_key'],
+            'tracking_consumer_secret': json['tracking_consumer_secret'] == null ? undefined : json['tracking_consumer_secret'],
+        };
+    }
+    function DhlParcelDeToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'dhl_api_key': value['dhl_api_key'],
+            'customer_number': value['customer_number'],
+            'tracking_consumer_key': value['tracking_consumer_key'],
+            'tracking_consumer_secret': value['tracking_consumer_secret'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the DhlPoland interface.
+     */
+    function instanceOfDhlPoland(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function DhlPolandFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'account_number': json['account_number'] == null ? undefined : json['account_number'],
+        };
+    }
+    function DhlPolandToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'account_number': value['account_number'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the DhlUniversal interface.
+     */
+    function instanceOfDhlUniversal(value) {
+        if (!('consumer_key' in value) || value['consumer_key'] === undefined)
+            return false;
+        if (!('consumer_secret' in value) || value['consumer_secret'] === undefined)
+            return false;
+        return true;
+    }
+    function DhlUniversalFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'consumer_key': json['consumer_key'],
+            'consumer_secret': json['consumer_secret'],
+            'language': json['language'] == null ? undefined : json['language'],
+        };
+    }
+    function DhlUniversalToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'consumer_key': value['consumer_key'],
+            'consumer_secret': value['consumer_secret'],
+            'language': value['language'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Dicom interface.
+     */
+    function instanceOfDicom(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function DicomFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'billing_account': json['billing_account'] == null ? undefined : json['billing_account'],
+        };
+    }
+    function DicomToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'billing_account': value['billing_account'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Dpd interface.
+     */
+    function instanceOfDpd(value) {
+        if (!('delis_id' in value) || value['delis_id'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function DpdFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'delis_id': json['delis_id'],
+            'password': json['password'],
+            'depot': json['depot'] == null ? undefined : json['depot'],
+            'message_language': json['message_language'] == null ? undefined : json['message_language'],
+            'account_country_code': json['account_country_code'] == null ? undefined : json['account_country_code'],
+        };
+    }
+    function DpdToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'delis_id': value['delis_id'],
+            'password': value['password'],
+            'depot': value['depot'],
+            'message_language': value['message_language'],
+            'account_country_code': value['account_country_code'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Dpdhl interface.
+     */
+    function instanceOfDpdhl(value) {
+        if (!('username' in value) || value['username'] === undefined)
+            return false;
+        if (!('password' in value) || value['password'] === undefined)
+            return false;
+        return true;
+    }
+    function DpdhlFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'username': json['username'],
+            'password': json['password'],
+            'app_id': json['app_id'] == null ? undefined : json['app_id'],
+            'app_token': json['app_token'] == null ? undefined : json['app_token'],
+            'zt_id': json['zt_id'] == null ? undefined : json['zt_id'],
+            'zt_password': json['zt_password'] == null ? undefined : json['zt_password'],
+            'account_number': json['account_number'] == null ? undefined : json['account_number'],
+        };
+    }
+    function DpdhlToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'username': value['username'],
+            'password': value['password'],
+            'app_id': value['app_id'],
+            'app_token': value['app_token'],
+            'zt_id': value['zt_id'],
+            'zt_password': value['zt_password'],
+            'account_number': value['account_number'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Easypost interface.
+     */
+    function instanceOfEasypost(value) {
+        if (!('api_key' in value) || value['api_key'] === undefined)
+            return false;
+        return true;
+    }
+    function EasypostFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'api_key': json['api_key'],
+        };
+    }
+    function EasypostToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'api_key': value['api_key'],
+        };
+    }
+
+    /* tslint:disable */
+    /* eslint-disable */
+    /**
+     * Karrio API
+     *  Karrio is a multi-carrier shipping API that simplifies the integration of logistics carrier services.  The Karrio API is organized around REST. Our API has predictable resource-oriented URLs, accepts JSON-encoded request bodies, returns JSON-encoded responses, and uses standard HTTP response codes, authentication, and verbs.  The Karrio API differs for every account as we release new versions. These docs are customized to your version of the API.   ## Versioning  When backwards-incompatible changes are made to the API, a new, dated version is released. The current version is `2024.6-rc26`.  Read our API changelog to learn more about backwards compatibility.  As a precaution, use API versioning to check a new API version before committing to an upgrade.   ## Environments  The Karrio API offer the possibility to create and retrieve certain objects in `test_mode`. In development, it is therefore possible to add carrier connections, get live rates, buy labels, create trackers and schedule pickups in `test_mode`.   ## Pagination  All top-level API resources have support for bulk fetches via \"list\" API methods. For instance, you can list addresses, list shipments, and list trackers. These list API methods share a common structure, taking at least these two parameters: limit, and offset.  Karrio utilizes offset-based pagination via the offset and limit parameters. Both parameters take a number as value (see below) and return objects in reverse chronological order. The offset parameter returns objects listed after an index. The limit parameter take a limit on the number of objects to be returned from 1 to 100.   ```json {     \"count\": 100,     \"next\": \"/v1/shipments?limit=25&offset=50\",     \"previous\": \"/v1/shipments?limit=25&offset=25\",     \"results\": [         { ... },     ] } ```  ## Metadata  Updateable Karrio objects—including Shipment and Order have a metadata parameter. You can use this parameter to attach key-value data to these Karrio objects.  Metadata is useful for storing additional, structured information on an object. As an example, you could store your user\'s full name and corresponding unique identifier from your system on a Karrio Order object.  Do not store any sensitive information as metadata.  ## Authentication  API keys are used to authenticate requests. You can view and manage your API keys in the Dashboard.  Your API keys carry many privileges, so be sure to keep them secure! Do not share your secret API keys in publicly accessible areas such as GitHub, client-side code, and so forth.  Authentication to the API is performed via HTTP Basic Auth. Provide your API token as the basic auth username value. You do not need to provide a password.  ```shell $ curl https://instance.api.com/v1/shipments \\     -u key_xxxxxx: # The colon prevents curl from asking for a password. ```  If you need to authenticate via bearer auth (e.g., for a cross-origin request), use `-H \"Authorization: Token key_xxxxxx\"` instead of `-u key_xxxxxx`.  All API requests must be made over [HTTPS](http://en.wikipedia.org/wiki/HTTP_Secure). API requests without authentication will also fail.
+     *
+     * The version of the OpenAPI document: 2024.6-rc26
+     *
+     *
+     * NOTE: This class is auto generated by OpenAPI Generator (https://openapi-generator.tech).
+     * https://openapi-generator.tech
+     * Do not edit the class manually.
+     */
+    /**
+     * Check if a given object implements the Eshipper interface.
+     */
+    function instanceOfEshipper(value) {
+        if (!('principal' in value) || value['principal'] === undefined)
+            return false;
+        if (!('credential' in value) || value['credential'] === undefined)
+            return false;
+        return true;
+    }
+    function EshipperFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'principal': json['principal'],
+            'credential': json['credential'],
+        };
+    }
+    function EshipperToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'principal': value['principal'],
+            'credential': value['credential'],
+        };
+    }
+
+    /* tslint:disable */
+    function FedexFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'api_key': json['api_key'] == null ? undefined : json['api_key'],
+            'secret_key': json['secret_key'] == null ? undefined : json['secret_key'],
+            'account_number': json['account_number'] == null ? undefined : json['account_number'],
+            'track_api_key': json['track_api_key'] == null ? undefined : json['track_api_key'],
+            'track_secret_key': json['track_secret_key'] == null ? undefined : json['track_secret_key'],
+            'account_country_code': json['account_country_code'] == null ? undefined : json['account_country_code'],
+        };
+    }
+    function FedexToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'api_key': value['api_key'],
+            'secret_key': value['secret_key'],
+            'account_number': value['account_number'],
+            'track_api_key': value['track_api_key'],
+            'track_secret_key': value['track_secret_key'],
+            'account_country_code': value['account_country_code'],
+        };
+    }
+
+    /* tslint:disable */
+    function ConnectionCredentialsFieldFromJSON(json) {
+        return ConnectionCredentialsFieldFromJSONTyped(json);
+    }
+    function ConnectionCredentialsFieldFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        if (instanceOfAlliedExpress(json)) {
+            return AlliedExpressFromJSONTyped(json);
+        }
+        if (instanceOfAlliedExpressLocal(json)) {
+            return AlliedExpressLocalFromJSONTyped(json);
+        }
+        if (instanceOfAmazonShipping(json)) {
+            return AmazonShippingFromJSONTyped(json);
+        }
+        if (instanceOfAramex(json)) {
+            return AramexFromJSONTyped(json);
+        }
+        if (instanceOfAsendiaUs(json)) {
+            return AsendiaUsFromJSONTyped(json);
+        }
+        if (instanceOfAustraliapost(json)) {
+            return AustraliapostFromJSONTyped(json);
+        }
+        if (instanceOfBoxknight(json)) {
+            return BoxknightFromJSONTyped(json);
+        }
+        if (instanceOfBpost(json)) {
+            return BpostFromJSONTyped(json);
+        }
+        if (instanceOfCanadapost(json)) {
+            return CanadapostFromJSONTyped(json);
+        }
+        if (instanceOfCanpar(json)) {
+            return CanparFromJSONTyped(json);
+        }
+        if (instanceOfChronopost(json)) {
+            return ChronopostFromJSONTyped(json);
+        }
+        if (instanceOfColissimo(json)) {
+            return ColissimoFromJSONTyped(json);
+        }
+        if (instanceOfDhlExpress(json)) {
+            return DhlExpressFromJSONTyped(json);
+        }
+        if (instanceOfDhlParcelDe(json)) {
+            return DhlParcelDeFromJSONTyped(json);
+        }
+        if (instanceOfDhlPoland(json)) {
+            return DhlPolandFromJSONTyped(json);
+        }
+        if (instanceOfDhlUniversal(json)) {
+            return DhlUniversalFromJSONTyped(json);
+        }
+        if (instanceOfDicom(json)) {
+            return DicomFromJSONTyped(json);
+        }
+        if (instanceOfDpd(json)) {
+            return DpdFromJSONTyped(json);
+        }
+        if (instanceOfDpdhl(json)) {
+            return DpdhlFromJSONTyped(json);
+        }
+        if (instanceOfEasypost(json)) {
+            return EasypostFromJSONTyped(json);
+        }
+        if (instanceOfEshipper(json)) {
+            return EshipperFromJSONTyped(json);
+        }
+        {
+            return FedexFromJSONTyped(json);
+        }
+    }
+    function ConnectionCredentialsFieldToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        if (instanceOfAlliedExpress(value)) {
+            return AlliedExpressToJSON(value);
+        }
+        if (instanceOfAlliedExpressLocal(value)) {
+            return AlliedExpressLocalToJSON(value);
+        }
+        if (instanceOfAmazonShipping(value)) {
+            return AmazonShippingToJSON(value);
+        }
+        if (instanceOfAramex(value)) {
+            return AramexToJSON(value);
+        }
+        if (instanceOfAsendiaUs(value)) {
+            return AsendiaUsToJSON(value);
+        }
+        if (instanceOfAustraliapost(value)) {
+            return AustraliapostToJSON(value);
+        }
+        if (instanceOfBoxknight(value)) {
+            return BoxknightToJSON(value);
+        }
+        if (instanceOfBpost(value)) {
+            return BpostToJSON(value);
+        }
+        if (instanceOfCanadapost(value)) {
+            return CanadapostToJSON(value);
+        }
+        if (instanceOfCanpar(value)) {
+            return CanparToJSON(value);
+        }
+        if (instanceOfChronopost(value)) {
+            return ChronopostToJSON(value);
+        }
+        if (instanceOfColissimo(value)) {
+            return ColissimoToJSON(value);
+        }
+        if (instanceOfDhlExpress(value)) {
+            return DhlExpressToJSON(value);
+        }
+        if (instanceOfDhlParcelDe(value)) {
+            return DhlParcelDeToJSON(value);
+        }
+        if (instanceOfDhlPoland(value)) {
+            return DhlPolandToJSON(value);
+        }
+        if (instanceOfDhlUniversal(value)) {
+            return DhlUniversalToJSON(value);
+        }
+        if (instanceOfDicom(value)) {
+            return DicomToJSON(value);
+        }
+        if (instanceOfDpd(value)) {
+            return DpdToJSON(value);
+        }
+        if (instanceOfDpdhl(value)) {
+            return DpdhlToJSON(value);
+        }
+        if (instanceOfEasypost(value)) {
+            return EasypostToJSON(value);
+        }
+        if (instanceOfEshipper(value)) {
+            return EshipperToJSON(value);
+        }
+        {
+            return FedexToJSON(value);
+        }
+    }
+
+    /* tslint:disable */
+    function CarrierConnectionFromJSON(json) {
+        return CarrierConnectionFromJSONTyped(json);
+    }
+    function CarrierConnectionFromJSONTyped(json, ignoreDiscriminator) {
         if (json == null) {
             return json;
         }
         return {
             'id': json['id'],
             'object_type': json['object_type'] == null ? undefined : json['object_type'],
-            'carrier_id': json['carrier_id'],
             'carrier_name': json['carrier_name'],
             'display_name': json['display_name'] == null ? undefined : json['display_name'],
-            'test_mode': json['test_mode'],
-            'active': json['active'],
+            'carrier_id': json['carrier_id'],
+            'credentials': json['credentials'] == null ? undefined : ConnectionCredentialsFieldFromJSON(json['credentials']),
             'capabilities': json['capabilities'] == null ? undefined : json['capabilities'],
-            'metadata': json['metadata'] == null ? undefined : json['metadata'],
             'config': json['config'] == null ? undefined : json['config'],
+            'metadata': json['metadata'] == null ? undefined : json['metadata'],
+            'is_system': json['is_system'],
+            'active': json['active'],
+            'test_mode': json['test_mode'],
         };
     }
 
     /* tslint:disable */
-    function CarrierListFromJSON(json) {
-        return CarrierListFromJSONTyped(json);
+    function CarrierConnectionDataToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'carrier_name': value['carrier_name'],
+            'carrier_id': value['carrier_id'],
+            'credentials': ConnectionCredentialsFieldToJSON(value['credentials']),
+            'capabilities': value['capabilities'],
+            'config': value['config'],
+            'metadata': value['metadata'],
+            'active': value['active'],
+        };
     }
-    function CarrierListFromJSONTyped(json, ignoreDiscriminator) {
+
+    /* tslint:disable */
+    function CarrierConnectionListFromJSON(json) {
+        return CarrierConnectionListFromJSONTyped(json);
+    }
+    function CarrierConnectionListFromJSONTyped(json, ignoreDiscriminator) {
         if (json == null) {
             return json;
         }
@@ -984,7 +2123,24 @@ var Karrio = (function () {
             'count': json['count'] == null ? undefined : json['count'],
             'next': json['next'] == null ? undefined : json['next'],
             'previous': json['previous'] == null ? undefined : json['previous'],
-            'results': (json['results'].map(CarrierSettingsFromJSON)),
+            'results': (json['results'].map(CarrierConnectionFromJSON)),
+        };
+    }
+
+    /* tslint:disable */
+    function CarrierDetailsFromJSON(json) {
+        return CarrierDetailsFromJSONTyped(json);
+    }
+    function CarrierDetailsFromJSONTyped(json, ignoreDiscriminator) {
+        if (json == null) {
+            return json;
+        }
+        return {
+            'carrier_name': json['carrier_name'],
+            'display_name': json['display_name'],
+            'capabilities': json['capabilities'] == null ? undefined : json['capabilities'],
+            'connection_fields': json['connection_fields'] == null ? undefined : json['connection_fields'],
+            'config_fields': json['config_fields'] == null ? undefined : json['config_fields'],
         };
     }
 
@@ -1706,6 +2862,22 @@ var Karrio = (function () {
             'address_line1': value['address_line1'],
             'address_line2': value['address_line2'],
             'validate_location': value['validate_location'],
+        };
+    }
+
+    /* tslint:disable */
+    function PatchedCarrierConnectionDataToJSON(value) {
+        if (value == null) {
+            return value;
+        }
+        return {
+            'carrier_name': value['carrier_name'],
+            'carrier_id': value['carrier_id'],
+            'credentials': ConnectionCredentialsFieldToJSON(value['credentials']),
+            'capabilities': value['capabilities'],
+            'config': value['config'],
+            'metadata': value['metadata'],
+            'active': value['active'],
         };
     }
 
@@ -2696,80 +3868,6 @@ var Karrio = (function () {
             });
         };
         /**
-         * Retrieve a carrier\'s services
-         * Get carrier services
-         */
-        APIApi.prototype.getServicesRaw = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
-                return __generator(this, function (_g) {
-                    switch (_g.label) {
-                        case 0:
-                            if (requestParameters['carrierName'] == null) {
-                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling getServices().');
-                            }
-                            queryParameters = {};
-                            headerParameters = {};
-                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
-                            // oauth required
-                            _a = headerParameters;
-                            _b = "Authorization";
-                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
-                        case 1:
-                            // oauth required
-                            _a[_b] = _g.sent();
-                            _g.label = 2;
-                        case 2:
-                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
-                            _c = headerParameters;
-                            _d = "Authorization";
-                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
-                        case 3:
-                            _c[_d] = _g.sent(); // JWT authentication
-                            _g.label = 4;
-                        case 4:
-                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
-                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
-                            }
-                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
-                            _e = headerParameters;
-                            _f = "Authorization";
-                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
-                        case 5:
-                            _e[_f] = _g.sent(); // Token authentication
-                            _g.label = 6;
-                        case 6: return [4 /*yield*/, this.request({
-                                path: "/v1/carriers/{carrier_name}/services".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
-                                method: 'GET',
-                                headers: headerParameters,
-                                query: queryParameters,
-                            }, initOverrides)];
-                        case 7:
-                            response = _g.sent();
-                            return [2 /*return*/, new JSONApiResponse(response)];
-                    }
-                });
-            });
-        };
-        /**
-         * Retrieve a carrier\'s services
-         * Get carrier services
-         */
-        APIApi.prototype.getServices = function (requestParameters, initOverrides) {
-            return __awaiter(this, void 0, void 0, function () {
-                var response;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0: return [4 /*yield*/, this.getServicesRaw(requestParameters, initOverrides)];
-                        case 1:
-                            response = _a.sent();
-                            return [4 /*yield*/, response.value()];
-                        case 2: return [2 /*return*/, _a.sent()];
-                    }
-                });
-            });
-        };
-        /**
          * Instance Metadata
          */
         APIApi.prototype.pingRaw = function (initOverrides) {
@@ -2823,10 +3921,187 @@ var Karrio = (function () {
             return _super !== null && _super.apply(this, arguments) || this;
         }
         /**
+         * Retrieve a carrier\'s services
+         * Get carrier services
+         */
+        CarriersApi.prototype.getServicesRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            if (requestParameters['carrierName'] == null) {
+                                throw new RequiredError('carrierName', 'Required parameter "carrierName" was null or undefined when calling getServices().');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/carriers/{carrier_name}/services".replace("{".concat("carrier_name", "}"), encodeURIComponent(String(requestParameters['carrierName']))),
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response)];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve a carrier\'s services
+         * Get carrier services
+         */
+        CarriersApi.prototype.getServices = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.getServicesRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
          * Returns the list of configured carriers
          * List all carriers
          */
-        CarriersApi.prototype.listRaw = function (requestParameters, initOverrides) {
+        CarriersApi.prototype.listRaw = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0:
+                            queryParameters = {};
+                            headerParameters = {};
+                            return [4 /*yield*/, this.request({
+                                    path: "/v1/carriers",
+                                    method: 'GET',
+                                    headers: headerParameters,
+                                    query: queryParameters,
+                                }, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return jsonValue.map(CarrierDetailsFromJSON); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Returns the list of configured carriers
+         * List all carriers
+         */
+        CarriersApi.prototype.list = function (initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.listRaw(initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        return CarriersApi;
+    }(BaseAPI));
+
+    /* tslint:disable */
+    /**
+     *
+     */
+    var ConnectionsApi = /** @class */ (function (_super) {
+        __extends(ConnectionsApi, _super);
+        function ConnectionsApi() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        /**
+         * Add a new carrier connection.
+         * Add a carrier connection
+         */
+        ConnectionsApi.prototype.addRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            if (requestParameters['carrierConnectionData'] == null) {
+                                throw new RequiredError('carrierConnectionData', 'Required parameter "carrierConnectionData" was null or undefined when calling add().');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
+                        case 2:
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/connections",
+                                method: 'POST',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: CarrierConnectionDataToJSON(requestParameters['carrierConnectionData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierConnectionFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Add a new carrier connection.
+         * Add a carrier connection
+         */
+        ConnectionsApi.prototype.add = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.addRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve all carrier connections
+         * List carrier connections
+         */
+        ConnectionsApi.prototype.listRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
                 return __generator(this, function (_g) {
@@ -2878,23 +4153,23 @@ var Karrio = (function () {
                             _e[_f] = _g.sent(); // Token authentication
                             _g.label = 6;
                         case 6: return [4 /*yield*/, this.request({
-                                path: "/v1/carriers",
+                                path: "/v1/connections",
                                 method: 'GET',
                                 headers: headerParameters,
                                 query: queryParameters,
                             }, initOverrides)];
                         case 7:
                             response = _g.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierListFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierConnectionListFromJSON(jsonValue); })];
                     }
                 });
             });
         };
         /**
-         * Returns the list of configured carriers
-         * List all carriers
+         * Retrieve all carrier connections
+         * List carrier connections
          */
-        CarriersApi.prototype.list = function (requestParameters, initOverrides) {
+        ConnectionsApi.prototype.list = function (requestParameters, initOverrides) {
             if (requestParameters === void 0) { requestParameters = {}; }
             return __awaiter(this, void 0, void 0, function () {
                 var response;
@@ -2910,10 +4185,84 @@ var Karrio = (function () {
             });
         };
         /**
-         * Retrieve a carrier account.
-         * Retrieve a carrier account
+         * Remove a carrier connection.
+         * Remove a carrier connection
          */
-        CarriersApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
+        ConnectionsApi.prototype.removeRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling remove().');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
+                        case 2:
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/connections/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'DELETE',
+                                headers: headerParameters,
+                                query: queryParameters,
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierConnectionFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Remove a carrier connection.
+         * Remove a carrier connection
+         */
+        ConnectionsApi.prototype.remove = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.removeRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        /**
+         * Retrieve carrier connection.
+         * Retrieve a connection
+         */
+        ConnectionsApi.prototype.retrieveRaw = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
                 return __generator(this, function (_g) {
@@ -2953,23 +4302,23 @@ var Karrio = (function () {
                             _e[_f] = _g.sent(); // Token authentication
                             _g.label = 6;
                         case 6: return [4 /*yield*/, this.request({
-                                path: "/v1/carriers/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                path: "/v1/connections/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
                                 method: 'GET',
                                 headers: headerParameters,
                                 query: queryParameters,
                             }, initOverrides)];
                         case 7:
                             response = _g.sent();
-                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierSettingsFromJSON(jsonValue); })];
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierConnectionFromJSON(jsonValue); })];
                     }
                 });
             });
         };
         /**
-         * Retrieve a carrier account.
-         * Retrieve a carrier account
+         * Retrieve carrier connection.
+         * Retrieve a connection
          */
-        CarriersApi.prototype.retrieve = function (requestParameters, initOverrides) {
+        ConnectionsApi.prototype.retrieve = function (requestParameters, initOverrides) {
             return __awaiter(this, void 0, void 0, function () {
                 var response;
                 return __generator(this, function (_a) {
@@ -2983,7 +4332,83 @@ var Karrio = (function () {
                 });
             });
         };
-        return CarriersApi;
+        /**
+         * Update a carrier connection.
+         * Update a connection
+         */
+        ConnectionsApi.prototype.updateRaw = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var queryParameters, headerParameters, _a, _b, _c, _d, _e, _f, response;
+                return __generator(this, function (_g) {
+                    switch (_g.label) {
+                        case 0:
+                            if (requestParameters['id'] == null) {
+                                throw new RequiredError('id', 'Required parameter "id" was null or undefined when calling update().');
+                            }
+                            queryParameters = {};
+                            headerParameters = {};
+                            headerParameters['Content-Type'] = 'application/json';
+                            if (!(this.configuration && this.configuration.accessToken)) return [3 /*break*/, 2];
+                            // oauth required
+                            _a = headerParameters;
+                            _b = "Authorization";
+                            return [4 /*yield*/, this.configuration.accessToken("OAuth2", [])];
+                        case 1:
+                            // oauth required
+                            _a[_b] = _g.sent();
+                            _g.label = 2;
+                        case 2:
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 4];
+                            _c = headerParameters;
+                            _d = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 3:
+                            _c[_d] = _g.sent(); // JWT authentication
+                            _g.label = 4;
+                        case 4:
+                            if (this.configuration && (this.configuration.username !== undefined || this.configuration.password !== undefined)) {
+                                headerParameters["Authorization"] = "Basic " + btoa(this.configuration.username + ":" + this.configuration.password);
+                            }
+                            if (!(this.configuration && this.configuration.apiKey)) return [3 /*break*/, 6];
+                            _e = headerParameters;
+                            _f = "Authorization";
+                            return [4 /*yield*/, this.configuration.apiKey("Authorization")];
+                        case 5:
+                            _e[_f] = _g.sent(); // Token authentication
+                            _g.label = 6;
+                        case 6: return [4 /*yield*/, this.request({
+                                path: "/v1/connections/{id}".replace("{".concat("id", "}"), encodeURIComponent(String(requestParameters['id']))),
+                                method: 'PATCH',
+                                headers: headerParameters,
+                                query: queryParameters,
+                                body: PatchedCarrierConnectionDataToJSON(requestParameters['patchedCarrierConnectionData']),
+                            }, initOverrides)];
+                        case 7:
+                            response = _g.sent();
+                            return [2 /*return*/, new JSONApiResponse(response, function (jsonValue) { return CarrierConnectionFromJSON(jsonValue); })];
+                    }
+                });
+            });
+        };
+        /**
+         * Update a carrier connection.
+         * Update a connection
+         */
+        ConnectionsApi.prototype.update = function (requestParameters, initOverrides) {
+            return __awaiter(this, void 0, void 0, function () {
+                var response;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
+                        case 0: return [4 /*yield*/, this.updateRaw(requestParameters, initOverrides)];
+                        case 1:
+                            response = _a.sent();
+                            return [4 /*yield*/, response.value()];
+                        case 2: return [2 /*return*/, _a.sent()];
+                    }
+                });
+            });
+        };
+        return ConnectionsApi;
     }(BaseAPI));
 
     /* tslint:disable */
@@ -7908,13 +9333,14 @@ var Karrio = (function () {
     var KarrioClient = /** @class */ (function () {
         function KarrioClient(clientConfig) {
             var config = new Configuration(__assign({ credentials: "include", headers: {
-                    "Accept": "application/json",
+                    Accept: "application/json",
                     "Content-Type": "application/json",
                 } }, clientConfig));
             this.config = clientConfig;
             this.API = new APIApi(config);
             this.addresses = new AddressesApi(config);
             this.carriers = new CarriersApi(config);
+            this.connections = new ConnectionsApi(config);
             this.parcels = new ParcelsApi(config);
             this.pickups = new PickupsApi(config);
             this.proxy = new ProxyApi(config);
