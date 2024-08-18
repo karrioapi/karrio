@@ -1,5 +1,3 @@
-from requests.packages import package
-
 import karrio.schemas.eshipper.rate_request as eshipper
 import karrio.schemas.eshipper.rate_response as rating
 import typing
@@ -9,7 +7,7 @@ import karrio.core.models as models
 import karrio.providers.eshipper.error as error
 import karrio.providers.eshipper.utils as provider_utils
 import karrio.providers.eshipper.units as provider_units
-import math
+
 
 def parse_rate_response(
     _response: lib.Deserializable[dict],
@@ -122,10 +120,10 @@ def rate_request(
             type="Package",
             packages=[
                 eshipper.PackageType(
-                    height=math.ceil(package.height.value),
-                    length=math.ceil(package.length.value),
-                    width=math.ceil(package.width.value),
-                    weight=math.ceil(package.weight.value),
+                    height=lib.to_int(package.height.value),
+                    length=lib.to_int(package.length.value),
+                    width=lib.to_int(package.width.value),
+                    weight=lib.to_int(package.weight.value),
                     dimensionUnit=package.dimension_unit.value,
                     weightUnit=package.weight_unit.value,
                     type=provider_units.PackagingType.map(package.packaging_type).value,
