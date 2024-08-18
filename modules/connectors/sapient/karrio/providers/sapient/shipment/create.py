@@ -88,7 +88,9 @@ def shipment_request(
             Action="Process",
             LabelFormat=provider_units.LabelType.map(payload.label_type).value or "PDF",
             ServiceCode=service or "CRL1",
-            DescriptionOfGoods=packages.description,
+            DescriptionOfGoods=lib.identity(
+                packages.description or packages.items.description or "N/A"
+            ),
             ShipmentDate=lib.fdate(
                 options.shipment_date.state or datetime.datetime.now(),
                 "%Y-%m-%d",
@@ -114,7 +116,10 @@ def shipment_request(
                 County=None,
                 CountryCode=shipper.country_code,
             ),
-            ShippingAccountId=None,
+            ShippingAccountId=lib.identity(
+                settings.shipping_account_id
+                or options.connection_config.mailer_id.state
+            ),
             ShippingLocationId=None,
             Reference1=payload.reference,
             DepartmentNumber=None,
@@ -179,7 +184,7 @@ def shipment_request(
                     provider_units.PackagingType.map(package.packaging_type).value
                     or "Parcel"
                 ),
-                PackageOccurrence=index,
+                PackageOccurrence=(index if len(packages) > 1 else None),
                 DeclaredWeight=package.weight.KG,
                 Dimensions=sapient.DimensionsType(
                     Length=package.length.CM,
@@ -196,7 +201,7 @@ def shipment_request(
         Items=[
             sapient.ItemType(
                 SkuCode=item.sku,
-                PackageOccurrence=index,
+                PackageOccurrence=None,
                 Quantity=item.quantity,
                 Description=item.title or item.description,
                 Value=item.value_amount,

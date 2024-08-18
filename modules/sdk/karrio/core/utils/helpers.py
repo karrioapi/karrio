@@ -185,19 +185,16 @@ def process_request(
 
     # Apply proxy settings if provided: Proxy Example` 'username:password@IP_Address:Port'
     if proxy:
-        proxy_info = proxy.split('@')
+        proxy_info = proxy.split("@")
         auth_info, host_port = proxy_info[0], proxy_info[1]
         auth_info = urllib.parse.unquote(auth_info)
         auth_encoded = base64.b64encode(auth_info.encode()).decode()
         proxy_url = f"http://{host_port}"
 
         # Create a ProxyHandler
-        proxy_handler = ProxyHandler({
-            'http': proxy_url,
-            'https': proxy_url
-        })
+        proxy_handler = ProxyHandler({"http": proxy_url, "https": proxy_url})
         opener = build_opener(proxy_handler)
-        opener.addheaders = [('Proxy-Authorization', f'Basic {auth_encoded}')]
+        opener.addheaders = [("Proxy-Authorization", f"Basic {auth_encoded}")]
         install_opener(opener)
         logger.info(f"Proxy set to: {proxy_url} with credentials")
 

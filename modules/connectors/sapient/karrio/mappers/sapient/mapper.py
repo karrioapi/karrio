@@ -61,7 +61,7 @@ class Mapper(mapper.Mapper):
     def parse_rate_response(
         self, response: lib.Deserializable[str]
     ) -> typing.Tuple[typing.List[models.RateDetails], typing.List[models.Message]]:
-        return provider.parse_rate_response(response, self.settings)
+        return universal_provider.parse_rate_response(response, self.settings)
 
     def parse_shipment_response(
         self, response: lib.Deserializable[str]

@@ -233,7 +233,6 @@ ShipmentRequest = {
             "CountryOfOrigin": "CN",
             "Description": "White Mens Large T-shirt",
             "HSCode": "6109100010",
-            "PackageOccurrence": 1,
             "Quantity": 1,
             "SkuCode": "SKU123",
             "Value": 19.99,
@@ -243,7 +242,6 @@ ShipmentRequest = {
             "CountryOfOrigin": "CN",
             "Description": "Black Mens Large Jumper",
             "HSCode": "6110113000",
-            "PackageOccurrence": 2,
             "Quantity": 2,
             "SkuCode": "SKU456",
             "Value": 32.99,
@@ -254,7 +252,6 @@ ShipmentRequest = {
         {
             "DeclaredWeight": 0.68,
             "Dimensions": {"Height": 50.8, "Length": 101.6, "Width": 76.2},
-            "PackageOccurrence": 1,
             "PackageType": "Parcel",
         }
     ],
@@ -275,6 +272,7 @@ ShipmentRequest = {
         "ContentType": "NDX",
         "CurrencyCode": "GBP",
         "DeclaredWeight": 0.68,
+        "DescriptionOfGoods": "N/A",
         "DimensionsUnitOfMeasure": "CM",
         "LabelFormat": "PDF",
         "ServiceCode": "carrier_service",
@@ -294,6 +292,7 @@ ShipmentRequest = {
         },
         "Reference1": "OrderRef56",
         "VatNumber": "GB123456789",
+        "ShippingAccountId": "shipping_account_id",
     },
 }
 

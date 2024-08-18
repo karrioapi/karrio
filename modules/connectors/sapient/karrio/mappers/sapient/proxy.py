@@ -2,6 +2,7 @@
 
 import karrio.lib as lib
 import karrio.api.proxy as proxy
+import karrio.providers.sapient.utils as provider_utils
 import karrio.mappers.sapient.settings as provider_settings
 import karrio.universal.mappers.rating_proxy as rating_proxy
 
@@ -21,7 +22,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",
+                "user-agent": "Karrio/1.0",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
@@ -35,7 +38,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",
+                "user-agent": "Karrio/1.0",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict)
@@ -49,7 +54,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",
+                "user-agent": "Karrio/1.0",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict, request.ctx)
@@ -71,7 +78,9 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
             headers={
                 "Content-Type": "application/json",
                 "Authorization": f"Bearer {self.settings.access_token}",
+                "user-agent": "Karrio/1.0",
             },
+            on_error=provider_utils.parse_error_response,
         )
 
         return lib.Deserializable(response, lib.to_dict)
