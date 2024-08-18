@@ -1,3 +1,4 @@
+import math
 from typing import Union, Optional
 from decimal import Decimal
 
@@ -33,4 +34,7 @@ class NUMBERFORMAT:
         """
         if value is None or isinstance(value, bool):
             return None
-        return int(value if base is None else base * round(float(value) / base))
+
+        return math.ceil(
+            float(value) if base is None else base * round(float(value) / base)
+        )

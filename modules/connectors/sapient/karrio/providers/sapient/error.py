@@ -22,7 +22,7 @@ def parse_error_response(
             carrier_name=settings.carrier_name,
             code=error.get("ErrorCode", "UNKNOWN"),
             message=error.get("Message", "Unknown error"),
-            details={**kwargs, "Cause": error.get("Cause")},
+            details=lib.to_dict({**kwargs, "Cause": error.get("Cause")}),
         )
         for error in errors
     ]

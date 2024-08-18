@@ -3,7 +3,6 @@ import karrio.schemas.eshipper.rate_response as rating
 import typing
 import datetime
 import karrio.lib as lib
-import karrio.core.units as units
 import karrio.core.models as models
 import karrio.providers.eshipper.error as error
 import karrio.providers.eshipper.utils as provider_utils
@@ -116,18 +115,18 @@ def rate_request(
             confirmDelivery=None,
             notifyRecipient=None,
         ),
-        packagingUnit="Metric",
+        packagingUnit="Metric" if packages.weight_unit.lower() == "kg" else "Imperial",
         packages=eshipper.PackagesType(
             type="Package",
             packages=[
                 eshipper.PackageType(
-                    height=str(lib.to_int(package.height.CM)),
-                    length=str(lib.to_int(package.length.CM)),
-                    width=str(lib.to_int(package.width.CM)),
-                    weight=str(lib.to_int(package.weight.KG)),
-                    dimensionUnit=units.DimensionUnit.CM.value,
-                    weightUnit=units.WeightUnit.KG.value,
-                    type=None,
+                    height=lib.to_int(package.height.value),
+                    length=lib.to_int(package.length.value),
+                    width=lib.to_int(package.width.value),
+                    weight=lib.to_int(package.weight.value),
+                    dimensionUnit=package.dimension_unit.value,
+                    weightUnit=package.weight_unit.value,
+                    type=provider_units.PackagingType.map(package.packaging_type).value,
                     freightClass=None,
                     nmfcCode=None,
                     insuranceAmount=None,

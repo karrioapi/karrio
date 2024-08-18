@@ -76,9 +76,12 @@ def login(settings: Settings):
     import karrio.providers.sapient.error as error
 
     result = lib.request(
-        url=f"{settings.server_url}/connect/token",
+        url=f"https://authentication.intersoftsapient.net/connect/token",
         method="POST",
-        headers={"content-Type": "application/x-www-form-urlencoded"},
+        headers={
+            "content-Type": "application/x-www-form-urlencoded",
+            "user-agent": "Karrio/1.0",
+        },
         data=lib.to_query_string(
             dict(
                 grant_type="client_credentials",
@@ -86,6 +89,7 @@ def login(settings: Settings):
                 client_secret=settings.client_secret,
             )
         ),
+        on_error=parse_error_response,
     )
 
     response = lib.to_dict(result)
@@ -103,3 +107,10 @@ def login(settings: Settings):
 class ConnectionConfig(lib.Enum):
     shipping_options = lib.OptionEnum("shipping_options", list)
     shipping_services = lib.OptionEnum("shipping_services", list)
+
+
+def parse_error_response(response):
+    """Parse the error response from the SAPIENT API."""
+    return lib.to_json(
+        dict(Errors=[dict(ErrorCode=str(response.code), Message=response.reason)])
+    )
