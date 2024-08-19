@@ -56,6 +56,21 @@ class Settings(core.Settings):
 def login(settings: Settings, client_id: str = None, client_secret: str = None):
     import karrio.providers.usps.error as error
 
+    API_SCOPES = [
+        "addresses",
+        "international-prices",
+        "subscriptions",
+        "payments",
+        "pickup",
+        "tracking",
+        "labels",
+        "scan-forms",
+        "companies",
+        "service-delivery-standards",
+        "locations",
+        "international-labels",
+        "prices",
+    ]
     result = lib.request(
         url=f"{settings.server_url}/oauth2/v3/token",
         method="POST",
@@ -65,6 +80,7 @@ def login(settings: Settings, client_id: str = None, client_secret: str = None):
                 grant_type="client_credentials",
                 client_id=client_id,
                 client_secret=client_secret,
+                scope=" ".join(API_SCOPES),
             )
         ),
     )
