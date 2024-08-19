@@ -104,7 +104,7 @@ def shipment_request(
         ),
         Shipper=sapient.ShipperType(
             Address=sapient.AddressType(
-                ContactName=shipper.name,
+                ContactName=shipper.contact or "N/A",
                 CompanyName=shipper.company_name,
                 ContactEmail=shipper.email,
                 ContactPhone=shipper.phone_number,
@@ -130,7 +130,7 @@ def shipment_request(
         ),
         Destination=sapient.DestinationType(
             Address=sapient.AddressType(
-                ContactName=recipient.name,
+                ContactName=recipient.contact or "N/A",
                 CompanyName=recipient.company_name,
                 ContactEmail=recipient.email,
                 ContactPhone=recipient.phone_number,
@@ -162,7 +162,7 @@ def shipment_request(
         ReturnToSender=lib.identity(
             sapient.ReturnToSenderType(
                 Address=sapient.AddressType(
-                    ContactName=return_address.name,
+                    ContactName=return_address.contact or "N/A",
                     CompanyName=return_address.company_name,
                     ContactEmail=return_address.email,
                     ContactPhone=return_address.phone_number,
