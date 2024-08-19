@@ -218,6 +218,7 @@ ShipmentRequest = {
     },
     "Destination": {
         "Address": {
+            "ContactName": "John Smith",
             "CompanyName": "Company & Co.",
             "ContactEmail": "john.smith@example.com",
             "ContactPhone": "07123456789",
@@ -257,6 +258,7 @@ ShipmentRequest = {
     ],
     "ReturnToSender": {
         "Address": {
+            "ContactName": "John Smith",
             "CompanyName": "Company & Co.",
             "ContactEmail": "email@server.com",
             "ContactPhone": "07723456789",
@@ -281,6 +283,7 @@ ShipmentRequest = {
     },
     "Shipper": {
         "Address": {
+            "ContactName": "Jane Smith",
             "CompanyName": "Company & Co.",
             "ContactEmail": "email@server.com",
             "ContactPhone": "607723456789",
