@@ -22,7 +22,7 @@ django-formtools==2.5.1
 django-health-check==3.18.3
 django-import-export==4.1.1
 django-oauth-toolkit==2.4.0
-django-otp==1.5.1
+django-otp==1.5.2
 django-phonenumber-field==8.0.0
 django-picklefield==3.2
 django-redis==5.4.0
