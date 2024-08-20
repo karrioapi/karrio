@@ -27,7 +27,7 @@ def _extract_details(
     settings: provider_utils.Settings,
 ) -> models.ShipmentDetails:
     shipment = lib.to_object(shipping.ShippingResponseType, data)
-    label_type = next((_.type for _ in shipment.labelData.label), "PDF")
+    label_type = next((_.type for _ in shipment.labelData.label), "PDF").upper()
     label = lib.bundle_base64([_.data for _ in shipment.labelData.label], label_type)
     trackingNumbers = [_.trackingNumber for _ in shipment.packages]
 
