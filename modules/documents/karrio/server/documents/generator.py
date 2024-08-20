@@ -47,7 +47,7 @@ class Documents:
             [{"data": data}] if related_object is None else []
         )
 
-        filename = (
+        filename = lib.identity(
             dict(filename=kwargs.get("doc_name")) if kwargs.get("doc_name") else {}
         )
 
@@ -55,15 +55,15 @@ class Documents:
         content = PAGE_SEPARATOR.join(
             [
                 *[
-                    jinja_template.render(**ctx, units=UNITS, utils=utils)
+                    jinja_template.render(**ctx, units=UNITS, utils=utils, lib=lib)
                     for ctx in shipment_contexts
                 ],
                 *[
-                    jinja_template.render(**ctx, units=UNITS, utils=utils)
+                    jinja_template.render(**ctx, units=UNITS, utils=utils, lib=lib)
                     for ctx in order_contexts
                 ],
                 *[
-                    jinja_template.render(**ctx, units=UNITS, utils=utils)
+                    jinja_template.render(**ctx, units=UNITS, utils=utils, lib=lib)
                     for ctx in generic_contexts
                 ],
             ]
