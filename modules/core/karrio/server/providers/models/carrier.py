@@ -1,6 +1,5 @@
 import typing
 import functools
-from django import dispatch
 import django.conf as conf
 import django.forms as forms
 import django.db.models as models
@@ -307,9 +306,3 @@ def create_carrier_proxy(carrier_name: str, display_name):
             "system_carriers": _SystemCarrierManager(),
         },
     )
-
-
-CARRIER_PROXIES = {
-    f"{carrier_name}": create_carrier_proxy(carrier_name, display_name)
-    for carrier_name, display_name in ref.collect_references()["carriers"].items()
-}

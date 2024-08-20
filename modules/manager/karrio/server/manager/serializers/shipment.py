@@ -638,7 +638,11 @@ def create_shipment_tracker(shipment: typing.Optional[models.Shipment], context)
     if (
         rate_provider != shipment.carrier_name
     ) and rate_provider in dataunits.CARRIER_NAMES:
-        carrier = providers.CARRIER_PROXIES[rate_provider].access_by(context).first()
+        carrier = (
+            providers.Carrier.access_by(context)
+            .filter(carrier_code=rate_provider)
+            .first()
+        )
 
     # Handle hub extension tracking
     if shipment.selected_rate_carrier.gateway.is_hub and carrier is None:
