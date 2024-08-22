@@ -37,7 +37,6 @@ class Proxy(proxy.Proxy):
         return lib.Deserializable(response, lib.to_dict)
 
     def cancel_shipment(self, request: lib.Serializable) -> lib.Deserializable[str]:
-        print(self.settings.access_token)
         response = lib.request(
             url=f"{self.settings.server_url}/api/v2/ship/cancel",
             data=lib.to_json(request.serialize()),
