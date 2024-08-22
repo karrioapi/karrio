@@ -39,9 +39,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22.x
       - name: Install
         run: |
           npm install
       - name: Test Build
         run: |
-          npm run build -w apps/dashboard 
+          npm run build -w apps/dashboard
