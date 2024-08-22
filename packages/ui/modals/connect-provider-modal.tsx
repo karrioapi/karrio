@@ -169,17 +169,9 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
   const handleCarrierChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const target = event.target;
     const value = target.value as CarrierNameType;
-    let state = ["lang", "language"].reduce(
-      (acc, cur) => {
-        if (connection_fields[value][cur]?.default) {
-          return { ...acc, [cur]: connection_fields[value][cur]?.default };
-        }
-        return acc;
-      },
-      {
-        carrier_id: `${value.toLocaleLowerCase()}${testMode ? "-test" : ""}`,
-      },
-    );
+    let state = {
+      carrier_id: `${value.toLocaleLowerCase()}${testMode ? "-test" : ""}`,
+    };
 
     setCarrierName(value);
     dispatch({ name: "full", value: state });
