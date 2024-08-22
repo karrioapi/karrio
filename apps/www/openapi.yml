@@ -2826,7 +2826,6 @@ paths:
           - purolator
           - roadie
           - royalmail
-          - sapient
           - sendle
           - tge
           - tnt
@@ -3547,7 +3546,6 @@ paths:
           - purolator
           - roadie
           - royalmail
-          - sapient
           - sendle
           - tge
           - tnt
@@ -10080,7 +10078,6 @@ components:
           - purolator
           - roadie
           - royalmail
-          - sapient
           - sendle
           - tge
           - tnt
@@ -10091,7 +10088,7 @@ components:
           - usps_wt_international
           - zoom2u
           type: string
-          x-spec-enum-id: a37952ea65de24e7
+          x-spec-enum-id: 5af7591a7c1a0806
           description: The tracking carrier
         account_number:
           type: string
@@ -10633,8 +10630,12 @@ components:
         contract_id:
           type: string
         language:
+          enum:
+          - en
+          - fr
           type: string
-          default: en
+          x-spec-enum-id: e4be23cf445bc4cb
+          description: Indicates a language string
       required:
       - password
       - username
@@ -10646,8 +10647,12 @@ components:
         password:
           type: string
         language:
+          enum:
+          - en
+          - fr
           type: string
-          default: en
+          x-spec-enum-id: e4be23cf445bc4cb
+          description: Indicates a language string
       required:
       - password
       - username
@@ -10662,8 +10667,12 @@ components:
           type: string
           default: CHRFR
         language:
+          enum:
+          - en_GB
+          - fr_FR
           type: string
-          default: en_GB
+          x-spec-enum-id: 497f777dd9f49678
+          description: Indicates a language string
       required:
       - account_number
       - password
@@ -10732,8 +10741,12 @@ components:
         consumer_secret:
           type: string
         language:
+          enum:
+          - en
+          - de
           type: string
-          default: en
+          x-spec-enum-id: c8ebf97e9150e311
+          description: Indicates a language string
       required:
       - consumer_key
       - consumer_secret
@@ -10873,8 +10886,12 @@ components:
         code_client:
           type: string
         language:
+          enum:
+          - fr
+          - en
           type: string
-          default: fr
+          x-spec-enum-id: 658b2ddeb0ffc173
+          description: Indicates a language string
       required:
       - api_key
       - identifier
@@ -10900,8 +10917,12 @@ components:
         api_key:
           type: string
         lang:
+          enum:
+          - fr_FR
+          - en_US
           type: string
-          default: fr_FR
+          x-spec-enum-id: efa3dd717c7774fb
+          description: Indicates a lang string
       required:
       - api_key
     locate2u:
@@ -10921,8 +10942,12 @@ components:
         billing_account:
           type: string
         language:
+          enum:
+          - en
+          - fr
           type: string
-          default: en
+          x-spec-enum-id: e4be23cf445bc4cb
+          description: Indicates a language string
       required:
       - api_key
       - customer_id
@@ -10935,11 +10960,15 @@ components:
           type: string
         account_number:
           type: string
-        language:
-          type: string
-          default: en
         user_token:
           type: string
+        language:
+          enum:
+          - en
+          - fr
+          type: string
+          x-spec-enum-id: e4be23cf445bc4cb
+          description: Indicates a language string
       required:
       - account_number
       - password
@@ -11473,6 +11502,205 @@ tags:
     | sendle_standard_dropoff | STANDARD-DROPOFF |
     | sendle_express_pickup | EXPRESS-PICKUP |
 
+    ### SAPIENT
+    | Code         | Service Name |
+    | ------------ | ------------ |
+    | sapient_royal_mail_hm_forces_mail | BF1 |
+    | sapient_royal_mail_hm_forces_signed_for | BF2 |
+    | sapient_royal_mail_hm_forces_special_delivery_500 | BF7 |
+    | sapient_royal_mail_hm_forces_special_delivery_1000 | BF8 |
+    | sapient_royal_mail_hm_forces_special_delivery_2500 | BF9 |
+    | sapient_royal_mail_international_business_personal_correspondence_max_sort_residue_ll | BG1 |
+    | sapient_royal_mail_international_business_mail_ll_max_sort_residue_standard | BG2 |
+    | sapient_royal_mail_international_business_personal_correspondence_max_sort_residue_l | BP1 |
+    | sapient_royal_mail_international_business_mail_l_max_sort_residue_standard | BP2 |
+    | sapient_royal_mail_international_business_printed_matter_packet | BPI |
+    | sapient_royal_mail_1st_class | BPL1 |
+    | sapient_royal_mail_2nd_class | BPL2 |
+    | sapient_royal_mail_1st_class_signed_for | BPR1 |
+    | sapient_royal_mail_2nd_class_signed_for | BPR2 |
+    | sapient_royal_mail_international_business_parcel_priority_country_priced_boxable | BXB |
+    | sapient_royal_mail_international_business_parcel_tracked_country_priced_boxable_extra_comp | BXC |
+    | sapient_royal_mail_international_business_parcel_priority_country_priced_boxable_ddp | BXD |
+    | sapient_royal_mail_international_business_parcel_tracked_country_priced_boxable_ddp | BXE |
+    | sapient_royal_mail_international_business_parcel_tracked_country_priced_boxable | BXF |
+    | sapient_royal_mail_24_standard_signed_for_parcel_daily_rate_service | CRL1 |
+    | sapient_royal_mail_48_standard_signed_for_parcel_daily_rate_service | CRL2 |
+    | sapient_royal_mail_international_business_parcels_zero_sort_priority | DE4 |
+    | sapient_royal_mail_international_business_parcels_zero_sort_priority_DE | DE6 |
+    | sapient_royal_mail_de_import_standard_24_parcel | DEA |
+    | sapient_royal_mail_de_import_standard_24_parcel_DE | DEB |
+    | sapient_royal_mail_de_import_standard_24_ll | DEC |
+    | sapient_royal_mail_de_import_standard_48_ll | DED |
+    | sapient_royal_mail_de_import_to_eu_tracked_signed_ll | DEE |
+    | sapient_royal_mail_de_import_to_eu_max_sort_ll | DEG |
+    | sapient_royal_mail_de_import_to_eu_tracked_parcel | DEI |
+    | sapient_royal_mail_de_import_to_eu_tracked_signed_parcel | DEJ |
+    | sapient_royal_mail_de_import_to_eu_tracked_high_vol_ll | DEK |
+    | sapient_royal_mail_de_import_to_eu_max_sort_parcel | DEM |
+    | sapient_royal_mail_international_business_mail_ll_country_priced_priority | DG4 |
+    | sapient_royal_mail_international_business_personal_correspondence_l_priority_untracked | DP3 |
+    | sapient_royal_mail_international_business_mail_ll_country_sort_priority | DP6 |
+    | sapient_royal_mail_international_business_parcels | DW1 |
+    | sapient_royal_mail_international_business_parcels_tracked_country_priced_extra_territorial_office_of_exchange | ETA |
+    | sapient_royal_mail_international_business_parcels_tracked_signed_country_priced_extra_territorial_office_of_exchange | ETB |
+    | sapient_royal_mail_international_business_parcels_zero_sort_priority_extra_territorial_office_of_exchange | ETC |
+    | sapient_royal_mail_international_business_mail_tracked_ll_country_priced_extra_territorial_office_of_exchange | ETD |
+    | sapient_royal_mail_international_business_mail_tracked_signed_ll_country_priced_extra_territorial_office_of_exchange | ETE |
+    | sapient_royal_mail_international_business_mail_ll_country_priced_priority_extra_territorial_office_of_exchange | ETF |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_territorial_office_of_exchange_e | ETG |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_comp_extra_territorial_office_of_exchange_e | ETH |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_territorial_office_of_exchange_c | ETI |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_comp_extra_territorial_office_of_exchange_c | ETJ |
+    | sapient_royal_mail_international_business_personal_correspondence_l_priority_untracked_extra_territorial_office_of_exchange | ETK |
+    | sapient_royal_mail_international_business_personal_correspondence_l_tracked_high_vol_country_priced_extra_territorial_office_of_exchange | ETL |
+    | sapient_royal_mail_international_business_personal_correspondence_l_tracked_signed_high_vol_country_priced_extra_territorial_office_of_exchange | ETM |
+    | sapient_royal_mail_international_business_personal_correspondence_signed_l_high_vol_country_priced_extra_territorial_office_of_exchange | ETN |
+    | sapient_royal_mail_international_business_personal_correspondence_ll_country_sort_priority_extra_territorial_office_of_exchange | ETO |
+    | sapient_royal_mail_international_business_personal_correspondence_tracked_ll_high_vol_extra_comp_country_priced_extra_territorial_office_of_exchange | ETP |
+    | sapient_royal_mail_international_business_personal_correspondence_tracked_signed_ll_high_vol_extra_comp_country_priced_extra_territorial_office_of_exchange | ETQ |
+    | sapient_royal_mail_international_business_personal_correspondence_signed_ll_extra_compensation_country_priced_extra_territorial_office_of_exchange | ETR |
+    | sapient_royal_mail_24_standard_signed_for_large_letter_flat_rate_service | FS1 |
+    | sapient_royal_mail_48_standard_signed_for_large_letter_flat_rate_service | FS2 |
+    | sapient_royal_mail_24_presorted_ll | FS7 |
+    | sapient_royal_mail_48_presorted_ll | FS8 |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg | HVB |
+    | sapient_royal_mail_international_business_tracked_express_npc | HVD |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg_extra_comp | HVE |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg_c_prio | HVK |
+    | sapient_royal_mail_international_tracked_parcels_0_30kg_xcomp_c_prio | HVL |
+    | sapient_royal_mail_international_business_parcels_zone_sort_priority_service | IE1 |
+    | sapient_royal_mail_international_business_mail_large_letter_zone_sort_priority | IG1 |
+    | sapient_royal_mail_international_business_mail_large_letter_zone_sort_priority_machine | IG4 |
+    | sapient_royal_mail_international_business_mail_letters_zone_sort_priority | IP1 |
+    | sapient_royal_mail_import_de_tracked_returns_24 | ITA |
+    | sapient_royal_mail_import_de_tracked_returns_48 | ITB |
+    | sapient_royal_mail_import_de_tracked_24_letter_boxable_high_volume | ITC |
+    | sapient_royal_mail_import_de_tracked_48_letter_boxable_high_volume | ITD |
+    | sapient_royal_mail_import_de_tracked_48_letter_boxable | ITE |
+    | sapient_royal_mail_import_de_tracked_24_letter_boxable | ITF |
+    | sapient_royal_mail_import_de_tracked_48_high_volume | ITL |
+    | sapient_royal_mail_import_de_tracked_24_high_volume | ITM |
+    | sapient_royal_mail_import_de_tracked_24 | ITN |
+    | sapient_royal_mail_de_import_to_eu_signed_parcel | ITR |
+    | sapient_royal_mail_import_de_tracked_48 | ITS |
+    | sapient_royal_mail_international_business_parcels_print_direct_priority | MB1 |
+    | sapient_royal_mail_international_business_parcels_print_direct_standard | MB2 |
+    | sapient_royal_mail_international_business_parcels_signed_extra_compensation_country_priced | MP0 |
+    | sapient_royal_mail_international_business_parcels_tracked_zone_sort | MP1 |
+    | sapient_royal_mail_international_business_parcels_tracked_extra_comp_zone_sort | MP4 |
+    | sapient_royal_mail_international_business_parcels_signed_zone_sort | MP5 |
+    | sapient_royal_mail_international_business_parcels_signed_extra_compensation_zone_sort | MP6 |
+    | sapient_royal_mail_international_business_parcels_tracked_country_priced | MP7 |
+    | sapient_royal_mail_international_business_parcels_tracked_extra_comp_country_priced | MP8 |
+    | sapient_royal_mail_international_business_parcels_signed_country_priced | MP9 |
+    | sapient_royal_mail_international_business_mail_tracked_high_vol_country_priced | MPL |
+    | sapient_royal_mail_international_business_mail_tracked_signed_high_vol_country_priced | MPM |
+    | sapient_royal_mail_international_business_mail_signed_high_vol_country_priced | MPN |
+    | sapient_royal_mail_international_business_mail_tracked_high_vol_extra_comp_country_priced | MPO |
+    | sapient_royal_mail_international_business_mail_tracked_signed_high_vol_extra_comp_country_priced | MPP |
+    | sapient_royal_mail_international_business_parcel_tracked_boxable_country_priced | MPR |
+    | sapient_royal_mail_international_business_parcels_tracked_signed_zone_sort | MTA |
+    | sapient_royal_mail_international_business_parcels_tracked_signed_extra_compensation_zone_sort | MTB |
+    | sapient_royal_mail_international_business_mail_tracked_signed_zone_sort | MTC |
+    | sapient_royal_mail_international_business_parcels_tracked_signed_country_priced | MTE |
+    | sapient_royal_mail_international_business_parcels_tracked_signed_extra_compensation_country_priced | MTF |
+    | sapient_royal_mail_international_business_mail_tracked_signed_country_priced | MTG |
+    | sapient_royal_mail_international_business_mail_tracked_zone_sort | MTI |
+    | sapient_royal_mail_international_business_mail_tracked_country_priced | MTK |
+    | sapient_royal_mail_international_business_mail_signed_zone_sort | MTM |
+    | sapient_royal_mail_international_business_mail_signed_country_priced | MTO |
+    | sapient_royal_mail_international_business_mail_signed_extra_compensation_country_priced | MTP |
+    | sapient_royal_mail_international_business_parcels_tracked_direct_ireland_country | MTS |
+    | sapient_royal_mail_international_business_parcels_tracked_signed_ddp | MTV |
+    | sapient_royal_mail_international_standard_on_account | OLA |
+    | sapient_royal_mail_international_economy_on_account | OLS |
+    | sapient_royal_mail_international_signed_on_account | OSA |
+    | sapient_royal_mail_international_signed_on_account_extra_comp | OSB |
+    | sapient_royal_mail_international_tracked_on_account | OTA |
+    | sapient_royal_mail_international_tracked_on_account_extra_comp | OTB |
+    | sapient_royal_mail_international_tracked_signed_on_account | OTC |
+    | sapient_royal_mail_international_tracked_signed_on_account_extra_comp | OTD |
+    | sapient_royal_mail_48_ll_flat_rate | PK0 |
+    | sapient_royal_mail_24_standard_signed_for_parcel_sort8_flat_rate_service | PK1 |
+    | sapient_royal_mail_48_standard_signed_for_parcel_sort8_flat_rate_service | PK2 |
+    | sapient_royal_mail_24_standard_signed_for_parcel_sort8_daily_rate_service | PK3 |
+    | sapient_royal_mail_48_standard_signed_for_parcel_sort8_daily_rate_service | PK4 |
+    | sapient_royal_mail_24_presorted_p | PK7 |
+    | sapient_royal_mail_48_presorted_p | PK8 |
+    | sapient_royal_mail_24_ll_flat_rate | PK9 |
+    | sapient_royal_mail_rm24_presorted_p_annual_flat_rate | PKB |
+    | sapient_royal_mail_rm48_presorted_p_annual_flat_rate | PKD |
+    | sapient_royal_mail_rm48_presorted_ll_annual_flat_rate | PKK |
+    | sapient_royal_mail_rm24_presorted_ll_annual_flat_rate | PKM |
+    | sapient_royal_mail_24_standard_signed_for_packetpost_flat_rate_service | PPF1 |
+    | sapient_royal_mail_48_standard_signed_for_packetpost_flat_rate_service | PPF2 |
+    | sapient_royal_mail_parcelpost_flat_rate_annual | PPJ1 |
+    | sapient_royal_mail_parcelpost_flat_rate_annual_PPJ | PPJ2 |
+    | sapient_royal_mail_rm24_ll_annual_flat_rate | PPS |
+    | sapient_royal_mail_rm48_ll_annual_flat_rate | PPT |
+    | sapient_royal_mail_international_business_personal_correspondence_max_sort_l | PS5 |
+    | sapient_royal_mail_international_business_mail_large_letter_max_sort_priority_service | PS7 |
+    | sapient_royal_mail_international_business_mail_letters_max_sort_standard | PSA |
+    | sapient_royal_mail_international_business_mail_large_letter_max_sort_standard_service | PSB |
+    | sapient_royal_mail_48_sort8p_annual_flat_rate | RM0 |
+    | sapient_royal_mail_24_ll_daily_rate | RM1 |
+    | sapient_royal_mail_24_p_daily_rate | RM2 |
+    | sapient_royal_mail_48_ll_daily_rate | RM3 |
+    | sapient_royal_mail_48_p_daily_rate | RM4 |
+    | sapient_royal_mail_24_p_flat_rate | RM5 |
+    | sapient_royal_mail_48_p_flat_rate | RM6 |
+    | sapient_royal_mail_24_sort8_ll_annual_flat_rate | RM7 |
+    | sapient_royal_mail_24_sort8_p_annual_flat_rate | RM8 |
+    | sapient_royal_mail_48_sort8_ll_annual_flat_rate | RM9 |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_750 | SD1 |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_1000 | SD2 |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_2500 | SD3 |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_750 | SD4 |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_1000 | SD5 |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_2500 | SD6 |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_id_750 | SDA |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_id_1000 | SDB |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_id_2500 | SDC |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_id_750 | SDE |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_id_1000 | SDF |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_id_2500 | SDG |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_age_750 | SDH |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_age_1000 | SDJ |
+    | sapient_royal_mail_special_delivery_guaranteed_by_1pm_age_2500 | SDK |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_age_750 | SDM |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_age_1000 | SDN |
+    | sapient_royal_mail_special_delivery_guaranteed_by_9am_age_2500 | SDQ |
+    | sapient_royal_mail_special_delivery_guaranteed_age_750 | SDV |
+    | sapient_royal_mail_special_delivery_guaranteed_age_1000 | SDW |
+    | sapient_royal_mail_special_delivery_guaranteed_age_2500 | SDX |
+    | sapient_royal_mail_special_delivery_guaranteed_id_750 | SDY |
+    | sapient_royal_mail_special_delivery_guaranteed_id_1000 | SDZ |
+    | sapient_royal_mail_special_delivery_guaranteed_id_2500 | SEA |
+    | sapient_royal_mail_special_delivery_guaranteed_750 | SEB |
+    | sapient_royal_mail_special_delivery_guaranteed_1000 | SEC |
+    | sapient_royal_mail_special_delivery_guaranteed_2500 | SED |
+    | sapient_royal_mail_1st_class_standard_signed_for_letters_daily_rate_service | STL1 |
+    | sapient_royal_mail_2nd_class_standard_signed_for_letters_daily_rate_service | STL2 |
+    | sapient_royal_mail_tracked_24_high_volume_signature_age | TPA |
+    | sapient_royal_mail_tracked_48_high_volume_signature_age | TPB |
+    | sapient_royal_mail_tracked_24_signature_age | TPC |
+    | sapient_royal_mail_tracked_48_signature_age | TPD |
+    | sapient_royal_mail_tracked_48_high_volume_signature_no_signature | TPL |
+    | sapient_royal_mail_tracked_24_high_volume_signature_no_signature | TPM |
+    | sapient_royal_mail_tracked_24_signature_no_signature | TPN |
+    | sapient_royal_mail_tracked_48_signature_no_signature | TPS |
+    | sapient_royal_mail_tracked_letter_boxable_48_high_volume_signature_no_signature | TRL |
+    | sapient_royal_mail_tracked_letter_boxable_24_high_volume_signature_no_signature | TRM |
+    | sapient_royal_mail_tracked_letter_boxable_24_signature_no_signature | TRN |
+    | sapient_royal_mail_tracked_letter_boxable_48_signature_no_signature | TRS |
+    | sapient_royal_mail_tracked_returns_24 | TSN |
+    | sapient_royal_mail_tracked_returns_48 | TSS |
+    | sapient_royal_mail_international_business_parcels_zero_sort_priority_WE | WE1 |
+    | sapient_royal_mail_international_business_mail_large_letter_zero_sort_priority | WG1 |
+    | sapient_royal_mail_international_business_mail_large_letter_zero_sort_priority_machine | WG4 |
+    | sapient_royal_mail_international_business_mail_letters_zero_sort_priority | WP1 |
+
     ### Roadie
     | Code         | Service Name |
     | ------------ | ------------ |
@@ -11859,13 +12087,13 @@ tags:
     | eshipper_project44_xpo_logistics | 5000110 |
     | eshipper_project44_xpress_global_systems | 5000109 |
     | eshipper_project44_yrc | 5000053 |
-    | eshipper_purolator_purolator_express | 5000001 |
-    | eshipper_purolator_purolator_express_1030 | 5000003 |
-    | eshipper_purolator_purolator_express_9am | 5000002 |
-    | eshipper_purolator_purolator_expresscheque | 5000011 |
-    | eshipper_purolator_purolator_ground | 5000010 |
-    | eshipper_purolator_purolator_ground_1030 | 5000013 |
-    | eshipper_purolator_purolator_ground_9am | 5000012 |
+    | eshipper_purolator_express | 5000001 |
+    | eshipper_purolator_express_1030 | 5000003 |
+    | eshipper_purolator_express_9am | 5000002 |
+    | eshipper_purolator_expresscheque | 5000011 |
+    | eshipper_purolator_ground | 5000010 |
+    | eshipper_purolator_ground_1030 | 5000013 |
+    | eshipper_purolator_ground_9am | 5000012 |
     | eshipper_purolator_puroletter | 5000004 |
     | eshipper_purolator_puroletter_1030 | 5000006 |
     | eshipper_purolator_puroletter_9am | 5000005 |
