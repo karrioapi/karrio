@@ -169,8 +169,15 @@ export const ConnectProviderModal: React.FC<ConnectProviderModalComponent> = ({
   const handleCarrierChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const target = event.target;
     const value = target.value as CarrierNameType;
-    let state = {
+    const state = {
       carrier_id: `${value.toLocaleLowerCase()}${testMode ? "-test" : ""}`,
+      credentials: Object.entries(connection_fields[value] || {}).reduce(
+        (acc, [key, field]) => ({
+          ...acc,
+          [key]: field.default,
+        }),
+        {} as any,
+      ),
     };
 
     setCarrierName(value);

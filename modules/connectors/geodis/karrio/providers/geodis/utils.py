@@ -4,6 +4,8 @@ import hashlib
 import karrio.lib as lib
 import karrio.core as core
 
+LanguageEnum = lib.units.create_enum("LanguageEnum", ["fr", "en"])
+
 
 class Settings(core.Settings):
     """GEODIS connection settings."""
@@ -11,7 +13,7 @@ class Settings(core.Settings):
     api_key: str
     identifier: str
     code_client: str = None
-    language: str = "fr"
+    language: LanguageEnum = "fr"  # type: ignore
 
     account_country_code: str = "FR"
     metadata: dict = {}

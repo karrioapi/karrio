@@ -1,4 +1,7 @@
+import karrio.lib as lib
 from karrio.core import Settings as BaseSettings
+
+LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "de"])
 
 
 class Settings(BaseSettings):
@@ -7,7 +10,7 @@ class Settings(BaseSettings):
     # Carrier specific properties
     consumer_key: str
     consumer_secret: str
-    language: str = "en"
+    language: LanguageEnum = "en"  # type: ignore
 
     account_country_code: str = "DE"
     metadata: dict = {}

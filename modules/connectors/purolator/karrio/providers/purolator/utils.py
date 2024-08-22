@@ -1,6 +1,10 @@
-from base64 import b64encode
+import base64
+
+import karrio.lib as lib
 from karrio.core import Settings as BaseSettings
 from karrio.core.utils import Envelope, apply_namespaceprefix, XP
+
+LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "fr"])
 
 
 class Settings(BaseSettings):
@@ -9,8 +13,8 @@ class Settings(BaseSettings):
     username: str
     password: str
     account_number: str
-    language: str = "en"
     user_token: str = None
+    language: LanguageEnum = "en"  # type: ignore
 
     id: str = None
     account_country_code: str = "CA"
@@ -31,7 +35,7 @@ class Settings(BaseSettings):
     @property
     def authorization(self):
         pair = "%s:%s" % (self.username, self.password)
-        return b64encode(pair.encode("utf-8")).decode("ascii")
+        return base64.b64encode(pair.encode("utf-8")).decode("ascii")
 
     @property
     def tracking_url(self):

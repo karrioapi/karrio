@@ -5,6 +5,9 @@ import karrio.lib as lib
 import karrio.core.settings as settings
 
 
+LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "fr"])
+
+
 class Settings(settings.Settings):
     """Canada post connection settings."""
 
@@ -12,11 +15,7 @@ class Settings(settings.Settings):
     password: str
     customer_number: str
     contract_id: str = None
-    language: str = "en"
-
-    id: str = None
-    account_country_code: str = "CA"
-    metadata: dict = {}
+    language: LanguageEnum = "en"  # type: ignore
 
     @property
     def carrier_name(self):

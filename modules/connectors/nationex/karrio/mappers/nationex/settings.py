@@ -12,7 +12,7 @@ class Settings(provider_utils.Settings):
     api_key: str
     customer_id: str
     billing_account: str = None
-    language: str = "en"
+    language: provider_utils.LanguageEnum = "en"  # type: ignore
 
     # generic properties
     id: str = None

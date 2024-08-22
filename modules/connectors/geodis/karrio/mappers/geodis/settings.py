@@ -16,7 +16,7 @@ class Settings(provider_utils.Settings):
     api_key: str
     identifier: str
     code_client: str = None
-    language: str = "fr"
+    language: provider_utils.LanguageEnum = "fr"  # type: ignore
 
     # generic properties
     id: str = None

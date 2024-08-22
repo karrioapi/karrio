@@ -1,7 +1,10 @@
 """Karrio Canpar client settings."""
 
+import karrio.lib as lib
 from karrio.core.settings import Settings as BaseSettings
 from karrio.core.utils import Envelope, apply_namespaceprefix, XP, Header
+
+LanguageEnum = lib.units.create_enum("LanguageEnum", ["en", "fr"])
 
 
 class Settings(BaseSettings):
@@ -9,11 +12,9 @@ class Settings(BaseSettings):
 
     username: str
     password: str
-    language: str = "en"
+    language: LanguageEnum = "en"  # type: ignore
 
-    id: str = None
     account_country_code: str = "CA"
-    metadata: dict = {}
 
     @property
     def carrier_name(self):
@@ -29,7 +30,9 @@ class Settings(BaseSettings):
 
     @property
     def tracking_url(self):
-        return "https://www.canpar.com/" + self.language + "/tracking/track.htm?barcode={}"
+        return (
+            "https://www.canpar.com/" + self.language + "/tracking/track.htm?barcode={}"
+        )
 
     @staticmethod
     def serialize(
