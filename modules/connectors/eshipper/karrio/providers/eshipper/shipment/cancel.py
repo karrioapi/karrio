@@ -13,7 +13,7 @@ def parse_shipment_cancel_response(
 ) -> typing.Tuple[models.ConfirmationDetails, typing.List[models.Message]]:
     response = _response.deserialize()
     messages = error.parse_error_response(response, settings)
-    success = len(response.get("order")) > 0
+    success = not any(messages)
 
     confirmation = (
         models.ConfirmationDetails(

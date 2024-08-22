@@ -92,14 +92,15 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         ]
 
         extra_carriers = {
-            f"{c.credentials.get('custom_carrier_name') or "generic"}": c.display_name for c in custom_carriers
+            f"{c.credentials.get('custom_carrier_name') or 'generic'}": c.display_name
+            for c in custom_carriers
         }
         system_carriers = {
-            f"{c.credentials.get('custom_carrier_name') or "generic"}": c.display_name
+            f"{c.credentials.get('custom_carrier_name') or 'generic'}": c.display_name
             for c in system_custom_carriers
         }
         extra_services = {
-            f"{c.credentials.get('custom_carrier_name') or "generic"}": {
+            f"{c.credentials.get('custom_carrier_name') or 'generic'}": {
                 s.service_code: s.service_code for s in c.services.all()
             }
             for c in custom_carriers

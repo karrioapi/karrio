@@ -211,7 +211,6 @@ CONNECTION_UPDATE_RESPONSE = {
                     "customer_number": "2004381_updated",
                     "password": "0bfa9fcb9853d1f51ee57a_updated",
                     "username": "6e93d53968881714_updated",
-                    "language": "en",
                 },
             }
         }
