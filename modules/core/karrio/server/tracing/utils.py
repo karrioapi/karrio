@@ -1,22 +1,20 @@
 import logging
 
-from karrio.core.utils import DP, Tracer
-from karrio.core.settings import Settings
-
+import karrio.lib as lib
+import karrio.server.conf as conf
+import karrio.server.core.utils as utils
+import karrio.server.tracing.models as models
 import karrio.server.serializers as serializers
-from karrio.server.core import utils
-from karrio.server.conf import settings
-from karrio.server.tracing import models
 
 logger = logging.getLogger(__name__)
 
 
 @utils.error_wrapper
-def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
-    if settings.PERSIST_SDK_TRACING is False:
+def save_tracing_records(context, tracer: lib.Tracer = None, schema: str = None):
+    if conf.settings.PERSIST_SDK_TRACING is False:
         return
 
-    tracer = tracer or getattr(context, "tracer", Tracer())
+    tracer = tracer or getattr(context, "tracer", lib.Tracer())
 
     # Process Karrio SDK tracing records to persist records of interest.
     @utils.async_wrapper
@@ -28,7 +26,7 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
 
         try:
             records = []
-            exists = (
+            exists = lib.identity(
                 models.TracingRecord.access_by(context)
                 .filter(
                     meta__request_log_id__isnull=False,
@@ -41,7 +39,7 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
                 return
 
             for record in tracer.records:
-                connection: Settings = record.metadata.get("connection")
+                connection: dict = record.metadata.get("connection")
 
                 records.append(
                     models.TracingRecord(
@@ -49,16 +47,14 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
                         record=record.data,
                         timestamp=record.timestamp,
                         created_by_id=getattr(actor, "id", None),
-                        test_mode=getattr(connection, "test_mode", False),
-                        meta=DP.to_dict(
+                        test_mode=connection.get("test_mode", False),
+                        meta=lib.to_dict(
                             {
                                 "tracer_id": tracer.id,
                                 "object_id": tracer.context.get("object_id"),
-                                "carrier_account_id": getattr(connection, "id", None),
-                                "carrier_id": getattr(connection, "carrier_id", None),
-                                "carrier_name": getattr(
-                                    connection, "carrier_name", None
-                                ),
+                                "carrier_account_id": connection.get("id"),
+                                "carrier_id": connection.get("carrier_id"),
+                                "carrier_name": connection.get("carrier_name"),
                                 "request_log_id": tracer.context.get("request_log_id"),
                             }
                         ),
@@ -78,8 +74,8 @@ def save_tracing_records(context, tracer: Tracer = None, schema: str = None):
 
 
 @utils.error_wrapper
-def bulk_save_tracing_records(tracer: Tracer, context=None):
-    if settings.PERSIST_SDK_TRACING is False:
+def bulk_save_tracing_records(tracer: lib.Tracer, context=None):
+    if conf.settings.PERSIST_SDK_TRACING is False:
         return
 
     if len(tracer.records) == 0 or context is None:
@@ -96,7 +92,7 @@ def bulk_save_tracing_records(tracer: Tracer, context=None):
                 timestamp=record.timestamp,
                 test_mode=getattr(context, "test_mode", False),
                 created_by_id=getattr(context.user, "id", None),
-                meta=DP.to_dict({"tracer_id": tracer.id, **(record.metadata or {})}),
+                meta=lib.to_dict({"tracer_id": tracer.id, **(record.metadata or {})}),
             )
         )
 
