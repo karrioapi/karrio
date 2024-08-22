@@ -29,24 +29,28 @@ def _extract_details(
     shipment = lib.to_object(shipping.ShippingResponseType, data)
     label_type = next((_.type for _ in shipment.labelData.label), "PDF").upper()
     label = lib.bundle_base64([_.data for _ in shipment.labelData.label], label_type)
+    invoice = lib.failsafe(lambda: shipment.customsInvoice.data)
     trackingNumbers = [_.trackingNumber for _ in shipment.packages]
+    rate_provider = provider_units.ShippingService.carrier(shipment.quote.serviceId)
 
     return models.ShipmentDetails(
         carrier_id=settings.carrier_id,
         carrier_name=settings.carrier_name,
         tracking_number=shipment.trackingNumber,
-        shipment_identifier=shipment.order.orderId,
+        shipment_identifier=shipment.order.id,
         label_type=label_type,
-        docs=models.Documents(label=label),
-        meta=dict(
-            carrier_tracking_link=shipment.trackingUrl,
-            service_name=shipment.carrier.serviceName,
-            tracking_numbers=trackingNumbers,
-            trackingId=shipment.order.trackingId,
-            orderId=shipment.order.orderId,
-            carrierName=shipment.carrier.carrierName,
-            transactionId=shipment.transactionId,
-            billingReference=shipment.billingReference,
+        docs=models.Documents(label=label, invoice=invoice),
+        meta=lib.to_dict(
+            dict(
+                rate_provider=rate_provider,
+                carrier_tracking_link=shipment.trackingUrl,
+                service_name=shipment.carrier.serviceName,
+                tracking_numbers=trackingNumbers,
+                orderId=shipment.order.id,
+                carrierName=shipment.carrier.carrierName,
+                transactionId=shipment.transactionId,
+                billingReference=shipment.billingReference,
+            )
         ),
     )
 

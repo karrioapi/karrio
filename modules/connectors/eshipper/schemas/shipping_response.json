@@ -1,7 +1,7 @@
 {
   "order": {
     "trackingId": "string",
-    "orderId": "string",
+    "id": "string",
     "message": "string"
   },
   "carrier": {

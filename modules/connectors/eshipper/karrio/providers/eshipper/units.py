@@ -168,13 +168,13 @@ class ShippingService(lib.StrEnum):
     eshipper_project44_xpo_logistics = "5000110"
     eshipper_project44_xpress_global_systems = "5000109"
     eshipper_project44_yrc = "5000053"
-    eshipper_purolator_purolator_express = "5000001"
-    eshipper_purolator_purolator_express_1030 = "5000003"
-    eshipper_purolator_purolator_express_9am = "5000002"
-    eshipper_purolator_purolator_expresscheque = "5000011"
-    eshipper_purolator_purolator_ground = "5000010"
-    eshipper_purolator_purolator_ground_1030 = "5000013"
-    eshipper_purolator_purolator_ground_9am = "5000012"
+    eshipper_purolator_express = "5000001"
+    eshipper_purolator_express_1030 = "5000003"
+    eshipper_purolator_express_9am = "5000002"
+    eshipper_purolator_expresscheque = "5000011"
+    eshipper_purolator_ground = "5000010"
+    eshipper_purolator_ground_1030 = "5000013"
+    eshipper_purolator_ground_9am = "5000012"
     eshipper_purolator_puroletter = "5000004"
     eshipper_purolator_puroletter_1030 = "5000006"
     eshipper_purolator_puroletter_9am = "5000005"
@@ -233,15 +233,15 @@ class ShippingService(lib.StrEnum):
     # fmt: on
 
     @staticmethod
-    def carrier_id(service: str) -> str:
+    def carrier_id(service_id: str) -> str:
         return next(
-            (_ for _, __ in CARRIER_SERVICES.items() if service in __),
+            (_ for _, __ in CARRIER_SERVICES.items() if str(service_id) in __),
             "5000011",
         )
 
     @staticmethod
-    def carrier(service: str) -> str:
-        return CARRIER_IDS.get(ShippingService.carrier_id(service))
+    def carrier(service_id: str) -> str:
+        return CARRIER_IDS.get(ShippingService.carrier_id(service_id))
 
 
 class ShippingOption(lib.Enum):
