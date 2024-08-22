@@ -78,11 +78,10 @@ def contextual_reference(request: Request = None, reduced: bool = True):
 
     def _get_generic_carriers():
         system_custom_carriers = [
-            c.settings
-            for c in gateway.Carriers.list(system_only=True, carrier_name="generic")
+            c for c in gateway.Carriers.list(system_only=True, carrier_name="generic")
         ]
         custom_carriers = [
-            c.settings
+            c
             for c in (
                 gateway.Carriers.list(context=request, carrier_name="generic").exclude(
                     is_system=True
@@ -93,13 +92,14 @@ def contextual_reference(request: Request = None, reduced: bool = True):
         ]
 
         extra_carriers = {
-            c.custom_carrier_name: c.display_name for c in custom_carriers
+            f"{c.credentials.get('custom_carrier_name') or "generic"}": c.display_name for c in custom_carriers
         }
         system_carriers = {
-            c.custom_carrier_name: c.display_name for c in system_custom_carriers
+            f"{c.credentials.get('custom_carrier_name') or "generic"}": c.display_name
+            for c in system_custom_carriers
         }
         extra_services = {
-            c.custom_carrier_name: {
+            f"{c.credentials.get('custom_carrier_name') or "generic"}": {
                 s.service_code: s.service_code for s in c.services.all()
             }
             for c in custom_carriers

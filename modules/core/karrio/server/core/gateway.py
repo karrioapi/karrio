@@ -1,7 +1,7 @@
 import uuid
 import typing
 import logging
-from datetime import datetime
+import datetime
 
 from django.db.models import Q
 from django.conf import settings
@@ -198,7 +198,7 @@ class Shipments:
                 "ext": carrier.ext,
                 "carrier": rate_provider,
                 "service_name": service_name,
-                "rate_provider": rate_provider,  # TODO: deprecate rate_provider
+                "rate_provider": rate_provider,  # TODO: deprecate 'rate_provider' in favor of 'carrier'
             }
 
         def process_selected_rate() -> dict:
@@ -263,7 +263,9 @@ class Shipments:
                 "parcels": process_parcel_refs(payload["parcels"]),
                 "tracking_url": process_tracking_url(shipment_rate),
                 "status": serializers.ShipmentStatus.purchased.value,
-                "created_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f%z"),
+                "created_at": datetime.datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S.%f%z"
+                ),
                 "meta": process_meta(shipment),
                 "messages": messages,
             },
@@ -361,10 +363,10 @@ class Shipments:
             tracking_number=tracking_number,
             events=[
                 datatypes.TrackingEvent(
-                    date=datetime.now().strftime("%Y-%m-%d"),
+                    date=datetime.datetime.now().strftime("%Y-%m-%d"),
                     description="Awaiting update from carrier...",
                     code="UNKNOWN",
-                    time=datetime.now().strftime("%H:%M"),
+                    time=datetime.datetime.now().strftime("%H:%M"),
                 )
             ],
             delivered=False,
