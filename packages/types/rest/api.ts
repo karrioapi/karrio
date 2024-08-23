@@ -1251,12 +1251,20 @@ export interface Canadapost {
      */
     'contract_id'?: string;
     /**
-     * 
+     * Indicates a language string
      * @type {string}
      * @memberof Canadapost
      */
-    'language'?: string;
+    'language'?: CanadapostLanguageEnum;
 }
+
+export const CanadapostLanguageEnum = {
+    En: 'en',
+    Fr: 'fr'
+} as const;
+
+export type CanadapostLanguageEnum = typeof CanadapostLanguageEnum[keyof typeof CanadapostLanguageEnum];
+
 /**
  * 
  * @export
@@ -1276,12 +1284,20 @@ export interface Canpar {
      */
     'password': string;
     /**
-     * 
+     * Indicates a language string
      * @type {string}
      * @memberof Canpar
      */
-    'language'?: string;
+    'language'?: CanparLanguageEnum;
 }
+
+export const CanparLanguageEnum = {
+    En: 'en',
+    Fr: 'fr'
+} as const;
+
+export type CanparLanguageEnum = typeof CanparLanguageEnum[keyof typeof CanparLanguageEnum];
+
 /**
  * 
  * @export
@@ -1675,12 +1691,20 @@ export interface Chronopost {
      */
     'id_emit'?: string;
     /**
-     * 
+     * Indicates a language string
      * @type {string}
      * @memberof Chronopost
      */
-    'language'?: string;
+    'language'?: ChronopostLanguageEnum;
 }
+
+export const ChronopostLanguageEnum = {
+    EnGb: 'en_GB',
+    FrFr: 'fr_FR'
+} as const;
+
+export type ChronopostLanguageEnum = typeof ChronopostLanguageEnum[keyof typeof ChronopostLanguageEnum];
+
 /**
  * 
  * @export
@@ -3028,12 +3052,20 @@ export interface DhlUniversal {
      */
     'consumer_secret': string;
     /**
-     * 
+     * Indicates a language string
      * @type {string}
      * @memberof DhlUniversal
      */
-    'language'?: string;
+    'language'?: DhlUniversalLanguageEnum;
 }
+
+export const DhlUniversalLanguageEnum = {
+    En: 'en',
+    De: 'de'
+} as const;
+
+export type DhlUniversalLanguageEnum = typeof DhlUniversalLanguageEnum[keyof typeof DhlUniversalLanguageEnum];
+
 /**
  * 
  * @export
@@ -3956,12 +3988,20 @@ export interface Geodis {
      */
     'code_client'?: string;
     /**
-     * 
+     * Indicates a language string
      * @type {string}
      * @memberof Geodis
      */
-    'language'?: string;
+    'language'?: GeodisLanguageEnum;
 }
+
+export const GeodisLanguageEnum = {
+    Fr: 'fr',
+    En: 'en'
+} as const;
+
+export type GeodisLanguageEnum = typeof GeodisLanguageEnum[keyof typeof GeodisLanguageEnum];
+
 /**
  * 
  * @export
@@ -4025,12 +4065,20 @@ export interface Laposte {
      */
     'api_key': string;
     /**
-     * 
+     * Indicates a lang string
      * @type {string}
      * @memberof Laposte
      */
-    'lang'?: string;
+    'lang'?: LaposteLangEnum;
 }
+
+export const LaposteLangEnum = {
+    FrFr: 'fr_FR',
+    EnUs: 'en_US'
+} as const;
+
+export type LaposteLangEnum = typeof LaposteLangEnum[keyof typeof LaposteLangEnum];
+
 /**
  * 
  * @export
@@ -4877,12 +4925,20 @@ export interface Nationex {
      */
     'billing_account'?: string;
     /**
-     * 
+     * Indicates a language string
      * @type {string}
      * @memberof Nationex
      */
-    'language'?: string;
+    'language'?: NationexLanguageEnum;
 }
+
+export const NationexLanguageEnum = {
+    En: 'en',
+    Fr: 'fr'
+} as const;
+
+export type NationexLanguageEnum = typeof NationexLanguageEnum[keyof typeof NationexLanguageEnum];
+
 /**
  * 
  * @export
@@ -6769,14 +6825,22 @@ export interface Purolator {
      * @type {string}
      * @memberof Purolator
      */
-    'language'?: string;
+    'user_token'?: string;
     /**
-     * 
+     * Indicates a language string
      * @type {string}
      * @memberof Purolator
      */
-    'user_token'?: string;
+    'language'?: PurolatorLanguageEnum;
 }
+
+export const PurolatorLanguageEnum = {
+    En: 'en',
+    Fr: 'fr'
+} as const;
+
+export type PurolatorLanguageEnum = typeof PurolatorLanguageEnum[keyof typeof PurolatorLanguageEnum];
+
 /**
  * 
  * @export
@@ -7548,6 +7612,12 @@ export interface ShipmentRateData {
      */
     'carrier_ids'?: Array<string> | null;
     /**
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
+     * @type {{ [key: string]: any; }}
+     * @memberof ShipmentRateData
+     */
+    'options'?: { [key: string]: any; };
+    /**
      * The shipment reference
      * @type {string}
      * @memberof ShipmentRateData
@@ -7579,7 +7649,7 @@ export interface ShipmentUpdateData {
      */
     'payment'?: Payment;
     /**
-     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"shipment_date\": \"2020-01-01\",             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"signature_confirmation\": true,         }         </details>         
+     * <details>         <summary>The options available for the shipment.</summary>          {             \"currency\": \"USD\",             \"insurance\": 100.00,             \"cash_on_delivery\": 30.00,             \"dangerous_good\": true,             \"declared_value\": 150.00,             \"sms_notification\": true,             \"email_notification\": true,             \"email_notification_to\": \"shipper@mail.com\",             \"hold_at_location\": true,             \"paperless_trade\": true,             \"preferred_service\": \"fedex_express_saver\",             \"shipment_date\": \"2020-01-01\",             \"shipment_note\": \"This is a shipment note\",             \"signature_confirmation\": true,             \"saturday_delivery\": true,             \"is_return\": true,             \"doc_files\": [                 {                     \"doc_type\": \"commercial_invoice\",                     \"doc_file\": \"base64 encoded file\",                     \"doc_name\": \"commercial_invoice.pdf\",                     \"doc_format\": \"pdf\",                 }             ],             \"doc_references\": [                 {                     \"doc_id\": \"123456789\",                     \"doc_type\": \"commercial_invoice\",                 }             ],         }         </details>         
      * @type {{ [key: string]: any; }}
      * @memberof ShipmentUpdateData
      */
@@ -8316,7 +8386,6 @@ export const TrackingDataCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -15363,7 +15432,7 @@ export interface ProxyApiSchedulePickupRequest {
 export interface ProxyApiTrackShipmentRequest {
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof ProxyApiTrackShipment
      */
     readonly carrierName: TrackShipmentCarrierNameEnum
@@ -15674,7 +15743,6 @@ export const TrackShipmentCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',
@@ -17338,7 +17406,7 @@ export interface TrackersApiCreateRequest {
 
     /**
      * 
-     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sapient' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
+     * @type {'allied_express' | 'allied_express_local' | 'amazon_shipping' | 'aramex' | 'asendia_us' | 'australiapost' | 'boxknight' | 'bpost' | 'canadapost' | 'canpar' | 'chronopost' | 'colissimo' | 'dhl_express' | 'dhl_parcel_de' | 'dhl_poland' | 'dhl_universal' | 'dicom' | 'dpd' | 'dpdhl' | 'fedex' | 'fedex_ws' | 'generic' | 'geodis' | 'hay_post' | 'laposte' | 'locate2u' | 'nationex' | 'purolator' | 'roadie' | 'royalmail' | 'sendle' | 'tge' | 'tnt' | 'ups' | 'usps' | 'usps_international' | 'usps_wt' | 'usps_wt_international' | 'zoom2u'}
      * @memberof TrackersApiCreate
      */
     readonly carrierName2: CreateCarrierNameEnum
@@ -17564,7 +17632,6 @@ export const CreateCarrierNameEnum = {
     Purolator: 'purolator',
     Roadie: 'roadie',
     Royalmail: 'royalmail',
-    Sapient: 'sapient',
     Sendle: 'sendle',
     Tge: 'tge',
     Tnt: 'tnt',

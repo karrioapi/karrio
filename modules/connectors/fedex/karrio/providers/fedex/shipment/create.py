@@ -647,7 +647,7 @@ def shipment_request(
                         )
                         else None
                     ),
-                    groupPackageCount=package_index,
+                    groupPackageCount=1,
                     itemDescriptionForClearance=None,
                     contentRecord=[],
                     itemDescription=package.parcel.description,
@@ -673,7 +673,7 @@ def shipment_request(
                     ),
                     trackingNumber=None,
                 )
-                for package_index, package in enumerate(packages, start=1)
+                for package in packages
             ],
         ),
         labelResponseOptions="LABEL",

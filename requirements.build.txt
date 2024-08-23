@@ -1,5 +1,6 @@
 --extra-index-url https://karrio.gateway.scarf.sh/simple/?sourceBuild
 strawberry-graphql==0.234.0
+django-constance==3.1.0
 Django==4.2.15
 
 # Carrier Extentions modules

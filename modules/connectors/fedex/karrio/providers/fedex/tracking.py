@@ -7,6 +7,8 @@ import karrio.providers.fedex.error as provider_error
 import karrio.providers.fedex.utils as provider_utils
 import karrio.providers.fedex.units as provider_units
 
+DATETIME_FORMATS = ["%Y-%m-%dT%H:%M:%S%z", "%Y-%m-%dT%H:%M:%S"]
+
 
 def parse_tracking_response(
     _response: lib.Deserializable[dict],
@@ -45,7 +47,8 @@ def _extract_details(
     detail = max(
         package.trackResults,
         key=lambda item: max(
-            lib.to_date(event.date, "%Y-%m-%dT%H:%M:%S%z") for event in item.scanEvents
+            lib.to_date(event.date, try_formats=DATETIME_FORMATS).replace(tzinfo=None)
+            for event in item.scanEvents
         ),
         default=None,
     )
@@ -78,8 +81,8 @@ def _extract_details(
         tracking_number=package.trackingNumber,
         events=[
             models.TrackingEvent(
-                date=lib.fdate(e.date, "%Y-%m-%dT%H:%M:%S%z"),
-                time=lib.flocaltime(e.date, "%Y-%m-%dT%H:%M:%S%z"),
+                date=lib.fdate(e.date, try_formats=DATETIME_FORMATS),
+                time=lib.flocaltime(e.date, try_formats=DATETIME_FORMATS),
                 code=e.eventType,
                 location=lib.identity(
                     lib.join(
@@ -118,9 +121,7 @@ def _extract_details(
             shipment_origin_country=lib.failsafe(
                 lambda: detail.originLocation.locationContactAndAddress.address.countryCode
             ),
-            signed_by=lib.failsafe(
-                lambda: detail.deliveryDetails.signedByName
-            ),
+            signed_by=lib.failsafe(lambda: detail.deliveryDetails.signedByName),
         ),
         images=lib.identity(models.Images(signature_image=img) if img else None),
         estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
