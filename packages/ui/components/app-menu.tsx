@@ -1,18 +1,15 @@
-import { useAppMutation, AppType } from '@karrio/hooks/apps';
-import { ConfirmModalWrapper } from '../modals/form-modals';
-import { MenuComponent } from './menu';
-import { AppLink } from './app-link';
-import React from 'react';
-
+import { ConfirmModalWrapper } from "../modals/form-modals";
+import { MenuComponent } from "./menu";
+import { AppLink } from "./app-link";
+import React from "react";
 
 interface AppMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {
-  app: AppType;
+  app: any;
   isViewing?: boolean;
 }
 
-
 export const AppMenu: React.FC<AppMenuComponent> = ({ app, isViewing }) => {
-  const mutation = useAppMutation();
+  const mutation = {} as any;
 
   return (
     <>
@@ -34,10 +31,10 @@ export const AppMenu: React.FC<AppMenuComponent> = ({ app, isViewing }) => {
           </div>
         </AppLink>
         <ConfirmModalWrapper
-          header='Uninstall app'
+          header="Uninstall app"
           onSubmit={() => mutation.deleteApp.mutateAsync({ id: app.id })}
           trigger={
-            <MenuComponent.Item as='a' className={'dropdown-item'}>
+            <MenuComponent.Item as="a" className={"dropdown-item"}>
               <div className="icon-text is-size-7 has-text-grey">
                 <span className="icon">
                   <i className="fas fa-trash"></i>
