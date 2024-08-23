@@ -9525,6 +9525,29 @@ components:
           description: "The list of configured carriers you wish to get rates from.<br/>\n\
             \        **Note that the request will be sent to all carriers in nothing\
             \ is specified**\n        "
+        options:
+          type: object
+          additionalProperties: {}
+          default: {}
+          description: "<details>\n        <summary>The options available for the\
+            \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
+            ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
@@ -9552,14 +9575,26 @@ components:
         options:
           type: object
           additionalProperties: {}
+          default: {}
           description: "<details>\n        <summary>The options available for the\
             \ shipment.</summary>\n\n        {\n            \"currency\": \"USD\"\
             ,\n            \"insurance\": 100.00,\n            \"cash_on_delivery\"\
-            : 30.00,\n            \"shipment_date\": \"2020-01-01\",\n           \
-            \ \"dangerous_good\": true,\n            \"declared_value\": 150.00,\n\
-            \            \"email_notification\": true,\n            \"email_notification_to\"\
-            : \"shipper@mail.com\",\n            \"signature_confirmation\": true,\n\
-            \        }\n        </details>\n        "
+            : 30.00,\n            \"dangerous_good\": true,\n            \"declared_value\"\
+            : 150.00,\n            \"sms_notification\": true,\n            \"email_notification\"\
+            : true,\n            \"email_notification_to\": \"shipper@mail.com\",\n\
+            \            \"hold_at_location\": true,\n            \"paperless_trade\"\
+            : true,\n            \"preferred_service\": \"fedex_express_saver\",\n\
+            \            \"shipment_date\": \"2020-01-01\",\n            \"shipment_note\"\
+            : \"This is a shipment note\",\n            \"signature_confirmation\"\
+            : true,\n            \"saturday_delivery\": true,\n            \"is_return\"\
+            : true,\n            \"doc_files\": [\n                {\n           \
+            \         \"doc_type\": \"commercial_invoice\",\n                    \"\
+            doc_file\": \"base64 encoded file\",\n                    \"doc_name\"\
+            : \"commercial_invoice.pdf\",\n                    \"doc_format\": \"\
+            pdf\",\n                }\n            ],\n            \"doc_references\"\
+            : [\n                {\n                    \"doc_id\": \"123456789\"\
+            ,\n                    \"doc_type\": \"commercial_invoice\",\n       \
+            \         }\n            ],\n        }\n        </details>\n        "
         reference:
           type: string
           nullable: true
