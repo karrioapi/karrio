@@ -111,9 +111,6 @@ def shipment_request(
     )
     shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
 
-    if shipping_date < datetime.datetime.now():
-        shipping_date = datetime.datetime.now()
-
     request = eshipper.ShippingRequestType(
         scheduledShipDate=lib.fdatetime(shipping_date, output_format="%Y-%m-%d %H:%M"),
         shippingrequestfrom=eshipper.FromType(

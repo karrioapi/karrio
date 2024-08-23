@@ -12,6 +12,9 @@ from django.core.files.base import ContentFile
 from django.urls import path, re_path
 
 import karrio.lib as lib
+import karrio.server.openapi as openapi
+import karrio.server.core.filters as filters
+import karrio.server.manager.models as models
 from karrio.server.core.views.api import GenericAPIView, APIView
 from karrio.server.core.filters import ShipmentFilters
 from karrio.server.manager.router import router
@@ -31,9 +34,6 @@ from karrio.server.manager.serializers import (
     ShipmentPurchaseData,
     ShipmentCancelSerializer,
 )
-import karrio.server.manager.models as models
-import karrio.server.core.filters as filters
-import karrio.server.openapi as openapi
 
 ENDPOINT_ID = "$$$$$"  # This endpoint id is used to make operation ids unique make sure not to duplicate
 logger = logging.getLogger(__name__)
@@ -215,7 +215,9 @@ class ShipmentRates(APIView):
         update = fetch_shipment_rates(
             shipment,
             context=request,
-            data=process_dictionaries_mutations(["metadata"], payload, shipment),
+            data=process_dictionaries_mutations(
+                ["metadata", "options"], payload, shipment
+            ),
         )
 
         return Response(Shipment(update).data)

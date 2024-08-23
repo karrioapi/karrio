@@ -513,7 +513,7 @@ MultiPieceShipmentRequest = {
                     "units": "IN",
                     "width": 11.0,
                 },
-                "groupPackageCount": 2,
+                "groupPackageCount": 1,
                 "packageSpecialServices": {
                     "signatureOptionType": "SERVICE_DEFAULT",
                     "specialServiceTypes": ["SIGNATURE_OPTION"],
