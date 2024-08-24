@@ -17,5 +17,6 @@
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "packageManager": "npm@10.8.2"
 }

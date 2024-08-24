@@ -44,6 +44,9 @@ jobs:
           node-version: 22.x
       - name: Install
         run: |
+          npm install -g corepack
+          mkdir -p ~/.volta/bin
+          corepack enable --install-directory ~/.volta/bin
           npm install
       - name: Test Build
         run: |
