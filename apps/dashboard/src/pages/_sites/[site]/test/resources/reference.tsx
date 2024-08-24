@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Resources/reference";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Resources/reference";

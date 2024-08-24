@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Settings/parcels";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Settings/parcels";

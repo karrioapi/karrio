@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Manifests/create_manifests";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Manifests/create_manifests";

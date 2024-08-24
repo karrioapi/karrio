@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Registration/signup_success";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Registration/signup_success";

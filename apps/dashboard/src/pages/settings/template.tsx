@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Settings/template";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Settings/template";

@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Workflows/workflow";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Workflows/workflow";

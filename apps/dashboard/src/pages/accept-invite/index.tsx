@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Invitation/accept-invite";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Invitation/accept-invite";

@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Labels/create_labels";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Labels/create_labels";

@@ -1,1 +1,1 @@
-export { default, getServerSideProps } from "@/modules/Billing";
+export { default, getServerSideProps } from "@karrio/core/modules/Billing";

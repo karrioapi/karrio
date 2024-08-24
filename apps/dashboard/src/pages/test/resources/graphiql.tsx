@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Resources/graphiql";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Resources/graphiql";

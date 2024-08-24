@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Admin/surcharges";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Admin/surcharges";

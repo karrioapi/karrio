@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Developers/event";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Developers/event";

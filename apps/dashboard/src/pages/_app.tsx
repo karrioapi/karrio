@@ -7,7 +7,7 @@ import APIMetadataProvider from "@karrio/hooks/api-metadata";
 import { NextPostHogProvider } from "@karrio/hooks/posthog";
 import { ClientProvider } from "@karrio/hooks/karrio";
 import { SessionProvider } from "next-auth/react";
-import MainLayout from "@/layouts/main-layout";
+import MainLayout from "@karrio/core/layouts/main-layout";
 import type { AppProps } from "next/app";
 
 const queryClient = new QueryClient();

@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Orders/draft_order";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Orders/draft_order";

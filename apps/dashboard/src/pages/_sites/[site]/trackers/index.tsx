@@ -1,1 +1,1 @@
-export { default, getServerSideProps } from "@/modules/Trackers";
+export { default, getServerSideProps } from "@karrio/core/modules/Trackers";

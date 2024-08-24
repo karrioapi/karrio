@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Connections/rate-sheets";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Connections/rate-sheets";

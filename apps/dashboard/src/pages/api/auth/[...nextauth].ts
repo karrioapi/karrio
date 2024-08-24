@@ -1,7 +1,7 @@
 import { parseJwt, computeTestMode, Auth, logger } from "@karrio/lib";
 import CredentialProvider from "next-auth/providers/credentials";
 import { NextApiRequest, NextApiResponse } from "next";
-import { loadAPIMetadata } from "@/context/main";
+import { loadAPIMetadata } from "@karrio/core/context/main";
 import { JWT } from "next-auth/jwt";
 import getConfig from "next/config";
 import NextAuth from "next-auth";

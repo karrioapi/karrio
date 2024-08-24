@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Admin/organization_accounts";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Admin/organization_accounts";

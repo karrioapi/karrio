@@ -1,1 +1,4 @@
-export { default, getServerSideProps } from "@/modules/Password/reset/sent";
+export {
+  default,
+  getServerSideProps,
+} from "@karrio/core/modules/Password/reset/sent";
