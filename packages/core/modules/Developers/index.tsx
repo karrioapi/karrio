@@ -1,14 +1,11 @@
+"use client";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { SelectField } from "@karrio/ui/components";
 import { useAPIUsage } from "@karrio/hooks/usage";
-import Head from "next/head";
 import {
-  Bar,
-  BarChart,
   CartesianGrid,
   Line,
   LineChart,
@@ -18,7 +15,7 @@ import {
 } from "recharts";
 import moment from "moment";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("API Keys");
 
 export default function ApiPage(pageProps: any) {
   const { references } = useAPIMetadata();
@@ -289,13 +286,9 @@ export default function ApiPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`API Keys - ${references?.APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <Component />
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

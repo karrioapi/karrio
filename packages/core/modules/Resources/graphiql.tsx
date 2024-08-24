@@ -1,15 +1,13 @@
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+"use client";
+import "graphiql/graphiql.css";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { createGraphiQLFetcher } from "@graphiql/toolkit";
 import { useSyncedSession } from "@karrio/hooks/session";
-import { EmbedLayout } from "@karrio/core/layouts/embed-layout";
 import { GraphiQL } from "graphiql";
-import Head from "next/head";
 import React from "react";
 
-import "graphiql/graphiql.css";
-
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("GraphiQL");
 
 export default function Page(pageProps: any) {
   const Component: React.FC = () => {
@@ -41,14 +39,9 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <EmbedLayout showModeIndicator={true}>
-      <Head>
-        <title>{`GraphiQL - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <Component />
-    </EmbedLayout>,
-    pageProps,
+    </>
   );
 }

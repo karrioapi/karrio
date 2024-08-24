@@ -1,3 +1,4 @@
+"use client";
 import {
   failsafe,
   formatDateTimeLong,
@@ -8,27 +9,25 @@ import {
 } from "@karrio/lib";
 import { Tabs, TabStateProvider } from "@karrio/ui/components/tabs";
 import { StatusCode } from "@karrio/ui/components/status-code-badge";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { useRouter } from "next/dist/client/router";
 import json from "highlight.js/lib/languages/json";
 import { useLog } from "@karrio/hooks/log";
 import hljs from "highlight.js";
-import Head from "next/head";
-import React from "react";
 import moment from "moment";
+import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("API Log");
 hljs.registerLanguage("json", json);
 
-export const LogComponent: React.FC<{ logId?: string }> = ({ logId }) => {
-  const router = useRouter();
+export const LogComponent: React.FC<{ logId: string; isPreview?: boolean }> = ({
+  logId,
+  isPreview,
+}) => {
   const { setLoading } = useLoader();
-  const entity_id = logId || (router.query.id as string);
+  const entity_id = logId;
   const [data, setData] = React.useState<string>();
   const [response, setResponse] = React.useState<string>();
   const [query_params, setQueryParams] = React.useState<string>();
@@ -63,11 +62,11 @@ export const LogComponent: React.FC<{ logId?: string }> = ({ logId }) => {
                 <StatusCode code={log?.status_code as number} />
               </span>
             </div>
-            {!isNone(logId) && (
+            {isPreview && (
               <div className="column is-2 is-flex is-justify-content-end">
                 <AppLink
                   href={`/developers/logs/${logId}`}
-                  target="blank"
+                  target="_blank"
                   className="button is-default has-text-info is-small mx-1"
                 >
                   <span className="icon">
@@ -359,15 +358,11 @@ export const LogComponent: React.FC<{ logId?: string }> = ({ logId }) => {
   );
 };
 
-export default function LogPage(pageProps: any) {
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Log - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-      <LogComponent />
-    </DashboardLayout>,
-    pageProps,
+export default function LogPage({ params }: { params: { id: string } }) {
+  return (
+    <>
+      <LogComponent logId={params.id} />
+    </>
   );
 }
 

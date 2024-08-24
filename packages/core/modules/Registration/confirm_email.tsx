@@ -1,17 +1,17 @@
-import { SectionLayout } from "@karrio/core/layouts/section-layout";
+"use client";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { useUserMutation } from "@karrio/hooks/user";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { isNone } from "@karrio/lib";
-import Head from "next/head";
 import Link from "next/link";
 
-export { getServerSideProps } from "@karrio/core/context/metadata";
+export const generateMetadata = dynamicMetadata("Sign Up Confirmation");
 
 export default function Page(pageProps: any) {
-  const router = useRouter();
-  const { token } = router.query as { token: string };
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token") as string;
   const {
     confirmEmail: { isLoading, data, mutateAsync },
   } = useUserMutation();
@@ -22,31 +22,25 @@ export default function Page(pageProps: any) {
 
   return (
     <>
-      <SectionLayout {...pageProps}>
-        <Head>
-          <title>{`Sign Up Confirmation - ${pageProps.metadata?.APP_NAME}`}</title>
-        </Head>
+      <div className="card isolated-card my-6">
+        <div className="card-content has-text-centered ">
+          {isLoading && <Spinner />}
 
-        <div className="card isolated-card my-6">
-          <div className="card-content has-text-centered ">
-            {isLoading && <Spinner />}
+          {data?.confirm_email?.success === true && (
+            <p>Your account is verified!</p>
+          )}
 
-            {data?.confirm_email?.success === true && (
-              <p>Your account is verified!</p>
-            )}
-
-            {!isLoading && !data?.confirm_email?.success && (
-              <p>Error, invalid or expired account activation token!</p>
-            )}
-          </div>
+          {!isLoading && !data?.confirm_email?.success && (
+            <p>Error, invalid or expired account activation token!</p>
+          )}
         </div>
+      </div>
 
-        <div className="has-text-centered my-4 is-size-6">
-          <Link legacyBehavior href="/login">
-            Sign in
-          </Link>
-        </div>
-      </SectionLayout>
+      <div className="has-text-centered my-4 is-size-6">
+        <Link legacyBehavior href="/signin">
+          Sign in
+        </Link>
+      </div>
     </>
   );
 }

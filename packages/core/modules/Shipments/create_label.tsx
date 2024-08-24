@@ -1,3 +1,4 @@
+"use client";
 import {
   AddressType,
   CommodityType,
@@ -20,7 +21,6 @@ import {
   getShipmentCommodities,
   isNone,
   isNoneOrEmpty,
-  useLocation,
 } from "@karrio/lib";
 import {
   AddressModalEditor,
@@ -51,34 +51,31 @@ import { CheckBoxField } from "@karrio/ui/components/checkbox-field";
 import { TextAreaField } from "@karrio/ui/components/textarea-field";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { useConnections } from "@karrio/hooks/carrier-connections";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { SelectField } from "@karrio/ui/components/select-field";
 import { useLabelDataMutation } from "@karrio/hooks/label-data";
 import { InputField } from "@karrio/ui/components/input-field";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
+import { useLocation } from "@karrio/hooks/location";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import React, { useEffect, useState } from "react";
 import { useOrders } from "@karrio/hooks/order";
 import { Disclosure } from "@headlessui/react";
-import Head from "next/head";
+import { useSearchParams } from "next/navigation";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Create Label");
 const ContextProviders = bundleContexts([
   CommodityEditModalProvider,
   ModalProvider,
 ]);
 
 export default function CreateLabelPage(pageProps: any) {
-  const { ORDERS_MANAGEMENT } = pageProps?.metadata || {};
-
   const Component: React.FC = () => {
     const notifier = useNotifier();
     const { basePath } = useAppMode();
@@ -86,9 +83,10 @@ export default function CreateLabelPage(pageProps: any) {
     const { carrierOptions } = useConnections();
     const workspace_config = useWorkspaceConfig();
     const { addUrlParam, ...router } = useLocation();
+    const searchParams = useSearchParams();
     const { query: templates } = useDefaultTemplates();
     const [ready, setReady] = useState<boolean>(false);
-    const { shipment_id = "new" } = router.query as any;
+    const shipment_id = searchParams.get("shipment_id") || "new";
     const [key, setKey] = useState<string>(`${shipment_id}-${Date.now()}`);
     const [addReturn, setAddReturn] = useState<boolean>(false);
     const {
@@ -255,7 +253,8 @@ export default function CreateLabelPage(pageProps: any) {
     }, [shipment]);
     useEffect(() => {
       if (ready) return;
-      const orders_called = (ORDERS_MANAGEMENT && !orders.isLoading) || true;
+      const orders_called =
+        (references.ORDERS_MANAGEMENT && !orders.isLoading) || true;
 
       if (
         !ready &&
@@ -839,7 +838,7 @@ export default function CreateLabelPage(pageProps: any) {
                               </button>
                             )}
                           </CommodityStateContext.Consumer>
-                          {ORDERS_MANAGEMENT && (
+                          {references.ORDERS_MANAGEMENT && (
                             <LineItemSelector
                               title="Add items"
                               shipment={shipment}
@@ -1451,7 +1450,7 @@ export default function CreateLabelPage(pageProps: any) {
                                 </button>
                               )}
                             </CommodityStateContext.Consumer>
-                            {ORDERS_MANAGEMENT && (
+                            {references.ORDERS_MANAGEMENT && (
                               <LineItemSelector
                                 title="Add commodities"
                                 shipment={shipment}
@@ -1781,17 +1780,12 @@ export default function CreateLabelPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
+  return (
+    <>
       <GoogleGeocodingScript />
-      <Head>
-        <title>{`Create label - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

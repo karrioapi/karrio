@@ -1,3 +1,4 @@
+"use client";
 import {
   useDocumentTemplateMutation,
   useDocumentTemplates,
@@ -8,18 +9,16 @@ import {
 } from "@karrio/ui/modals/confirm-modal";
 import { TemplateDescription } from "@karrio/ui/components/template-description";
 import { DocumentTemplateType, NotificationType } from "@karrio/types";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Notify } from "@karrio/ui/components/notifier";
 import { useContext } from "react";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Document Templates");
 
 export default function TemplatesPage(pageProps: any) {
-  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
+  const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
   const Component: React.FC = () => {
     const { notify } = useContext(Notify);
@@ -228,15 +227,11 @@ export default function TemplatesPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Templates Settings - ${APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <ConfirmModal>
         <Component />
       </ConfirmModal>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

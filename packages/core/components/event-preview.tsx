@@ -1,5 +1,5 @@
 import { EventComponent } from "@karrio/core/modules/Developers/event";
-import { useLocation } from "@karrio/lib";
+import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";
 
 type EventPreviewContextType = {
@@ -42,10 +42,10 @@ export const EventPreview: React.FC<EventPreviewComponent> = ({ children }) => {
       <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
         <div className="modal-background" onClick={dismiss}></div>
 
-        {isActive && (
+        {isActive && eventId && (
           <div className="modal-card is-medium-modal">
             <section className="modal-card-body px-5 pt-0 pb-6">
-              <EventComponent eventId={eventId} />
+              <EventComponent eventId={eventId} isPreview />
             </section>
           </div>
         )}

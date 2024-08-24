@@ -1,22 +1,20 @@
+"use client";
 import {
   formatAddressLocationShort,
   formatAddressShort,
   formatCarrierSlug,
   formatDateTime,
   formatRef,
-  isNone,
   preventPropagation,
-  url$,
 } from "@karrio/lib";
 import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { CreateManifestModal } from "@karrio/ui/modals/create-manifest-modal";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AddressType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
@@ -25,13 +23,11 @@ import { ModalProvider } from "@karrio/ui/modals/modal";
 import { useShipments } from "@karrio/hooks/shipment";
 import { ManifestData } from "@karrio/types/rest/api";
 import { bundleContexts } from "@karrio/hooks/utils";
+import { useSearchParams } from "next/navigation";
 import { Spinner } from "@karrio/ui/components";
-import { useRouter } from "next/router";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Create Manifest");
 const ContextProviders = bundleContexts([ModalProvider, ConfirmModal]);
 
 export default function Page(pageProps: any) {
@@ -39,7 +35,7 @@ export default function Page(pageProps: any) {
     // General context data         -----------------------------------------------------------
     //#region
 
-    const router = useRouter();
+    const searchParams = useSearchParams();
     const loader = useLoader();
     const { metadata } = useAPIMetadata();
     const [allChecked, setAllChecked] = React.useState(false);
@@ -163,7 +159,7 @@ export default function Page(pageProps: any) {
 
     React.useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     React.useEffect(() => {
       loader.setLoading(query.isLoading);
     }, [query.isLoading]);
@@ -415,16 +411,11 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Manifests - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

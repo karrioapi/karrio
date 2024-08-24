@@ -1,14 +1,13 @@
+"use client";
 import { LabelTemplateEditModalProvider } from "@karrio/ui/modals/label-template-edit-modal";
 import { SystemCarrierManagement } from "@karrio/ui/admin/system-carrier-management";
 import { ConnectProviderModal } from "@karrio/ui/modals/connect-provider-modal";
 import { RateSheetManagement } from "@karrio/ui/admin/rate-sheet-management";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { bundleContexts } from "@karrio/hooks/utils";
-import { AdminLayout } from "@karrio/core/layouts/admin-layout";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Carriers");
 
 const ContextProviders = bundleContexts([
   ConfirmModal,
@@ -17,8 +16,6 @@ const ContextProviders = bundleContexts([
 ]);
 
 export default function Page(pageProps: any) {
-  const { APP_NAME } = (pageProps as any).metadata || {};
-
   const Component: React.FC = () => {
     return (
       <>
@@ -41,16 +38,11 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <AdminLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Carriers - ${APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </AdminLayout>,
-    pageProps,
+    </>
   );
 }

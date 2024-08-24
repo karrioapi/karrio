@@ -1,12 +1,11 @@
+"use client";
 import { WorkspaceConfigForm } from "@karrio/ui/forms/workspace-config-form";
 import { CloseAccountAction } from "@karrio/ui/forms/close-account-action";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Account Settings");
 
 export default function AccountPage(pageProps: any) {
   const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
@@ -82,7 +81,7 @@ export default function AccountPage(pageProps: any) {
 
         <div>
           {/* General preferences section */}
-          <WorkspaceConfigForm pageProps={pageProps} />
+          <WorkspaceConfigForm />
 
           <hr style={{ height: "1px" }} />
 
@@ -107,16 +106,11 @@ export default function AccountPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Account Settings - ${APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ConfirmModal>
         <Component />
       </ConfirmModal>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

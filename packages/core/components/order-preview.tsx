@@ -1,5 +1,5 @@
 import { OrderComponent } from "@karrio/core/modules/Orders/order";
-import { useLocation } from "@karrio/lib";
+import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";
 
 type OrderPreviewContextType = {
@@ -42,10 +42,10 @@ export const OrderPreview: React.FC<OrderPreviewComponent> = ({ children }) => {
       <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
         <div className="modal-background" onClick={dismiss}></div>
 
-        {isActive && (
+        {isActive && orderId && (
           <div className="modal-card is-medium-modal">
             <section className="modal-card-body px-5 pt-0 pb-6">
-              <OrderComponent orderId={orderId} />
+              <OrderComponent orderId={orderId} isPreview />
             </section>
           </div>
         )}

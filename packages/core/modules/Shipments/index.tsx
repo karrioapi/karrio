@@ -1,3 +1,4 @@
+"use client";
 import {
   formatAddressShort,
   formatAddressLocationShort,
@@ -19,12 +20,11 @@ import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { ShipmentsFilter } from "@karrio/ui/filters/shipments-filter";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AddressType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
@@ -32,14 +32,13 @@ import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { useShipments } from "@karrio/hooks/shipment";
 import React, { useContext, useEffect } from "react";
-import { useRouter } from "next/dist/client/router";
-import Head from "next/head";
+import { useSearchParams } from "next/navigation";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Shipments");
 
-export default function ShipmentsPage(pageProps: any) {
+export default function Page(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
+    const searchParams = useSearchParams();
     const { setLoading } = useLoader();
     const { references } = useAPIMetadata();
     const [allChecked, setAllChecked] = React.useState(false);
@@ -166,7 +165,7 @@ export default function ShipmentsPage(pageProps: any) {
 
     useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
@@ -177,12 +176,12 @@ export default function ShipmentsPage(pageProps: any) {
       if (
         query.isFetched &&
         !initialized &&
-        !isNoneOrEmpty(router.query.modal)
+        !isNoneOrEmpty(searchParams.get("modal"))
       ) {
-        previewShipment(router.query.modal as string);
+        previewShipment(searchParams.get("modal") as string);
         setInitialized(true);
       }
-    }, [router.query.modal, query.isFetched]);
+    }, [searchParams.get("modal"), query.isFetched]);
 
     return (
       <>
@@ -565,17 +564,13 @@ export default function ShipmentsPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Shipments - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <ShipmentPreview>
         <ConfirmModal>
           <Component />
         </ConfirmModal>
       </ShipmentPreview>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

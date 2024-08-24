@@ -1,20 +1,16 @@
+"use client";
 import { WorkflowMenu } from "@karrio/ui/components/workflow-menu";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { useWorkflows } from "@karrio/hooks/workflows";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { Spinner } from "@karrio/ui/components";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Workflows");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
-  const { references } = useAPIMetadata();
-
   const Component: React.FC = () => {
     const {
       query: { data: { workflows } = {}, ...query },
@@ -108,16 +104,11 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Workflows - ${references?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

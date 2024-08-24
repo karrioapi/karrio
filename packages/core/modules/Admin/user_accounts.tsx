@@ -1,17 +1,13 @@
+"use client";
 import { StaffManagement } from "@karrio/ui/admin/staff-management";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
-import { AdminLayout } from "@karrio/core/layouts/admin-layout";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Staff");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
-  const { APP_NAME } = (pageProps as any).metadata || {};
-
   const Component: React.FC = () => {
     return (
       <>
@@ -27,16 +23,11 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <AdminLayout>
-      <Head>
-        <title>{`Users - ${APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </AdminLayout>,
-    pageProps,
+    </>
   );
 }

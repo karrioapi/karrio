@@ -1,3 +1,4 @@
+"use client";
 import {
   TrackerModalProvider,
   TrackerModalContext,
@@ -19,22 +20,20 @@ import {
 import { useTrackerMutation, useTrackers } from "@karrio/hooks/tracker";
 import { TrackersFilter } from "@karrio/ui/filters/trackers-filter";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useLoader } from "@karrio/ui/components/loader";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { TrackingEvent } from "@karrio/types/rest/api";
 import React, { useContext, useEffect } from "react";
-import { useRouter } from "next/dist/client/router";
-import Head from "next/head";
+import { useSearchParams } from "next/navigation";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Trackers");
 
 export default function TrackersPage(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
-    const { modal } = router.query;
+    const searchParams = useSearchParams();
+    const modal = searchParams.get("modal") as string;
     const { setLoading } = useLoader();
     const mutation = useTrackerMutation();
     const { addTracker } = useContext(TrackerModalContext);
@@ -66,7 +65,7 @@ export default function TrackersPage(pageProps: any) {
 
     useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
@@ -339,11 +338,8 @@ export default function TrackersPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Trackers - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <TrackerModalProvider>
         <TrackingPreview>
           <ConfirmModal>
@@ -351,8 +347,7 @@ export default function TrackersPage(pageProps: any) {
           </ConfirmModal>
         </TrackingPreview>
       </TrackerModalProvider>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }
 

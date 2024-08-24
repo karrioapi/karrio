@@ -1,7 +1,8 @@
-import { useAppMode } from '@karrio/hooks/app-mode';
-import Link, { LinkProps } from 'next/link';
-import { p } from '@karrio/lib';
-import React from 'react';
+"use client";
+import { useAppMode } from "@karrio/hooks/app-mode";
+import Link, { LinkProps } from "next/link";
+import { p } from "@karrio/lib";
+import React from "react";
 
 interface AppLinkProps extends LinkProps<HTMLElement> {
   href: string;
@@ -12,7 +13,15 @@ interface AppLinkProps extends LinkProps<HTMLElement> {
   style?: React.CSSProperties;
 }
 
-export const AppLink: React.FC<AppLinkProps> = ({ href, className, target, onClick, children, style, ...props }) => {
+export const AppLink: React.FC<AppLinkProps> = ({
+  href,
+  className,
+  target,
+  onClick,
+  children,
+  style,
+  ...props
+}) => {
   const { basePath } = useAppMode();
 
   return (
@@ -21,9 +30,10 @@ export const AppLink: React.FC<AppLinkProps> = ({ href, className, target, onCli
         {...(style ? { style } : {})}
         {...(target ? { target } : {})}
         {...(onClick ? { onClick } : {})}
-        {...(className ? { className } : {})}>
+        {...(className ? { className } : {})}
+      >
         {children}
       </a>
     </Link>
-  )
+  );
 };

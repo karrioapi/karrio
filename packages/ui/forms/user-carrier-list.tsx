@@ -14,7 +14,7 @@ import { CopiableLink } from "../components/copiable-link";
 import React, { useContext, useEffect } from "react";
 import { isNoneOrEmpty, jsonify } from "@karrio/lib";
 import { useAppMode } from "@karrio/hooks/app-mode";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import { Notify } from "../components/notifier";
 import { Spinner } from "../components/spinner";
 import { Loading } from "../components/loader";
@@ -26,7 +26,8 @@ type ConnectionUpdateType = Partial<UpdateCarrierConnectionMutationInput> & {
 interface UserConnectionListView {}
 
 export const UserConnectionList: React.FC<UserConnectionListView> = () => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const modal = searchParams.get("modal") as string;
   const { testMode } = useAppMode();
   const { notify } = useContext(Notify);
   const labelModal = useLabelTemplateModal();
@@ -82,9 +83,9 @@ export const UserConnectionList: React.FC<UserConnectionListView> = () => {
     }
   }, [query.data?.user_connections]);
   useEffect(() => {
-    if (query.isFetching && !isNoneOrEmpty(router.query.modal)) {
+    if (query.isFetching && !isNoneOrEmpty(modal)) {
       const connection = (query.data?.user_connections || []).find(
-        (c) => c.id === router.query.modal,
+        (c) => c.id === modal,
       );
       connection &&
         editConnection({
@@ -92,7 +93,7 @@ export const UserConnectionList: React.FC<UserConnectionListView> = () => {
           update: mutation.updateCarrierConnection.mutateAsync,
         });
     }
-  }, [router.query.modal, query.data?.user_connections]);
+  }, [modal, query.data?.user_connections]);
 
   return (
     <>

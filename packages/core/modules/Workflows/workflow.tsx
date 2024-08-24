@@ -1,3 +1,4 @@
+"use client";
 import {
   ActionNodeInput,
   AutomationActionType,
@@ -7,13 +8,13 @@ import {
 } from "@karrio/types/graphql/ee";
 import { ConnectionModalEditor } from "@karrio/ui/modals/workflow-connection-edit-modal";
 import { ActionModalEditor } from "@karrio/ui/modals/workflow-action-edit-modal";
-import { isEqual, isNone, isNoneOrEmpty, url$, useLocation } from "@karrio/lib";
 import { TextAreaField } from "@karrio/ui/components/textarea-field";
 import { TabStateProvider, Tabs } from "@karrio/ui/components/tabs";
 import { WorkflowActionType } from "@karrio/hooks/workflow-actions";
 import { ConfirmModalWrapper } from "@karrio/ui/modals/form-modals";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
+import { isEqual, isNone, isNoneOrEmpty, url$ } from "@karrio/lib";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { InputField } from "@karrio/ui/components/input-field";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useWorkflowForm } from "@karrio/hooks/workflows";
@@ -32,19 +33,17 @@ import CodeMirror from "@uiw/react-codemirror";
 import { WorkflowEventList } from "./events";
 import React, { useState } from "react";
 import hljs from "highlight.js";
-import Head from "next/head";
 import moment from "moment";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Workflow");
 const ContextProviders = bundleContexts([ModalProvider]);
 hljs.registerLanguage("django", django);
 hljs.registerLanguage("json", json);
 
-export default function Page(pageProps: any) {
+export default function Page({ params }: { params: { id: string } }) {
   const Component: React.FC = () => {
     const loader = useLoader();
-    const router = useLocation();
-    const { id } = router.query;
+    const id = params.id;
     const { references } = useAPIMetadata();
     const [key, setKey] = useState<string>(`workflow-${Date.now()}`);
     const {
@@ -1083,12 +1082,8 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
+  return (
     <>
-      <Head>
-        <title>{`Workflow - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
       <ContextProviders>
         <TabStateProvider
           tabs={["Editor", "Executions"]}
@@ -1097,7 +1092,6 @@ export default function Page(pageProps: any) {
           <Component />
         </TabStateProvider>
       </ContextProviders>
-    </>,
-    pageProps,
+    </>
   );
 }

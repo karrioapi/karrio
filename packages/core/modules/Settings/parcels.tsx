@@ -1,3 +1,4 @@
+"use client";
 import {
   ParcelEditModal,
   ParcelEditContext,
@@ -11,23 +12,22 @@ import {
   ConfirmModalContext,
 } from "@karrio/ui/modals/confirm-modal";
 import { ParcelDescription } from "@karrio/ui/components/parcel-description";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
+import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import { useContext, useEffect } from "react";
-import { getURLSearchParams, isNoneOrEmpty } from "@karrio/lib";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Parcels");
 
 export default function ParcelsPage(pageProps: any) {
-  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
+  const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
   const Component: React.FC = () => {
-    const router = useRouter();
+    const searchParams = useSearchParams();
+    const modal = searchParams.get("modal") as string;
     const { setLoading } = useContext(Loading);
     const mutation = useParcelTemplateMutation();
     const { editParcel } = useContext(ParcelEditContext);
@@ -56,26 +56,22 @@ export default function ParcelsPage(pageProps: any) {
 
     useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
     useEffect(() => {
-      if (
-        query.isFetched &&
-        !initialized &&
-        !isNoneOrEmpty(router.query.modal)
-      ) {
+      if (query.isFetched && !initialized && !isNoneOrEmpty(modal)) {
         const parcelTemplate = (parcel_templates?.edges || []).find(
-          (c) => c.node.id === router.query.modal,
+          (c) => c.node.id === modal,
         )?.node;
-        if (parcelTemplate || router.query.modal === "new") {
+        if (parcelTemplate || modal === "new") {
           editParcel({ parcelTemplate } as any);
         }
         setInitialized(true);
       }
       query.isFetched && setInitialized(true);
-    }, [router.query.modal, query.isFetched]);
+    }, [modal, query.isFetched]);
 
     return (
       <>
@@ -261,17 +257,13 @@ export default function ParcelsPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Parcels Settings - ${APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <ConfirmModal>
         <ParcelEditModal>
           <Component />
         </ParcelEditModal>
       </ConfirmModal>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

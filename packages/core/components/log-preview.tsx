@@ -1,5 +1,5 @@
 import { LogComponent } from "@karrio/core/modules/Developers/log";
-import { useLocation } from "@karrio/lib";
+import { useLocation } from "@karrio/hooks/location";
 import React, { useState } from "react";
 
 type LogPreviewContextType = {
@@ -42,10 +42,10 @@ export const LogPreview: React.FC<LogPreviewComponent> = ({ children }) => {
       <div className={`modal ${isActive ? "is-active" : ""}`} key={key}>
         <div className="modal-background" onClick={dismiss}></div>
 
-        {isActive && (
+        {isActive && logId && (
           <div className="modal-card is-medium-modal">
             <section className="modal-card-body px-5 pt-0 pb-6">
-              <LogComponent logId={logId} />
+              <LogComponent logId={logId} isPreview />
             </section>
           </div>
         )}

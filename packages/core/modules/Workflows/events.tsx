@@ -1,27 +1,25 @@
+"use client";
 import { WorkflowPreviewModal } from "@karrio/core/components/workflow-event-preview";
 import { formatDateTimeLong, getURLSearchParams } from "@karrio/lib";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useWorkflowEvents } from "@karrio/hooks/workflow-events";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { WorkflowEventFilter } from "@karrio/types/graphql/ee";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
+import { useSearchParams } from "next/navigation";
 import { Spinner } from "@karrio/ui/components";
-import { useRouter } from "next/router";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Workflow Events");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export const WorkflowEventList: React.FC<{
   defaultFilter?: WorkflowEventFilter;
 }> = ({ defaultFilter }) => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
   const loader = useLoader();
   const {
     query: { data: { workflow_events } = {}, ...query },
@@ -44,16 +42,10 @@ export const WorkflowEventList: React.FC<{
 
   React.useEffect(() => {
     updateFilter();
-  }, [router.query]);
+  }, [searchParams]);
   React.useEffect(() => {
     loader.setLoading(query.isFetching);
   }, [query.isFetching]);
-  React.useEffect(() => {
-    // if (query.isFetched && !initialized && !isNoneOrEmpty(router.query.modal)) {
-    //   previewEvent(router.query.modal as string);
-    //   setInitialized(true);
-    // }
-  }, [router.query.modal, query.isFetched]);
 
   return (
     <>
@@ -147,8 +139,6 @@ export const WorkflowEventList: React.FC<{
 };
 
 export default function Page(pageProps: any) {
-  const { references } = useAPIMetadata();
-
   const Component: React.FC = () => {
     return (
       <>
@@ -186,16 +176,11 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Workflows - ${references?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

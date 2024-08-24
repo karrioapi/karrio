@@ -8,7 +8,7 @@ import { CopiableLink } from "../components/copiable-link";
 import { CarrierBadge } from "../components/carrier-badge";
 import { useConfirmModal } from "../modals/confirm-modal";
 import { useNotifier } from "../components/notifier";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import { NotificationType } from "@karrio/types";
 import { useLoader } from "../components/loader";
 import { Spinner } from "../components/spinner";
@@ -24,7 +24,8 @@ interface SystemCarrierManagementComponent {}
 export const SystemCarrierManagement: React.FC<
   SystemCarrierManagementComponent
 > = () => {
-  const router = useRouter();
+  const searchParams = useSearchParams();
+  const modal = searchParams.get("modal") as string;
   const { notify } = useNotifier();
   const { setLoading } = useLoader();
   const { confirm: confirmDeletion } = useConfirmModal();
@@ -63,17 +64,15 @@ export const SystemCarrierManagement: React.FC<
     setLoading(query.isFetching);
   });
   React.useEffect(() => {
-    if (query.isFetching && !isNoneOrEmpty(router.query.modal)) {
-      const connection = system_connections.find(
-        (c) => c.id === router.query.modal,
-      );
+    if (query.isFetching && !isNoneOrEmpty(modal)) {
+      const connection = system_connections.find((c) => c.id === modal);
       connection &&
         editConnection({
           connection: connection as any,
           update: mutation.updateSystemCarrierConnection.mutateAsync,
         });
     }
-  }, [router.query.modal, system_connections]);
+  }, [modal, system_connections]);
 
   return (
     <>

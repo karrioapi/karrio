@@ -1,16 +1,14 @@
+"use client";
 import { LabelTemplateEditModalProvider } from "@karrio/ui/modals/label-template-edit-modal";
 import { ConnectProviderModal } from "@karrio/ui/modals/connect-provider-modal";
 import { SystemConnectionList } from "@karrio/ui/forms/system-carrier-list";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
-import { useRouter } from "next/dist/client/router";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("System Connections");
 const ContextProviders = bundleContexts([
   ModalProvider,
   ConfirmModal,
@@ -18,10 +16,8 @@ const ContextProviders = bundleContexts([
   LabelTemplateEditModalProvider,
 ]);
 
-export default function ConnectionsPage(pageProps: any) {
+export default function Page(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
-
     return (
       <>
         <header className="px-0 pb-0 pt-4 is-flex is-justify-content-space-between">
@@ -62,16 +58,11 @@ export default function ConnectionsPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Carrier Connections - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

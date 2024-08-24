@@ -1,12 +1,11 @@
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+"use client";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { EmbedLayout } from "@karrio/core/layouts/embed-layout";
 import { RedocStandalone } from "redoc";
 import { url$ } from "@karrio/lib";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("API Reference");
 
 export default function Page(pageProps: any) {
   const Component: React.FC = () => {
@@ -24,14 +23,9 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <EmbedLayout showModeIndicator={true}>
-      <Head>
-        <title>{`API Reference - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <Component />
-    </EmbedLayout>,
-    pageProps,
+    </>
   );
 }

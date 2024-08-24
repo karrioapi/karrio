@@ -8,7 +8,6 @@ import {
   isNone,
   isNoneOrEmpty,
   toNumber,
-  useLocation,
 } from "@karrio/lib";
 import {
   AddressType,
@@ -34,6 +33,7 @@ import { useAppMode } from "./app-mode";
 import { useKarrio } from "./karrio";
 import moment from "moment";
 import React from "react";
+import { useRouter } from "next/navigation";
 
 const DEFAULT_SHIPMENT_DATA = {
   shipper: {} as AddressType,
@@ -127,7 +127,7 @@ export function useLabelData(id: string, initialData?: ShipmentType) {
 
 export function useLabelDataMutation(id: string, initialData?: ShipmentType) {
   const loader = useLoader();
-  const router = useLocation();
+  const router = useRouter();
   const notifier = useNotifier();
   const { basePath } = useAppMode();
   const { mutation, ...state } = useLabelData(id, initialData);

@@ -1,3 +1,4 @@
+"use client";
 import {
   WebhookTestModal,
   useTestWebhookModal,
@@ -11,22 +12,21 @@ import {
   ConfirmModalContext,
 } from "@karrio/ui/modals/confirm-modal";
 import { useWebhookMutation, useWebhooks } from "@karrio/hooks/webhook";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { NotificationType, WebhookType } from "@karrio/types";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { formatDateTime, isNoneOrEmpty } from "@karrio/lib";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Notify } from "@karrio/ui/components/notifier";
-import { useRouter } from "next/dist/client/router";
 import { useContext, useEffect } from "react";
-import Head from "next/head";
 import React from "react";
+import { useSearchParams } from "next/navigation";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Webhooks");
 
 export default function WebhooksPage(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
+    const searchParams = useSearchParams();
+    const modal = searchParams.get("modal");
     const { query } = useWebhooks();
     const mutation = useWebhookMutation();
     const { notify } = useContext(Notify);
@@ -53,18 +53,14 @@ export default function WebhooksPage(pageProps: any) {
       };
 
     useEffect(() => {
-      if (
-        query.isFetched &&
-        !initialized &&
-        !isNoneOrEmpty(router.query.modal)
-      ) {
+      if (query.isFetched && !initialized && !isNoneOrEmpty(modal)) {
         const webhook = query.data?.webhooks.edges.find(
-          (c) => c.node.id === router.query.modal,
+          (c) => c.node.id === modal,
         );
         webhook && editWebhook({ webhook } as any);
         setInitialized(true);
       }
-    }, [router.query.modal, query.isFetched]);
+    }, [modal, query.isFetched]);
 
     return (
       <>
@@ -229,22 +225,15 @@ export default function WebhooksPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
+  return (
     <>
-      <DashboardLayout showModeIndicator={true}>
-        <Head>
-          <title>{`Webhooks - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-        </Head>
-
-        <WebhookEditModal>
-          <WebhookTestModal>
-            <ConfirmModal>
-              <Component />
-            </ConfirmModal>
-          </WebhookTestModal>
-        </WebhookEditModal>
-      </DashboardLayout>
-    </>,
-    pageProps,
+      <WebhookEditModal>
+        <WebhookTestModal>
+          <ConfirmModal>
+            <Component />
+          </ConfirmModal>
+        </WebhookTestModal>
+      </WebhookEditModal>
+    </>
   );
 }

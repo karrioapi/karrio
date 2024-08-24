@@ -1,3 +1,4 @@
+"use client";
 import {
   formatAddressLocationShort,
   formatAddressShort,
@@ -10,22 +11,21 @@ import {
   isNoneOrEmpty,
   url$,
 } from "@karrio/lib";
-import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
 import {
   OrderPreview,
   OrderPreviewContext,
 } from "@karrio/core/components/order-preview";
+import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
 import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { useDocumentTemplates } from "@karrio/hooks/document-template";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
 import React, { ChangeEvent, useContext, useEffect } from "react";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { OrdersFilter } from "@karrio/ui/filters/orders-filter";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AddressType, ShipmentType } from "@karrio/types";
 import { useLoader } from "@karrio/ui/components/loader";
@@ -33,12 +33,10 @@ import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { bundleContexts } from "@karrio/hooks/utils";
-import { useRouter } from "next/dist/client/router";
 import { useOrders } from "@karrio/hooks/order";
-import Head from "next/head";
+import { useRouter, useSearchParams } from "next/navigation";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Orders");
 const ContextProviders = bundleContexts([
   OrderPreview,
   ConfirmModal,
@@ -49,7 +47,9 @@ export default function OrdersPage(pageProps: any) {
   const Component: React.FC = () => {
     const router = useRouter();
     const { setLoading } = useLoader();
+    const searchParams = useSearchParams();
     const { references } = useAPIMetadata();
+    const modal = searchParams.get("modal") as string;
     const { previewOrder } = useContext(OrderPreviewContext);
     const [allChecked, setAllChecked] = React.useState(false);
     const [initialized, setInitialized] = React.useState(false);
@@ -247,7 +247,7 @@ export default function OrdersPage(pageProps: any) {
 
     useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
@@ -255,15 +255,11 @@ export default function OrdersPage(pageProps: any) {
       updatedSelection(selection, orders);
     }, [selection, orders]);
     useEffect(() => {
-      if (
-        query.isFetched &&
-        !initialized &&
-        !isNoneOrEmpty(router.query.modal)
-      ) {
-        previewOrder(router.query.modal as string);
+      if (query.isFetched && !initialized && !isNoneOrEmpty(modal)) {
+        previewOrder(modal as string);
         setInitialized(true);
       }
-    }, [router.query.modal, query.isFetched]);
+    }, [modal, query.isFetched]);
 
     return (
       <>
@@ -646,17 +642,12 @@ export default function OrdersPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
+  return (
+    <>
       <GoogleGeocodingScript />
-      <Head>
-        <title>{`Orders - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

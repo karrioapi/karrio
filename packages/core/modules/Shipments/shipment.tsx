@@ -1,3 +1,4 @@
+"use client";
 import { CustomsInfoDescription } from "@karrio/ui/components/customs-info-description";
 import {
   MetadataEditor,
@@ -16,13 +17,12 @@ import { CustomsType, NotificationType, ParcelType } from "@karrio/types";
 import { StatusCode } from "@karrio/ui/components/status-code-badge";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { CarrierBadge } from "@karrio/ui/components/carrier-badge";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ShipmentMenu } from "@karrio/ui/components/shipment-menu";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { SelectField } from "@karrio/ui/components/select-field";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
 import { InputField } from "@karrio/ui/components/input-field";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { DocumentUploadData } from "@karrio/types/rest/api";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -31,20 +31,17 @@ import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { MetadataObjectTypeEnum } from "@karrio/types";
 import { useShipment } from "@karrio/hooks/shipment";
-import { useRouter } from "next/dist/client/router";
 import { useEvents } from "@karrio/hooks/event";
 import { useLogs } from "@karrio/hooks/log";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Shipment");
 type FileDataType = DocumentUploadData["document_files"][0];
 
-export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({
-  shipmentId,
-}) => {
-  const router = useRouter();
+export const ShipmentComponent: React.FC<{
+  shipmentId: string;
+  isPreview?: boolean;
+}> = ({ shipmentId, isPreview }) => {
   const notifier = useNotifier();
   const { setLoading } = useLoader();
   const $fileInput = React.useRef<HTMLInputElement>();
@@ -52,7 +49,7 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({
   const {
     references: { carrier_capabilities = {} },
   } = useAPIMetadata();
-  const entity_id = shipmentId || (router.query.id as string);
+  const entity_id = shipmentId;
   const { query: logs } = useLogs({ entity_id });
   const { query: events } = useEvents({ entity_id });
   const {
@@ -131,10 +128,10 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({
                 <CopiableLink text={shipment.id as string} title="Copy ID" />
               </div>
               <div className="is-flex is-justify-content-right">
-                {!isNone(shipmentId) && (
+                {isPreview && (
                   <AppLink
                     href={`/shipments/${shipmentId}`}
-                    target="blank"
+                    target="_blank"
                     className="button is-white has-text-info is-small mx-1"
                   >
                     <span className="icon">
@@ -758,16 +755,12 @@ export const ShipmentComponent: React.FC<{ shipmentId?: string }> = ({
   );
 };
 
-export default function ShipmentPage(pageProps: any) {
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Shipment - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
+export default function Page({ params }: { params: { id: string } }) {
+  return (
+    <>
       <ConfirmModal>
-        <ShipmentComponent />
+        <ShipmentComponent shipmentId={params.id} />
       </ConfirmModal>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

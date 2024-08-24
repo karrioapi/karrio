@@ -1,3 +1,4 @@
+"use client";
 import {
   formatAddressLocationShort,
   formatAddressShort,
@@ -17,22 +18,21 @@ import {
   ConfirmModal,
   ConfirmModalContext,
 } from "@karrio/ui/modals/confirm-modal";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
 import React, { useContext, useEffect } from "react";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import { AddressType } from "@karrio/types";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Addresses");
 
 export default function AddressPage(pageProps: any) {
-  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
+  const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
   const Component: React.FC = () => {
-    const router = useRouter();
+    const searchParams = useSearchParams();
+    const modal = searchParams.get("modal") as string;
     const { setLoading } = useContext(Loading);
     const { confirm } = useContext(ConfirmModalContext);
     const { editAddress } = useContext(AddressEditContext);
@@ -61,26 +61,22 @@ export default function AddressPage(pageProps: any) {
 
     useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
     useEffect(() => {
-      if (
-        query.isFetched &&
-        !initialized &&
-        !isNoneOrEmpty(router.query.modal)
-      ) {
+      if (query.isFetched && !initialized && !isNoneOrEmpty(modal)) {
         const templates = address_templates?.edges || [];
         const addressTemplate: any = templates.find(
-          (c) => c.node.id === router.query.modal,
+          (c) => c.node.id === modal,
         )?.node;
-        if (addressTemplate || router.query.modal === "new") {
+        if (addressTemplate || modal === "new") {
           editAddress({ addressTemplate });
         }
         setInitialized(true);
       }
-    }, [router.query.modal, query.isFetched]);
+    }, [modal, query.isFetched]);
 
     return (
       <>
@@ -295,18 +291,14 @@ export default function AddressPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout>
+  return (
+    <>
       <GoogleGeocodingScript />
-      <Head>
-        <title>{`Addresses Settings - ${APP_NAME}`}</title>
-      </Head>
       <ConfirmModal>
         <AddressEditModal>
           <Component />
         </AddressEditModal>
       </ConfirmModal>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

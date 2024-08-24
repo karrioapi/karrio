@@ -1,22 +1,18 @@
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { SectionLayout } from "@karrio/core/layouts/section-layout";
+"use client";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { useUserMutation } from "@karrio/hooks/user";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import React, { useEffect } from "react";
 import { isNone } from "@karrio/lib";
-import Head from "next/head";
 import Link from "next/link";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Email Change Confirmation");
 
 export default function Page(pageProps: any) {
-  const { references } = useAPIMetadata();
-
   const Component: React.FC = () => {
-    const router = useRouter();
-    const { token } = router.query;
+    const searchParams = useSearchParams();
+    const token = searchParams.get("token") as string;
     const { confirmEmailChange } = useUserMutation();
     const [loading, setLoading] = React.useState(false);
     const [success, setSuccess] = React.useState(false);
@@ -69,14 +65,9 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <SectionLayout {...pageProps}>
-      <Head>
-        <title>{`Email change confirmation - ${references.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <Component />
-    </SectionLayout>,
-    pageProps,
+    </>
   );
 }

@@ -1,15 +1,12 @@
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+"use client";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { Switch } from "@karrio/ui/components/switch";
-import { AdminLayout } from "@karrio/core/layouts/admin-layout";
 import { url$ } from "@karrio/lib";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Platform");
 
 export default function Page(pageProps: any) {
-  const { APP_NAME } = (pageProps as any).metadata || {};
-
   const Component: React.FC = () => {
     const { metadata, getHost } = useAPIMetadata();
 
@@ -312,14 +309,9 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <AdminLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Platform - ${APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <Component />
-    </AdminLayout>,
-    pageProps,
+    </>
   );
 }

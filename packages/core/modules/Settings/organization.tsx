@@ -1,15 +1,14 @@
+"use client";
 import { OrganizationManagement } from "@karrio/ui/forms/organization-management";
 import { InviteMemberProvider } from "@karrio/ui/modals/invite-member-modal";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Organization Settings");
 
 export default function AccountPage(pageProps: any) {
-  const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
+  const { MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
 
   const Component: React.FC = () => {
     return (
@@ -93,16 +92,11 @@ export default function AccountPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Organization Settings - ${APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ConfirmModal>
         <Component />
       </ConfirmModal>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

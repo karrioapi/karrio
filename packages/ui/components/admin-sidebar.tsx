@@ -1,6 +1,7 @@
+"use client";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useRouter } from "next/dist/client/router";
 import { useAppMode } from "@karrio/hooks/app-mode";
+import { usePathname } from "next/navigation";
 import { formatRef, p } from "@karrio/lib";
 import React, { useRef } from "react";
 import { AppLink } from "./app-link";
@@ -9,7 +10,7 @@ import Image from "next/image";
 interface AdminSidebarComponent {}
 
 export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
-  const router = useRouter();
+  const pathname = usePathname();
   const sidebar = useRef<HTMLDivElement>(null);
   const dismissAction = useRef<HTMLButtonElement>(null);
   const { basePath } = useAppMode();
@@ -21,8 +22,8 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
     dismissAction.current?.classList.remove("is-mobile-active");
   };
   const isActive = (path: string) => {
-    if (path === "/admin") return path === router.pathname;
-    return router.pathname.includes(`${basePath}${path}`.replace("//", "/"));
+    if (path === "/admin") return path === pathname;
+    return pathname.includes(`${basePath}${path}`.replace("//", "/"));
   };
   const activeClass = (path: string) => (isActive(path) ? "is-active" : "");
 
@@ -155,4 +156,3 @@ export const AdminSidebar: React.FC<AdminSidebarComponent> = () => {
     </div>
   );
 };
-

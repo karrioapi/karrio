@@ -1,3 +1,4 @@
+"use client";
 import {
   CommodityEditModalProvider,
   CommodityStateContext,
@@ -9,39 +10,29 @@ import {
 import { GoogleGeocodingScript } from "@karrio/ui/components/google-geocoding-script";
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
-import {
-  formatRef,
-  isEqual,
-  isNone,
-  isNoneOrEmpty,
-  useLocation,
-} from "@karrio/lib";
+import { formatRef, isEqual, isNone, isNoneOrEmpty } from "@karrio/lib";
 import { MetadataObjectTypeEnum, PaidByEnum } from "@karrio/types";
 import { AddressModalEditor } from "@karrio/ui/modals/form-modals";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { InputField } from "@karrio/ui/components/input-field";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useLoader } from "@karrio/ui/components/loader";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
 import { useOrderForm } from "@karrio/hooks/order";
 import React, { useEffect, useState } from "react";
-import { AddressType } from "@karrio/types";
-import Head from "next/head";
 import { Spinner } from "@karrio/ui/components";
+import { AddressType } from "@karrio/types";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Drfat Order");
 const ContextProviders = bundleContexts([
   CommodityEditModalProvider,
   ModalProvider,
 ]);
 
-export default function Page(pageProps: any) {
+export default function Page({ params }: { params: { id: string } }) {
   const Component: React.FC = () => {
     const loader = useLoader();
-    const router = useLocation();
-    const { id } = router.query;
+    const id = params.id || "new";
     const [ready, setReady] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const [key, setKey] = useState<string>(`order-${Date.now()}`);
@@ -553,17 +544,12 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
+  return (
+    <>
       <GoogleGeocodingScript />
-      <Head>
-        <title>{`Draft order - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

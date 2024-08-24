@@ -1,14 +1,12 @@
-import { CloseAccountAction } from "@karrio/ui/forms/close-account-action";
+"use client";
 import { ProfileUpdateInput } from "@karrio/ui/forms/profile-update-input";
 import { PasswordManagement } from "@karrio/ui/forms/password-management";
 import { EmailManagement } from "@karrio/ui/forms/email-management";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Profile Settings");
 
 export default function AccountPage(pageProps: any) {
   const { APP_NAME, MULTI_ORGANIZATIONS } = (pageProps as any).metadata || {};
@@ -121,16 +119,11 @@ export default function AccountPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Profile Settings - ${APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ConfirmModal>
         <Component />
       </ConfirmModal>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

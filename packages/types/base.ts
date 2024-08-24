@@ -511,3 +511,8 @@ export const DEFAULT_CUSTOMS_CONTENT: Partial<CustomsType> = {
   content_type: graph.CustomsContentTypeEnum.merchandise,
   options: {},
 };
+
+export type PageProps = {
+  params: { id: string };
+  searchParams: { [key: string]: string | string[] | undefined };
+};

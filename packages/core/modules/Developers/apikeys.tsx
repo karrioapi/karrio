@@ -1,14 +1,13 @@
+"use client";
 import { GenerateAPIModal } from "@karrio/ui/modals/generate-api-dialog";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useContext, useEffect, useRef, useState } from "react";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Loading } from "@karrio/ui/components/loader";
 import { useAPIToken } from "@karrio/hooks/api-token";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("API Keys");
 
 export default function ApiPage(pageProps: any) {
   const { references } = useAPIMetadata();
@@ -174,13 +173,9 @@ export default function ApiPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`API Keys - ${references?.APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <Component />
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

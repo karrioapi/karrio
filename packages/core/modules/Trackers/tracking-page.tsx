@@ -1,22 +1,33 @@
 import { TrackingEvent, TrackingStatus } from "@karrio/types/rest/api";
+import { formatDayDate, isNone, KARRIO_API, url$ } from "@karrio/lib";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { formatDayDate, isNone } from "@karrio/lib";
-import { Metadata } from "@karrio/types";
-import { NextPage } from "next";
-import Head from "next/head";
+import { Collection, KarrioClient } from "@karrio/types";
+import { loadMetadata } from "@karrio/core/context/main";
 import Link from "next/link";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/tracker";
+export const generateMetadata = dynamicMetadata("Tracking");
 
 type DayEvents = { [k: string]: TrackingEvent[] };
 
-const Tracking: NextPage<{
-  id: string;
-  metadata: Metadata;
-  tracker?: TrackingStatus;
-  message?: string;
-}> = ({ metadata, id, tracker, message }) => {
+export default async function Page({ params }: { params: Collection }) {
+  const id = params?.id as string;
+  const { metadata } = await loadMetadata();
+  const client = new KarrioClient({
+    basePath: url$`${(metadata?.HOST as string) || KARRIO_API}`,
+  });
+  const { data: tracker, message } = await client.trackers
+    .retrieve({ idOrTrackingNumber: id })
+    .then(({ data }) => ({ data, message: null }))
+    .catch((_) => {
+      console.log(_.response?.data?.errors || _.response);
+      return {
+        data: null,
+        message: `No Tracker ID nor Tracking Number found for ${id}`,
+      };
+    });
+
   const computeEvents = (tracker: TrackingStatus): DayEvents => {
     return (tracker?.events || []).reduce((days, event: TrackingEvent) => {
       const daydate = formatDayDate(event.date as string);
@@ -26,10 +37,6 @@ const Tracking: NextPage<{
 
   return (
     <>
-      <Head>
-        <title>{`Tracking - ${tracker?.tracking_number || id} - ${metadata?.APP_NAME}`}</title>
-      </Head>
-
       <section className="hero is-fullheight p-2">
         <div className="container">
           <div className="has-text-centered my-4">
@@ -144,7 +151,7 @@ const Tracking: NextPage<{
           <div className="content has-text-centered">
             <p>
               <Link legacyBehavior href="/" className="button is-white">
-                <span>Powered by &copy; {metadata.APP_NAME}</span>
+                <span>Powered by &copy; {metadata?.APP_NAME}</span>
               </Link>
             </p>
           </div>
@@ -152,6 +159,4 @@ const Tracking: NextPage<{
       </section>
     </>
   );
-};
-
-export default Tracking;
+}

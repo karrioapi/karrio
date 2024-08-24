@@ -1,34 +1,28 @@
-import { SectionLayout } from "@karrio/core/layouts/section-layout";
-import Head from "next/head";
+"use client";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import Link from "next/link";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/metadata";
+export const generateMetadata = dynamicMetadata("Sign Up Success");
 
 function SignUpSuccess(pageProps: any) {
   return (
     <>
-      <SectionLayout {...pageProps}>
-        <Head>
-          <title>{`Sign Up Success - ${pageProps.metadata?.APP_NAME}`}</title>
-        </Head>
-
-        <div className="card isolated-card my-6">
-          <div className="card-content has-text-centered ">
-            <p>Your account has been created.</p>
-            <p>
-              Check your registration email inbox to verify the address and
-              activate your account.
-            </p>
-          </div>
+      <div className="card isolated-card my-6">
+        <div className="card-content has-text-centered ">
+          <p>Your account has been created.</p>
+          <p>
+            Check your registration email inbox to verify the address and
+            activate your account.
+          </p>
         </div>
+      </div>
 
-        <div className="has-text-centered my-4 is-size-6">
-          <Link legacyBehavior href="/login">
-            Sign in
-          </Link>
-        </div>
-      </SectionLayout>
+      <div className="has-text-centered my-4 is-size-6">
+        <Link legacyBehavior href="/signin">
+          Sign in
+        </Link>
+      </div>
     </>
   );
 }

@@ -8,10 +8,11 @@ const { withSentryConfig } = require('@sentry/nextjs');
 
 const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
 
+/** @type {import('next').NextConfig} */
 const moduleExports = {
-  swcMinify: true,
+  swcMinify: false,
   reactStrictMode: true,
-  transpilePackages: ['@karrio/hooks', '@karrio/ui', '@karrio/lib', '@karrio/types'],
+  transpilePackages: ['@karrio/core', '@karrio/hooks', '@karrio/ui', '@karrio/lib', '@karrio/types'],
   basePath: BASE_PATH,
   sassOptions: {
     includePaths: [path.join(__dirname, 'src', 'styles')],
@@ -20,23 +21,10 @@ const moduleExports = {
     disableServerWebpackPlugin: true,
     disableClientWebpackPlugin: true,
   },
-
-  async headers() {
-    return [
-      {
-        source: '/api/auth/:slug',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'no-store, max-age=0',
-          },
-          {
-            key: 'CDN-Cache-Control',
-            value: 'no-store, max-age=0',
-          },
-        ],
-      },
-    ];
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false, net: false, tls: false };
+    config.externals.push('pino-pretty', 'encoding');
+    return config;
   },
 };
 

@@ -1,3 +1,4 @@
+"use client";
 import {
   RegisterUserMutationInput,
   register_user_register_user_errors,
@@ -10,17 +11,16 @@ import React, {
   useState,
 } from "react";
 import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { InputField } from "@karrio/ui/components/input-field";
-import { SectionLayout } from "@karrio/core/layouts/section-layout";
-import { isNone, isNoneOrEmpty } from "@karrio/lib";
-import { useRouter } from "next/dist/client/router";
 import { useUserMutation } from "@karrio/hooks/user";
+import { isNone, isNoneOrEmpty } from "@karrio/lib";
+import { useRouter, useSearchParams } from "next/navigation";
 import { p } from "@karrio/lib";
-import Head from "next/head";
 import Link from "next/link";
 
-export { getServerSideProps } from "@karrio/core/context/metadata";
+export const generateMetadata = dynamicMetadata("Sign Up");
 
 const DEFAULT_VALUE: Partial<RegisterUserMutationInput> = {
   email: "",
@@ -45,7 +45,8 @@ function reducer(
 
 const Component: React.FC = () => {
   const router = useRouter();
-  const { email } = router.query;
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email") as string;
   const mutation = useUserMutation();
   const { loading, setLoading } = useContext(Loading);
   const [user, dispatch] = useReducer(
@@ -199,7 +200,7 @@ const Component: React.FC = () => {
       <div className="has-text-centered my-4 is-size-6">
         <span>
           Have an account?{" "}
-          <Link legacyBehavior href="/login">
+          <Link legacyBehavior href="/signin">
             Sign in
           </Link>
         </span>
@@ -208,20 +209,12 @@ const Component: React.FC = () => {
   );
 };
 
-function SignUp(pageProps: any) {
+export default function SignUp(pageProps: any) {
   return (
     <>
-      <SectionLayout {...pageProps}>
-        <Head>
-          <title>{`Sign Up - ${pageProps.metadata?.APP_NAME}`}</title>
-        </Head>
-
-        <LoadingProvider>
-          <Component />
-        </LoadingProvider>
-      </SectionLayout>
+      <LoadingProvider>
+        <Component />
+      </LoadingProvider>
     </>
   );
 }
-
-export default SignUp;

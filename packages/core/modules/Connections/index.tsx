@@ -1,3 +1,4 @@
+"use client";
 import {
   ConnectProviderModal,
   ConnectProviderModalContext,
@@ -9,18 +10,16 @@ import {
 import { LabelTemplateEditModalProvider } from "@karrio/ui/modals/label-template-edit-modal";
 import { UserConnectionList } from "@karrio/ui/forms/user-carrier-list";
 import { useSystemConnections } from "@karrio/hooks/system-connection";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Loading } from "@karrio/ui/components/loader";
 import { bundleContexts } from "@karrio/hooks/utils";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import { useContext, useEffect } from "react";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Carrier Connections");
 const ContextProviders = bundleContexts([
   ModalProvider,
   ConfirmModal,
@@ -30,8 +29,8 @@ const ContextProviders = bundleContexts([
 
 export default function ConnectionsPage(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
-    const { modal } = router.query;
+    const searchParams = useSearchParams();
+    const modal = searchParams.get("modal");
     const { setLoading } = useContext(Loading);
     const mutation = useCarrierConnectionMutation();
     const { query: systemQuery } = useSystemConnections();
@@ -100,16 +99,11 @@ export default function ConnectionsPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Carrier Connections - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

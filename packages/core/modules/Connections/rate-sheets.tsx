@@ -1,18 +1,17 @@
+"use client";
 import { LabelTemplateEditModalProvider } from "@karrio/ui/modals/label-template-edit-modal";
 import { RateSheetEditModalProvider } from "@karrio/ui/modals/rate-sheet-edit-modal";
 import { ConnectProviderModal } from "@karrio/ui/modals/connect-provider-modal";
 import { RateSheetModalEditor } from "@karrio/ui/modals/rate-sheet-editor";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { RateSheetList } from "@karrio/ui/forms/rate-sheet-list";
 import { useRateSheetMutation } from "@karrio/hooks/rate-sheet";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { bundleContexts } from "@karrio/hooks/utils";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Rate Sheets");
 const ContextProviders = bundleContexts([
   ModalProvider,
   ConfirmModal,
@@ -74,16 +73,11 @@ export default function ConnectionsPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Carrier Connections - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

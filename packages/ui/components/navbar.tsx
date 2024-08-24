@@ -1,34 +1,36 @@
-import { ShortcutDropdown } from './shortcut-dropdown';
-import { AccountDropdown } from './account-dropdown';
-import { SearchBar } from '../forms/search-bar';
-import React from 'react';
+"use client";
+import { ShortcutDropdown } from "./shortcut-dropdown";
+import { AccountDropdown } from "./account-dropdown";
+import { SearchBar } from "../forms/search-bar";
+import React from "react";
 
-interface NavbarComponent { }
+interface NavbarComponent {}
 
-export const Navbar: React.FC<NavbarComponent> = ({ }) => {
+export const Navbar: React.FC<NavbarComponent> = ({}) => {
   const openSidebar = (e: React.MouseEvent) => {
     e.preventDefault();
-    document.querySelector('.plex-sidebar')?.classList.add('is-mobile-active');
-    document.querySelector('.sidebar-menu-button')?.classList.add('is-mobile-active');
+    document.querySelector(".plex-sidebar")?.classList.add("is-mobile-active");
+    document
+      .querySelector(".sidebar-menu-button")
+      ?.classList.add("is-mobile-active");
   };
 
   return (
     <>
-
       <div className="static-nav">
         <div className="nav-start">
-
           <div className="nav-item mobile-item is-flex">
-            <button className="menu-icon v-2 mobile-sidebar-trigger" onClick={openSidebar}>
+            <button
+              className="menu-icon v-2 mobile-sidebar-trigger"
+              onClick={openSidebar}
+            >
               <span></span>
             </button>
           </div>
 
           <SearchBar />
-
         </div>
         <div className="nav-end">
-
           <div className="nav-item mobile-item is-flex mobile-search-trigger">
             <i className="fas fa-search"></i>
           </div>
@@ -36,13 +38,16 @@ export const Navbar: React.FC<NavbarComponent> = ({ }) => {
           <ShortcutDropdown />
 
           <AccountDropdown />
-
         </div>
 
         <div className="mobile-search">
           <div className="field">
             <div className="control has-icon has-icon-right">
-              <input type="text" className="input search-field" placeholder="Search for shipments..." />
+              <input
+                type="text"
+                className="input search-field"
+                placeholder="Search for shipments..."
+              />
               <div className="form-icon">
                 <i className="fas fa-search"></i>
               </div>
@@ -53,8 +58,7 @@ export const Navbar: React.FC<NavbarComponent> = ({ }) => {
             </div>
           </div>
         </div>
-
       </div>
     </>
   );
-}
+};

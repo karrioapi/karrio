@@ -1,3 +1,4 @@
+"use client";
 import {
   formatDateTimeLong,
   getURLSearchParams,
@@ -9,22 +10,21 @@ import {
   LogPreviewContext,
 } from "@karrio/core/components/log-preview";
 import { StatusCode } from "@karrio/ui/components/status-code-badge";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { LogsFilter } from "@karrio/ui/filters/logs-filter";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useLoader } from "@karrio/ui/components/loader";
+import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
 import React, { useContext, useEffect } from "react";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import { useLogs } from "@karrio/hooks/log";
-import Head from "next/head";
-import { AppLink } from "@karrio/ui/components/app-link";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("API Logs");
 
 export default function LogsPage(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
+    const searchParams = useSearchParams();
+    const modal = searchParams.get("modal");
     const { setLoading } = useLoader();
     const { previewLog } = useContext(LogPreviewContext);
     const [initialized, setInitialized] = React.useState(false);
@@ -47,20 +47,16 @@ export default function LogsPage(pageProps: any) {
 
     useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [modal]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
     useEffect(() => {
-      if (
-        query.isFetched &&
-        !initialized &&
-        !isNoneOrEmpty(router.query.modal)
-      ) {
-        previewLog(router.query.modal as string);
+      if (query.isFetched && !initialized && !isNoneOrEmpty(modal)) {
+        previewLog(modal as string);
         setInitialized(true);
       }
-    }, [router.query.modal, query.isFetched]);
+    }, [modal, query.isFetched]);
 
     return (
       <>
@@ -235,15 +231,11 @@ export default function LogsPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Logs - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <LogPreview>
         <Component />
       </LogPreview>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

@@ -1,27 +1,26 @@
+"use client";
 import { failsafe, formatDateTimeLong, isNone, jsonify } from "@karrio/lib";
 import { Tabs, TabStateProvider } from "@karrio/ui/components/tabs";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { useWorkflowEvent } from "@karrio/hooks/workflow-events";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { useRouter } from "next/dist/client/router";
 import json from "highlight.js/lib/languages/json";
 import hljs from "highlight.js";
-import Head from "next/head";
 import moment from "moment";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Workflow Event");
 hljs.registerLanguage("json", json);
 
-export const Component: React.FC<{ eventId?: string }> = ({ eventId }) => {
-  const router = useRouter();
+export const Component: React.FC<{ eventId: string; isPreview?: boolean }> = ({
+  eventId,
+  isPreview,
+}) => {
   const { setLoading } = useLoader();
-  const entity_id = eventId || (router.query.id as string);
+  const entity_id = eventId;
   const {
     query: { data: { workflow_event } = {}, ...query },
   } = useWorkflowEvent(entity_id);
@@ -46,11 +45,11 @@ export const Component: React.FC<{ eventId?: string }> = ({ eventId }) => {
                 <StatusBadge status={workflow_event?.status as string} />
               </div>
             </div>
-            {!isNone(eventId) && (
+            {isPreview && (
               <div className="column is-2 is-flex is-justify-content-end">
                 <AppLink
                   href={`/workflows/events/${eventId}`}
-                  target="blank"
+                  target="_blank"
                   className="button is-default has-text-info is-small mx-1"
                 >
                   <span className="icon">
@@ -224,15 +223,11 @@ export const Component: React.FC<{ eventId?: string }> = ({ eventId }) => {
   );
 };
 
-export default function Page(pageProps: any) {
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Workflow Event - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-      <Component />
-    </DashboardLayout>,
-    pageProps,
+export default function Page({ params }: { params: { id: string } }) {
+  return (
+    <>
+      <Component eventId={params.id} />
+    </>
   );
 }
 

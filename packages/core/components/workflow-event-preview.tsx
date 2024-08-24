@@ -3,7 +3,7 @@ import { Component } from "@karrio/core/modules/Workflows/event";
 import React from "react";
 
 type EventPreviewModalProps = {
-  eventId?: string;
+  eventId: string;
 };
 
 export const WorkflowPreviewModal: React.FC<
@@ -16,7 +16,7 @@ export const WorkflowPreviewModal: React.FC<
 
     return (
       <section className="modal-card-body px-5 pt-0 pb-6">
-        <Component eventId={eventId} />
+        <Component eventId={eventId} isPreview />
       </section>
     );
   };

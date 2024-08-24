@@ -1,3 +1,4 @@
+"use client";
 import {
   formatDateTimeLong,
   getURLSearchParams,
@@ -7,23 +8,21 @@ import {
   EventPreview,
   EventPreviewContext,
 } from "@karrio/core/components/event-preview";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { EventsFilter } from "@karrio/ui/filters/events-filter";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { useLoader } from "@karrio/ui/components/loader";
 import { Spinner } from "@karrio/ui/components/spinner";
 import React, { useContext, useEffect } from "react";
-import { useRouter } from "next/dist/client/router";
+import { useSearchParams } from "next/navigation";
 import { useEvents } from "@karrio/hooks/event";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Events");
 
 export default function EventsPage(pageProps: any) {
   const Component: React.FC = () => {
-    const router = useRouter();
     const context = useEvents();
+    const searchParams = useSearchParams();
     const { setLoading } = useLoader();
     const { previewEvent } = useContext(EventPreviewContext);
     const [initialized, setInitialized] = React.useState(false);
@@ -45,7 +44,7 @@ export default function EventsPage(pageProps: any) {
 
     useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     useEffect(() => {
       setLoading(query.isFetching);
     }, [query.isFetching]);
@@ -53,12 +52,12 @@ export default function EventsPage(pageProps: any) {
       if (
         query.isFetched &&
         !initialized &&
-        !isNoneOrEmpty(router.query.modal)
+        !isNoneOrEmpty(searchParams.get("modal"))
       ) {
-        previewEvent(router.query.modal as string);
+        previewEvent(searchParams.get("modal") as string);
         setInitialized(true);
       }
-    }, [router.query.modal, query.isFetched]);
+    }, [searchParams.get("modal"), query.isFetched]);
 
     return (
       <>
@@ -188,15 +187,11 @@ export default function EventsPage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Events - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
+  return (
+    <>
       <EventPreview>
         <Component />
       </EventPreview>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

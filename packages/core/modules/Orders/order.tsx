@@ -1,3 +1,4 @@
+"use client";
 import {
   MetadataEditor,
   MetadataEditorContext,
@@ -11,28 +12,27 @@ import {
 import { CommodityDescription } from "@karrio/ui/components/commodity-description";
 import { AddressDescription } from "@karrio/ui/components/address-description";
 import { StatusCode } from "@karrio/ui/components/status-code-badge";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
 import { StatusBadge } from "@karrio/ui/components/status-badge";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
 import { OrderMenu } from "@karrio/ui/components/order-menu";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
 import { Spinner } from "@karrio/ui/components/spinner";
 import { MetadataObjectTypeEnum } from "@karrio/types";
-import { useRouter } from "next/dist/client/router";
 import { useEvents } from "@karrio/hooks/event";
 import { useOrder } from "@karrio/hooks/order";
 import { useLogs } from "@karrio/hooks/log";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Orders");
 
-export const OrderComponent: React.FC<{ orderId?: string }> = ({ orderId }) => {
-  const router = useRouter();
+export const OrderComponent: React.FC<{
+  orderId: string;
+  isPreview?: boolean;
+}> = ({ orderId, isPreview }) => {
   const { setLoading } = useLoader();
-  const entity_id = orderId || (router.query.id as string);
+  const entity_id = orderId;
   const { query: logs } = useLogs({ entity_id });
   const { query: events } = useEvents({ entity_id });
   const {
@@ -65,11 +65,11 @@ export const OrderComponent: React.FC<{ orderId?: string }> = ({ orderId }) => {
                 <CopiableLink text={order?.id as string} title="Copy ID" />
               </div>
               <div className="is-flex is-justify-content-right">
-                {!isNone(orderId) && (
+                {isPreview && (
                   <AppLink
                     className="button is-white has-text-info is-small mx-1"
                     href={`/orders/${orderId}`}
-                    target="blank"
+                    target="_blank"
                   >
                     <span className="icon">
                       <i className="fas fa-external-link-alt"></i>
@@ -403,15 +403,10 @@ export const OrderComponent: React.FC<{ orderId?: string }> = ({ orderId }) => {
   );
 };
 
-export default function OrderPage(pageProps: any) {
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Order - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
-      <OrderComponent />
-    </DashboardLayout>,
-    pageProps,
+export default function Page({ params }: { params: { id: string } }) {
+  return (
+    <>
+      <OrderComponent orderId={params.id} />
+    </>
   );
 }

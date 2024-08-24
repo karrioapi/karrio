@@ -1,24 +1,23 @@
+"use client";
 import { formatDateTimeLong, isNone, notEmptyJSON } from "@karrio/lib";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { CopiableLink } from "@karrio/ui/components/copiable-link";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
-import { useRouter } from "next/dist/client/router";
 import json from "highlight.js/lib/languages/json";
 import React, { useEffect, useState } from "react";
 import { useEvent } from "@karrio/hooks/event";
 import hljs from "highlight.js";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Event");
 hljs.registerLanguage("json", json);
 
-export const EventComponent: React.FC<{ eventId?: string }> = ({ eventId }) => {
-  const router = useRouter();
+export const EventComponent: React.FC<{
+  eventId: string;
+  isPreview?: boolean;
+}> = ({ eventId, isPreview }) => {
   const { setLoading } = useLoader();
-  const entity_id = eventId || (router.query.id as string);
+  const entity_id = eventId;
   const [data, setData] = useState<string>();
   const {
     query: { data: { event } = {}, ...query },
@@ -50,11 +49,11 @@ export const EventComponent: React.FC<{ eventId?: string }> = ({ eventId }) => {
               <p className="has-text-right">
                 <CopiableLink text={event?.id as string} title="Copy ID" />
               </p>
-              {!isNone(eventId) && (
+              {isPreview && (
                 <p className="has-text-right">
                   <AppLink
                     href={`/developers/events/${eventId}`}
-                    target="blank"
+                    target="_blank"
                     className="button is-default has-text-info is-small mx-1"
                   >
                     <span className="icon">
@@ -118,14 +117,10 @@ export const EventComponent: React.FC<{ eventId?: string }> = ({ eventId }) => {
   );
 };
 
-export default function EventPage(pageProps: any) {
-  return AuthenticatedPage(
-    <DashboardLayout>
-      <Head>
-        <title>{`Event - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-      <EventComponent />
-    </DashboardLayout>,
-    pageProps,
+export default function EventPage({ params }: { params: { id: string } }) {
+  return (
+    <>
+      <EventComponent eventId={params.id} />
+    </>
   );
 }

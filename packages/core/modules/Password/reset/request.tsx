@@ -1,14 +1,14 @@
+"use client";
 import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ButtonField } from "@karrio/ui/components/button-field";
-import { SectionLayout } from "@karrio/core/layouts/section-layout";
 import { useUserMutation } from "@karrio/hooks/user";
-import { useRouter } from "next/dist/client/router";
+import { useRouter } from "next/navigation";
 import React, { FormEvent, useRef } from "react";
 import { p, isNone } from "@karrio/lib";
-import Head from "next/head";
 import Link from "next/link";
 
-export { getServerSideProps } from "@karrio/core/context/metadata";
+export const generateMetadata = dynamicMetadata("Password Reset");
 
 export default function Page(pageProps: any) {
   const Component: React.FC<{}> = () => {
@@ -96,7 +96,7 @@ export default function Page(pageProps: any) {
 
         <div className="has-text-centered my-4 is-size-6">
           <span>
-            Return to <Link href="/login">Sign in</Link>
+            Return to <Link href="/signin">Sign in</Link>
           </span>
         </div>
       </>
@@ -105,15 +105,9 @@ export default function Page(pageProps: any) {
 
   return (
     <>
-      <SectionLayout {...pageProps}>
-        <Head>
-          <title>{`Password Reset - ${pageProps.metadata?.APP_NAME}`}</title>
-        </Head>
-
-        <LoadingProvider>
-          <Component />
-        </LoadingProvider>
-      </SectionLayout>
+      <LoadingProvider>
+        <Component />
+      </LoadingProvider>
     </>
   );
 }

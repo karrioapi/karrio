@@ -1,3 +1,4 @@
+"use client";
 import {
   DocumentTemplateType,
   DOCUMENT_RELATED_OBJECTS,
@@ -8,7 +9,6 @@ import {
   isEqual,
   isNoneOrEmpty,
   url$,
-  useLocation,
   validationMessage,
   validityCheck,
 } from "@karrio/lib";
@@ -17,20 +17,20 @@ import {
   useDocumentTemplateMutation,
 } from "@karrio/hooks/document-template";
 import { TextAreaField } from "@karrio/ui/components/textarea-field";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import React, { useEffect, useReducer, useState } from "react";
 import { InputField } from "@karrio/ui/components/input-field";
 import { DEFAULT_DOCUMENT_TEMPLATE } from "@karrio/lib/sample";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useNotifier } from "@karrio/ui/components/notifier";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { useLoader } from "@karrio/ui/components/loader";
 import { AppLink } from "@karrio/ui/components/app-link";
+import { useLocation } from "@karrio/hooks/location";
 import CodeMirror from "@uiw/react-codemirror";
 import { html } from "@codemirror/lang-html";
-import Head from "next/head";
+import { useSearchParams } from "next/navigation";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Document Template");
 type stateValue = string | boolean | string[] | Partial<TemplateType>;
 const DEFAULT_STATE = {
   related_object: "order",
@@ -52,8 +52,8 @@ function reducer(
 export default function DocumentTemplatePage(pageProps: any) {
   const Component: React.FC = () => {
     const loader = useLoader();
-    const router = useLocation();
-    const { id } = router.query;
+    const searchParams = useSearchParams();
+    const id = searchParams.get("id") as string;
     const notifier = useNotifier();
     const { references } = useAPIMetadata();
     const [isNew, setIsNew] = useState<boolean>();
@@ -287,14 +287,9 @@ export default function DocumentTemplatePage(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
+  return (
     <>
-      <Head>
-        <title>{`Template - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
       <Component />
-    </>,
-    pageProps,
+    </>
   );
 }

@@ -1,6 +1,6 @@
 import { ShipmentComponent } from "@karrio/core/modules/Shipments/shipment";
+import { useLocation } from "@karrio/hooks/location";
 import { ConfirmModal } from "@karrio/ui/modals/confirm-modal";
-import { useLocation } from "@karrio/lib";
 import React, { useState } from "react";
 
 type ShipmentPreviewContextType = {
@@ -50,7 +50,7 @@ export const ShipmentPreview: React.FC<ShipmentPreviewComponent> = ({
           <div className="modal-card is-medium-modal">
             <section className="modal-card-body px-5 pt-0 pb-6">
               <ConfirmModal>
-                <ShipmentComponent shipmentId={shipmentId} />
+                <ShipmentComponent shipmentId={shipmentId} isPreview />
               </ConfirmModal>
             </section>
           </div>

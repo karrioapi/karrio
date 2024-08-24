@@ -15,7 +15,6 @@ import {
   ShipmentType,
 } from "@karrio/types";
 import { signOut } from "next-auth/react";
-import { useRouter } from "next/router";
 import { BASE_PATH } from "./constants";
 import gql from "graphql-tag";
 import moment from "moment";
@@ -347,29 +346,6 @@ export function gqlstr(node: ReturnType<typeof gql>): string {
   return (node.loc && node.loc.source.body) || "";
 }
 
-export function useLocation(): any {
-  const router = useRouter();
-
-  const updateUrlParam = (param: string, value: string) => {
-    router.push(
-      {
-        pathname: location.pathname,
-        query: { ...router.query, [param]: value },
-      },
-      undefined,
-      { shallow: true },
-    );
-  };
-
-  return {
-    ...router,
-    addUrlParam,
-    updateUrlParam,
-    insertUrlParam,
-    removeUrlParam,
-  };
-}
-
 export function getURLSearchParams() {
   const query = new URLSearchParams(location.search);
   return [...(query.keys() as any)].reduce(
@@ -674,7 +650,7 @@ export function getUnfulfilledOrderLineItems(orders: OrderType[]) {
 export function forceSignOut() {
   signOut({
     callbackUrl:
-      "/login?next=" + window.location.pathname + window.location.search,
+      "/signin?next=" + window.location.pathname + window.location.search,
   });
 }
 

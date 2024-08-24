@@ -1,15 +1,15 @@
+"use client";
 import React, { FormEvent, useContext, useEffect, useReducer } from "react";
 import { LoadingProvider, Loading } from "@karrio/ui/components/loader";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { ConfirmPasswordResetMutationInput } from "@karrio/types";
 import { ButtonField } from "@karrio/ui/components/button-field";
 import { InputField } from "@karrio/ui/components/input-field";
-import { SectionLayout } from "@karrio/core/layouts/section-layout";
 import { useUserMutation } from "@karrio/hooks/user";
-import { useRouter } from "next/dist/client/router";
-import Head from "next/head";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 
-export { getServerSideProps } from "@karrio/core/context/metadata";
+export const generateMetadata = dynamicMetadata("Password Reset");
 
 const DEFAULT_VALUE: Partial<ConfirmPasswordResetMutationInput> = {
   new_password1: "",
@@ -32,7 +32,11 @@ function reducer(
 
 const Component: React.FC<{}> = () => {
   const router = useRouter();
-  const { uidb64, token } = router.query;
+  const searchParams = useSearchParams();
+  const [uidb64, token] = [
+    searchParams.get("uidb64") as string,
+    searchParams.get("token") as string,
+  ];
   const { loading, setLoading } = useContext(Loading);
   const [data, dispatch] = useReducer(
     reducer,
@@ -140,7 +144,7 @@ const Component: React.FC<{}> = () => {
       <div className="has-text-centered my-4 is-size-6">
         <span>
           Return to{" "}
-          <Link legacyBehavior href="/login">
+          <Link legacyBehavior href="/signin">
             Sign in
           </Link>
         </span>
@@ -152,15 +156,9 @@ const Component: React.FC<{}> = () => {
 export default function Page(pageProps: any) {
   return (
     <>
-      <SectionLayout {...pageProps}>
-        <Head>
-          <title>{`Password Reset - ${pageProps.metadata?.APP_NAME}`}</title>
-        </Head>
-
-        <LoadingProvider>
-          <Component />
-        </LoadingProvider>
-      </SectionLayout>
+      <LoadingProvider>
+        <Component />
+      </LoadingProvider>
     </>
   );
 }

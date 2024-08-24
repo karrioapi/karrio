@@ -1,3 +1,4 @@
+"use client";
 import {
   AddressType,
   CURRENCY_OPTIONS,
@@ -19,7 +20,6 @@ import {
   isNone,
   isNoneOrEmpty,
   p,
-  useLocation,
 } from "@karrio/lib";
 import {
   CheckBoxField,
@@ -58,7 +58,7 @@ import { useBatchShipmentForm } from "@karrio/hooks/bulk-shipments";
 import { useWorkspaceConfig } from "@karrio/hooks/workspace-config";
 import { useConnections } from "@karrio/hooks/carrier-connections";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { closeDropdown } from "@karrio/ui/components/dropdown";
 import { useNotifier } from "@karrio/ui/components/notifier";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
@@ -68,31 +68,34 @@ import { ModalProvider } from "@karrio/ui/modals/modal";
 import { Dialog, Disclosure } from "@headlessui/react";
 import { useShipments } from "@karrio/hooks/shipment";
 import { bundleContexts } from "@karrio/hooks/utils";
+import { useLocation } from "@karrio/hooks/location";
 import { useAppMode } from "@karrio/hooks/app-mode";
+import { useSearchParams } from "next/navigation";
 import { useOrders } from "@karrio/hooks/order";
 import Image from "next/legacy/image";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Create labels");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
-  const { ORDERS_MANAGEMENT } = pageProps?.metadata;
-
   const Component: React.FC = () => {
     // General context data         -----------------------------------------------------------
     //#region
     const loader = useLoader();
     const router = useLocation();
     const notifier = useNotifier();
+    const { metadata } = useAPIMetadata();
+    const searchParams = useSearchParams();
     const { basePath } = useAppMode();
     const { references } = useAPIMetadata();
     const { carrierOptions } = useConnections();
     const workspace_config = useWorkspaceConfig();
     const { query: defaults } = useDefaultTemplates();
-    const { order_ids = "", shipment_ids = "" } = router.query as any;
+    const [order_ids, shipment_ids] = [
+      searchParams.get("order_ids") || "",
+      searchParams.get("shipment_ids") || "",
+    ];
     const [orderIds] = React.useState<string[]>(
       order_ids.split(",").filter((_) => !isNoneOrEmpty(_)),
     );
@@ -2098,7 +2101,7 @@ export default function Page(pageProps: any) {
                                                 </button>
                                               )}
                                             </CommodityStateContext.Consumer>
-                                            {ORDERS_MANAGEMENT && (
+                                            {metadata.ORDERS_MANAGEMENT && (
                                               <LineItemSelector
                                                 title="Add commodities"
                                                 shipment={shipment}
@@ -2418,17 +2421,12 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
+  return (
     <>
       <GoogleGeocodingScript />
-      <Head>
-        <title>{`Create labels - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </>,
-    pageProps,
+    </>
   );
 }

@@ -1,21 +1,20 @@
+"use client";
 import { useOrganizationInvitation } from "@karrio/hooks/organization";
-import { useAPIMetadata } from "@karrio/hooks/api-metadata";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { Spinner } from "@karrio/ui/components/spinner";
-import { SectionLayout } from "@karrio/core/layouts/section-layout";
-import { useRouter } from "next/dist/client/router";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import React, { useEffect } from "react";
 import { isNone } from "@karrio/lib";
 import Link from "next/link";
-import Head from "next/head";
 
-export { getServerSideProps } from "@karrio/core/context/metadata";
+export const generateMetadata = dynamicMetadata("Accept Invitation");
 
 export default function Page(pageProps: any) {
-  const { references } = useAPIMetadata();
   const { data: session } = useSession();
   const router = useRouter();
-  const { token } = router.query;
+  const searchParams = useSearchParams();
+  const token = searchParams.get("token");
   const {
     query: { data: { organization_invitation } = {}, ...query },
   } = useOrganizationInvitation(token as string);
@@ -37,7 +36,7 @@ export default function Page(pageProps: any) {
       setTimeout(
         () =>
           router.push(
-            `/login?email=${invite?.invitee?.email}&next=/?accept_invitation=${token}`,
+            `/signin?email=${invite?.invitee?.email}&next=/?accept_invitation=${token}`,
           ),
         1000,
       );
@@ -52,34 +51,28 @@ export default function Page(pageProps: any) {
 
   return (
     <>
-      <SectionLayout {...pageProps}>
-        <Head>
-          <title>{`Accept Invitation - ${references.APP_NAME}`}</title>
-        </Head>
+      <div className="card isolated-card my-6">
+        <div className="card-content has-text-centered ">
+          {!query.isFetched && query.isFetching && <Spinner />}
 
-        <div className="card isolated-card my-6">
-          <div className="card-content has-text-centered ">
-            {!query.isFetched && query.isFetching && <Spinner />}
+          {query.isFetched && (query.error || !organization_invitation) && (
+            <p>Error, invalid or expired organization invitation token!</p>
+          )}
 
-            {query.isFetched && (query.error || !organization_invitation) && (
-              <p>Error, invalid or expired organization invitation token!</p>
-            )}
-
-            {organization_invitation && <p>Redirecting...</p>}
-          </div>
+          {organization_invitation && <p>Redirecting...</p>}
         </div>
+      </div>
 
-        {query.error && (
-          <div className="has-text-centered my-4 is-size-6">
-            <span>
-              Return to{" "}
-              <Link legacyBehavior href="/login">
-                Sign in
-              </Link>
-            </span>
-          </div>
-        )}
-      </SectionLayout>
+      {query.error && (
+        <div className="has-text-centered my-4 is-size-6">
+          <span>
+            Return to{" "}
+            <Link legacyBehavior href="/signin">
+              Sign in
+            </Link>
+          </span>
+        </div>
+      )}
     </>
   );
 }

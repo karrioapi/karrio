@@ -1,3 +1,4 @@
+"use client";
 import {
   formatAddressLocationShort,
   formatAddressShort,
@@ -10,8 +11,7 @@ import {
 import { useSystemCarrierConnections } from "@karrio/hooks/admin/connections";
 import { useCarrierConnections } from "@karrio/hooks/user-connection";
 import { CarrierImage } from "@karrio/ui/components/carrier-image";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { DashboardLayout } from "@karrio/core/layouts/dashboard-layout";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 import { MenuComponent } from "@karrio/ui/components/menu";
 import { AddressType, ManifestType } from "@karrio/types";
@@ -20,13 +20,11 @@ import { AppLink } from "@karrio/ui/components/app-link";
 import { ModalProvider } from "@karrio/ui/modals/modal";
 import { useManifests } from "@karrio/hooks/manifests";
 import { bundleContexts } from "@karrio/hooks/utils";
+import { useSearchParams } from "next/navigation";
 import { Spinner } from "@karrio/ui/components";
-import { useRouter } from "next/router";
-import Head from "next/head";
 import React from "react";
 
-export { getServerSideProps } from "@karrio/core/context/main";
-
+export const generateMetadata = dynamicMetadata("Manifests");
 const ContextProviders = bundleContexts([ModalProvider]);
 
 export default function Page(pageProps: any) {
@@ -34,7 +32,7 @@ export default function Page(pageProps: any) {
     // General context data         -----------------------------------------------------------
     //#region
 
-    const router = useRouter();
+    const searchParams = useSearchParams();
     const loader = useLoader();
     const { references } = useAPIMetadata();
     const [allChecked, setAllChecked] = React.useState(false);
@@ -118,7 +116,7 @@ export default function Page(pageProps: any) {
 
     React.useEffect(() => {
       updateFilter();
-    }, [router.query]);
+    }, [searchParams]);
     React.useEffect(() => {
       loader.setLoading(query.isLoading);
     }, [query.isLoading]);
@@ -359,16 +357,11 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <DashboardLayout showModeIndicator={true}>
-      <Head>
-        <title>{`Manifests - ${(pageProps as any).metadata?.APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <ContextProviders>
         <Component />
       </ContextProviders>
-    </DashboardLayout>,
-    pageProps,
+    </>
   );
 }

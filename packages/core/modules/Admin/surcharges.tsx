@@ -1,9 +1,8 @@
+"use client";
 import { SurchargeManagement } from "@karrio/ui/admin/surcharge-management";
-import { AuthenticatedPage } from "@karrio/core/layouts/authenticated-page";
-import { AdminLayout } from "@karrio/core/layouts/admin-layout";
-import Head from "next/head";
+import { dynamicMetadata } from "@karrio/core/components/metadata";
 
-export { getServerSideProps } from "@karrio/core/context/main";
+export const generateMetadata = dynamicMetadata("Surcharges");
 
 export default function Page(pageProps: any) {
   const { APP_NAME } = (pageProps as any).metadata || {};
@@ -23,14 +22,9 @@ export default function Page(pageProps: any) {
     );
   };
 
-  return AuthenticatedPage(
-    <AdminLayout>
-      <Head>
-        <title>{`Surcharges - ${APP_NAME}`}</title>
-      </Head>
-
+  return (
+    <>
       <Component />
-    </AdminLayout>,
-    pageProps,
+    </>
   );
 }
