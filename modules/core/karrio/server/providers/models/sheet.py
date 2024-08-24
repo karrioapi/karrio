@@ -2,6 +2,7 @@ import functools
 import django.db.models as models
 import django.utils.translation as translation
 
+import django.conf as conf
 import karrio.server.core.models as core
 
 _ = translation.gettext_lazy
@@ -32,6 +33,14 @@ class RateSheet(core.OwnedEntity):
         blank=True,
         null=True,
         default=core.field_default({}),
+    )
+
+    created_by = models.ForeignKey(
+        conf.settings.AUTH_USER_MODEL,
+        blank=True,
+        null=True,
+        on_delete=models.CASCADE,
+        editable=False,
     )
 
     def delete(self, *args, **kwargs):

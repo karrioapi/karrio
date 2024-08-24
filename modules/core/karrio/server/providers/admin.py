@@ -8,6 +8,7 @@ from django.utils.translation import gettext_lazy as _
 
 import karrio.lib as lib
 import karrio.references as ref
+import karrio.server.core.utils as utils
 import karrio.server.serializers as serializers
 import karrio.server.core.dataunits as dataunits
 import karrio.server.providers.models as providers
@@ -353,6 +354,11 @@ class LabelTemplateAdmin(admin.ModelAdmin):
         return False
 
 
-for carrier_name, display_name in ref.collect_references()["carriers"].items():
-    proxy = providers.create_carrier_proxy(carrier_name, display_name)
-    admin.site.register(proxy, model_admin(carrier_name, proxy))
+@utils.skip_on_commands()
+def register_carrier_admins():
+    for carrier_name, display_name in ref.collect_references()["carriers"].items():
+        proxy = providers.create_carrier_proxy(carrier_name, display_name)
+        admin.site.register(proxy, model_admin(carrier_name, proxy))
+
+
+register_carrier_admins()
