@@ -1,6 +1,10 @@
 #!/usr/bin/env bash
 
-./bin/create-new-env --empty &&
+# Activate python env
+source "bin/activate-env" >/dev/null 2>&1
+
+echo 'reset env...'
+source "${ROOT:?}/bin/create-new-env" --empty &&
     pip install -r requirements.build.txt &&
     pip freeze
 

@@ -109,7 +109,7 @@ monotonic==1.6
 more-itertools==10.4.0
 oauthlib==3.2.2
 packaging==24.1
-phonenumbers==8.13.43
+phonenumbers==8.13.44
 pillow==10.4.0
 posthog==3.5.0
 psutil==6.0.0
