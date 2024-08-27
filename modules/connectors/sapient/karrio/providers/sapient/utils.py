@@ -111,6 +111,11 @@ class ConnectionConfig(lib.Enum):
 
 def parse_error_response(response):
     """Parse the error response from the SAPIENT API."""
+    content = lib.failsafe(lambda: lib.decode(response.read()))
+
+    if any(content or ""):
+        return content
+
     return lib.to_json(
         dict(Errors=[dict(ErrorCode=str(response.code), Message=response.reason)])
     )

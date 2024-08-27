@@ -302,6 +302,7 @@ ShipmentRequest = {
 ShipmentCancelRequest = {
     "ShipmentIds": ["fa3bb603-2687-4b38-ba18-3264208446c6"],
     "Status": "Cancel",
+    "Reason": "Order Cancelled",
 }
 
 

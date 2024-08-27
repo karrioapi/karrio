@@ -40,6 +40,7 @@ class Proxy(rating_proxy.RatingMixinProxy, proxy.Proxy):
                 "Authorization": f"Bearer {self.settings.access_token}",
                 "user-agent": "Karrio/1.0",
             },
+            on_ok=lambda _: '{"ok": true}',
             on_error=provider_utils.parse_error_response,
         )
 

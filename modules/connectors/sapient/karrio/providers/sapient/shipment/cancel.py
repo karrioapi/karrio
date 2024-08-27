@@ -39,7 +39,7 @@ def shipment_cancel_request(
             # fmt: off
             {
                 "reason": lib.OptionEnum("Reason"),
-                "shipment_ids": lib.OptionEnum("ShipmentIds"),
+                "shipment_ids": lib.OptionEnum("ShipmentIds", list),
             },
             # fmt: on
         ),
@@ -48,6 +48,7 @@ def shipment_cancel_request(
     # map data to convert karrio model to sapient specific type
     request = dict(
         Status="Cancel",
+        Reason=options.reason.state or "Order Cancelled",
         ShipmentIds=lib.identity(
             options.shipment_ids.state or [payload.shipment_identifier]
         ),
