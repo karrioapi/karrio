@@ -113,7 +113,8 @@ ShipmentPayload = {
         },
     ],
     "options": {
-        "shipment_date": "2024-07-16",
+        "shipping_date": "2024-07-16",
+        "shipping_time": "10:30",
     },
 }
 
@@ -178,7 +179,7 @@ ShipmentRequest = {
         "type": "Package",
     },
     "packagingUnit": "Metric",
-    "scheduledShipDate": "2024-07-16 00:00",
+    "scheduledShipDate": "2024-07-16 10:30",
     "serviceId": "5000184",
     "from": {
         "address1": "9, Van Der Graaf Court",
@@ -200,9 +201,7 @@ ShipmentRequest = {
     },
 }
 
-ShipmentCancelRequest = {
-    "order": {"orderId": "1234567890", "trackingId": "794947717776"}
-}
+ShipmentCancelRequest = {"order": {"orderId": "1234567890"}}
 
 
 ShipmentResponse = """{

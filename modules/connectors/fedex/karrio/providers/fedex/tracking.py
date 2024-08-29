@@ -53,9 +53,10 @@ def _extract_details(
         default=None,
     )
     estimated_delivery = lib.failsafe(
-        lambda: (
+        lambda: lib.fdate(
             detail.standardTransitTimeWindow.window.begins
-            or detail.estimatedDeliveryTimeWindow.window.begins
+            or detail.estimatedDeliveryTimeWindow.window.begins,
+            try_formats=DATETIME_FORMATS,
         )
     )
     status = next(
@@ -124,7 +125,7 @@ def _extract_details(
             signed_by=lib.failsafe(lambda: detail.deliveryDetails.signedByName),
         ),
         images=lib.identity(models.Images(signature_image=img) if img else None),
-        estimated_delivery=lib.fdate(estimated_delivery, "%Y-%m-%dT%H:%M:%S"),
+        estimated_delivery=estimated_delivery,
         delivered=(status == "delivered"),
         status=status,
     )

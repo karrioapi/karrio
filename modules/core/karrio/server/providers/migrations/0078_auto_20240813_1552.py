@@ -29,7 +29,11 @@ def forwards_func(apps, schema_editor):
                 for name, model in MODELS.items()
                 if hasattr(_carrier, model.__name__.lower())
             ),
-            ("eshipper", _carrier.metadata.get("__settings", {})),
+            (
+                _carrier.metadata.get("__settings", {}).get("carrier_name")
+                or "eshipper",
+                _carrier.metadata.get("__settings", {}),
+            ),
         )
 
         _services = _settings.pop("services", {})
