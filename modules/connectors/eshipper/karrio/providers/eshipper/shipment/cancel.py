@@ -36,7 +36,7 @@ def shipment_cancel_request(
 
     request = eshipper.CancelRequestType(
         order=eshipper.OrderType(
-            trackingId=payload.shipment_identifier,
+            trackingId=None,
             orderId=payload.options.get("orderId"),
             message=None,
         )

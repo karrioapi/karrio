@@ -20,6 +20,20 @@ def parse_error_response(
             ],
             [],
         ),
+        *sum(
+            [
+                [
+                    dict(
+                        code="error",
+                        message=order["message"]
+                    )
+                    for order in _.get("order", [])
+                    if "message" in order and order["message"].startswith("Error")
+                ]
+                for _ in responses
+            ],
+            [],
+        )
     ]
 
     return [
