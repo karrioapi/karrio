@@ -1097,7 +1097,6 @@ class ShippingOption(utils.Enum):
     insurance = utils.OptionEnum("insurance", float)
     cash_on_delivery = utils.OptionEnum("COD", float)
     shipment_note = utils.OptionEnum("shipment_note")
-    shipment_date = utils.OptionEnum("shipment_date")
     dangerous_good = utils.OptionEnum("dangerous_good", bool)
     declared_value = utils.OptionEnum("declared_value", float)
     paperless_trade = utils.OptionEnum("paperless_trade", bool)
@@ -1114,6 +1113,13 @@ class ShippingOption(utils.Enum):
         "hold_at_location_address",
         functools.partial(utils.DP.to_object, models.Address),
     )
+
+    """TODO: dreprecate these"""
+    shipment_date = utils.OptionEnum("shipment_date")
+
+    """TODO: standardize to these"""
+    shipping_date = utils.OptionEnum("shipping_date")  # TODO: change format to datetime
+    shipping_time = utils.OptionEnum("shipping_time")
 
 
 class ShippingOptions(Options):
@@ -1160,6 +1166,14 @@ class ShippingOptions(Options):
     @property
     def shipment_date(self) -> utils.OptionEnum:
         return self[ShippingOption.shipment_date.name]
+
+    @property
+    def shipping_date(self) -> utils.OptionEnum:
+        return self[ShippingOption.shipping_date.name] or self.shipment_date
+
+    @property
+    def shipping_time(self) -> utils.OptionEnum:
+        return self[ShippingOption.shipping_time.name]
 
     @property
     def signature_confirmation(self) -> utils.OptionEnum:

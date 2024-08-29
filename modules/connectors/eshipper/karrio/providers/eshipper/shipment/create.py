@@ -1,3 +1,4 @@
+import time
 import karrio.schemas.eshipper.shipping_request as eshipper
 import karrio.schemas.eshipper.shipping_response as shipping
 import typing
@@ -109,10 +110,16 @@ def shipment_request(
             else None
         ),
     )
-    shipping_date = lib.to_date(options.shipment_date.state or datetime.datetime.now())
+    now = datetime.datetime.now() + datetime.timedelta(minutes=5)
+    shipping_time = lib.ftime(options.shipping_time.state or now, "%H:%M")
+    shipping_date = lib.fdate(options.shipping_date.state or now)
 
     request = eshipper.ShippingRequestType(
-        scheduledShipDate=lib.fdatetime(shipping_date, output_format="%Y-%m-%d %H:%M"),
+        scheduledShipDate=lib.fdatetime(
+            f"{shipping_date} {shipping_time}",
+            current_format="%Y-%m-%d %H:%M",
+            output_format="%Y-%m-%d %H:%M",
+        ),
         shippingrequestfrom=eshipper.FromType(
             attention=shipper.contact,
             company=shipper.company_name,
