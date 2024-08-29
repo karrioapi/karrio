@@ -622,12 +622,19 @@ class Products(typing.Iterable[Product]):
 
     @property
     def value_amount(self):
-        return sum((item.value_amount or 0.0 for item in self._items), 0.0)
+        return sum(
+            (
+                item.value_amount * item.quantity
+                for item in self._items
+                if utils.NF.decimal(item.value_amount) is not None
+            ),
+            0.0,
+        )
 
     @property
     def weight(self) -> Weight:
         return Weight(
-            sum([item.weight for item in self._items], 0.0),
+            sum([item.weight * item.quantity for item in self._items], 0.0),
             self._weight_unit,
         )
 
