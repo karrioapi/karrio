@@ -88,8 +88,8 @@ def shipment_request(
             Action="Process",
             LabelFormat=provider_units.LabelType.map(payload.label_type).value or "PDF",
             ServiceCode=service or "CRL1",
-            DescriptionOfGoods=lib.identity(
-                packages.description or packages.items.description or "N/A"
+            DescriptionOfGoods=lib.text(
+                packages.description or packages.items.description or "N/A", max=70
             ),
             ShipmentDate=lib.fdate(
                 options.shipment_date.state or datetime.datetime.now(),
@@ -203,7 +203,7 @@ def shipment_request(
                 SkuCode=item.sku,
                 PackageOccurrence=None,
                 Quantity=item.quantity,
-                Description=item.title or item.description,
+                Description=lib.text(item.title or item.description, max=35),
                 Value=item.value_amount,
                 Weight=item.weight,
                 HSCode=item.hs_code,
