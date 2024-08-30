@@ -92,7 +92,9 @@ def shipment_request(
                 packages.description or packages.items.description or "N/A", max=70
             ),
             ShipmentDate=lib.fdate(
-                options.shipment_date.state or datetime.datetime.now(),
+                lib.to_date(
+                    options.shipment_date.state or datetime.datetime.now()
+                ).astimezone(datetime.timezone.utc),
                 "%Y-%m-%d",
             ),
             CurrencyCode=options.currency.state or "GBP",
