@@ -3,7 +3,7 @@ asgiref==3.8.1
 attrs==24.2.0
 backoff==2.2.1
 Brotli==1.1.0
-certifi==2024.7.4
+certifi==2024.8.30
 cffi==1.17.0
 charset-normalizer==3.3.2
 click==8.1.7
