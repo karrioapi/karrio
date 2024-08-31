@@ -10,6 +10,9 @@ from karrio.schemas.purolator.pickup_service_1_2_1 import (
     Weight,
     WeightUnit,
     NotificationEmails,
+    ArrayOfShipmentSummaryDetail,
+    ShipmentSummaryDetail,
+    ShipmentSummary,
 )
 import karrio.lib as lib
 from karrio.core.units import Phone, Packages
@@ -149,7 +152,21 @@ def _schedule_pickup_request(
                 ),
                 FaxNumber=None,
             ),
-            ShipmentSummary=None,
+            ShipmentSummary=ShipmentSummary(
+                ShipmentSummaryDetails = ArrayOfShipmentSummaryDetail(
+                    ShipmentSummaryDetail = [
+                        ShipmentSummaryDetail(
+                            DestinationCode = payload.options.get("ShipmentSummaryDetail")["DestinationCode"],
+                            ModeOfTransport = payload.options.get("ShipmentSummaryDetail")["ModeOfTransport"],
+                            TotalPieces = payload.options.get("ShipmentSummaryDetail")["TotalPieces"],
+                            TotalWeight = Weight(
+                                Value = payload.options.get("ShipmentSummaryDetail")["WeightValue"],
+                                WeightUnit = payload.options.get("ShipmentSummaryDetail")["WeightUnit"],
+                            ),
+                        ),
+                    ],
+                ),
+            ),
             NotificationEmails=NotificationEmails(NotificationEmail=[address.email]),
         ),
     )
