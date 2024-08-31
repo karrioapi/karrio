@@ -4,6 +4,7 @@ import { signOut } from "next-auth/react";
 import { Dropdown } from "./dropdown";
 import { AppLink } from "./app-link";
 import React from "react";
+import { p } from "@karrio/lib";
 
 interface AccountDropdownComponent {}
 
@@ -75,14 +76,9 @@ export const AccountDropdown: React.FC<AccountDropdownComponent> = ({
 
               <a
                 className="options-item is-vcentered px-0"
-                onClick={() =>
-                  signOut({
-                    callbackUrl:
-                      "/signin?next=" +
-                      window.location.pathname +
-                      window.location.search,
-                  })
-                }
+                onClick={() => {
+                  signOut();
+                }}
               >
                 <i className="fas fa-power-off"></i>
                 <div className="option-content">

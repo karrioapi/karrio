@@ -1,8 +1,9 @@
+"use client";
 import { useUserMutation } from "@karrio/hooks/user";
-import { useRouter } from "next/navigation";
 import React, { useContext, useState } from "react";
 import { NotificationType } from "@karrio/types";
 import { Notify } from "../components/notifier";
+import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
 
 interface CloseAccountActionComponent
@@ -24,7 +25,10 @@ export const CloseAccountAction: React.FC<CloseAccountActionComponent> = ({
     evt.preventDefault();
     try {
       await mutation.closeAccount.mutateAsync();
-      signOut();
+      signOut({
+        callbackUrl:
+          "/signin?next=" + window.location.pathname + window.location.search,
+      });
       router.push("/signin");
     } catch (err: any) {
       notify({ type: NotificationType.error, message: err });

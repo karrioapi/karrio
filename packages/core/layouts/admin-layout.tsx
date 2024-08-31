@@ -12,6 +12,7 @@ import {
   loadMetadata,
   loadOrgData,
   loadUserData,
+  requireAuthentication,
 } from "@karrio/core/context/main";
 import React from "react";
 
@@ -22,17 +23,7 @@ export default async function Layout({
 }) {
   const session = await auth();
 
-  if (!session || (session as any)?.error === "RefreshAccessTokenError") {
-    const [pathname, search] = [
-      headers().get("x-pathname") || "",
-      headers().get("x-search") || "",
-    ];
-    const location = search.includes("next")
-      ? search
-      : `next=${pathname}${search}`;
-
-    redirect(`/signin?next=${location}`);
-  }
+  await requireAuthentication(session);
 
   const metadata = await loadMetadata();
   const user = await loadUserData(session, metadata.metadata as Metadata);

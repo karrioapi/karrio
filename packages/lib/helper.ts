@@ -647,13 +647,6 @@ export function getUnfulfilledOrderLineItems(orders: OrderType[]) {
     .filter(({ quantity }) => toNumber(quantity) || 0 > 0);
 }
 
-export function forceSignOut() {
-  signOut({
-    callbackUrl:
-      "/signin?next=" + window.location.pathname + window.location.search,
-  });
-}
-
 export function errorToMessages(error: ErrorType | Error | any) {
   const data = error.data?.message || error.message;
 

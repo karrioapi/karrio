@@ -4,14 +4,13 @@ import { Notifier } from "@karrio/ui/components/notifier";
 import { Navbar } from "@karrio/ui/components/navbar";
 import { Providers } from "@karrio/hooks/providers";
 import { auth } from "@karrio/core/context/auth";
-import { redirect } from "next/navigation";
 import { Metadata } from "@karrio/types";
 import {
   loadMetadata,
   loadOrgData,
   loadUserData,
+  requireAuthentication,
 } from "@karrio/core/context/main";
-import { headers } from "next/headers";
 
 export default async function Layout({
   children,
@@ -20,17 +19,7 @@ export default async function Layout({
 }) {
   const session = await auth();
 
-  if (!session || (session as any)?.error === "RefreshAccessTokenError") {
-    const [pathname, search] = [
-      headers().get("x-pathname") || "",
-      headers().get("x-search") || "",
-    ];
-    const location = search.includes("next")
-      ? search
-      : `next=${pathname}${search}`;
-
-    redirect(`/signin?next=${location}`);
-  }
+  await requireAuthentication(session);
 
   const metadata = await loadMetadata();
   const user = await loadUserData(session, metadata.metadata as Metadata);

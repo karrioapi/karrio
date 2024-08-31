@@ -34,7 +34,7 @@ export default async function Layout({
           <div className="hero-footer">
             <div className="content has-text-centered">
               <p>
-                {metadata?.APP_NAME.includes("Karrio") && (
+                {metadata?.APP_NAME?.includes("Karrio") && (
                   <>
                     <a
                       href="https://karrio.io"
