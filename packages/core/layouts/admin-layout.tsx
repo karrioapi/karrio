@@ -7,7 +7,6 @@ import { Providers } from "@karrio/hooks/providers";
 import { auth } from "@karrio/core/context/auth";
 import { redirect } from "next/navigation";
 import { Metadata } from "@karrio/types";
-import { headers } from "next/headers";
 import {
   loadMetadata,
   loadOrgData,

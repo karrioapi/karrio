@@ -1,8 +1,8 @@
+import { MULTI_TENANT } from "@karrio/lib/constants";
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 import { IMAGES } from "@karrio/types";
 
-const MULTI_TENANT = Boolean(JSON.parse(process.env.MULTI_TENANT || "false"));
 export const config = {
   matcher: [
     /*

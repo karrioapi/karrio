@@ -1,5 +1,6 @@
 "use server";
 import {
+  isNone,
   KARRIO_ADMIN_API_KEY,
   KARRIO_ADMIN_URL,
   KARRIO_URL,
@@ -132,18 +133,26 @@ export async function loadOrgData(session: any, metadata?: Metadata) {
 }
 
 async function getAPIURL() {
-  if (!MULTI_TENANT) return KARRIO_URL as string;
+  if (
+    MULTI_TENANT === true &&
+    !isNone(KARRIO_ADMIN_URL) &&
+    !isNone(KARRIO_ADMIN_API_KEY)
+  ) {
+    const app_domain = headers().get("host") as string;
+    const tenant =
+      MULTI_TENANT && !!app_domain
+        ? await loadTenantInfo({ app_domain })
+        : null;
+    const APIURL = !!TENANT_ENV_KEY
+      ? (tenant?.api_domains || []).find((d) =>
+          d.includes(TENANT_ENV_KEY as string),
+        )
+      : (tenant?.api_domains || [])[0];
 
-  const app_domain = headers().get("host") as string;
-  const tenant =
-    MULTI_TENANT && !!app_domain ? await loadTenantInfo({ app_domain }) : null;
-  const APIURL = !!TENANT_ENV_KEY
-    ? (tenant?.api_domains || []).find((d) =>
-        d.includes(TENANT_ENV_KEY as string),
-      )
-    : (tenant?.api_domains || [])[0];
+    return (!!APIURL ? APIURL : KARRIO_URL) as string;
+  }
 
-  return (!!APIURL ? APIURL : KARRIO_URL) as string;
+  return KARRIO_URL as string;
 }
 
 export const loadTenantInfo = unstable_cache(
