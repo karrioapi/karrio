@@ -30,7 +30,7 @@ transactions. Integrate, connect and process shipping transactions with a modern
 -   **Headless Shipping**: Access a network of shipping carriers API-first.
 -   **Multi-carrier API**: Build shipping functionalities with webhooks, APIs and metadata.
 -   **Multi-carrier SDK**: Use the karrio SDK to integrate with custom carrier APIs.
--   **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
+-   **Fulfil Orders**: Connect carrier accounts, get live rates and purchase shipping labels.
 -   **Tracking**: Create package trackers and get real-time tracking status.
 -   **Dashboard**: Use the karrio dashboard to test and visualize shipping transactions.
 -   **Cloud**: Optimized for deployments using Docker.
@@ -53,7 +53,7 @@ docker compose up
 Default Login: `admin@example.com` | `demo`
 
 <p align="center">
-  <img alt="Karrio Dashboard" src="screenshots/dashboard.png" width="700" style="max-width: 100%;" />
+  <img alt="Karrio Dashboard" src="screenshots/dashboard.png" width="800" style="max-width: 100%;" />
 </p>
 
 ## Get started
@@ -79,11 +79,11 @@ You can deploy a hobby instance in one line on Linux with Docker (recommended 4G
 
 ## Philosophy
 
-Karrio makes it easy to integrate shipping carriers and improve your fulfilment processes without loosing control.
+Karrio makes it easy to integrate with shipping carriers and improve your fulfilment processes without loosing control.
 
-We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
+We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping APIs that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
 
-## Value Props
+## Benefits
 
 Karrio is the only **platform-focused** open-source developer tool that offers label generation, package tracking, carrier connections management and, document generation APIs that **you can host on your own infrastructure**.
 
@@ -106,8 +106,8 @@ When onboarding new carriers, your IT team can meet their requirements in a week
 We <3 contributions big and small. In priority order (although everything is appreciated) with the most helpful first:
 
 -   Ask general question on [Github Discussions](https://github.com/orgs/karrioapi/discussions)
--   Open a PR (see our instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development))
 -   Submit a [feature request](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&projects=&template=feature_request.md) or [bug report](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&projects=&template=bug_report.md)
+-   Open a PR (see our instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development))
 
 ### Contributors
 
@@ -119,7 +119,7 @@ We <3 contributions big and small. In priority order (although everything is app
 
 This project uses the [Apache v2 license](LICENSE).
 
-For more tooling to build on top of Karrio, Join Karrio Insiders for:
+For more tooling to build on top of Karrio, join [Karrio Insiders](https://docs.karrio.io/insiders/) for:
 
 -   carrier integration and onboarding support
 -   multi-tenancy and team collaboration
