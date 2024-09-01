@@ -15,6 +15,8 @@
   </picture>
 </a>
 
+The open-source platform for shipping integration
+
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 [![puprlship-tests](https://github.com/karrioapi/karrio/actions/workflows/tests.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/tests.yml)
 [![karrio-build](https://github.com/karrioapi/karrio/actions/workflows/build.yml/badge.svg)](https://github.com/karrioapi/karrio/actions/workflows/build.yml)
@@ -22,9 +24,20 @@
 [![Discord](https://img.shields.io/static/v1?label=Discord&message=chat&color=738adb&logo=discord)](https://discord.gg/gS88uE7sEx)
 [![Docker pulls](https://img.shields.io/docker/pulls/karrio/server)](https://hub.docker.com/r/karrio/server)
 
+Karrio allows you to integrate with your shipping carriers to query, visualize and manage shipping API
+transactions. Integrate, connect and process shipping transactions with a modern tech stack:
 
-Karrio is a developer-first shipping integration and logistics automation platform
-that helps developers build shipping experiences into their platforms.
+-   **Headless Shipping**: Access a network of shipping carriers API-first.
+-   **Multi-carrier API**: Build shipping functionalities with webhooks, APIs and metadata.
+-   **Multi-carrier SDK**: Use the karrio SDK to integrate with custom carrier APIs.
+-   **Fulfil Orders**: Connect carrier accounts, get live rates and purchase shipping labels.
+-   **Tracking**: Create package trackers and get real-time tracking status.
+-   **Dashboard**: Use the karrio dashboard to test and visualize shipping transactions.
+-   **Cloud**: Optimized for deployments using Docker.
+
+**Karrio is not designed as an out-of-the-box shipping software to be used for purposes that differ to the feature scope above.**
+
+In regard to development philosophy, Karrio has a relaxed, open & positive approach. At the end of the day this is free tool developed and maintained by people donating their own free time.
 
 **Get up and running in 1 minute with:**
 
@@ -39,19 +52,8 @@ docker compose up
 
 Default Login: `admin@example.com` | `demo`
 
-## Features
-
-- **Headless Shipping**: Access a network of traditional and modern shipping carriers API-first.
-- **Extensible**: Build anything with webhooks, APIs and metadata.
-- **Multi-carrier SDK**: Use the karrio SDK to integrate with custom carrier APIs.
-- **Fulfilment**: Connect carrier accounts, get live rates and purchase shipping labels.
-- **Tracking**: Create package trackers, get real-time tracking status and deliver a great shopping experience.
-- **Address Validation**: Validate shipping addresses using integrated 3rd party APIs.
-- **Cloud**: Optimized for deployments using Docker.
-- **Dashboard**: Use the karrio dashboard to orchestrate your logistics operations.
-
 <p align="center">
-  <img alt="Karrio Dashboard" src="screenshots/dashboard-shipments.png" width="700" style="max-width: 100%;" />
+  <img alt="Karrio Dashboard" src="screenshots/dashboard.png" width="800" style="max-width: 100%;" />
 </p>
 
 ## Get started
@@ -75,43 +77,37 @@ You can deploy a hobby instance in one line on Linux with Docker (recommended 4G
 -   Difficult access to account and API credentials for development.
 -   Poor developer experience.
 
-## Our philosophy
+## Philosophy
 
-We help you integrate with your shipping carriers and improve your fulfilment processes without loosing control.
+Karrio makes it easy to integrate with shipping carriers and improve your fulfilment processes without loosing control.
 
-We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping API that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
+We believe that the logistics industry can greatly benefit from a unified, open and standardized shipping APIs that gives you direct access to a network of carriers, control over customers' personal data and **compliance**.
 
-## What are the benefits?
+## Benefits
 
-Karrio is the only **platform-focused** open-source shipping platform with label generation, document generation and package tracking API that **you can host on your own infrastructure**.
+Karrio is the only **platform-focused** open-source developer tool that offers label generation, package tracking, carrier connections management and, document generation APIs that **you can host on your own infrastructure**.
 
 We are an open-source alternative to expensive in-house carrier integration and multi-carrier Saas APIs. We're designed to be more **developer-friendly**, with the fullset of shipping functionalities without vendor-lockin.
 
 ### Shipping for platforms
 
 With Karrio, you can extend your platform with native shipping capabilities. Improve merchants and customers experience on your Marketplace, eCommerce, ERP, WMS, OMS, 3PL and Logistics platform.
+
 With Karrio, 3PLs and large volume shippers regain control over their shipping tech stack and processes.
 
-### Shipping for enterprise
+### Shipping for retailers
 
 Karrio makes modern shipping accessible to brands, retailers as well as businesses in regulated industries.
-Ideal for pharmacy shipping where compliance is a must.
 
-## Support
-
-If you have general questions about Karrio, want to say hello or just follow along, we'd like to invite you to join our [Discord Community](https://discord.gg/gS88uE7sEx).
-
-If you run into any problems or issues, please create a Github issue and we'll try our best to help.
-
-We strive to provide good support through our issue trackers on Github.
+When onboarding new carriers, your IT team can meet their requirements in a week or less.
 
 ## Contributing
 
-See our Docs for instructions on [development setup](https://docs.karrio.io/contributing/development).
+We <3 contributions big and small. In priority order (although everything is appreciated) with the most helpful first:
 
-We <3 contributions big or small, check out our [guide on how to get started](https://docs.karrio.io/contributing/guidlines).
-
-Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairing%20session&body=I'd%20like%20to%20do%20a%20pairing%20session!) to chat with a member of our team.
+-   Ask general question on [Github Discussions](https://github.com/orgs/karrioapi/discussions)
+-   Submit a [feature request](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&projects=&template=feature_request.md) or [bug report](https://github.com/karrioapi/karrio/issues/new?assignees=&labels=&projects=&template=bug_report.md)
+-   Open a PR (see our instructions on [developing Karrio locally](https://docs.karrio.io/contributing/development))
 
 ### Contributors
 
@@ -119,25 +115,26 @@ Not sure where to start? [Send us an email](mailto:dev@karrio.com?subject=Pairin
   <img src="https://contrib.rocks/image?repo=karrioapi/karrio" />
 </a>
 
-## License
+## Open-source vs. paid
 
-This project uses the [Apache v2 license](LICENSE)
+This project uses the [Apache v2 license](LICENSE).
+
+For more tooling to build on top of Karrio, join [Karrio Insiders](https://docs.karrio.io/insiders/) for:
+
+-   carrier integration and onboarding support
+-   multi-tenancy and team collaboration
+-   advanced shipping addons
+-   customizable dashboard
+-   billing management
+-   and more...
 
 ## Sponsors
 
-We are building an open and global shipping platform that makes shipping integration and logistics automation fun and accessible using open source software.
-Thanks for sponsoring and backing us.
+We are building an open and global shipping tech stack that makes shipping integration fun and accessible using open source software.
+
+Special thanks to our sponsors
 
 <a href="https://appsandbrains.com/" target="_blank"><img alt="Apps & Brains" src="screenshots/apps-&-brains.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-
-### Past sponsors
-
-<a href="https://www.chequesplus.com/" target="_blank"><img alt="Cheques Plus" src="screenshots/cheques-plus.png" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-<a href="https://www.truckhardware.ca/" target="_blank"><img alt="Truck Hardware" src="screenshots/truckhardware.png" style="width: 150px; height: 30px; border-radius: 2px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-<a href="https://www.shipto.me/" target="_blank"><img alt="Shiptome" src="screenshots/shipto.svg" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-<a href="https://en.platana.fr/" target="_blank"><img alt="Platana.fr" src="screenshots/platana.svg" style="width: 150px; height: 30px; padding: 4px; margin: 2px;" width="125" height="30" /></a>
-
-
 
 ### Become a sponsor
 

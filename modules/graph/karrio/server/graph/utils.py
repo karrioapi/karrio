@@ -10,7 +10,6 @@ from django.utils.translation import gettext_lazy as _
 from karrio.server.core.utils import *
 import karrio.lib as lib
 import karrio.server.core.utils as utils
-import karrio.server.apps.models as apps
 import karrio.server.core.models as core
 import karrio.server.orders.models as orders
 import karrio.server.manager.models as manager
@@ -84,7 +83,6 @@ MetafieldTypeEnum: typing.Any = strawberry.enum(  # type: ignore
 
 
 class MetadataObjectType(lib.Enum):
-    app = apps.App
     carrier = providers.Carrier
     commodity = manager.Commodity
     shipment = manager.Shipment

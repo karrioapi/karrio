@@ -56,7 +56,6 @@ Django==4.2.15
 -e ./apps/api
 -e ./modules/graph
 -e ./modules/admin
--e ./modules/apps
 -e ./modules/data
 -e ./modules/events
 -e ./modules/manager

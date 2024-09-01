@@ -1,3 +1,5 @@
+"use client";
+
 import {
   SessionType,
   KarrioClient,
@@ -46,7 +48,8 @@ export const ClientProvider: React.FC<ClientProviderProps> = ({
     pageData,
   });
 
-  if (!getHost || !getHost()) return <></>;
+  if (!getHost || !getHost() || !session) return <></>;
+
   return (
     <APIClientsContext.Provider value={updateClient(references, session)}>
       {children}

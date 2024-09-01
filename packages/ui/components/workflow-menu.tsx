@@ -1,8 +1,8 @@
 import { useWorkflowMutation, WorkflowType } from '@karrio/hooks/workflows';
-import { MenuComponent } from './menu';
-import React from 'react';
 import { ConfirmModalWrapper } from '../modals/form-modals';
+import { MenuComponent } from './menu';
 import { AppLink } from './app-link';
+import React from 'react';
 
 
 interface WorkflowMenuComponent extends React.InputHTMLAttributes<HTMLDivElement> {

@@ -3,12 +3,9 @@
 // https://docs.sentry.io/platforms/javascript/guides/nextjs/
 
 import * as Sentry from '@sentry/nextjs';
-import getConfig from 'next/config';
 
-
-const { publicRuntimeConfig } = getConfig();
-const SENTRY_DSN = publicRuntimeConfig.SENTRY_DSN;
-const API_URL = publicRuntimeConfig.KARRIO_PUBLIC_URL;
+const SENTRY_DSN = process.env.SENTRY_DSN;
+const API_URL = process.env.KARRIO_PUBLIC_URL;
 
 Sentry.init({
   dsn: SENTRY_DSN,

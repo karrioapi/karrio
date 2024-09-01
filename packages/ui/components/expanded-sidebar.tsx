@@ -1,8 +1,9 @@
+"use client";
 import { OrganizationDropdown } from "./organization-dropdown";
 import { useAPIMetadata } from "@karrio/hooks/api-metadata";
-import { useRouter } from "next/dist/client/router";
 import { useAppMode } from "@karrio/hooks/app-mode";
 import { p, DASHBOARD_VERSION } from "@karrio/lib";
+import { usePathname } from "next/navigation";
 import { useUser } from "@karrio/hooks/user";
 import React, { useRef } from "react";
 import { AppLink } from "./app-link";
@@ -11,7 +12,7 @@ import Image from "next/image";
 interface ExpandedSidebarComponent {}
 
 export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
-  const router = useRouter();
+  const pathname = usePathname();
   const sidebar = useRef<HTMLDivElement>(null);
   const dismissAction = useRef<HTMLButtonElement>(null);
   const {
@@ -27,24 +28,27 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
     dismissAction.current?.classList.remove("is-mobile-active");
   };
   const isActive = (path: string) => {
-    if (path === basePath) return path === router.pathname;
-    return router.pathname.includes(`${basePath}${path}`.replace("//", "/"));
+    if (path === basePath) return path === pathname;
+    return pathname.includes(`${basePath}${path}`.replace("//", "/"));
   };
   const activeClass = (path: string) => (isActive(path) ? "is-active" : "");
 
   return (
     <div className="plex-sidebar" ref={sidebar}>
       <div className="sidebar-header pl-5 mb-2">
-        {metadata?.MULTI_ORGANIZATIONS ? (
-          <OrganizationDropdown />
-        ) : (
-          <Image
-            src={p`/icon.svg`}
-            className="mt-1"
-            width="30"
-            height="100"
-            alt="logo"
-          />
+        {metadata && (
+          <>
+            {metadata.MULTI_ORGANIZATIONS && <OrganizationDropdown />}
+            {!metadata.MULTI_ORGANIZATIONS && (
+              <Image
+                src={p`/icon.svg`}
+                width={30}
+                height={40}
+                className="mt-1"
+                alt="logo"
+              />
+            )}
+          </>
         )}
 
         <button
@@ -192,8 +196,8 @@ export const ExpandedSidebar: React.FC<ExpandedSidebarComponent> = () => {
           <span className="has-text-weight-bold">Resources</span>
         </a>
 
-        {(showResourcesMenus ||
-          window.location.pathname.includes("/resources")) && (
+        {((process.browser && showResourcesMenus) ||
+          pathname.includes("/resources")) && (
           <>
             <AppLink
               href="/resources/reference"

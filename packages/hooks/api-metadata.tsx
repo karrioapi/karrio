@@ -1,3 +1,5 @@
+"use client";
+
 import { Metadata, References } from "@karrio/types";
 import { useQuery } from "@tanstack/react-query";
 import { useSyncedSession } from "./session";
@@ -12,12 +14,17 @@ type APIMeta = {
 };
 const APIMetadata = React.createContext<APIMeta>({} as any);
 
-const APIMetadataProvider: React.FC<{
+function APIMetadataProvider({
+  children,
+  metadata,
+  MULTI_TENANT,
+  KARRIO_PUBLIC_URL,
+}: {
   metadata: Metadata;
   MULTI_TENANT?: boolean;
   KARRIO_PUBLIC_URL?: string;
   children?: React.ReactNode;
-}> = ({ children, metadata, MULTI_TENANT, KARRIO_PUBLIC_URL }) => {
+}) {
   const {
     query: { data: session },
   } = useSyncedSession();
@@ -59,7 +66,7 @@ const APIMetadataProvider: React.FC<{
       {children}
     </APIMetadata.Provider>
   );
-};
+}
 
 export function useAPIMetadata() {
   return useContext(APIMetadata);

@@ -3686,99 +3686,6 @@ export interface delete_document_templateVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL query operation: search_data
-// ====================================================
-
-export interface search_data_shipment_results_edges_node_recipient {
-  id: string;
-  city: string | null;
-  street_number: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  country_code: CountryCodeEnum;
-  postal_code: string | null;
-  person_name: string | null;
-  phone_number: string | null;
-  company_name: string | null;
-  state_code: string | null;
-}
-
-export interface search_data_shipment_results_edges_node {
-  id: string;
-  status: ShipmentStatusEnum;
-  tracking_number: string | null;
-  recipient: search_data_shipment_results_edges_node_recipient;
-  created_at: any;
-}
-
-export interface search_data_shipment_results_edges {
-  node: search_data_shipment_results_edges_node;
-}
-
-export interface search_data_shipment_results {
-  edges: search_data_shipment_results_edges[];
-}
-
-export interface search_data_order_results_edges_node_shipping_to {
-  id: string;
-  city: string | null;
-  street_number: string | null;
-  address_line1: string | null;
-  address_line2: string | null;
-  country_code: CountryCodeEnum;
-  postal_code: string | null;
-  person_name: string | null;
-  phone_number: string | null;
-  company_name: string | null;
-  state_code: string | null;
-}
-
-export interface search_data_order_results_edges_node {
-  id: string;
-  status: OrderStatus;
-  order_id: string;
-  shipping_to: search_data_order_results_edges_node_shipping_to;
-  created_at: any;
-}
-
-export interface search_data_order_results_edges {
-  node: search_data_order_results_edges_node;
-}
-
-export interface search_data_order_results {
-  edges: search_data_order_results_edges[];
-}
-
-export interface search_data_trackers_results_edges_node {
-  id: string;
-  status: TrackerStatusEnum;
-  tracking_number: string;
-  created_at: any;
-}
-
-export interface search_data_trackers_results_edges {
-  node: search_data_trackers_results_edges_node;
-}
-
-export interface search_data_trackers_results {
-  edges: search_data_trackers_results_edges[];
-}
-
-export interface search_data {
-  shipment_results: search_data_shipment_results;
-  order_results: search_data_order_results;
-  trackers_results: search_data_trackers_results;
-}
-
-export interface search_dataVariables {
-  keyword?: string | null;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: CreateRateSheet
 // ====================================================
 
@@ -4354,7 +4261,6 @@ export interface GetManifestsVariables {
 // ====================================================
 
 export interface GetManifest_manifest_address {
-  id: string;
   postal_code: string | null;
   city: string | null;
   federal_tax_id: string | null;
@@ -4364,17 +4270,11 @@ export interface GetManifest_manifest_address {
   country_code: CountryCodeEnum;
   email: string | null;
   phone_number: string | null;
-  state_code: string | null;
-  residential: boolean | null;
-  street_number: string | null;
   address_line1: string | null;
   address_line2: string | null;
-}
-
-export interface GetManifest_manifest_manifest_carrier {
-  carrier_id: string;
-  carrier_name: string;
-  config: any | null;
+  state_code: string | null;
+  suburb: string | null;
+  street_number: string | null;
 }
 
 export interface GetManifest_manifest_messages {
@@ -4390,7 +4290,6 @@ export interface GetManifest_manifest {
   shipment_identifiers: string[];
   reference: string | null;
   address: GetManifest_manifest_address;
-  manifest_carrier: GetManifest_manifest_manifest_carrier | null;
   messages: GetManifest_manifest_messages[];
   options: any;
   metadata: any;
@@ -4405,6 +4304,99 @@ export interface GetManifest {
 
 export interface GetManifestVariables {
   id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: search_data
+// ====================================================
+
+export interface search_data_shipment_results_edges_node_recipient {
+  id: string;
+  city: string | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  country_code: CountryCodeEnum;
+  postal_code: string | null;
+  person_name: string | null;
+  phone_number: string | null;
+  company_name: string | null;
+  state_code: string | null;
+}
+
+export interface search_data_shipment_results_edges_node {
+  id: string;
+  status: ShipmentStatusEnum;
+  tracking_number: string | null;
+  recipient: search_data_shipment_results_edges_node_recipient;
+  created_at: any;
+}
+
+export interface search_data_shipment_results_edges {
+  node: search_data_shipment_results_edges_node;
+}
+
+export interface search_data_shipment_results {
+  edges: search_data_shipment_results_edges[];
+}
+
+export interface search_data_order_results_edges_node_shipping_to {
+  id: string;
+  city: string | null;
+  street_number: string | null;
+  address_line1: string | null;
+  address_line2: string | null;
+  country_code: CountryCodeEnum;
+  postal_code: string | null;
+  person_name: string | null;
+  phone_number: string | null;
+  company_name: string | null;
+  state_code: string | null;
+}
+
+export interface search_data_order_results_edges_node {
+  id: string;
+  status: OrderStatus;
+  order_id: string;
+  shipping_to: search_data_order_results_edges_node_shipping_to;
+  created_at: any;
+}
+
+export interface search_data_order_results_edges {
+  node: search_data_order_results_edges_node;
+}
+
+export interface search_data_order_results {
+  edges: search_data_order_results_edges[];
+}
+
+export interface search_data_trackers_results_edges_node {
+  id: string;
+  status: TrackerStatusEnum;
+  tracking_number: string;
+  created_at: any;
+}
+
+export interface search_data_trackers_results_edges {
+  node: search_data_trackers_results_edges_node;
+}
+
+export interface search_data_trackers_results {
+  edges: search_data_trackers_results_edges[];
+}
+
+export interface search_data {
+  shipment_results: search_data_shipment_results;
+  order_results: search_data_order_results;
+  trackers_results: search_data_trackers_results;
+}
+
+export interface search_dataVariables {
+  keyword?: string | null;
 }
 
 /* tslint:disable */
@@ -4953,7 +4945,6 @@ export enum OrderStatus {
 }
 
 export enum MetadataObjectTypeEnum {
-  app = "app",
   carrier = "carrier",
   commodity = "commodity",
   order = "order",

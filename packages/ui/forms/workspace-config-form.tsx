@@ -11,6 +11,8 @@ import { CheckBoxField, InputField, SelectField } from "../components";
 import { useUser } from "@karrio/hooks/user";
 import { isNoneOrEmpty } from "@karrio/lib";
 import React from "react";
+import { useKarrio } from "@karrio/hooks/karrio";
+import { useAPIMetadata } from "@karrio/hooks/api-metadata";
 
 type WorkspaceConfigFormProps = {
   pageProps?: { workspace_config?: GetWorkspaceConfig_workspace_config } | any;
@@ -41,21 +43,21 @@ function reducer(
   }
 }
 
-export const WorkspaceConfigForm: React.FC<WorkspaceConfigFormProps> = ({
-  pageProps,
-}) => {
+export const WorkspaceConfigForm: React.FC<WorkspaceConfigFormProps> = () => {
+  const karrio = useKarrio();
+  const { references } = useAPIMetadata();
   const mutation = useWorkspaceConfigMutation();
   const {
     query: { data: { user } = {} },
   } = useUser();
   const [payload, dispatch] = React.useReducer(
     reducer,
-    pageProps?.workspace_config,
-    () => pageProps?.workspace_config || {},
+    karrio?.pageData?.workspace_config as any,
+    () => karrio.pageData?.workspace_config || ({} as any),
   );
   const {
-    query: { data: { workspace_config } = {}, ...query },
-  } = useWorkspaceConfig({ defaultValue: pageProps?.workspace_config });
+    query: { data: { workspace_config } = {} },
+  } = useWorkspaceConfig();
 
   const onChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const target = event.target;
@@ -75,7 +77,7 @@ export const WorkspaceConfigForm: React.FC<WorkspaceConfigFormProps> = ({
         <div className="column is-5 pr-2">
           <p className="subtitle is-6 py-1">General defaults</p>
           <p className="is-size-7 pr-2">
-            Set up preferences for your {pageProps?.APP_NAME || ""} account.
+            Set up preferences for your {references?.APP_NAME || ""} account.
           </p>
         </div>
 

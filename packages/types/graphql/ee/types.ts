@@ -4,6 +4,264 @@
 // This file was automatically generated and should not be edited.
 
 // ====================================================
+// GraphQL query operation: GetApp
+// ====================================================
+
+export interface GetApp_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetApp_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetApp_app_installation | null;
+}
+
+export interface GetApp {
+  app: GetApp_app;
+}
+
+export interface GetAppVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetApps
+// ====================================================
+
+export interface GetApps_apps_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetApps_apps_edges_node_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetApps_apps_edges_node {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetApps_apps_edges_node_installation | null;
+}
+
+export interface GetApps_apps_edges {
+  node: GetApps_apps_edges_node;
+}
+
+export interface GetApps_apps {
+  page_info: GetApps_apps_page_info;
+  edges: GetApps_apps_edges[];
+}
+
+export interface GetApps {
+  apps: GetApps_apps;
+}
+
+export interface GetAppsVariables {
+  filter?: AppFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetPrivateApp
+// ====================================================
+
+export interface GetPrivateApp_private_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetPrivateApp_private_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetPrivateApp_private_app_installation | null;
+}
+
+export interface GetPrivateApp {
+  private_app: GetPrivateApp_private_app;
+}
+
+export interface GetPrivateAppVariables {
+  id: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: GetPrivateApps
+// ====================================================
+
+export interface GetPrivateApps_private_apps_page_info {
+  count: number;
+  has_next_page: boolean;
+  has_previous_page: boolean;
+  start_cursor: string | null;
+  end_cursor: string | null;
+}
+
+export interface GetPrivateApps_private_apps_edges_node_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface GetPrivateApps_private_apps_edges_node {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: GetPrivateApps_private_apps_edges_node_installation | null;
+}
+
+export interface GetPrivateApps_private_apps_edges {
+  node: GetPrivateApps_private_apps_edges_node;
+}
+
+export interface GetPrivateApps_private_apps {
+  page_info: GetPrivateApps_private_apps_page_info;
+  edges: GetPrivateApps_private_apps_edges[];
+}
+
+export interface GetPrivateApps {
+  private_apps: GetPrivateApps_private_apps;
+}
+
+export interface GetPrivateAppsVariables {
+  filter?: AppFilter | null;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: InstallApp
+// ====================================================
+
+export interface InstallApp_install_app_installation {
+  id: number;
+  access_scopes: string[];
+  created_at: any;
+  updated_at: any;
+  metadata: any | null;
+}
+
+export interface InstallApp_install_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface InstallApp_install_app {
+  installation: InstallApp_install_app_installation | null;
+  errors: InstallApp_install_app_errors[] | null;
+}
+
+export interface InstallApp {
+  install_app: InstallApp_install_app;
+}
+
+export interface InstallAppVariables {
+  data: InstallAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: UninstallApp
+// ====================================================
+
+export interface UninstallApp_uninstall_app_app_installation {
+  id: number;
+  access_scopes: string[];
+  metadata: any | null;
+}
+
+export interface UninstallApp_uninstall_app_app {
+  id: string;
+  display_name: string;
+  developer_name: string;
+  is_public: boolean;
+  is_builtin: boolean;
+  is_embedded: boolean;
+  is_published: boolean;
+  launch_url: string;
+  features: string[];
+  metadata: any | null;
+  installation: UninstallApp_uninstall_app_app_installation | null;
+}
+
+export interface UninstallApp_uninstall_app_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface UninstallApp_uninstall_app {
+  app: UninstallApp_uninstall_app_app | null;
+  errors: UninstallApp_uninstall_app_errors[] | null;
+}
+
+export interface UninstallApp {
+  uninstall_app: UninstallApp_uninstall_app;
+}
+
+export interface UninstallAppVariables {
+  data: UninstallAppMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
 // GraphQL query operation: get_organization
 // ====================================================
 
@@ -202,6 +460,257 @@ export interface get_organizations_organizations {
 
 export interface get_organizations {
   organizations: get_organizations_organizations[];
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: delete_organization
+// ====================================================
+
+export interface delete_organization_delete_organization_organization {
+  id: string;
+}
+
+export interface delete_organization_delete_organization_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface delete_organization_delete_organization {
+  organization: delete_organization_delete_organization_organization | null;
+  errors: delete_organization_delete_organization_errors[] | null;
+}
+
+export interface delete_organization {
+  delete_organization: delete_organization_delete_organization;
+}
+
+export interface delete_organizationVariables {
+  data: DeleteOrganizationMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: create_organization
+// ====================================================
+
+export interface create_organization_create_organization_organization {
+  id: string;
+}
+
+export interface create_organization_create_organization_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface create_organization_create_organization {
+  organization: create_organization_create_organization_organization | null;
+  errors: create_organization_create_organization_errors[] | null;
+}
+
+export interface create_organization {
+  create_organization: create_organization_create_organization;
+}
+
+export interface create_organizationVariables {
+  data: CreateOrganizationMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: update_organization
+// ====================================================
+
+export interface update_organization_update_organization_organization {
+  id: string;
+}
+
+export interface update_organization_update_organization_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface update_organization_update_organization {
+  organization: update_organization_update_organization_organization | null;
+  errors: update_organization_update_organization_errors[] | null;
+}
+
+export interface update_organization {
+  update_organization: update_organization_update_organization;
+}
+
+export interface update_organizationVariables {
+  data: UpdateOrganizationMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: change_organization_owner
+// ====================================================
+
+export interface change_organization_owner_change_organization_owner_organization {
+  id: string;
+}
+
+export interface change_organization_owner_change_organization_owner_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface change_organization_owner_change_organization_owner {
+  organization: change_organization_owner_change_organization_owner_organization | null;
+  errors: change_organization_owner_change_organization_owner_errors[] | null;
+}
+
+export interface change_organization_owner {
+  change_organization_owner: change_organization_owner_change_organization_owner;
+}
+
+export interface change_organization_ownerVariables {
+  data: ChangeOrganizationOwnerMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: set_organization_user_roles
+// ====================================================
+
+export interface set_organization_user_roles_set_organization_user_roles_organization {
+  id: string;
+}
+
+export interface set_organization_user_roles_set_organization_user_roles_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface set_organization_user_roles_set_organization_user_roles {
+  organization: set_organization_user_roles_set_organization_user_roles_organization | null;
+  errors: set_organization_user_roles_set_organization_user_roles_errors[] | null;
+}
+
+export interface set_organization_user_roles {
+  set_organization_user_roles: set_organization_user_roles_set_organization_user_roles;
+}
+
+export interface set_organization_user_rolesVariables {
+  data: SetOrganizationUserRolesMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: send_organization_invites
+// ====================================================
+
+export interface send_organization_invites_send_organization_invites_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface send_organization_invites_send_organization_invites {
+  errors: send_organization_invites_send_organization_invites_errors[] | null;
+}
+
+export interface send_organization_invites {
+  send_organization_invites: send_organization_invites_send_organization_invites;
+}
+
+export interface send_organization_invitesVariables {
+  data: SendOrganizationInvitesMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL query operation: get_organization_invitation
+// ====================================================
+
+export interface get_organization_invitation_organization_invitation_invitee {
+  email: string;
+}
+
+export interface get_organization_invitation_organization_invitation {
+  invitee_identifier: string;
+  organization_name: string;
+  invitee: get_organization_invitation_organization_invitation_invitee | null;
+}
+
+export interface get_organization_invitation {
+  organization_invitation: get_organization_invitation_organization_invitation | null;
+}
+
+export interface get_organization_invitationVariables {
+  guid: string;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: accept_organization_invitation
+// ====================================================
+
+export interface accept_organization_invitation_accept_organization_invitation_organization {
+  id: string;
+}
+
+export interface accept_organization_invitation_accept_organization_invitation_errors {
+  field: string;
+  messages: string[];
+}
+
+export interface accept_organization_invitation_accept_organization_invitation {
+  organization: accept_organization_invitation_accept_organization_invitation_organization | null;
+  errors: accept_organization_invitation_accept_organization_invitation_errors[] | null;
+}
+
+export interface accept_organization_invitation {
+  accept_organization_invitation: accept_organization_invitation_accept_organization_invitation;
+}
+
+export interface accept_organization_invitationVariables {
+  data: AcceptOrganizationInvitationMutationInput;
+}
+
+
+/* tslint:disable */
+// This file was automatically generated and should not be edited.
+
+// ====================================================
+// GraphQL mutation operation: delete_organization_invitation
+// ====================================================
+
+export interface delete_organization_invitation_delete_organization_invitation {
+  id: string;
+}
+
+export interface delete_organization_invitation {
+  delete_organization_invitation: delete_organization_invitation_delete_organization_invitation;
+}
+
+export interface delete_organization_invitationVariables {
+  data: DeleteMutationInput;
 }
 
 
@@ -1047,257 +1556,6 @@ export interface GetWorkflowConnectionTemplatesVariables {
 // This file was automatically generated and should not be edited.
 
 // ====================================================
-// GraphQL mutation operation: delete_organization
-// ====================================================
-
-export interface delete_organization_delete_organization_organization {
-  id: string;
-}
-
-export interface delete_organization_delete_organization_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface delete_organization_delete_organization {
-  organization: delete_organization_delete_organization_organization | null;
-  errors: delete_organization_delete_organization_errors[] | null;
-}
-
-export interface delete_organization {
-  delete_organization: delete_organization_delete_organization;
-}
-
-export interface delete_organizationVariables {
-  data: DeleteOrganizationMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: create_organization
-// ====================================================
-
-export interface create_organization_create_organization_organization {
-  id: string;
-}
-
-export interface create_organization_create_organization_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface create_organization_create_organization {
-  organization: create_organization_create_organization_organization | null;
-  errors: create_organization_create_organization_errors[] | null;
-}
-
-export interface create_organization {
-  create_organization: create_organization_create_organization;
-}
-
-export interface create_organizationVariables {
-  data: CreateOrganizationMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: update_organization
-// ====================================================
-
-export interface update_organization_update_organization_organization {
-  id: string;
-}
-
-export interface update_organization_update_organization_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface update_organization_update_organization {
-  organization: update_organization_update_organization_organization | null;
-  errors: update_organization_update_organization_errors[] | null;
-}
-
-export interface update_organization {
-  update_organization: update_organization_update_organization;
-}
-
-export interface update_organizationVariables {
-  data: UpdateOrganizationMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: change_organization_owner
-// ====================================================
-
-export interface change_organization_owner_change_organization_owner_organization {
-  id: string;
-}
-
-export interface change_organization_owner_change_organization_owner_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface change_organization_owner_change_organization_owner {
-  organization: change_organization_owner_change_organization_owner_organization | null;
-  errors: change_organization_owner_change_organization_owner_errors[] | null;
-}
-
-export interface change_organization_owner {
-  change_organization_owner: change_organization_owner_change_organization_owner;
-}
-
-export interface change_organization_ownerVariables {
-  data: ChangeOrganizationOwnerMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: set_organization_user_roles
-// ====================================================
-
-export interface set_organization_user_roles_set_organization_user_roles_organization {
-  id: string;
-}
-
-export interface set_organization_user_roles_set_organization_user_roles_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface set_organization_user_roles_set_organization_user_roles {
-  organization: set_organization_user_roles_set_organization_user_roles_organization | null;
-  errors: set_organization_user_roles_set_organization_user_roles_errors[] | null;
-}
-
-export interface set_organization_user_roles {
-  set_organization_user_roles: set_organization_user_roles_set_organization_user_roles;
-}
-
-export interface set_organization_user_rolesVariables {
-  data: SetOrganizationUserRolesMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: send_organization_invites
-// ====================================================
-
-export interface send_organization_invites_send_organization_invites_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface send_organization_invites_send_organization_invites {
-  errors: send_organization_invites_send_organization_invites_errors[] | null;
-}
-
-export interface send_organization_invites {
-  send_organization_invites: send_organization_invites_send_organization_invites;
-}
-
-export interface send_organization_invitesVariables {
-  data: SendOrganizationInvitesMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL query operation: get_organization_invitation
-// ====================================================
-
-export interface get_organization_invitation_organization_invitation_invitee {
-  email: string;
-}
-
-export interface get_organization_invitation_organization_invitation {
-  invitee_identifier: string;
-  organization_name: string;
-  invitee: get_organization_invitation_organization_invitation_invitee | null;
-}
-
-export interface get_organization_invitation {
-  organization_invitation: get_organization_invitation_organization_invitation | null;
-}
-
-export interface get_organization_invitationVariables {
-  guid: string;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: accept_organization_invitation
-// ====================================================
-
-export interface accept_organization_invitation_accept_organization_invitation_organization {
-  id: string;
-}
-
-export interface accept_organization_invitation_accept_organization_invitation_errors {
-  field: string;
-  messages: string[];
-}
-
-export interface accept_organization_invitation_accept_organization_invitation {
-  organization: accept_organization_invitation_accept_organization_invitation_organization | null;
-  errors: accept_organization_invitation_accept_organization_invitation_errors[] | null;
-}
-
-export interface accept_organization_invitation {
-  accept_organization_invitation: accept_organization_invitation_accept_organization_invitation;
-}
-
-export interface accept_organization_invitationVariables {
-  data: AcceptOrganizationInvitationMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
-// GraphQL mutation operation: delete_organization_invitation
-// ====================================================
-
-export interface delete_organization_invitation_delete_organization_invitation {
-  id: string;
-}
-
-export interface delete_organization_invitation {
-  delete_organization_invitation: delete_organization_invitation_delete_organization_invitation;
-}
-
-export interface delete_organization_invitationVariables {
-  data: DeleteMutationInput;
-}
-
-
-/* tslint:disable */
-// This file was automatically generated and should not be edited.
-
-// ====================================================
 // GraphQL mutation operation: CreateWorkflow
 // ====================================================
 
@@ -1704,6 +1962,12 @@ export interface DeleteWorkflowTriggerVariables {
 // START Enums and Input Objects
 //==============================================================
 
+export enum UserRole {
+  admin = "admin",
+  developer = "developer",
+  member = "member",
+}
+
 export enum AutomationTriggerType {
   manual = "manual",
   scheduled = "scheduled",
@@ -1766,10 +2030,26 @@ export enum AutomationEventType {
   webhook = "webhook",
 }
 
-export enum UserRole {
-  admin = "admin",
-  developer = "developer",
-  member = "member",
+// null
+export interface AppFilter {
+  offset?: number | null;
+  first?: number | null;
+  features?: string[] | null;
+  metadata_key?: string | null;
+  metadata_value?: string | null;
+  created_after?: any | null;
+  created_before?: any | null;
+}
+
+// null
+export interface InstallAppMutationInput {
+  app_id: string;
+  metadata?: any | null;
+}
+
+// null
+export interface UninstallAppMutationInput {
+  app_id: string;
 }
 
 // null
@@ -1777,39 +2057,6 @@ export interface UsageFilter {
   date_after?: string | null;
   date_before?: string | null;
   omit?: string[] | null;
-}
-
-// null
-export interface WorkflowFilter {
-  offset?: number | null;
-  first?: number | null;
-  keyword?: string | null;
-}
-
-// null
-export interface WorkflowConnectionFilter {
-  offset?: number | null;
-  first?: number | null;
-  keyword?: string | null;
-  auth_type?: AutomationAuthType | null;
-}
-
-// null
-export interface WorkflowActionFilter {
-  offset?: number | null;
-  first?: number | null;
-  keyword?: string | null;
-  action_type?: AutomationActionType | null;
-}
-
-// null
-export interface WorkflowEventFilter {
-  offset?: number | null;
-  first?: number | null;
-  keyword?: string | null;
-  parameters_key?: string[] | null;
-  status?: AutomationEventStatus | null;
-  event_type?: AutomationEventType | null;
 }
 
 // null
@@ -1858,6 +2105,39 @@ export interface AcceptOrganizationInvitationMutationInput {
 // null
 export interface DeleteMutationInput {
   id: string;
+}
+
+// null
+export interface WorkflowFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+}
+
+// null
+export interface WorkflowConnectionFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+  auth_type?: AutomationAuthType | null;
+}
+
+// null
+export interface WorkflowActionFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+  action_type?: AutomationActionType | null;
+}
+
+// null
+export interface WorkflowEventFilter {
+  offset?: number | null;
+  first?: number | null;
+  keyword?: string | null;
+  parameters_key?: string[] | null;
+  status?: AutomationEventStatus | null;
+  event_type?: AutomationEventType | null;
 }
 
 // null

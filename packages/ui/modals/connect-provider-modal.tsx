@@ -1,3 +1,4 @@
+"use client";
 import {
   Collection,
   NoneEnum,
@@ -9,7 +10,6 @@ import {
   isEqual,
   isNone,
   isNoneOrEmpty,
-  useLocation,
   validationMessage,
   validityCheck,
 } from "@karrio/lib";
@@ -29,6 +29,7 @@ import { useAppMode } from "@karrio/hooks/app-mode";
 import { Disclosure } from "@headlessui/react";
 import { Loading } from "../components/loader";
 import { CheckBoxField } from "../components";
+import { useLocation } from "@karrio/hooks/location";
 
 type CarrierNameType = CarrierNameEnum | NoneEnum;
 type OperationType = {

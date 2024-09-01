@@ -2632,71 +2632,6 @@ export const DELETE_DOCUMENT_TEMPLATE = gql`
   }
 `;
 
-export const SEARCH_DATA = gql`
-  query search_data($keyword: String) {
-    shipment_results: shipments(
-      filter: { keyword: $keyword, offset: 0, first: 10 }
-    ) {
-      edges {
-        node {
-          id
-          status
-          tracking_number
-          recipient {
-            id
-            city
-            street_number
-            address_line1
-            address_line2
-            country_code
-            postal_code
-            person_name
-            phone_number
-            company_name
-            state_code
-          }
-          created_at
-        }
-      }
-    }
-    order_results: orders(filter: { keyword: $keyword, offset: 0, first: 10 }) {
-      edges {
-        node {
-          id
-          status
-          order_id
-          shipping_to {
-            id
-            city
-            street_number
-            address_line1
-            address_line2
-            country_code
-            postal_code
-            person_name
-            phone_number
-            company_name
-            state_code
-          }
-          created_at
-        }
-      }
-    }
-    trackers_results: trackers(
-      filter: { tracking_number: $keyword, offset: 0, first: 10 }
-    ) {
-      edges {
-        node {
-          id
-          status
-          tracking_number
-          created_at
-        }
-      }
-    }
-  }
-`;
-
 export const CREATE_RATE_SHEET = gql`
   mutation CreateRateSheet($data: CreateRateSheetMutationInput!) {
     create_rate_sheet(input: $data) {
@@ -3048,7 +2983,6 @@ export const GET_MANIFEST = gql`
       shipment_identifiers
       reference
       address {
-        id
         postal_code
         city
         federal_tax_id
@@ -3058,16 +2992,11 @@ export const GET_MANIFEST = gql`
         country_code
         email
         phone_number
-        state_code
-        residential
-        street_number
         address_line1
         address_line2
-      }
-      manifest_carrier {
-        carrier_id
-        carrier_name
-        config
+        state_code
+        suburb
+        street_number
       }
       messages {
         message
@@ -3078,6 +3007,78 @@ export const GET_MANIFEST = gql`
       meta
       created_at
       updated_at
+    }
+  }
+`;
+
+//#endregion
+
+// -----------------------------------------------------------
+// Shared queries and mutations
+// -----------------------------------------------------------
+//#region
+
+export const SEARCH_DATA = gql`
+  query search_data($keyword: String) {
+    shipment_results: shipments(
+      filter: { keyword: $keyword, offset: 0, first: 10 }
+    ) {
+      edges {
+        node {
+          id
+          status
+          tracking_number
+          recipient {
+            id
+            city
+            street_number
+            address_line1
+            address_line2
+            country_code
+            postal_code
+            person_name
+            phone_number
+            company_name
+            state_code
+          }
+          created_at
+        }
+      }
+    }
+    order_results: orders(filter: { keyword: $keyword, offset: 0, first: 10 }) {
+      edges {
+        node {
+          id
+          status
+          order_id
+          shipping_to {
+            id
+            city
+            street_number
+            address_line1
+            address_line2
+            country_code
+            postal_code
+            person_name
+            phone_number
+            company_name
+            state_code
+          }
+          created_at
+        }
+      }
+    }
+    trackers_results: trackers(
+      filter: { tracking_number: $keyword, offset: 0, first: 10 }
+    ) {
+      edges {
+        node {
+          id
+          status
+          tracking_number
+          created_at
+        }
+      }
     }
   }
 `;

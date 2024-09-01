@@ -6,7 +6,6 @@ import django.db.models as models
 
 import karrio
 import karrio.lib as lib
-import karrio.references as ref
 import karrio.core.units as units
 import django.core.cache as caching
 import karrio.api.gateway as gateway
